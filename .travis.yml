@@ -8,6 +8,7 @@ addons:
     packages:
       - g++-5
       - gcc-5
+      - uuid-dev
       - libgtest-dev
       - lcov
       - cppcheck
