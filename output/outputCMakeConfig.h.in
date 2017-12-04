@@ -1,0 +1,4 @@
+// CMake configured options and settings
+#define OUTPUT_VERSION_MAJOR @output_VERSION_MAJOR@
+#define OUTPUT_VERSION_MINOR @output_VERSION_MINOR@
+#define OUTPUT_VERSION_PATCH @output_VERSION_PATCH@

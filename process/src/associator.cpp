@@ -1,0 +1,309 @@
+#include <associator.h>
+#include <logger.h>
+#include <ctime>
+#include <string>
+#include <Logit.h>
+#include <Glass.h>
+
+namespace glass {
+// Construction/Destruction
+Associator::Associator()
+		: util::ThreadBaseClass("Associator", 5) {
+	logger::log("debug", "associator::Associator(): Construction.");
+
+	m_iWorkCounter = 0;
+	ReportInterval = 60;
+	std::time(&tLastWorkReport);
+
+	Input = NULL;
+	Output = NULL;
+	m_pGlass = NULL;
+	m_MessageQueue = NULL;
+
+	m_iCheckInterval = 600;
+
+	tQueueDuration = std::chrono::duration<double>::zero();
+	tGlassDuration = std::chrono::duration<double>::zero();
+
+	// clear / create object(s)
+	clear();
+}
+
+Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
+		: util::ThreadBaseClass("Associator", 5) {
+	logger::log("debug", "associator::associator(...): Advanced Construction.");
+
+	m_pGlass = NULL;
+	m_MessageQueue = NULL;
+	m_iWorkCounter = 0;
+
+	ReportInterval = 60;
+	std::time(&tLastWorkReport);
+
+	// clear / create object(s)
+	clear();
+
+	// fill in the interfaces
+	Input = inputint;
+	Output = outputint;
+
+	m_iCheckInterval = 600;
+
+	tQueueDuration = std::chrono::duration<double>::zero();
+	tGlassDuration = std::chrono::duration<double>::zero();
+}
+
+Associator::~Associator() {
+	logger::log("debug", "associator::~Associator(): Destruction.");
+
+	// stop the processing thread
+	stop();
+
+	Input = NULL;
+	Output = NULL;
+
+	// delete glass
+	if (m_pGlass != NULL)
+		delete (m_pGlass);
+
+	// clean up message queue
+	m_MessageQueue->clearQueue();
+	if (m_MessageQueue != NULL) {
+		delete (m_MessageQueue);
+	}
+}
+
+bool Associator::setup(json::Object *config) {
+	if (Input == NULL) {
+		logger::log("error", "associator::setup(): Input interface is NULL .");
+		return (false);
+	}
+
+	if (Output == NULL) {
+		logger::log("error", "associator::setup(): Output interface is NULL .");
+		return (false);
+	}
+
+	if (m_pGlass == NULL) {
+		logger::log("error",
+					"associator::setup(): Class Core interface is NULL .");
+		return (false);
+	}
+
+	// send the config to glass
+	m_pGlass->dispatch(config);
+	logger::log("debug",
+				"associator::setup(): Done Passing in provided config.");
+
+	return (true);
+}
+
+void Associator::clear() {
+	logger::log("debug", "associator::clear(): clearing configuration.");
+
+	// we "clear" by deleting the whole glass object
+	if (m_pGlass != NULL) {
+		delete (m_pGlass);
+	}
+	// create the glass object
+	m_pGlass = new glasscore::CGlass();
+
+	// hook up glass communication with Associator class
+	m_pGlass->piSend = dynamic_cast<glasscore::IGlassSend *>(this);
+
+	// set up glass to use our logging
+	glassutil::CLogit::setLogCallback(
+			std::bind(&Associator::logGlass, this, std::placeholders::_1));
+
+	if (m_MessageQueue != NULL) {
+		delete (m_MessageQueue);
+	}
+	m_MessageQueue = new util::Queue();
+
+	// finally do baseclass clear
+	util::BaseClass::clear();
+}
+
+void Associator::logGlass(glassutil::logMessageStruct message) {
+	if (message.level == glassutil::log_level::info) {
+		logger::log("info", "glasscore: " + message.message);
+	} else if (message.level == glassutil::log_level::debug) {
+		logger::log("debug", "glasscore: " + message.message);
+	} else if (message.level == glassutil::log_level::warn) {
+		logger::log("warning", "glasscore: " + message.message);
+	} else if (message.level == glassutil::log_level::error) {
+		logger::log("error", "glasscore: " + message.message);
+	}
+}
+
+void Associator::Send(json::Object *communication) {
+	// this probably could be the same function as dispatch...
+	// ...except the interface won't let it be
+	dispatch(communication);
+}
+
+void Associator::sendToAssociator(json::Object* message) {
+	if (m_MessageQueue != NULL) {
+		m_MessageQueue->addDataToQueue(message);
+	}
+}
+
+bool Associator::work() {
+	if (Input == NULL) {
+		return (false);
+	}
+
+	if (m_pGlass == NULL) {
+		return (false);
+	}
+
+	if (m_MessageQueue == NULL) {
+		return (false);
+	}
+
+	// first check to see if we have any messages to send
+	json::Object* message = m_MessageQueue->getDataFromQueue();
+
+	if (message != NULL) {
+		logger::log(
+				"debug",
+				"associator::work: Got message:" + json::Serialize(*message));
+
+		// send the message into glass
+		m_pGlass->dispatch(message);
+	}
+
+	time_t tNow;
+	std::time(&tNow);
+
+	std::chrono::high_resolution_clock::time_point tQueueStartTime =
+			std::chrono::high_resolution_clock::now();
+	// now grab whatever input might have for us and send it into glass
+	json::Object* data = Input->getData();
+	std::chrono::high_resolution_clock::time_point tQueueEndTime =
+			std::chrono::high_resolution_clock::now();
+
+	tQueueDuration += std::chrono::duration_cast<std::chrono::duration<double>>(
+			tQueueEndTime - tQueueStartTime);
+
+	// only send in something if we got something
+	if (data != NULL) {
+		m_iWorkCounter++;
+
+		logger::log("debug",
+					"Associator::work: Got data:" + json::Serialize(*data));
+
+		std::chrono::high_resolution_clock::time_point tGlassStartTime =
+				std::chrono::high_resolution_clock::now();
+		// glass can sort things out from here
+		// note that if this takes too long, we may need to adjust
+		// thread monitoring, or add a call to setworkcheck()
+		m_pGlass->dispatch(data);
+		std::chrono::high_resolution_clock::time_point tGlassEndTime =
+				std::chrono::high_resolution_clock::now();
+
+		tGlassDuration += std::chrono::duration_cast<
+				std::chrono::duration<double>>(tGlassEndTime - tGlassStartTime);
+
+		// logger::log("debug", "associator::work(): Sent data to glass.");
+	}
+
+	if ((tNow - tLastWorkReport) >= ReportInterval) {
+		int pendingdata = Input->dataCount();
+		double averagequeuetime = tQueueDuration.count() / m_iWorkCounter;
+		double averageglasstime = tGlassDuration.count() / m_iWorkCounter;
+		if (m_iWorkCounter == 0)
+			logger::log(
+					"warning",
+					"associator::work(): Sent NO data to glass in the last "
+							+ std::to_string(
+									static_cast<int>(tNow - tLastWorkReport))
+							+ " seconds.");
+		else
+			logger::log(
+					"info",
+					"Associator::work(): Sent " + std::to_string(m_iWorkCounter)
+							+ " data to glass (" + std::to_string(pendingdata)
+							+ " pending) in the last "
+							+ std::to_string(
+									static_cast<int>(tNow - tLastWorkReport))
+							+ " seconds. ("
+							+ std::to_string(
+									static_cast<double>(m_iWorkCounter)
+											/ static_cast<double>((tNow
+													- tLastWorkReport)))
+							+ " data per second) ("
+							+ std::to_string(averagequeuetime)
+							+ " average queue time; "
+							+ std::to_string(averageglasstime)
+							+ " average glass time).");
+
+		tLastWorkReport = tNow;
+		m_iWorkCounter = 0;
+
+		tQueueDuration = std::chrono::duration<double>::zero();
+		tGlassDuration = std::chrono::duration<double>::zero();
+	}
+
+	// we only send in one item per work loop
+	// work was successful
+	return (true);
+}
+
+bool Associator::check() {
+	// don't check m_pGlass if it is not created yet
+	if (m_pGlass != NULL) {
+		// check glass
+		// check glass thread status
+		if (m_pGlass->statusCheck() == false) {
+			logger::log(
+					"error",
+					"Associator::check(): GlassLib statusCheck() returned false!.");
+			return (false);
+		}
+	}
+
+	// let threadbaseclass handle background worker thread
+	return (ThreadBaseClass::check());
+}
+
+// process any messages glasscore sends us
+bool Associator::dispatch(json::Object *communication) {
+	// tell base class we're still alive
+	ThreadBaseClass::setWorkCheck();
+
+	if (communication == NULL) {
+		logger::log("critical",
+					"associator::dispatch(): NULL message passed in.");
+		return (false);
+	}
+
+	// get the message type so that we know where
+	// to route the message
+	std::string messagetype;
+	if (communication->HasKey("Cmd")) {
+		messagetype = (*communication)["Cmd"].ToString();
+	} else if (communication->HasKey("Type")) {
+		messagetype = (*communication)["Type"].ToString();
+	} else {
+		logger::log(
+				"critical",
+				"associator::dispatch(): BAD message passed in, no Cmd/Type found.");
+		return (false);
+	}
+
+	// send to output
+	if (Output != NULL) {
+		// Allocate a new json object to avoid
+		// multi-thread pointer issues.
+		Output->sendToOutput(new json::Object(*communication));
+	} else {
+		logger::log("error",
+					"associator::dispatch(): Output interface is NULL, nothing "
+					"to dispatch to.");
+		return (false);
+	}
+
+	return (true);
+}
+}  // namespace glass

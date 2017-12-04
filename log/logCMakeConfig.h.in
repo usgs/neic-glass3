@@ -1,0 +1,4 @@
+// CMake configured options and settings
+#define LOG_VERSION_MAJOR @log_VERSION_MAJOR@
+#define LOG_VERSION_MINOR @log_VERSION_MINOR@
+#define LOG_VERSION_PATCH @log_VERSION_PATCH@

@@ -1,0 +1,4 @@
+// CMake configured options and settings
+#define GLASSCORE_VERSION_MAJOR @glasscore_VERSION_MAJOR@
+#define GLASSCORE_VERSION_MINOR @glasscore_VERSION_MINOR@
+#define GLASSCORE_VERSION_PATCH @glasscore_VERSION_PATCH@

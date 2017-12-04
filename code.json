@@ -1,0 +1,32 @@
+{
+  "name": "neic-glass3",
+  "organization": "U.S. Geological Survey",
+  "description": "REPOSITORY_DESCRIPTION",
+  "status": "Beta",
+  "homepage": "https://github.com/usgs/neic-glass3",
+  "downloadURL": "https://github.com/usgs/neic-glass3/archive/master.zip",
+
+  "openSourceProject": 1,
+  "license": "https://github.com/usgs/neic-glass3/blob/master/LICENSE.md",
+  "vcs": "git",
+  "repository": "https://github.com/usgs/neic-glass3.git",
+
+  "tags": [
+    "earthquake",
+    "detection",
+    "association",
+    "processing"
+  ],
+  "languages": [
+    "c++",
+    "cmake"
+  ],
+
+  "contact": {
+    "name": "John Patton",
+    "email": "jpatton@usgs.gov"
+  },
+  "updated": {
+    "metadataLastUpdated": "2017-12-04"
+  }
+}

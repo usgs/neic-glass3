@@ -1,0 +1,4 @@
+// CMake configured options and settings
+#define PROCESS_VERSION_MAJOR @process_VERSION_MAJOR@
+#define PROCESS_VERSION_MINOR @process_VERSION_MINOR@
+#define PROCESS_VERSION_PATCH @process_VERSION_PATCH@

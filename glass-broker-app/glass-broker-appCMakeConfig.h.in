@@ -1,0 +1,4 @@
+// CMake configured options and settings
+#define GLASS_VERSION_MAJOR @glass-broker-app_VERSION_MAJOR@
+#define GLASS_VERSION_MINOR @glass-broker-app_VERSION_MINOR@
+#define GLASS_VERSION_PATCH @glass-broker-app_VERSION_PATCH@

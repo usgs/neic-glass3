@@ -1,0 +1,2 @@
+# log
+Glass logging library.
