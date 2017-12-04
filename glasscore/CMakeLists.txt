@@ -92,7 +92,7 @@ if (RUN_TESTS)
     # ----- TEST SOURCES ----- #
     file(GLOB GLASSCORETEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
-    if (UNIX AND NOT APPLE)
+    if (NOT WIN32 AND NOT APPLE)
         set(PTHREADLIB -pthread)
         set(UUIDLIB -luuid)
     endif (UNIX AND NOT APPLE)
