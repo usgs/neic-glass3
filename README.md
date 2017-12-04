@@ -1,5 +1,10 @@
 neic-glass3
 ------
+
+[![Build Status](https://travis-ci.org/usgs/neic-glass3.svg?branch=master)](https://travis-ci.org/usgs/neic-glass3)
+
+[![codecov](https://codecov.io/gh/usgs/neic-glass3/branch/master/graph/badge.svg)](https://codecov.io/gh/usgs/neic-glass3)
+
 Next generation seismic event detection and association algorithm
 developed by the United States Geological Survey National Earthquake Information
 Center and Caryl Erin Johnson, PhD, Introspective Systems LLC.
