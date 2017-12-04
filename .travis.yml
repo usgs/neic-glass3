@@ -52,7 +52,7 @@ script:
   - mkdir build
   - mkdir dist
   - cd build
-  - cmake -DRUN_TESTS=1 -DSUPPORT_COVERAGE=1 -DRUN_COVERAGE=1 -DRUN_CPPCHECK=1 -DRUN_CPPLINT=1 -DCMAKE_INSTALL_PREFIX=../dist -DRAPIDJSON_PATH=../lib/rapidjson .. && make
+  - cmake -DRUN_TESTS=1 -DSUPPORT_COVERAGE=1 -DRUN_COVERAGE=1 -DRUN_CPPCHECK=1 -DRUN_CPPLINT=1 -DCMAKE_INSTALL_PREFIX=../dist -DRAPIDJSON_PATH=../lib/rapidjson -DCPPLINT_PATH=../lib/cpplint/cpplint.py .. && make
 
 after_success:
   # Uploading coverage report to CodeCov
