@@ -44,12 +44,25 @@ configure_file (
 # SuperEasyJSON
 find_package(SuperEasyJSON CONFIG REQUIRED)
 
+# uuid
+if (UNIX AND NOT APPLE)
+    find_package(Libuuid REQUIRED)
+      if (NOT LIBUUID_FOUND)
+        message(FATAL_ERROR
+          "You might need to run 'sudo apt-get install uuid-dev' or similar")
+      endif()
+endif (UNIX AND NOT APPLE)
+
 # ----- SET INCLUDE DIRECTORIES ----- #
 include_directories("${PROJECT_BINARY_DIR}")
 include_directories(${PROJECT_SOURCE_DIR}/glassutil/include)
 include_directories(${PROJECT_SOURCE_DIR}/traveltime/include)
 include_directories(${PROJECT_SOURCE_DIR}/glasslib/include)
 include_directories(${SuperEasyJSON_INCLUDE_DIRS})
+
+if (UNIX AND NOT APPLE)
+  include_directories(${LIBUUID_INCLUDE_DIR})
+endif (UNIX AND NOT APPLE)
 
 # ----- SET SOURCE FILES ----- #
 file(GLOB SRCS "${PROJECT_SOURCE_DIR}/glassutil/src/*.cpp"
@@ -92,11 +105,6 @@ if (RUN_TESTS)
     # ----- TEST SOURCES ----- #
     file(GLOB GLASSCORETEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
-    if (NOT WIN32 AND NOT APPLE)
-        set(PTHREADLIB -pthread)
-        set(UUIDLIB -luuid)
-    endif (UNIX AND NOT APPLE)
-
     # ----- SET TEST INCLUDE DIRECTORIES ----- #
     include_directories(${GTEST_INCLUDE_DIRS})
 
@@ -104,7 +112,13 @@ if (RUN_TESTS)
     add_executable(glasscore-tests ${GLASSCORETEST_SOURCES})
     set_target_properties(glasscore-tests PROPERTIES OUTPUT_NAME glasscore-tests)
     target_link_libraries(glasscore-tests ${SuperEasyJSON_LIBRARIES})
-    target_link_libraries(glasscore-tests ${PTHREADLIB} ${UUIDLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
+
+    if (UNIX AND NOT APPLE)
+        set(PTHREADLIB -pthread)
+        target_link_libraries(glasscore-tests ${LIBUUID_LIBRARY})
+    endif (UNIX AND NOT APPLE)
+
+    target_link_libraries(glasscore-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
     target_link_libraries(glasscore-tests glasscore)
 
     # ----- TESTS ----- #
