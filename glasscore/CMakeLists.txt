@@ -8,6 +8,8 @@ set (glasscore_VERSION_PATCH 0)
 # ----- PROJECT ----- #
 project (glasscore VERSION ${glasscore_VERSION_MAJOR}.${glasscore_VERSION_MINOR}.${glasscore_VERSION_PATCH})
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/..")
+
 # ----- CMAKE INCLUDES ----- #
 include(internal_utils.cmake)
 
