@@ -41,6 +41,7 @@ install:
     # set compilers
     - export CXX="g++-5"
     - export CC="gcc-5"
+    - export LD_LIBRARY_PATH=/usr/local/lib64/
 
 before_script:
     - uname -a
