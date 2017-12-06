@@ -111,9 +111,11 @@ if (RUN_TESTS)
     include_directories(${GTEST_INCLUDE_DIRS})
 
     # ----- CREATE TEST EXE ----- #
+    # NOTE: Order libraries are linked matters for G++
     add_executable(glasscore-tests ${GLASSCORETEST_SOURCES})
     set_target_properties(glasscore-tests PROPERTIES OUTPUT_NAME glasscore-tests)
     target_link_libraries(glasscore-tests ${SuperEasyJSON_LIBRARIES})
+    target_link_libraries(glasscore-tests glasscore)
 
     if (UNIX AND NOT APPLE)
         set(PTHREADLIB -pthread)
@@ -121,7 +123,7 @@ if (RUN_TESTS)
     endif (UNIX AND NOT APPLE)
 
     target_link_libraries(glasscore-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
-    target_link_libraries(glasscore-tests glasscore)
+
 
     # ----- TESTS ----- #
     GTEST_ADD_TESTS(glasscore-tests "" ${GLASSCORETEST_SOURCES})
