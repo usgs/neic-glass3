@@ -720,8 +720,8 @@ void CRay::calculateBracketMinima(double *x, double dFunFac, double dDelta,
 	double ax = x[0];
 	double bx = x[1];
 	double cx = x[2];
-	double fa = calculateThetaFunction(ax, dFunFac, dDelta, dRcvr); // x[3];
-	double fb = calculateThetaFunction(bx, dFunFac, dDelta, dRcvr);// x[4];
+	double fa = calculateThetaFunction(ax, dFunFac, dDelta, dRcvr);  // x[3];
+	double fb = calculateThetaFunction(bx, dFunFac, dDelta, dRcvr);  // x[4];
 	double fc = x[5];
 
 	if (fb > fa) {

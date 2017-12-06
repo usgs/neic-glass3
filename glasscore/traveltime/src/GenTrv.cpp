@@ -594,7 +594,7 @@ bool CGenTrv::generate(json::Object *com) {
 							"CGenTrv::generate: file writing complete.");
 
 	// cleanup
-	if (travelTimeArray ) {
+	if (travelTimeArray) {
 		delete[] (travelTimeArray);
 	}
 	if (depthDistanceArray) {

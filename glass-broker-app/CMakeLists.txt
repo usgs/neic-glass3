@@ -8,6 +8,8 @@ set (glass-broker-app_VERSION_PATCH 0)
 # ----- PROJECT ----- #
 project (glass-broker-app VERSION ${glass-broker-app_VERSION_MAJOR}.${glass-broker-app_VERSION_MINOR}.${glass-broker-app_VERSION_PATCH})
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/..")
+
 # ----- CMAKE INCLUDES ----- #
 include(ExternalProject)
 include(internal_utils.cmake)
@@ -99,6 +101,15 @@ if (LIBRDKAFKA_CPP_LIB STREQUAL "LIBRDKAFKA_CPP_LIB-NOTFOUND")
     message (FATAL_ERROR "Couldn't find the librdkafka cpp library")
 endif ()
 
+# uuid
+if (UNIX AND NOT APPLE)
+    find_package(Libuuid REQUIRED)
+      if (NOT LIBUUID_FOUND)
+        message(FATAL_ERROR
+          "You might need to run 'sudo apt-get install uuid-dev' or similar")
+      endif()
+endif (UNIX AND NOT APPLE)
+
 # ----- SET INCLUDE DIRECTORIES ----- #
 include_directories ("${PROJECT_BINARY_DIR}")
 include_directories(${SuperEasyJSON_INCLUDE_DIRS})
@@ -122,6 +133,10 @@ include_directories(${LIBRDKAFKA_PATH}/src-cpp)
 include_directories(${PROJECT_SOURCE_DIR}/input)
 include_directories(${PROJECT_SOURCE_DIR}/broker_output)
 
+if (UNIX AND NOT APPLE)
+  include_directories(${LIBUUID_INCLUDE_DIR})
+endif (UNIX AND NOT APPLE)
+
 # ----- LIBRARIES ----- #
 # input
 add_library (input STATIC ${PROJECT_SOURCE_DIR}/input/input.cpp ${PROJECT_SOURCE_DIR}/input/input.h)
@@ -131,7 +146,6 @@ add_library (broker_output STATIC  ${PROJECT_SOURCE_DIR}/broker_output/brokerOut
 
 if (UNIX AND NOT APPLE)
     set(PTHREADLIB -pthread)
-    set(UUIDLIB -luuid)
     set(ZLIB -lz)
     set(LIBDL -ldl)
 endif (UNIX AND NOT APPLE)
@@ -153,7 +167,13 @@ target_link_libraries(glass-broker-app ${util_LIBRARIES})
 target_link_libraries(glass-broker-app ${config_LIBRARIES})
 target_link_libraries(glass-broker-app ${log_LIBRARIES})
 target_link_libraries(glass-broker-app ${SuperEasyJSON_LIBRARIES})
-target_link_libraries(glass-broker-app ${PTHREADLIB} ${UUIDLIB} ${GCC_COVERAGE_LINK_FLAGS} ${ZLIB} ${LIBDL})
+
+if (UNIX AND NOT APPLE)
+    set(PTHREADLIB -pthread)
+    target_link_libraries(glass-broker-app ${LIBUUID_LIBRARY})
+endif (UNIX AND NOT APPLE)
+
+target_link_libraries(glass-broker-app ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS} ${ZLIB} ${LIBDL})
 
 # ----- TESTS ----- #
 # no tests currently
