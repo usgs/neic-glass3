@@ -540,12 +540,6 @@ bool output::work() {
 				// first try to remove any pending events
 				// from the tracking cache
 				removeTrackingData(message);
-
-				// cleanup
-				// cppcheck-suppress nullPointerRedundantCheck
-				if (message != NULL) {
-					delete (message);
-				}
 			}
 			m_iExpireCounter++;
 		} else if (messagetype == "SiteLookup") {
@@ -563,10 +557,7 @@ bool output::work() {
 							+ json::Serialize(*message) + ".");
 
 			// cleanup
-			// cppcheck-suppress nullPointerRedundantCheck
-			if (message != NULL) {
-				delete (message);
-			}
+			delete (message);
 		}
 
 		// reporting
