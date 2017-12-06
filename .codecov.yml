@@ -1,0 +1,3 @@
+ignore:
+  - "**/*_unittest.cpp" # ignore unit tests
+  - "lib"    # ignore external libraries
