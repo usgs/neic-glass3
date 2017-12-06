@@ -1,2 +1,3 @@
 ignore:
-  - "**/lib/**"    # ignore external libraries
+  - "**/*_unittest.cpp" # ignore unit tests
+  - "lib"    # ignore external libraries
