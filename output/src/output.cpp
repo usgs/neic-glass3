@@ -56,11 +56,13 @@ output::~output() {
 	// stop the input thread
 	stop();
 
+	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_TrackingCache != NULL) {
 		m_TrackingCache->clearCache();
 		delete (m_TrackingCache);
 	}
 
+	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_MessageQueue != NULL) {
 		m_MessageQueue->clearQueue();
 		delete (m_MessageQueue);
@@ -170,11 +172,13 @@ bool output::setup(json::Object *config) {
 	// unlock our configuration
 	m_ConfigMutex.unlock();
 
+	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_TrackingCache != NULL) {
 		delete (m_TrackingCache);
 	}
 	m_TrackingCache = new util::Cache();
 
+	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_MessageQueue != NULL) {
 		delete (m_MessageQueue);
 	}
@@ -487,8 +491,10 @@ bool output::work() {
 			addTrackingData(message);
 
 			// cleanup
-			if (message != NULL)
+			// cppcheck-suppress nullPointerRedundantCheck
+			if (message != NULL) {
 				delete (message);
+			}
 			m_iEventCounter++;
 		} else if (messagetype == "Cancel") {
 			json::Object * trackingData = getTrackingData(messageid);
@@ -534,10 +540,6 @@ bool output::work() {
 				// first try to remove any pending events
 				// from the tracking cache
 				removeTrackingData(message);
-
-				// cleanup
-				if (message != NULL)
-					delete (message);
 			}
 			m_iExpireCounter++;
 		} else if (messagetype == "SiteLookup") {
@@ -555,8 +557,7 @@ bool output::work() {
 							+ json::Serialize(*message) + ".");
 
 			// cleanup
-			if (message != NULL)
-				delete (message);
+			delete (message);
 		}
 
 		// reporting

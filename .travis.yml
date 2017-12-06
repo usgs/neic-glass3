@@ -1,0 +1,61 @@
+# travis file for c++, does not include doxygen.
+language: c++
+
+sudo: false
+# add modern c++ and gtest
+addons:
+  apt:
+    packages:
+      - g++-5
+      - gcc-5
+      - uuid-dev
+      - libgtest-dev
+      - lcov
+      - cppcheck
+    sources:
+      - ubuntu-toolchain-r-test
+
+install:
+    # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/deps/
+    - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
+    - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
+
+    # Install a recent CMake (unless already installed on OS X)
+    - |
+      if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+        if [[ -z "$(ls -A ${DEPS_DIR}/cmake/bin)" ]]; then
+          CMAKE_URL="https://cmake.org/files/v3.6/cmake-3.6.2-Linux-x86_64.tar.gz"
+          mkdir -p cmake && travis_retry wget --no-check-certificate --quiet -O - "${CMAKE_URL}" | tar --strip-components=1 -xz -C cmake
+        fi
+        export PATH="${DEPS_DIR}/cmake/bin:${PATH}"
+      else
+        if ! brew ls --version cmake &>/dev/null; then brew install cmake; fi
+      fi
+    # Build gtest
+    - cd ${DEPS_DIR}
+    - mkdir gtest && cd gtest
+    - export GTEST_ROOT=$(pwd)
+    - cp -r /usr/src/gtest/* ./
+    - cmake -D CMAKE_INSTALL_PREFIX:PATH=./ ./
+    - make
+    # set compilers
+    - export CXX="g++-5"
+    - export CC="gcc-5"
+    - export LD_LIBRARY_PATH=/usr/local/lib64/
+
+before_script:
+    - uname -a
+    - printenv
+    - g++-5 --version 2>&1 | grep g++-5
+
+script:
+  # C++ build, tests, and coverage
+  - cd ${TRAVIS_BUILD_DIR}
+  - mkdir build
+  - mkdir dist
+  - cd build
+  - cmake -DGIT_CLONE_PUBLIC=1 -DRUN_TESTS=1 -DSUPPORT_COVERAGE=1 -DRUN_COVERAGE=1 -DRUN_CPPCHECK=1 -DRUN_CPPLINT=1 -DCMAKE_INSTALL_PREFIX=../dist -DRAPIDJSON_PATH=../lib/rapidjson -DCPPLINT_PATH=../lib/cpplint/cpplint.py .. && make
+
+after_success:
+  # Uploading coverage report to CodeCov
+  - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"

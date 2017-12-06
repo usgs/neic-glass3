@@ -1799,15 +1799,10 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
 
 		// init x, y, and z gaussian step distances
-		double dx = 0.0;
-		double dy = 0.0;
-		double dz = 0.0;
-		double dt = 0.0;
-
-		dx = gauss(0.0, dkm * 2);
-		dy = gauss(0.0, dkm * 2);
-		dz = gauss(0.0, dkm);
-		dt = gauss(0.0, dOt);
+		double dx = gauss(0.0, dkm * 2);
+		double dy = gauss(0.0, dkm * 2);
+		double dz = gauss(0.0, dkm);
+		double dt = gauss(0.0, dOt);
 
 		// compute current location using the hypo location and the x and y
 		// Gaussian step distances
@@ -2012,15 +2007,10 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
 
 		// init x, y, and z gaussian step distances
-		double dx = 0.0;
-		double dy = 0.0;
-		double dz = 0.0;
-		double dt = 0.0;
-
-		dx = gauss(0.0, dkm * 2);
-		dy = gauss(0.0, dkm * 2);
-		dz = gauss(0.0, dkm);
-		dt = gauss(0.0, dOt);
+		double dx = gauss(0.0, dkm * 2);
+		double dy = gauss(0.0, dkm * 2);
+		double dz = gauss(0.0, dkm);
+		double dt = gauss(0.0, dOt);
 
 		// compute current location using the hypo location and the x and y
 		// Gaussian step distances
@@ -2043,8 +2033,6 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 
 		// compute current origin time
 		double oT = tOrg + dt;
-
-		val = 0;
 
 		pTTT->setOrigin(xlat, xlon, xz);
 		val = getSumAbsResidual(xlat, xlon, xz, oT, nucleate);
@@ -2393,9 +2381,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			continue;
 		}
 
-		std::string sOtherPid = "";
-
-		sOtherPid = pickHyp->sPid;
+		std::string sOtherPid = pickHyp->sPid;
 
 		// if this pick is linked to this hypo
 		if (sOtherPid == sPid) {
@@ -2484,9 +2470,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			continue;
 		}
 
-		std::string sOtherPid = "";
-
-		sOtherPid = corrHyp->sPid;
+		std::string sOtherPid = corrHyp->sPid;
 
 		// if this corr is linked to this hypo
 		if (sOtherPid == sPid) {

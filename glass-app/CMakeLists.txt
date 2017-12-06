@@ -8,6 +8,8 @@ set (glass-app_VERSION_PATCH 0)
 # ----- PROJECT ----- #
 project (glass-app VERSION ${glass-app_VERSION_MAJOR}.${glass-app_VERSION_MINOR}.${glass-app_VERSION_PATCH})
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/..")
+
 # ----- CMAKE INCLUDES ----- #
 include(ExternalProject)
 include(internal_utils.cmake)
@@ -69,6 +71,15 @@ find_package(process CONFIG REQUIRED)
 # output
 find_package(output CONFIG REQUIRED)
 
+# uuid
+if (UNIX AND NOT APPLE)
+    find_package(Libuuid REQUIRED)
+      if (NOT LIBUUID_FOUND)
+        message(FATAL_ERROR
+          "You might need to run 'sudo apt-get install uuid-dev' or similar")
+      endif()
+endif (UNIX AND NOT APPLE)
+
 # ----- SET INCLUDE DIRECTORIES ----- #
 include_directories ("${PROJECT_BINARY_DIR}")
 include_directories(${SuperEasyJSON_INCLUDE_DIRS})
@@ -88,17 +99,16 @@ include_directories(${output_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/input)
 include_directories(${PROJECT_SOURCE_DIR}/file_output)
 
+if (UNIX AND NOT APPLE)
+  include_directories(${LIBUUID_INCLUDE_DIR})
+endif (UNIX AND NOT APPLE)
+
 # ----- LIBRARIES ----- #
 # input
 add_library (input STATIC ${PROJECT_SOURCE_DIR}/input/input.cpp ${PROJECT_SOURCE_DIR}/input/input.h)
 
 # output
 add_library (file_output STATIC  ${PROJECT_SOURCE_DIR}/file_output/file_output.cpp ${PROJECT_SOURCE_DIR}/file_output/file_output.h)
-
-if (UNIX AND NOT APPLE)
-    set(PTHREADLIB -pthread)
-    set(UUIDLIB -luuid)
-endif (UNIX AND NOT APPLE)
 
 # ----- EXECUTABLE ----- #
 # NOTE: Order libraries are linked matters for G++
@@ -114,7 +124,13 @@ target_link_libraries(glass-app ${util_LIBRARIES})
 target_link_libraries(glass-app ${config_LIBRARIES})
 target_link_libraries(glass-app ${log_LIBRARIES})
 target_link_libraries(glass-app ${SuperEasyJSON_LIBRARIES})
-target_link_libraries(glass-app ${PTHREADLIB} ${UUIDLIB} ${GCC_COVERAGE_LINK_FLAGS})
+
+if (UNIX AND NOT APPLE)
+    set(PTHREADLIB -pthread)
+    target_link_libraries(glass-app ${LIBUUID_LIBRARY})
+endif (UNIX AND NOT APPLE)
+
+target_link_libraries(glass-app ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS})
 
 # ----- TESTS ----- #
 option(RUN_TESTS "Create and run unit tests (requires GTest)" OFF)
@@ -150,7 +166,12 @@ if (RUN_TESTS)
     target_link_libraries(glass-app-tests ${config_LIBRARIES})
     target_link_libraries(glass-app-tests ${log_LIBRARIES})
     target_link_libraries(glass-app-tests ${SuperEasyJSON_LIBRARIES})
-    target_link_libraries(glass-app-tests ${PTHREADLIB} ${UUIDLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
+
+    if (UNIX AND NOT APPLE)
+        target_link_libraries(glass-app-tests ${LIBUUID_LIBRARY})
+    endif (UNIX AND NOT APPLE)
+
+    target_link_libraries(glass-app-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
 
     # ----- TESTS ----- #
     GTEST_ADD_TESTS(glass-app-tests "" ${UNITTEST_SOURCES})

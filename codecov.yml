@@ -1,0 +1,2 @@
+ignore:
+  - "cpp/lib"    # ignore external libraries
