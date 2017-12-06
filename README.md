@@ -73,3 +73,7 @@ and several `.vcproj` files will be created.  You can then build them using
 Visual Studio.  
 9. Note that for \*nix you must generate seperate build directories for x86 vs
 x64 compilation specifying the appropriate generator `cmake -G <generator> ..`.
+
+Further Information and Documentation
+------
+For further information and documentation please check out the [neic-glass3 Wiki](https://github.com/usgs/neic-glass3/wiki)
