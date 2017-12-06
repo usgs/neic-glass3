@@ -26,6 +26,7 @@ option(RUN_CPPCHECK "Run CPP Checks (requires cppcheck installed)" OFF)
 option(RUN_CPPLINT "Run CPP Checks (requires cpplint and python installed)" OFF)
 option(SUPPORT_COVERAGE "Instrument for Coverage" OFF)
 option(RUN_COVERAGE "Run Coverage Report (requires lcov installed)" OFF)
+option(GIT_CLONE_PUBLIC "Clone from public git URLs (https)" OFF)
 
 # ----- EXTERNAL LIBRARIES ----- #
 # Google Test
@@ -39,13 +40,23 @@ if (RUN_TESTS)
         set(GTEST_DEPEND "GTest")
 
         MESSAGE(STATUS "Configuring to download GTest.")
-        ExternalProject_Add(
-            GTest
-            GIT_REPOSITORY git@github.com:google/googletest.git
-            GIT_TAG release-1.8.0
-            TIMEOUT 10
-            CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
-        )
+        if (GIT_CLONE_PUBLIC)
+          ExternalProject_Add(
+              GTest
+              GIT_REPOSITORY https://github.com/google/googletest.git
+              GIT_TAG release-1.8.0
+              TIMEOUT 10
+              CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
+          )
+        else()
+          ExternalProject_Add(
+              GTest
+              GIT_REPOSITORY git@github.com:google/googletest.git
+              GIT_TAG release-1.8.0
+              TIMEOUT 10
+              CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
+          )
+        endif()
     endif()
 endif(RUN_TESTS)
 
@@ -64,13 +75,24 @@ if (BUILD_DOCUMENTATION)
     # ----- DOWNLOAD DOXYGEN IF NOT FOUND ----- #
     if(NOT DOXYGEN_FOUND)
         MESSAGE(STATUS "Configuring to download Doxygen.")
-        ExternalProject_Add(
-            Doxygen
-            GIT_REPOSITORY git@github.com:doxygen/doxygen.git
-            GIT_TAG Release_1_8_12
-            TIMEOUT 10
-            CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
-        )
+
+        if (GIT_CLONE_PUBLIC)
+          ExternalProject_Add(
+              Doxygen
+              GIT_REPOSITORY https://github.com/doxygen/doxygen.git
+              GIT_TAG Release_1_8_12
+              TIMEOUT 10
+              CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
+          )
+        else()
+          ExternalProject_Add(
+              Doxygen
+              GIT_REPOSITORY git@github.com:doxygen/doxygen.git
+              GIT_TAG Release_1_8_12
+              TIMEOUT 10
+              CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
+          )
+        endif()
 
         set(DOXYGEN_DEPEND "Doxygen")
     endif()
@@ -90,16 +112,29 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
     set(RAPIDJSON_PATH "${CURRENT_SOURCE_DIR}/../lib/rapidjson" CACHE PATH "Path to rapidjson")
 
     # DetectionFormats
-    ExternalProject_Add(DetectionFormats
-        GIT_REPOSITORY git@github.com:usgs/earthquake-detection-formats.git
-        #GIT_TAG working
-        TIMEOUT 10
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
-          -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-          -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
-          -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-          -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
-    )
+    if (GIT_CLONE_PUBLIC)
+      ExternalProject_Add(DetectionFormats
+          GIT_REPOSITORY https://github.com/usgs/earthquake-detection-formats.git
+          #GIT_TAG working
+          TIMEOUT 10
+          CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
+            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+            -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
+      )
+    else()
+      ExternalProject_Add(DetectionFormats
+          GIT_REPOSITORY git@github.com:usgs/earthquake-detection-formats.git
+          #GIT_TAG working
+          TIMEOUT 10
+          CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
+            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+            -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
+      )
+    endif()
 endif()
 
 if (BUILD_GLASS-BROKER-APP)
@@ -115,17 +150,31 @@ if (BUILD_GLASS-BROKER-APP)
         CACHE FILEPATH "Path to the rdkafka cpp library")
 
     # HazdevBroker
-    ExternalProject_Add(HazdevBroker
-        GIT_REPOSITORY git@github.com:usgs/hazdev-broker.git
-        #GIT_TAG working
-        TIMEOUT 10
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
-          -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-          -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
-          -DLIBRDKAFKA_PATH=${LIBRDKAFKA_PATH}
-          -DLIBRDKAFKA_C_LIB=${LIBRDKAFKA_C_LIB}
-          -DLIBRDKAFKA_CPP_LIB=${LIBRDKAFKA_CPP_LIB}
-    )
+    if (GIT_CLONE_PUBLIC)
+      ExternalProject_Add(HazdevBroker
+          GIT_REPOSITORY https://github.com/usgs/hazdev-broker.git
+          #GIT_TAG working
+          TIMEOUT 10
+          CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
+            -DLIBRDKAFKA_PATH=${LIBRDKAFKA_PATH}
+            -DLIBRDKAFKA_C_LIB=${LIBRDKAFKA_C_LIB}
+            -DLIBRDKAFKA_CPP_LIB=${LIBRDKAFKA_CPP_LIB}
+      )
+    else()
+      ExternalProject_Add(HazdevBroker
+          GIT_REPOSITORY git@github.com:usgs/hazdev-broker.git
+          #GIT_TAG working
+          TIMEOUT 10
+          CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
+            -DLIBRDKAFKA_PATH=${LIBRDKAFKA_PATH}
+            -DLIBRDKAFKA_C_LIB=${LIBRDKAFKA_C_LIB}
+            -DLIBRDKAFKA_CPP_LIB=${LIBRDKAFKA_CPP_LIB}
+      )
+    endif()
 endif()
 
 # ----- PROJECT LIBRARIES ----- #
