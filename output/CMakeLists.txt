@@ -180,11 +180,12 @@ if(RUN_CPPCHECK)
       DEPENDS output
       COMMAND cppcheck
       --enable=warning,performance,portability
+      --suppress=nullPointerRedundantCheck
+      --inline-suppr 
       --language=c++
       --std=c++11
       --template="[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)"
       --verbose
-      --suppress=nullPointerRedundantCheck
       --error-exitcode=1
       ${CPPCHECK_SRCS}
       COMMENT "Running cppcheck" VERBATIM
