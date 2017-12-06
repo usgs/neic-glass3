@@ -1,2 +1,2 @@
 ignore:
-  - "lib"    # ignore external libraries
+  - "**/lib/**"    # ignore external libraries
