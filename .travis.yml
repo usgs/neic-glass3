@@ -62,7 +62,7 @@ script:
   - cmake -DGIT_CLONE_PUBLIC=1 -DRUN_TESTS=1 -DSUPPORT_COVERAGE=1 -DRUN_COVERAGE=1 -DRUN_CPPCHECK=1 -DRUN_CPPLINT=1 -DGENERATE_DOCUMENTATION=1 -DCMAKE_INSTALL_PREFIX=../dist -DRAPIDJSON_PATH=../lib/rapidjson -DCPPLINT_PATH=../lib/cpplint/cpplint.py .. && make
   # copy documentation index.md to doxygen documentation directory
   - cd ${TRAVIS_BUILD_DIR}
-  - cp ${TRAVIS_BUILD_DIR}/doc/index.md ${TRAVIS_BUILD_DIR}/dist/doc
+  - cp -r ${TRAVIS_BUILD_DIR}/doc/* ${TRAVIS_BUILD_DIR}/dist/doc
 
 deploy:
   # Deploying doxygen documentation to github pages
