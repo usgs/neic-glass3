@@ -10,7 +10,7 @@
 
 	# Use this directory for the other glass
 	# subcomponent configuration files
-	"ConfigDirectory":"./params",
+	"ConfigDirectory":"./global_example",
 
 	# Association thread configuration
 	# The file containing the configuration
