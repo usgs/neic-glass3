@@ -436,6 +436,11 @@ class CGlass {
 	bool testTimes;
 
 	/**
+	 * \brief Bool to decide when to print files for locator test
+	 */
+	bool testLocator;
+
+	/**
 	 * \brief Output info for graphics.
 	 */
 	bool graphicsOut;

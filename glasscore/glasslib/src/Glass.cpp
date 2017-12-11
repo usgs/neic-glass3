@@ -48,6 +48,8 @@ CGlass::CGlass() {
 	graphicsSteps = 100;
 	testTimes = false;
 	minimizeTTLocator = false;
+	testLocator = false;
+
 }
 
 // ---------------------------------------------------------~CGlass
@@ -212,6 +214,7 @@ void CGlass::clear() {
 	dCutMin = 30.0;
 	iCycleLimit = 25;
 	testTimes = false;
+	testLocator = false;
 	graphicsOut = false;
 	graphicsOutFolder = "./";
 	graphicsStepKM = 1.;
@@ -452,6 +455,31 @@ bool CGlass::initialize(json::Object *com) {
 	if ((com->HasKey("TestTravelTimes"))
 			&& ((*com)["TestTravelTimes"].GetType() == json::ValueType::BoolVal)) {
 		testTimes = (*com)["TestTravelTimes"].ToBool();
+	}
+
+	// setup if we are going to print locator iterations for debuging
+	if ((com->HasKey("TestLocator"))) {
+		testLocator = (*com)["TestLocator"].ToBool();
+
+		glassutil::CLogit::log(
+									glassutil::log_level::info,
+									"CGlass::initialize: Testing Locator ON!!!: "
+											+ std::to_string(testLocator));
+	}
+	else {
+		glassutil::CLogit::log(
+									glassutil::log_level::info,
+									"CGlass::initialize: Testing Locator off!!!: "
+											+ std::to_string(testLocator));
+	}
+
+
+
+	if(testLocator) {
+		glassutil::CLogit::log(
+							glassutil::log_level::info,
+							"CGlass::initialize: Testing Locator ON!!!: "
+									+ std::to_string(testLocator));
 	}
 
 	// Change locator

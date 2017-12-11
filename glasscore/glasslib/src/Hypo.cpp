@@ -665,6 +665,37 @@ json::Object CHypo::hypo() {
 }
 
 // ---------------------------------------------------------Event
+void CHypo::event() {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	bEvent = true;
+	reportCount++;
+	json::Object evt;
+
+	// fill in Event command from current hypocenter
+	evt["Cmd"] = "Event";
+	evt["Pid"] = sPid;
+	evt["CreateTime"] = glassutil::CDate::encodeISO8601Time(tCreate);
+	evt["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+			glassutil::CDate::now());
+	evt["Version"] = reportCount;
+
+	// basic hypo information
+	evt["Latitude"] = dLat;
+	evt["Longitude"] = dLon;
+	evt["Depth"] = dZ;
+	evt["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
+	evt["Bayes"] = dBayes;
+	evt["Ndata"] = static_cast<int>(vPick.size())
+			+ static_cast<int>(vCorr.size());
+
+	// send it
+	if (pGlass) {
+		pGlass->send(&evt);
+	}
+}
+
 // ---------------------------------------------------------associate
 bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 						double sdassoc) {
@@ -1737,6 +1768,16 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 
 	char sLog[1024];
 
+	//if testing locator, setup output file
+	std::ofstream outfile;
+	if(pGlass->testLocator)
+	{
+		std::string filename = "locatorTest/" + sPid + ".txt";
+		outfile.open(filename, std::ios::out | std::ios::app);
+		outfile << std::to_string(dLat) << " " << std::to_string(dLon) << " " << std::to_string(dZ) << " " << std::to_string(tOrg)
+								<< " " << std::to_string(vPick.size()) << " " << std::to_string(valStart) << " 0 0 0 \n";
+	}
+
 	snprintf(sLog, sizeof(sLog), "CHypo::annealingLocate: old bayes value "
 				"%.4f sPid:%s",
 				valStart, sPid.c_str());
@@ -1796,6 +1837,14 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		// get the stack value for this hypocenter
 		double val = getBayes(xlat, xlon, xz, oT, nucleate);
 
+		//if testing locator print interation
+		if(pGlass->testLocator)
+		{
+			outfile << std::to_string(xlat) << " " << std::to_string(xlon) << " " << std::to_string(xz) << " " << std::to_string(oT)
+									<< " " << std::to_string(vPick.size()) << " " << std::to_string(val) << " " << std::to_string(dkm*2) << " " << std::to_string(dkm)
+									<< " " << std::to_string(dOt)<< "\n";
+		}
+
 		// is this stacked bayesian value better than the previous one?
 		if (val > valBest || (val > dThresh && (valBest - val) < (pow(gauss(0,.2),2)) )) {
 			// then this is the new best value
@@ -1829,6 +1878,12 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 
 	if (pGlass->graphicsOut == true) {
 		graphicsOutput();
+	}
+
+	//if testing
+	if(pGlass->testLocator)
+	{
+		outfile.close();
 	}
 
 	return;
