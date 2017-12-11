@@ -665,37 +665,6 @@ json::Object CHypo::hypo() {
 }
 
 // ---------------------------------------------------------Event
-void CHypo::event() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	bEvent = true;
-	reportCount++;
-	json::Object evt;
-
-	// fill in Event command from current hypocenter
-	evt["Cmd"] = "Event";
-	evt["Pid"] = sPid;
-	evt["CreateTime"] = glassutil::CDate::encodeISO8601Time(tCreate);
-	evt["ReportTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
-	evt["Version"] = reportCount;
-
-	// basic hypo information
-	evt["Latitude"] = dLat;
-	evt["Longitude"] = dLon;
-	evt["Depth"] = dZ;
-	evt["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
-	evt["Bayes"] = dBayes;
-	evt["Ndata"] = static_cast<int>(vPick.size())
-			+ static_cast<int>(vCorr.size());
-
-	// send it
-	if (pGlass) {
-		pGlass->send(&evt);
-	}
-}
-
 // ---------------------------------------------------------associate
 bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 						double sdassoc) {
@@ -1681,13 +1650,6 @@ double CHypo::localize() {
 		return dBayes;
 	}
 
-	// generate weights.
-	// Not needed now I think.
-	// if (!weights()) {
-	// Do nothing more if generating weights was unsuccessful
-	// return (0.0);
-	// }
-
 	// increment location count for debugging?
 	// Note: Not sure what the purpose of keeping this count is
 	pGlass->nLocate++;
@@ -1699,16 +1661,23 @@ double CHypo::localize() {
 	// if there are already a large number of picks, only do it
 	// do often...
 
+	// create taper using the number of picks to define the
+	// search distance in localize. Smaller search with more picks
+
+	glassutil::CTaper taper;
+	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, 30 + 0.0001);
+	double searchR = dRes/4. + taper.Val(vPick.size())*.75*dRes;
+
 	// This should be the default
 	if (pGlass->minimizeTTLocator == false) {
 		if (npick < 25) {
-			annealingLocate(10000, dRes, 1., dRes / 6.0, .1);
+			annealingLocate(5000, searchR, 1., searchR / 8.0, .1);
 		} else if (npick < 50 && (npick % 5) == 0) {
-			annealingLocate(5000, dRes, 1., dRes / 6.0, .1);
+			annealingLocate(2500, searchR, 1., searchR / 8.0, .1);
 		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocate(1000, dRes / 2., 1., dRes / 6.0, .1);
+			annealingLocate(1250, searchR, 1., searchR / 8.0, .1);
 		} else if ((npick % 25) == 0) {
-			annealingLocate(500, dRes / 2., 1., dRes / 6.0, .1);
+			annealingLocate(500, searchR, 1., searchR / 8.0, .1);
 		} else {
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::localize: Skipping localize with %d picks",
@@ -1717,13 +1686,13 @@ double CHypo::localize() {
 		}
 	} else {
 		if (npick < 25) {
-			annealingLocateResidual(10000, dRes, 1., dRes / 6.0, .1);
+			annealingLocateResidual(10000, searchR, 1., searchR / 8.0, .1);
 		} else if (npick < 50 && (npick % 5) == 0) {
-			annealingLocateResidual(5000, dRes, 1., dRes / 6.0, .1);
+			annealingLocateResidual(5000, searchR, 1., searchR / 8.0, .1);
 		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocateResidual(1000, dRes / 2., 1., dRes / 6.0, .1);
+			annealingLocateResidual(1000, searchR / 2., 1., searchR / 8.0, .1);
 		} else if ((npick % 25) == 0) {
-			annealingLocateResidual(500, dRes / 2., 1., dRes / 6.0, .1);
+			annealingLocateResidual(500, searchR / 2., 1., searchR / 8.0, .1);
 		} else {
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::localize: Skipping localize with %d picks",
@@ -1828,7 +1797,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		double val = getBayes(xlat, xlon, xz, oT, nucleate);
 
 		// is this stacked bayesian value better than the previous one?
-		if (val > valBest) {
+		if (val > valBest || (val > dThresh && (valBest - val) < (pow(gauss(0,.2),2)) )) {
 			// then this is the new best value
 			valBest = val;
 			// set the hypo location/depth/time from the new best
