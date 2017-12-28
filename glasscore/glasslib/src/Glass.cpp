@@ -232,6 +232,7 @@ void CGlass::clear() {
 
 // ---------------------------------------------------------Initialize
 bool CGlass::initialize(json::Object *com) {
+
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -455,31 +456,6 @@ bool CGlass::initialize(json::Object *com) {
 	if ((com->HasKey("TestTravelTimes"))
 			&& ((*com)["TestTravelTimes"].GetType() == json::ValueType::BoolVal)) {
 		testTimes = (*com)["TestTravelTimes"].ToBool();
-	}
-
-	// setup if we are going to print locator iterations for debuging
-	if ((com->HasKey("TestLocator"))) {
-		testLocator = (*com)["TestLocator"].ToBool();
-
-		glassutil::CLogit::log(
-									glassutil::log_level::info,
-									"CGlass::initialize: Testing Locator ON!!!: "
-											+ std::to_string(testLocator));
-	}
-	else {
-		glassutil::CLogit::log(
-									glassutil::log_level::info,
-									"CGlass::initialize: Testing Locator off!!!: "
-											+ std::to_string(testLocator));
-	}
-
-
-
-	if(testLocator) {
-		glassutil::CLogit::log(
-							glassutil::log_level::info,
-							"CGlass::initialize: Testing Locator ON!!!: "
-									+ std::to_string(testLocator));
 	}
 
 	// Change locator
@@ -877,6 +853,30 @@ bool CGlass::initialize(json::Object *com) {
 									"CGlass::initialize: Track set to false");
 		}
 	}
+
+
+	printf("\n\nTEST!!!!\n\n");
+
+	// Test Locator
+	if ((com->HasKey("TestLocator"))
+			&& ((*com)["TestLocator"].GetType() == json::ValueType::BoolVal)) {
+		testLocator = (*com)["TestLocator"].ToBool();
+
+		if (testLocator) {
+			glassutil::CLogit::log(glassutil::log_level::info,
+									"CGlass::initialize: testLocator set to true");
+		} else {
+			glassutil::CLogit::log(glassutil::log_level::info,
+									"CGlass::initialize: testLocator set to false");
+		}
+	}
+	else
+	{
+		glassutil::CLogit::log(glassutil::log_level::info,
+											"CGlass::initialize: testLocator not Found!");
+	}
+
+
 
 	// set maximum number of picks
 	if ((com->HasKey("PickMax"))

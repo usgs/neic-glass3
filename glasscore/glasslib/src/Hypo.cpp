@@ -1770,9 +1770,9 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 
 	//if testing locator, setup output file
 	std::ofstream outfile;
-	if(pGlass->testLocator)
+	//if(pGlass->testLocator)
 	{
-		std::string filename = "locatorTest/" + sPid + ".txt";
+		std::string filename = "./locatorTest/" + sPid + ".txt";
 		outfile.open(filename, std::ios::out | std::ios::app);
 		outfile << std::to_string(dLat) << " " << std::to_string(dLon) << " " << std::to_string(dZ) << " " << std::to_string(tOrg)
 								<< " " << std::to_string(vPick.size()) << " " << std::to_string(valStart) << " 0 0 0 \n";
@@ -1838,7 +1838,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		double val = getBayes(xlat, xlon, xz, oT, nucleate);
 
 		//if testing locator print interation
-		if(pGlass->testLocator)
+		//if(pGlass->testLocator)
 		{
 			outfile << std::to_string(xlat) << " " << std::to_string(xlon) << " " << std::to_string(xz) << " " << std::to_string(oT)
 									<< " " << std::to_string(vPick.size()) << " " << std::to_string(val) << " " << std::to_string(dkm*2) << " " << std::to_string(dkm)
@@ -1846,7 +1846,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		}
 
 		// is this stacked bayesian value better than the previous one?
-		if (val > valBest || (val > dThresh && (valBest - val) < (pow(gauss(0,.2),2)) )) {
+		if (val > valBest || (val > dThresh && (valBest - val) < (pow(gauss(0,.2),2) / (100./dkm)) )) {
 			// then this is the new best value
 			valBest = val;
 			// set the hypo location/depth/time from the new best
@@ -1881,7 +1881,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 	}
 
 	//if testing
-	if(pGlass->testLocator)
+	//if(pGlass->testLocator)
 	{
 		outfile.close();
 	}
