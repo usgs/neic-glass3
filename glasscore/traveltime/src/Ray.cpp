@@ -440,7 +440,6 @@ double CRay::delta(double time, double *pret) {
 	double pmax;
 	double rayParam;
 	double t1;
-	double t2;
 	double p1;
 	double tcal;
 	double dcal = -1.0;
@@ -452,7 +451,7 @@ double CRay::delta(double time, double *pret) {
 
 	for (int i = 0; i < n; i++) {
 		double p2 = dMinimumRayParam + i * pdel;
-		t2 = integrateFunction(FUN_P_TIME, p2, pTerra->dEarthRadius);
+		double t2 = integrateFunction(FUN_P_TIME, p2, pTerra->dEarthRadius);
 
 		if (!i) {
 			t1 = t2;
@@ -787,7 +786,7 @@ double CRay::brentMinimization(double *xx, double tol, double *xmin,
 	double cx = xx[2];
 	double a, b, d;
 	double etemp;
-	double fu, fv, fw, fx;
+	double fv, fw, fx;
 	double p, q, r;
 	double tol2;
 	double u, v, w, x;
@@ -828,7 +827,7 @@ double CRay::brentMinimization(double *xx, double tol, double *xmin,
 			d = CGOLD * (e = (x >= xm ? a - x : b - x));
 		}
 		u = (fabs(d) >= tol1 ? x + d : x + SIGN(tol1, d));
-		fu = calculateThetaFunction(u, dFunFac, dDelta, dRcvr);
+		double fu = calculateThetaFunction(u, dFunFac, dDelta, dRcvr);
 		if (fu <= fx) {
 			if (u >= x)
 				a = x;

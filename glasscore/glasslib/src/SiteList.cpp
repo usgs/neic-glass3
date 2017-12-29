@@ -357,7 +357,8 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 			snprintf(
 					sLog,
 					sizeof(sLog),
-					"CSiteList::getSite: SCNL:%s not on station list, requesting information.",
+					"CSiteList::getSite: SCNL:%s not on station list, "
+					"requesting information.",
 					scnl.c_str());
 			glassutil::CLogit::log(sLog);
 		}

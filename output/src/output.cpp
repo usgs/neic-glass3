@@ -401,7 +401,6 @@ bool output::work() {
 	// so that we can have config that changes
 	// should I do this?
 	m_ConfigMutex.lock();
-	int pubdelay = 0;
 	int siteListDelay = m_iSiteListDelay;
 	m_ConfigMutex.unlock();
 

@@ -191,7 +191,6 @@ bool ThreadPool::check() {
 		for (StatusItr = m_ThreadStatusMap.begin();
 				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
 			// get the thread status
-			std::thread::id threadid = StatusItr->first;
 			bool status = static_cast<bool>(StatusItr->second);
 
 			// at least one thread did not respond
