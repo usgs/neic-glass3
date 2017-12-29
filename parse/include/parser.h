@@ -32,7 +32,7 @@ class Parser {
 	 * \param newAuthor - A std::string containing the author to
 	 * use if one is not provided by the parsed message.
 	 */
-	Parser(std::string newAgencyID, std::string newAuthor);
+	Parser(const std::string &newAgencyID, const std::string &newAuthor);
 
 	/**
 	 * \brief parser destructor
@@ -50,7 +50,7 @@ class Parser {
 	 * \return Returns a pointer to the json::Object containing
 	 * the data.
 	 */
-	virtual json::Object* parse(std::string input) = 0;
+	virtual json::Object* parse(const std::string &input) = 0;
 
 	/**
 	 * \brief validation function

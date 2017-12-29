@@ -383,9 +383,7 @@ std::string hypoToJSONDetection(json::Object *data,
 								detectiondocument.GetAllocator()));
 
 	// cleanup
-	if (data != NULL) {
-		delete (data);
-	}
+	delete (data);
 
 	// done
 	return (OutputData);
@@ -453,9 +451,7 @@ std::string cancelToJSONRetract(json::Object *data,
 			retract.tojson(retractdocument, retractdocument.GetAllocator()));
 
 	// cleanup
-	if (data != NULL) {
-		delete (data);
-	}
+	delete (data);
 
 	// done
 	return (OutputData);
@@ -541,9 +537,7 @@ std::string siteListToStationList(json::Object *data) {
 	OutputData = json::Serialize(stationListObj);
 
 	// cleanup
-	if (data != NULL) {
-		delete (data);
-	}
+	delete (data);
 
 	// done
 	return (OutputData);
@@ -644,10 +638,9 @@ std::string siteLookupToStationInfoRequest(json::Object *data,
 				"siteLookupToStationInfoRequest: Invalid station info request "
 						"message: " + errorstring);
 	}
+
 	// cleanup
-	if (data != NULL) {
-		delete (data);
-	}
+	delete (data);
 
 	// done
 	return (OutputString);

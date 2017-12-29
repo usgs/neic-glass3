@@ -867,16 +867,6 @@ bool output::isDataChanged(json::Object *data) {
 		return (false);
 	}
 
-	// get the id
-	std::string id = "";
-	if ((*data).HasKey("ID")) {
-		id = (*data)["ID"].ToString();
-	} else if ((*data).HasKey("Pid")) {
-		id = (*data)["Pid"].ToString();
-	} else {
-		id = "";
-	}
-
 	// get the pub log
 	json::Array pubLog = (*data)["PubLog"].ToArray();
 

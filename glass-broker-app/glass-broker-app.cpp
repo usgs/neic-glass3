@@ -15,7 +15,6 @@
 
 int main(int argc, char* argv[]) {
 	std::string configdir = "";
-	bool isrunning = true;
 
 	// check our arguments
 	if ((argc < 2) || (argc > 4)) {
@@ -330,15 +329,12 @@ int main(int argc, char* argv[]) {
 
 		if (InputThread->check() == false) {
 			logger::log("error", "glass: Input thread has exited!!");
-			isrunning = false;
 			break;
 		} else if (OutputThread->check() == false) {
 			logger::log("error", "glass: Output thread has exited!!");
-			isrunning = false;
 			break;
 		} else if (AssocThread->check() == false) {
 			logger::log("error", "glass: Association thread has exited!!");
-			isrunning = false;
 			break;
 		}
 

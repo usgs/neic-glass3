@@ -33,7 +33,7 @@
 // hypo, quake, and event output functions should also be tested.
 
 // check site data for validity
-void checkdata(glasscore::CHypo *hypoobject, std::string testinfo) {
+void checkdata(glasscore::CHypo *hypoobject, const std::string &testinfo) {
 	// check lat
 	double latitude = hypoobject->dLat;
 	double expectedLatitude = LATITUDE;

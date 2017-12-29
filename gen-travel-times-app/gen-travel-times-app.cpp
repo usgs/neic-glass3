@@ -29,9 +29,6 @@ void logTravelTimes(glassutil::logMessageStruct message) {
 }
 
 int main(int argc, char* argv[]) {
-	std::string configdir = "";
-	bool isrunning = true;
-
 	// check our arguments
 	if ((argc < 2) || (argc > 3)) {
 		std::cout << "gen-travel-times-app version "

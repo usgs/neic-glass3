@@ -46,8 +46,9 @@ void testjob5() {
 }
 
 static bool haltbadjob = false;
+int result = 0;
 void badjob() {
-	int result = 0;
+	result = 0;
 	while (haltbadjob == false) {
 		result = 1 + 1;
 	}

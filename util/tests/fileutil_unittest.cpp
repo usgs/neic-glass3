@@ -25,7 +25,8 @@ class FileUtil : public ::testing::Test {
 	virtual void SetUp() {
 		// logger::log_init("fileutil", spdlog::level::debug, true, "./");
 
-		int nError = 0;
+		int nError1 = 0;
+		int nError2 = 0;
 
 		std::string testdata = std::string(TESTDATA);
 		std::string testpath1 = std::string(TESTPATH1);
@@ -37,16 +38,18 @@ class FileUtil : public ::testing::Test {
 
 		// create testing directories
 #ifdef _WIN32
-		nError = _mkdir(firsttestpath.c_str());
-		nError = _mkdir(secondtestpath.c_str());
+		nError1 = _mkdir(firsttestpath.c_str());
+		nError2 = _mkdir(secondtestpath.c_str());
 #else
 		mode_t nMode = 0733;
-		nError = mkdir(firsttestpath.c_str(), nMode);
-		nError = mkdir(secondtestpath.c_str(), nMode);
+		nError1 = mkdir(firsttestpath.c_str(), nMode);
+		nError2 = mkdir(secondtestpath.c_str(), nMode);
 #endif
-		if (nError != 0) {
+		if (nError1 != 0) {
 			printf("Failed to create testing directory %s.\n",
 					firsttestpath.c_str());
+		}
+		if (nError2 != 0) {
 			printf("Failed to create testing directory %s.\n",
 					secondtestpath.c_str());
 		}
@@ -152,7 +155,7 @@ TEST_F(FileUtil, CombinedTests) {
 
 	// check the file name
 	ASSERT_STREQ(foundfilename.c_str(), testfilename.c_str())<<
-			"expected vs, found file names.";
+	"expected vs, found file names.";
 
 	// movefileto
 	result = util::moveFileTo(testfilename, secondtestpath);
@@ -170,7 +173,7 @@ TEST_F(FileUtil, CombinedTests) {
 
 	// check the moved file name
 	ASSERT_STREQ(foundfilename.c_str(), movedfilename.c_str())<<
-			"expected vs, moved file names.";
+	"expected vs, moved file names.";
 
 	// deletefilefrom
 	result = util::deleteFileFrom(movedfilename);
@@ -194,5 +197,5 @@ TEST_F(FileUtil, CombinedTests) {
 
 	// check the copied file name
 	ASSERT_STREQ(foundfilename.c_str(), copydestinationfilename.c_str())<<
-			"expected vs, copied file names.";
+	"expected vs, copied file names.";
 }

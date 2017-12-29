@@ -26,7 +26,7 @@
 // Maybe consider performing this test at a higher level?
 
 // check site data for validity
-void checkdata(glasscore::CPick * pickobject, std::string testinfo) {
+void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 	// check scnl
 	std::string sitescnl = pickobject->pSite->sScnl;
 	std::string expectedscnl = std::string(SCNL);
@@ -110,6 +110,8 @@ TEST(PickTest, Construction) {
 
 	// check results
 	checkdata(testPick, "initialize check");
+
+	delete(testPick);
 }
 
 // tests to see if the pick can be constructed from JSON

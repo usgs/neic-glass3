@@ -8,14 +8,14 @@
 #include <vector>
 
 namespace parse {
-CCParser::CCParser(std::string newAgencyID, std::string newAuthor)
+CCParser::CCParser(const std::string &newAgencyID, const std::string &newAuthor)
 		: Parser::Parser(newAgencyID, newAuthor) {
 }
 CCParser::~CCParser() {
 }
 
 // parse a json object from an input string
-json::Object* CCParser::parse(std::string input) {
+json::Object* CCParser::parse(const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0)
 		return (NULL);

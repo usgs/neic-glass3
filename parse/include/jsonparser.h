@@ -33,7 +33,7 @@ class JSONParser : public Parser {
 	 * \param newAuthor - A std::string containing the author to
 	 * use if one is not provided.
 	 */
-	JSONParser(std::string newAgencyID, std::string newAuthor);
+	JSONParser(const std::string &newAgencyID, const std::string &newAuthor);
 
 	/**
 	 * \brief jsonparser destructor
@@ -52,7 +52,7 @@ class JSONParser : public Parser {
 	 * \return Returns a pointer to the json::Object containing
 	 * the data.
 	 */
-	json::Object* parse(std::string input) override;
+	json::Object* parse(const std::string &input) override;
 
 	/**
 	 * \brief json validation function

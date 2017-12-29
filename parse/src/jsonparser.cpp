@@ -7,14 +7,15 @@
 #include <vector>
 
 namespace parse {
-JSONParser::JSONParser(std::string newAgencyID, std::string newAuthor)
+JSONParser::JSONParser(const std::string &newAgencyID,
+						const std::string &newAuthor)
 		: Parser::Parser(newAgencyID, newAuthor) {
 }
 JSONParser::~JSONParser() {
 }
 
 // parse a json object from an input string
-json::Object* JSONParser::parse(std::string input) {
+json::Object* JSONParser::parse(const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0) {
 		return (NULL);
@@ -181,7 +182,8 @@ bool JSONParser::validate(json::Object* input) {
 			// check information requestor if it's present
 			if (stationObject.informationRequestor.isempty() == false) {
 				if ((stationObject.informationRequestor.agencyid != m_AgencyID)
-						|| (stationObject.informationRequestor.author != m_Author)) {
+						|| (stationObject.informationRequestor.author
+								!= m_Author)) {
 					logger::log(
 							"debug",
 							"jsonparser::validate: stationInfo is not for this "

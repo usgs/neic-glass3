@@ -37,7 +37,8 @@ protected:
 
 		//logger::log_init("inputtest", spdlog::level::debug, true, testpath);
 
-		int nError = 0;
+		int nError1 = 0;
+		int nError2 = 0;
 
 		testpath = std::string(TESTPATH);
 		testdatapath = std::string(TESTDATAPATH);
@@ -52,17 +53,19 @@ protected:
 
 		// create testing directories
 #ifdef _WIN32
-		nError = _mkdir(errordirectory.c_str());
-		nError = _mkdir(archivedirectory.c_str());
+		nError1 = _mkdir(errordirectory.c_str());
+		nError2 = _mkdir(archivedirectory.c_str());
 #else
 		mode_t nMode = 0733;
-		nError = mkdir(errordirectory.c_str(), nMode);
-		nError = mkdir(archivedirectory.c_str(), nMode);
+		nError1 = mkdir(errordirectory.c_str(), nMode);
+		nError2 = mkdir(archivedirectory.c_str(), nMode);
 #endif
 
-		if (nError != 0) {
+		if (nError1 != 0) {
 			printf("Failed to create testing directory %s.\n",
 					errordirectory.c_str());
+		}
+		if (nError2 != 0) {
 			printf("Failed to create testing directory %s.\n",
 					archivedirectory.c_str());
 		}

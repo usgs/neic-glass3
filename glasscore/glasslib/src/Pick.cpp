@@ -411,7 +411,6 @@ bool CPick::nucleate() {
 		// use the hypo's nucleation threshold, which is really the
 		// web's nucleation threshold
 		int ncut = hypo->nCut;
-		int npick;
 		bool bad = false;
 
 		// First localization attempt after nucleation
@@ -426,7 +425,7 @@ bool CPick::nucleate() {
 							.1);
 
 			// get the number of picks we have now
-			npick = hypo->vPick.size();
+			int npick = hypo->vPick.size();
 
 			snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass %d %d/%d %s",
 						ipass, npick, ncut, hypo->sPid.c_str());

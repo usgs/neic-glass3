@@ -766,7 +766,6 @@ bool CGenTrv::T(std::string phase, double delta, double depth) {
 	double rayParam = 0.0;
 	dTravelTime = -10.0;
 	double travelTime = -10.0;
-	double tdif = -10.0;
 
 	// set up radius
 	double radius = earthRadius;
@@ -810,7 +809,7 @@ bool CGenTrv::T(std::string phase, double delta, double depth) {
 		pRay->setupRayParam();
 
 		// get travel time and ray parameter
-		tdif = pRay->travel((DEG2RAD * delta), radius);
+		double tdif = pRay->travel((DEG2RAD * delta), radius);
 
 		// check for valid travel time
 		if (tdif < 0) {
