@@ -75,14 +75,14 @@ std::string hypoToJSONDetection(json::Object *data,
 
 			if (isUpdate == false) {
 				detection.detectiontype =
-						detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::newdetection]; // NOLINT
+						detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::newdetection];  // NOLINT
 			} else {
 				detection.detectiontype =
-						detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::update]; // NOLINT
+						detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::update];  // NOLINT
 			}
 		} else {
 			detection.detectiontype =
-					detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::newdetection]; // NOLINT
+					detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::newdetection];  // NOLINT
 		}
 
 		// optional values that we have
@@ -377,6 +377,8 @@ std::string hypoToJSONDetection(json::Object *data,
 						+ std::string(e.what()));
 	}
 
+	// need to check if detection is valid
+
 	rapidjson::Document detectiondocument;
 	OutputData = detectionformats::ToJSONString(
 			detection.tojson(detectiondocument,
@@ -478,6 +480,11 @@ std::string siteListToStationList(json::Object *data) {
 		return ("");
 	}
 
+	logger::log(
+			"debug",
+			"siteListToStationList(): data = |" + json::Serialize(*data)
+					+ "|.");
+
 	std::string OutputData = "";
 
 	json::Object stationListObj;
@@ -566,6 +573,11 @@ std::string siteLookupToStationInfoRequest(json::Object *data,
 					"passed in.");
 		return ("");
 	}
+
+	logger::log(
+			"debug",
+			"siteLookupToStationInfoRequest(): data = |"
+					+ json::Serialize(*data) + "|.");
 
 	std::string OutputString = "";
 	std::string site = "";
