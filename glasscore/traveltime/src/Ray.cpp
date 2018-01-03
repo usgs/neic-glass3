@@ -788,7 +788,6 @@ double CRay::brentMinimization(double *xx, double tol, double *xmin,
 	double etemp;
 	double fv, fw, fx;
 	double p, q, r;
-	double tol2;
 	double u, v, w, x;
 	double e = 0.0;
 
@@ -799,7 +798,7 @@ double CRay::brentMinimization(double *xx, double tol, double *xmin,
 	for (iter = 1; iter <= ITMAX; iter++) {
 		double xm = 0.5 * (a + b);
 		double tol1 = tol * fabs(x) + ZEPS;
-		tol2 = 2.0 * tol1;
+		double tol2 = 2.0 * tol1;
 		if (fabs(x - xm) <= (tol2 - 0.5 * (b - a))) {
 			*xmin = x;
 			return fx;
