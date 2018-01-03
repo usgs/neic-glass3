@@ -373,7 +373,7 @@ int CPickList::indexPick(double tPick) {
 		if (tCurrentPick > tPick) {
 			// new upper bound is this index
 			i2 = ix;
-		} else { // if (tCurrentPick <= tPick)
+		} else {  // if (tCurrentPick <= tPick)
 			// if time is after or equal to current pick
 			// new lower bound is this index
 			i1 = ix;

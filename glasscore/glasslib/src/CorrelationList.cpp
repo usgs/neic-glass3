@@ -338,7 +338,7 @@ int CCorrelationList::indexCorrelation(double tCorrelation) {
 		if (tCurrentCorrelation > tCorrelation) {
 			// new upper bound is this index
 			i2 = ix;
-		} else { // if (tCurrentCorrelation <= tCorrelation)
+		} else {  // if (tCurrentCorrelation <= tCorrelation)
 			// if time is after or equal to current correlation
 			// new lower bound is this index
 			i1 = ix;

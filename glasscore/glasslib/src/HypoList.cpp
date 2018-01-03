@@ -174,7 +174,7 @@ int CHypoList::indexHypo(double tOrg) {
 		if (tCurrentOrg > tOrg) {
 			// new upper bound is this index
 			i2 = ix;
-		} else { // if (tCurrentOrg <= tOrg)
+		} else {  // if (tCurrentOrg <= tOrg)
 			// if time is after or equal to current origin
 			// new lower bound is this index
 			i1 = ix;
