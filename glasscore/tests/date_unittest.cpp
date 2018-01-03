@@ -7,6 +7,88 @@
 #define DATETIME "20151228213224.017"
 #define JULIANTIME 3660327144.017
 
+#define YEAR 2015
+#define MONTH 12
+#define DAY 28
+#define HOUR 21
+#define MINUTE 32
+#define SECONDS 24.017
+
+// tests to see if we can convert julian time to iso8601
+TEST(DateTest, Construction) {
+	// default constru tor
+	glassutil::CDate dt;
+
+	// year()
+	ASSERT_EQ(0, dt.year())<< "Default year() Check";
+
+	// month()
+	ASSERT_EQ(0, dt.month())<< "Default month() Check";
+
+	// day()
+	ASSERT_EQ(0, dt.day())<< "Default day() Check";
+
+	// hour()
+	ASSERT_EQ(0, dt.hour())<< "Default hour() Check";
+
+	// minute()
+	ASSERT_EQ(0, dt.minute())<< "Default minute() Check";
+
+	// seconds()
+	ASSERT_EQ(0, dt.seconds())<< "Default seconds() Check";
+
+	// time()
+	ASSERT_EQ(0, dt.time())<< "Default time() Check";
+
+	// julian time constructor
+	glassutil::CDate dt2(JULIANTIME);
+
+	// year()
+	ASSERT_EQ(YEAR, dt2.year())<< "Julian year() Check";
+
+	// month()
+	ASSERT_EQ(MONTH, dt2.month())<< "Julian month() Check";
+
+	// day()
+	ASSERT_EQ(DAY, dt2.day())<< "Julian day() Check";
+
+	// hour()
+	ASSERT_EQ(HOUR, dt2.hour())<< "Julian hour() Check";
+
+	// minute()
+	ASSERT_EQ(MINUTE, dt2.minute())<< "Julian minute() Check";
+
+	// seconds()
+	ASSERT_NEAR(SECONDS, dt2.seconds(), 0.001)<< "Julian seconds() Check";
+
+	// time()
+	ASSERT_NEAR(JULIANTIME, dt2.time(), 0.001)<< "Julian time() Check";
+
+	// full time constructor
+	glassutil::CDate dt3(YEAR, MONTH, DAY, HOUR, MINUTE, SECONDS);
+
+	// year()
+	ASSERT_EQ(YEAR, dt3.year())<< "Full year() Check";
+
+	// month()
+	ASSERT_EQ(MONTH, dt3.month())<< "Full month() Check";
+
+	// day()
+	ASSERT_EQ(DAY, dt3.day())<< "Full day() Check";
+
+	// hour()
+	ASSERT_EQ(HOUR, dt3.hour())<< "Full hour() Check";
+
+	// minute()
+	ASSERT_EQ(MINUTE, dt3.minute())<< "Full minute() Check";
+
+	// seconds()
+	ASSERT_NEAR(SECONDS, dt3.seconds(), 0.001)<< "Full seconds() Check";
+
+	// time()
+	ASSERT_NEAR(JULIANTIME, dt3.time(), 0.001)<< "Full time() Check";
+}
+
 // tests to see if we can convert julian time to iso8601
 TEST(DateTest, ConvertJulianTimeToISO8601) {
 	glassutil::CLogit::disable();
