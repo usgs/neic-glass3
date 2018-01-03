@@ -25,6 +25,8 @@ TEST(LogitTest, Logging) {
 
 	glassutil::CLogit::log("log test");
 
+	glassutil::CLogit::log(std::string("log string test"));
+
 	glassutil::CLogit::log(glassutil::log_level::info, "log with level test");
 }
 
