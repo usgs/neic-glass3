@@ -14,6 +14,7 @@
 #define NUMROWS 3
 #define NUMCOLS 4
 #define UPDATE true
+#define NOUPDATE false
 
 // NOTE: Need to consider testing the grid generation functions, as well
 // as addSite and remSite, but that would need a much more
@@ -23,6 +24,9 @@
 // tests to see if the node can be constructed
 TEST(WebTest, Construction) {
 	glassutil::CLogit::disable();
+
+	// default constructor
+	glasscore::CWeb aWeb(NOUPDATE, 10, 10);
 
 	// construct a web
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -66,4 +70,23 @@ TEST(WebTest, Construction) {
 
 	// pointers
 	ASSERT_EQ(NULL, testWeb->pGlass)<< "pGlass null";
+
+	delete (testWeb);
+}
+
+// tests to see if the node can be initialized
+TEST(WebTest, Initialize) {
+	glassutil::CLogit::disable();
+
+	// default constructor
+	glasscore::CWeb aWeb(UPDATE, 10, 10);
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+
+	aWeb.initialize(std::string(NAME),
+	THRESH,
+					NUMDETECT,
+					NUMNUCLEATE,
+					NUMROWS,
+					NUMCOLS,
+					UPDATE, nullTrav, nullTrav);
 }

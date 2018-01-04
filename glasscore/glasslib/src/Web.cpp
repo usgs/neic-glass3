@@ -122,15 +122,17 @@ CWeb::~CWeb() {
 
 	clear();
 
-	// stop the thread
-	m_bRunJobLoop = false;
+	if (m_bUseBackgroundThread == true) {
+		// stop the thread
+		m_bRunJobLoop = false;
 
-	// wait for the thread to finish
-	m_BackgroundThread->join();
+		// wait for the thread to finish
+		m_BackgroundThread->join();
 
-	// delete it
-	delete (m_BackgroundThread);
-	m_BackgroundThread = NULL;
+		// delete it
+		delete (m_BackgroundThread);
+		m_BackgroundThread = NULL;
+	}
 }
 
 // ---------------------------------------------------------clear

@@ -163,10 +163,10 @@ TEST(Convert, SiteListTest) {
 	// failure cases
 	ASSERT_STREQ(parse::siteListToStationList(NULL).c_str(), "");
 	ASSERT_STREQ(
-			parse::siteListToStationList(new json::Object( json::Deserialize(BADSITELISTSTRING1))).c_str(),
+			parse::siteListToStationList(new json::Object( json::Deserialize(BADSITELISTSTRING1))).c_str(), // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::siteListToStationList(new json::Object( json::Deserialize(BADSITELISTSTRING2))).c_str(),
+			parse::siteListToStationList(new json::Object( json::Deserialize(BADSITELISTSTRING2))).c_str(), // NOLINT
 			"");
 
 	std::string sitelistfile = "./" + std::string(TESTPATH) + "/"
