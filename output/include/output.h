@@ -136,29 +136,6 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 */
 	util::iAssociator* Associator;
 
- protected:
-	/**
-	 * \brief output work function
-	 *
-	 * The function (from threadclassbase) used to do work.
-	 *
-	 * \return returns true if work was successful, false otherwise.
-	 */
-	bool work() override;
-
-	/**
-	 * \brief output file writing function
-	 *
-	 * The function used output detection data
-	 *
-	 * \param data - A pointer to a json::Object containing the data to be
-	 * output.
-	 */
-	void writeOutput(json::Object *data);
-
-	virtual void sendOutput(const std::string &type, const std::string &id,
-							const std::string &message) = 0;
-
 	/**
 	 * \brief add data to the output tracking cache
 	 *
@@ -224,6 +201,29 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	bool isDataReady(json::Object *data);
 	bool isDataChanged(json::Object *data);
 	bool isDataPublished(json::Object *data, bool ignoreVersion = true);
+
+ protected:
+	/**
+	 * \brief output work function
+	 *
+	 * The function (from threadclassbase) used to do work.
+	 *
+	 * \return returns true if work was successful, false otherwise.
+	 */
+	bool work() override;
+
+	/**
+	 * \brief output file writing function
+	 *
+	 * The function used output detection data
+	 *
+	 * \param data - A pointer to a json::Object containing the data to be
+	 * output.
+	 */
+	void writeOutput(json::Object *data);
+
+	virtual void sendOutput(const std::string &type, const std::string &id,
+							const std::string &message) = 0;
 
  private:
 	/**
