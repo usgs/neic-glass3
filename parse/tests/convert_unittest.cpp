@@ -7,11 +7,21 @@
 #include <fstream>
 #include <string>
 
-#define HYPOSTRING "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"ID\":\"20311B8E10AF5649BDC52ED099CF173E\",\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\",\"Type\":\"Hypo\"}" // NOLINT
+#define HYPOSTRING "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Type\":\"Correlation\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Phase\":\"P\",\"Time\":\"2015-12-28T21:32:24.017Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2015-12-28T21:30:44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\",\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}},{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"ID\":\"20311B8E10AF5649BDC52ED099CF173E\",\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\",\"Type\":\"Hypo\"}" // NOLINT
+#define BADHYPOSTRING1 "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"ID\":\"20311B8E10AF5649BDC52ED099CF173E\",\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\"}" // NOLINT
+#define BADHYPOSTRING2 "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\",\"Type\":\"Hypo\"}" // NOLINT
+
 #define CANCELSTRING "{\"Pid\":\"20311B8E10AF5649BDC52ED099CF173E\",\"Type\":\"Cancel\"}" // NOLINT
+#define BADCANCELSTRING1 "{\"Type\":\"Cancel\"}"
+#define BADCANCELSTRING2 "{\"Pid\":\"20311B8E10AF5649BDC52ED099CF173E\"}"
+
 #define TESTPATH "testdata"
 #define SITELISTFILE "siteList.txt"
+#define BADSITELISTSTRING1 "{\"Type\":\"WhoKnows\"}"
+#define BADSITELISTSTRING2 "{\"Cmd\":\"NotRight\"}"
+
 #define SITELOOKUPSTRING "{\"Comp\":\"BHZ\",\"Loc\":"",\"Net\":\"AU\",\"Site\":\"WR10\",\"Type\":\"SiteLookup\"}" // NOLINT
+#define BADSITELOOKUPSTRING1 "{\"Comp\":\"BHZ\",\"Loc\":"",\"Net\":\"AU\",\"Site\":\"WR10\"}" // NOLINT
 
 #define TESTAGENCYID "US"
 #define TESTAUTHOR "glasstest"
@@ -21,14 +31,22 @@ TEST(Convert, HypoTest) {
 	std::string agencyid = std::string(TESTAGENCYID);
 	std::string author = std::string(TESTAUTHOR);
 
+	// failure cases
+	ASSERT_STREQ(parse::hypoToJSONDetection(NULL, agencyid, author).c_str(),
+					"");
+	ASSERT_STREQ(
+			parse::hypoToJSONDetection(new json::Object(json::Deserialize(BADHYPOSTRING1)), agencyid, author).c_str(),  // NOLINT
+			"");
+	ASSERT_STREQ(
+			parse::hypoToJSONDetection(new json::Object( json::Deserialize(BADHYPOSTRING2)), agencyid, author).c_str(),  // NOLINT
+			"");
+	ASSERT_STREQ(
+			parse::hypoToJSONDetection(new json::Object( json::Deserialize(CANCELSTRING)), agencyid, author).c_str(),  // NOLINT
+			"");
+
 	// Hypo
-	std::string hypostring = std::string(HYPOSTRING);
-
-	json::Object* hypoobject = new json::Object(json::Deserialize(hypostring));
-
-	std::string detectionoutput = parse::hypoToJSONDetection(hypoobject,
-																agencyid,
-																author);
+	std::string detectionoutput = parse::hypoToJSONDetection(
+			new json::Object(json::Deserialize(HYPOSTRING)), agencyid, author);
 	// build detection object
 	rapidjson::Document detectiondocument;
 	detectionformats::detection detectionobject(
@@ -99,14 +117,23 @@ TEST(Convert, CancelTest) {
 	std::string agencyid = std::string(TESTAGENCYID);
 	std::string author = std::string(TESTAUTHOR);
 
+	// failure cases
+	ASSERT_STREQ(parse::cancelToJSONRetract(NULL, agencyid, author).c_str(),
+					"");
+	ASSERT_STREQ(
+			parse::cancelToJSONRetract(new json::Object(json::Deserialize(BADCANCELSTRING1)), agencyid, author).c_str(),  // NOLINT
+			"");
+	ASSERT_STREQ(
+			parse::cancelToJSONRetract(new json::Object( json::Deserialize(BADCANCELSTRING2)), agencyid, author).c_str(),  // NOLINT
+			"");
+	ASSERT_STREQ(
+			parse::cancelToJSONRetract(new json::Object( json::Deserialize(HYPOSTRING)), agencyid, author).c_str(),  // NOLINT
+			"");
+
 	// Cancel
-	std::string cancelstring = std::string(CANCELSTRING);
-
-	json::Object* cancleobject = new json::Object(
-			json::Deserialize(cancelstring));
-
-	std::string retractoutput = parse::cancelToJSONRetract(cancleobject,
-															agencyid, author);
+	std::string retractoutput = parse::cancelToJSONRetract(
+			new json::Object(json::Deserialize(CANCELSTRING)), agencyid,
+			author);
 	// build detection object
 	rapidjson::Document retractdocument;
 	detectionformats::retract retractobject(
@@ -132,6 +159,16 @@ TEST(Convert, CancelTest) {
 
 TEST(Convert, SiteListTest) {
 	// logger::log_init("converttest", spdlog::level::debug, ".", true);
+
+	// failure cases
+	ASSERT_STREQ(parse::siteListToStationList(NULL).c_str(), "");
+	ASSERT_STREQ(
+			parse::siteListToStationList(new json::Object( json::Deserialize(BADSITELISTSTRING1))).c_str(),
+			"");
+	ASSERT_STREQ(
+			parse::siteListToStationList(new json::Object( json::Deserialize(BADSITELISTSTRING2))).c_str(),
+			"");
+
 	std::string sitelistfile = "./" + std::string(TESTPATH) + "/"
 			+ std::string(SITELISTFILE);
 
@@ -167,15 +204,22 @@ TEST(Convert, SiteLookupTest) {
 	std::string agencyid = std::string(TESTAGENCYID);
 	std::string author = std::string(TESTAUTHOR);
 
+	// failure cases
+	ASSERT_STREQ(
+			parse::siteLookupToStationInfoRequest(NULL, agencyid, author).c_str(),
+			"");
+	ASSERT_STREQ(
+			parse::siteLookupToStationInfoRequest(new json::Object(json::Deserialize(BADSITELOOKUPSTRING1)), agencyid, author).c_str(),  // NOLINT
+			"");
+	ASSERT_STREQ(
+			parse::siteLookupToStationInfoRequest(new json::Object( json::Deserialize(CANCELSTRING)), agencyid, author).c_str(),  // NOLINT
+			"");
+
 	// sitelookup
-	std::string sitelookupstring = std::string(SITELOOKUPSTRING);
-
-	json::Object* sitelookupobject = new json::Object(
-			json::Deserialize(sitelookupstring));
-
 	std::string stationinforequestoutput =
-			parse::siteLookupToStationInfoRequest(sitelookupobject, agencyid,
-													author);
+			parse::siteLookupToStationInfoRequest(
+					new json::Object(json::Deserialize(SITELOOKUPSTRING)),
+					agencyid, author);
 	// build detection object
 	rapidjson::Document stationdocument;
 	detectionformats::stationInfoRequest stationrequestobject(
