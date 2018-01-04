@@ -121,6 +121,7 @@ if (RUN_TESTS)
     # NOTE: Order libraries are linked matters for G++
     add_executable(output-tests ${outputTEST_SOURCES})
     set_target_properties(output-tests PROPERTIES OUTPUT_NAME output-tests)
+    target_link_libraries(output-tests output)
     target_link_libraries(output-tests ${parse_LIBRARIES})
     target_link_libraries(output-tests ${DetectionFormats_LIBRARIES})
     target_link_libraries(output-tests ${util_LIBRARIES})
@@ -128,7 +129,6 @@ if (RUN_TESTS)
     target_link_libraries(output-tests ${log_LIBRARIES})
     target_link_libraries(output-tests ${SuperEasyJSON_LIBRARIES})
     target_link_libraries(output-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
-    target_link_libraries(output-tests output)
 
     # ----- TESTS ----- #
     GTEST_ADD_TESTS(output-tests "" ${outputTEST_SOURCES})

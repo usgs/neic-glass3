@@ -32,6 +32,9 @@ class OutputStub : public glass::output {
 	}
 };
 
+// NOTE that other aspects of output are tested in the file_output tests that
+// are part of glass-app
+
 // tests to see if remove_chars is functional
 TEST(Output, TrackingTests) {
 	// create output stub
