@@ -441,7 +441,6 @@ double CRay::delta(double time, double *pret) {
 	int n = 1000;
 
 	for (int i = 0; i < n; i++) {
-		double dcal = -1.0;
 		double pdel = (dMaximumRayParam - dMinimumRayParam) / (n - 1);
 		double t1 = 0;
 		double p2 = dMinimumRayParam + i * pdel;
@@ -453,6 +452,7 @@ double CRay::delta(double time, double *pret) {
 		}
 
 		if ((t1 < time && t2 > time) || (t2 < time && t1 > time)) {
+			double dcal = -1.0;
 			double p1 = p2 - pdel;
 			double t2save = t2;
 			double rayParam = 0;
