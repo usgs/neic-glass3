@@ -144,9 +144,11 @@ int CHypoList::indexHypo(double tOrg) {
 		return (-2);
 	}
 
+	double tFirstOrg = vHypo[0].first;
+
 	// handle origin earlier than first element case
 	// time is earlier than first origin
-	if (tOrg < vHypo[0].first) {
+	if (tOrg < tFirstOrg) {
 		// return -1 to indicate earlier than first element
 		return (-1);
 	}
@@ -154,26 +156,25 @@ int CHypoList::indexHypo(double tOrg) {
 	// handle case that the origin is later than last element
 	int i1 = 0;
 	int i2 = vHypo.size() - 1;
-
+	double tLastOrg = vHypo[i2].first;
 	// time is after last origin
-	if (tOrg >= vHypo[i2].first) {
+	if (tOrg >= tLastOrg) {
 		return (i2);
 	}
 
 	// search for insertion point within vector
 	// using a binary search
-	int ix;
-
 	// while upper minus lower bounds is greater than one
 	while ((i2 - i1) > 1) {
 		// compute current origin index
-		ix = (i1 + i2) / 2;
+		int ix = (i1 + i2) / 2;
+		double tCurrentOrg = vHypo[ix].first;
 
 		// if time is before current origin
-		if (vHypo[ix].first > tOrg) {
+		if (tCurrentOrg > tOrg) {
 			// new upper bound is this index
 			i2 = ix;
-		} else if (vHypo[ix].first <= tOrg) {
+		} else {  // if (tCurrentOrg <= tOrg)
 			// if time is after or equal to current origin
 			// new lower bound is this index
 			i1 = ix;
@@ -515,7 +516,6 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 			"CHypoList::associate idPick:" + std::to_string(pk->idPick));
 
 	std::string pid;
-	bool bass = false;
 	std::vector<std::shared_ptr<CHypo>> viper;
 
 	// compute the index range to search for hypos to associate with
@@ -1013,7 +1013,6 @@ bool CHypoList::merge(std::shared_ptr<CHypo> hypo) {
 	int it2 = indexHypo(hypo->tOrg + timeCut);
 
 	std::string pidmax;
-	double sdassoc = pGlass->sdAssociate;
 
 	// for each hypo in the list within the
 	// time range
@@ -1064,12 +1063,6 @@ bool CHypoList::merge(std::shared_ptr<CHypo> hypo) {
 					hypo3->addPick(pick);
 				}
 
-				// use the hypo's nucleation threshold, which is really the
-				// web's nucleation threshold
-				int ncut = hypo->nCut;
-				int npick;
-				bool bad = false;
-
 				// First localization attempt after nucleation
 				// make 3 passes
 
@@ -1094,7 +1087,7 @@ bool CHypoList::merge(std::shared_ptr<CHypo> hypo) {
 					hypo3->localize();
 				}
 
-				npick = hypo3->vPick.size();
+				int npick = hypo3->vPick.size();
 
 				/*
 				 for (int ipass = 0; ipass < 3; ipass++) {
@@ -1316,7 +1309,6 @@ bool CHypoList::statusCheck() {
 		for (StatusItr = m_ThreadStatusMap.begin();
 				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
 			// get the thread status
-			std::thread::id threadid = StatusItr->first;
 			bool status = static_cast<bool>(StatusItr->second);
 
 			// at least one thread did not respond

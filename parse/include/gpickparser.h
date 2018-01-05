@@ -33,7 +33,7 @@ class GPickParser : public Parser {
 	 * \param newAuthor - A std::string containing the author to
 	 * use if one is not provided.
 	 */
-	GPickParser(std::string newAgencyID, std::string newAuthor);
+	GPickParser(const std::string &newAgencyID, const std::string &newAuthor);
 
 	/**
 	 * \brief gpickparser destructor
@@ -52,7 +52,7 @@ class GPickParser : public Parser {
 	 * \return Returns a pointer to the json::Object containing
 	 * the data.
 	 */
-	json::Object* parse(std::string input) override;
+	json::Object* parse(const std::string &input) override;
 
 	/**
 	 * \brief pick validation function

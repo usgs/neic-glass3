@@ -298,8 +298,6 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 		return (NULL);
 	}
 
-	char sLog[1024];
-
 	// generate SCNL the same way that it is built in CSite::initialize
 	std::string scnl = "";
 
@@ -355,10 +353,12 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 			// send request
 			pGlass->send(&obj);
 
+			char sLog[1024];
 			snprintf(
 					sLog,
 					sizeof(sLog),
-					"CSiteList::getSite: SCNL:%s not on station list, requesting information.",
+					"CSiteList::getSite: SCNL:%s not on station list, "
+					"requesting information.",
 					scnl.c_str());
 			glassutil::CLogit::log(sLog);
 		}

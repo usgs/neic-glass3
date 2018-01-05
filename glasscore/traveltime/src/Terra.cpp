@@ -160,7 +160,6 @@ json::Array CTerra::parse(const char *line) {
 	// an external library
 	json::Array arr;
 	char str[1000];
-	char c;
 
 	// set up to search for the start of a string
 	int state = 0;
@@ -168,7 +167,7 @@ json::Array CTerra::parse(const char *line) {
 
 	// For each character in the line
 	for (int i = 0; i < static_cast<int>(strlen(line)); i++) {
-		c = line[i];
+		char c = line[i];
 		switch (state) {
 			case 0:
 				// Looking for first non-blank
@@ -239,8 +238,6 @@ double CTerra::S(double radius) {
 // ---------------------------------------------------------interpolateVelocity
 double CTerra::interpolateVelocity(double radius, double *layerVelocity) {
 	double velocity;
-
-	int middleIndex;
 	int lowerIndex = -1;
 	int upperIndex = nLayer;
 
@@ -249,7 +246,7 @@ double CTerra::interpolateVelocity(double radius, double *layerVelocity) {
 	while (upperIndex - lowerIndex > 1) {
 		// compute the current middle index
 		// right shift bits by one (effectively divide by 2)
-		middleIndex = (upperIndex + lowerIndex) >> 1;
+		int middleIndex = (upperIndex + lowerIndex) >> 1;
 
 		if (radius > dLayerRadii[middleIndex]) {
 			// if the given radius is greater than layer radius of

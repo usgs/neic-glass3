@@ -33,7 +33,7 @@ class CCParser : public Parser {
 	 * \param newAuthor - A std::string containing the author to
 	 * use if one is not provided.
 	 */
-	CCParser(std::string newAgencyID, std::string newAuthor);
+	CCParser(const std::string &newAgencyID, const std::string &newAuthor);
 
 	/**
 	 * \brief ccparser destructor
@@ -52,7 +52,7 @@ class CCParser : public Parser {
 	 * \return Returns a pointer to the json::Object containing
 	 * the data.
 	 */
-	json::Object* parse(std::string input) override;
+	json::Object* parse(const std::string &input) override;
 
 	/**
 	 * \brief cross correlation validation function

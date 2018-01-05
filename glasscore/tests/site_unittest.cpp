@@ -31,7 +31,7 @@
 // Maybe consider performing this test at a higher level?
 
 // check site data for validity
-void checkdata(glasscore::CSite * siteobject, std::string testinfo) {
+void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	// check scnl
 	std::string sitescnl = siteobject->sScnl;
 	std::string expectedscnl = std::string(SCNL);

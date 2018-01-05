@@ -85,8 +85,8 @@ class brokerOutput : public output {
 	 * \param data - A pointer to a json::Object containing the data to be
 	 * output.
 	 */
-	void sendOutput(std::string type, std::string id, std::string message)
-			override;
+	void sendOutput(const std::string &type, const std::string &id,
+					const std::string &message) override;
 
 	/**
 	 * \brief the function for producer logging

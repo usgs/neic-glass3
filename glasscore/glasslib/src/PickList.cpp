@@ -340,9 +340,11 @@ int CPickList::indexPick(double tPick) {
 		return (-2);
 	}
 
+	double tFirstPick = vPick[0].first;
+
 	// handle pick earlier than first element case
 	// time is earlier than first pick
-	if (tPick < vPick[0].first) {
+	if (tPick < tFirstPick) {
 		// return -1 to indicate earlier than first element
 		return (-1);
 	}
@@ -350,27 +352,28 @@ int CPickList::indexPick(double tPick) {
 	// handle case that the pick is later than last element
 	int i1 = 0;
 	int i2 = vPick.size() - 1;
+	double tLastPick = vPick[i2].first;
 
 	// time is after last pick
-	if (tPick >= vPick[i2].first) {
+	if (tPick >= tLastPick) {
 		// return index of last element
 		return (i2);
 	}
 
 	// search for insertion point within vector
 	// using a binary search
-	int ix;
-
 	// while upper minus lower bounds is greater than one
 	while ((i2 - i1) > 1) {
 		// compute current pick index
-		ix = (i1 + i2) / 2;
+		int ix = (i1 + i2) / 2;
+
+		double tCurrentPick = vPick[ix].first;
 
 		// if time is before current pick
-		if (vPick[ix].first > tPick) {
+		if (tCurrentPick > tPick) {
 			// new upper bound is this index
 			i2 = ix;
-		} else if (vPick[ix].first <= tPick) {
+		} else {  // if (tCurrentPick <= tPick)
 			// if time is after or equal to current pick
 			// new lower bound is this index
 			i1 = ix;
@@ -764,7 +767,6 @@ bool CPickList::statusCheck() {
 		for (StatusItr = m_ThreadStatusMap.begin();
 				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
 			// get the thread status
-			std::thread::id threadid = StatusItr->first;
 			bool status = static_cast<bool>(StatusItr->second);
 
 			// at least one thread did not respond

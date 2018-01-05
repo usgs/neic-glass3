@@ -8,14 +8,14 @@
 
 class parserstub : public parse::Parser {
  public:
-	parserstub(std::string newagencyid, std::string newauthor)
+	parserstub(const std::string &newagencyid, const std::string &newauthor)
 			: parse::Parser(newagencyid, newauthor) {
 	}
 
 	~parserstub() {
 	}
 
-	json::Object* parse(std::string input) override {
+	json::Object* parse(const std::string &input) override {
 		return (NULL);
 	}
 

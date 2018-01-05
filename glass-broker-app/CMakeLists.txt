@@ -217,9 +217,9 @@ if(RUN_CPPLINT)
                            "${PROJECT_SOURCE_DIR}/*.cpp")
 
     add_custom_target(cpplint ALL
-      DEPENDS /usr/bin/python glass-broker-app
-      COMMAND "${CPPLINT_PATH}"
-      --filter=-whitespace/tab,-legal/copyright,-build/c++11,-build/header_guard,-readability/fn_size
+      DEPENDS glass-broker-app
+      COMMAND /usr/bin/python "${CPPLINT_PATH}"
+      --filter=-whitespace/tab,-legal/copyright,-build/c++11,-build/header_guard,-readability/fn_size,-build/include
       ${CPPLINT_SRCS}
       COMMENT "Running cpplint" VERBATIM
     )

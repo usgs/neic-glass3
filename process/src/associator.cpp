@@ -278,20 +278,6 @@ bool Associator::dispatch(json::Object *communication) {
 		return (false);
 	}
 
-	// get the message type so that we know where
-	// to route the message
-	std::string messagetype;
-	if (communication->HasKey("Cmd")) {
-		messagetype = (*communication)["Cmd"].ToString();
-	} else if (communication->HasKey("Type")) {
-		messagetype = (*communication)["Type"].ToString();
-	} else {
-		logger::log(
-				"critical",
-				"associator::dispatch(): BAD message passed in, no Cmd/Type found.");
-		return (false);
-	}
-
 	// send to output
 	if (Output != NULL) {
 		// Allocate a new json object to avoid

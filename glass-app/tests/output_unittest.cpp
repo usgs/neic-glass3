@@ -11,6 +11,10 @@
 #define TESTDATAPATH "outputtests"
 #define OUTPUTDIRECTORY "output"
 
+#define EMPTYCONFIG "{\"Cmd\":\"GlassOutput\",\"OutputDirectory\":\"huh\"}"
+#define CONFIGFAIL1 "{\"PublicationTimes\":[3, 6]}"
+#define CONFIGFAIL2 "{\"Cmd\":\"BLEH\"}"
+
 #define SLEEPTIME 100
 #define TESTAGENCYID "US"
 #define TESTAUTHOR "glass"
@@ -199,8 +203,29 @@ class OutputTest : public ::testing::Test {
 		AssocThread = new AssociatorStub();
 		AssocThread->Output = OutputThread;
 		OutputThread->Associator = AssocThread;
+
 		// configure input
 		return (OutputThread->setup(output_config_json));
+	}
+
+	bool configurefail1() {
+		// configure fail
+		return (OutputThread->setup(NULL));
+	}
+
+	bool configurefail2() {
+		// configure fail
+		return (OutputThread->setup(new json::Object(json::Deserialize(CONFIGFAIL1))));
+	}
+
+	bool configurefail3() {
+		// configure fail
+		return (OutputThread->setup(new json::Object(json::Deserialize(CONFIGFAIL2))));
+	}
+
+	bool emptyconfig() {
+		// configure empty
+		return (OutputThread->setup(new json::Object(json::Deserialize(EMPTYCONFIG))));
 	}
 
 	void CheckData(json::Object * dataone, json::Object * datatwo) {
@@ -349,6 +374,12 @@ TEST_F(OutputTest, Construction) {
 }
 
 TEST_F(OutputTest, Configuration) {
+	// failes
+	ASSERT_FALSE(configurefail1())<< "OutputThread->setup returned false 1";
+	ASSERT_FALSE(configurefail2())<< "OutputThread->setup returned false 2";
+	ASSERT_FALSE(configurefail3())<< "OutputThread->setup returned false 3";
+	ASSERT_TRUE(emptyconfig())<< "OutputThread->setup returned true";
+
 	// configure output
 	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
 
@@ -492,6 +523,8 @@ TEST_F(OutputTest, Cancel) {
 	// assert that the file is not there
 	ASSERT_FALSE(std::ifstream(output3file).good())
 	<< "hypo output file not created";
+
+	ASSERT_TRUE(OutputThread->check());
 }
 
 TEST_F(OutputTest, Retract) {

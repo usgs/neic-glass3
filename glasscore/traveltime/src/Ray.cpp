@@ -213,7 +213,7 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 	double calcRayParam;
 	double pinc;
 	double x[3];
-	double y0, y1, y2;
+	double y1, y2;
 	double time;
 	double d;
 	double trav;
@@ -288,7 +288,7 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 			*rayParam = dMinimumRayParam;
 			return trav;
 	}
-	double p0, p1, p2;
+	double p1, p2;
 	double pincmax = 2.0;
 	double pincmin = 1.0e-8;
 	pinc = pincmin;
@@ -299,11 +299,10 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 	time = -5.0;
 
 	if (false) {
-		double q;
 		double qinc = 1.0;
 		for (double calcRayParam = dMinimumRayParam;
 				calcRayParam < dMaximumRayParam + qinc; calcRayParam += qinc) {
-			q = calcRayParam;
+			double q = calcRayParam;
 			if (q > dMaximumRayParam) {
 				q = dMaximumRayParam;
 			}
@@ -315,14 +314,14 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 
 	while (p2 > dMinimumRayParam) {
 		// printf("%d p2:%.4f dMinimumRayParam:%.4f\n", ip, p2, dMinimumRayParam);
-		p0 = p1;
+		double p0 = p1;
 		p1 = p2;
 		p2 -= pinc;
 		calcRayParam = p2;
 		if (calcRayParam < dMinimumRayParam) {
 			calcRayParam = dMinimumRayParam;
 		}
-		y0 = y1;
+		double y0 = y1;
 		y1 = y2;
 		y2 = calculateThetaFunction(calcRayParam, funFac, delta, earthRadius);
 
@@ -393,7 +392,6 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 double CRay::travelBasic(double delta) {
 	double x[6];
 	double trav;
-	double time;
 	double xmin;
 	int i;
 
@@ -411,7 +409,7 @@ double CRay::travelBasic(double delta) {
 		x[0] = x[1];
 		x[1] = x[2];
 		calculateBracketMinima(x, funFac, delta, dEarthRadius);
-		time = funFac
+		double time = funFac
 				* brentMinimization(x, 2.0e-3, &xmin, funFac, delta,
 									dEarthRadius);
 		if (i == 0) {
@@ -440,22 +438,13 @@ double CRay::delta(double time, double *pret) {
 
 	double dmax = -1.0;
 	double pmax;
-	double rayParam;
-	double t1;
-	double t2;
-	double p1;
-	double p2;
-	double tcal;
-	double dcal = -1.0;
 	int n = 1000;
-	int iref;
-	double tol = 0.5;
-	double t2save;
-	double pdel = (dMaximumRayParam - dMinimumRayParam) / (n - 1);
 
 	for (int i = 0; i < n; i++) {
-		p2 = dMinimumRayParam + i * pdel;
-		t2 = integrateFunction(FUN_P_TIME, p2, pTerra->dEarthRadius);
+		double pdel = (dMaximumRayParam - dMinimumRayParam) / (n - 1);
+		double t1 = 0;
+		double p2 = dMinimumRayParam + i * pdel;
+		double t2 = integrateFunction(FUN_P_TIME, p2, pTerra->dEarthRadius);
 
 		if (!i) {
 			t1 = t2;
@@ -463,16 +452,18 @@ double CRay::delta(double time, double *pret) {
 		}
 
 		if ((t1 < time && t2 > time) || (t2 < time && t1 > time)) {
-			p1 = p2 - pdel;
-			t2save = t2;
-			for (iref = 0; iref < 5; iref++) {
+			double dcal = -1.0;
+			double p1 = p2 - pdel;
+			double t2save = t2;
+			double rayParam = 0;
+			for (int iref = 0; iref < 5; iref++) {
 				rayParam = p1 + (time - t1) * (p2 - p1) / (t2 - t1);
-				tcal = integrateFunction(FUN_P_TIME, rayParam,
+				double tcal = integrateFunction(FUN_P_TIME, rayParam,
 											pTerra->dEarthRadius);
 				dcal = integrateFunction(FUN_P_DELTA, rayParam,
 											pTerra->dEarthRadius);
 
-				if (fabs(tcal - time) < tol) {
+				if (fabs(tcal - time) < 0.5) {
 					break;
 				}
 
@@ -505,7 +496,7 @@ double CRay::delta(double time, double *pret) {
 		t1 = t2;
 	}
 	*pret = pmax;
-	return dmax;
+	return (dmax);
 }
 
 // ------------------------------------------------------------------T
@@ -790,10 +781,9 @@ double CRay::brentMinimization(double *xx, double tol, double *xmin,
 	double cx = xx[2];
 	double a, b, d;
 	double etemp;
-	double fu, fv, fw, fx;
+	double fv, fw, fx;
 	double p, q, r;
-	double tol1, tol2;
-	double u, v, w, x, xm;
+	double u, v, w, x;
 	double e = 0.0;
 
 	a = (ax < cx ? ax : cx);
@@ -801,8 +791,9 @@ double CRay::brentMinimization(double *xx, double tol, double *xmin,
 	x = w = v = bx;
 	fw = fv = fx = calculateThetaFunction(x, dFunFac, dDelta, dRcvr);
 	for (iter = 1; iter <= ITMAX; iter++) {
-		xm = 0.5 * (a + b);
-		tol2 = 2.0 * (tol1 = tol * fabs(x) + ZEPS);
+		double xm = 0.5 * (a + b);
+		double tol1 = tol * fabs(x) + ZEPS;
+		double tol2 = 2.0 * tol1;
 		if (fabs(x - xm) <= (tol2 - 0.5 * (b - a))) {
 			*xmin = x;
 			return fx;
@@ -830,7 +821,7 @@ double CRay::brentMinimization(double *xx, double tol, double *xmin,
 			d = CGOLD * (e = (x >= xm ? a - x : b - x));
 		}
 		u = (fabs(d) >= tol1 ? x + d : x + SIGN(tol1, d));
-		fu = calculateThetaFunction(u, dFunFac, dDelta, dRcvr);
+		double fu = calculateThetaFunction(u, dFunFac, dDelta, dRcvr);
 		if (fu <= fx) {
 			if (u >= x)
 				a = x;

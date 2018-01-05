@@ -73,7 +73,7 @@ bool brokerOutput::setup(json::Object *config) {
 		return (false);
 	} else {
 		std::string configtype = (*config)["Configuration"];
-		if (configtype != "glass-broker-app-brokerOutput") {
+		if (configtype != "glass-broker-app-output") {
 			logger::log("error",
 						"brokerOutput::setup(): Wrong configuration provided, "
 								"configuration is for: " + configtype + ".");
@@ -92,8 +92,8 @@ bool brokerOutput::setup(json::Object *config) {
 		producerConfig = "";
 		logger::log(
 				"error",
-				"brokerOutput::setup(): Required configuration value HazdevBrokerConfig not "
-				"specified.");
+				"brokerOutput::setup(): Required configuration value "
+				"HazdevBrokerConfig not specified.");
 		return (false);
 	} else {
 		producerConfig = json::Serialize(
@@ -226,8 +226,8 @@ void brokerOutput::clear() {
 }
 
 // handle output
-void brokerOutput::sendOutput(std::string type, std::string id,
-								std::string message) {
+void brokerOutput::sendOutput(const std::string &type, const std::string &id,
+								const std::string &message) {
 	if (type == "") {
 		logger::log("error", "fileOutput::sendOutput(): empty type passed in.");
 		return;
@@ -245,17 +245,14 @@ void brokerOutput::sendOutput(std::string type, std::string id,
 	}
 
 	if (type == "Detection") {
-
 		if ((m_OutputProducer != NULL) && (m_OutputTopic != NULL)) {
 			m_OutputProducer->sendString(m_OutputTopic, message);
 		}
 	} else if (type == "Retraction") {
-
 		if ((m_OutputProducer != NULL) && (m_OutputTopic != NULL)) {
 			m_OutputProducer->sendString(m_OutputTopic, message);
 		}
 	} else if (type == "StationInfoRequest") {
-
 		if ((m_StationRequestProducer != NULL)
 				&& (m_StationRequestTopic != NULL)) {
 			m_StationRequestProducer->sendString(m_StationRequestTopic,

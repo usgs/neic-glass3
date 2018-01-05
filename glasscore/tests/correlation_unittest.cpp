@@ -27,7 +27,7 @@
 
 // check site data for validity
 void checkdata(glasscore::CCorrelation * corrleationobject,
-				std::string testinfo) {
+			   const std::string &testinfo) {
 	// check scnl
 	std::string sitescnl = corrleationobject->pSite->sScnl;
 	std::string expectedscnl = std::string(SCNL);
@@ -161,6 +161,8 @@ TEST(CorrelationTest, JSONConstruction) {
 
 	// check results
 	checkdata(testCorrelation, "json construction check");
+
+	delete(testCorrelation);
 }
 
 // tests correlation hypo operations

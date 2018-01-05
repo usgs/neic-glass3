@@ -98,75 +98,75 @@ target_include_directories(
 )
 
 # ----- TESTS ----- #
-#option(RUN_TESTS "Create and run unit tests (requires GTest)" OFF)
-#
-#if (RUN_TESTS)
-#
-#    # ----- LOOK FOR GTEST ----- #
-#    find_package(GTest REQUIRED)
-#
-#    enable_testing()
-#
-#    # ----- TEST SOURCES ----- #
-#    file(GLOB outputTEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
-#
-#    if (NOT MSVC)
-#        set(PTHREADLIB -pthread)
-#    endif (NOT MSVC)
-#
-#    # ----- SET TEST INCLUDE DIRECTORIES ----- #
-#    include_directories(${GTEST_INCLUDE_DIRS})
-#
-#    # ----- CREATE TEST EXE ----- #
-#    # NOTE: Order libraries are linked matters for G++
-#    add_executable(output-tests ${outputTEST_SOURCES})
-#    set_target_properties(output-tests PROPERTIES OUTPUT_NAME output-tests)
-#    target_link_libraries(output-tests ${parse_LIBRARIES})
-#    target_link_libraries(output-tests ${DetectionFormats_LIBRARIES})
-#    target_link_libraries(output-tests ${util_LIBRARIES})
-#    target_link_libraries(output-tests ${config_LIBRARIES})
-#    target_link_libraries(output-tests ${log_LIBRARIES})
-#    target_link_libraries(output-tests ${SuperEasyJSON_LIBRARIES})
-#    target_link_libraries(output-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
-#    target_link_libraries(output-tests output)
-#
-#    # ----- TESTS ----- #
-#    GTEST_ADD_TESTS(output-tests "" ${outputTEST_SOURCES})
-#
-#    # ----- COPY TEST DATA ----- #
-#    add_custom_command(TARGET output-tests
-#        PRE_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy_directory
-#        ${CMAKE_SOURCE_DIR}/testdata ${CMAKE_CURRENT_BINARY_DIR}/testdata
-#        COMMENT "Copying Test Data" VERBATIM
-#    )
-#
-#    # ----- RUN TESTS ----- #
-#    add_custom_command(TARGET output-tests
-#        POST_BUILD
-#        COMMAND output-tests
-#        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-#        COMMENT "Running output-tests" VERBATIM
-#    )
-#
-#    # ----- RUN COVERAGE ----- #
-#    if(SUPPORT_COVERAGE)
-#
-#        option(RUN_COVERAGE "Run Coverage Report (requires lcov installed)" OFF)
-#
-#        if(RUN_COVERAGE)
-#            add_custom_target(coverage-report ALL
-#              DEPENDS output-tests
-#              COMMAND /bin/sh
-#              ${PROJECT_SOURCE_DIR}/generate_coverage.sh
-#              COMMENT "Capture/Report Coverage Info" VERBATIM
-#            )
-#
-#        endif (RUN_COVERAGE)
-#
-#    endif (SUPPORT_COVERAGE)
-#
-#endif(RUN_TESTS)
+option(RUN_TESTS "Create and run unit tests (requires GTest)" OFF)
+
+if (RUN_TESTS)
+
+    # ----- LOOK FOR GTEST ----- #
+    find_package(GTest REQUIRED)
+
+    enable_testing()
+
+    # ----- TEST SOURCES ----- #
+    file(GLOB outputTEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
+
+    if (NOT MSVC)
+        set(PTHREADLIB -pthread)
+    endif (NOT MSVC)
+
+    # ----- SET TEST INCLUDE DIRECTORIES ----- #
+    include_directories(${GTEST_INCLUDE_DIRS})
+
+    # ----- CREATE TEST EXE ----- #
+    # NOTE: Order libraries are linked matters for G++
+    add_executable(output-tests ${outputTEST_SOURCES})
+    set_target_properties(output-tests PROPERTIES OUTPUT_NAME output-tests)
+    target_link_libraries(output-tests output)
+    target_link_libraries(output-tests ${parse_LIBRARIES})
+    target_link_libraries(output-tests ${DetectionFormats_LIBRARIES})
+    target_link_libraries(output-tests ${util_LIBRARIES})
+    target_link_libraries(output-tests ${config_LIBRARIES})
+    target_link_libraries(output-tests ${log_LIBRARIES})
+    target_link_libraries(output-tests ${SuperEasyJSON_LIBRARIES})
+    target_link_libraries(output-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
+
+    # ----- TESTS ----- #
+    GTEST_ADD_TESTS(output-tests "" ${outputTEST_SOURCES})
+
+    # ----- COPY TEST DATA ----- #
+    add_custom_command(TARGET output-tests
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/testdata ${CMAKE_CURRENT_BINARY_DIR}/testdata
+        COMMENT "Copying Test Data" VERBATIM
+    )
+
+    # ----- RUN TESTS ----- #
+    add_custom_command(TARGET output-tests
+        POST_BUILD
+        COMMAND output-tests
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Running output-tests" VERBATIM
+    )
+
+    # ----- RUN COVERAGE ----- #
+    if(SUPPORT_COVERAGE)
+
+        option(RUN_COVERAGE "Run Coverage Report (requires lcov installed)" OFF)
+
+        if(RUN_COVERAGE)
+            add_custom_target(coverage-report ALL
+              DEPENDS output-tests
+              COMMAND /bin/sh
+              ${PROJECT_SOURCE_DIR}/generate_coverage.sh
+              COMMENT "Capture/Report Coverage Info" VERBATIM
+            )
+
+        endif (RUN_COVERAGE)
+
+    endif (SUPPORT_COVERAGE)
+
+endif(RUN_TESTS)
 
 # ----- CPPCHECK ----- #
 option(RUN_CPPCHECK "Run CPP Checks (requires cppcheck installed)" OFF)
@@ -181,7 +181,7 @@ if(RUN_CPPCHECK)
       COMMAND cppcheck
       --enable=warning,performance,portability
       --suppress=nullPointerRedundantCheck
-      --inline-suppr 
+      --inline-suppr
       --language=c++
       --std=c++11
       --template="[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)"

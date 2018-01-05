@@ -2,7 +2,7 @@
 #include <string>
 
 namespace parse {
-Parser::Parser(std::string newAgencyID, std::string newAuthor) {
+Parser::Parser(const std::string &newAgencyID, const std::string &newAuthor) {
 	m_AgencyID = newAgencyID;
 	m_Author = newAuthor;
 }

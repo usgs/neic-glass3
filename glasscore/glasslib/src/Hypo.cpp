@@ -469,13 +469,12 @@ double CHypo::gauss(double avg, double std) {
 	// generate Gaussian pseudo-random number using the
 	// polar form of the Box-Muller method
 	// NOTE: Move to some glass math utility library?
-	double rsq;
-	double v1;
-	double v2;
+	double rsq = 0;
+	double v1 = 0;
 
 	do {
 		v1 = Rand(-1.0, 1.0);
-		v2 = Rand(-1.0, 1.0);
+		double v2 = Rand(-1.0, 1.0);
 		rsq = v1 * v1 + v2 * v2;
 	} while (rsq >= 1.0);
 
@@ -1763,7 +1762,6 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 
 	// these hold the values of the initial, current, and best stack location
 	double valStart = 0;
-	double val = 0;
 	double valBest = 0;
 	// calculate the value of the stack at the current location
 	valStart = getBayes(dLat, dLon, dZ, tOrg, nucleate);
@@ -1827,7 +1825,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		double oT = tOrg + dt;
 
 		// get the stack value for this hypocenter
-		val = getBayes(xlat, xlon, xz, oT, nucleate);
+		double val = getBayes(xlat, xlon, xz, oT, nucleate);
 
 		// is this stacked bayesian value better than the previous one?
 		if (val > valBest) {
@@ -1880,12 +1878,9 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 	}
 
 	glassutil::CGeo geo;
-	double sigma;
 	double value = 0.;
-	double delta = 0.;
 	double tcal;
 	char sLog[1024];
-	double resi = 0;
 
 	// define a taper for sigma, makes close in readings have higher weight
 	// ranges from 0.75-3.0 from 0-2 degrees, than 3.0 after that (see loop)
@@ -1913,7 +1908,7 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 	// Currently only P, S, and nucleation phases added to stack.
 	for (int ipick = 0; ipick < npick; ipick++) {
 		auto pick = vPick[ipick];
-		resi = 99999999;
+		double resi = 99999999;
 
 		// calculate residual
 		double tobs = pick->tPick - oT;
@@ -1935,8 +1930,8 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 		}
 
 		// calculate distance to station to get sigma
-		delta = RAD2DEG * geo.delta(&site->geo);
-		sigma = (tap.Val(delta) * 2.25) + 0.75;
+		double delta = RAD2DEG * geo.delta(&site->geo);
+		double sigma = (tap.Val(delta) * 2.25) + 0.75;
 
 		// calculate and add to the stack
 		value += pGlass->sig_laplace_pdf(resi, sigma);
@@ -1966,12 +1961,8 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 
 	pTTT->setOrigin(dLat, dLon, dZ);
 
-	int npick = vPick.size();
-
 	double val = 0;
 	double valStart = 0;
-
-	double tcal = 0.0;
 
 	valStart = getSumAbsResidual(dLat, dLon, dZ, tOrg, nucleate);
 	dBayes = getBayes(dLat, dLon, dZ, tOrg, nucleate);
@@ -2090,10 +2081,7 @@ double CHypo::getSumAbsResidual(double xlat, double xlon, double xZ, double oT,
 
 	double sigma;
 	double value = 0.;
-	double delta = 0.;
-	double tcal;
 	char sLog[1024];
-	double resi = 0;
 
 	// This sets the travel-time look up location
 	if (pTrv1 != NULL) {
@@ -2114,10 +2102,11 @@ double CHypo::getSumAbsResidual(double xlat, double xlon, double xZ, double oT,
 	// If residual is greater than 10, make it 10.
 	for (int ipick = 0; ipick < npick; ipick++) {
 		auto pick = vPick[ipick];
-		resi = 99999999;
+		double resi = 99999999;
 
 		// calculate residual
 		double tobs = pick->tPick - oT;
+		double tcal;
 		std::shared_ptr<CSite> site = pick->pSite;
 
 		// only use nucleation phase if on nucleation branch
@@ -2160,8 +2149,6 @@ void CHypo::graphicsOutput() {
 	outfile << "hypocenter: " << std::to_string(dLat) << " "
 			<< std::to_string(dLon) << " " << std::to_string(dZ) << " "
 			<< std::to_string(tOrg) << "\n";
-	double xlon = 0.0;
-	double xlat = 0.0;
 	double stack = 0;
 	double tcal = 0;
 	double delta = 0;
@@ -2169,10 +2156,10 @@ void CHypo::graphicsOutput() {
 	glassutil::CGeo geo;
 	int npick = vPick.size();
 	for (int y = -1 * pGlass->graphicsSteps; y <= pGlass->graphicsSteps; y++) {
-		xlat = dLat + (y * pGlass->graphicsStepKM) / 111.1;
+		double xlat = dLat + (y * pGlass->graphicsStepKM) / 111.1;
 		for (int x = -1 * pGlass->graphicsSteps; x <= pGlass->graphicsSteps;
 				x++) {
-			xlon = dLon
+			double xlon = dLon
 					+ cos(DEG2RAD * xlat) * (x * pGlass->graphicsStepKM)
 							/ 111.1;
 			pTTT->setOrigin(xlat, xlon, dZ);

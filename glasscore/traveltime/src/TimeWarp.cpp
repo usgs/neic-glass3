@@ -87,18 +87,16 @@ double CTimeWarp::value(double gridIndex) {
 	double a = 1.0 / dSlopeInfinity;
 	double b = 1.0 / dSlopeZero - 1.0 / dSlopeInfinity;
 	double val = 0.5 * (dGridMinimum + dGridMaximum);
-	double f;
-	double fp;
 
 	// Calculate interpolated value
 	// NOTE: Why 100 here?
 	for (int i = 0; i < 100; i++) {
-		f = grid(val) - gridIndex;
+		double f = grid(val) - gridIndex;
 		if (fabs(f) < 0.000001) {
 			break;
 		}
 
-		fp = a + b * exp(-dDecayConstant * val);
+		double fp = a + b * exp(-dDecayConstant * val);
 		val -= f / fp;
 	}
 	return (val);

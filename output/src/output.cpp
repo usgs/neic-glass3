@@ -401,7 +401,6 @@ bool output::work() {
 	// so that we can have config that changes
 	// should I do this?
 	m_ConfigMutex.lock();
-	int pubdelay = 0;
 	int siteListDelay = m_iSiteListDelay;
 	m_ConfigMutex.unlock();
 
@@ -865,16 +864,6 @@ bool output::isDataChanged(json::Object *data) {
 					"output::isDataChanged(): Bad tracking object passed in, "
 							" missing PubLog:" + json::Serialize(*data));
 		return (false);
-	}
-
-	// get the id
-	std::string id = "";
-	if ((*data).HasKey("ID")) {
-		id = (*data)["ID"].ToString();
-	} else if ((*data).HasKey("Pid")) {
-		id = (*data)["Pid"].ToString();
-	} else {
-		id = "";
 	}
 
 	// get the pub log

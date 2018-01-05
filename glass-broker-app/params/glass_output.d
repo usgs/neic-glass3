@@ -3,7 +3,8 @@
 {
 	# this configuration is for glass broker output
 	"Configuration":"glass-broker-app-output",
-
+  "Cmd":"GlassOutput",
+	
 	# the times in seconds to publish events
 	"PublicationTimes":[60,300],
 

@@ -8,14 +8,15 @@
 #include <vector>
 
 namespace parse {
-GPickParser::GPickParser(std::string newAgencyID, std::string newAuthor)
+GPickParser::GPickParser(const std::string &newAgencyID,
+							const std::string &newAuthor)
 		: Parser::Parser(newAgencyID, newAuthor) {
 }
 GPickParser::~GPickParser() {
 }
 
 // parse a json object from an input string
-json::Object* GPickParser::parse(std::string input) {
+json::Object* GPickParser::parse(const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0)
 		return (NULL);

@@ -293,7 +293,7 @@ bool CCorrelationList::addCorrelation(json::Object *correlation) {
 	return (true);
 }
 
-// ---------------------------------------------------------indexPixk
+// ---------------------------------------------------------indexCorrelation
 int CCorrelationList::indexCorrelation(double tCorrelation) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
 
@@ -303,9 +303,12 @@ int CCorrelationList::indexCorrelation(double tCorrelation) {
 		return (-2);
 	}
 
+	// get the time of the first correlation in the list
+	double tFirstCorrelation = vCorrelation[0].first;
+
 	// handle correlation earlier than first element case
 	// time is earlier than first correlation
-	if (tCorrelation < vCorrelation[0].first) {
+	if (tCorrelation < tFirstCorrelation) {
 		// return -1 to indicate earlier than first element
 		return (-1);
 	}
@@ -313,27 +316,29 @@ int CCorrelationList::indexCorrelation(double tCorrelation) {
 	// handle case that the correlation is later than last element
 	int i1 = 0;
 	int i2 = vCorrelation.size() - 1;
+	double tLastCorrelation = vCorrelation[i2].first;
 
 	// time is after last correlation
-	if (tCorrelation >= vCorrelation[i2].first) {
+	if (tCorrelation >= tLastCorrelation) {
 		// return index of last element
 		return (i2);
 	}
 
 	// search for insertion point within vector
 	// using a binary search
-	int ix;
-
 	// while upper minus lower bounds is greater than one
 	while ((i2 - i1) > 1) {
 		// compute current correlation index
-		ix = (i1 + i2) / 2;
+		int ix = (i1 + i2) / 2;
+
+		// get current correlation time
+		double tCurrentCorrelation = vCorrelation[ix].first;
 
 		// if time is before current correlation
-		if (vCorrelation[ix].first > tCorrelation) {
+		if (tCurrentCorrelation > tCorrelation) {
 			// new upper bound is this index
 			i2 = ix;
-		} else if (vCorrelation[ix].first <= tCorrelation) {
+		} else {  // if (tCurrentCorrelation <= tCorrelation)
 			// if time is after or equal to current correlation
 			// new lower bound is this index
 			i1 = ix;
@@ -464,9 +469,6 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
 							"CCorrelationList::scavenge. " + hyp->sPid);
-
-	// Calculate range for possible associations
-	double sdassoc = pGlass->sdAssociate;
 
 	// get the index of the correlation to start with
 	// based on the hypo origin time

@@ -75,14 +75,14 @@ std::string hypoToJSONDetection(json::Object *data,
 
 			if (isUpdate == false) {
 				detection.detectiontype =
-						detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::newdetection]; // NOLINT
+						detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::newdetection];  // NOLINT
 			} else {
 				detection.detectiontype =
-						detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::update]; // NOLINT
+						detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::update];  // NOLINT
 			}
 		} else {
 			detection.detectiontype =
-					detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::newdetection]; // NOLINT
+					detectionformats::detectiontypevalues[detectionformats::detectiontypeindex::newdetection];  // NOLINT
 		}
 
 		// optional values that we have
@@ -377,15 +377,15 @@ std::string hypoToJSONDetection(json::Object *data,
 						+ std::string(e.what()));
 	}
 
+	// need to check if detection is valid
+
 	rapidjson::Document detectiondocument;
 	OutputData = detectionformats::ToJSONString(
 			detection.tojson(detectiondocument,
 								detectiondocument.GetAllocator()));
 
 	// cleanup
-	if (data != NULL) {
-		delete (data);
-	}
+	delete (data);
 
 	// done
 	return (OutputData);
@@ -453,9 +453,7 @@ std::string cancelToJSONRetract(json::Object *data,
 			retract.tojson(retractdocument, retractdocument.GetAllocator()));
 
 	// cleanup
-	if (data != NULL) {
-		delete (data);
-	}
+	delete (data);
 
 	// done
 	return (OutputData);
@@ -481,6 +479,11 @@ std::string siteListToStationList(json::Object *data) {
 				"siteListToStationList(): Wrong json data object passed in.");
 		return ("");
 	}
+
+	logger::log(
+			"debug",
+			"siteListToStationList(): data = |" + json::Serialize(*data)
+					+ "|.");
 
 	std::string OutputData = "";
 
@@ -541,9 +544,7 @@ std::string siteListToStationList(json::Object *data) {
 	OutputData = json::Serialize(stationListObj);
 
 	// cleanup
-	if (data != NULL) {
-		delete (data);
-	}
+	delete (data);
 
 	// done
 	return (OutputData);
@@ -572,6 +573,11 @@ std::string siteLookupToStationInfoRequest(json::Object *data,
 					"passed in.");
 		return ("");
 	}
+
+	logger::log(
+			"debug",
+			"siteLookupToStationInfoRequest(): data = |"
+					+ json::Serialize(*data) + "|.");
 
 	std::string OutputString = "";
 	std::string site = "";
@@ -644,10 +650,9 @@ std::string siteLookupToStationInfoRequest(json::Object *data,
 				"siteLookupToStationInfoRequest: Invalid station info request "
 						"message: " + errorstring);
 	}
+
 	// cleanup
-	if (data != NULL) {
-		delete (data);
-	}
+	delete (data);
 
 	// done
 	return (OutputString);

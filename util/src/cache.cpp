@@ -369,7 +369,6 @@ bool Cache::loadCacheFromDisk(bool lock) {
 
 	std::chrono::high_resolution_clock::time_point tFileStartTime =
 			std::chrono::high_resolution_clock::now();
-	int datacount = 0;
 
 	// check to see if file exists
 	if (std::ifstream(cachefile).good()) {
@@ -380,6 +379,8 @@ bool Cache::loadCacheFromDisk(bool lock) {
 		std::ifstream infile;
 		std::string line;
 		infile.open(cachefile, std::ios::in);
+
+		int datacount = 0;
 
 		// while there is stuff to read
 		while (infile) {

@@ -122,15 +122,17 @@ CWeb::~CWeb() {
 
 	clear();
 
-	// stop the thread
-	m_bRunJobLoop = false;
+	if (m_bUseBackgroundThread == true) {
+		// stop the thread
+		m_bRunJobLoop = false;
 
-	// wait for the thread to finish
-	m_BackgroundThread->join();
+		// wait for the thread to finish
+		m_BackgroundThread->join();
 
-	// delete it
-	delete (m_BackgroundThread);
-	m_BackgroundThread = NULL;
+		// delete it
+		delete (m_BackgroundThread);
+		m_BackgroundThread = NULL;
+	}
 }
 
 // ---------------------------------------------------------clear
@@ -393,7 +395,6 @@ bool CWeb::global(json::Object*com) {
 
 	// initialize face vector index and size
 	int nface = 0;
-	int iface0;
 
 	// subdivide the 8 equilateral triangle faces of the octahedron to
 	// create a vector of equally spaced vertices
@@ -408,7 +409,7 @@ bool CWeb::global(json::Object*com) {
 
 		// setup face vector index and size
 		// for this loop iteration
-		iface0 = nface;
+		int iface0 = nface;
 		nface = vFace.size();
 
 		// subdivide all the triangles for this loop
@@ -483,13 +484,11 @@ bool CWeb::global(json::Object*com) {
 	// Generate global grid
 	std::shared_ptr<CNode> node;
 	int iNodeCount = 0;
-	double lat;
-	double lon;
 
 	// for each vertex
 	for (auto p : vVert) {
-		lat = p.first;
-		lon = p.second;
+		double lat = p.first;
+		double lon = p.second;
 
 		std::lock_guard<std::mutex> guard(vSiteMutex);
 
@@ -1765,8 +1764,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 	}
 
 	// log info if we've added a site
-	char sLog[1024];
 	if (nodeModCount > 0) {
+		char sLog[1024];
 		snprintf(sLog, sizeof(sLog), "CWeb::addSite: Added site: %s to %d "
 					"node(s) in web: %s",
 					site->sScnl.c_str(), nodeModCount, sName.c_str());

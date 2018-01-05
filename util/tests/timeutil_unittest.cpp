@@ -54,3 +54,15 @@ TEST(TimeUtil, ConvertISO8601ToEpochTime) {
 	double ConvertedEpochTime = util::convertISO8601ToEpochTime(ISO8601Time);
 	ASSERT_EQ(ConvertedEpochTime, ExpectedEpochTime);
 }
+
+// fail tests
+TEST(TimeUtil, FailTests) {
+	// test various bad strings
+	ASSERT_EQ(util::convertISO8601ToEpochTime(""), -1);
+	ASSERT_EQ(util::convertISO8601ToEpochTime("12345678901234567890"), -1);
+	ASSERT_EQ(util::convertISO8601ToEpochTime("AAAAAAAAAAAAAAAAAAAAAAAA"), -1);
+	ASSERT_EQ(util::convertDateTimeToEpochTime(""), -1);
+	ASSERT_EQ(util::convertDateTimeToEpochTime("1234567890123456"), -1);
+	ASSERT_EQ(util::convertDateTimeToEpochTime("AAAAAAAAAAAAAAAAAAAAAAAA"), -1);
+}
+
