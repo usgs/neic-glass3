@@ -1,0 +1,14 @@
+<map id="glasscore::CCorrelationList" name="glasscore::CCorrelationList">
+<area shape="rect" id="node5" href="$classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="957,1381,1176,1723"/>
+<area shape="rect" id="node7" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="983,2294,1125,2591"/>
+<area shape="rect" id="node29" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="1993,1800,2140,2229"/>
+<area shape="rect" id="node20" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="1177,1093,1312,1317"/>
+<area shape="rect" id="node23" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="1335,747,1497,957"/>
+<area shape="rect" id="node24" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="1241,294,1367,562"/>
+<area shape="rect" id="node14" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="583,1888,723,2141"/>
+<area shape="rect" id="node19" href="$classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="1169,1947,1321,2083"/>
+<area shape="rect" id="node33" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="1345,1917,1489,2112"/>
+<area shape="rect" id="node21" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="1189,587,1309,723"/>
+<area shape="rect" id="node25" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="1653,338,1811,518"/>
+<area shape="rect" id="node28" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="763,1167,916,1244"/>
+</map>

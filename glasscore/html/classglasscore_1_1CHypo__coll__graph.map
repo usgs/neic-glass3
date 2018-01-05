@@ -1,0 +1,15 @@
+<map id="glasscore::CHypo" name="glasscore::CHypo">
+<area shape="rect" id="node7" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="1007,1168,1141,1392"/>
+<area shape="rect" id="node8" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="1490,587,1611,723"/>
+<area shape="rect" id="node11" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="1083,747,1245,957"/>
+<area shape="rect" id="node12" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="1103,294,1229,562"/>
+<area shape="rect" id="node13" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="1588,338,1745,518"/>
+<area shape="rect" id="node17" href="$classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1615,1469,1833,1811"/>
+<area shape="rect" id="node18" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="2474,2822,2616,3119"/>
+<area shape="rect" id="node32" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="3203,2108,3351,2537"/>
+<area shape="rect" id="node38" href="$classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="1101,2859,1280,3083"/>
+<area shape="rect" id="node36" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="1495,2225,1639,2420"/>
+<area shape="rect" id="node24" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="2098,2196,2237,2449"/>
+<area shape="rect" id="node29" href="$classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="1319,2255,1471,2391"/>
+<area shape="rect" id="node31" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="1761,1241,1915,1319"/>
+</map>

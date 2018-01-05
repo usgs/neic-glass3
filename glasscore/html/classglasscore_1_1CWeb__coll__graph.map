@@ -1,0 +1,15 @@
+<map id="glasscore::CWeb" name="glasscore::CWeb">
+<area shape="rect" id="node14" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="1317,1094,1459,1391"/>
+<area shape="rect" id="node32" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="1590,1925,1738,2355"/>
+<area shape="rect" id="node13" href="$classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="922,1499,1140,1840"/>
+<area shape="rect" id="node25" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="614,1131,748,1355"/>
+<area shape="rect" id="node26" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="278,587,399,723"/>
+<area shape="rect" id="node27" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="662,747,824,957"/>
+<area shape="rect" id="node28" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="644,294,770,562"/>
+<area shape="rect" id="node29" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="926,338,1083,518"/>
+<area shape="rect" id="node19" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="2025,2013,2164,2267"/>
+<area shape="rect" id="node37" href="$classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="2005,2427,2184,2651"/>
+<area shape="rect" id="node35" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="284,2043,428,2237"/>
+<area shape="rect" id="node24" href="$classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="726,2072,878,2208"/>
+<area shape="rect" id="node31" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="976,1204,1130,1281"/>
+</map>
