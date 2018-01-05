@@ -51,7 +51,7 @@ TEST(TaperTest, Construction) {
 	ASSERT_NEAR(X4, taper2.dX4, 0.001)<< "dX4 Check";
 }
 
-// tests to see if the taper can be constructed
+// tests to see if the taper can be copied
 TEST(TaperTest, Copy) {
 	glassutil::CLogit::disable();
 

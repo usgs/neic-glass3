@@ -247,6 +247,8 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 	int nCut = pWeb->nNucleate;
 	double dThresh = pWeb->dThresh;
 	double dAzimuthRange = pWeb->pGlass->beamMatchingAzimuthWindow;
+	// commented out because slowness matching of beams is not yet implemented
+	// but is scheduled to be soon
 	// double dDistanceRange = pWeb->pGlass->beamMatchingDistanceWindow;
 
 	// init overall significance sum and node site count

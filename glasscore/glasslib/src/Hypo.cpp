@@ -2149,7 +2149,6 @@ void CHypo::graphicsOutput() {
 	outfile << "hypocenter: " << std::to_string(dLat) << " "
 			<< std::to_string(dLon) << " " << std::to_string(dZ) << " "
 			<< std::to_string(tOrg) << "\n";
-	double xlon = 0.0;
 	double stack = 0;
 	double tcal = 0;
 	double delta = 0;
@@ -2160,7 +2159,7 @@ void CHypo::graphicsOutput() {
 		double xlat = dLat + (y * pGlass->graphicsStepKM) / 111.1;
 		for (int x = -1 * pGlass->graphicsSteps; x <= pGlass->graphicsSteps;
 				x++) {
-			xlon = dLon
+			double xlon = dLon
 					+ cos(DEG2RAD * xlat) * (x * pGlass->graphicsStepKM)
 							/ 111.1;
 			pTTT->setOrigin(xlat, xlon, dZ);

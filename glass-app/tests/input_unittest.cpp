@@ -62,11 +62,11 @@ protected:
 #endif
 
 		if (nError1 != 0) {
-			printf("Failed to create testing directory %s.\n",
+			printf("Failed to create testing error directory %s.\n",
 					errordirectory.c_str());
 		}
 		if (nError2 != 0) {
-			printf("Failed to create testing directory %s.\n",
+			printf("Failed to create testing archive directory %s.\n",
 					archivedirectory.c_str());
 		}
 
