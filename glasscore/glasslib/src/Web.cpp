@@ -394,7 +394,7 @@ bool CWeb::global(json::Object*com) {
 
 	for (int i = (-1 * numSamples); i <= numSamples; i++) {
 		double aLat = std::asin((2 * i) / ((2.0 * numSamples) + 1))
-				* (180.0 / M_PI);
+				* (180.0 / PI);
 		double aLon = fmod(i, fibRatio) * (360.0 / fibRatio);
 
 		// longitude bounds check
