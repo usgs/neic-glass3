@@ -755,20 +755,22 @@ bool CWeb::grid_explicit(json::Object *com) {
 				"CWeb::grid_explicit: NULL json configuration.");
 		return (false);
 	}
-	// check pGlass
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid_explicit: NULL glass pointer.");
-		return (false);
-	}
 
 	char sLog[1024];
 
 	// grid definition variables and defaults
 	std::string name = "Nemo";
-	int detect = pGlass->nDetect;
-	int nucleate = pGlass->nNucleate;
-	double thresh = pGlass->dThresh;
+	int detect = 20;
+	int nucleate = 7;
+	double thresh = 2.0;
+
+	// check pGlass
+	if (pGlass != NULL) {
+		detect = pGlass->nDetect;
+		nucleate = pGlass->nNucleate;
+		thresh = pGlass->dThresh;
+	}
+
 	int nN = 0;
 	bool saveGrid = false;
 	bool update = false;

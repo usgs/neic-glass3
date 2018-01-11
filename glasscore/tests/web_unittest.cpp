@@ -15,6 +15,7 @@
 #define STATIONFILENAME "teststationlist.json"
 #define GLOBALFILENAME "testglobal.d"
 #define GRIDFILENAME "testgrid.d"
+#define GRIDEXPLICITFILENAME "testexplicitgrid.d"
 
 #define NAME "TestWeb"
 #define THRESH 1.4
@@ -44,6 +45,13 @@
 #define GRIDNUMCOLS 51
 #define GRIDNUMZ 1
 #define GRIDNUMNODES 2601
+
+#define GRIDEXPLICITNAME "TestExplicitGrid"
+#define GRIDEXPLICITTHRESH 0.5
+#define GRIDEXPLICITNUMDETECT 14
+#define GRIDEXPLICITNUMNUCLEATE 5
+#define GRIDEXPLICITRESOLUTION 100.0
+#define GRIDEXPLICITNUMNODES 12
 
 #define PHASE1 "P"
 #define PHASE2 "S"
@@ -349,6 +357,94 @@ TEST(WebTest, GridTest) {
 
 	// phase name
 	ASSERT_STREQ(testGridWeb.pTrv2->sPhase.c_str(), phasename2.c_str());
+
+	// cleanup
+	delete (testSiteList);
+}
+
+TEST(WebTest, GridExplicitTest) {
+	glassutil::CLogit::disable();
+
+	std::string phasename1 = std::string(PHASE1);
+
+	// load files
+	// stationlist
+	std::ifstream stationFile;
+	stationFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(STATIONFILENAME),
+			std::ios::in);
+	std::string stationLine = "";
+	std::getline(stationFile, stationLine);
+	stationFile.close();
+
+	// grid config
+	std::ifstream gridFile;
+	gridFile.open(
+			"./" + std::string(TESTPATH) + "/"
+					+ std::string(GRIDEXPLICITFILENAME),
+			std::ios::in);
+	std::string gridLine = "";
+	std::getline(gridFile, gridLine);
+	gridFile.close();
+
+	json::Object siteList = json::Deserialize(stationLine);
+	json::Object gridConfig = json::Deserialize(gridLine);
+
+	// construct a sitelist
+	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
+	testSiteList->dispatch(&siteList);
+
+	// construct a web
+	glasscore::CWeb testGridWeb(UPDATE);
+	testGridWeb.pSiteList = testSiteList;
+	testGridWeb.dispatch(&gridConfig);
+
+	// name
+	ASSERT_STREQ(std::string(GRIDEXPLICITNAME).c_str(),
+			testGridWeb.sName.c_str())<< "Web sName Matches";
+
+	// threshold
+	ASSERT_EQ(GRIDEXPLICITTHRESH,
+			  testGridWeb.dThresh)<< "Web dThresh Check";
+
+	// nDetect
+	ASSERT_EQ(GRIDEXPLICITNUMDETECT,
+			  testGridWeb.nDetect)<< "Web nDetect Check";
+
+	// nNucleate
+	ASSERT_EQ(GRIDEXPLICITNUMNUCLEATE,
+			  testGridWeb.nNucleate)<< "Web nNucleate Check";
+
+	// dResolution
+	ASSERT_EQ(GRIDEXPLICITRESOLUTION,
+			  testGridWeb.dResolution)<< "Web dResolution Check";
+
+	// nRow
+	ASSERT_EQ(0, testGridWeb.nRow)<< "Web nRow Check";
+
+	// nCol
+	ASSERT_EQ(0, testGridWeb.nCol)<< "Web nCol Check";
+
+	// nCol
+	ASSERT_EQ(0, testGridWeb.nZ)<< "Web nZ Check";
+
+	// bUpdate
+	ASSERT_EQ(NOUPDATE, testGridWeb.bUpdate)<< "Web bUpdate Check";
+
+	// lists
+	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.vNode.size())<< "node list";
+	ASSERT_EQ(0, (int)testGridWeb.vSitesFilter.size())<<
+	"site filter list empty";
+	ASSERT_EQ(0, (int)testGridWeb.vNetFilter.size())<<
+	"net filter list empty";
+
+	// pointers
+	ASSERT_EQ(NULL, testGridWeb.pGlass)<< "pGlass null";
+	ASSERT_TRUE(NULL != testGridWeb.pTrv1)<< "pTrv1 not null";
+	ASSERT_TRUE(NULL == testGridWeb.pTrv2)<< "pTrv2 null";
+
+	// phase name
+	ASSERT_STREQ(testGridWeb.pTrv1->sPhase.c_str(), phasename1.c_str());
 
 	// cleanup
 	delete (testSiteList);
