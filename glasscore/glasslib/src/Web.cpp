@@ -454,13 +454,6 @@ bool CWeb::grid(json::Object *com) {
 		return (false);
 	}
 
-	// check pGlass
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: NULL glass pointer.");
-		return (false);
-	}
-
 	char sLog[1024];
 
 	// grid definition variables and defaults
@@ -479,9 +472,9 @@ bool CWeb::grid(json::Object *com) {
 	double resol = 0;
 	double lat = 0;
 	double lon = 0;
-	std::vector<double> zzz;
 	int rows = 0;
 	int cols = 0;
+	std::vector<double> zzz;
 	int zs = 0;
 	bool saveGrid = false;
 	bool update = false;
