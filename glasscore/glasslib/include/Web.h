@@ -23,6 +23,7 @@ namespace glasscore {
 // forward declarations
 class CGlass;
 class CSite;
+class CSiteList;
 class CNode;
 class CPick;
 
@@ -76,7 +77,7 @@ class CWeb {
 	 * seconds between status checks. -1 to disable status checks.  Default 60.
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
-			int numRows, int numCols, bool update,
+			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			bool createBackgroundThread = true, int sleepTime = 100,
@@ -138,7 +139,8 @@ class CWeb {
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
-					int numNucleate, int numRows, int numCols, bool update,
+					int numNucleate, int resolution, int numRows, int numCols,
+					int numZ, bool update,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav);
 
@@ -321,6 +323,8 @@ class CWeb {
 	 */
 	CGlass *pGlass;
 
+	CSiteList *pSiteList;
+
 	/**
 	 * \brief A std::vector containing the network names to be included
 	 * in this web. This needs to be saved to support dynamic addition
@@ -367,6 +371,8 @@ class CWeb {
 	 */
 	int nCol;
 
+	int nZ;
+
 	/**
 	 * \brief A double value containing the number of closest stations to use
 	 * when generating a node for this detection array. This number overrides
@@ -387,6 +393,8 @@ class CWeb {
 	 * default Glass parameter if it is provided
 	 */
 	double dThresh;
+
+	double dResolution;
 
 	/**
 	 * \brief A boolean flag that stores whether to update this web when a

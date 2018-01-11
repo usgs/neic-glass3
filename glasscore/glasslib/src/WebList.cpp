@@ -98,8 +98,10 @@ bool CWebList::addWeb(json::Object *com) {
 
 	// Create a new web object
 	std::shared_ptr<CWeb> web(new CWeb(m_bUseBackgroundThreads));
-	web->pGlass = pGlass;
-
+	if (pGlass != NULL) {
+		web->pGlass = pGlass;
+		web->pSiteList = pGlass->pSiteList;
+	}
 	// send the config to web so that it can generate itself
 	if (web->dispatch(com)) {
 		// add the web to the list if it was successfully created
