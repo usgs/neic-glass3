@@ -990,15 +990,6 @@ bool CGlass::initialize(json::Object *com) {
 	// printf("%.2f %.4f %.4f\n", sg, Gaus(sg, 1.0), Sig(sg, 1.0));
 	// }
 
-	// clean out old web list if any
-	if (pWebList) {
-		delete (pWebList);
-	}
-
-	// create detection web list
-	pWebList = new CWebList(webBackgroundUpdate);
-	pWebList->pGlass = this;
-
 	// clean out old site list if any
 	if (pSiteList) {
 		delete (pSiteList);
@@ -1007,6 +998,16 @@ bool CGlass::initialize(json::Object *com) {
 	// create site list
 	pSiteList = new CSiteList();
 	pSiteList->pGlass = this;
+
+	// clean out old web list if any
+	if (pWebList) {
+		delete (pWebList);
+	}
+
+	// create detection web list
+	pWebList = new CWebList(webBackgroundUpdate);
+	pWebList->pGlass = this;
+	pWebList->pSiteList = pSiteList;
 
 	// clean out old pick list if any
 	if (pPickList) {

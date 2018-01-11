@@ -26,6 +26,7 @@ CWebList::~CWebList() {
 // ---------------------------------------------------------clear
 void CWebList::clear() {
 	pGlass = NULL;
+	pSiteList = NULL;
 
 	// clear out all the  webs
 	for (auto &web : vWeb) {
@@ -51,8 +52,7 @@ bool CWebList::dispatch(json::Object *com) {
 
 		// if the Cmd value is for one of the web generation commands,
 		// call addWeb
-		if ((v == "Global") || (v == "Shell") || (v == "Single")
-				|| (v == "Grid") || (v == "Grid_Explicit")) {
+		if ((v == "Global") || (v == "Grid") || (v == "Grid_Explicit")) {
 			return (addWeb(com));
 		}
 
@@ -100,8 +100,11 @@ bool CWebList::addWeb(json::Object *com) {
 	std::shared_ptr<CWeb> web(new CWeb(m_bUseBackgroundThreads));
 	if (pGlass != NULL) {
 		web->pGlass = pGlass;
-		web->pSiteList = pGlass->pSiteList;
 	}
+	if (pSiteList != NULL) {
+		web->pSiteList = pSiteList;
+	}
+
 	// send the config to web so that it can generate itself
 	if (web->dispatch(com)) {
 		// add the web to the list if it was successfully created
@@ -198,6 +201,29 @@ void CWebList::remSite(std::shared_ptr<CSite> site) {
 			}
 		}
 	}
+}
+
+// ---------------------------------------------------------hasSite
+bool CWebList::hasSite(std::shared_ptr<CSite> site) {
+	//  nullcheck
+	if (site == NULL) {
+		return (false);
+	}
+
+	if (vWeb.size() < 1) {
+		return(false);
+	}
+
+	// for each node in web
+	for (auto &web : vWeb) {
+		// check to see if we have this site
+		if (web->hasSite(site) == true) {
+			return(true);
+		}
+	}
+
+	// site not found
+	return(false);
 }
 
 // ---------------------------------------------------------statusCheck

@@ -35,6 +35,7 @@
 #define GLOBALRESOLUTION 250.0
 #define GLOBALNUMZ 2
 #define GLOBALNUMNODES 19410
+#define GLOBALNUMNETEXLUDE 13
 
 #define GRIDNAME "TestGrid"
 #define GRIDTHRESH 0.5
@@ -297,7 +298,7 @@ TEST(WebTest, GlobalTest) {
 	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.vNode.size())<< "node list";
 	ASSERT_EQ(0, (int)testGlobalWeb.vSitesFilter.size())<<
 	"site filter list empty";
-	ASSERT_EQ(0, (int)testGlobalWeb.vNetFilter.size())<<
+	ASSERT_EQ(GLOBALNUMNETEXLUDE, (int)testGlobalWeb.vNetFilter.size())<<
 	"net filter list empty";
 
 	// pointers
@@ -580,7 +581,7 @@ TEST(WebTest, RemoveTest) {
 	testGridWeb.pSiteList = testSiteList;
 	testGridWeb.dispatch(&gridConfig);
 
-	// create site to add
+	// create site to remove
 	json::Object siteJSON = json::Deserialize(std::string(REMOVESITE));
 	glasscore::CSite * removeSite = new glasscore::CSite(&siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
@@ -591,7 +592,7 @@ TEST(WebTest, RemoveTest) {
 	// check to see if this site is in grid
 	ASSERT_TRUE(testGridWeb.hasSite(sharedRemoveSite))<< "site in grid";
 
-	// add to grid
+	// remove from grid
 	testGridWeb.remSite(sharedRemoveSite);
 
 	// check to see if this site is in grid
@@ -599,4 +600,24 @@ TEST(WebTest, RemoveTest) {
 
 	// cleanup
 	delete (testSiteList);
+}
+
+TEST(WebTest, FailTests) {
+	glassutil::CLogit::disable();
+
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	glasscore::CWeb aWeb(std::string(NAME),
+	THRESH,
+							NUMDETECT,
+							NUMNUCLEATE,
+							RESOLUTION,
+							NUMROWS,
+							NUMCOLS, NUMZ,
+							NOUPDATE,
+							nullTrav, nullTrav);
+
+	ASSERT_FALSE(aWeb.dispatch(NULL))<< "Null dispatch false";
+	ASSERT_FALSE(aWeb.global(NULL))<< "Null global false";
+	ASSERT_FALSE(aWeb.grid(NULL))<< "Null grid false";
+	ASSERT_FALSE(aWeb.grid_explicit(NULL))<< "Null grid_explicit false";
 }

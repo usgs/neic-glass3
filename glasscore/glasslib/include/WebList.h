@@ -15,8 +15,8 @@ namespace glasscore {
 
 // forward declarations
 class CGlass;
-class CPick;
 class CSite;
+class CSiteList;
 class CWeb;
 
 /**
@@ -114,6 +114,8 @@ class CWebList {
 	 */
 	void remSite(std::shared_ptr<CSite> site);
 
+	bool hasSite(std::shared_ptr<CSite> site);
+
 	/**
 	 * \brief check to see if each web thread is still functional
 	 *
@@ -126,6 +128,8 @@ class CWebList {
 	 * get sites (stations), encode/decode time, and get debug flags
 	 */
 	CGlass *pGlass;
+
+	CSiteList *pSiteList;
 
 	/**
 	 * \brief A vector of shared pointers to all currently defined
