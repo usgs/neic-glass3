@@ -1045,7 +1045,14 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		}
 
 		// set up the first phase travel time
-		pTrv1->setup(phs, file);
+		if (pTrv1->setup(phs, file) == false) {
+			glassutil::CLogit::log(
+								glassutil::log_level::error,
+								"CWeb::loadTravelTimes: Failed to load file "
+								"location " + file + " for first phase: "
+								+ phs);
+			return(false);
+		}
 
 	} else {
 		// if no first phase, use default from glass
@@ -1103,7 +1110,14 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		}
 
 		// set up the second phase travel time
-		pTrv2->setup(phs, file);
+		if (pTrv2->setup(phs, file) == false) {
+			glassutil::CLogit::log(
+								glassutil::log_level::error,
+								"CWeb::loadTravelTimes: Failed to load file "
+								"location " + file + " for second phase: "
+								+ phs);
+			return(false);
+		}
 	} else {
 		// no second phase
 		// clean out old phase if any

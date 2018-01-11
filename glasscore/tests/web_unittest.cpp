@@ -12,10 +12,22 @@
 #include "Logit.h"
 
 #define TESTPATH "testdata"
+
 #define STATIONFILENAME "teststationlist.json"
+
 #define GLOBALFILENAME "testglobal.d"
+#define BADGLOBALFILENAME1 "badglobal1.d"
+#define BADGLOBALFILENAME2 "badglobal2.d"
+#define BADGLOBALFILENAME3 "badglobal3.d"
+
 #define GRIDFILENAME "testgrid.d"
+#define BADGRIDFILENAME1 "badgrid1.d"
+#define BADGRIDFILENAME2 "badgrid2.d"
+#define BADGRIDFILENAME3 "badgrid3.d"
+
 #define GRIDEXPLICITFILENAME "testexplicitgrid.d"
+#define BADEXPLICITGRIDFILENAME1 "badexplicitgrid1.d"
+#define BADEXPLICITGRIDFILENAME2 "badexplicitgrid2.d"
 
 #define NAME "TestWeb"
 #define THRESH 1.4
@@ -614,10 +626,104 @@ TEST(WebTest, FailTests) {
 							NUMROWS,
 							NUMCOLS, NUMZ,
 							NOUPDATE,
-							nullTrav, nullTrav);
+							nullTrav, nullTrav, false, 10, 10);
 
+	// Nulls
 	ASSERT_FALSE(aWeb.dispatch(NULL))<< "Null dispatch false";
 	ASSERT_FALSE(aWeb.global(NULL))<< "Null global false";
 	ASSERT_FALSE(aWeb.grid(NULL))<< "Null grid false";
 	ASSERT_FALSE(aWeb.grid_explicit(NULL))<< "Null grid_explicit false";
+
+	// grid fails
+	std::ifstream badGridFile;
+	std::string badGridLine = "";
+	json::Object badGridConfig;
+
+	// global
+	// bad tt
+	badGridFile.open(
+			"./" + std::string(TESTPATH) + "/"
+					+ std::string(BADGLOBALFILENAME1),
+			std::ios::in);
+	std::getline(badGridFile, badGridLine);
+	badGridFile.close();
+
+	badGridConfig = json::Deserialize(badGridLine);
+	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global1 false";
+
+	// no resolution
+	badGridFile.open(
+			"./" + std::string(TESTPATH) + "/"
+					+ std::string(BADGLOBALFILENAME2),
+			std::ios::in);
+	std::getline(badGridFile, badGridLine);
+	badGridFile.close();
+
+	badGridConfig = json::Deserialize(badGridLine);
+	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global2 false";
+
+	// no depths
+	badGridFile.open(
+			"./" + std::string(TESTPATH) + "/"
+					+ std::string(BADGLOBALFILENAME3),
+			std::ios::in);
+	std::getline(badGridFile, badGridLine);
+	badGridFile.close();
+
+	badGridConfig = json::Deserialize(badGridLine);
+	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global4 false";
+
+	// grid
+	// bad tt
+	badGridFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(BADGRIDFILENAME1),
+			std::ios::in);
+	std::getline(badGridFile, badGridLine);
+	badGridFile.close();
+
+	badGridConfig = json::Deserialize(badGridLine);
+	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid1 false";
+
+	// no resolution
+	badGridFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(BADGRIDFILENAME2),
+			std::ios::in);
+	std::getline(badGridFile, badGridLine);
+	badGridFile.close();
+
+	badGridConfig = json::Deserialize(badGridLine);
+	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid2 false";
+
+	// no depths
+	badGridFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(BADGRIDFILENAME3),
+			std::ios::in);
+	std::getline(badGridFile, badGridLine);
+	badGridFile.close();
+
+	badGridConfig = json::Deserialize(badGridLine);
+	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid3 false";
+
+	// explicit
+	// bad tt
+	badGridFile.open(
+			"./" + std::string(TESTPATH) + "/"
+					+ std::string(BADEXPLICITGRIDFILENAME1),
+			std::ios::in);
+	std::getline(badGridFile, badGridLine);
+	badGridFile.close();
+
+	badGridConfig = json::Deserialize(badGridLine);
+	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid1 false";
+
+	// no resolution
+	badGridFile.open(
+			"./" + std::string(TESTPATH) + "/"
+					+ std::string(BADEXPLICITGRIDFILENAME2),
+			std::ios::in);
+	std::getline(badGridFile, badGridLine);
+	badGridFile.close();
+
+	badGridConfig = json::Deserialize(badGridLine);
+	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid2 false";
 }
