@@ -114,6 +114,13 @@ class CWebList {
 	 */
 	void remSite(std::shared_ptr<CSite> site);
 
+	/**
+	 * \brief Check if the webs have a site
+	 * This function checks to see if the given site is used in any web
+	 *
+	 * \param site - A shared pointer to a CSite object containing the site to
+	 * check
+	 */
 	bool hasSite(std::shared_ptr<CSite> site);
 
 	/**
@@ -129,6 +136,9 @@ class CWebList {
 	 */
 	CGlass *pGlass;
 
+	/**
+	 * \brief A pointer to the CSiteList class, used get sites (stations)
+	 */
 	CSiteList *pSiteList;
 
 	/**
