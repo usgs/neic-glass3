@@ -217,4 +217,24 @@ TEST(WebListTest, SiteOperations) {
 
 	// check to see if this site is in grid
 	ASSERT_FALSE(testWebList->hasSite(sharedRemoveSite))<< "site removed";
+
+	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
+
+	delete (testSiteList);
+	delete (testWebList);
+}
+
+TEST(WebListTest, FailTests) {
+	glassutil::CLogit::disable();
+
+	// construct a WebList
+	glasscore::CWebList * testWebList = new glasscore::CWebList();
+
+	ASSERT_FALSE(testWebList->dispatch(NULL))<< "Null dispatch false";
+	ASSERT_FALSE(testWebList->addWeb(NULL))<< "Null addWeb false";
+	ASSERT_FALSE(testWebList->removeWeb(NULL))<< "Null removeWeb false";
+	testWebList->remSite(NULL);
+	testWebList->addSite(NULL);
+
+	delete (testWebList);
 }
