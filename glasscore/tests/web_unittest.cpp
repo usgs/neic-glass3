@@ -56,6 +56,9 @@
 #define PHASE1 "P"
 #define PHASE2 "S"
 
+#define ADDSITE "{\"Elevation\":302.000000,\"Enable\":true,\"InformationRequestor\":{\"AgencyID\":\"US\",\"Author\":\"station-lookup-app\"},\"Latitude\":35.656729,\"Longitude\":-97.609276,\"Quality\":1.000000,\"Site\":{\"Channel\":\"HHZ\",\"Location\":\"--\",\"Network\":\"OK\",\"Station\":\"BCOK\"},\"Type\":\"StationInfo\",\"UseForTeleseismic\":true}" // NOLINT
+#define REMOVESITE "{\"Elevation\":378.000000,\"Enable\":false,\"InformationRequestor\":{\"AgencyID\":\"US\",\"Author\":\"station-lookup-app\"},\"Latitude\":35.356842,\"Longitude\":-97.656074,\"Quality\":1.000000,\"Site\":{\"Channel\":\"HHZ\",\"Location\":\"--\",\"Network\":\"OK\",\"Station\":\"CCOK\"},\"Type\":\"StationInfo\",\"UseForTeleseismic\":true}" // NOLINT
+
 // tests to see if the node can be constructed
 TEST(WebTest, Construction) {
 	glassutil::CLogit::disable();
@@ -172,18 +175,56 @@ TEST(WebTest, Initialize) {
 	glassutil::CLogit::disable();
 
 	// default constructor
-	glasscore::CWeb aWeb(UPDATE, 10, 10);
+	glasscore::CWeb testWeb(UPDATE, 10, 10);
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
 
-	aWeb.initialize(std::string(NAME),
+	testWeb.initialize(std::string(NAME),
 	THRESH,
-					NUMDETECT,
-					NUMNUCLEATE,
-					RESOLUTION, NUMROWS,
-					NUMCOLS,
-					NUMZ,
-					UPDATE,
-					nullTrav, nullTrav);
+						NUMDETECT,
+						NUMNUCLEATE,
+						RESOLUTION, NUMROWS,
+						NUMCOLS,
+						NUMZ,
+						UPDATE,
+						nullTrav, nullTrav);
+
+	// name
+	ASSERT_STREQ(std::string(NAME).c_str(), testWeb.sName.c_str())<<
+	"Web sName Matches";
+
+	// threshold
+	ASSERT_EQ(THRESH, testWeb.dThresh)<< "Web dThresh Check";
+
+	// nDetect
+	ASSERT_EQ(NUMDETECT, testWeb.nDetect)<< "Web nDetect Check";
+
+	// nNucleate
+	ASSERT_EQ(NUMNUCLEATE, testWeb.nNucleate)<< "Web nNucleate Check";
+
+	// resolution
+	ASSERT_EQ(RESOLUTION, testWeb.dResolution)<< "Web resolution Check";
+
+	// nRow
+	ASSERT_EQ(NUMROWS, testWeb.nRow)<< "Web nRow Check";
+
+	// nCol
+	ASSERT_EQ(NUMCOLS, testWeb.nCol)<< "Web nCol Check";
+
+	// nZ
+	ASSERT_EQ(NUMZ, testWeb.nZ)<< "Web nZ Check";
+
+	// bUpdate
+	ASSERT_EQ(UPDATE, testWeb.bUpdate)<< "Web bUpdate Check";
+
+	// lists
+	int expectedSize = 0;
+	ASSERT_EQ(expectedSize, (int)testWeb.vNode.size())<< "node list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb.vSitesFilter.size())<<
+	"site filter list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb.vNetFilter.size())<<
+	"net filter list empty";
+
+	ASSERT_TRUE(testWeb.statusCheck())<< "status check";
 }
 
 TEST(WebTest, GlobalTest) {
@@ -405,19 +446,19 @@ TEST(WebTest, GridExplicitTest) {
 
 	// threshold
 	ASSERT_EQ(GRIDEXPLICITTHRESH,
-			  testGridWeb.dThresh)<< "Web dThresh Check";
+			testGridWeb.dThresh)<< "Web dThresh Check";
 
 	// nDetect
 	ASSERT_EQ(GRIDEXPLICITNUMDETECT,
-			  testGridWeb.nDetect)<< "Web nDetect Check";
+			testGridWeb.nDetect)<< "Web nDetect Check";
 
 	// nNucleate
 	ASSERT_EQ(GRIDEXPLICITNUMNUCLEATE,
-			  testGridWeb.nNucleate)<< "Web nNucleate Check";
+			testGridWeb.nNucleate)<< "Web nNucleate Check";
 
 	// dResolution
 	ASSERT_EQ(GRIDEXPLICITRESOLUTION,
-			  testGridWeb.dResolution)<< "Web dResolution Check";
+			testGridWeb.dResolution)<< "Web dResolution Check";
 
 	// nRow
 	ASSERT_EQ(0, testGridWeb.nRow)<< "Web nRow Check";
@@ -445,6 +486,116 @@ TEST(WebTest, GridExplicitTest) {
 
 	// phase name
 	ASSERT_STREQ(testGridWeb.pTrv1->sPhase.c_str(), phasename1.c_str());
+
+	// cleanup
+	delete (testSiteList);
+}
+
+TEST(WebTest, AddTest) {
+	glassutil::CLogit::disable();
+
+	// load files
+	// stationlist
+	std::ifstream stationFile;
+	stationFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(STATIONFILENAME),
+			std::ios::in);
+	std::string stationLine = "";
+	std::getline(stationFile, stationLine);
+	stationFile.close();
+
+	// grid config
+	std::ifstream gridFile;
+	gridFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(GRIDFILENAME),
+			std::ios::in);
+	std::string gridLine = "";
+	std::getline(gridFile, gridLine);
+	gridFile.close();
+
+	json::Object siteList = json::Deserialize(stationLine);
+	json::Object gridConfig = json::Deserialize(gridLine);
+
+	// construct a sitelist
+	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
+	testSiteList->dispatch(&siteList);
+
+	// construct a web
+	glasscore::CWeb testGridWeb(UPDATE);
+	testGridWeb.pSiteList = testSiteList;
+	testGridWeb.dispatch(&gridConfig);
+
+	// create site to add
+	json::Object siteJSON = json::Deserialize(std::string(ADDSITE));
+	glasscore::CSite * addSite = new glasscore::CSite(&siteJSON, NULL);
+	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
+
+	// add to site list
+	testSiteList->addSite(sharedAddSite);
+
+	// check to see if this site is in grid
+	ASSERT_FALSE(testGridWeb.hasSite(sharedAddSite))<< "site not in grid";
+
+	// add to grid
+	testGridWeb.addSite(sharedAddSite);
+
+	// check to see if this site is in grid
+	ASSERT_TRUE(testGridWeb.hasSite(sharedAddSite))<< "site added";
+
+	// cleanup
+	delete (testSiteList);
+}
+
+TEST(WebTest, RemoveTest) {
+	glassutil::CLogit::disable();
+
+	// load files
+	// stationlist
+	std::ifstream stationFile;
+	stationFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(STATIONFILENAME),
+			std::ios::in);
+	std::string stationLine = "";
+	std::getline(stationFile, stationLine);
+	stationFile.close();
+
+	// grid config
+	std::ifstream gridFile;
+	gridFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(GRIDFILENAME),
+			std::ios::in);
+	std::string gridLine = "";
+	std::getline(gridFile, gridLine);
+	gridFile.close();
+
+	json::Object siteList = json::Deserialize(stationLine);
+	json::Object gridConfig = json::Deserialize(gridLine);
+
+	// construct a sitelist
+	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
+	testSiteList->dispatch(&siteList);
+
+	// construct a web
+	glasscore::CWeb testGridWeb(UPDATE);
+	testGridWeb.pSiteList = testSiteList;
+	testGridWeb.dispatch(&gridConfig);
+
+	// create site to add
+	json::Object siteJSON = json::Deserialize(std::string(REMOVESITE));
+	glasscore::CSite * removeSite = new glasscore::CSite(&siteJSON, NULL);
+	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
+
+	// update in site list
+	testSiteList->addSite(sharedRemoveSite);
+
+	// check to see if this site is in grid
+	ASSERT_TRUE(testGridWeb.hasSite(sharedRemoveSite))<< "site in grid";
+
+	// add to grid
+	testGridWeb.remSite(sharedRemoveSite);
+
+	// check to see if this site is in grid
+	ASSERT_FALSE(testGridWeb.hasSite(sharedRemoveSite))<< "site removed";
 
 	// cleanup
 	delete (testSiteList);

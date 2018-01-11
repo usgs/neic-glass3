@@ -282,6 +282,8 @@ class CWeb {
 	 */
 	void remSite(std::shared_ptr<CSite> site);
 
+	bool hasSite(std::shared_ptr<CSite> site);
+
 	/**
 	 * \brief Check to see if site allowed
 	 * This function checks to see if a given site is allowed in the web

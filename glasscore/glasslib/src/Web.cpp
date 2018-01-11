@@ -1793,4 +1793,22 @@ void CWeb::jobSleep() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
 	}
 }
+
+bool CWeb::hasSite(std::shared_ptr<CSite> site) {
+	//  nullcheck
+	if (site == NULL) {
+		return (false);
+	}
+
+	// for each node in web
+	for (auto &node : vNode) {
+		// check to see if we have this site
+		if (node->getSite(site->sScnl) != NULL) {
+			return(true);
+		}
+	}
+
+	// site not found
+	return(false);
+}
 }  // namespace glasscore
