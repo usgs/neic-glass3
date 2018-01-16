@@ -1,0 +1,1 @@
+{"Cmd":"Global","Name":"TestGlobal","Nets":["IU","US","II","CU","G","GE","IM","IC","GT","C","AU","MX","AT"],"Resolution":250.0,"Detect":10,"Nucleate":5,"Thresh":2.5,"Z":[10.0,30.0],"SaveGrid":true,"Update":true,"NucleationPhases":{"Phase1":{"PhaseName":"P","TravFile":"BLEH.trv"}}}}

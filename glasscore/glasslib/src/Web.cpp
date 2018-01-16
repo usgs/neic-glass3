@@ -10,6 +10,7 @@
 #include <thread>
 #include <mutex>
 #include <ctime>
+#include <limits>
 #include "Web.h"
 #include "IGlassSend.h"
 #include "Glass.h"
@@ -21,6 +22,8 @@
 #include "Site.h"
 #include "Logit.h"
 #include "Pid.h"
+
+#define _USE_MATH_DEFINES
 
 namespace glasscore {
 
@@ -37,34 +40,6 @@ bool sortSite(const std::pair<double, std::shared_ptr<CSite>> &lhs,
 	return (false);
 }
 
-// vertex sorting function
-// Compares vertices by latitude with a secondary sort on
-// longitude
-bool sortVert(const std::pair<double, double> &vert1,
-				const std::pair<double, double> &vert2) {
-	// get lats and lons
-	double lat1 = vert1.first;
-	double lon1 = vert1.second;
-	double lat2 = vert2.first;
-	double lon2 = vert2.second;
-
-	if (lat1 < lat2 - 0.1) {
-		return (true);
-	}
-
-	if (lat1 < lat2 + 0.1) {
-		if (lon1 < lon2) {
-			return true;
-		}
-	}
-
-	// lat1 > lat2
-	return (false);
-}
-
-// NOTE: Web generation needs to be improved. The global grid generation has
-// a platform defendant issue (different number of nodes on linux than windows,
-// and is inflexible.
 // ---------------------------------------------------------CWeb
 CWeb::CWeb(bool createBackgroundThread, int sleepTime, int checkInterval) {
 	// setup threadsto
@@ -89,7 +64,7 @@ CWeb::CWeb(bool createBackgroundThread, int sleepTime, int checkInterval) {
 
 // ---------------------------------------------------------CWeb
 CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
-			int numRows, int numCols, bool update,
+			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			bool createBackgroundThread, int sleepTime, int checkInterval) {
@@ -101,8 +76,8 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 
 	clear();
 
-	initialize(name, thresh, numDetect, numNucleate, numRows, numCols, update,
-				firstTrav, secondTrav);
+	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
+				numCols, numZ, update, firstTrav, secondTrav);
 
 	// start the thread
 	if (m_bUseBackgroundThread == true) {
@@ -139,14 +114,14 @@ CWeb::~CWeb() {
 void CWeb::clear() {
 	nRow = 0;
 	nCol = 0;
-	nDetect = 16;
-	nNucleate = 0;
-	dThresh = -1.0;
+	nZ = 0;
+	nDetect = 10;
+	nNucleate = 5;
+	dThresh = 2.5;
+	dResolution = 100;
 	sName = "Nemo";
-	tOrg = 0;
-	vDistLo = 0;
-	vDistHi = 0;
 	pGlass = NULL;
+	pSiteList = NULL;
 	bUpdate = false;
 
 	// clear out all the nodes in the web
@@ -162,25 +137,24 @@ void CWeb::clear() {
 	// clear sites
 	vSite.clear();
 
-	// clear tesselation vectors
-	vVert.clear();
-	vFace.clear();
-
 	pTrv1 = NULL;
 	pTrv2 = NULL;
 }
 
 // ---------------------------------------------------------Initialize
 bool CWeb::initialize(std::string name, double thresh, int numDetect,
-						int numNucleate, int numRows, int numCols, bool update,
+						int numNucleate, int resolution, int numRows,
+						int numCols, int numZ, bool update,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav) {
 	sName = name;
 	dThresh = thresh;
 	nDetect = numDetect;
 	nNucleate = numNucleate;
+	dResolution = resolution;
 	nRow = numRows;
 	nCol = numCols;
+	nZ = numZ;
 	bUpdate = update;
 	pTrv1 = firstTrav;
 	pTrv2 = secondTrav;
@@ -236,23 +210,24 @@ bool CWeb::global(json::Object*com) {
 		return (false);
 	}
 
-	// check pGlass
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::global: NULL glass pointer.");
-		return (false);
-	}
-
 	char sLog[1024];
 
 	// global grid definition variables and defaults
 	std::string name = "Nemo";
-	int detect = pGlass->nDetect;
-	int nucleate = pGlass->nNucleate;
-	double thresh = pGlass->dThresh;
-	double resol = 0;
+	int detect = 20;
+	int nucleate = 7;
+	double thresh = 2.0;
+
+	// check pGlass
+	if (pGlass != NULL) {
+		detect = pGlass->nDetect;
+		nucleate = pGlass->nNucleate;
+		thresh = pGlass->dThresh;
+	}
+
+	double resol = 100;
 	std::vector<double> zzz;
-	int nZ = 0;
+	int zs = 0;
 	bool saveGrid = false;
 	bool update = false;
 
@@ -322,7 +297,7 @@ bool CWeb::global(json::Object*com) {
 				zzz.push_back(v.ToDouble());
 			}
 		}
-		nZ = static_cast<int>(zzz.size());
+		zs = static_cast<int>(zzz.size());
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CWeb::global: Missing required Z Array.");
@@ -351,7 +326,8 @@ bool CWeb::global(json::Object*com) {
 	}
 
 	// init, note global doesn't use nRow or nCol
-	initialize(name, thresh, detect, nucleate, 0, 0, update, pTrv1, pTrv2);
+	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update, pTrv1,
+				pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -359,112 +335,19 @@ bool CWeb::global(json::Object*com) {
 	// Generate eligible station list
 	genSiteList();
 
-	// create the 6 geographic vertices defining
-	// an octahedron corresponds with the globe
-	vVert.clear();
+	// calculate the number of nodes from the desired resolution
+	// This function was empirically determined via using different
+	// numNode values and computing the average resolution from a node to
+	// the nearest other 6 nodes
+	int numNodes = 5.0E8 * std::pow(dResolution, -1.965);
 
-	std::pair<double, double> vert1 = { 90.0, 0.0 };
-	vVert.push_back(vert1);
-
-	std::pair<double, double> vert2 = { 0.0, 0.0 };
-	vVert.push_back(vert2);
-
-	std::pair<double, double> vert3 = { 0.0, 90.0 };
-	vVert.push_back(vert3);
-
-	std::pair<double, double> vert4 = { 0.0, 180.0 };
-	vVert.push_back(vert4);
-
-	std::pair<double, double> vert5 = { 0.0, 270.0 };
-	vVert.push_back(vert5);
-
-	std::pair<double, double> vert6 = { -90.0, 0.0 };
-	vVert.push_back(vert6);
-
-	// create the 8 equilateral triangle faces of the
-	// initial octahedron
-	vFace.clear();
-	vFace.push_back(std::make_tuple(0, 1, 2));
-	vFace.push_back(std::make_tuple(0, 2, 3));
-	vFace.push_back(std::make_tuple(0, 3, 4));
-	vFace.push_back(std::make_tuple(0, 4, 1));
-	vFace.push_back(std::make_tuple(5, 2, 1));
-	vFace.push_back(std::make_tuple(5, 3, 2));
-	vFace.push_back(std::make_tuple(5, 4, 3));
-	vFace.push_back(std::make_tuple(5, 1, 4));
-
-	// initialize face vector index and size
-	int nface = 0;
-
-	// subdivide the 8 equilateral triangle faces of the octahedron to
-	// create a vector of equally spaced vertices
-	// Perform 7 iterations to get a nominal vertex
-	// spacing of roughly 100km.
-	// NOTE: Grid density HARDCODED, the provided node resolution
-	// has no effect on how dense this grid ends up
-	for (int iIterate = 0; iIterate < 7; iIterate++) {
-		// initialize distance bounds
-		vDistLo = 100000.0;
-		vDistHi = -100000.0;
-
-		// setup face vector index and size
-		// for this loop iteration
-		int iface0 = nface;
-		nface = vFace.size();
-
-		// subdivide all the triangles for this loop
-		// starting from the last face from the previous loop
-		for (int iface = iface0; iface < nface; iface++) {
-			subdivide(vFace.at(iface));
-		}
-
-		// log the insanity
-		snprintf(sLog, sizeof(sLog),
-					"CWeb::global: nVert:%d; DistRange:(%.2f %.2f);",
-					static_cast<int>(vVert.size()), vDistLo, vDistHi);
-		glassutil::CLogit::log(sLog);
+	// should have an odd number of nodes (see paper named below)
+	if ((numNodes % 2) == 0) {
+		numNodes += 1;
 	}
 
-	// sort vertices by latitude
-	sort(vVert.begin(), vVert.end(), sortVert);
-
-	// Convert the vertices to detection nodes
-	// we only need one vertex for each face for a node, the rest are
-	// effectively duplicates
-	// construct temporary vector for vertices
-	std::vector<std::pair<double, double>> temp;
-
-	// init temp vector by copying first vertex from vVert
-	vert1 = vVert.at(0);
-	temp.push_back(vert1);
-
-	// for every vertex in vVert
-	for (int ivert = 1; ivert < vVert.size(); ivert++) {
-		// get the next vertex
-		vert2 = vVert.at(ivert);
-
-		// if the second vertex is far enough apart in
-		// degrees of latitude to represent a unique
-		// node, add to temporary vector
-		if (fabs(vert2.first - vert1.first) > 0.05) {
-			temp.push_back(vert2);
-			vert1 = vert2;
-		} else {
-			// if the second vertex is far enough apart in
-			// degrees of longitude to represent a unique
-			// node, add to temporary vector add to temporary vector
-			if (fabs(vert2.second - vert1.second) > 0.05) {
-				temp.push_back(vert2);
-				vert1 = vert2;
-			}
-		}
-	}
-
-	// save the reduced vertext vector
-	vVert = temp;
-
-	snprintf(sLog, sizeof(sLog), "CWeb::global: Final nVert:%d;",
-				static_cast<int>(vVert.size()));
+	snprintf(sLog, sizeof(sLog), "CWeb::global: Calculated numNodes:%d;",
+				numNodes);
 	glassutil::CLogit::log(sLog);
 
 	// create / open gridfile for saving
@@ -481,43 +364,52 @@ bool CWeb::global(json::Object*com) {
 					<< "\n";
 	}
 
-	// Generate global grid
-	std::shared_ptr<CNode> node;
+	// Generate equally spaced grid of nodes over the globe (more or less)
+	// Follows Paper (Gonzolez, 2010) Measurement of Areas on a Sphere Using
+	// Fibonacci and Latitude Longitude Lattices
+	// std::vector<std::pair<double, double>> vVert;
 	int iNodeCount = 0;
+	int numSamples = (numNodes - 1) / 2;
+	double fibRatio = (1 + std::sqrt(5.0)) / 2.0;  // AKA golden ratio
 
-	// for each vertex
-	for (auto p : vVert) {
-		double lat = p.first;
-		double lon = p.second;
+	for (int i = (-1 * numSamples); i <= numSamples; i++) {
+		double aLat = std::asin((2 * i) / ((2.0 * numSamples) + 1))
+				* (180.0 / PI);
+		double aLon = fmod(i, fibRatio) * (360.0 / fibRatio);
 
+		// longitude bounds check
+		if (aLon < -180.0) {
+			aLon += 360.0;
+		}
+		if (aLon > 180.0) {
+			aLon -= 360.0;
+		}
+
+		// lock the site list while adding a node
 		std::lock_guard<std::mutex> guard(vSiteMutex);
 
 		// sort site list for this vertex
-		sortSiteList(lat, lon);
+		sortSiteList(aLat, aLon);
 
 		// for each depth
 		for (auto z : zzz) {
 			// create node
-			// NOTE: The resolution used to create each node is NOT the actual
-			// resolution of the global grid, but the one provided in the
-			// configuration. Caryl says that a provided resolution that is
-			// significantly larger than the grid resolution will cause the
-			// global grid to start missing events
-			node = genNode(lat, lon, z, resol);
+			std::shared_ptr<CNode> node = genNode(aLat, aLon, z, dResolution);
 
 			// if we got a valid node, add it
 			if (addNode(node) == true) {
 				iNodeCount++;
-			}
 
-			// write node to grid file
-			if (saveGrid) {
-				outfile << sName << "," << node->sPid << ","
-						<< std::to_string(lat) << "," << std::to_string(lon)
-						<< "," << std::to_string(z) << "\n";
+				// write node to grid file
+				if (saveGrid) {
+					outfile << sName << "," << node->sPid << ","
+							<< std::to_string(aLat) << ","
+							<< std::to_string(aLon) << "," << std::to_string(z)
+							<< "\n";
 
-				// write to station file
-				outstafile << node->getSitesString();
+					// write to station file
+					outstafile << node->getSitesString();
+				}
 			}
 		}
 	}
@@ -542,7 +434,7 @@ bool CWeb::global(json::Object*com) {
 			"CWeb::global sName:%s Phase(s):%s; nZ:%d; resol:%.2f; nDetect:%d;"
 			" nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
 			" vSitesFilter:%d; iNodeCount:%d;",
-			sName.c_str(), phases.c_str(), nZ, resol, nDetect, nNucleate,
+			sName.c_str(), phases.c_str(), nZ, dResolution, nDetect, nNucleate,
 			dThresh, static_cast<int>(vNetFilter.size()),
 			static_cast<int>(vSitesFilter.size()), iNodeCount);
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
@@ -562,28 +454,28 @@ bool CWeb::grid(json::Object *com) {
 		return (false);
 	}
 
-	// check pGlass
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: NULL glass pointer.");
-		return (false);
-	}
-
 	char sLog[1024];
 
 	// grid definition variables and defaults
 	std::string name = "Nemo";
-	int detect = pGlass->nDetect;
-	int nucleate = pGlass->nNucleate;
-	double thresh = pGlass->dThresh;
+	int detect = 20;
+	int nucleate = 7;
+	double thresh = 2.0;
+
+	// check pGlass
+	if (pGlass != NULL) {
+		detect = pGlass->nDetect;
+		nucleate = pGlass->nNucleate;
+		thresh = pGlass->dThresh;
+	}
+
 	double resol = 0;
 	double lat = 0;
 	double lon = 0;
-	std::vector<double> zzz;
 	int rows = 0;
 	int cols = 0;
-	int nZ = 0;
-	tOrg = 0.0;
+	std::vector<double> zzz;
+	int zs = 0;
 	bool saveGrid = false;
 	bool update = false;
 
@@ -672,7 +564,7 @@ bool CWeb::grid(json::Object *com) {
 				zzz.push_back(v.ToDouble());
 			}
 		}
-		nZ = static_cast<int>(zzz.size());
+		zs = static_cast<int>(zzz.size());
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CWeb::grid: Missing required Z Array.");
@@ -705,19 +597,6 @@ bool CWeb::grid(json::Object *com) {
 		saveGrid = (*com)["SaveGrid"].ToBool();
 	}
 
-	// An integer containing an origin time used for testing detection grids
-	if ((com->HasKey("Org"))
-			&& ((*com)["Org"].GetType() == json::ValueType::StringVal)) {
-		std::string torg = (*com)["Org"].ToString();
-
-		// convert time
-		glassutil::CDate dt(torg);
-		tOrg = dt.time();
-
-		snprintf(sLog, sizeof(sLog), "HYP: %s %.2f", torg.c_str(), tOrg);
-		glassutil::CLogit::log(sLog);
-	}
-
 	// set whether to update weblists
 	if ((com->HasKey("Update"))
 			&& ((*com)["Update"].GetType() == json::ValueType::BoolVal)) {
@@ -734,8 +613,8 @@ bool CWeb::grid(json::Object *com) {
 	}
 
 	// initialize
-	initialize(name, thresh, detect, nucleate, rows, cols, update, pTrv1,
-				pTrv2);
+	initialize(name, thresh, detect, nucleate, resol, rows, cols, zs, update,
+				pTrv1, pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -810,7 +689,8 @@ bool CWeb::grid(json::Object *com) {
 			// for each depth at this grid point
 			for (auto z : zzz) {
 				// generate this node
-				std::shared_ptr<CNode> node = genNode(latrow, loncol, z, resol);
+				std::shared_ptr<CNode> node = genNode(latrow, loncol, z,
+														dResolution);
 
 				// if we got a valid node, add it
 				if (addNode(node) == true) {
@@ -853,8 +733,9 @@ bool CWeb::grid(json::Object *com) {
 				" vSitesFilter:%d; iNodeCount:%d;",
 				sName.c_str(), phases.c_str(), lat0,
 				lat0 - (nRow - 1) * latDistance, lon0,
-				lon0 + (nCol - 1) * lonDistance, nRow, nCol, nZ, resol, nDetect,
-				nNucleate, dThresh, static_cast<int>(vNetFilter.size()),
+				lon0 + (nCol - 1) * lonDistance, nRow, nCol, nZ, dResolution,
+				nDetect, nNucleate, dThresh,
+				static_cast<int>(vNetFilter.size()),
 				static_cast<int>(vSitesFilter.size()), iNodeCount);
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
 
@@ -874,22 +755,23 @@ bool CWeb::grid_explicit(json::Object *com) {
 				"CWeb::grid_explicit: NULL json configuration.");
 		return (false);
 	}
-	// check pGlass
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid_explicit: NULL glass pointer.");
-		return (false);
-	}
 
 	char sLog[1024];
 
 	// grid definition variables and defaults
 	std::string name = "Nemo";
-	int detect = pGlass->nDetect;
-	int nucleate = pGlass->nNucleate;
-	double thresh = pGlass->dThresh;
+	int detect = 20;
+	int nucleate = 7;
+	double thresh = 2.0;
+
+	// check pGlass
+	if (pGlass != NULL) {
+		detect = pGlass->nDetect;
+		nucleate = pGlass->nNucleate;
+		thresh = pGlass->dThresh;
+	}
+
 	int nN = 0;
-	tOrg = 0.0;
 	bool saveGrid = false;
 	bool update = false;
 	std::vector<std::vector<double>> nodes;
@@ -1017,21 +899,9 @@ bool CWeb::grid_explicit(json::Object *com) {
 						+ std::to_string(update));
 	}
 
-	// An integer containing an origin time used for testing detection grids
-	if ((com->HasKey("Org"))
-			&& ((*com)["Org"].GetType() == json::ValueType::StringVal)) {
-		std::string torg = (*com)["Org"].ToString();
-
-		// convert time
-		glassutil::CDate dt(torg);
-		tOrg = dt.time();
-
-		snprintf(sLog, sizeof(sLog), "HYP: %s %.2f", torg.c_str(), tOrg);
-		glassutil::CLogit::log(sLog);
-	}
-
 	// initialize
-	initialize(name, thresh, detect, nucleate, 0., 0., update, pTrv1, pTrv2);
+	initialize(name, thresh, detect, nucleate, resol, 0., 0., 0., update, pTrv1,
+				pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -1108,123 +978,8 @@ bool CWeb::grid_explicit(json::Object *com) {
 	return (true);
 }
 
-// --------------------------------------------------------Subdivide
-void CWeb::subdivide(std::tuple<int, int, int> face) {
-	// Given an equilateral triangle defined by 3 faces (edges)
-	// Create a point at the midpoint of each of the three faces
-	// (edges)
-	// Connect the points through the inside of the triangle to
-	// create 3 more faces (edges),
-	// Use the resulting 6 faces (edges) to creating 4 smaller
-	// equilateral triangles contained within the original
-	// triangle
-	// Store those 4 triangles in vFace
-	//
-	// In this implementation, each face (edge) is a line
-	// defined by a pair of geographic (latitude, longitude)
-	// vertices that are indexed by a face (edge) id.
-	// The geographic vertices are stored in the vVert vector
-	// as std::pairs
-	// The equilateral triangle face indexes are stored in
-	// the vFace vector as std::tuples
-
-	// get the 3 indexes of the faces (edges) of the existing
-	// triangle
-	int n0 = std::get<0>(face);
-	int n1 = std::get<1>(face);
-	int n2 = std::get<2>(face);
-
-	// compute the indexes of the 3 new faces (edges) inside the
-	// existing triangle
-	int n3 = vVert.size();
-	int n4 = n3 + 1;
-	int n5 = n4 + 1;
-
-	// generate the midpoints of each face (edge)
-	// by using the face indexes to look up the geographic
-	// vertices calling Bisect.
-	// Add each resulting new geographic vertex to vVert
-	vVert.push_back(bisect(vVert.at(n0), vVert.at(n1)));
-	vVert.push_back(bisect(vVert.at(n1), vVert.at(n2)));
-	vVert.push_back(bisect(vVert.at(n2), vVert.at(n0)));
-
-	// generate the 4 new triangles from the 6 face (edge)
-	// indexes.
-	// Add each new face (edge) to vFace
-	vFace.push_back(std::make_tuple(n0, n3, n5));
-	vFace.push_back(std::make_tuple(n3, n1, n4));
-	vFace.push_back(std::make_tuple(n5, n4, n2));
-	vFace.push_back(std::make_tuple(n3, n4, n5));
-}
-
-// ---------------------------------------------------------Bisect
-std::pair<double, double> CWeb::bisect(std::pair<double, double> geo1,
-										std::pair<double, double> geo2) {
-	double xy;
-	double dist;
-
-	// compute the (x, y, z) of the first geographic point
-	xy = cos(DEG2RAD * geo1.first);
-	double x1 = xy * cos(DEG2RAD * geo1.second);
-	double y1 = xy * sin(DEG2RAD * geo1.second);
-	double z1 = sin(DEG2RAD * geo1.first);
-
-	// compute the (x, y, z) of the second geographic point
-	xy = cos(DEG2RAD * geo2.first);
-	double x2 = xy * cos(DEG2RAD * geo2.second);
-	double y2 = xy * sin(DEG2RAD * geo2.second);
-	double z2 = sin(DEG2RAD * geo2.first);
-
-	// compute the midpoint of the face
-	double x = 0.5 * (x1 + x2);
-	double y = 0.5 * (y1 + y2);
-	double z = 0.5 * (z1 + z2);
-
-	// compute the length of the longest diagonal of the face
-	double r = sqrt((x * x) + (y * y) + (z * z));
-
-	// divide the midpoint by the longest diagonal of the face
-	x /= r;
-	y /= r;
-	z /= r;
-
-	// compute the distance between the first point
-	// and the midpoint, updating the distance bounds	as needed
-	dist = 40000.0 * acos(x * x1 + y * y1 + z * z1) / TWOPI;
-	if (dist < vDistLo) {
-		vDistLo = dist;
-	}
-	if (dist > vDistHi) {
-		vDistHi = dist;
-	}
-
-	// compute the distance between the second point
-	// and the midpoint, updating the distance bounds	as needed
-	dist = 40000.0 * acos(x * x2 + y * y2 + z * z2) / TWOPI;
-	if (dist < vDistLo) {
-		vDistLo = dist;
-	}
-	if (dist > vDistHi) {
-		vDistHi = dist;
-	}
-
-	// convert the midpoint to latitude and longitude
-	double lat = RAD2DEG * asin(z);
-	double lon = RAD2DEG * atan2(y, x);
-
-	// return the new midpoint
-	return {lat, lon};
-}
-
 // ---------------------------------------------------------loadTravelTimes
 bool CWeb::loadTravelTimes(json::Object *com) {
-	// nullchecks
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::loadTravelTimes: NULL pGlass.");
-		return (false);
-	}
-
 	// check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -1237,7 +992,7 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		pTrv1.reset();
 
 		// use overall glass default if available
-		if (pGlass->pTrvDefault != NULL) {
+		if ((pGlass != NULL) && (pGlass->pTrvDefault != NULL)) {
 			pTrv1 = pGlass->pTrvDefault;
 		} else {
 			// create new traveltime
@@ -1290,7 +1045,14 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		}
 
 		// set up the first phase travel time
-		pTrv1->setup(phs, file);
+		if (pTrv1->setup(phs, file) == false) {
+			glassutil::CLogit::log(
+								glassutil::log_level::error,
+								"CWeb::loadTravelTimes: Failed to load file "
+								"location " + file + " for first phase: "
+								+ phs);
+			return(false);
+		}
 
 	} else {
 		// if no first phase, use default from glass
@@ -1348,7 +1110,14 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		}
 
 		// set up the second phase travel time
-		pTrv2->setup(phs, file);
+		if (pTrv2->setup(phs, file) == false) {
+			glassutil::CLogit::log(
+								glassutil::log_level::error,
+								"CWeb::loadTravelTimes: Failed to load file "
+								"location " + file + " for second phase: "
+								+ phs);
+			return(false);
+		}
 	} else {
 		// no second phase
 		// clean out old phase if any
@@ -1465,15 +1234,15 @@ bool CWeb::isSiteAllowed(std::shared_ptr<CSite> site) {
 // ---------------------------------------------------------genSiteList
 bool CWeb::genSiteList() {
 	// nullchecks
-	// check pGlass
-	if (pGlass == NULL) {
+	// check pSiteList
+	if (pSiteList == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::genSiteList: NULL glass pointer.");
+								"CWeb::genSiteList: NULL pSiteList pointer.");
 		return (false);
 	}
 
 	// get the total number sites in glass's site list
-	int nsite = pGlass->pSiteList->getSiteCount();
+	int nsite = pSiteList->getSiteCount();
 
 	// don't bother continuing if we have no sites
 	if (nsite <= 0) {
@@ -1495,7 +1264,7 @@ bool CWeb::genSiteList() {
 	// for each site
 	for (int isite = 0; isite < nsite; isite++) {
 		// get site from the overall site list
-		std::shared_ptr<CSite> site = pGlass->pSiteList->getSite(isite);
+		std::shared_ptr<CSite> site = pSiteList->getSite(isite);
 
 		if (site->bUse == false) {
 			continue;
@@ -2037,5 +1806,23 @@ void CWeb::jobSleep() {
 	if (m_bRunJobLoop == true) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
 	}
+}
+
+bool CWeb::hasSite(std::shared_ptr<CSite> site) {
+	//  nullcheck
+	if (site == NULL) {
+		return (false);
+	}
+
+	// for each node in web
+	for (auto &node : vNode) {
+		// check to see if we have this site
+		if (node->getSite(site->sScnl) != NULL) {
+			return(true);
+		}
+	}
+
+	// site not found
+	return(false);
 }
 }  // namespace glasscore

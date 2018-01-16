@@ -23,6 +23,7 @@ namespace glasscore {
 // forward declarations
 class CGlass;
 class CSite;
+class CSiteList;
 class CNode;
 class CPick;
 
@@ -40,6 +41,8 @@ class CWeb {
 	 * \brief CWeb constructor
 	 *
 	 * The constructor for the CWeb class.
+	 * \param createBackgroundThread - A boolean flag indicating whether
+	 * to create a background thread for web updates.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
@@ -60,23 +63,27 @@ class CWeb {
 	 * link with each node in the web.
 	 * \param numNucleate - An integer value containing the number of sites
 	 * required for the web to nucleate an event.
+	 * \param resolution - A double value containing the desired resolution
+	 * for this web
 	 * \param numRows - An integer value containing the number of rows in this
 	 * web.
-	 * \param numCols - An integer value containing the nuber of columns in this
+	 * \param numCols - An integer value containing the number of columns in
+	 * this web.
+	 * \param numZ - An integer value containing the number of depths in this
 	 * web.
 	 * \param update - A boolean flag indicating whether this web is allowed to
 	 * update
-	 * \param firstTrav - A shared pointer to the first CTravelTime object to use for
-	 * travel time lookups.
-	 * \param secondTrav - A shared pointer to the second CTravelTime object to use for
-	 * travel time lookups.
+	 * \param firstTrav - A shared pointer to the first CTravelTime object to
+	 * use for travel time lookups.
+	 * \param secondTrav - A shared pointer to the second CTravelTime object to
+	 * use for travel time lookups.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
 	 * seconds between status checks. -1 to disable status checks.  Default 60.
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
-			int numRows, int numCols, bool update,
+			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			bool createBackgroundThread = true, int sleepTime = 100,
@@ -125,20 +132,25 @@ class CWeb {
 	 * link with each node in the web.
 	 * \param numNucleate - An integer value containing the number of sites
 	 * required for the web to nucleate an event.
+	 * \param resolution - A double value containing the desired resolution
+	 * for this web
 	 * \param numRows - An integer value containing the number of rows in this
 	 * web.
-	 * \param numCols - An integer value containing the nuber of columns in this
+	 * \param numCols - An integer value containing the number of columns in
+	 * this web.
+	 * \param numZ - An integer value containing the number of depths in this
 	 * web.
 	 * \param update - A boolean flag indicating whether this web is allowed to
 	 * update
-	 * \param firstTrav - A shared pointer to the first CTravelTime object to use for
-	 * travel time lookups.
-	 * \param secondTrav - A shared pointer to the second CTravelTime object to use for
-	 * travel time lookups.
+	 * \param firstTrav - A shared pointer to the first CTravelTime object to
+	 * use for travel time lookups.
+	 * \param secondTrav - A shared pointer to the second CTravelTime object to
+	 * use for travel time lookups.
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
-					int numNucleate, int numRows, int numCols, bool update,
+					int numNucleate, int resolution, int numRows, int numCols,
+					int numZ, bool update,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav);
 
@@ -211,37 +223,6 @@ class CWeb {
 	bool genSiteList();
 
 	/**
-	 * \brief Subdivide face into 4 equalateral triangles
-	 *
-	 * This function is used repeatedly to Subdivide each
-	 * face of the initial octahedron to 4 equal spaces.
-	 * The new faces are added to vFace, and the new
-	 * nodes are appended to vNode;
-	 *
-	 * \param face - A tuple<int, int, int> containing the face to subdivide
-	 * \return Returns void
-	 */
-	void subdivide(std::tuple<int, int, int> face);
-
-	/**
-	 * \brief Bisect angle between two points on earth
-	 *
-	 * The goal here is to take two lat,lon pairs and
-	 * find the midpoint of the shortest great circle
-	 * joining them. This function is used by Global
-	 * to tesselate an octahedron
-	 *
-	 * \param geo1 A pair<double, double> representing the first latitude and
-	 * longitude
-	 * \param geo2 A pair<double, double> representing the second latitude and
-	 * longitude
-	 * \return A pair<double, double> representing the latitude and longitude of
-	 * the midpoint
-	 */
-	std::pair<double, double> bisect(std::pair<double, double> geo1,
-										std::pair<double, double> geo2);
-
-	/**
 	 * \brief Sort site list
 	 *
 	 * This function sorts a list of sites stored in vSite in increasing
@@ -293,7 +274,7 @@ class CWeb {
 	std::shared_ptr<CNode> genNodeSites(std::shared_ptr<CNode> node);
 
 	/**
-	 * \brief Add node to this site
+	 * \brief Add site to this web
 	 * This function adds the given site to the list of nodes linked to this
 	 * web and restructure node site lists
 	 *
@@ -302,14 +283,23 @@ class CWeb {
 	void addSite(std::shared_ptr<CSite> site);
 
 	/**
-	 * \brief Remove pick from this site
-	 * This function removes the given node from the list of nodes linked to
-	 * this web and restructure node site lists
+	 * \brief Remove site from this web
+	 * This function removes the given site to the list of nodes linked to this
+	 * web and restructure node site lists
 	 *
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * remove
 	 */
 	void remSite(std::shared_ptr<CSite> site);
+
+	/**
+	 * \brief Check if this web has a site
+	 * This function checks to see if the given site is used for this web
+	 *
+	 * \param site - A shared pointer to a CSite object containing the site to
+	 * check
+	 */
+	bool hasSite(std::shared_ptr<CSite> site);
 
 	/**
 	 * \brief Check to see if site allowed
@@ -321,6 +311,9 @@ class CWeb {
 	 */
 	bool isSiteAllowed(std::shared_ptr<CSite> site);
 
+	/**
+	 * \brief Background thread work loop for this web
+	 */
 	void workLoop();
 
 	/**
@@ -348,9 +341,14 @@ class CWeb {
 	// Local Attributes
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
-	 * get sites (stations), encode/decode time, and get debug flags
+	 * get default values, encode/decode time, and get debug flags
 	 */
 	CGlass *pGlass;
+
+	/**
+	 * \brief A pointer to the CSiteList class, used get sites (stations)
+	 */
+	CSiteList *pSiteList;
 
 	/**
 	 * \brief A std::vector containing the network names to be included
@@ -399,6 +397,12 @@ class CWeb {
 	int nCol;
 
 	/**
+	 * \brief A integer containing the number of depths in a detection grid
+	 * generated by the Grid() command
+	 */
+	int nZ;
+
+	/**
 	 * \brief A double value containing the number of closest stations to use
 	 * when generating a node for this detection array. This number overrides
 	 * the default Glass parameter if it is provided
@@ -420,38 +424,10 @@ class CWeb {
 	double dThresh;
 
 	/**
-	 * \brief An integer containing an origin time used for testing detection
-	 *  grids generated by the Grid() function
+	 * \brief A double value containing the inter-node resolution for this
+	 * detection array
 	 */
-	double tOrg;
-
-	/**
-	 * \brief A vector of pair<double, double> representing the geographic
-	 * vertices generated during construction of a Global web via the
-	 * tesselation of an octahedron algorithm
-	 */
-	std::vector<std::pair<double, double>> vVert;
-
-	/**
-	 * \brief A vector of tuple<int, int, int> representing the triangle faces
-	 * created during construction of a Global web via the tesselation of an
-	 * octahedron algorithm
-	 */
-	std::vector<std::tuple<int, int, int>> vFace;
-
-	/**
-	 * \brief A double that stores the effective smallest distance between
-	 * geographic vertices generated during construction of a Global web via the
-	 * tesselation of an octahedron algorithm
-	 */
-	double vDistLo;
-
-	/**
-	 * \brief A double that stores the effective largest distance between
-	 * geographic vertices generated during construction of a Global web via the
-	 * tesselation of an octahedron algorithm
-	 */
-	double vDistHi;
+	double dResolution;
 
 	/**
 	 * \brief A boolean flag that stores whether to update this web when a
@@ -530,6 +506,10 @@ class CWeb {
 	 */
 	time_t tLastStatusCheck;
 
+	/**
+	 * \brief boolean flag used to indicate whether to use a background thread
+	 * for updates
+	 */
 	bool m_bUseBackgroundThread;
 
 	/**
