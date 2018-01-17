@@ -72,33 +72,43 @@ An example `glass_init.d` configuration file:
 ```
 
 ## General Configuration
-These configuration parameters define overall glasscore variables.
+These configuration parameters define overall glasscore variables. All values
+should be greater than zero.
 
 * **HypoMax** - The maximum size of the detection hypocenter list. Once the
 maximum size is reached, glass will start expiring the oldest detections from
-this list as new detections are made.
+this list as new detections are made. This value is used for computational
+performance tuning. Too small a value can impact glass association performance.
 * **PickMax** - The maximum size of the input pick list. Once the maximum size
 is reached, glass will start expiring the oldest picks from this list as new
-picks are received.
+picks are received. This value is used for computational performance tuning.
+Too small a value can impact glass detection performance.
 * **SitePickMax** - The maximum size of the per site pick list. This value is
-used for computational performance tuning.
+used for computational performance tuning. Too small a value can impact glass
+detection performance.
 * **CorrelationMax** - The maximum size of the input correlation list. Once the
 maximum size is reached, glass will start expiring the oldest correlations from
-this list as new correlations are received.
+this list as new correlations are received. This value is used for computational
+performance tuning.
 * **Track** - A mostly depreciated flag controlling whether tracking debug
 statements are logged.
 * **PickDuplicateWindow** - The time window (+/-) within which to consider a
 pick a duplicate of an existing pick from the same station.
 * **NumNucleationThreads** - The number of nucleation/detection threads to run
-in glass.
+in glass. This value should always be at least one. The upper limit depends
+on local machine capabilities.
 * **NumHypoThreads** - The number of hypocenter location threads to run in
-glass.  In general this value should be equal to **NumNucleationThreads**.
+glass.  In general this value should be equal to **NumNucleationThreads** to
+avoid race conditions.
 * **WebBackgroundUpdate** - A flag indicating whether to process station updates
-to grids on a background thread.
+to grids on a background thread. If station updates are not processed on a
+background thread, glass will halt while the updates are processed.
 
 ## Nucleation Configuration
 These configuration parameters define and control glasscore nucleation and
-association.
+association. All values should be greater than zero, but exact limits are still
+being determined.
+
 * **Thresh** - The default viability threshold needed to exceed for a nucleation
 to be successful. This value can be overridden in a detection grid (Web) if
 provided as part of a specific grid configuration.
@@ -128,9 +138,9 @@ hypocenter.
 * **CorrelationCancelAge** - The minimum age of a correlations before allowing a
 hypocenter to cancel.
 * **ReportThresh** The viability threshold needed to exceed to report a
-hypocenter.
+hypocenter. Defaults to **Thresh**.
 * **ReportCut** The default number of data that need to be associated to report
-a hypocenter.
+a hypocenter. Defaluts to **Nucleate**.
 
 ### DefaultNucleationPhase
 This parameter defines the default nucleation phase for glass. This value can be
@@ -183,7 +193,7 @@ file for evaluation.
 
 ## Regional / Local Grid
 This is a detection grid designed to cover some regional or local area of
-interest, with the provided depth layers. 
+interest, with the provided depth layers.
 ### Example:
 ```json
 {
