@@ -39,6 +39,7 @@ TEST(WebListTest, Construction) {
 	delete (testWebList);
 }
 
+// tests adding a web to the web list
 TEST(WebListTest, AddWeb) {
 	glassutil::CLogit::disable();
 
@@ -87,6 +88,7 @@ TEST(WebListTest, AddWeb) {
 	delete (testWebList);
 }
 
+// tests removing a web from the web list
 TEST(WebListTest, RemWeb) {
 	glassutil::CLogit::disable();
 
@@ -141,6 +143,7 @@ TEST(WebListTest, RemWeb) {
 	delete (testWebList);
 }
 
+// test various site operations (add, remove) with the web list
 TEST(WebListTest, SiteOperations) {
 	glassutil::CLogit::disable();
 
@@ -224,6 +227,7 @@ TEST(WebListTest, SiteOperations) {
 	delete (testWebList);
 }
 
+// Tests various falure cases for weblist
 TEST(WebListTest, FailTests) {
 	glassutil::CLogit::disable();
 

@@ -72,7 +72,7 @@
 #define ADDSITE "{\"Elevation\":302.000000,\"Enable\":true,\"InformationRequestor\":{\"AgencyID\":\"US\",\"Author\":\"station-lookup-app\"},\"Latitude\":35.656729,\"Longitude\":-97.609276,\"Quality\":1.000000,\"Site\":{\"Channel\":\"HHZ\",\"Location\":\"--\",\"Network\":\"OK\",\"Station\":\"BCOK\"},\"Type\":\"StationInfo\",\"UseForTeleseismic\":true}" // NOLINT
 #define REMOVESITE "{\"Elevation\":378.000000,\"Enable\":false,\"InformationRequestor\":{\"AgencyID\":\"US\",\"Author\":\"station-lookup-app\"},\"Latitude\":35.356842,\"Longitude\":-97.656074,\"Quality\":1.000000,\"Site\":{\"Channel\":\"HHZ\",\"Location\":\"--\",\"Network\":\"OK\",\"Station\":\"CCOK\"},\"Type\":\"StationInfo\",\"UseForTeleseismic\":true}" // NOLINT
 
-// tests to see if the node can be constructed
+// tests to see if the web can be constructed
 TEST(WebTest, Construction) {
 	glassutil::CLogit::disable();
 
@@ -183,7 +183,7 @@ TEST(WebTest, Construction) {
 	delete (testWeb2);
 }
 
-// tests to see if the node can be initialized
+// tests to see if the web can be initialized
 TEST(WebTest, Initialize) {
 	glassutil::CLogit::disable();
 
@@ -240,6 +240,7 @@ TEST(WebTest, Initialize) {
 	ASSERT_TRUE(testWeb.statusCheck())<< "status check";
 }
 
+// test constructing a global grid
 TEST(WebTest, GlobalTest) {
 	glassutil::CLogit::disable();
 
@@ -328,6 +329,8 @@ TEST(WebTest, GlobalTest) {
 	delete (testSiteList);
 }
 
+// test creating a regional/local grid
+// NOTE: Need to check that grid boundries are as expected.
 TEST(WebTest, GridTest) {
 	glassutil::CLogit::disable();
 
@@ -416,6 +419,7 @@ TEST(WebTest, GridTest) {
 	delete (testSiteList);
 }
 
+// test creating an explcit grid
 TEST(WebTest, GridExplicitTest) {
 	glassutil::CLogit::disable();
 
@@ -504,6 +508,7 @@ TEST(WebTest, GridExplicitTest) {
 	delete (testSiteList);
 }
 
+// test adding a station to a grid
 TEST(WebTest, AddTest) {
 	glassutil::CLogit::disable();
 
@@ -559,6 +564,7 @@ TEST(WebTest, AddTest) {
 	delete (testSiteList);
 }
 
+// test removing a station from a grid
 TEST(WebTest, RemoveTest) {
 	glassutil::CLogit::disable();
 
@@ -614,6 +620,7 @@ TEST(WebTest, RemoveTest) {
 	delete (testSiteList);
 }
 
+// test various failure cases for web
 TEST(WebTest, FailTests) {
 	glassutil::CLogit::disable();
 

@@ -42,7 +42,8 @@ class CWeb {
 	 *
 	 * The constructor for the CWeb class.
 	 * \param createBackgroundThread - A boolean flag indicating whether
-	 * to create a background thread for web updates.
+	 * to create a background thread for web updates. If set to false, glass will
+   * halt until the web update is completed. Default true.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
@@ -77,6 +78,9 @@ class CWeb {
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
 	 * use for travel time lookups.
+   * \param createBackgroundThread - A boolean flag indicating whether
+   * to create a background thread for web updates. If set to false, glass will
+   * halt until the web update is completed. Default true.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
