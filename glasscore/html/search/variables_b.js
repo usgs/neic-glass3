@@ -26,5 +26,6 @@ var searchData=
   ['nsitepickmax',['nSitePickMax',['../classglasscore_1_1CGlass.html#af844b7ff940316ca92d81dbc91dd37f9',1,'glasscore::CGlass::nSitePickMax()'],['../classglasscore_1_1CSite.html#ae5ec50df4c6594b56d847d7c4078a483',1,'glasscore::CSite::nSitePickMax()']]],
   ['ntrv',['nTrv',['../classtraveltime_1_1CTrav.html#af9e7e8121fa0dad455fda4534db92c83',1,'traveltime::CTrav::nTrv()'],['../classtraveltime_1_1CTTT.html#a9b26bf34ace2b93af8856e7b431e4d9f',1,'traveltime::CTTT::nTrv()']]],
   ['nwts',['nWts',['../classglasscore_1_1CHypo.html#ad521055a78ae45f846ab25b013fecf23',1,'glasscore::CHypo']]],
-  ['nx',['nX',['../classtraveltime_1_1CSpline.html#a9fa65e71ac8bc3dc5d8895b4abc48223',1,'traveltime::CSpline']]]
+  ['nx',['nX',['../classtraveltime_1_1CSpline.html#a9fa65e71ac8bc3dc5d8895b4abc48223',1,'traveltime::CSpline']]],
+  ['nz',['nZ',['../classglasscore_1_1CWeb.html#a79c2b3b40349e86c68628baf608e27ab',1,'glasscore::CWeb']]]
 ];

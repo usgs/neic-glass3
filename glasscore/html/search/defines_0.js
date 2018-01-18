@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['cgold',['CGOLD',['../Ray_8cpp.html#a84b6d4f75b738c61f98e4d28db6a8ad3',1,'Ray.cpp']]]
+  ['_5fuse_5fmath_5fdefines',['_USE_MATH_DEFINES',['../Web_8cpp.html#a525335710b53cb064ca56b936120431e',1,'Web.cpp']]]
 ];

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['itmax',['ITMAX',['../Ray_8cpp.html#a3641b6d4c21b7a852dbb32c2b693302e',1,'Ray.cpp']]]
+  ['glimit',['GLIMIT',['../Ray_8cpp.html#ab08072801a249ee2058194bb698c85a3',1,'Ray.cpp']]],
+  ['gold',['GOLD',['../Ray_8cpp.html#af468028083c9e52aa2c94ef3b9940450',1,'Ray.cpp']]]
 ];

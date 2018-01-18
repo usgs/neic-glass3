@@ -34,7 +34,7 @@ var searchData=
   ['drad',['dRad',['../classglassutil_1_1CGeo.html#acc0a924d488be815d0a1ce1357b2ae73',1,'glassutil::CGeo']]],
   ['dreportthresh',['dReportThresh',['../classglasscore_1_1CGlass.html#ada98acf33aa7c9fe0a5a5a893a2fa6b8',1,'glasscore::CGlass']]],
   ['dres',['dRes',['../classglasscore_1_1CHypo.html#a4664713867a722ec83f274c023aa11d9',1,'glasscore::CHypo']]],
-  ['dresolution',['dResolution',['../classglasscore_1_1CNode.html#ad257bee316875483d374682342bdde31',1,'glasscore::CNode']]],
+  ['dresolution',['dResolution',['../classglasscore_1_1CNode.html#ad257bee316875483d374682342bdde31',1,'glasscore::CNode::dResolution()'],['../classglasscore_1_1CWeb.html#a573a15f0ac3f03da18b5e7e7043dab76',1,'glasscore::CWeb::dResolution()']]],
   ['dsig',['dSig',['../classglasscore_1_1CHypo.html#a5a247c494f04cb1ff7ac68e3fe737ea8',1,'glasscore::CHypo']]],
   ['dslopeinfinity',['dSlopeInfinity',['../classtraveltime_1_1CTimeWarp.html#a0ffe114e7136d92eb71e737572e2c203',1,'traveltime::CTimeWarp']]],
   ['dslopezero',['dSlopeZero',['../classtraveltime_1_1CTimeWarp.html#a628345c0feb264dbc83da9142822085d',1,'traveltime::CTimeWarp']]],

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['deg2rad',['DEG2RAD',['../Geo_8h.html#af7e8592d0a634bd3642e9fd508ea8022',1,'Geo.h']]]
+  ['cgold',['CGOLD',['../Ray_8cpp.html#a84b6d4f75b738c61f98e4d28db6a8ad3',1,'Ray.cpp']]]
 ];

@@ -26,10 +26,8 @@ var searchData=
   ['sortsitelink',['sortSiteLink',['../namespaceglasscore.html#a56bff5f58e3643a05ef7477565ab155e',1,'glasscore']]],
   ['sortsitelinks',['sortSiteLinks',['../classglasscore_1_1CNode.html#a6aad8c29153c1432dd6c0ed8a31b07d4',1,'glasscore::CNode']]],
   ['sortsitelist',['sortSiteList',['../classglasscore_1_1CWeb.html#a4fa1b8202c4092de4e7ea999634893df',1,'glasscore::CWeb']]],
-  ['sortvert',['sortVert',['../namespaceglasscore.html#a048685b21d8290d44520002149484dcc',1,'glasscore']]],
   ['split',['split',['../namespaceglasscore.html#abe9238c7b38c219ae835c674170aeb03',1,'glasscore::split(const std::string &amp;s, char delim, std::vector&lt; std::string &gt; &amp;elems)'],['../namespaceglasscore.html#a3a7096f407ae3eadadcc957efcd55674',1,'glasscore::split(const std::string &amp;s, char delim)']]],
   ['stats',['stats',['../classglasscore_1_1CHypo.html#ae93d70567ceeb7614f766d0d299a4ca2',1,'glasscore::CHypo']]],
   ['statuscheck',['statusCheck',['../classglasscore_1_1CGlass.html#a7ea55d662fafe7fb813a362173afb019',1,'glasscore::CGlass::statusCheck()'],['../classglasscore_1_1CHypoList.html#a95d646ad7a94b9547d312a0faeb79825',1,'glasscore::CHypoList::statusCheck()'],['../classglasscore_1_1CPickList.html#a7b0ba9737ea5646502f047e356b823bf',1,'glasscore::CPickList::statusCheck()'],['../classglasscore_1_1CWeb.html#a0069028c1a817a46e2f68b2ce929dafa',1,'glasscore::CWeb::statusCheck()'],['../classglasscore_1_1CWebList.html#a5ea58743f44735a666662e3a882b4d92',1,'glasscore::CWebList::statusCheck()']]],
-  ['subdivide',['subdivide',['../classglasscore_1_1CWeb.html#ac348aa8b12f3a6f26e16ffc3739cd54b',1,'glasscore::CWeb']]],
   ['summary',['summary',['../classglasscore_1_1CHypo.html#a4bdb60cfa7220f341ba6378a65df7bff',1,'glasscore::CHypo']]]
 ];

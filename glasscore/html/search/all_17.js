@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['y',['Y',['../classtraveltime_1_1CSpline.html#ace49e173d6e8202b34589dbdd4e0e37f',1,'traveltime::CSpline']]],
-  ['year',['year',['../classglassutil_1_1CDate.html#aa877b0f5c7335894ae7654607e0e0bab',1,'glassutil::CDate']]]
+  ['xbayes',['xBayes',['../classglasscore_1_1CHypo.html#aaa5773164b487f989a4e5d14ffffe532',1,'glasscore::CHypo']]],
+  ['xlat',['xLat',['../classglasscore_1_1CHypo.html#ad20e6b7b2d9f7ffeb58f9076bdf62ad9',1,'glasscore::CHypo']]],
+  ['xlon',['xLon',['../classglasscore_1_1CHypo.html#aa341f61032c005bbfdaa6f68904e0bcd',1,'glasscore::CHypo']]],
+  ['xorg',['xOrg',['../classglasscore_1_1CHypo.html#a884a9dfd6c3c87c149b2abccdf9a5e3f',1,'glasscore::CHypo']]],
+  ['xz',['xZ',['../classglasscore_1_1CHypo.html#a82f60b26f4ee5f46c34c860c924f252e',1,'glasscore::CHypo']]]
 ];

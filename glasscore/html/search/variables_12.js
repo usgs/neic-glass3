@@ -2,9 +2,6 @@ var searchData=
 [
   ['vcorr',['vCorr',['../classglasscore_1_1CHypo.html#aae3f7260830dc981cb8db16ece863014',1,'glasscore::CHypo']]],
   ['vcorrelation',['vCorrelation',['../classglasscore_1_1CCorrelationList.html#a99f5c529e73a00cfb2c3136087c4ada3',1,'glasscore::CCorrelationList']]],
-  ['vdisthi',['vDistHi',['../classglasscore_1_1CWeb.html#a48a7311dd343886cb239f3528d885e5b',1,'glasscore::CWeb']]],
-  ['vdistlo',['vDistLo',['../classglasscore_1_1CWeb.html#aaf0cd1d4fd410efd9c7433e17532922b',1,'glasscore::CWeb']]],
-  ['vface',['vFace',['../classglasscore_1_1CWeb.html#aa376bf8c1bb83f9354568a39e2552f6b',1,'glasscore::CWeb']]],
   ['vhypo',['vHypo',['../classglasscore_1_1CHypoList.html#ae43fd6fec716d6c7416898e1842f7870',1,'glasscore::CHypoList']]],
   ['vnetfilter',['vNetFilter',['../classglasscore_1_1CWeb.html#af8be766aa7097e1b7769443967a206de',1,'glasscore::CWeb']]],
   ['vnode',['vNode',['../classglasscore_1_1CWeb.html#a4e4fc3dc3211db6c5d3223a9482ba3ee',1,'glasscore::CWeb']]],
@@ -17,7 +14,6 @@ var searchData=
   ['vsitesfilter',['vSitesFilter',['../classglasscore_1_1CWeb.html#aa6b6eb1276d1de7559790532569a11b0',1,'glasscore::CWeb']]],
   ['vtrigger',['vTrigger',['../classglasscore_1_1CSite.html#a845731f3301a1113cbb43102d6b5735f',1,'glasscore::CSite']]],
   ['vtriggermutex',['vTriggerMutex',['../classglasscore_1_1CSite.html#a8532f5409bdb8ba02aa3d06214058e93',1,'glasscore::CSite']]],
-  ['vvert',['vVert',['../classglasscore_1_1CWeb.html#ac449bd6f8c00b76b4691368b29657b54',1,'glasscore::CWeb']]],
   ['vweb',['vWeb',['../classglasscore_1_1CWebList.html#a20bd8234a76056366431bf570499d0d6',1,'glasscore::CWebList']]],
   ['vwts',['vWts',['../classglasscore_1_1CHypo.html#abc776bfacf9998c7883ef6a06eeeb1f7',1,'glasscore::CHypo']]]
 ];
