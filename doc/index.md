@@ -13,7 +13,7 @@ Please note that this documentation site is **Under Construction** and not all p
 * [Util](https://usgs.github.io/neic-glass3/util/html/)
 
 ## Configuration Documentation
-* [Glass Configuration](GlassConfiguration.mdd)
+* [Glass Configuration](GlassConfiguration.md)
 
 ## Wiki
 * [Glass Wiki](https://github.com/usgs/neic-glass3/wiki)
