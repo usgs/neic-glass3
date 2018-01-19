@@ -854,29 +854,24 @@ bool CGlass::initialize(json::Object *com) {
 		}
 	}
 
-
-	printf("\n\nTEST!!!!\n\n");
-
 	// Test Locator
 	if ((com->HasKey("TestLocator"))
 			&& ((*com)["TestLocator"].GetType() == json::ValueType::BoolVal)) {
 		testLocator = (*com)["TestLocator"].ToBool();
 
 		if (testLocator) {
-			glassutil::CLogit::log(glassutil::log_level::info,
-									"CGlass::initialize: testLocator set to true");
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: testLocator set to true");
 		} else {
-			glassutil::CLogit::log(glassutil::log_level::info,
-									"CGlass::initialize: testLocator set to false");
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: testLocator set to false");
 		}
-	}
-	else
-	{
+	} else {
 		glassutil::CLogit::log(glassutil::log_level::info,
-											"CGlass::initialize: testLocator not Found!");
+								"CGlass::initialize: testLocator not Found!");
 	}
-
-
 
 	// set maximum number of picks
 	if ((com->HasKey("PickMax"))

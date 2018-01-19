@@ -597,6 +597,11 @@ class CHypo {
 	double dBayes;
 
 	/**
+	 * \brief A double value containing this hypo's initial Bayes statistic
+	 */
+	double dBayesInitial;
+
+	/**
 	 * \brief A double value containing this hypo's minimum distance in degrees
 	 */
 	double dMin;

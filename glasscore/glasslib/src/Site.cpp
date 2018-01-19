@@ -34,7 +34,7 @@ std::vector<std::string> &split(const std::string &s, char delim,
 }
 
 std::vector<std::string> split(const std::string &s, char delim) {
-	std::vector<std::string> elems;
+	std::vector < std::string > elems;
 
 	// split using string and delimiter
 	split(s, delim, elems);
@@ -406,7 +406,7 @@ double CSite::getDistance(std::shared_ptr<CSite> site) {
 // ---------------------------------------------------------addPick
 void CSite::addPick(std::shared_ptr<CPick> pck) {
 	// lock for editing
-	std::lock_guard<std::mutex> guard(vPickMutex);
+	std::lock_guard < std::mutex > guard(vPickMutex);
 
 	// nullcheck
 	if (pck == NULL) {
@@ -438,7 +438,7 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 // ---------------------------------------------------------remPick
 void CSite::remPick(std::shared_ptr<CPick> pck) {
 	// lock for editing
-	std::lock_guard<std::mutex> guard(vPickMutex);
+	std::lock_guard < std::mutex > guard(vPickMutex);
 
 	// nullcheck
 	if (pck == NULL) {
@@ -458,7 +458,7 @@ void CSite::remPick(std::shared_ptr<CPick> pck) {
 void CSite::addNode(std::shared_ptr<CNode> node, double travelTime1,
 					double travelTime2) {
 	// lock for editing
-	std::lock_guard<std::mutex> guard(vNodeMutex);
+	std::lock_guard < std::mutex > guard(vNodeMutex);
 
 	// nullcheck
 	if (node == NULL) {
@@ -485,7 +485,7 @@ void CSite::addNode(std::shared_ptr<CNode> node, double travelTime1,
 // ---------------------------------------------------------remNode
 void CSite::remNode(std::string nodeID) {
 	// lock for editing
-	std::lock_guard<std::mutex> guard(vNodeMutex);
+	std::lock_guard < std::mutex > guard(vNodeMutex);
 
 	// nullcheck
 	if (nodeID == "") {
@@ -499,7 +499,7 @@ void CSite::remNode(std::string nodeID) {
 	// remove the node identified by the id
 	for (const auto &link : vNode) {
 		// third is shared pointer to node
-		std::shared_ptr<CNode> aNode = std::get<LINK_PTR>(link);
+		std::shared_ptr<CNode> aNode = std::get < LINK_PTR > (link);
 
 		// nullcheck
 		if (aNode == NULL) {
@@ -525,7 +525,7 @@ void CSite::remNode(std::string nodeID) {
 
 // ---------------------------------------------------------Nucleate
 void CSite::nucleate(double tPick) {
-	std::lock_guard<std::mutex> guard(vNodeMutex);
+	std::lock_guard < std::mutex > guard(vNodeMutex);
 
 	// clear any previous triggering nodes
 	vTriggerMutex.lock();
@@ -536,13 +536,13 @@ void CSite::nucleate(double tPick) {
 	for (const auto &link : vNode) {
 		// compute potential origin time from tpick and traveltime to node
 		// first get traveltime1 to node
-		double travelTime1 = std::get<LINK_TT1>(link);
+		double travelTime1 = std::get < LINK_TT1 > (link);
 
 		// second get traveltime2 to node
-		double travelTime2 = std::get<LINK_TT2>(link);
+		double travelTime2 = std::get < LINK_TT2 > (link);
 
 		// third get shared pointer to node
-		std::shared_ptr<CNode> node = std::get<LINK_PTR>(link);
+		std::shared_ptr<CNode> node = std::get < LINK_PTR > (link);
 
 		// compute first origin time
 		double tOrigin1 = -1;
@@ -581,7 +581,7 @@ void CSite::nucleate(double tPick) {
 
 // ---------------------------------------------------------addTrigger
 void CSite::addTrigger(std::shared_ptr<CNode> node) {
-	std::lock_guard<std::mutex> guard(vTriggerMutex);
+	std::lock_guard < std::mutex > guard(vTriggerMutex);
 
 	// for each known triggering node
 	for (int iq = 0; iq < vTrigger.size(); iq++) {
@@ -592,6 +592,19 @@ void CSite::addTrigger(std::shared_ptr<CNode> node) {
 		if (node->pWeb->sName == q->pWeb->sName) {
 			// if latest node's sum is greater than current triggered node's
 			// sum, replace it
+
+			//glassutil::CLogit::log(
+			//glassutil::log_level::debug,
+			//"CSite::addTrigger Node 1:"
+			//+ std::to_string(node->dLat) + ", "
+			//+ std::to_string(node->dLon) + ", "
+			//+ std::to_string(node->dZ) + ", "
+			//+ std::to_string(node->dSum) + ", Node 2:"
+			//+ std::to_string(q->dLat) + ", "
+			//+ std::to_string(q->dLon) + ", "
+			//+ std::to_string(q->dZ) + ", "
+			//+ std::to_string(q->dSum));
+
 			if (node->dSum > q->dSum) {
 				vTrigger[iq] = node;
 			}
@@ -606,7 +619,7 @@ void CSite::addTrigger(std::shared_ptr<CNode> node) {
 }
 
 int CSite::getNodeLinksCount() {
-	std::lock_guard<std::mutex> guard(vNodeMutex);
+	std::lock_guard < std::mutex > guard(vNodeMutex);
 	int size = vNode.size();
 
 	return (size);
