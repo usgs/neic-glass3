@@ -375,7 +375,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 		}
 	}
 
-	//Depth Down-weighting
+	// Depth Down-weighting
 	if (dZ > 75.) {
 		dSum = dSum / (dZ / 75.);
 	}

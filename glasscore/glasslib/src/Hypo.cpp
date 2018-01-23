@@ -776,7 +776,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	// Need modify travel time libraries to support getting distance
 	// from slowness, and it's of limited value compared to the back
 	// azimuth check
-	/*if (pick->dSlowness > 0) {
+	/* if (pick->dSlowness > 0) {
 	 // compute observed distance from slowness (1/velocity)
 	 // and tObs (distance = velocity * time)
 	 double obsDistance = (1 / pick->dSlowness) * tObs;
@@ -788,7 +788,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	 // it is not, do not associate
 	 return (false);
 	 }
-	 }*/
+	 } */
 
 	// compute absolute residual
 	double tRes = tObs - tCal;
@@ -1772,10 +1772,9 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 
 	char sLog[1024];
 
-	//if testing locator, setup output file
+	// if testing locator, setup output file
 	std::ofstream outfile;
-	//if(pGlass->testLocator)
-	{
+	if (pGlass->testLocator) {
 		std::string filename = "./locatorTest/" + sPid + ".txt";
 		outfile.open(filename, std::ios::out | std::ios::app);
 		outfile << std::to_string(dLat) << " " << std::to_string(dLon) << " "
@@ -1843,9 +1842,8 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		// get the stack value for this hypocenter
 		double val = getBayes(xlat, xlon, xz, oT, nucleate);
 
-		//if testing locator print interation
-		//if(pGlass->testLocator)
-		{
+		// if testing locator print iteration
+		if (pGlass->testLocator) {
 			outfile << std::to_string(xlat) << " " << std::to_string(xlon)
 					<< " " << std::to_string(xz) << " " << std::to_string(oT)
 					<< " " << std::to_string(vPick.size()) << " "
@@ -1895,9 +1893,8 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		graphicsOutput();
 	}
 
-	//if testing
-	//if(pGlass->testLocator)
-	{
+	// if testing the locator close the file
+	if (pGlass->testLocator) {
 		outfile.close();
 	}
 
@@ -1966,11 +1963,10 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 			if (pTTT->sPhase == "P") {
 				resi = tobs - tcal;
 			} else if (pTTT->sPhase == "S") {
-				resi = (tobs - tcal) * 2.;  //Effectively halving the weight of S
+				resi = (tobs - tcal) * 2.;  // Effectively halving the weight of S
 			} else {
 				resi = (tobs - tcal) * 10.;  // Down weighting all other phases
 			}
-
 		}
 
 		// calculate distance to station to get sigma

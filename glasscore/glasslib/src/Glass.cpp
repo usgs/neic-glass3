@@ -49,7 +49,6 @@ CGlass::CGlass() {
 	testTimes = false;
 	minimizeTTLocator = false;
 	testLocator = false;
-
 }
 
 // ---------------------------------------------------------~CGlass
@@ -232,7 +231,6 @@ void CGlass::clear() {
 
 // ---------------------------------------------------------Initialize
 bool CGlass::initialize(json::Object *com) {
-
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,

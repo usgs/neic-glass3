@@ -593,17 +593,17 @@ void CSite::addTrigger(std::shared_ptr<CNode> node) {
 			// if latest node's sum is greater than current triggered node's
 			// sum, replace it
 
-			//glassutil::CLogit::log(
-			//glassutil::log_level::debug,
-			//"CSite::addTrigger Node 1:"
-			//+ std::to_string(node->dLat) + ", "
-			//+ std::to_string(node->dLon) + ", "
-			//+ std::to_string(node->dZ) + ", "
-			//+ std::to_string(node->dSum) + ", Node 2:"
-			//+ std::to_string(q->dLat) + ", "
-			//+ std::to_string(q->dLon) + ", "
-			//+ std::to_string(q->dZ) + ", "
-			//+ std::to_string(q->dSum));
+			// glassutil::CLogit::log(
+			// glassutil::log_level::debug,
+			// "CSite::addTrigger Node 1:"
+			// + std::to_string(node->dLat) + ", "
+			// + std::to_string(node->dLon) + ", "
+			// + std::to_string(node->dZ) + ", "
+			// + std::to_string(node->dSum) + ", Node 2:"
+			// + std::to_string(q->dLat) + ", "
+			// + std::to_string(q->dLon) + ", "
+			// + std::to_string(q->dZ) + ", "
+			// + std::to_string(q->dSum));
 
 			if (node->dSum > q->dSum) {
 				vTrigger[iq] = node;
