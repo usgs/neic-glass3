@@ -377,8 +377,8 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 
 	// Depth Down-weighting
 	if (dZ > 75.) {
-		dSum = dSum / (dZ / 75.); // 75 was empirically when testing
-								  // events in Soda Springs
+		dSum = dSum / (dZ / 75.);  // 75 was empirically when testing
+								   // events in Soda Springs
 	}
 
 	// make sure the number of significant picks
