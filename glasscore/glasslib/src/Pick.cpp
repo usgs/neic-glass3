@@ -225,7 +225,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		return;
 	}
 
-	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 
 	// remember input json for hypo message generation
 	// note, move to init?
@@ -240,7 +240,7 @@ CPick::~CPick() {
 
 // ---------------------------------------------------------~clear
 void CPick::clear() {
-	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 
 	pSite = NULL;
 	pHypo = NULL;
@@ -260,7 +260,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 						double backAzimuth, double slowness) {
 	clear();
 	// lock after clear to avoid deadlock
-	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 
 	// nullcheck
 	if (pickSite == NULL) {
@@ -285,7 +285,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 
 // ---------------------------------------------------------addHypo
 void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
-	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -306,7 +306,7 @@ void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
 
 // ---------------------------------------------------------remHypo
 void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
-	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -322,12 +322,12 @@ void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
 }
 
 void CPick::clearHypo() {
-	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 	pHypo = NULL;
 }
 
 void CPick::setAss(std::string ass) {
-	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 
 	sAss = ass;
 }
@@ -383,8 +383,8 @@ bool CPick::nucleate() {
 
 		// create the hypo using the node
 		pGlass->m_TTTMutex.lock();
-		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(node,
-																pGlass->pTTT);
+		std::shared_ptr<CHypo> hypo = std::make_shared < CHypo
+				> (node, pGlass->pTTT);
 		pGlass->m_TTTMutex.unlock();
 
 		// set hypo glass pointer and such
@@ -421,8 +421,10 @@ bool CPick::nucleate() {
 			// the search is based on the grid resolution, and the how
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
-			hypo->anneal(10000, node->dResolution, 1.0, node->dResolution / 6.0,
-							.1);
+			// values derived from testing global event association
+
+			hypo->anneal(10000, node->dResolution / 2., node->dResolution / 10.,
+							node->dResolution / 10.0, .1);
 
 			// get the number of picks we have now
 			int npick = hypo->vPick.size();

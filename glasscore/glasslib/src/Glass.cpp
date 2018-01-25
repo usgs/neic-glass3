@@ -48,6 +48,7 @@ CGlass::CGlass() {
 	graphicsSteps = 100;
 	testTimes = false;
 	minimizeTTLocator = false;
+	testLocator = false;
 }
 
 // ---------------------------------------------------------~CGlass
@@ -212,6 +213,7 @@ void CGlass::clear() {
 	dCutMin = 30.0;
 	iCycleLimit = 25;
 	testTimes = false;
+	testLocator = false;
 	graphicsOut = false;
 	graphicsOutFolder = "./";
 	graphicsStepKM = 1.;
@@ -848,6 +850,25 @@ bool CGlass::initialize(json::Object *com) {
 			glassutil::CLogit::log(glassutil::log_level::info,
 									"CGlass::initialize: Track set to false");
 		}
+	}
+
+	// Test Locator
+	if ((com->HasKey("TestLocator"))
+			&& ((*com)["TestLocator"].GetType() == json::ValueType::BoolVal)) {
+		testLocator = (*com)["TestLocator"].ToBool();
+
+		if (testLocator) {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: testLocator set to true");
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: testLocator set to false");
+		}
+	} else {
+		glassutil::CLogit::log(glassutil::log_level::info,
+								"CGlass::initialize: testLocator not Found!");
 	}
 
 	// set maximum number of picks
