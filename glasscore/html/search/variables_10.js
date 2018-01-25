@@ -2,6 +2,7 @@ var searchData=
 [
   ['tcorrelation',['tCorrelation',['../classglasscore_1_1CCorrelation.html#ad10f2b090b0f3beac653684d58e6739d',1,'glasscore::CCorrelation']]],
   ['tcreate',['tCreate',['../classglasscore_1_1CHypo.html#a8401a3e0ff4cbe84a1efeac46cb71910',1,'glasscore::CHypo']]],
+  ['testlocator',['testLocator',['../classglasscore_1_1CGlass.html#a26e31e604c536586a115c10f9b7fc184',1,'glasscore::CGlass']]],
   ['testtimes',['testTimes',['../classglasscore_1_1CGlass.html#a5d121378a70f05cf2ccc92d92fe7aa1d',1,'glasscore::CGlass']]],
   ['tglasscreate',['tGlassCreate',['../classglasscore_1_1CCorrelation.html#ac8db05951f1f5176a9eb40fbe365bc03',1,'glasscore::CCorrelation']]],
   ['tlaststatuscheck',['tLastStatusCheck',['../classglasscore_1_1CHypoList.html#ab01697550871b4775b55b2e70f28b21e',1,'glasscore::CHypoList::tLastStatusCheck()'],['../classglasscore_1_1CPickList.html#a86615a93d7bab0384fb9e4d70cc861c4',1,'glasscore::CPickList::tLastStatusCheck()'],['../classglasscore_1_1CWeb.html#a087a5b1eb4d85a3eb9ea25b6a97fce61',1,'glasscore::CWeb::tLastStatusCheck()']]],

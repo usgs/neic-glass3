@@ -10,6 +10,7 @@ var searchData=
   ['terra_2ecpp',['Terra.cpp',['../Terra_8cpp.html',1,'']]],
   ['terra_2eh',['Terra.h',['../Terra_8h.html',1,'']]],
   ['test',['test',['../classtraveltime_1_1CSpline.html#a5317c08ea17a53d2505001aa0bc0a2a0',1,'traveltime::CSpline']]],
+  ['testlocator',['testLocator',['../classglasscore_1_1CGlass.html#a26e31e604c536586a115c10f9b7fc184',1,'glasscore::CGlass']]],
   ['testtimes',['testTimes',['../classglasscore_1_1CGlass.html#a5d121378a70f05cf2ccc92d92fe7aa1d',1,'glasscore::CGlass']]],
   ['testtraveltimes',['testTravelTimes',['../classtraveltime_1_1CTTT.html#a300bc10cf9a604ab573e8da6d5fb6c9c',1,'traveltime::CTTT']]],
   ['tglasscreate',['tGlassCreate',['../classglasscore_1_1CCorrelation.html#ac8db05951f1f5176a9eb40fbe365bc03',1,'glasscore::CCorrelation']]],

@@ -4,6 +4,7 @@ var searchData=
   ['dassmin',['dAssMin',['../classtraveltime_1_1CTTT.html#aa0c7101a9d9d6c19b1249938fd984868',1,'traveltime::CTTT']]],
   ['dbackazimuth',['dBackAzimuth',['../classglasscore_1_1CPick.html#abaa10fa48bdbb3c4a64c80df35c513ca',1,'glasscore::CPick']]],
   ['dbayes',['dBayes',['../classglasscore_1_1CHypo.html#a9d4a3d28230ec9acc6bae84f742ee144',1,'glasscore::CHypo']]],
+  ['dbayesinitial',['dBayesInitial',['../classglasscore_1_1CHypo.html#aa9238589494caf10430ccf7f36055909',1,'glasscore::CHypo']]],
   ['dcorrelation',['dCorrelation',['../classglasscore_1_1CCorrelation.html#a7fdc231fa3e460123b02488d5968a352',1,'glasscore::CCorrelation']]],
   ['dcut',['dCut',['../classglasscore_1_1CHypo.html#ad0e9d10b5024f67dd8eae7dd909810d1',1,'glasscore::CHypo']]],
   ['dcutfactor',['dCutFactor',['../classglasscore_1_1CGlass.html#aa350261e11815b07d3dcadebfca99115',1,'glasscore::CGlass::dCutFactor()'],['../classglasscore_1_1CHypo.html#aa84dd907b64a829b95f868f3ebe05e53',1,'glasscore::CHypo::dCutFactor()']]],
