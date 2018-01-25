@@ -421,6 +421,8 @@ bool CPick::nucleate() {
 			// the search is based on the grid resolution, and the how
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
+			// values derived from testing global event association
+
 			hypo->anneal(10000, node->dResolution / 2., node->dResolution / 10.,
 							node->dResolution / 10.0, .1);
 

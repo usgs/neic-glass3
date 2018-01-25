@@ -1700,6 +1700,10 @@ double CHypo::localize() {
 
 	// create taper using the number of picks to define the
 	// search distance in localize. Smaller search with more picks
+	// the search radius starts at 1/4 the node resolution and
+	// shrinks to 1/16 the node radius as picks are added
+	// note that the locator can extend past the input search radius
+	// these values were chosen by testing specific events
 
 	glassutil::CTaper taper;
 	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, 30 + 0.0001);
@@ -1964,8 +1968,13 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 				resi = tobs - tcal;
 			} else if (pTTT->sPhase == "S") {
 				resi = (tobs - tcal) * 2.;  // Effectively halving the weight of S
+											// this value was selected by testing specific
+											// events with issues
 			} else {
 				resi = (tobs - tcal) * 10.;  // Down weighting all other phases
+											 // Value was chosen so that other phases would
+											 // still contribute (reducing instabilities)
+											 // but remain insignificant
 			}
 		}
 
