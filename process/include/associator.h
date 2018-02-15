@@ -192,9 +192,20 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	int m_iWorkCounter;
 
 	/**
-	 * \brief The duration of time spent getting data from the input queue.
+	 * \brief Integer holding the count of input data sent to glasscore overall
 	 */
-	std::chrono::duration<double> tQueueDuration;
+	int m_iTotalWorkCounter;
+
+	/**
+	 * \brief Integer holding the count of used to compute the running average
+	 * of data per second
+	 */
+	int m_iRunningAverageCounter;
+
+	/**
+	 * \brief Integer holding the the running average of data per second
+	 */
+	double m_dRunningAverage;
 
 	/**
 	 * \brief The duration of time spent sending data to the glasscore.

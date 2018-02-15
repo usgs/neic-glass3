@@ -12,6 +12,10 @@ Associator::Associator()
 	logger::log("debug", "associator::Associator(): Construction.");
 
 	m_iWorkCounter = 0;
+	m_iTotalWorkCounter = 0;
+	m_iRunningAverageCounter = 0;
+	m_dRunningAverage = 0;
+
 	ReportInterval = 60;
 	std::time(&tLastWorkReport);
 
@@ -22,7 +26,6 @@ Associator::Associator()
 
 	m_iCheckInterval = 600;
 
-	tQueueDuration = std::chrono::duration<double>::zero();
 	tGlassDuration = std::chrono::duration<double>::zero();
 
 	// clear / create object(s)
@@ -36,6 +39,9 @@ Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
 	m_pGlass = NULL;
 	m_MessageQueue = NULL;
 	m_iWorkCounter = 0;
+	m_iTotalWorkCounter = 0;
+	m_iRunningAverageCounter = 0;
+	m_dRunningAverage = 0;
 
 	ReportInterval = 60;
 	std::time(&tLastWorkReport);
@@ -49,7 +55,6 @@ Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
 
 	m_iCheckInterval = 600;
 
-	tQueueDuration = std::chrono::duration<double>::zero();
 	tGlassDuration = std::chrono::duration<double>::zero();
 }
 
@@ -165,33 +170,22 @@ bool Associator::work() {
 	json::Object* message = m_MessageQueue->getDataFromQueue();
 
 	if (message != NULL) {
-		logger::log(
-				"debug",
-				"associator::work: Got message:" + json::Serialize(*message));
-
 		// send the message into glass
 		m_pGlass->dispatch(message);
+
+		// done with message
+		delete (message);
 	}
 
-	time_t tNow;
+	std::time_t tNow;
 	std::time(&tNow);
 
-	std::chrono::high_resolution_clock::time_point tQueueStartTime =
-			std::chrono::high_resolution_clock::now();
 	// now grab whatever input might have for us and send it into glass
 	json::Object* data = Input->getData();
-	std::chrono::high_resolution_clock::time_point tQueueEndTime =
-			std::chrono::high_resolution_clock::now();
-
-	tQueueDuration += std::chrono::duration_cast<std::chrono::duration<double>>(
-			tQueueEndTime - tQueueStartTime);
 
 	// only send in something if we got something
 	if (data != NULL) {
 		m_iWorkCounter++;
-
-		logger::log("debug",
-					"Associator::work: Got data:" + json::Serialize(*data));
 
 		std::chrono::high_resolution_clock::time_point tGlassStartTime =
 				std::chrono::high_resolution_clock::now();
@@ -204,44 +198,54 @@ bool Associator::work() {
 
 		tGlassDuration += std::chrono::duration_cast<
 				std::chrono::duration<double>>(tGlassEndTime - tGlassStartTime);
-
-		// logger::log("debug", "associator::work(): Sent data to glass.");
 	}
 
 	if ((tNow - tLastWorkReport) >= ReportInterval) {
 		int pendingdata = Input->dataCount();
-		double averagequeuetime = tQueueDuration.count() / m_iWorkCounter;
 		double averageglasstime = tGlassDuration.count() / m_iWorkCounter;
-		if (m_iWorkCounter == 0)
+
+		if (m_iWorkCounter == 0) {
 			logger::log(
 					"warning",
 					"associator::work(): Sent NO data to glass in the last "
 							+ std::to_string(
 									static_cast<int>(tNow - tLastWorkReport))
 							+ " seconds.");
-		else
+		} else {
+			m_iTotalWorkCounter += m_iWorkCounter;
+
+			// calculate data per second average
+			double dataAverage = static_cast<double>(m_iWorkCounter)
+					/ static_cast<double>((tNow - tLastWorkReport));
+
+			// calculate running average
+			m_iRunningAverageCounter++;
+			if (m_iRunningAverageCounter == 1) {
+				m_dRunningAverage = dataAverage;
+			}
+
+			m_dRunningAverage = (m_dRunningAverage
+					* (m_iRunningAverageCounter - 1) + dataAverage)
+					/ m_iRunningAverageCounter;
+
 			logger::log(
 					"info",
 					"Associator::work(): Sent " + std::to_string(m_iWorkCounter)
 							+ " data to glass (" + std::to_string(pendingdata)
-							+ " pending) in the last "
+							+ " pending, " + std::to_string(m_iTotalWorkCounter)
+							+ " total) in the last "
 							+ std::to_string(
 									static_cast<int>(tNow - tLastWorkReport))
-							+ " seconds. ("
-							+ std::to_string(
-									static_cast<double>(m_iWorkCounter)
-											/ static_cast<double>((tNow
-													- tLastWorkReport)))
+							+ " seconds. (" + std::to_string(dataAverage)
 							+ " data per second) ("
-							+ std::to_string(averagequeuetime)
-							+ " average queue time; "
+							+ std::to_string(m_dRunningAverage)
+							+ " running average data per second) ("
 							+ std::to_string(averageglasstime)
-							+ " average glass time).");
+							+ " average per pick time).");
+		}
 
 		tLastWorkReport = tNow;
 		m_iWorkCounter = 0;
-
-		tQueueDuration = std::chrono::duration<double>::zero();
 		tGlassDuration = std::chrono::duration<double>::zero();
 	}
 

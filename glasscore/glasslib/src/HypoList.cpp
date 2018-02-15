@@ -870,14 +870,13 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 		return (false);
 	}
 
+	std::string pid = hyp->sPid;
+
+	std::chrono::high_resolution_clock::time_point tEvolveStartTime =
+			std::chrono::high_resolution_clock::now();
+
 	hyp->incrementProcessCount();
 	hyp->setCycle(hyp->iCycle + 1);
-
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CHypoList::evolve sPid:" + hyp->sPid + " cycle:"
-					+ std::to_string(hyp->iCycle) + " processCount:"
-					+ std::to_string(hyp->processCount));
 
 	// initialize breport, gets set to true later if event isn't cancelled.
 	// otherwise, in some cases events will not be reported.
@@ -885,6 +884,12 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 
 	// locate the hypo
 	hyp->localize();
+
+	std::chrono::high_resolution_clock::time_point tLocalizeEndTime =
+			std::chrono::high_resolution_clock::now();
+	double localizeTime = std::chrono::duration_cast<
+			std::chrono::duration<double>>(tLocalizeEndTime - tEvolveStartTime)
+			.count();
 
 	// Search for any associable picks that match hypo in the pick list
 	// NOTE: This uses the hard coded 2400 second scavenge duration default
@@ -906,6 +911,12 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 		hyp->localize();
 	}
 
+	std::chrono::high_resolution_clock::time_point tScavengeEndTime =
+			std::chrono::high_resolution_clock::now();
+	double scavengeTime = std::chrono::duration_cast<
+			std::chrono::duration<double>>(tScavengeEndTime - tLocalizeEndTime)
+			.count();
+
 	// Ensure all data belong to hypo
 	if (resolve(hyp)) {
 		// we should report this hypo since it has changed
@@ -914,6 +925,12 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 		// relocate the hypo
 		hyp->localize();
 	}
+
+	std::chrono::high_resolution_clock::time_point tResolveEndTime =
+			std::chrono::high_resolution_clock::now();
+	double resolveTime = std::chrono::duration_cast<
+			std::chrono::duration<double>>(tResolveEndTime - tScavengeEndTime)
+			.count();
 
 	// Remove data that no longer fit hypo's association criteria
 	if (hyp->prune()) {
@@ -924,6 +941,12 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 		hyp->localize();
 	}
 
+	std::chrono::high_resolution_clock::time_point tPruneEndTime =
+			std::chrono::high_resolution_clock::now();
+	double pruneTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tPruneEndTime - tResolveEndTime).count();
+
 	/*// Check to see if event can be merged into another
 	 if (merge(hyp))
 	 {
@@ -933,15 +956,51 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 
 	// check to see if this hypo is viable.
 	if (hyp->cancel()) {
+		std::chrono::high_resolution_clock::time_point tCancelEndTime =
+				std::chrono::high_resolution_clock::now();
+		double cancelTime = std::chrono::duration_cast<
+				std::chrono::duration<double>>(tCancelEndTime - tPruneEndTime)
+				.count();
+
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CHypoList::evolve canceling sPid:" + hyp->sPid
 						+ " processCount:" + std::to_string(hyp->processCount));
 		remHypo(hyp);
 
+		std::chrono::high_resolution_clock::time_point tRemoveEndTime =
+				std::chrono::high_resolution_clock::now();
+		double removeTime = std::chrono::duration_cast<
+				std::chrono::duration<double>>(tRemoveEndTime - tCancelEndTime)
+				.count();
+
+		double evolveTime = std::chrono::duration_cast<
+				std::chrono::duration<double>>(
+				tRemoveEndTime - tEvolveStartTime).count();
+
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CHypoList::evolve: Canceled sPid:" + pid + " cycle:"
+						+ std::to_string(hyp->iCycle) + " processCount:"
+						+ std::to_string(hyp->processCount)
+						+ " Evolve Timing: localizeTime:"
+						+ std::to_string(localizeTime) + " scavengeTime:"
+						+ std::to_string(scavengeTime) + " resolveTime:"
+						+ std::to_string(resolveTime) + " pruneTime:"
+						+ std::to_string(pruneTime) + " cancelTime:"
+						+ std::to_string(cancelTime) + " removeTime:"
+						+ std::to_string(removeTime) + " evolveTime:"
+						+ std::to_string(evolveTime));
+
 		// return false since the hypo was canceled.
 		return (false);
 	}
+
+	std::chrono::high_resolution_clock::time_point tCancelEndTime =
+			std::chrono::high_resolution_clock::now();
+	double cancelTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tCancelEndTime - tPruneEndTime).count();
 
 	// report if asked
 	// NOTE: why?
@@ -967,8 +1026,38 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 		}
 	}
 
+	std::chrono::high_resolution_clock::time_point tReportEndTime =
+			std::chrono::high_resolution_clock::now();
+	double reportTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tReportEndTime - tCancelEndTime).count();
+
 	// check for and log any miss-linked picks
 	hyp->trap();
+
+	std::chrono::high_resolution_clock::time_point tTrapEndTime =
+			std::chrono::high_resolution_clock::now();
+	double trapTime = std::chrono::duration_cast<std::chrono::duration<double>>(
+			tTrapEndTime - tReportEndTime).count();
+
+	double evolveTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tTrapEndTime - tEvolveStartTime).count();
+
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypoList::evolve: Finished sPid:" + pid + " cycle:"
+					+ std::to_string(hyp->iCycle) + " processCount:"
+					+ std::to_string(hyp->processCount)
+					+ " Evolve Timing: localizeTime:"
+					+ std::to_string(localizeTime) + " scavengeTime:"
+					+ std::to_string(scavengeTime) + " resolveTime:"
+					+ std::to_string(resolveTime) + " pruneTime:"
+					+ std::to_string(pruneTime) + " cancelTime:"
+					+ std::to_string(cancelTime) + " reportTime:"
+					+ std::to_string(reportTime) + " trapTime:"
+					+ std::to_string(trapTime) + " evolveTime:"
+					+ std::to_string(evolveTime));
 
 	// the hypo survived, so return true
 	return (true);
