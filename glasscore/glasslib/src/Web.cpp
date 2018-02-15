@@ -402,7 +402,7 @@ bool CWeb::global(json::Object*com) {
 
 				// write node to grid file
 				if (saveGrid) {
-					outfile << sName << "," << node->sPid << ","
+					outfile << sName << "," << node->getPid() << ","
 							<< std::to_string(aLat) << ","
 							<< std::to_string(aLon) << "," << std::to_string(z)
 							<< "\n";
@@ -699,7 +699,7 @@ bool CWeb::grid(json::Object *com) {
 
 				// write node to grid file
 				if (saveGrid) {
-					outfile << sName << "," << node->sPid << ","
+					outfile << sName << "," << node->getPid() << ","
 							<< std::to_string(latrow) << ","
 							<< std::to_string(loncol) << ","
 							<< std::to_string(z) << "\n";
@@ -1323,7 +1323,7 @@ std::shared_ptr<CNode> CWeb::genNode(double lat, double lon, double z,
 			new CNode(sName, lat, lon, z, resol, glassutil::CPid::pid()));
 
 	// set parent web
-	node->pWeb = this;
+	node->setWeb(this);
 
 	// return empty node if we don't
 	// have any sites
@@ -1378,10 +1378,10 @@ std::shared_ptr<CNode> CWeb::genNodeSites(std::shared_ptr<CNode> node) {
 
 	// setup traveltimes for this node
 	if (pTrv1 != NULL) {
-		pTrv1->setOrigin(node->dLat, node->dLon, node->dZ);
+		pTrv1->setOrigin(node->getLat(), node->getLon(), node->getZ());
 	}
 	if (pTrv2 != NULL) {
-		pTrv2->setOrigin(node->dLat, node->dLon, node->dZ);
+		pTrv2->setOrigin(node->getLat(), node->getLon(), node->getZ());
 	}
 
 	// clear node of any existing sites
@@ -1452,6 +1452,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 	for (auto &node : vNode) {
 		nodeCount++;
 
+		node->setEnabled(false);
+
 		if (nodeCount % 1000 == 0) {
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
@@ -1469,13 +1471,14 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		if (foundSite != NULL) {
 			// NOTE: what to do here?! anything? only would
 			// matter if the site location changed or (future) quality changed
+			node->setEnabled(true);
 			continue;
 		}
 
 		// set to node geographic location
 		// NOTE: node depth is ignored here
 		glassutil::CGeo geo;
-		geo.setGeographic(node->dLat, node->dLon, 6371.0);
+		geo.setGeographic(node->getLat(), node->getLon(), 6371.0);
 
 		// compute delta distance between site and node
 		double newDistance = RAD2DEG * site->getGeo().delta(&geo);
@@ -1490,16 +1493,16 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 
 		// Ignore if new site is farther than last linked site
 		if (newDistance > maxDistance) {
-			node->bEnabled = true;
+			node->setEnabled(true);
 			continue;
 		}
 
 		// setup traveltimes for this node
 		if (pTrv1 != NULL) {
-			pTrv1->setOrigin(node->dLat, node->dLon, node->dZ);
+			pTrv1->setOrigin(node->getLat(), node->getLon(), node->getZ());
 		}
 		if (pTrv2 != NULL) {
-			pTrv2->setOrigin(node->dLat, node->dLon, node->dZ);
+			pTrv2->setOrigin(node->getLat(), node->getLon(), node->getZ());
 		}
 
 		// compute traveltimes between site and node
@@ -1525,6 +1528,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 
 		// we've added a site
 		nodeModCount++;
+
+		node->setEnabled(true);
 
 		// update thread status
 		setStatus(true);
@@ -1582,6 +1587,7 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 			continue;
 		}
 
+		node->setEnabled(false);
 		std::lock_guard<std::mutex> guard(vSiteMutex);
 
 		// generate the site list for this web if this is the first
@@ -1593,13 +1599,13 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 
 			// make sure we've got enough sites for a node
 			if (vSite.size() < nDetect) {
-				node->bEnabled = true;
+				node->setEnabled(true);
 				return;
 			}
 		}
 
 		// sort overall list of sites for this node
-		sortSiteList(node->dLat, node->dLon);
+		sortSiteList(node->getLat(), node->getLon());
 
 		// remove site link
 		if (node->unlinkSite(foundSite) == true) {
@@ -1641,6 +1647,8 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 					"CWeb::remSite: Failed to remove station " + site->getScnl()
 							+ " from web " + sName + ".");
 		}
+
+		node->setEnabled(true);
 
 		// update thread status
 		setStatus(true);

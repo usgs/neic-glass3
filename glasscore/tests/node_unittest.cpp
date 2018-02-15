@@ -32,23 +32,23 @@ TEST(NodeTest, Construction) {
 														std::string(NODEID));
 
 	// name
-	ASSERT_STREQ(std::string(NAME).c_str(), testNode->sName.c_str())<<
+	ASSERT_STREQ(std::string(NAME).c_str(), testNode->getName().c_str())<<
 			"Node Name Matches";
 
 	// latitude
-	ASSERT_EQ(LATITUDE, testNode->dLat)<< "Node Latitude Check";
+	ASSERT_EQ(LATITUDE, testNode->getLat())<< "Node Latitude Check";
 
 	// longitude
-	ASSERT_EQ(LONGITUDE, testNode->dLon)<< "Node Longitude Check";
+	ASSERT_EQ(LONGITUDE, testNode->getLon())<< "Node Longitude Check";
 
 	// depth
-	ASSERT_EQ(DEPTH, testNode->dZ)<< "Node Depth Check";
+	ASSERT_EQ(DEPTH, testNode->getZ())<< "Node Depth Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testNode->dResolution)<< "Node Resolution Check";
+	ASSERT_EQ(RESOLUTION, testNode->getResolution())<< "Node Resolution Check";
 
 	// id
-	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->sPid.c_str())<<
+	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->getPid().c_str())<<
 			"Node ID Matches";
 
 	// site list

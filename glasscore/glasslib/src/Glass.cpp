@@ -1090,7 +1090,7 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create detection processor
 	pDetection = new CDetection();
-	pDetection->pGlass = this;
+	pDetection->setGlass(this);
 
 	return (true);
 }

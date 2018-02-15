@@ -84,22 +84,22 @@ CHypo::CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt) {
 		return;
 	}
 
-	if (node->pWeb == NULL) {
+	if (node->getWeb() == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::CHypo: NULL node->pWeb.");
+								"CHypo::CHypo: NULL node->getWeb().");
 
 		clear();
 		return;
 	}
 
 	// lock for trv copying
-	std::lock_guard<std::mutex> ttGuard(node->pWeb->m_TrvMutex);
+	std::lock_guard<std::mutex> ttGuard(node->getWeb()->m_TrvMutex);
 
-	if (!initialize(node->dLat, node->dLon, node->dZ, node->tOrg,
-					glassutil::CPid::pid(), node->pWeb->sName, 0.0,
-					node->pWeb->dThresh, node->pWeb->nNucleate,
-					node->pWeb->pTrv1.get(), node->pWeb->pTrv2.get(), ttt,
-					node->dResolution)) {
+	if (!initialize(node->getLat(), node->getLon(), node->getZ(), node->getTOrg(),
+					glassutil::CPid::pid(), node->getWeb()->sName, 0.0,
+					node->getWeb()->dThresh, node->getWeb()->nNucleate,
+					node->getWeb()->pTrv1.get(), node->getWeb()->pTrv2.get(), ttt,
+					node->getResolution())) {
 		clear();
 	}
 }

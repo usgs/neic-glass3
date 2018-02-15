@@ -28,6 +28,7 @@ CDetection::~CDetection() {
 
 // ---------------------------------------------------------clear
 void CDetection::clear() {
+	std::lock_guard<std::recursive_mutex> detectionGuard(detectionMutex);
 	pGlass = NULL;
 }
 
@@ -86,6 +87,8 @@ bool CDetection::process(json::Object *com) {
 								"CDetection::process: NULL pGlass.");
 		return (false);
 	}
+
+	std::lock_guard<std::recursive_mutex> detectionGuard(detectionMutex);
 
 	// detection definition variables
 	double torg = 0;
@@ -217,5 +220,15 @@ bool CDetection::process(json::Object *com) {
 
 	// done
 	return (true);
+}
+
+const CGlass* CDetection::getGlass() {
+	std::lock_guard<std::recursive_mutex> detectionGuard(detectionMutex);
+	return (pGlass);
+}
+
+void CDetection::setGlass(CGlass* glass) {
+	std::lock_guard<std::recursive_mutex> detectionGuard(detectionMutex);
+	pGlass = glass;
 }
 }  // namespace glasscore

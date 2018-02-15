@@ -705,7 +705,7 @@ class CHypo {
 
 	/**
 	 * \brief CGlass setter
-	 * \param glss - the CGlass pointer
+	 * \param glass - the CGlass pointer
 	 */
 	void setGlass(CGlass* glass);
 

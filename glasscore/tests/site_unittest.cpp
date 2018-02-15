@@ -249,7 +249,7 @@ TEST(SiteTest, NodeOperations) {
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Added Nodes";
 
 	// test removing nodes from site
-	testSite->remNode(testNode->sPid);
+	testSite->remNode(testNode->getPid());
 	expectedSize = 1;
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Removed Node";
 }

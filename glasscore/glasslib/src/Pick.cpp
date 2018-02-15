@@ -352,20 +352,10 @@ bool CPick::nucleate() {
 	// is exceeded, the node is added to the site's trigger list
 	pSite->nucleate(tPick);
 
-	// Set glass values for debugging
-	pGlass->sWeb = "";
-	pGlass->nCount = 0;
-	pGlass->dSum = 0.0;
-
 	// for each node that triggered linked to this
 	// pick's site
 	pSite->vTriggerMutex.lock();
 	for (auto node : pSite->vTrigger) {
-		// Set glass values for debugging
-		pGlass->sWeb = node->pWeb->sName;
-		pGlass->nCount = node->nCount;
-		pGlass->dSum = node->dSum;
-
 		snprintf(sLog, sizeof(sLog), "CPick::nucleate: %s %d %.2f",
 					pGlass->sWeb.c_str(), pGlass->nCount, pGlass->dSum);
 		glassutil::CLogit::log(sLog);
@@ -376,7 +366,7 @@ bool CPick::nucleate() {
 		// NOTE: this did not used to check the nucleate return here
 		// it seems that this should improve computational performance
 		// but MIGHT have unintended consequences.
-		if (!node->nucleate(node->tOrg, true)) {
+		if (!node->nucleate(node->getTOrg(), true)) {
 			// didn't nucleate anything
 			continue;
 		}
@@ -423,8 +413,9 @@ bool CPick::nucleate() {
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
 
-			hypo->anneal(10000, node->dResolution / 2., node->dResolution / 10.,
-							node->dResolution / 10.0, .1);
+			hypo->anneal(10000, node->getResolution() / 2.,
+							node->getResolution() / 10.,
+							node->getResolution() / 10.0, .1);
 
 			// get the number of picks we have now
 			int npick = hypo->getVPickSize();
@@ -472,7 +463,7 @@ bool CPick::nucleate() {
 
 			// log the triggering web
 			snprintf(sLog, sizeof(sLog), "CPick::nucleate: WEB %s\n",
-						node->sName.c_str());
+						node->getName().c_str());
 			glassutil::CLogit::log(sLog);
 
 			// add a link to the hypo for each pick
