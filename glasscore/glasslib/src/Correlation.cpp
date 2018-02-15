@@ -164,7 +164,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 	}
 
 	// check to see if we're using this site
-	if (!site->bUse) {
+	if (!site->getUse()) {
 		return;
 	}
 
@@ -359,7 +359,7 @@ bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CCorrelation::initialize: pSite:" + pSite->sScnl
+			"CCorrelation::initialize: pSite:" + pSite->getScnl()
 					+ "; tCorrelation:" + std::to_string(tCorrelation)
 					+ "; idCorrelation:" + std::to_string(idCorrelation)
 					+ "; sPid:" + sPid + "; sPhs:" + sPhs + "; tOrg:"

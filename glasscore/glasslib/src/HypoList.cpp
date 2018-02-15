@@ -576,7 +576,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 					sLog, sizeof(sLog), "ASS %s %s %s (%d)\n",
 					hyp->getPid().c_str(),
 					glassutil::CDate::encodeDateTime(pk->getTPick()).c_str(),
-					pk->getSite()->sScnl.c_str(),
+					pk->getSite()->getScnl().c_str(),
 					static_cast<int>(hyp->getVPickSize()));
 			glassutil::CLogit::Out(sLog);
 		}
@@ -718,7 +718,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 					"C-ASS %s %s %s (%d)\n",
 					hyp->getPid().substr(0, 4).c_str(),
 					glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-					corr->getSite()->sScnl.c_str(),
+					corr->getSite()->getScnl().c_str(),
 					static_cast<int>(hyp->getVCorrSize()));
 			glassutil::CLogit::Out(sLog);
 		}

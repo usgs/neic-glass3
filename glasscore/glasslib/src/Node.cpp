@@ -161,7 +161,7 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 
 		// if the new station would be before
 		// the current station
-		if (currentSite->sScnl == site->sScnl) {
+		if (currentSite->getScnl() == site->getScnl()) {
 			found = true;
 			foundLink = link;
 			foundSite = currentSite;
@@ -276,7 +276,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 		std::shared_ptr<CSite> site = std::get < LINK_PTR > (link);
 
 		// Ignore if station out of service
-		if (!site->bUse) {
+		if (!site->getUse()) {
 			continue;
 		}
 
@@ -307,7 +307,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 				nodeGeo.setGeographic(dLat, dLon, 6371.0 - dZ);
 
 				// compute azimith from the site to the node
-				double siteAzimuth = pick->getSite()->geo.azimuth(&nodeGeo);
+				double siteAzimuth = pick->getSite()->getGeo().azimuth(&nodeGeo);
 
 				// check to see if pick's backazimuth is within the
 				// valid range
@@ -324,7 +324,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 			// azimuth check
 			/*if (pick->dSlowness > 0) {
 			 // compute distance from the site to the node
-			 double siteDistance = pick->pSite->geo.delta(&nodeGeo);
+			 double siteDistance = pick->pSite->getGeo().delta(&nodeGeo);
 
 			 // compute observed distance from slowness (1/velocity)
 			 // and tObs (distance = velocity * time)
@@ -477,7 +477,7 @@ std::shared_ptr<CSite> CNode::getSite(std::string sScnl) {
 		// get the site
 		auto aSite = std::get < LINK_PTR > (link);
 
-		if (aSite->sScnl == sScnl) {
+		if (aSite->getScnl() == sScnl) {
 			// found
 			return (aSite);
 		}
@@ -520,10 +520,10 @@ std::string CNode::getSitesString() {
 		// get the site
 		std::shared_ptr<CSite> currentSite = std::get < LINK_PTR > (link);
 
-		siteString += sPid + "," + currentSite->sScnl + ","
-				+ std::to_string(currentSite->geo.dLat) + ";"
-				+ std::to_string(currentSite->geo.dLon) + ";"
-				+ std::to_string(currentSite->geo.dRad) + "\n";
+		siteString += sPid + "," + currentSite->getScnl() + ","
+				+ std::to_string(currentSite->getGeo().dLat) + ";"
+				+ std::to_string(currentSite->getGeo().dLon) + ";"
+				+ std::to_string(currentSite->getGeo().dRad) + "\n";
 	}
 
 	return (siteString);

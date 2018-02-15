@@ -97,7 +97,7 @@ TEST(PickListTest, PickOperations) {
 	// check testpick
 	ASSERT_TRUE(testPick != NULL)<< "testPick not null";
 	// check scnl
-	std::string sitescnl = testPick->getSite()->sScnl;
+	std::string sitescnl = testPick->getSite()->getScnl();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
 			"testPick has right scnl";
@@ -125,7 +125,7 @@ TEST(PickListTest, PickOperations) {
 	std::shared_ptr<glasscore::CPick> test2Pick = testPickList->getPick(2);
 
 	// check scnl
-	sitescnl = test2Pick->getSite()->sScnl;
+	sitescnl = test2Pick->getSite()->getScnl();
 	expectedscnl = std::string(SCNL2);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
 			"test2Pick has right scnl";

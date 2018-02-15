@@ -223,6 +223,8 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 						CGlass *glassPtr) {
 	clear();
 
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+
 	// generate scnl
 	sScnl = "";
 
@@ -298,6 +300,7 @@ CSite::~CSite() {
 }
 
 void CSite::clear() {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	// clear scnl
 	sScnl = "";
 	sSite = "";
@@ -308,11 +311,8 @@ void CSite::clear() {
 	bUse = true;
 	bUseForTele = true;
 	dQual = 1.0;
-	dTrav = 0.0;
 
 	pGlass = NULL;
-	pNode = NULL;
-	qNode = NULL;
 
 	// clear geographic
 	geo = glassutil::CGeo();
@@ -338,6 +338,7 @@ void CSite::clear() {
 }
 
 void CSite::update(CSite *site) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	// scnl check
 	if (sScnl != site->sScnl) {
 		return;
@@ -359,6 +360,7 @@ void CSite::update(CSite *site) {
 
 // ---------------------------------------------------------setLocation
 void CSite::setLocation(double lat, double lon, double z) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	// construct unit vector in cartesian earth coordinates
 	double rxy = cos(DEG2RAD * lat);
 	dVec[0] = rxy * cos(DEG2RAD * lon);
@@ -624,5 +626,67 @@ int CSite::getNodeLinksCount() {
 	int size = vNode.size();
 
 	return (size);
+}
+
+bool CSite::getUse()  {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (bUse);
+}
+
+void CSite::setUse(bool use) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	bUse = use;
+}
+
+bool CSite::getUseForTele() {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (bUseForTele);
+}
+
+void CSite::setUseForTele(bool useForTele) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	bUseForTele = useForTele;
+}
+
+double CSite::getQual() {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (dQual);
+}
+
+void CSite::setQual(double qual) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	dQual = qual;
+}
+
+glassutil::CGeo& CSite::getGeo() {
+	return (geo);
+}
+
+int CSite::getSitePickMax() const {
+	return (nSitePickMax);
+}
+
+CGlass* CSite::getGlass() const {
+	return (pGlass);
+}
+
+const std::string& CSite::getComp() const {
+	return (sComp);
+}
+
+const std::string& CSite::getLoc() const {
+	return (sLoc);
+}
+
+const std::string& CSite::getNet() const {
+	return (sNet);
+}
+
+const std::string& CSite::getScnl() const {
+	return (sScnl);
+}
+
+const std::string& CSite::getSite() const {
+	return (sSite);
 }
 }  // namespace glasscore

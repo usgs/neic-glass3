@@ -413,7 +413,7 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 		if (std::abs(newCorrelation->getTCorrelation() - cor->getTCorrelation())
 				< tWindow) {
 			// check if sites match
-			if (newCorrelation->getSite()->sScnl == cor->getSite()->sScnl) {
+			if (newCorrelation->getSite()->getScnl() == cor->getSite()->getScnl()) {
 				glassutil::CGeo geo1;
 				geo1.setGeographic(newCorrelation->getLat(),
 									newCorrelation->getLon(),
@@ -430,10 +430,10 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 							"CCorrelationList::checkDuplicate: Duplicate "
 									"(tWindow = " + std::to_string(tWindow)
 									+ ", xWindow = " + std::to_string(xWindow)
-									+ ") : old:" + cor->getSite()->sScnl + " "
+									+ ") : old:" + cor->getSite()->getScnl() + " "
 									+ std::to_string(cor->getTCorrelation())
 									+ " new(del):"
-									+ newCorrelation->getSite()->sScnl + " "
+									+ newCorrelation->getSite()->getScnl() + " "
 									+ std::to_string(
 											newCorrelation->getTCorrelation()));
 					return (true);
@@ -532,7 +532,7 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 						hyp->getPid().substr(0, 4).c_str(),
 						glassutil::CDate::encodeDateTime(
 								corr->getTCorrelation()).c_str(),
-						corr->getSite()->sScnl.c_str(),
+						corr->getSite()->getScnl().c_str(),
 						static_cast<int>(hyp->getVCorrSize()));
 				glassutil::CLogit::Out(sLog);
 			}

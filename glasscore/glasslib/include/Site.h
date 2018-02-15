@@ -213,7 +213,102 @@ class CSite {
 	 */
 	void addTrigger(std::shared_ptr<CNode> node);
 
+	/**
+	 * \brief Node link count getter
+	 * \return the node link count
+	 */
 	int getNodeLinksCount();
+
+	/**
+	 * \brief Use flag getter
+	 * \return the use flag
+	 */
+	bool getUse();
+
+	/**
+	 * \brief Use flag setter
+	 * \param use - the use flag
+	 */
+	void setUse(bool use);
+
+	/**
+	 * \brief Use for teleseismic flag getter
+	 * \return the use for teleseismic flag
+	 */
+	bool getUseForTele();
+
+	/**
+	 * \brief Use for teleseismic flag setter
+	 * \param useForTele - the use for teleseismic flag
+	 */
+	void setUseForTele(bool useForTele);
+
+	/**
+	 * \brief Quality getter
+	 * \return the quality
+	 */
+	double getQual();
+
+	/**
+	 * \brief Quality setter
+	 * \param qual - the quality
+	 */
+	void setQual(double qual);
+
+	/**
+	 * \brief CGeo getter
+	 * \return the CGeo
+	 */
+	glassutil::CGeo& getGeo();
+
+	/**
+	 * \brief Max picks for site getter
+	 * \return the max picks for site
+	 */
+	int getSitePickMax() const;
+
+	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	CGlass* getGlass() const;
+
+	/**
+	 * \brief SCNL getter
+	 * \return the SCNL
+	 */
+	const std::string& getScnl() const;
+
+	/**
+	 * \brief Site getter
+	 * \return the site
+	 */
+	const std::string& getSite() const;
+
+	/**
+	 * \brief Comp getter
+	 * \return the comp
+	 */
+	const std::string& getComp() const;
+
+	/**
+	 * \brief Net getter
+	 * \return the net
+	 */
+	const std::string& getNet() const;
+
+	/**
+	 * \brief Loc getter
+	 * \return the loc
+	 */
+	const std::string& getLoc() const;
+
+	// NOTE: Make these private in the future!!!!!!!
+
+	/**
+	 * \brief A mutex to control threading access to vPick.
+	 */
+	std::mutex vPickMutex;
 
 	/**
 	 * \brief A std::vector of std::shared_ptr's to the picks mad at this this
@@ -221,25 +316,20 @@ class CSite {
 	 */
 	std::vector<std::shared_ptr<CPick>> vPick;
 
-	/**
-	 * \brief A std::shared_ptr to the node with the best PDF the last time
-	 * nucleate() was called that exceeded web specific thresholds.
+	/*
+	 * /brief A std::vector of shared node pointers that contain a list
+	 * of nodes that triggered for an input pick. It supports the concept
+	 * that each node can generate trigger event independently from other
+	 * webs. It is set by the method 'addTrigger'.
 	 */
-	std::shared_ptr<CNode> pNode;
+	std::vector<std::shared_ptr<CNode>> vTrigger;
 
 	/**
-	 * \brief A std::shared_ptr to the node with the best PDF the last time
-	 * nucleate() was called with the largest value for the current pick.
+	 * \brief A mutex to control threading access to vTrigger.
 	 */
-	std::shared_ptr<CNode> qNode;
+	std::mutex vTriggerMutex;
 
-	/**
-	 * \brief A double value containing the P travel time
-	 * between the node with the best PDF the last time
-	 * nucleate() was called and the site in seconds
-	 */
-	double dTrav;
-
+ private:
 	/**
 	 * \brief A pointer to the main CGlass class used encode/decode time and
 	 * get debugging flags
@@ -305,25 +395,11 @@ class CSite {
 	 */
 	int nSitePickMax;
 
-	/*
-	 * /brief A std::vector of shared node pointers that contain a list
-	 * of nodes that triggered for an input pick. It supports the concept
-	 * that each node can generate trigger event independently from other
-	 * webs. It is set by the method 'addTrigger'.
-	 */
-	std::vector<std::shared_ptr<CNode>> vTrigger;
-
 	/**
-	 * \brief A mutex to control threading access to vPick.
+	 * \brief A mutex to control threading access to vNode.
 	 */
-	std::mutex vPickMutex;
+	std::mutex vNodeMutex;
 
-	/**
-	 * \brief A mutex to control threading access to vTrigger.
-	 */
-	std::mutex vTriggerMutex;
-
- private:
 	/**
 	 * \brief A std::vector of tuples linking site to node
 	 * {shared node pointer, travel-time 1, travel-time 2}
@@ -331,9 +407,13 @@ class CSite {
 	std::vector<NodeLink> vNode;
 
 	/**
-	 * \brief A mutex to control threading access to vNode.
+	 * \brief A recursive_mutex to control threading access to CSite.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
 	 */
-	std::mutex vNodeMutex;
+	std::recursive_mutex siteMutex;
 };
 }  // namespace glasscore
 #endif  // SITE_H

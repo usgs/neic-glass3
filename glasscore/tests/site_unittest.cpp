@@ -33,61 +33,61 @@
 // check site data for validity
 void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	// check scnl
-	std::string sitescnl = siteobject->sScnl;
+	std::string sitescnl = siteobject->getScnl();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str());
 
 	// check site
-	std::string sitesite = siteobject->sSite;
+	std::string sitesite = siteobject->getSite();
 	std::string expectedsite = std::string(SITE);
 	ASSERT_STREQ(sitesite.c_str(), expectedsite.c_str());
 
 	// check comp
-	std::string sitecomp = siteobject->sComp;
+	std::string sitecomp = siteobject->getComp();
 	std::string expectedcomp = std::string(COMP);
 	ASSERT_STREQ(sitecomp.c_str(), expectedcomp.c_str());
 
 	// check net
-	std::string sitenet = siteobject->sNet;
+	std::string sitenet = siteobject->getNet();
 	std::string expectednet = std::string(NET);
 	ASSERT_STREQ(sitenet.c_str(), expectednet.c_str());
 
 	// check loc
-	std::string siteloc = siteobject->sLoc;
+	std::string siteloc = siteobject->getLoc();
 	std::string expectedloc = std::string(LOC);
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 
 	// check latitude
-	double sitelatitude = siteobject->geo.dLat;
+	double sitelatitude = siteobject->getGeo().dLat;
 	// NOTE: expected latitude is in geocentric coordinates
 	double expectedlatitude = GEOCENTRIC_LATITUDE;
 	ASSERT_NEAR(sitelatitude, expectedlatitude, 0.000001);
 
 	// check longitude
-	double sitelongitude = siteobject->geo.dLon;
+	double sitelongitude = siteobject->getGeo().dLon;
 	// NOTE: expected longitude is the same in geocentric and geographic
 	// coordinates
 	double expectedlongitude = LONGITUDE;
 	ASSERT_NEAR(sitelongitude, expectedlongitude, 0.000001);
 
 	// check elevation
-	double siteelevation = siteobject->geo.dZ;
+	double siteelevation = siteobject->getGeo().dZ;
 	// NOTE: expected elevation is in geocentric coordinates
 	double expectedelevation = GEOCENTRID_ELEVATION;
 	ASSERT_NEAR(siteelevation, expectedelevation, 0.000001);
 
 	// check use
-	bool siteuse = siteobject->bUse;
+	bool siteuse = siteobject->getUse();
 	bool expecteduse = USE;
 	ASSERT_EQ(siteuse, expecteduse);
 
 	// check useforTele
-	bool siteusefortele = siteobject->bUseForTele;
+	bool siteusefortele = siteobject->getUseForTele();
 	bool expectedusefortele = USEFORTELE;
 	ASSERT_EQ(siteusefortele, expectedusefortele);
 
 	// check qual
-	double sitequal = siteobject->dQual;
+	double sitequal = siteobject->getQual();
 	double expectedqual = QUALITY;
 	ASSERT_NEAR(sitequal, expectedqual, 0.000001);
 }
@@ -101,29 +101,23 @@ TEST(SiteTest, Construction) {
 
 	// assert default values
 	// scnl
-	ASSERT_STREQ("", testSite->sScnl.c_str())<< "sScnl Empty";
-	ASSERT_STREQ("", testSite->sSite.c_str())<< "sSite Empty";
-	ASSERT_STREQ("", testSite->sComp.c_str())<< "sComp Empty";
-	ASSERT_STREQ("", testSite->sNet.c_str())<< "sNet Empty";
-	ASSERT_STREQ("", testSite->sLoc.c_str())<< "sLoc Empty";
+	ASSERT_STREQ("", testSite->getScnl().c_str())<< "sScnl Empty";
+	ASSERT_STREQ("", testSite->getSite().c_str())<< "sSite Empty";
+	ASSERT_STREQ("", testSite->getComp().c_str())<< "sComp Empty";
+	ASSERT_STREQ("", testSite->getNet().c_str())<< "sNet Empty";
+	ASSERT_STREQ("", testSite->getLoc().c_str())<< "sLoc Empty";
 
-	ASSERT_EQ(true, testSite->bUse)<< "bUse false";
-	ASSERT_EQ(true, testSite->bUseForTele)<< "bUseForTele false";
-	ASSERT_EQ(0, testSite->dTrav)<< "dTrav zero";
-	ASSERT_EQ(1, testSite->dQual)<< "dQual one";
+	ASSERT_EQ(true, testSite->getUse())<< "bUse false";
+	ASSERT_EQ(true, testSite->getUseForTele())<< "bUseForTele false";
+	ASSERT_EQ(1, testSite->getQual())<< "dQual one";
 
 	// pointers
-	ASSERT_EQ(NULL, testSite->pGlass)<< "pGlass null";
-	ASSERT_EQ(NULL, testSite->pNode.get())<< "pNode null";
-	ASSERT_EQ(NULL, testSite->qNode.get())<< "qNode null";
+	ASSERT_EQ(NULL, testSite->getGlass())<< "pGlass null";
 
 	// geographic
-	ASSERT_EQ(0, testSite->geo.dLat)<< "geo.dLat 0";
-	ASSERT_EQ(0, testSite->geo.dLon)<< "geo.dLon 0";
-	ASSERT_EQ(0, testSite->geo.dZ)<< "geo.dZ 0";
-	ASSERT_EQ(0, testSite->dVec[0])<< "dVec[0] 0";
-	ASSERT_EQ(0, testSite->dVec[1])<< "dVec[1] 0";
-	ASSERT_EQ(0, testSite->dVec[2])<< "dVec[2] 0";
+	ASSERT_EQ(0, testSite->getGeo().dLat)<< "geo.dLat 0";
+	ASSERT_EQ(0, testSite->getGeo().dLon)<< "geo.dLon 0";
+	ASSERT_EQ(0, testSite->getGeo().dZ)<< "geo.dZ 0";
 
 	// lists
 	ASSERT_EQ(0, testSite->getNodeLinksCount())<< "vNode.size() 0";
@@ -183,7 +177,7 @@ TEST(SiteTest, Distance) {
 
 	// test getDelta
 	double expectedDelta = SITE2DELTA;
-	ASSERT_DOUBLE_EQ(expectedDelta, testSite->getDelta(&testSite2->geo));
+	ASSERT_DOUBLE_EQ(expectedDelta, testSite->getDelta(&testSite2->getGeo()));
 }
 
 // tests to see if picks can be added to and removed from the site

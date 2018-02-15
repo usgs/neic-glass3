@@ -66,8 +66,8 @@ TEST(SiteListTest, SiteOperations) {
 	// test updating a site, and get site
 	testSiteList->addSite(sharedTestSite4);
 	std::shared_ptr<glasscore::CSite> updatedSite = testSiteList->getSite(
-			sharedTestSite4->sScnl);
-	ASSERT_FALSE(updatedSite->bUse)<< "Updated site";
+			sharedTestSite4->getScnl());
+	ASSERT_FALSE(updatedSite->getUse())<< "Updated site";
 
 	// cleanup
 	delete (testSiteList);

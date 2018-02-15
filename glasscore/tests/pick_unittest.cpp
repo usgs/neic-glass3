@@ -28,27 +28,27 @@
 // check site data for validity
 void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 	// check scnl
-	std::string sitescnl = pickobject->getSite()->sScnl;
+	std::string sitescnl = pickobject->getSite()->getScnl();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str());
 
 	// check site
-	std::string sitesite = pickobject->getSite()->sSite;
+	std::string sitesite = pickobject->getSite()->getSite();
 	std::string expectedsite = std::string(SITE);
 	ASSERT_STREQ(sitesite.c_str(), expectedsite.c_str());
 
 	// check comp
-	std::string sitecomp = pickobject->getSite()->sComp;
+	std::string sitecomp = pickobject->getSite()->getComp();
 	std::string expectedcomp = std::string(COMP);
 	ASSERT_STREQ(sitecomp.c_str(), expectedcomp.c_str());
 
 	// check net
-	std::string sitenet = pickobject->getSite()->sNet;
+	std::string sitenet = pickobject->getSite()->getNet();
 	std::string expectednet = std::string(NET);
 	ASSERT_STREQ(sitenet.c_str(), expectednet.c_str());
 
 	// check loc
-	std::string siteloc = pickobject->getSite()->sLoc;
+	std::string siteloc = pickobject->getSite()->getLoc();
 	std::string expectedloc = std::string(LOC);
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 

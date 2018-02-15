@@ -269,7 +269,7 @@ void CHypo::addPick(std::shared_ptr<CPick> pck) {
 		if (q->getPid() == pck->getPid()) {
 			char sLog[1024];
 			snprintf(sLog, sizeof(sLog), "CHypo::addPick: ** Duplicate pick %s",
-						pck->getSite()->sScnl.c_str());
+						pck->getSite()->getScnl().c_str());
 			glassutil::CLogit::log(sLog);
 
 			// NOTE: shouldn't we not add this duplicate pick?
@@ -374,7 +374,7 @@ void CHypo::addCorrelation(std::shared_ptr<CCorrelation> corr) {
 			char sLog[1024];
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::addCorrelation: ** Duplicate correlation %s",
-						corr->getSite()->sScnl.c_str());
+						corr->getSite()->getScnl().c_str());
 			glassutil::CLogit::log(sLog);
 
 			return;
@@ -570,7 +570,7 @@ json::Object CHypo::hypo() {
 		// get basic pick values
 		std::shared_ptr<CSite> site = pick->getSite();
 		double tobs = pick->getTPick() - tOrg;
-		double tcal = pTTT->T(&site->geo, tobs);
+		double tcal = pTTT->T(&site->getGeo(), tobs);
 		double tres = tobs - tcal;
 		// should this be changed?
 		double sig = pGlass->sig(tres, 1.0);
@@ -586,20 +586,20 @@ json::Object CHypo::hypo() {
 			// add the association info
 			json::Object assocobj;
 			assocobj["Phase"] = pTTT->sPhase;
-			assocobj["Distance"] = geo.delta(&site->geo) / DEG2RAD;
-			assocobj["Azimuth"] = geo.azimuth(&site->geo) / DEG2RAD;
+			assocobj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
+			assocobj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
 			assocobj["Residual"] = tres;
 			assocobj["Sigma"] = sig;
 			pickObj["AssociationInfo"] = assocobj;
 		} else {
 			// we don't have a jpick, so fill in what we know
-			pickObj["Site"] = site->sScnl;
+			pickObj["Site"] = site->getScnl();
 			pickObj["Pid"] = pick->getPid();
 			pickObj["T"] = glassutil::CDate::encodeDateTime(pick->getTPick());
 			pickObj["Time"] = glassutil::CDate::encodeISO8601Time(
 					pick->getTPick());
-			pickObj["Distance"] = geo.delta(&site->geo) / DEG2RAD;
-			pickObj["Azimuth"] = geo.azimuth(&site->geo) / DEG2RAD;
+			pickObj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
+			pickObj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
 			pickObj["Residual"] = tres;
 		}
 
@@ -612,7 +612,7 @@ json::Object CHypo::hypo() {
 		// get basic pick values
 		std::shared_ptr<CSite> site = correlation->getSite();
 		double tobs = correlation->getTCorrelation() - tOrg;
-		double tcal = pTTT->T(&site->geo, tobs);
+		double tcal = pTTT->T(&site->getGeo(), tobs);
 		double tres = tobs - tcal;
 		// should this be changed?
 		double sig = pGlass->sig(tres, 1.0);
@@ -629,22 +629,22 @@ json::Object CHypo::hypo() {
 			// add the association info
 			json::Object assocobj;
 			assocobj["Phase"] = pTTT->sPhase;
-			assocobj["Distance"] = geo.delta(&site->geo) / DEG2RAD;
-			assocobj["Azimuth"] = geo.azimuth(&site->geo) / DEG2RAD;
+			assocobj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
+			assocobj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
 			assocobj["Residual"] = tres;
 			assocobj["Sigma"] = sig;
 			correlationObj["AssociationInfo"] = assocobj;
 		} else {
 			// we don't have a jCorrelation, so fill in what we know
-			correlationObj["Site"] = site->sScnl;
+			correlationObj["Site"] = site->getScnl();
 			correlationObj["Pid"] = correlation->getPid();
 			correlationObj["Time"] = glassutil::CDate::encodeISO8601Time(
 					correlation->getTCorrelation());
 			correlationObj["Latitude"] = correlation->getLat();
 			correlationObj["Longitude"] = correlation->getLon();
 			correlationObj["Depth"] = correlation->getZ();
-			correlationObj["Distance"] = geo.delta(&site->geo) / DEG2RAD;
-			correlationObj["Azimuth"] = geo.azimuth(&site->geo) / DEG2RAD;
+			correlationObj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
+			correlationObj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
 			correlationObj["Residual"] = tres;
 			correlationObj["Correlation"] = correlation->getCorrelation();
 		}
@@ -733,7 +733,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	std::shared_ptr<CSite> site = pick->getSite();
 
 	// compute distance
-	double siteDistance = hypoGeo.delta(&site->geo) / DEG2RAD;
+	double siteDistance = hypoGeo.delta(&site->getGeo()) / DEG2RAD;
 
 	// check if distance is beyond cutoff
 	if (siteDistance > dCut) {
@@ -745,7 +745,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	double tObs = pick->getTPick() - tOrg;
 
 	// get expected travel time
-	double tCal = pTTT->T(&site->geo, tObs);
+	double tCal = pTTT->T(&site->getGeo(), tObs);
 
 	// Check if pick has an invalid travel time,
 	if (tCal < 0.0) {
@@ -756,7 +756,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	// check backazimuth if present
 	if (pick->getBackAzimuth() > 0) {
 		// compute azimith from the site to the node
-		double siteAzimuth = site->geo.azimuth(&hypoGeo);
+		double siteAzimuth = site->getGeo().azimuth(&hypoGeo);
 
 		// check to see if pick's backazimuth is within the
 		// valid range
@@ -806,7 +806,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 		 " stdev:%.2f>sdassoc:%.2f)",
 		 sPid.c_str(),
 		 glassutil::CDate::encodeDateTime(pick->getTPick()).c_str(),
-		 pick->getSite()->sScnl.c_str(), pick->getPid().c_str(), stdev, sdassoc);
+		 pick->getSite()->getScnl().c_str(), pick->getPid().c_str(), stdev, sdassoc);
 		 glassutil::CLogit::log(sLog);
 		 */
 
@@ -819,7 +819,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	 " stdev:%.2f>sdassoc:%.2f)",
 	 sPid.c_str(),
 	 glassutil::CDate::encodeDateTime(pick->getTPick()).c_str(),
-	 pick->getSite()->sScnl.c_str(), pick->getPid().c_str(), stdev, sdassoc);
+	 pick->getSite()->getScnl().c_str(), pick->getPid().c_str(), stdev, sdassoc);
 	 glassutil::CLogit::log(sLog);
 	 */
 
@@ -872,7 +872,7 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 					" xDist:%.2f>xWindow:%.2f)",
 					sPid.c_str(),
 					glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-					corr->getSite()->sScnl.c_str(), corr->getPid().c_str(),
+					corr->getSite()->getScnl().c_str(), corr->getPid().c_str(),
 					tDist, tWindow, xDist, xWindow);
 			glassutil::CLogit::log(sLog);
 
@@ -887,7 +887,7 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 				" tDist:%.2f>tWindow:%.2f",
 				sPid.c_str(),
 				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->sScnl.c_str(), corr->getPid().c_str(), tDist,
+				corr->getSite()->getScnl().c_str(), corr->getPid().c_str(), tDist,
 				tWindow);
 	} else {
 		snprintf(
@@ -896,7 +896,7 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 				" tDist:%.2f<tWindow:%.2f xDist:%.2f>xWindow:%.2f)",
 				sPid.c_str(),
 				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->sScnl.c_str(), corr->getPid().c_str(), tDist,
+				corr->getSite()->getScnl().c_str(), corr->getPid().c_str(), tDist,
 				tWindow, xDist, xWindow);
 	}
 	glassutil::CLogit::log(sLog);
@@ -1043,7 +1043,7 @@ bool CHypo::prune() {
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f)",
 					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->sScnl.c_str(), sdprune);
+					pck->getSite()->getScnl().c_str(), sdprune);
 			glassutil::CLogit::log(sLog);
 			// }
 
@@ -1053,14 +1053,14 @@ bool CHypo::prune() {
 
 		// Trim whiskers
 		// compute delta between site and hypo
-		double delta = geo.delta(&pck->getSite()->geo);
+		double delta = geo.delta(&pck->getSite()->getGeo());
 
 		// check if delta is beyond distance limit
 		if (delta > dCut) {
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f > %.2f)",
 					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->sScnl.c_str(), delta, dCut);
+					pck->getSite()->getScnl().c_str(), delta, dCut);
 			glassutil::CLogit::log(sLog);
 
 			// add pick to remove list
@@ -1099,7 +1099,7 @@ bool CHypo::prune() {
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: C-CUL %s %s",
 					glassutil::CDate::encodeDateTime(cor->getTCorrelation()).c_str(),
-					cor->getSite()->sScnl.c_str());
+					cor->getSite()->getScnl().c_str());
 			glassutil::CLogit::log(sLog);
 			// }
 
@@ -1338,13 +1338,13 @@ void CHypo::stats() {
 		std::shared_ptr<CSite> site = pick->getSite();
 
 		// compute the distance delta
-		double delta = geo.delta(&site->geo) / DEG2RAD;
+		double delta = geo.delta(&site->getGeo()) / DEG2RAD;
 
 		// add to distance vactor
 		dis.push_back(delta);
 
 		// compute the azimuth
-		double azimuth = geo.azimuth(&site->geo) / DEG2RAD;
+		double azimuth = geo.azimuth(&site->getGeo()) / DEG2RAD;
 
 		// add to azimuth vector
 		azm.push_back(azimuth);
@@ -1508,7 +1508,7 @@ void CHypo::list(std::string src) {
 		double tobs = pick->getTPick() - tOrg;
 
 		// get expected travel time
-		double tcal = pTTT->T(&site->geo, tobs);
+		double tcal = pTTT->T(&site->getGeo(), tobs);
 
 		// compute residual
 		double tres = tobs - tcal;
@@ -1520,10 +1520,10 @@ void CHypo::list(std::string src) {
 		}
 
 		// compute distance
-		double dis = geo.delta(&site->geo) / DEG2RAD;
+		double dis = geo.delta(&site->getGeo()) / DEG2RAD;
 
 		// compute azimuth
-		double azm = geo.azimuth(&site->geo) / DEG2RAD;
+		double azm = geo.azimuth(&site->getGeo()) / DEG2RAD;
 
 		// get the association string
 		std::string sass = pick->getAss();
@@ -1542,7 +1542,7 @@ void CHypo::list(std::string src) {
 						"CHypo::list: ** %s **\nPid:%s\n%s  %s %s %.2f Dis:%.1f"
 						" Azm:%.1f Wt:NA",
 						sorg.c_str(), sPid.c_str(), sass.c_str(),
-						site->sScnl.c_str(), pTTT->sPhase.c_str(), tres, dis,
+						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres, dis,
 						azm);
 			glassutil::CLogit::log(sLog);
 
@@ -1551,7 +1551,7 @@ void CHypo::list(std::string src) {
 						"CHypo::list: ** %s **\nPid:%s\n%s  %s %s %.2f Dis:%.1f"
 						" Azm:%.1f Wt:%.2f",
 						sorg.c_str(), sPid.c_str(), sass.c_str(),
-						site->sScnl.c_str(), pTTT->sPhase.c_str(), tres, dis,
+						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres, dis,
 						azm, vWts[ipk]);
 			glassutil::CLogit::log(sLog);
 		}
@@ -1610,11 +1610,11 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		// calculate the travel times
 		double tCal1 = -1;
 		if (pTrv1 != NULL) {
-			tCal1 = pTrv1->T(&pick->getSite()->geo);
+			tCal1 = pTrv1->T(&pick->getSite()->getGeo());
 		}
 		double tCal2 = -1;
 		if (pTrv2 != NULL) {
-			tCal2 = pTrv2->T(&pick->getSite()->geo);
+			tCal2 = pTrv2->T(&pick->getSite()->getGeo());
 		}
 
 		// calculate absolute residuals
@@ -1954,14 +1954,14 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 
 		// only use nucleation phase if on nucleation branch
 		if (nucleate == 1 && pTrv2 == NULL) {
-			tcal = pTrv1->T(&site->geo);
+			tcal = pTrv1->T(&site->getGeo());
 			resi = tobs - tcal;
 		} else if (nucleate == 1 && pTrv1 == NULL) {
-			tcal = pTrv2->T(&site->geo);
+			tcal = pTrv2->T(&site->getGeo());
 			resi = tobs - tcal;
 		} else {
 			// take whichever has the smallest residual, P or S
-			tcal = pTTT->T(&site->geo, tobs);
+			tcal = pTTT->T(&site->getGeo(), tobs);
 			if (pTTT->sPhase == "P") {
 				resi = tobs - tcal;
 			} else if (pTTT->sPhase == "S") {
@@ -1977,7 +1977,7 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 		}
 
 		// calculate distance to station to get sigma
-		double delta = RAD2DEG * geo.delta(&site->geo);
+		double delta = RAD2DEG * geo.delta(&site->getGeo());
 		double sigma = (tap.Val(delta) * 2.25) + 0.75;
 
 		// calculate and add to the stack
@@ -2158,14 +2158,14 @@ double CHypo::getSumAbsResidual(double xlat, double xlon, double xZ, double oT,
 
 		// only use nucleation phase if on nucleation branch
 		if (nucleate == 1 && pTrv2 == NULL) {
-			tcal = pTrv1->T(&site->geo);
+			tcal = pTrv1->T(&site->getGeo());
 			resi = tobs - tcal;
 		} else if (nucleate == 1 && pTrv1 == NULL) {
-			tcal = pTrv2->T(&site->geo);
+			tcal = pTrv2->T(&site->getGeo());
 			resi = tobs - tcal;
 		} else {
 			// take whichever has the smallest residual, P or S
-			tcal = pTTT->T(&site->geo, tobs);
+			tcal = pTTT->T(&site->getGeo(), tobs);
 			if (pTTT->sPhase == "P" || pTTT->sPhase == "S") {
 				resi = tobs - tcal;
 			}
@@ -2215,8 +2215,8 @@ void CHypo::graphicsOutput() {
 				auto pick = vPick[ipick];
 				double tobs = pick->getTPick() - tOrg;
 				std::shared_ptr<CSite> site = pick->getSite();
-				tcal = pTTT->T(&site->geo, tobs);
-				delta = RAD2DEG * geo.delta(&site->geo);
+				tcal = pTTT->T(&site->getGeo(), tobs);
+				delta = RAD2DEG * geo.delta(&site->getGeo());
 
 				// This should be a function.
 				if (delta < 1.5) {
@@ -2322,7 +2322,7 @@ bool CHypo::weights() {
 		geo.setGeographic(dLat, dLon, 6371.0 - dZ);
 
 		// get distance between this pick and the hypo
-		double del = RAD2DEG * geo.delta(&site->geo);
+		double del = RAD2DEG * geo.delta(&site->getGeo());
 
 		// compute sigma for this pick-hypo distance from the average sigma and
 		// the distance to this site using the taper
@@ -2339,7 +2339,7 @@ bool CHypo::weights() {
 			std::shared_ptr<CSite> sitej = pickj->getSite();
 
 			// get the distance between this pick and the pick being weighted
-			double delj = RAD2DEG * site->getDelta(&sitej->geo);
+			double delj = RAD2DEG * site->getDelta(&sitej->getGeo());
 
 			// if the distance is within 6 sig
 			if (delj < (6.0 * sig)) {
@@ -2421,7 +2421,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 					"CHypo::resolve: SCV COMPARE %s %s %s %s (%.2f, %.2f)",
 					sPid.c_str(), sOtherPid.c_str(),
 					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->sScnl.c_str(), aff1, aff2);
+					pck->getSite()->getScnl().c_str(), aff1, aff2);
 		glassutil::CLogit::log(sLog);
 
 		// check which affinity is better
@@ -2435,7 +2435,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 						sPid.c_str(),
 						sOtherPid.c_str(),
 						glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-						pck->getSite()->sScnl.c_str(), aff1);
+						pck->getSite()->getScnl().c_str(), aff1);
 				glassutil::CLogit::log(sLog);
 			}
 
@@ -2513,7 +2513,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 				sPid.c_str(),
 				sOtherPid.c_str(),
 				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->sScnl.c_str(), aff1, aff2);
+				corr->getSite()->getScnl().c_str(), aff1, aff2);
 		glassutil::CLogit::log(sLog);
 
 		// check which affinity is better
@@ -2528,7 +2528,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 						sOtherPid.c_str(),
 						glassutil::CDate::encodeDateTime(
 								corr->getTCorrelation()).c_str(),
-						corr->getSite()->sScnl.c_str(), aff1);
+						corr->getSite()->getScnl().c_str(), aff1);
 				glassutil::CLogit::log(sLog);
 			}
 

@@ -149,7 +149,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 	}
 
 	// check to see if we're using this site
-	if (!site->bUse) {
+	if (!site->getUse()) {
 		return;
 	}
 
@@ -276,7 +276,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CPick::initialize: site:" + pSite->sScnl + "; tPick:"
+			"CPick::initialize: site:" + pSite->getScnl() + "; tPick:"
 					+ std::to_string(tPick) + "; idPick:"
 					+ std::to_string(idPick) + "; sPid:" + sPid);
 
@@ -335,7 +335,7 @@ void CPick::setAss(std::string ass) {
 // ---------------------------------------------------------Nucleate
 bool CPick::nucleate() {
 	// get CGlass pointer from site
-	CGlass *pGlass = pSite->pGlass;
+	CGlass *pGlass = pSite->getGlass();
 
 	// nullcheck
 	if (pGlass == NULL) {
@@ -403,7 +403,7 @@ bool CPick::nucleate() {
 			if (pGlass->bTrack) {
 				snprintf(sLog, sizeof(sLog),
 							"CPick::nucleate: Adding to hyp %s\n",
-							pick->pSite->sScnl.c_str());
+							pick->pSite->getScnl().c_str());
 				glassutil::CLogit::log(sLog);
 			}
 		}

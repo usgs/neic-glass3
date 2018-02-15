@@ -458,16 +458,16 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 		// check if time difference is within window
 		if (std::abs(newPick->getTPick() - pck->getTPick()) < window) {
 			// check if sites match
-			if (newPick->getSite()->sScnl == pck->getSite()->sScnl) {
+			if (newPick->getSite()->getScnl() == pck->getSite()->getScnl()) {
 				// if match is found, set to true, log, and break out of loop
 				matched = true;
 				glassutil::CLogit::log(
 						glassutil::log_level::warn,
 						"CPickList::checkDuplicat: Duplicate (window = "
 								+ std::to_string(window) + ") : old:"
-								+ pck->getSite()->sScnl + " "
+								+ pck->getSite()->getScnl() + " "
 								+ std::to_string(pck->getTPick()) + " new(del):"
-								+ newPick->getSite()->sScnl + " "
+								+ newPick->getSite()->getScnl() + " "
 								+ std::to_string(newPick->getTPick()));
 				break;
 			}
@@ -561,7 +561,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 						sLog, sizeof(sLog), "WAF %s %s %s (%d)\n",
 						hyp->getPid().substr(0, 4).c_str(),
 						glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-						pck->getSite()->sScnl.c_str(),
+						pck->getSite()->getScnl().c_str(),
 						static_cast<int>(hyp->getVPickSize()));
 				glassutil::CLogit::Out(sLog);
 			}

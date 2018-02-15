@@ -126,7 +126,7 @@ bool CSiteList::addSite(json::Object *com) {
 	CSite * site = new CSite(com, pGlass);
 
 	// make sure a site was actually created
-	if (site->sScnl == "") {
+	if (site->getScnl() == "") {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CSiteList::addSite: Site not created.");
 		delete (site);
@@ -181,7 +181,7 @@ bool CSiteList::addSiteList(json::Object *com) {
 				CSite * site = new CSite(&siteObj, pGlass);
 
 				// make sure a site was actually created
-				if (site->sScnl == "") {
+				if (site->getScnl() == "") {
 					glassutil::CLogit::log(
 							glassutil::log_level::warn,
 							"CSiteList::addSiteList: Site not created.");
@@ -216,7 +216,7 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 	}
 
 	// check to see if we have an existing site
-	std::shared_ptr<CSite> oldSite = getSite(site->sScnl);
+	std::shared_ptr<CSite> oldSite = getSite(site->getScnl());
 
 	std::lock_guard<std::mutex> guard(vSiteMutex);
 
@@ -234,7 +234,7 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 	} else {
 		// add new site to list and map
 		vSite.push_back(site);
-		mSite[site->sScnl] = site;
+		mSite[site->getScnl()] = site;
 
 		// pass new site to webs
 		if (pGlass) {
@@ -386,7 +386,7 @@ bool CSiteList::reqSiteList() {
 		double z;
 
 		// convert to geographic coordinates
-		site->geo.getGeographic(&lat, &lon, &z);
+		site->getGeo().getGeographic(&lat, &lon, &z);
 
 		// convert from earth radius to elevation
 		double elv = (z - 6317.0) * -1000.0;
@@ -395,17 +395,17 @@ bool CSiteList::reqSiteList() {
 		stationObj["Lat"] = lat;
 		stationObj["Lon"] = lon;
 		stationObj["Z"] = elv;
-		stationObj["Qual"] = site->dQual;
-		stationObj["Use"] = site->bUse;
-		stationObj["UseForTele"] = site->bUseForTele;
+		stationObj["Qual"] = site->getQual();
+		stationObj["Use"] = site->getUse();
+		stationObj["UseForTele"] = site->getUseForTele();
 
-		stationObj["Sta"] = site->sSite;
-		if (site->sComp != "") {
-			stationObj["Comp"] = site->sComp;
+		stationObj["Sta"] = site->getSite();
+		if (site->getComp() != "") {
+			stationObj["Comp"] = site->getComp();
 		}
-		stationObj["Net"] = site->sNet;
-		if (site->sLoc != "") {
-			stationObj["Loc"] = site->sLoc;
+		stationObj["Net"] = site->getNet();
+		if (site->getLoc() != "") {
+			stationObj["Loc"] = site->getLoc();
 		}
 
 		// add to station list
