@@ -179,7 +179,7 @@ bool CDetection::process(json::Object *com) {
 		glassutil::CGeo geo1;
 		geo1.setGeographic(lat, lon, z);
 		glassutil::CGeo geo2;
-		geo2.setGeographic(hypo->dLat, hypo->dLon, hypo->dZ);
+		geo2.setGeographic(hypo->getLat(), hypo->getLon(), hypo->getZ());
 		double delta = RAD2DEG * geo1.delta(&geo2);
 
 		// if the detection is more than 5 degrees away, it isn't a match
@@ -198,10 +198,10 @@ bool CDetection::process(json::Object *com) {
 			pGlass->m_TTTMutex.unlock();
 
 			// set hypo glass pointer and such
-			hypo->pGlass = pGlass;
-			hypo->dCutFactor = pGlass->dCutFactor;
-			hypo->dCutPercentage = pGlass->dCutPercentage;
-			hypo->dCutMin = pGlass->dCutMin;
+			hypo->setGlass(pGlass);
+			hypo->setCutFactor(pGlass->dCutFactor);
+			hypo->setCutPercentage(pGlass->dCutPercentage);
+			hypo->setCutMin(pGlass->dCutMin);
 
 			// process hypo using evolve
 			if (pGlass->pHypoList->evolve(hypo, 1)) {

@@ -492,13 +492,6 @@ class CHypo {
 	void graphicsOutput();
 
 	/**
-	 * \brief Sets the processing cycle count
-	 *
-	 * \param newCycle - An integer value containing the new cycle count
-	 */
-	void setCycle(int newCycle);
-
-	/**
 	 * \brief Calculate station weights
 	 *
 	 * Calculate the weight of each station for each pick in this
@@ -518,8 +511,241 @@ class CHypo {
 	 */
 	void trap();
 
-	void incrementProcessCount();
+	/**
+	 * \brief Latitude getter
+	 * \return the latitude
+	 */
+	double getLat();
 
+	/**
+	 * \brief Longitude getter
+	 * \return the longitude
+	 */
+	double getLon();
+
+	/**
+	 * \brief Depth getter
+	 * \return the depth
+	 */
+	double getZ();
+
+	/**
+	 * \brief Origin time getter
+	 * \return the origin time
+	 */
+	double getTOrg();
+
+	/**
+	 * \brief Bayes value getter
+	 * \return the bayes value
+	 */
+	double getBayes();
+
+	/**
+	 * \brief Correlation added flag getter
+	 * \return the correlation added flag
+	 */
+	bool getCorrAdded();
+
+	/**
+	 * \brief Correlation added flag setter
+	 * \param corrAdded - the correlation added flag
+	 */
+	void setCorrAdded(bool corrAdded);
+
+	/**
+	 * \brief Event reported flag getter
+	 * \return the event reported flag
+	 */
+	bool getEvent();
+
+	/**
+	 * \brief Fixed flag getter
+	 * \return the fixed flag
+	 */
+	bool getFixed();
+
+	/**
+	 * \brief Fixed flag setter
+	 * \param fixed - the fixed flag
+	 */
+	void setFixed(bool fixed);
+
+	/**
+	 * \brief Bayes initial value getter
+	 * \return the intial bayes value
+	 */
+	double getBayesInitial();
+
+	/**
+	 * \brief Cut factor getter
+	 * \return the cut factor value
+	 */
+	double getCutFactor();
+
+	/**
+	 * \brief Cut factor setter
+	 * \param cutFactor -  the cut factor
+	 */
+	void setCutFactor(double cutFactor);
+
+	/**
+	 * \brief Cut min getter
+	 * \return the cut min value
+	 */
+	double getCutMin();
+
+	/**
+	 * \brief Cut min setter
+	 * \param cutMin - the cut min value
+	 */
+	void setCutMin(double cutMin);
+
+	/**
+	 * \brief Cut percentage getter
+	 * \return the cut percentage value
+	 */
+	double getCutPercentage();
+
+	/**
+	 * \brief Cut factor setter
+	 * \param cutPercentage - the cut percentage value
+	 */
+	void setCutPercentage(double cutPercentage);
+
+	/**
+	 * \brief Cut getter
+	 * \return the cut value
+	 */
+	int getCut();
+
+	/**
+	 * \brief Cut setter
+	 * \param cut - the cut value
+	 */
+	void setCut(double cut);
+
+	/**
+	 * \brief Thresh getter
+	 * \return the thresh value
+	 */
+	double getThresh();
+
+	/**
+	 * \brief Thresh setter
+	 * \param thresh - the thresh value
+	 */
+	void setThresh(double thresh);
+
+	/**
+	 * \brief Gap getter
+	 * \return the gap value
+	 */
+	double getGap();
+
+	/**
+	 * \brief Kurtosis getter
+	 * \return the kurtosis value
+	 */
+	double getKrt();
+
+	/**
+	 * \brief Med distance getter
+	 * \return the med distance value
+	 */
+	double getMed();
+
+	/**
+	 * \brief Min distance getter
+	 * \return the min distance value
+	 */
+	double getMin();
+
+	/**
+	 * \brief Residual getter
+	 * \return the residual value
+	 */
+	double getRes();
+
+	/**
+	 * \brief Sig getter
+	 * \return the sig value
+	 */
+	double getSig();
+
+	/**
+	 * \brief Cycle getter
+	 * \return the cycle value
+	 */
+	int getCycle();
+
+	/**
+	 * \brief Cycle setter
+	 * \param newCycle - the cycle value
+	 */
+	int setCycle(int newCycle);
+
+	/**
+	 * \brief Process count getter
+	 * \return the process count value
+	 */
+	int getProcessCount();
+
+	/**
+	 * \brief Process count incrementer
+	 * \return the process count value
+	 */
+	int incrementProcessCount();
+
+	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	const CGlass* getGlass();
+
+	/**
+	 * \brief CGlass setter
+	 * \param glss - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+	/**
+	 * \brief Pid getter
+	 * \return the Pid
+	 */
+	const std::string& getPid() const;
+
+	/**
+	 * \brief Web Name getter
+	 * \return the Web Name
+	 */
+	const std::string& getWebName() const;
+
+	/**
+	 * \brief Pick vector size getter
+	 * \return the pick vector size
+	 */
+	int getVPickSize();
+
+	/**
+	 * \brief Correlation vector size getter
+	 * \return the correlation vector size
+	 */
+	int getVCorrSize();
+
+	/**
+	 * \brief Creation time getter
+	 * \return the creation time
+	 */
+	double getTCreate() const;
+
+	/**
+	 * \brief Report count getter
+	 * \return the report count
+	 */
+	int getReportCount();
+
+ private:
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
 	 * look up travel times, encode/decode time, and call significance
@@ -531,7 +757,7 @@ class CHypo {
 	 * \brief  A std::string with the name of the initiating subnet trigger
 	 * used during the nucleation process
 	 */
-	std::string sWeb;
+	std::string sWebName;
 
 	/**
 	 * \brief An integer containing the number of stations needed to maintain
@@ -575,16 +801,6 @@ class CHypo {
 	 * \brief A double value containing this hypo's depth in kilometers
 	 */
 	double dZ;
-
-	/**
-	 * \brief A boolean indicating whether this hypo needs to be refined.
-	 */
-	bool bRefine;
-
-	/**
-	 * \brief A boolean indicating if a Quake message was sent for this hypo.
-	 */
-	bool bQuake;
 
 	/**
 	 * \brief A boolean indicating if an Event message was sent for this hypo.

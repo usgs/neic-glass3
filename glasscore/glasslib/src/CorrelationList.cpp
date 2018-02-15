@@ -253,12 +253,12 @@ bool CCorrelationList::addCorrelation(json::Object *correlation) {
 			pGlass->m_TTTMutex.unlock();
 
 			// set hypo glass pointer and such
-			hypo->pGlass = pGlass;
-			hypo->dCutFactor = pGlass->dCutFactor;
-			hypo->dCutPercentage = pGlass->dCutPercentage;
-			hypo->dCutMin = pGlass->dCutMin;
-			hypo->nCut = pGlass->nNucleate;
-			hypo->dThresh = pGlass->dThresh;
+			hypo->setGlass(pGlass);
+			hypo->setCutFactor(pGlass->dCutFactor);
+			hypo->setCutPercentage(pGlass->dCutPercentage);
+			hypo->setCutMin(pGlass->dCutMin);
+			hypo->setCut(pGlass->nNucleate);
+			hypo->setThresh(pGlass->dThresh);
 
 			// add correlation to hypo
 			hypo->addCorrelation(corr);
@@ -468,15 +468,15 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	}
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CCorrelationList::scavenge. " + hyp->sPid);
+							"CCorrelationList::scavenge. " + hyp->getPid());
 
 	// get the index of the correlation to start with
 	// based on the hypo origin time
-	int it1 = indexCorrelation(hyp->tOrg - tDuration);
+	int it1 = indexCorrelation(hyp->getTOrg() - tDuration);
 
 	// get the index of the correlation to end with by using the hypo
 	// origin time plus the provided duration
-	int it2 = indexCorrelation(hyp->tOrg + tDuration);
+	int it2 = indexCorrelation(hyp->getTOrg() + tDuration);
 
 	// index can't be negative
 	// Primarily occurs if origin time is before first correlation
@@ -527,11 +527,11 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 						sLog,
 						sizeof(sLog),
 						"C-WAF %s %s %s (%d)\n",
-						hyp->sPid.substr(0, 4).c_str(),
+						hyp->getPid().substr(0, 4).c_str(),
 						glassutil::CDate::encodeDateTime(corr->tCorrelation)
 								.c_str(),
 						corr->pSite->sScnl.c_str(),
-						static_cast<int>(hyp->vCorr.size()));
+						static_cast<int>(hyp->getVCorrSize()));
 				glassutil::CLogit::Out(sLog);
 			}
 
@@ -603,7 +603,7 @@ std::vector<std::shared_ptr<CCorrelation>> CCorrelationList::rogues(
 		std::shared_ptr<CHypo> corrHyp = corr->pHypo;
 
 		// if the current pick is associated to this event
-		if ((corrHyp != NULL) && (corrHyp->sPid == pidHyp)) {
+		if ((corrHyp != NULL) && (corrHyp->getPid() == pidHyp)) {
 			// skip to next pick
 			continue;
 		}

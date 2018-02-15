@@ -316,7 +316,7 @@ void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
 	}
 
 	// Remove hypo reference from this pick
-	if (pHypo->sPid == hyp->sPid) {
+	if (pHypo->getPid() == hyp->getPid()) {
 		pHypo = NULL;
 	}
 }
@@ -388,10 +388,10 @@ bool CPick::nucleate() {
 		pGlass->m_TTTMutex.unlock();
 
 		// set hypo glass pointer and such
-		hypo->pGlass = pGlass;
-		hypo->dCutFactor = pGlass->dCutFactor;
-		hypo->dCutPercentage = pGlass->dCutPercentage;
-		hypo->dCutMin = pGlass->dCutMin;
+		hypo->setGlass(pGlass);
+		hypo->setCutFactor(pGlass->dCutFactor);
+		hypo->setCutPercentage(pGlass->dCutPercentage);
+		hypo->setCutMin(pGlass->dCutMin);
 
 		// add links to all the picks that support the hypo
 		for (auto pick : node->vPick) {
@@ -410,7 +410,7 @@ bool CPick::nucleate() {
 
 		// use the hypo's nucleation threshold, which is really the
 		// web's nucleation threshold
-		int ncut = hypo->nCut;
+		int ncut = hypo->getCut();
 		bool bad = false;
 
 		// First localization attempt after nucleation
@@ -427,10 +427,10 @@ bool CPick::nucleate() {
 							node->dResolution / 10.0, .1);
 
 			// get the number of picks we have now
-			int npick = hypo->vPick.size();
+			int npick = hypo->getVPickSize();
 
 			snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass %d %d/%d %s",
-						ipass, npick, ncut, hypo->sPid.c_str());
+						ipass, npick, ncut, hypo->getPid().c_str());
 			glassutil::CLogit::log(sLog);
 
 			// check to see if we still have enough picks for this hypo to
@@ -442,7 +442,7 @@ bool CPick::nucleate() {
 				// we don't
 				snprintf(sLog, sizeof(sLog),
 							"CPick::nucleate: -- Abandoning this solution %s",
-							hypo->sPid.c_str());
+							hypo->getPid().c_str());
 				glassutil::CLogit::log(sLog);
 
 				// don't bother making additional passes
@@ -462,11 +462,12 @@ bool CPick::nucleate() {
 		if (pGlass->pHypoList->evolve(hypo, 1)) {
 			// the hypo survived evolve,
 			// log the hypo
-			std::string st = glassutil::CDate::encodeDateTime(hypo->tOrg);
+			std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
 			snprintf(sLog, sizeof(sLog),
 						"CPick::nucleate: TRG hypo:%s %s %9.4f %10.4f %6.1f %d",
-						hypo->sPid.c_str(), st.c_str(), hypo->dLat, hypo->dLon,
-						hypo->dZ, static_cast<int>(hypo->vPick.size()));
+						hypo->getPid().c_str(), st.c_str(), hypo->getLat(),
+						hypo->getLon(), hypo->getZ(),
+						static_cast<int>(hypo->getVPickSize()));
 			glassutil::CLogit::log(sLog);
 
 			// log the triggering web

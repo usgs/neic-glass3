@@ -127,7 +127,7 @@ TEST(HypoListTest, HypoOperations) {
 	ASSERT_TRUE(testHypo != NULL)<< "testHypo not null";
 
 	// check id
-	std::string hypoId = testHypo->sPid;
+	std::string hypoId = testHypo->getPid();
 	std::string expectedId = std::string(TESTHYPOID);
 	ASSERT_STREQ(hypoId.c_str(), expectedId.c_str())<< "testHypo has right id";
 

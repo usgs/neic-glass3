@@ -406,7 +406,7 @@ void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
 	std::lock_guard<std::mutex> guard(correlationMutex);
 
 	// Remove hypo reference from this corrleation
-	if (pHypo->sPid == hyp->sPid) {
+	if (pHypo->getPid() == hyp->getPid()) {
 		pHypo = NULL;
 	}
 }

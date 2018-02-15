@@ -275,7 +275,7 @@ class CHypoList {
 	bool reqHypo(json::Object *com);
 
 	/** \brief Merge event **/
-	bool merge(std::shared_ptr<CHypo> hyp);
+	// bool merge(std::shared_ptr<CHypo> hyp);
 
 	/**
 	 * \brief HypoList sort function

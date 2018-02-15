@@ -502,14 +502,14 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	char sLog[1024];
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CPickList::scavenge. " + hyp->sPid);
+							"CPickList::scavenge. " + hyp->getPid());
 
 	// Calculate range for possible associations
 	double sdassoc = pGlass->sdAssociate;
 
 	// get the index of the pick to start with
 	// based on the hypo origin time
-	int it1 = indexPick(hyp->tOrg);
+	int it1 = indexPick(hyp->getTOrg());
 
 	// index can't be negative
 	// Primarily occurs if origin time is before first pick
@@ -519,7 +519,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	// get the index of the pick to end with by using the hypo
 	// origin time plus the provided duration
-	int it2 = indexPick(hyp->tOrg + tDuration);
+	int it2 = indexPick(hyp->getTOrg() + tDuration);
 
 	// don't bother if there's no picks
 	if (it1 == it2) {
@@ -559,10 +559,10 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 			if (pGlass->bTrack) {
 				snprintf(
 						sLog, sizeof(sLog), "WAF %s %s %s (%d)\n",
-						hyp->sPid.substr(0, 4).c_str(),
+						hyp->getPid().substr(0, 4).c_str(),
 						glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
 						pck->getSite()->sScnl.c_str(),
-						static_cast<int>(hyp->vPick.size()));
+						static_cast<int>(hyp->getVPickSize()));
 				glassutil::CLogit::Out(sLog);
 			}
 
@@ -583,7 +583,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CPickList::scavenge " + hyp->sPid + " added:"
+			"CPickList::scavenge " + hyp->getPid() + " added:"
 					+ std::to_string(addCount));
 
 	// return whether we've associated at least one pick
@@ -640,7 +640,7 @@ std::vector<std::shared_ptr<CPick>> CPickList::rogues(std::string pidHyp,
 		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
 
 		// if the current pick is associated to this event
-		if ((pickHyp != NULL) && (pickHyp->sPid == pidHyp)) {
+		if ((pickHyp != NULL) && (pickHyp->getPid() == pidHyp)) {
 			// skip to next pick
 			continue;
 		}
