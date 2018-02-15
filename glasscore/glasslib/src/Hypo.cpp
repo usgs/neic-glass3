@@ -124,9 +124,9 @@ CHypo::CHypo(std::shared_ptr<CCorrelation> corr,
 		return;
 	}
 
-	if (!initialize(corr->dLat, corr->dLon, corr->dZ, corr->tOrg,
-					glassutil::CPid::pid(), "Correlation", 0.0, 0.0, 0.0,
-					firstTrav, secondTrav, ttt, 0.0)) {
+	if (!initialize(corr->getLat(), corr->getLon(), corr->getZ(),
+					corr->getTOrg(), glassutil::CPid::pid(), "Correlation", 0.0,
+					0.0, 0.0, firstTrav, secondTrav, ttt, 0.0)) {
 		clear();
 	}
 }
@@ -343,7 +343,7 @@ void CHypo::clearPicks() {
 		}
 
 		// if the current pick is linked to this hypo
-		if ((pck->getHypo() != NULL) && (sPid == pck->getHypo()->sPid)) {
+		if ((pck->getHypo() != NULL) && (sPid == pck->getHypo()->getPid())) {
 			// remove hypo link from this pick
 			pck->clearHypo();
 		}
@@ -370,11 +370,11 @@ void CHypo::addCorrelation(std::shared_ptr<CCorrelation> corr) {
 		// see if we have this same correlation
 		// NOTE: this only checks by ID, need to improve this to
 		// an ID/Source check
-		if (q->sPid == corr->sPid) {
+		if (q->getPid() == corr->getPid()) {
 			char sLog[1024];
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::addCorrelation: ** Duplicate correlation %s",
-						corr->pSite->sScnl.c_str());
+						corr->getSite()->sScnl.c_str());
 			glassutil::CLogit::log(sLog);
 
 			return;
@@ -399,7 +399,7 @@ void CHypo::remCorrelation(std::shared_ptr<CCorrelation> corr) {
 	}
 
 	// get the correlation id
-	std::string pid = corr->sPid;
+	std::string pid = corr->getPid();
 
 	// for each correlation in the vector
 	for (int i = 0; i < vCorr.size(); i++) {
@@ -407,7 +407,7 @@ void CHypo::remCorrelation(std::shared_ptr<CCorrelation> corr) {
 		auto correlation = vCorr[i];
 
 		// is this correlation a match?
-		if (correlation->sPid == pid) {
+		if (correlation->getPid() == pid) {
 			// remove correlation from vector
 			vCorr.erase(vCorr.cbegin() + i);
 			return;
@@ -429,7 +429,7 @@ bool CHypo::hasCorrelation(std::shared_ptr<CCorrelation> corr) {
 	// for each corr in the vector
 	for (const auto &q : vCorr) {
 		// is this corr a match?
-		if (q->sPid == corr->sPid) {
+		if (q->getPid() == corr->getPid()) {
 			return (true);
 		}
 	}
@@ -448,9 +448,9 @@ void CHypo::clearCorrelations() {
 		}
 
 		// if the current pick is linked to this hypo
-		if ((corr->pHypo != NULL) && (sPid == corr->pHypo->sPid)) {
+		if ((corr->getHypo() != NULL) && (sPid == corr->getHypo()->getPid())) {
 			// remove hypo link from this pick
-			corr->pHypo = NULL;
+			corr->clearHypo();
 		}
 	}
 
@@ -517,8 +517,8 @@ json::Object CHypo::hypo() {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CHypo::Hypo: generating hypo message for sPid:" + sPid + " sWebName:"
-					+ sWebName);
+			"CHypo::Hypo: generating hypo message for sPid:" + sPid
+					+ " sWebName:" + sWebName);
 
 	// NOTE: Need to think about this format, currently it *almost*
 	// creates a detection formats json, but doesn't use the library
@@ -610,8 +610,8 @@ json::Object CHypo::hypo() {
 	// for each correlation
 	for (auto correlation : vCorr) {
 		// get basic pick values
-		std::shared_ptr<CSite> site = correlation->pSite;
-		double tobs = correlation->tCorrelation - tOrg;
+		std::shared_ptr<CSite> site = correlation->getSite();
+		double tobs = correlation->getTCorrelation() - tOrg;
 		double tcal = pTTT->T(&site->geo, tobs);
 		double tres = tobs - tcal;
 		// should this be changed?
@@ -619,10 +619,12 @@ json::Object CHypo::hypo() {
 
 		// if we have it, use the shared pointer
 		json::Object correlationObj;
-		if (correlation->jCorrelation) {
+		std::shared_ptr<json::Object> jCorrelation = correlation
+				->getJCorrelation();
+		if (jCorrelation) {
 			// start with a copy of json pick
 			// which has the site, source, time, etc
-			correlationObj = json::Object(*correlation->jCorrelation.get());
+			correlationObj = json::Object(*jCorrelation.get());
 
 			// add the association info
 			json::Object assocobj;
@@ -635,16 +637,16 @@ json::Object CHypo::hypo() {
 		} else {
 			// we don't have a jCorrelation, so fill in what we know
 			correlationObj["Site"] = site->sScnl;
-			correlationObj["Pid"] = correlation->sPid;
+			correlationObj["Pid"] = correlation->getPid();
 			correlationObj["Time"] = glassutil::CDate::encodeISO8601Time(
-					correlation->tCorrelation);
-			correlationObj["Latitude"] = correlation->dLat;
-			correlationObj["Longitude"] = correlation->dLon;
-			correlationObj["Depth"] = correlation->dZ;
+					correlation->getTCorrelation());
+			correlationObj["Latitude"] = correlation->getLat();
+			correlationObj["Longitude"] = correlation->getLon();
+			correlationObj["Depth"] = correlation->getZ();
 			correlationObj["Distance"] = geo.delta(&site->geo) / DEG2RAD;
 			correlationObj["Azimuth"] = geo.azimuth(&site->geo) / DEG2RAD;
 			correlationObj["Residual"] = tres;
-			correlationObj["Correlation"] = correlation->dCorrelation;
+			correlationObj["Correlation"] = correlation->getCorrelation();
 		}
 
 		// add new pick to list
@@ -851,12 +853,13 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 	double xDist = 0;
 
 	// check if time difference is within window
-	tDist = std::abs(tOrg - corr->tCorrelation);
+	tDist = std::abs(tOrg - corr->getTCorrelation());
 	if (tDist < tWindow) {
 		glassutil::CGeo geo1;
 		geo1.setGeographic(dLat, dLon, 6371.0 - dZ);
 		glassutil::CGeo geo2;
-		geo2.setGeographic(corr->dLat, corr->dLon, 6371.0 - corr->dZ);
+		geo2.setGeographic(corr->getLat(), corr->getLon(),
+							6371.0 - corr->getZ());
 		xDist = RAD2DEG * geo1.delta(&geo2);
 
 		// check if distance difference is within window
@@ -868,9 +871,9 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 					" Corr:%s tDist:%.2f<tWindow:%.2f"
 					" xDist:%.2f>xWindow:%.2f)",
 					sPid.c_str(),
-					glassutil::CDate::encodeDateTime(corr->tCorrelation).c_str(),
-					corr->pSite->sScnl.c_str(), corr->sPid.c_str(), tDist,
-					tWindow, xDist, xWindow);
+					glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
+					corr->getSite()->sScnl.c_str(), corr->getPid().c_str(),
+					tDist, tWindow, xDist, xWindow);
 			glassutil::CLogit::log(sLog);
 
 			return (true);
@@ -883,17 +886,18 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 				"CHypo::associate: C-NOASSOC Hypo:%s Time:%s Station:%s Corr:%s"
 				" tDist:%.2f>tWindow:%.2f",
 				sPid.c_str(),
-				glassutil::CDate::encodeDateTime(corr->tCorrelation).c_str(),
-				corr->pSite->sScnl.c_str(), corr->sPid.c_str(), tDist, tWindow);
+				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
+				corr->getSite()->sScnl.c_str(), corr->getPid().c_str(), tDist,
+				tWindow);
 	} else {
 		snprintf(
 				sLog, sizeof(sLog),
 				"CHypo::associate: C-NOASSOC Hypo:%s Time:%s Station:%s Corr:%s"
 				" tDist:%.2f<tWindow:%.2f xDist:%.2f>xWindow:%.2f)",
 				sPid.c_str(),
-				glassutil::CDate::encodeDateTime(corr->tCorrelation).c_str(),
-				corr->pSite->sScnl.c_str(), corr->sPid.c_str(), tDist, tWindow,
-				xDist, xWindow);
+				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
+				corr->getSite()->sScnl.c_str(), corr->getPid().c_str(), tDist,
+				tWindow, xDist, xWindow);
 	}
 	glassutil::CLogit::log(sLog);
 
@@ -979,7 +983,7 @@ double CHypo::affinity(std::shared_ptr<CCorrelation> corr) {
 
 	// compute time factor, multiply by 10 to make time factor
 	// have equal weight to the distance factor
-	double tFactor = std::abs(tOrg - corr->tCorrelation) * 10;
+	double tFactor = std::abs(tOrg - corr->getTCorrelation()) * 10;
 
 	// hypo is in geographic coordinates
 	glassutil::CGeo geo1;
@@ -987,7 +991,7 @@ double CHypo::affinity(std::shared_ptr<CCorrelation> corr) {
 
 	// correlation is in geographic coordinates
 	glassutil::CGeo geo2;
-	geo2.setGeographic(corr->dLat, corr->dLon, 6371.0 - corr->dZ);
+	geo2.setGeographic(corr->getLat(), corr->getLon(), 6371.0 - corr->getZ());
 
 	// compute distance factor
 	double xFactor = RAD2DEG * geo1.delta(&geo2);
@@ -1094,8 +1098,8 @@ bool CHypo::prune() {
 			// if (pGlass->bTrack) {
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: C-CUL %s %s",
-					glassutil::CDate::encodeDateTime(cor->tCorrelation).c_str(),
-					cor->pSite->sScnl.c_str());
+					glassutil::CDate::encodeDateTime(cor->getTCorrelation()).c_str(),
+					cor->getSite()->sScnl.c_str());
 			glassutil::CLogit::log(sLog);
 			// }
 
@@ -1163,11 +1167,11 @@ bool CHypo::cancel() {
 		for (auto cor : vCorr) {
 			// count correlation as expired if it's creation time is older than
 			// the cancel age
-			if ((cor->tGlassCreate + pGlass->correlationCancelAge) < now) {
+			if ((cor->getTGlassCreate() + pGlass->correlationCancelAge) < now) {
 				snprintf(sLog, sizeof(sLog),
 							"CHypo::cancel: Correlation:%s created: %f "
 							"limit:%d now:%f",
-							sPid.c_str(), cor->tGlassCreate,
+							sPid.c_str(), cor->getTGlassCreate(),
 							pGlass->correlationCancelAge, now);
 				glassutil::CLogit::log(sLog);
 				expireCount++;
@@ -1525,7 +1529,7 @@ void CHypo::list(std::string src) {
 		std::string sass = pick->getAss();
 
 		// if the hypo link is valid
-		if ((pick->getHypo() != NULL) && (pick->getHypo()->sPid != sPid)) {
+		if ((pick->getHypo() != NULL) && (pick->getHypo()->getPid() != sPid)) {
 			// set association string
 			sass = "*";
 		} else {
@@ -2260,12 +2264,12 @@ void CHypo::trap() {
 		}
 
 		// check sPid
-		if (hyp->sPid != sPid) {
+		if (hyp->getPid() != sPid) {
 			// sPid is for a different hypo
 			snprintf(
 					sLog, sizeof(sLog),
 					"CHypo::trap: sPid %s Pick: %s linked to another hypo: %s",
-					sPid.c_str(), q->getPid().c_str(), hyp->sPid.c_str());
+					sPid.c_str(), q->getPid().c_str(), hyp->getPid().c_str());
 			glassutil::CLogit::log(glassutil::log_level::warn, sLog);
 		}
 	}
@@ -2399,7 +2403,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			continue;
 		}
 
-		std::string sOtherPid = pickHyp->sPid;
+		std::string sOtherPid = pickHyp->getPid();
 
 		// if this pick is linked to this hypo
 		if (sOtherPid == sPid) {
@@ -2481,7 +2485,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		auto corr = vCorr[iCorr];
 
 		// get the correlation's hypo pointer
-		std::shared_ptr<CHypo> corrHyp = corr->pHypo;
+		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
 
 		// if this correlation isn't linked to a hypo
 		if (corrHyp == NULL) {
@@ -2490,7 +2494,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			continue;
 		}
 
-		std::string sOtherPid = corrHyp->sPid;
+		std::string sOtherPid = corrHyp->getPid();
 
 		// if this corr is linked to this hypo
 		if (sOtherPid == sPid) {
@@ -2503,11 +2507,13 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		double aff2 = corrHyp->affinity(corr);
 
 		snprintf(
-				sLog, sizeof(sLog),
+				sLog,
+				sizeof(sLog),
 				"CHypo::resolve: C SCV COMPARE %s %s %s %s (%.2f, %.2f )",
-				sPid.c_str(), sOtherPid.c_str(),
-				glassutil::CDate::encodeDateTime(corr->tCorrelation).c_str(),
-				corr->pSite->sScnl.c_str(), aff1, aff2);
+				sPid.c_str(),
+				sOtherPid.c_str(),
+				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
+				corr->getSite()->sScnl.c_str(), aff1, aff2);
 		glassutil::CLogit::log(sLog);
 
 		// check which affinity is better
@@ -2520,9 +2526,9 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 						"CHypo::resolve: C SCV %s %s %s %s (%.2f)\n",
 						sPid.c_str(),
 						sOtherPid.c_str(),
-						glassutil::CDate::encodeDateTime(corr->tCorrelation)
-								.c_str(),
-						corr->pSite->sScnl.c_str(), aff1);
+						glassutil::CDate::encodeDateTime(
+								corr->getTCorrelation()).c_str(),
+						corr->getSite()->sScnl.c_str(), aff1);
 				glassutil::CLogit::log(sLog);
 			}
 
@@ -2611,7 +2617,7 @@ double CHypo::getBayesInitial() {
 	return (dBayesInitial);
 }
 
-double CHypo::getCutFactor()  {
+double CHypo::getCutFactor() {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dCutFactor);
 }

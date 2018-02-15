@@ -122,8 +122,6 @@ class CPick {
 	void addHypo(std::shared_ptr<CHypo> hyp, std::string ass = "", bool force =
 							false);
 
-	void setAss(std::string ass);
-
 	/**
 	 * \brief Remove hypo reference to this pick
 	 *
@@ -192,6 +190,12 @@ class CPick {
 	 * \return the association string
 	 */
 	const std::string& getAss();
+
+	/**
+	 * \brief Association string setter
+	 * \param ass - the association string
+	 */
+	void setAss(std::string ass);
 
 	/**
 	 * \brief Phase getter

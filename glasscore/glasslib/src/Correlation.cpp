@@ -294,7 +294,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		return;
 	}
 
-	std::lock_guard<std::mutex> guard(correlationMutex);
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 
 	// remember input json for hypo message generation
 	// note move to init?
@@ -309,7 +309,7 @@ CCorrelation::~CCorrelation() {
 
 // ---------------------------------------------------------clear
 void CCorrelation::clear() {
-	std::lock_guard<std::mutex> guard(correlationMutex);
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 
 	pSite = NULL;
 	pHypo = NULL;
@@ -341,7 +341,7 @@ bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
 		return (false);
 	}
 
-	std::lock_guard<std::mutex> guard(correlationMutex);
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 
 	pSite = correlationSite;
 	sPhs = phase;
@@ -382,7 +382,7 @@ void CCorrelation::addHypo(std::shared_ptr<CHypo> hyp, std::string ass,
 		return;
 	}
 
-	std::lock_guard<std::mutex> guard(correlationMutex);
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 
 	// Add hypo data reference to this correlation
 	if (force == true) {
@@ -403,7 +403,7 @@ void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
-	std::lock_guard<std::mutex> guard(correlationMutex);
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 
 	// Remove hypo reference from this corrleation
 	if (pHypo->getPid() == hyp->getPid()) {
@@ -412,14 +412,70 @@ void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
 }
 
 void CCorrelation::clearHypo() {
-	std::lock_guard<std::mutex> guard(correlationMutex);
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 	pHypo = NULL;
 }
 
-void CCorrelation::setAss(std::string ass) {
-	std::lock_guard<std::mutex> guard(correlationMutex);
+double CCorrelation::getCorrelation() const {
+	return (dCorrelation);
+}
 
+double CCorrelation::getLat() const {
+	return (dLat);
+}
+
+double CCorrelation::getLon() const {
+	return (dLon);
+}
+
+double CCorrelation::getZ() const {
+	return (dZ);
+}
+
+int CCorrelation::getIdCorrelation() const {
+	return (idCorrelation);
+}
+
+const std::shared_ptr<json::Object>& CCorrelation::getJCorrelation() const {
+	return (jCorrelation);
+}
+
+const std::shared_ptr<CHypo>& CCorrelation::getHypo() const {
+	return (pHypo);
+}
+
+const std::shared_ptr<CSite>& CCorrelation::getSite() const {
+	return (pSite);
+}
+
+const std::string& CCorrelation::getAss() {
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+	return (sAss);
+}
+
+void CCorrelation::setAss(std::string ass) {
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 	sAss = ass;
+}
+
+const std::string& CCorrelation::getPhs() const {
+	return (sPhs);
+}
+
+const std::string& CCorrelation::getPid() const {
+	return (sPid);
+}
+
+double CCorrelation::getTCorrelation() const {
+	return (tCorrelation);
+}
+
+double CCorrelation::getTGlassCreate() const {
+	return (tGlassCreate);
+}
+
+double CCorrelation::getTOrg() const {
+	return (tOrg);
 }
 
 }  // namespace glasscore

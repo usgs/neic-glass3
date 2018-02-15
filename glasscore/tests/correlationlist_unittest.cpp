@@ -111,7 +111,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	// check testcorrelation
 	ASSERT_TRUE(testCorrelation != NULL)<< "testCorrelation not null";
 	// check scnl
-	std::string sitescnl = testCorrelation->pSite->sScnl;
+	std::string sitescnl = testCorrelation->getSite()->sScnl;
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
 			"testCorrelation has right scnl";
@@ -140,7 +140,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 			testCorrelationList->getCorrelation(2);
 
 	// check scnl
-	sitescnl = test2Correlation->pSite->sScnl;
+	sitescnl = test2Correlation->getSite()->sScnl;
 	expectedscnl = std::string(SCNL2);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
 			"test2Correlation has right scnl";

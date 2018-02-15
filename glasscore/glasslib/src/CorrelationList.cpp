@@ -142,8 +142,9 @@ bool CCorrelationList::addCorrelation(json::Object *correlation) {
 														pSiteList);
 
 	// check to see if we got a valid correlation
-	if ((newCorrelation->pSite == NULL) || (newCorrelation->tCorrelation == 0)
-			|| (newCorrelation->sPid == "")) {
+	if ((newCorrelation->getSite() == NULL)
+			|| (newCorrelation->getTCorrelation() == 0)
+			|| (newCorrelation->getPid() == "")) {
 		// cleanup
 		delete (newCorrelation);
 		return (false);
@@ -189,7 +190,7 @@ bool CCorrelationList::addCorrelation(json::Object *correlation) {
 	}
 
 	// create pair for insertion
-	std::pair<double, int> p(corr->tCorrelation, nCorrelation);
+	std::pair<double, int> p(corr->getTCorrelation(), nCorrelation);
 
 	// check to see if we're at the correlation limit
 	if (vCorrelation.size() == nCorrelationMax) {
@@ -207,7 +208,7 @@ bool CCorrelationList::addCorrelation(json::Object *correlation) {
 
 	// Insert new correlation in proper time sequence into correlation vector
 	// get the index of the new correlation
-	int iCorrelation = indexCorrelation(corr->tCorrelation);
+	int iCorrelation = indexCorrelation(corr->getTCorrelation());
 	switch (iCorrelation) {
 		case -2:
 			// Empty vector, just add it
@@ -384,10 +385,10 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 	}
 
 	// get the index of the earliest possible match
-	int it1 = indexCorrelation(newCorrelation->tCorrelation - tWindow);
+	int it1 = indexCorrelation(newCorrelation->getTCorrelation() - tWindow);
 
 	// get index of the latest possible correlation
-	int it2 = indexCorrelation(newCorrelation->tCorrelation + tWindow);
+	int it2 = indexCorrelation(newCorrelation->getTCorrelation() + tWindow);
 
 	// index can't be negative, it1/2 negative if correlation before first in
 	// list
@@ -409,15 +410,16 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 		std::shared_ptr<CCorrelation> cor = mCorrelation[q.second];
 
 		// check if time difference is within window
-		if (std::abs(newCorrelation->tCorrelation - cor->tCorrelation)
+		if (std::abs(newCorrelation->getTCorrelation() - cor->getTCorrelation())
 				< tWindow) {
 			// check if sites match
-			if (newCorrelation->pSite->sScnl == cor->pSite->sScnl) {
+			if (newCorrelation->getSite()->sScnl == cor->getSite()->sScnl) {
 				glassutil::CGeo geo1;
-				geo1.setGeographic(newCorrelation->dLat, newCorrelation->dLon,
-									newCorrelation->dZ);
+				geo1.setGeographic(newCorrelation->getLat(),
+									newCorrelation->getLon(),
+									newCorrelation->getZ());
 				glassutil::CGeo geo2;
-				geo2.setGeographic(cor->dLat, cor->dLon, cor->dZ);
+				geo2.setGeographic(cor->getLat(), cor->getLon(), cor->getZ());
 				double delta = RAD2DEG * geo1.delta(&geo2);
 
 				// check if distance difference is within window
@@ -428,12 +430,12 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 							"CCorrelationList::checkDuplicate: Duplicate "
 									"(tWindow = " + std::to_string(tWindow)
 									+ ", xWindow = " + std::to_string(xWindow)
-									+ ") : old:" + cor->pSite->sScnl + " "
-									+ std::to_string(cor->tCorrelation)
+									+ ") : old:" + cor->getSite()->sScnl + " "
+									+ std::to_string(cor->getTCorrelation())
 									+ " new(del):"
-									+ newCorrelation->pSite->sScnl + " "
+									+ newCorrelation->getSite()->sScnl + " "
 									+ std::to_string(
-											newCorrelation->tCorrelation));
+											newCorrelation->getTCorrelation()));
 					return (true);
 				}
 			}
@@ -498,7 +500,7 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 		// get the correlation from the vector
 		auto q = vCorrelation[it];
 		std::shared_ptr<CCorrelation> corr = mCorrelation[q.second];
-		std::shared_ptr<CHypo> corrHyp = corr->pHypo;
+		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
 
 		// check to see if this correlation is already in this hypo
 		if (hyp->hasCorrelation(corr)) {
@@ -528,9 +530,9 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 						sizeof(sLog),
 						"C-WAF %s %s %s (%d)\n",
 						hyp->getPid().substr(0, 4).c_str(),
-						glassutil::CDate::encodeDateTime(corr->tCorrelation)
-								.c_str(),
-						corr->pSite->sScnl.c_str(),
+						glassutil::CDate::encodeDateTime(
+								corr->getTCorrelation()).c_str(),
+						corr->getSite()->sScnl.c_str(),
 						static_cast<int>(hyp->getVCorrSize()));
 				glassutil::CLogit::Out(sLog);
 			}
@@ -600,7 +602,7 @@ std::vector<std::shared_ptr<CCorrelation>> CCorrelationList::rogues(
 		// get the current pick from the vector
 		auto q = vCorrelation[it];
 		std::shared_ptr<CCorrelation> corr = mCorrelation[q.second];
-		std::shared_ptr<CHypo> corrHyp = corr->pHypo;
+		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
 
 		// if the current pick is associated to this event
 		if ((corrHyp != NULL) && (corrHyp->getPid() == pidHyp)) {

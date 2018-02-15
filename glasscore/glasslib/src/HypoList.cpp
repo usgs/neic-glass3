@@ -662,7 +662,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 	// *could* be issues here, but has no idea how significant they are.
 	// Could affect association to splits with similar origin times.
 	int it1 = indexHypo(
-			corr->tCorrelation - pGlass->correlationMatchingTWindow);
+			corr->getTCorrelation() - pGlass->correlationMatchingTWindow);
 
 	// check to see the index indicates that the time is before the
 	// start of the hypo list
@@ -674,7 +674,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 	// get the ending index based on the correlation time plus
 	// correlationMatchingTWindow
 	int it2 = indexHypo(
-			corr->tCorrelation + pGlass->correlationMatchingTWindow);
+			corr->getTCorrelation() + pGlass->correlationMatchingTWindow);
 
 	std::string pidmax;
 
@@ -717,8 +717,8 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 					sizeof(sLog),
 					"C-ASS %s %s %s (%d)\n",
 					hyp->getPid().substr(0, 4).c_str(),
-					glassutil::CDate::encodeDateTime(corr->tCorrelation).c_str(),
-					corr->pSite->sScnl.c_str(),
+					glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
+					corr->getSite()->sScnl.c_str(),
 					static_cast<int>(hyp->getVCorrSize()));
 			glassutil::CLogit::Out(sLog);
 		}
