@@ -284,10 +284,10 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 		// search through each pick at this site
 		for (const auto &pick : site->vPick) {
 			// get the pick's arrival time
-			double tPick = pick->tPick;
+			double tPick = pick->getTPick();
 
 			// get the picks back azimuth
-			double backAzimuth = pick->dBackAzimuth;
+			double backAzimuth = pick->getBackAzimuth();
 
 			// compute observed travel time from the pick time and
 			// the provided origin time
@@ -307,7 +307,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 				nodeGeo.setGeographic(dLat, dLon, 6371.0 - dZ);
 
 				// compute azimith from the site to the node
-				double siteAzimuth = pick->pSite->geo.azimuth(&nodeGeo);
+				double siteAzimuth = pick->getSite()->geo.azimuth(&nodeGeo);
 
 				// check to see if pick's backazimuth is within the
 				// valid range

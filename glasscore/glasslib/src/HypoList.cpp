@@ -513,7 +513,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CHypoList::associate idPick:" + std::to_string(pk->idPick));
+			"CHypoList::associate idPick:" + std::to_string(pk->getIdPick()));
 
 	std::string pid;
 	std::vector<std::shared_ptr<CHypo>> viper;
@@ -522,7 +522,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 	// (a potential hypo must be before the pick we're associating)
 	// use the pick time minus 2400 seconds to compute the starting index
 	// NOTE: Hard coded time delta
-	int it1 = indexHypo(pk->tPick - 2400.0);
+	int it1 = indexHypo(pk->getTPick() - 2400.0);
 
 	// check to see the index indicates that the time is before the
 	// start of the hypo list
@@ -533,7 +533,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 
 	// get the ending index based on the pick time (a potential hypo can't
 	// be after the pick we're associating)
-	int it2 = indexHypo(pk->tPick);
+	int it2 = indexHypo(pk->getTPick());
 
 	std::string pidmax;
 	double sdassoc = pGlass->sdAssociate;
@@ -572,11 +572,12 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		// log
 		if (pGlass->bTrack) {
 			char sLog[1024];
-			snprintf(sLog, sizeof(sLog), "ASS %s %s %s (%d)\n",
-						hyp->sPid.c_str(),
-						glassutil::CDate::encodeDateTime(pk->tPick).c_str(),
-						pk->pSite->sScnl.c_str(),
-						static_cast<int>(hyp->vPick.size()));
+			snprintf(
+					sLog, sizeof(sLog), "ASS %s %s %s (%d)\n",
+					hyp->sPid.c_str(),
+					glassutil::CDate::encodeDateTime(pk->getTPick()).c_str(),
+					pk->getSite()->sScnl.c_str(),
+					static_cast<int>(hyp->vPick.size()));
 			glassutil::CLogit::Out(sLog);
 		}
 
@@ -1142,13 +1143,13 @@ bool CHypoList::merge(std::shared_ptr<CHypo> hypo) {
 				// add all picks for other two events
 				for (auto pick : hypo->vPick) {
 					// they're not associated yet, just potentially
-					pick->sAss = "N";
+					pick->setAss("N");
 					hypo3->addPick(pick);
 				}
 
 				for (auto pick : hypo2->vPick) {
 					// they're not associated yet, just potentially
-					pick->sAss = "N";
+					pick->setAss("N");
 					hypo3->addPick(pick);
 				}
 

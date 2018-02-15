@@ -151,7 +151,67 @@ class CPick {
 	 */
 	bool nucleate();
 
-	// Local Attributes
+	/**
+	 * \brief Back azimuth getter
+	 * \return the back azimuth
+	 */
+	double getBackAzimuth() const;
+
+	/**
+	 * \brief Slowness getter
+	 * \return the slowness
+	 */
+	double getSlowness() const;
+
+	/**
+	 * \brief Pick id getter
+	 * \return the pick id
+	 */
+	int getIdPick() const;
+
+	/**
+	 * \brief Json pick getter
+	 * \return the json pick
+	 */
+	const std::shared_ptr<json::Object>& getJPick() const;
+
+	/**
+	 * \brief Hypo getter
+	 * \return the hypo
+	 */
+	const std::shared_ptr<CHypo>& getHypo();
+
+	/**
+	 * \brief Site getter
+	 * \return the site
+	 */
+	const std::shared_ptr<CSite>& getSite() const;
+
+	/**
+	 * \brief Association string getter
+	 * \return the association string
+	 */
+	const std::string& getAss();
+
+	/**
+	 * \brief Phase getter
+	 * \return the phase
+	 */
+	const std::string& getPhs() const;
+
+	/**
+	 * \brief Pid getter
+	 * \return the pid
+	 */
+	const std::string& getPid() const;
+
+	/**
+	 * \brief Pick time getter
+	 * \return the pick time
+	 */
+	double getTPick() const;
+
+ private:
 	/**
 	 * \brief A std::shared_ptr to a CSite object
 	 * representing the link between this pick and the site it was
@@ -208,6 +268,13 @@ class CPick {
 	 */
 	std::shared_ptr<json::Object> jPick;
 
+	/**
+	 * \brief A recursive_mutex to control threading access to CPick.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
 	std::recursive_mutex pickMutex;
 };
 }  // namespace glasscore

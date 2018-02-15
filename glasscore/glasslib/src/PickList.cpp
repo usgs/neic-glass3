@@ -202,8 +202,8 @@ bool CPickList::addPick(json::Object *pick) {
 	CPick * newPick = new CPick(pick, nPick + 1, pSiteList);
 
 	// check to see if we got a valid pick
-	if ((newPick->pSite == NULL) || (newPick->tPick == 0)
-			|| (newPick->sPid == "")) {
+	if ((newPick->getSite() == NULL) || (newPick->getTPick() == 0)
+			|| (newPick->getPid() == "")) {
 		// cleanup
 		delete (newPick);
 		return (false);
@@ -248,7 +248,7 @@ bool CPickList::addPick(json::Object *pick) {
 	}
 
 	// create pair for insertion
-	std::pair<double, int> p(pck->tPick, nPick);
+	std::pair<double, int> p(pck->getTPick(), nPick);
 
 	// check to see if we're at the pick limit
 	if (vPick.size() == nPickMax) {
@@ -258,7 +258,7 @@ bool CPickList::addPick(json::Object *pick) {
 		auto pos = mPick.find(pdx.second);
 
 		// remove pick from per site pick list
-		pos->second->pSite->remPick(pos->second);
+		pos->second->getSite()->remPick(pos->second);
 
 		// erase from map
 		mPick.erase(pos);
@@ -269,7 +269,7 @@ bool CPickList::addPick(json::Object *pick) {
 
 	// Insert new pick in proper time sequence into pick vector
 	// get the index of the new pick
-	int iPick = indexPick(pck->tPick);
+	int iPick = indexPick(pck->getTPick());
 	switch (iPick) {
 		case -2:
 			// Empty vector, just add it
@@ -298,7 +298,7 @@ bool CPickList::addPick(json::Object *pick) {
 	mPick[nPick] = pck;
 
 	// add to site specific pick list
-	pck->pSite->addPick(pck);
+	pck->getSite()->addPick(pck);
 
 	m_vPickMutex.unlock();
 
@@ -432,10 +432,10 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 	bool matched = false;
 
 	// get the index of the earliest possible match
-	int it1 = indexPick(newPick->tPick - window);
+	int it1 = indexPick(newPick->getTPick() - window);
 
 	// get index of the latest possible pick
-	int it2 = indexPick(newPick->tPick + window);
+	int it2 = indexPick(newPick->getTPick() + window);
 
 	// index can't be negative, it1/2 negative if pick before first in list
 	if (it1 < 0) {
@@ -456,19 +456,19 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 		std::shared_ptr<CPick> pck = mPick[q.second];
 
 		// check if time difference is within window
-		if (std::abs(newPick->tPick - pck->tPick) < window) {
+		if (std::abs(newPick->getTPick() - pck->getTPick()) < window) {
 			// check if sites match
-			if (newPick->pSite->sScnl == pck->pSite->sScnl) {
+			if (newPick->getSite()->sScnl == pck->getSite()->sScnl) {
 				// if match is found, set to true, log, and break out of loop
 				matched = true;
 				glassutil::CLogit::log(
 						glassutil::log_level::warn,
 						"CPickList::checkDuplicat: Duplicate (window = "
 								+ std::to_string(window) + ") : old:"
-								+ pck->pSite->sScnl + " "
-								+ std::to_string(pck->tPick) + " new(del):"
-								+ newPick->pSite->sScnl + " "
-								+ std::to_string(newPick->tPick));
+								+ pck->getSite()->sScnl + " "
+								+ std::to_string(pck->getTPick()) + " new(del):"
+								+ newPick->getSite()->sScnl + " "
+								+ std::to_string(newPick->getTPick()));
 				break;
 			}
 		}
@@ -534,7 +534,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 		// get the pick from the vector
 		auto q = vPick[it];
 		std::shared_ptr<CPick> pck = mPick[q.second];
-		std::shared_ptr<CHypo> pickHyp = pck->pHypo;
+		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
 
 		// check to see if this pick is already in this hypo
 		if (hyp->hasPick(pck)) {
@@ -560,8 +560,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 				snprintf(
 						sLog, sizeof(sLog), "WAF %s %s %s (%d)\n",
 						hyp->sPid.substr(0, 4).c_str(),
-						glassutil::CDate::encodeDateTime(pck->tPick).c_str(),
-						pck->pSite->sScnl.c_str(),
+						glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
+						pck->getSite()->sScnl.c_str(),
 						static_cast<int>(hyp->vPick.size()));
 				glassutil::CLogit::Out(sLog);
 			}
@@ -637,7 +637,7 @@ std::vector<std::shared_ptr<CPick>> CPickList::rogues(std::string pidHyp,
 		// get the current pick from the vector
 		auto q = vPick[it];
 		std::shared_ptr<CPick> pck = mPick[q.second];
-		std::shared_ptr<CHypo> pickHyp = pck->pHypo;
+		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
 
 		// if the current pick is associated to this event
 		if ((pickHyp != NULL) && (pickHyp->sPid == pidHyp)) {

@@ -225,7 +225,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		return;
 	}
 
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// remember input json for hypo message generation
 	// note, move to init?
@@ -240,7 +240,7 @@ CPick::~CPick() {
 
 // ---------------------------------------------------------~clear
 void CPick::clear() {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	pSite = NULL;
 	pHypo = NULL;
@@ -258,9 +258,9 @@ void CPick::clear() {
 bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 						int pickId, std::string pickIdString,
 						double backAzimuth, double slowness) {
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+
 	clear();
-	// lock after clear to avoid deadlock
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 
 	// nullcheck
 	if (pickSite == NULL) {
@@ -285,7 +285,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 
 // ---------------------------------------------------------addHypo
 void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -306,7 +306,7 @@ void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
 
 // ---------------------------------------------------------remHypo
 void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -322,12 +322,12 @@ void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
 }
 
 void CPick::clearHypo() {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 	pHypo = NULL;
 }
 
 void CPick::setAss(std::string ass) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	sAss = ass;
 }
@@ -383,8 +383,8 @@ bool CPick::nucleate() {
 
 		// create the hypo using the node
 		pGlass->m_TTTMutex.lock();
-		std::shared_ptr<CHypo> hypo = std::make_shared < CHypo
-				> (node, pGlass->pTTT);
+		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(node,
+																pGlass->pTTT);
 		pGlass->m_TTTMutex.unlock();
 
 		// set hypo glass pointer and such
@@ -506,4 +506,47 @@ bool CPick::nucleate() {
 	// done
 	return (false);
 }
+
+double CPick::getBackAzimuth() const {
+	return (dBackAzimuth);
+}
+
+double CPick::getSlowness() const {
+	return (dSlowness);
+}
+
+int CPick::getIdPick() const {
+	return (idPick);
+}
+
+const std::shared_ptr<json::Object>& CPick::getJPick() const {
+	return (jPick);
+}
+
+const std::shared_ptr<CHypo>& CPick::getHypo() {
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
+	return (pHypo);
+}
+
+const std::shared_ptr<CSite>& CPick::getSite() const {
+	return (pSite);
+}
+
+const std::string& CPick::getAss() {
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
+	return (sAss);
+}
+
+const std::string& CPick::getPhs() const {
+	return (sPhs);
+}
+
+const std::string& CPick::getPid() const {
+	return (sPid);
+}
+
+double CPick::getTPick() const {
+	return (tPick);
+}
+
 }  // namespace glasscore

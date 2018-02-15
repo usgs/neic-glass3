@@ -417,11 +417,11 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 	}
 
 	// ensure this pick is for this site
-	if (pck->pSite->sScnl != sScnl) {
+	if (pck->getSite()->sScnl != sScnl) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
 				"CSite::addPick: CPick for different site: (" + sScnl + "!="
-						+ pck->pSite->sScnl + ")");
+						+ pck->getSite()->sScnl + ")");
 		return;
 	}
 
