@@ -228,8 +228,8 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 
 		// pass updated site to webs
 		if (pGlass) {
-			if (pGlass->pWebList) {
-				pGlass->pWebList->addSite(oldSite);
+			if (pGlass->getWebList()) {
+				pGlass->getWebList()->addSite(oldSite);
 			}
 		}
 	} else {
@@ -239,8 +239,8 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 
 		// pass new site to webs
 		if (pGlass) {
-			if (pGlass->pWebList) {
-				pGlass->pWebList->addSite(site);
+			if (pGlass->getWebList()) {
+				pGlass->getWebList()->addSite(site);
 			}
 		}
 	}

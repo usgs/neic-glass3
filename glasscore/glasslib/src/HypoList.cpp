@@ -290,9 +290,9 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	// set some basic hypo values from pGlass if we have it
 	if (pGlass) {
 		hypo->setGlass(pGlass);
-		hypo->setCutFactor(pGlass->dCutFactor);
-		hypo->setCutPercentage(pGlass->dCutPercentage);
-		hypo->setCutMin(pGlass->dCutMin);
+		hypo->setCutFactor(pGlass->getCutFactor());
+		hypo->setCutPercentage(pGlass->getCutPercentage());
+		hypo->setCutMin(pGlass->getCutMin());
 	}
 
 	// Add hypo to cache (mHypo) and time sorted
@@ -306,7 +306,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	// get maximum number of hypos
 	// use max picks from pGlass if we have it
 	if (pGlass) {
-		nHypoMax = pGlass->nHypoMax;
+		nHypoMax = pGlass->getHypoMax();
 	}
 
 	// create pair for insertion
@@ -536,7 +536,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 	int it2 = indexHypo(pk->getTPick());
 
 	std::string pidmax;
-	double sdassoc = pGlass->sdAssociate;
+	double sdassoc = pGlass->getSdAssociate();
 
 	// for each hypo in the list within the
 	// time range
@@ -570,16 +570,16 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		std::shared_ptr<CHypo> hyp = mHypo[pidmax];
 
 		// log
-		if (pGlass->bTrack) {
-			char sLog[1024];
-			snprintf(
-					sLog, sizeof(sLog), "ASS %s %s %s (%d)\n",
-					hyp->getPid().c_str(),
-					glassutil::CDate::encodeDateTime(pk->getTPick()).c_str(),
-					pk->getSite()->getScnl().c_str(),
-					static_cast<int>(hyp->getVPickSize()));
-			glassutil::CLogit::Out(sLog);
-		}
+		/*
+		 char sLog[1024];
+		 snprintf(
+		 sLog, sizeof(sLog), "ASS %s %s %s (%d)\n",
+		 hyp->getPid().c_str(),
+		 glassutil::CDate::encodeDateTime(pk->getTPick()).c_str(),
+		 pk->getSite()->getScnl().c_str(),
+		 static_cast<int>(hyp->getVPickSize()));
+		 glassutil::CLogit::Out(sLog);
+		 */
 
 		// link the pick to the hypo
 		pk->addHypo(hyp, "", true);
@@ -662,7 +662,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 	// *could* be issues here, but has no idea how significant they are.
 	// Could affect association to splits with similar origin times.
 	int it1 = indexHypo(
-			corr->getTCorrelation() - pGlass->correlationMatchingTWindow);
+			corr->getTCorrelation() - pGlass->getCorrelationMatchingTWindow());
 
 	// check to see the index indicates that the time is before the
 	// start of the hypo list
@@ -674,7 +674,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 	// get the ending index based on the correlation time plus
 	// correlationMatchingTWindow
 	int it2 = indexHypo(
-			corr->getTCorrelation() + pGlass->correlationMatchingTWindow);
+			corr->getTCorrelation() + pGlass->getCorrelationMatchingTWindow());
 
 	std::string pidmax;
 
@@ -689,8 +689,8 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 
 		// check to see if the correlation will associate with
 		// this hypo
-		if (hyp->associate(corr, pGlass->correlationMatchingTWindow,
-							pGlass->correlationMatchingXWindow)) {
+		if (hyp->associate(corr, pGlass->getCorrelationMatchingTWindow(),
+							pGlass->getCorrelationMatchingXWindow())) {
 			// add to the list of hypos this correlation can associate with
 			viper.push_back(hyp);
 
@@ -710,19 +710,19 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 		hyp = mHypo[pidmax];
 
 		// log
-		if (pGlass->bTrack) {
-			char sLog[1024];
-			snprintf(
-					sLog,
-					sizeof(sLog),
-					"C-ASS %s %s %s (%d)\n",
-					hyp->getPid().substr(0, 4).c_str(),
-					glassutil::CDate::encodeDateTime(corr->getTCorrelation())
-							.c_str(),
-					corr->getSite()->getScnl().c_str(),
-					static_cast<int>(hyp->getVCorrSize()));
-			glassutil::CLogit::Out(sLog);
-		}
+		/*
+		 char sLog[1024];
+		 snprintf(
+		 sLog,
+		 sizeof(sLog),
+		 "C-ASS %s %s %s (%d)\n",
+		 hyp->getPid().substr(0, 4).c_str(),
+		 glassutil::CDate::encodeDateTime(corr->getTCorrelation())
+		 .c_str(),
+		 corr->getSite()->getScnl().c_str(),
+		 static_cast<int>(hyp->getVCorrSize()));
+		 glassutil::CLogit::Out(sLog);
+		 */
 
 		// link the correlation to the hypo
 		corr->addHypo(hyp, "", true);
@@ -840,7 +840,7 @@ void CHypoList::darwin() {
 
 	// check to see if we've hit the iCycle Limit for this
 	// hypo
-	if (hyp->getCycle() >= pGlass->iCycleLimit) {
+	if (hyp->getCycle() >= pGlass->getCycleLimit()) {
 		// log
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
@@ -896,7 +896,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 
 	// Search for any associable picks that match hypo in the pick list
 	// NOTE: This uses the hard coded 2400 second scavenge duration default
-	if (pGlass->pPickList->scavenge(hyp)) {
+	if (pGlass->getPickList()->scavenge(hyp)) {
 		// we should report this hypo since it has changed
 		breport = true;
 
@@ -906,7 +906,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 
 	// search for any associable correlations that match hypo in the correlation
 	// list
-	if (pGlass->pCorrelationList->scavenge(hyp)) {
+	if (pGlass->getCorrelationList()->scavenge(hyp)) {
 		// we should report this hypo since it has changed
 		breport = true;
 

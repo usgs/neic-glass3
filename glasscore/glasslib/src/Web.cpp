@@ -228,9 +228,9 @@ bool CWeb::global(json::Object*com) {
 
 	// check pGlass
 	if (pGlass != NULL) {
-		detect = pGlass->nDetect;
-		nucleate = pGlass->nNucleate;
-		thresh = pGlass->dThresh;
+		detect = pGlass->getDetect();
+		nucleate = pGlass->getNucleate();
+		thresh = pGlass->getThresh();
 	}
 
 	double resol = 100;
@@ -472,9 +472,9 @@ bool CWeb::grid(json::Object *com) {
 
 	// check pGlass
 	if (pGlass != NULL) {
-		detect = pGlass->nDetect;
-		nucleate = pGlass->nNucleate;
-		thresh = pGlass->dThresh;
+		detect = pGlass->getDetect();
+		nucleate = pGlass->getNucleate();
+		thresh = pGlass->getThresh();
 	}
 
 	double resol = 0;
@@ -774,9 +774,9 @@ bool CWeb::grid_explicit(json::Object *com) {
 
 	// check pGlass
 	if (pGlass != NULL) {
-		detect = pGlass->nDetect;
-		nucleate = pGlass->nNucleate;
-		thresh = pGlass->dThresh;
+		detect = pGlass->getDetect();
+		nucleate = pGlass->getNucleate();
+		thresh = pGlass->getThresh();
 	}
 
 	int nN = 0;
@@ -1000,8 +1000,8 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		pTrv1.reset();
 
 		// use overall glass default if available
-		if ((pGlass != NULL) && (pGlass->pTrvDefault != NULL)) {
-			pTrv1 = pGlass->pTrvDefault;
+		if ((pGlass != NULL) && (pGlass->getTrvDefault() != NULL)) {
+			pTrv1 = pGlass->getTrvDefault();
 		} else {
 			// create new traveltime
 			pTrv1 = std::make_shared<traveltime::CTravelTime>();
@@ -1066,8 +1066,8 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		pTrv1.reset();
 
 		// use overall glass default if available
-		if (pGlass->pTrvDefault != NULL) {
-			pTrv1 = pGlass->pTrvDefault;
+		if (pGlass->getTrvDefault() != NULL) {
+			pTrv1 = pGlass->getTrvDefault();
 		} else {
 			// create new traveltime
 			pTrv1 = std::make_shared<traveltime::CTravelTime>();

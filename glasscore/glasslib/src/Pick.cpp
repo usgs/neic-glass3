@@ -358,10 +358,6 @@ bool CPick::nucleate() {
 	std::vector<std::shared_ptr<CNode>> vTrigger = pSite->getVTrigger();
 
 	for (auto node : vTrigger) {
-		snprintf(sLog, sizeof(sLog), "CPick::nucleate: %s %d %.2f",
-					pGlass->sWeb.c_str(), pGlass->nCount, pGlass->dSum);
-		glassutil::CLogit::log(sLog);
-
 		// nucleate at the node to build the
 		// list of picks that support this node
 		// tOrg was set during nucleation pass
@@ -374,16 +370,16 @@ bool CPick::nucleate() {
 		}
 
 		// create the hypo using the node
-		pGlass->m_TTTMutex.lock();
-		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(node,
-																pGlass->pTTT);
-		pGlass->m_TTTMutex.unlock();
+		// pGlass->m_TTTMutex.lock();
+		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
+				node, pGlass->getTTT());
+		// pGlass->m_TTTMutex.unlock();
 
 		// set hypo glass pointer and such
 		hypo->setGlass(pGlass);
-		hypo->setCutFactor(pGlass->dCutFactor);
-		hypo->setCutPercentage(pGlass->dCutPercentage);
-		hypo->setCutMin(pGlass->dCutMin);
+		hypo->setCutFactor(pGlass->getCutFactor());
+		hypo->setCutPercentage(pGlass->getCutPercentage());
+		hypo->setCutMin(pGlass->getCutMin());
 
 		// add links to all the picks that support the hypo
 		std::vector<std::shared_ptr<CPick>> vNodePicks = node->getVPick();
@@ -464,7 +460,7 @@ bool CPick::nucleate() {
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit looking at it closer.  Process it using evolve
-		if (pGlass->pHypoList->evolve(hypo, 1)) {
+		if (pGlass->getHypoList()->evolve(hypo, 1)) {
 			// the hypo survived evolve,
 			// log the hypo
 			std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
@@ -493,7 +489,7 @@ bool CPick::nucleate() {
 			 }*/
 
 			// add new hypo to hypo list
-			pGlass->pHypoList->addHypo(hypo);
+			pGlass->getHypoList()->addHypo(hypo);
 		}
 	}
 

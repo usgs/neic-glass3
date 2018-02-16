@@ -718,8 +718,8 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 		return (false);
 	}
 
-	double dAzimuthRange = pGlass->beamMatchingAzimuthWindow;
-	// double dDistanceRange = pGlass->beamMatchingDistanceWindow;
+	double dAzimuthRange = pGlass->getBeamMatchingAzimuthWindow();
+	// double dDistanceRange = pGlass->getBeamMatchingDistanceWindow();
 
 	// set up a geographic object for this hypo
 	glassutil::CGeo hypoGeo;
@@ -925,10 +925,10 @@ double CHypo::affinity(std::shared_ptr<CPick> pck) {
 
 	// get various global parameters from the glass pointer
 	// get the standard deviation allowed for association
-	double sdassoc = pGlass->sdAssociate;
+	double sdassoc = pGlass->getSdAssociate();
 
 	// get the affinity factor
-	double expaff = pGlass->expAffinity;
+	double expaff = pGlass->getExpAffinity();
 
 	// check to see if this pick can  associate with this hypo using
 	// the given association standard deviation
@@ -974,8 +974,8 @@ double CHypo::affinity(std::shared_ptr<CCorrelation> corr) {
 	}
 
 	// get various global parameters from the glass pointer
-	double tWindow = pGlass->correlationMatchingTWindow;
-	double xWindow = pGlass->correlationMatchingXWindow;
+	double tWindow = pGlass->getCorrelationMatchingTWindow();
+	double xWindow = pGlass->getCorrelationMatchingXWindow();
 
 	// check to see if this correlation can associate with this hypo
 	if (!associate(corr, tWindow, xWindow)) {
@@ -1033,7 +1033,7 @@ bool CHypo::prune() {
 	geo.setGeographic(dLat, dLon, 6371.0);
 
 	// get the standard deviation allowed for pruning
-	double sdprune = pGlass->sdPrune;
+	double sdprune = pGlass->getSdPrune();
 
 	// for each pick in this hypo
 	for (auto pck : vPick) {
@@ -1041,13 +1041,12 @@ bool CHypo::prune() {
 		if (!associate(pck, 1.0, sdprune)) {
 			// pick no longer associates, add to remove list
 			vremove.push_back(pck);
-			// if (pGlass->bTrack) {
+
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f)",
 					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
 					pck->getSite()->getScnl().c_str(), sdprune);
 			glassutil::CLogit::log(sLog);
-			// }
 
 			// on to the next pick
 			continue;
@@ -1088,8 +1087,8 @@ bool CHypo::prune() {
 	std::vector<std::shared_ptr<CCorrelation>> vcremove;
 
 	// get the correlation windows
-	double tWindow = pGlass->correlationMatchingTWindow;
-	double xWindow = pGlass->correlationMatchingXWindow;
+	double tWindow = pGlass->getCorrelationMatchingTWindow();
+	double xWindow = pGlass->getCorrelationMatchingXWindow();
 
 	// for each correlation in this hypo
 	for (auto cor : vCorr) {
@@ -1097,7 +1096,7 @@ bool CHypo::prune() {
 		if (!associate(cor, tWindow, xWindow)) {
 			// correlation no longer associates, add to remove list
 			vcremove.push_back(cor);
-			// if (pGlass->bTrack) {
+
 			snprintf(
 					sLog,
 					sizeof(sLog),
@@ -1106,7 +1105,6 @@ bool CHypo::prune() {
 							.c_str(),
 					cor->getSite()->getScnl().c_str());
 			glassutil::CLogit::log(sLog);
-			// }
 
 			// on to the next correlation
 			continue;
@@ -1166,18 +1164,19 @@ bool CHypo::cancel() {
 	if (vCorr.size() > 0) {
 		// get the current time
 		double now = glassutil::CDate::now();
+		int cancelAge = pGlass->getCorrelationCancelAge();
 
 		// check correlations
 		int expireCount = 0;
 		for (auto cor : vCorr) {
 			// count correlation as expired if it's creation time is older than
 			// the cancel age
-			if ((cor->getTGlassCreate() + pGlass->correlationCancelAge) < now) {
+			if ((cor->getTGlassCreate() + cancelAge) < now) {
 				snprintf(sLog, sizeof(sLog),
 							"CHypo::cancel: Correlation:%s created: %f "
 							"limit:%d now:%f",
-							sPid.c_str(), cor->getTGlassCreate(),
-							pGlass->correlationCancelAge, now);
+							sPid.c_str(), cor->getTGlassCreate(), cancelAge,
+							now);
 				glassutil::CLogit::log(sLog);
 				expireCount++;
 			}
@@ -1190,7 +1189,7 @@ bool CHypo::cancel() {
 						"correlations (%d) older than %d seconds",
 						sPid.c_str(),
 						(static_cast<int>(vCorr.size()) - expireCount),
-						pGlass->correlationCancelAge);
+						cancelAge);
 			glassutil::CLogit::log(sLog);
 		} else {
 			snprintf(sLog, sizeof(sLog),
@@ -1198,7 +1197,7 @@ bool CHypo::cancel() {
 						"correlations (%d) younger than %d seconds",
 						sPid.c_str(),
 						(static_cast<int>(vCorr.size()) - expireCount),
-						pGlass->correlationCancelAge);
+						cancelAge);
 			glassutil::CLogit::log(sLog);
 
 			// Hypo is still viable, for now...
@@ -1272,7 +1271,7 @@ bool CHypo::reportCheck() {
 				dt.dateTime().c_str(), dLat, dLon, dZ,
 				static_cast<int>(vPick.size()));
 
-	int nReportCut = pGlass->nReportCut;
+	int nReportCut = pGlass->getReportCut();
 
 	// check data count
 	if ((vPick.size() + vCorr.size()) < nReportCut) {
@@ -1291,7 +1290,7 @@ bool CHypo::reportCheck() {
 	// rms check? other checks?
 
 	// baysian threshold check
-	double dReportThresh = pGlass->dReportThresh;
+	double dReportThresh = pGlass->getReportThresh();
 	if (dBayes < dReportThresh) {
 		// failure
 		snprintf(
@@ -1490,8 +1489,8 @@ void CHypo::list(std::string src) {
 	}
 
 	// generate list of rogue picks
-	std::vector<std::shared_ptr<CPick>> pickRogues = pGlass->pPickList->rogues(
-			sPid, tOrg);
+	std::vector<std::shared_ptr<CPick>> pickRogues = pGlass->getPickList()
+			->rogues(sPid, tOrg);
 
 	// add rogue picks to the local pick vector
 	for (auto pick : pickRogues) {
@@ -1581,7 +1580,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 							"CHypo::anneal. " + sPid);
 
 	// locate using new function
-	if (pGlass->minimizeTTLocator == false) {
+	if (pGlass->getMinimizeTtLocator() == false) {
 		annealingLocate(nIter, dStart, dStop, tStart, tStop, 1);
 	} else {
 		annealingLocateResidual(nIter, dStart, dStop, tStart, tStop, 1);
@@ -1690,10 +1689,6 @@ double CHypo::localize() {
 		return dBayes;
 	}
 
-	// increment location count for debugging?
-	// Note: Not sure what the purpose of keeping this count is
-	pGlass->nLocate++;
-
 	// get the number of picks
 	int npick = vPick.size();
 
@@ -1713,7 +1708,7 @@ double CHypo::localize() {
 	double searchR = (dRes / 4. + taper.Val(vPick.size()) * .75 * dRes) / 4.;
 
 	// This should be the default
-	if (pGlass->minimizeTTLocator == false) {
+	if (pGlass->getMinimizeTtLocator() == false) {
 		if (npick < 50) {
 			annealingLocate(5000, searchR, 1., searchR / 30.0, .1);
 		} else if (npick < 150 && (npick % 10) == 0) {
@@ -1751,11 +1746,6 @@ double CHypo::localize() {
 				static_cast<int>(vPick.size()));
 	glassutil::CLogit::log(sLog);
 
-	if (pGlass->bTrack) {
-		// call list to output the current data
-		list("Localize");
-	}
-
 	// return the final maximum bayesian fit
 	return (dBayes);
 }
@@ -1781,7 +1771,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 
 	// if testing locator, setup output file
 	std::ofstream outfile;
-	if (pGlass->testLocator) {
+	if (pGlass->getTestLocator()) {
 		std::string filename = "./locatorTest/" + sPid + ".txt";
 		outfile.open(filename, std::ios::out | std::ios::app);
 		outfile << std::to_string(dLat) << " " << std::to_string(dLon) << " "
@@ -1850,7 +1840,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		double val = getBayes(xlat, xlon, xz, oT, nucleate);
 
 		// if testing locator print iteration
-		if (pGlass->testLocator) {
+		if (pGlass->getTestLocator()) {
 			outfile << std::to_string(xlat) << " " << std::to_string(xlon)
 					<< " " << std::to_string(xz) << " " << std::to_string(oT)
 					<< " " << std::to_string(vPick.size()) << " "
@@ -1896,12 +1886,12 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 				valBest, sPid.c_str());
 	glassutil::CLogit::log(sLog);
 
-	if (pGlass->graphicsOut == true) {
+	if (pGlass->getGraphicsOut() == true) {
 		graphicsOutput();
 	}
 
 	// if testing the locator close the file
-	if (pGlass->testLocator) {
+	if (pGlass->getTestLocator()) {
 		outfile.close();
 	}
 
@@ -2112,7 +2102,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 				"CHypo::annealingLocate: new sum abs residual %.4f", valBest);
 	glassutil::CLogit::log(sLog);
 
-	if (pGlass->graphicsOut == true) {
+	if (pGlass->getGraphicsOut() == true) {
 		graphicsOutput();
 	}
 
@@ -2196,7 +2186,7 @@ void CHypo::graphicsOutput() {
 	}
 
 	std::ofstream outfile;
-	std::string filename = pGlass->graphicsOutFolder + sPid + ".txt";
+	std::string filename = pGlass->getGraphicsOutFolder() + sPid + ".txt";
 	outfile.open(filename, std::ios::out);
 	outfile << "hypocenter: " << std::to_string(dLat) << " "
 			<< std::to_string(dLon) << " " << std::to_string(dZ) << " "
@@ -2207,12 +2197,13 @@ void CHypo::graphicsOutput() {
 	double sigma = 0;
 	glassutil::CGeo geo;
 	int npick = vPick.size();
-	for (int y = -1 * pGlass->graphicsSteps; y <= pGlass->graphicsSteps; y++) {
-		double xlat = dLat + (y * pGlass->graphicsStepKM) / 111.1;
-		for (int x = -1 * pGlass->graphicsSteps; x <= pGlass->graphicsSteps;
-				x++) {
+	for (int y = -1 * pGlass->getGraphicsSteps();
+			y <= pGlass->getGraphicsSteps(); y++) {
+		double xlat = dLat + (y * pGlass->getGraphicsStepKm()) / 111.1;
+		for (int x = -1 * pGlass->getGraphicsSteps();
+				x <= pGlass->getGraphicsSteps(); x++) {
 			double xlon = dLon
-					+ cos(DEG2RAD * xlat) * (x * pGlass->graphicsStepKM)
+					+ cos(DEG2RAD * xlat) * (x * pGlass->getGraphicsStepKm())
 							/ 111.1;
 			pTTT->setOrigin(xlat, xlon, dZ);
 			stack = 0;
@@ -2295,8 +2286,8 @@ bool CHypo::weights() {
 	}
 
 	// get average delta and sigma from glass
-	double avgDelta = pGlass->avgDelta;
-	double avgSigma = pGlass->avgSigma;
+	double avgDelta = pGlass->getAvgDelta();
+	double avgSigma = pGlass->getAvgSigma();
 
 	// create taper
 	glassutil::CTaper tap;
@@ -2373,7 +2364,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 								"CHypo::resolve: NULL pGlass.");
 		return (false);
 	}
-	if (pGlass->pHypoList == NULL) {
+	if (pGlass->getHypoList() == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::resolve: NULL pGlass pHypoList.");
 		return (false);
@@ -2432,17 +2423,17 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		// check which affinity is better
 		if (aff1 > aff2) {
 			// this pick has a higher affinity with the provided hypo
-			if (pGlass->bTrack) {
-				snprintf(
-						sLog,
-						sizeof(sLog),
-						"CHypo::resolve: SCV %s %s %s %s (%.2f)",
-						sPid.c_str(),
-						sOtherPid.c_str(),
-						glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-						pck->getSite()->getScnl().c_str(), aff1);
-				glassutil::CLogit::log(sLog);
-			}
+			/*
+			 snprintf(
+			 sLog,
+			 sizeof(sLog),
+			 "CHypo::resolve: SCV %s %s %s %s (%.2f)",
+			 sPid.c_str(),
+			 sOtherPid.c_str(),
+			 glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
+			 pck->getSite()->getScnl().c_str(), aff1);
+			 glassutil::CLogit::log(sLog);
+			 */
 
 			// remove the pick from it's original hypo
 			pickHyp->remPick(pck);
@@ -2456,10 +2447,10 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			// just stealing it back, which is why we do it here
 			// NOTE: why add it at all? we're gonna locate before we finish
 			// is it to see if we can get more next time
-			pGlass->pHypoList->pushFifo(hyp);
+			pGlass->getHypoList()->pushFifo(hyp);
 
 			// add the original hypo the pick was linked to the processing queue
-			pGlass->pHypoList->pushFifo(pickHyp);
+			pGlass->getHypoList()->pushFifo(pickHyp);
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;
@@ -2524,18 +2515,18 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		// check which affinity is better
 		if (aff1 > aff2) {
 			// this pick has a higher affinity with the provided hypo
-			if (pGlass->bTrack) {
-				snprintf(
-						sLog,
-						sizeof(sLog),
-						"CHypo::resolve: C SCV %s %s %s %s (%.2f)\n",
-						sPid.c_str(),
-						sOtherPid.c_str(),
-						glassutil::CDate::encodeDateTime(
-								corr->getTCorrelation()).c_str(),
-						corr->getSite()->getScnl().c_str(), aff1);
-				glassutil::CLogit::log(sLog);
-			}
+			/*
+			 snprintf(
+			 sLog,
+			 sizeof(sLog),
+			 "CHypo::resolve: C SCV %s %s %s %s (%.2f)\n",
+			 sPid.c_str(),
+			 sOtherPid.c_str(),
+			 glassutil::CDate::encodeDateTime(
+			 corr->getTCorrelation()).c_str(),
+			 corr->getSite()->getScnl().c_str(), aff1);
+			 glassutil::CLogit::log(sLog);
+			 */
 
 			// remove the correlation from it's original hypo
 			corrHyp->remCorrelation(corr);
@@ -2547,10 +2538,10 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			// NOTE: this puts provided hypo before original hypo in FIFO,
 			// we want this hypo to keep this pick, rather than the original
 			// just stealing it back, which is why we do it here
-			pGlass->pHypoList->pushFifo(hyp);
+			pGlass->getHypoList()->pushFifo(hyp);
 
 			// add the original hypo the pick was linked to the processing queue
-			pGlass->pHypoList->pushFifo(corrHyp);
+			pGlass->getHypoList()->pushFifo(corrHyp);
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;

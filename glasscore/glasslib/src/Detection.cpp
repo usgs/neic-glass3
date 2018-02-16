@@ -165,15 +165,13 @@ bool CDetection::process(json::Object *com) {
 	// Check to see if hypo already exists. We could also
 	// check location at this point, but it seems unlikely
 	// that would add much value
-	auto hypolist = pGlass->pHypoList;
-
 	// define a three minute search window
 	// NOTE: Hard coded.
 	double t1 = torg - 90.0;
 	double t2 = torg + 90.0;
 
 	// search for the first hypocenter in the window
-	std::shared_ptr<CHypo> hypo = hypolist->findHypo(t1, t2);
+	std::shared_ptr<CHypo> hypo = pGlass->getHypoList()->findHypo(t1, t2);
 
 	// check to see if we found a hypo
 	if (hypo != NULL) {
@@ -192,29 +190,29 @@ bool CDetection::process(json::Object *com) {
 			traveltime::CTravelTime* nullTrav = NULL;
 
 			// create new hypo
-			pGlass->m_TTTMutex.lock();
+			// pGlass->m_TTTMutex.lock();
 			hypo = std::make_shared<CHypo>(lat, lon, z, torg,
 											glassutil::CPid::pid(), "Detection",
 											0.0, 0.0, 0,
-											pGlass->pTrvDefault.get(), nullTrav,
-											pGlass->pTTT);
-			pGlass->m_TTTMutex.unlock();
+											pGlass->getTrvDefault().get(),
+											nullTrav, pGlass->getTTT());
+			// pGlass->m_TTTMutex.unlock();
 
 			// set hypo glass pointer and such
 			hypo->setGlass(pGlass);
-			hypo->setCutFactor(pGlass->dCutFactor);
-			hypo->setCutPercentage(pGlass->dCutPercentage);
-			hypo->setCutMin(pGlass->dCutMin);
+			hypo->setCutFactor(pGlass->getCutFactor());
+			hypo->setCutPercentage(pGlass->getCutPercentage());
+			hypo->setCutMin(pGlass->getCutMin());
 
 			// process hypo using evolve
-			if (pGlass->pHypoList->evolve(hypo, 1)) {
+			if (pGlass->getHypoList()->evolve(hypo, 1)) {
 				// add to hypo list
-				hypolist->addHypo(hypo);
+				pGlass->getHypoList()->addHypo(hypo);
 			}
 		} else {
 			// existing hypo, now hwat?
 			// schedule hypo for processing?
-			hypolist->pushFifo(hypo);
+			pGlass->getHypoList()->pushFifo(hypo);
 		}
 	}
 

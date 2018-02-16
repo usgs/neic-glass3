@@ -211,7 +211,8 @@ bool CPickList::addPick(json::Object *pick) {
 
 	// check if pick is duplicate, if pGlass exists
 	if (pGlass) {
-		bool duplicate = checkDuplicate(newPick, pGlass->pickDuplicateWindow);
+		bool duplicate = checkDuplicate(newPick,
+										pGlass->getPickDuplicateWindow());
 
 		// it is a duplicate, log and don't add pick
 		if (duplicate) {
@@ -244,7 +245,7 @@ bool CPickList::addPick(json::Object *pick) {
 	// get maximum number of picks
 	// use max picks from pGlass if we have it
 	if (pGlass) {
-		nPickMax = pGlass->nPickMax;
+		nPickMax = pGlass->getPickMax();
 	}
 
 	// create pair for insertion
@@ -310,7 +311,7 @@ bool CPickList::addPick(json::Object *pick) {
 	// wait until there's space in the queue
 	// we don't want to build up a huge queue of unprocessed
 	// picks
-	if ((pGlass) && (pGlass->pHypoList)) {
+	if ((pGlass) && (pGlass->getHypoList())) {
 		while (queueSize >= (m_iNumThreads)) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
@@ -505,7 +506,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 							"CPickList::scavenge. " + hyp->getPid());
 
 	// Calculate range for possible associations
-	double sdassoc = pGlass->sdAssociate;
+	double sdassoc = pGlass->getSdAssociate();
 
 	// get the index of the pick to start with
 	// based on the hypo origin time
@@ -556,15 +557,6 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 			// add pick to this hypo
 			hyp->addPick(pck);
-			if (pGlass->bTrack) {
-				snprintf(
-						sLog, sizeof(sLog), "WAF %s %s %s (%d)\n",
-						hyp->getPid().substr(0, 4).c_str(),
-						glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-						pck->getSite()->getScnl().c_str(),
-						static_cast<int>(hyp->getVPickSize()));
-				glassutil::CLogit::Out(sLog);
-			}
 
 			// we've associated a pick
 			bAss = true;
@@ -669,7 +661,7 @@ void CPickList::processPick() {
 			// on to the next loop
 			continue;
 		}
-		if (pGlass->pHypoList == NULL) {
+		if (pGlass->getHypoList() == NULL) {
 			// give up some time at the end of the loop
 			jobSleep();
 
@@ -710,7 +702,7 @@ void CPickList::processPick() {
 		// Attempt both association and nucleation of the new pick.
 		// If both succeed, the mess is sorted out in darwin/evolve
 		// associate
-		pGlass->pHypoList->associate(pck);
+		pGlass->getHypoList()->associate(pck);
 
 		// nucleate
 		pck->nucleate();

@@ -253,10 +253,10 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 	// parent web
 	int nCut = pWeb->getNucleate();
 	double dThresh = pWeb->getThresh();
-	double dAzimuthRange = pWeb->getGlass()->beamMatchingAzimuthWindow;
+	double dAzimuthRange = pWeb->getGlass()-> getBeamMatchingAzimuthWindow();
 	// commented out because slowness matching of beams is not yet implemented
 	// but is scheduled to be soon
-	// double dDistanceRange = pWeb->pGlass->beamMatchingDistanceWindow;
+	// double dDistanceRange = pWeb->pGlass->getBeamMatchingDistanceWindow();
 
 	// init overall significance sum and node site count
 	// to 0
@@ -414,7 +414,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 		snprintf(sLog, sizeof(sLog),
 					"**Nucleate %s Web:%s Cut:%d Thresh:%.2f nPick:%d\n",
 					sOrg.c_str(), pWeb->getName().c_str(), nCut, dSum,
-					vPick.size());
+					static_cast<int>(vPick.size()));
 		glassutil::CLogit::Out(sLog);
 	}
 
