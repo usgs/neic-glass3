@@ -507,13 +507,13 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 
 	// are there any hypos to associate with?
 	if (vHypo.size() < 1) {
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CHypoList::associate NOASSOC idPick:"
+						+ std::to_string(pk->getIdPick()) + "; No Hypos");
 		// nope
 		return (false);
 	}
-
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CHypoList::associate idPick:" + std::to_string(pk->getIdPick()));
 
 	std::string pid;
 	std::vector<std::shared_ptr<CHypo>> viper;
@@ -561,6 +561,11 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 
 	// there were no hypos that the pick associated with
 	if (viper.size() < 1) {
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CHypoList::associate NOASSOC idPick:"
+						+ std::to_string(pk->getIdPick()));
+
 		return (false);
 	}
 
@@ -598,6 +603,11 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		// add to the processing queue
 		pushFifo(hyp);
 
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CHypoList::associate ASSOC idPick:"
+						+ std::to_string(pk->getIdPick()) + "; numHypos:1");
+
 		// the pick was associated
 		return (true);
 	}
@@ -616,6 +626,12 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		// note that we didn't link the pick to any hypos
 		pushFifo(q);
 	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypoList::associate ASSOC idPick:"
+					+ std::to_string(pk->getIdPick()) + "; numHypos:"
+					+ std::to_string(viper.size()));
 
 	// the pick was associated
 	return (true);

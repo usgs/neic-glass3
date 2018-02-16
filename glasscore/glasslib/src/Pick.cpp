@@ -275,11 +275,12 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 	dBackAzimuth = backAzimuth;
 	dSlowness = slowness;
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CPick::initialize: site:" + pSite->getScnl() + "; tPick:"
-					+ std::to_string(tPick) + "; idPick:"
-					+ std::to_string(idPick) + "; sPid:" + sPid);
+	/* glassutil::CLogit::log(
+	 glassutil::log_level::debug,
+	 "CPick::initialize: site:" + pSite->getScnl() + "; tPick:"
+	 + std::to_string(tPick) + "; idPick:"
+	 + std::to_string(idPick) + "; sPid:" + sPid);
+	 */
 
 	return (true);
 }
@@ -469,18 +470,18 @@ bool CPick::nucleate() {
 		if (pGlass->getHypoList()->evolve(hypo, 1)) {
 			// the hypo survived evolve,
 			// log the hypo
+			std::string pt = glassutil::CDate::encodeDateTime(tPick);
 			std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
-			snprintf(sLog, sizeof(sLog),
-						"CPick::nucleate: TRG hypo:%s %s %9.4f %10.4f %6.1f %d",
-						hypo->getPid().c_str(), st.c_str(), hypo->getLat(),
-						hypo->getLon(), hypo->getZ(),
-						static_cast<int>(hypo->getVPickSize()));
-			glassutil::CLogit::log(sLog);
 
-			// log the triggering web
-			snprintf(sLog, sizeof(sLog), "CPick::nucleate: WEB %s\n",
-						node->getName().c_str());
-			glassutil::CLogit::log(sLog);
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CPick::nucleate: TRG site:" + pSite->getScnl() + "; tPick:"
+							+ pt + "; idPick:" + std::to_string(idPick)
+							+ "; sPid:" + sPid + " => web:" + node->getName()
+							+ "; hyp: " + hypo->getPid() + "; lat:"
+							+ std::to_string(hypo->getLat()) + "; lon:"
+							+ std::to_string(hypo->getLon()) + "; z:"
+							+ std::to_string(hypo->getZ()) + "; tOrg:" + st);
 
 			// add a link to the hypo for each pick
 			// NOTE: Why is this done? Shouldn't evolve have already
@@ -506,9 +507,11 @@ bool CPick::nucleate() {
 		return (true);
 	}
 
-	snprintf(sLog, sizeof(sLog), "CPick::nucleate: NOTRG idPick:%d sPid:%s",
-				idPick, sPid.c_str());
-	glassutil::CLogit::log(sLog);
+	std::string pt = glassutil::CDate::encodeDateTime(tPick);
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CPick::nucleate: NOTRG site:" + pSite->getScnl() + "; tPick:" + pt
+					+ "; idPick:" + std::to_string(idPick) + "; sPid:" + sPid);
 
 	// done
 	return (false);
