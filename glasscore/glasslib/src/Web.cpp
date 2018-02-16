@@ -1387,12 +1387,13 @@ std::shared_ptr<CNode> CWeb::genNodeSites(std::shared_ptr<CNode> node) {
 								"CWeb::genNodeSites: nDetect is 0.");
 		return (node);
 	}
+
+	int sitesAllowed = nDetect;
 	if (vSite.size() < nDetect) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CWeb::genNodeSites: nDetect is greater "
 								"than the number of sites.");
-
-		return (node);
+		sitesAllowed = vSite.size();
 	}
 
 	// setup traveltimes for this node
@@ -1407,7 +1408,7 @@ std::shared_ptr<CNode> CWeb::genNodeSites(std::shared_ptr<CNode> node) {
 	node->clearSiteLinks();
 
 	// for the number of allowed sites per node
-	for (int i = 0; i < nDetect; i++) {
+	for (int i = 0; i < sitesAllowed; i++) {
 		// get each site
 		auto aSite = vSite[i];
 		std::shared_ptr<CSite> site = aSite.second;
@@ -1513,7 +1514,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		double maxDistance = RAD2DEG * geo.delta(&furthestSite->getGeo());
 
 		// Ignore if new site is farther than last linked site
-		if (newDistance > maxDistance) {
+		if ((node->getSiteLinksCount() >= nDetect)
+				&& (newDistance > maxDistance)) {
 			node->setEnabled(true);
 			continue;
 		}
@@ -1536,13 +1538,20 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 			travelTime2 = pTrv2->T(newDistance);
 		}
 
-		// remove last site
-		// This assumes that the node site list is sorted
-		// on distance/traveltime
-		node->unlinkLastSite();
+		// check to see if we're at the limit
+		if (node->getSiteLinksCount() < nDetect) {
+			// Link node to site using traveltimes
+			node->linkSite(site, node, travelTime1, travelTime2);
 
-		// Link node to site using traveltimes
-		node->linkSite(site, node, travelTime1, travelTime2);
+		} else {
+			// remove last site
+			// This assumes that the node site list is sorted
+			// on distance/traveltime
+			node->unlinkLastSite();
+
+			// Link node to site using traveltimes
+			node->linkSite(site, node, travelTime1, travelTime2);
+		}
 
 		// resort site links
 		node->sortSiteLinks();
@@ -1927,19 +1936,18 @@ const std::shared_ptr<traveltime::CTravelTime>& CWeb::getTrv2() const {
 
 int CWeb::getVNetFilterSize() const {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
-	return(vNetFilter.size());
+	return (vNetFilter.size());
 }
 
 int CWeb::getVSitesFilterSize() const {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
-	return(vSitesFilter.size());
+	return (vSitesFilter.size());
 }
 
 int CWeb::getVNodeSize() const {
 	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
-	return(vNode.size());
+	return (vNode.size());
 }
 
 }  // namespace glasscore
-
 
