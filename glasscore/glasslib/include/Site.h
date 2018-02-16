@@ -217,13 +217,13 @@ class CSite {
 	 * \brief Node link count getter
 	 * \return the node link count
 	 */
-	int getNodeLinksCount();
+	int getNodeLinksCount() const;
 
 	/**
 	 * \brief Use flag getter
 	 * \return the use flag
 	 */
-	bool getUse();
+	bool getUse() const;
 
 	/**
 	 * \brief Use flag setter
@@ -235,7 +235,7 @@ class CSite {
 	 * \brief Use for teleseismic flag getter
 	 * \return the use for teleseismic flag
 	 */
-	bool getUseForTele();
+	bool getUseForTele() const;
 
 	/**
 	 * \brief Use for teleseismic flag setter
@@ -247,7 +247,7 @@ class CSite {
 	 * \brief Quality getter
 	 * \return the quality
 	 */
-	double getQual();
+	double getQual() const;
 
 	/**
 	 * \brief Quality setter
@@ -398,7 +398,7 @@ class CSite {
 	/**
 	 * \brief A mutex to control threading access to vNode.
 	 */
-	std::mutex vNodeMutex;
+	mutable std::mutex vNodeMutex;
 
 	/**
 	 * \brief A std::vector of tuples linking site to node
@@ -413,7 +413,7 @@ class CSite {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex siteMutex;
+	mutable std::recursive_mutex siteMutex;
 };
 }  // namespace glasscore
 #endif  // SITE_H

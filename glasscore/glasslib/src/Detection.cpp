@@ -222,7 +222,7 @@ bool CDetection::process(json::Object *com) {
 	return (true);
 }
 
-const CGlass* CDetection::getGlass() {
+const CGlass* CDetection::getGlass() const {
 	std::lock_guard<std::recursive_mutex> detectionGuard(detectionMutex);
 	return (pGlass);
 }

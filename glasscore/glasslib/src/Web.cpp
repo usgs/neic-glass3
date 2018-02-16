@@ -1366,13 +1366,21 @@ std::shared_ptr<CNode> CWeb::genNodeSites(std::shared_ptr<CNode> node) {
 	}
 	// check sites
 	if (vSite.size() == 0) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CWeb::genNodeSites: No sites.");
 		return (node);
 	}
 	// check nDetect
 	if (nDetect == 0) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CWeb::genNodeSites: nDetect is 0.");
 		return (node);
 	}
 	if (vSite.size() < nDetect) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CWeb::genNodeSites: nDetect is greater "
+								"than the number of sites.");
+
 		return (node);
 	}
 

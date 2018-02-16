@@ -536,15 +536,13 @@ std::string CNode::getSitesString() {
 	return (siteString);
 }
 
-int CNode::getSiteLinksCount() {
+int CNode::getSiteLinksCount() const {
 	// lock mutex for this scope
 	std::lock_guard<std::mutex> guard(vSiteMutex);
-	int size = vSite.size();
-
-	return (size);
+	return (vSite.size());
 }
 
-bool CNode::getEnabled() {
+bool CNode::getEnabled() const {
 	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	return (bEnabled);
 }
@@ -570,7 +568,7 @@ double CNode::getZ() const {
 	return (dZ);
 }
 
-CWeb* CNode::getWeb() {
+CWeb* CNode::getWeb() const {
 	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	return (pWeb);
 }
@@ -588,17 +586,17 @@ const std::string& CNode::getPid() const {
 	return (sPid);
 }
 
-double CNode::getTOrg() {
+double CNode::getTOrg() const {
 	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	return (tOrg);
 }
 
-double CNode::getSum() {
+double CNode::getSum() const {
 	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	return (dSum);
 }
 
-int CNode::getCount() {
+int CNode::getCount() const {
 	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	return (nCount);
 }

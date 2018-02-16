@@ -95,11 +95,11 @@ CHypo::CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt) {
 	// lock for trv copying
 	std::lock_guard<std::mutex> ttGuard(node->getWeb()->m_TrvMutex);
 
-	if (!initialize(node->getLat(), node->getLon(), node->getZ(), node->getTOrg(),
-					glassutil::CPid::pid(), node->getWeb()->sName, 0.0,
-					node->getWeb()->dThresh, node->getWeb()->nNucleate,
-					node->getWeb()->pTrv1.get(), node->getWeb()->pTrv2.get(), ttt,
-					node->getResolution())) {
+	if (!initialize(node->getLat(), node->getLon(), node->getZ(),
+					node->getTOrg(), glassutil::CPid::pid(),
+					node->getWeb()->sName, 0.0, node->getWeb()->dThresh,
+					node->getWeb()->nNucleate, node->getWeb()->pTrv1.get(),
+					node->getWeb()->pTrv2.get(), ttt, node->getResolution())) {
 		clear();
 	}
 }
@@ -871,7 +871,8 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 					" Corr:%s tDist:%.2f<tWindow:%.2f"
 					" xDist:%.2f>xWindow:%.2f)",
 					sPid.c_str(),
-					glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
+					glassutil::CDate::encodeDateTime(corr->getTCorrelation())
+							.c_str(),
 					corr->getSite()->getScnl().c_str(), corr->getPid().c_str(),
 					tDist, tWindow, xDist, xWindow);
 			glassutil::CLogit::log(sLog);
@@ -882,22 +883,24 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 
 	if (xDist == 0) {
 		snprintf(
-				sLog, sizeof(sLog),
+				sLog,
+				sizeof(sLog),
 				"CHypo::associate: C-NOASSOC Hypo:%s Time:%s Station:%s Corr:%s"
 				" tDist:%.2f>tWindow:%.2f",
 				sPid.c_str(),
 				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->getScnl().c_str(), corr->getPid().c_str(), tDist,
-				tWindow);
+				corr->getSite()->getScnl().c_str(), corr->getPid().c_str(),
+				tDist, tWindow);
 	} else {
 		snprintf(
-				sLog, sizeof(sLog),
+				sLog,
+				sizeof(sLog),
 				"CHypo::associate: C-NOASSOC Hypo:%s Time:%s Station:%s Corr:%s"
 				" tDist:%.2f<tWindow:%.2f xDist:%.2f>xWindow:%.2f)",
 				sPid.c_str(),
 				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->getScnl().c_str(), corr->getPid().c_str(), tDist,
-				tWindow, xDist, xWindow);
+				corr->getSite()->getScnl().c_str(), corr->getPid().c_str(),
+				tDist, tWindow, xDist, xWindow);
 	}
 	glassutil::CLogit::log(sLog);
 
@@ -1097,8 +1100,11 @@ bool CHypo::prune() {
 			vcremove.push_back(cor);
 			// if (pGlass->bTrack) {
 			snprintf(
-					sLog, sizeof(sLog), "CHypo::prune: C-CUL %s %s",
-					glassutil::CDate::encodeDateTime(cor->getTCorrelation()).c_str(),
+					sLog,
+					sizeof(sLog),
+					"CHypo::prune: C-CUL %s %s",
+					glassutil::CDate::encodeDateTime(cor->getTCorrelation())
+							.c_str(),
 					cor->getSite()->getScnl().c_str());
 			glassutil::CLogit::log(sLog);
 			// }
@@ -1542,8 +1548,8 @@ void CHypo::list(std::string src) {
 						"CHypo::list: ** %s **\nPid:%s\n%s  %s %s %.2f Dis:%.1f"
 						" Azm:%.1f Wt:NA",
 						sorg.c_str(), sPid.c_str(), sass.c_str(),
-						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres, dis,
-						azm);
+						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres,
+						dis, azm);
 			glassutil::CLogit::log(sLog);
 
 		} else {
@@ -1551,8 +1557,8 @@ void CHypo::list(std::string src) {
 						"CHypo::list: ** %s **\nPid:%s\n%s  %s %s %.2f Dis:%.1f"
 						" Azm:%.1f Wt:%.2f",
 						sorg.c_str(), sPid.c_str(), sass.c_str(),
-						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres, dis,
-						azm, vWts[ipk]);
+						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres,
+						dis, azm, vWts[ipk]);
 			glassutil::CLogit::log(sLog);
 		}
 	}
@@ -2562,32 +2568,32 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 	return (bAss);
 }
 
-double CHypo::getLat() {
+double CHypo::getLat() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dLat);
 }
 
-double CHypo::getLon() {
+double CHypo::getLon() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dLon);
 }
 
-double CHypo::getZ() {
+double CHypo::getZ() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dZ);
 }
 
-double CHypo::getTOrg() {
+double CHypo::getTOrg() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (tOrg);
 }
 
-double CHypo::getBayes() {
+double CHypo::getBayes() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dBayes);
 }
 
-bool CHypo::getCorrAdded() {
+bool CHypo::getCorrAdded() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (bCorrAdded);
 }
@@ -2597,12 +2603,12 @@ void CHypo::setCorrAdded(bool corrAdded) {
 	bCorrAdded = corrAdded;
 }
 
-bool CHypo::getEvent() {
+bool CHypo::getEvent() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (bEvent);
 }
 
-bool CHypo::getFixed() {
+bool CHypo::getFixed() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (bFixed);
 }
@@ -2612,12 +2618,12 @@ void CHypo::setFixed(bool fixed) {
 	bFixed = fixed;
 }
 
-double CHypo::getBayesInitial() {
+double CHypo::getBayesInitial() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dBayesInitial);
 }
 
-double CHypo::getCutFactor() {
+double CHypo::getCutFactor() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dCutFactor);
 }
@@ -2627,7 +2633,7 @@ void CHypo::setCutFactor(double cutFactor) {
 	dCutFactor = cutFactor;
 }
 
-double CHypo::getCutMin() {
+double CHypo::getCutMin() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dCutMin);
 }
@@ -2637,7 +2643,7 @@ void CHypo::setCutMin(double cutMin) {
 	dCutMin = cutMin;
 }
 
-double CHypo::getCutPercentage() {
+double CHypo::getCutPercentage() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dCutPercentage);
 }
@@ -2647,37 +2653,37 @@ void CHypo::setCutPercentage(double cutPercentage) {
 	dCutPercentage = cutPercentage;
 }
 
-double CHypo::getGap() {
+double CHypo::getGap() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dGap);
 }
 
-double CHypo::getKrt() {
+double CHypo::getKrt() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dKrt);
 }
 
-double CHypo::getMed() {
+double CHypo::getMed() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dMed);
 }
 
-double CHypo::getMin() {
+double CHypo::getMin() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dMin);
 }
 
-double CHypo::getRes() {
+double CHypo::getRes() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dRes);
 }
 
-double CHypo::getSig() {
+double CHypo::getSig() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dSig);
 }
 
-double CHypo::getThresh() {
+double CHypo::getThresh() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (dThresh);
 }
@@ -2687,7 +2693,7 @@ void CHypo::setThresh(double thresh) {
 	dThresh = thresh;
 }
 
-int CHypo::getCycle() {
+int CHypo::getCycle() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (iCycle);
 }
@@ -2701,7 +2707,7 @@ int CHypo::setCycle(int newCycle) {
 	return (iCycle);
 }
 
-int CHypo::getCut() {
+int CHypo::getCut() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (nCut);
 }
@@ -2711,7 +2717,7 @@ void CHypo::setCut(double cut) {
 	nCut = cut;
 }
 
-const CGlass* CHypo::getGlass() {
+const CGlass* CHypo::getGlass() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (pGlass);
 }
@@ -2721,7 +2727,7 @@ void CHypo::setGlass(CGlass* glass) {
 	pGlass = glass;
 }
 
-int CHypo::getProcessCount() {
+int CHypo::getProcessCount() const {
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 	return (processCount);
 }
@@ -2743,11 +2749,11 @@ const std::string& CHypo::getWebName() const {
 	return (sWebName);
 }
 
-int CHypo::getVPickSize() {
+int CHypo::getVPickSize() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (vPick.size());
 }
-int CHypo::getVCorrSize() {
+int CHypo::getVCorrSize() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (vCorr.size());
 }
@@ -2756,7 +2762,7 @@ double CHypo::getTCreate() const {
 	return (tCreate);
 }
 
-int CHypo::getReportCount() {
+int CHypo::getReportCount() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (reportCount);
 }

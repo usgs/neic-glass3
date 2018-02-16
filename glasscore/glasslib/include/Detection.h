@@ -95,7 +95,7 @@ class CDetection {
 	 * \brief CGlass getter
 	 * \return the CGlass pointer
 	 */
-	const CGlass* getGlass();
+	const CGlass* getGlass() const;
 
 	/**
 	 * \brief CGlass setter
@@ -112,13 +112,13 @@ class CDetection {
 	CGlass *pGlass;
 
 	/**
-		 * \brief A recursive_mutex to control threading access to CDetection.
-		 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
-		 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
-		 * However a recursive_mutex allows us to maintain the original class
-		 * design as delivered by the contractor.
-		 */
-		std::recursive_mutex detectionMutex;
+	 * \brief A recursive_mutex to control threading access to CDetection.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex detectionMutex;
 };
 }  // namespace glasscore
 #endif  // DETECTION_H

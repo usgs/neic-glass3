@@ -448,7 +448,7 @@ const std::shared_ptr<CSite>& CCorrelation::getSite() const {
 	return (pSite);
 }
 
-const std::string& CCorrelation::getAss() {
+const std::string& CCorrelation::getAss() const {
 	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 	return (sAss);
 }

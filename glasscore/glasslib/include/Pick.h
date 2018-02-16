@@ -177,7 +177,7 @@ class CPick {
 	 * \brief Hypo getter
 	 * \return the hypo
 	 */
-	const std::shared_ptr<CHypo>& getHypo();
+	const std::shared_ptr<CHypo>& getHypo() const;
 
 	/**
 	 * \brief Site getter
@@ -189,7 +189,7 @@ class CPick {
 	 * \brief Association string getter
 	 * \return the association string
 	 */
-	const std::string& getAss();
+	const std::string& getAss() const;
 
 	/**
 	 * \brief Association string setter
@@ -279,7 +279,7 @@ class CPick {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex pickMutex;
+	mutable std::recursive_mutex pickMutex;
 };
 }  // namespace glasscore
 #endif  // PICK_H

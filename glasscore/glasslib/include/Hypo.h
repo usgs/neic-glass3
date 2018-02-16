@@ -515,37 +515,37 @@ class CHypo {
 	 * \brief Latitude getter
 	 * \return the latitude
 	 */
-	double getLat();
+	double getLat() const;
 
 	/**
 	 * \brief Longitude getter
 	 * \return the longitude
 	 */
-	double getLon();
+	double getLon() const;
 
 	/**
 	 * \brief Depth getter
 	 * \return the depth
 	 */
-	double getZ();
+	double getZ() const;
 
 	/**
 	 * \brief Origin time getter
 	 * \return the origin time
 	 */
-	double getTOrg();
+	double getTOrg() const;
 
 	/**
 	 * \brief Bayes value getter
 	 * \return the bayes value
 	 */
-	double getBayes();
+	double getBayes() const;
 
 	/**
 	 * \brief Correlation added flag getter
 	 * \return the correlation added flag
 	 */
-	bool getCorrAdded();
+	bool getCorrAdded() const;
 
 	/**
 	 * \brief Correlation added flag setter
@@ -557,13 +557,13 @@ class CHypo {
 	 * \brief Event reported flag getter
 	 * \return the event reported flag
 	 */
-	bool getEvent();
+	bool getEvent() const;
 
 	/**
 	 * \brief Fixed flag getter
 	 * \return the fixed flag
 	 */
-	bool getFixed();
+	bool getFixed() const;
 
 	/**
 	 * \brief Fixed flag setter
@@ -575,13 +575,13 @@ class CHypo {
 	 * \brief Bayes initial value getter
 	 * \return the intial bayes value
 	 */
-	double getBayesInitial();
+	double getBayesInitial() const;
 
 	/**
 	 * \brief Cut factor getter
 	 * \return the cut factor value
 	 */
-	double getCutFactor();
+	double getCutFactor() const;
 
 	/**
 	 * \brief Cut factor setter
@@ -593,7 +593,7 @@ class CHypo {
 	 * \brief Cut min getter
 	 * \return the cut min value
 	 */
-	double getCutMin();
+	double getCutMin() const;
 
 	/**
 	 * \brief Cut min setter
@@ -605,7 +605,7 @@ class CHypo {
 	 * \brief Cut percentage getter
 	 * \return the cut percentage value
 	 */
-	double getCutPercentage();
+	double getCutPercentage() const;
 
 	/**
 	 * \brief Cut factor setter
@@ -617,7 +617,7 @@ class CHypo {
 	 * \brief Cut getter
 	 * \return the cut value
 	 */
-	int getCut();
+	int getCut() const;
 
 	/**
 	 * \brief Cut setter
@@ -629,7 +629,7 @@ class CHypo {
 	 * \brief Thresh getter
 	 * \return the thresh value
 	 */
-	double getThresh();
+	double getThresh() const;
 
 	/**
 	 * \brief Thresh setter
@@ -641,43 +641,43 @@ class CHypo {
 	 * \brief Gap getter
 	 * \return the gap value
 	 */
-	double getGap();
+	double getGap() const;
 
 	/**
 	 * \brief Kurtosis getter
 	 * \return the kurtosis value
 	 */
-	double getKrt();
+	double getKrt() const;
 
 	/**
 	 * \brief Med distance getter
 	 * \return the med distance value
 	 */
-	double getMed();
+	double getMed() const;
 
 	/**
 	 * \brief Min distance getter
 	 * \return the min distance value
 	 */
-	double getMin();
+	double getMin() const;
 
 	/**
 	 * \brief Residual getter
 	 * \return the residual value
 	 */
-	double getRes();
+	double getRes() const;
 
 	/**
 	 * \brief Sig getter
 	 * \return the sig value
 	 */
-	double getSig();
+	double getSig() const;
 
 	/**
 	 * \brief Cycle getter
 	 * \return the cycle value
 	 */
-	int getCycle();
+	int getCycle() const;
 
 	/**
 	 * \brief Cycle setter
@@ -689,7 +689,7 @@ class CHypo {
 	 * \brief Process count getter
 	 * \return the process count value
 	 */
-	int getProcessCount();
+	int getProcessCount() const;
 
 	/**
 	 * \brief Process count incrementer
@@ -701,7 +701,7 @@ class CHypo {
 	 * \brief CGlass getter
 	 * \return the CGlass pointer
 	 */
-	const CGlass* getGlass();
+	const CGlass* getGlass() const;
 
 	/**
 	 * \brief CGlass setter
@@ -725,13 +725,13 @@ class CHypo {
 	 * \brief Pick vector size getter
 	 * \return the pick vector size
 	 */
-	int getVPickSize();
+	int getVPickSize() const;
 
 	/**
 	 * \brief Correlation vector size getter
 	 * \return the correlation vector size
 	 */
-	int getVCorrSize();
+	int getVCorrSize() const;
 
 	/**
 	 * \brief Creation time getter
@@ -743,7 +743,7 @@ class CHypo {
 	 * \brief Report count getter
 	 * \return the report count
 	 */
-	int getReportCount();
+	int getReportCount() const;
 
  private:
 	/**
@@ -984,7 +984,7 @@ class CHypo {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex hypoMutex;
+	mutable std::recursive_mutex hypoMutex;
 
 	/**
 	 * \brief A random engine used to generate random numbers

@@ -621,14 +621,14 @@ void CSite::addTrigger(std::shared_ptr<CNode> node) {
 	vTrigger.push_back(node);
 }
 
-int CSite::getNodeLinksCount() {
+int CSite::getNodeLinksCount() const {
 	std::lock_guard<std::mutex> guard(vNodeMutex);
 	int size = vNode.size();
 
 	return (size);
 }
 
-bool CSite::getUse()  {
+bool CSite::getUse() const {
 	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	return (bUse);
 }
@@ -638,7 +638,7 @@ void CSite::setUse(bool use) {
 	bUse = use;
 }
 
-bool CSite::getUseForTele() {
+bool CSite::getUseForTele() const {
 	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	return (bUseForTele);
 }
@@ -648,7 +648,7 @@ void CSite::setUseForTele(bool useForTele) {
 	bUseForTele = useForTele;
 }
 
-double CSite::getQual() {
+double CSite::getQual() const {
 	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	return (dQual);
 }

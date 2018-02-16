@@ -191,13 +191,13 @@ class CNode {
 	 * \brief Site links count getter
 	 * \return the site links count
 	 */
-	int getSiteLinksCount();
+	int getSiteLinksCount() const;
 
 	/**
 	 * \brief Enabled flag getter
 	 * \return the enabled flag
 	 */
-	bool getEnabled();
+	bool getEnabled() const;
 
 	/**
 	 * \brief Enabled flag setter
@@ -233,7 +233,7 @@ class CNode {
 	 * \brief CWeb pointer getter
 	 * \return the CWeb pointer
 	 */
-	CWeb* getWeb();
+	CWeb* getWeb() const;
 
 	/**
 	 * \brief CWeb pointer setter
@@ -257,19 +257,19 @@ class CNode {
 	 * \brief tOrg getter
 	 * \return the tOrg
 	 */
-	double getTOrg();
+	double getTOrg() const;
 
 	/**
 	 * \brief dSum getter
 	 * \return the dSum
 	 */
-	double getSum();
+	double getSum() const;
 
 	/**
 	 * \brief nCount getter
 	 * \return the nCount
 	 */
-	int getCount();
+	int getCount() const;
 
 	// NOTE: Make private....
 	/**
@@ -352,7 +352,7 @@ class CNode {
 	/**
 	 * \brief A mutex to control threading access to vSite.
 	 */
-	std::mutex vSiteMutex;
+	mutable std::mutex vSiteMutex;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CNode.
@@ -361,7 +361,7 @@ class CNode {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex nodeMutex;
+	mutable std::recursive_mutex nodeMutex;
 };
 }  // namespace glasscore
 #endif  // NODE_H

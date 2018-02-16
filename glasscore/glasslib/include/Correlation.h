@@ -217,7 +217,7 @@ class CCorrelation {
 	 * \brief Association string getter
 	 * \return the association string
 	 */
-	const std::string& getAss();
+	const std::string& getAss() const;
 
 	/**
 	 * \brief Association string setter
@@ -336,7 +336,7 @@ class CCorrelation {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex correlationMutex;
+	mutable std::recursive_mutex correlationMutex;
 };
 }  // namespace glasscore
 #endif  // CORRELATION_H

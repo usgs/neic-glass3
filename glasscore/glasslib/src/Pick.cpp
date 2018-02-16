@@ -515,7 +515,7 @@ const std::shared_ptr<json::Object>& CPick::getJPick() const {
 	return (jPick);
 }
 
-const std::shared_ptr<CHypo>& CPick::getHypo() {
+const std::shared_ptr<CHypo>& CPick::getHypo() const {
 	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (pHypo);
 }
@@ -524,7 +524,7 @@ const std::shared_ptr<CSite>& CPick::getSite() const {
 	return (pSite);
 }
 
-const std::string& CPick::getAss() {
+const std::string& CPick::getAss() const {
 	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (sAss);
 }
