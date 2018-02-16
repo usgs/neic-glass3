@@ -177,7 +177,7 @@ class CPick {
 	 * \brief Hypo getter
 	 * \return the hypo
 	 */
-	const std::shared_ptr<CHypo>& getHypo() const;
+	const std::shared_ptr<CHypo> getHypo() const;
 
 	/**
 	 * \brief Site getter
@@ -227,7 +227,7 @@ class CPick {
 	 * \brief A std::vector of std::shared_ptr's to CHypo objects
 	 * representing the links between this pick and associated hypocenter
 	 */
-	std::shared_ptr<CHypo> pHypo;
+	std::weak_ptr<CHypo> wpHypo;
 
 	/**
 	 * \brief A std::string containing a character representing the action

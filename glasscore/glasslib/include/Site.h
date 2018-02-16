@@ -327,7 +327,7 @@ class CSite {
 	 * \brief A std::vector of std::shared_ptr's to the picks mad at this this
 	 * CSite
 	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
+	std::vector<std::weak_ptr<CPick>> vPick;
 
 	/*
 	 * /brief A std::vector of shared node pointers that contain a list

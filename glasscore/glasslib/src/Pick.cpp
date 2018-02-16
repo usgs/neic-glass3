@@ -243,9 +243,9 @@ CPick::~CPick() {
 void CPick::clear() {
 	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
-	pSite = NULL;
-	pHypo = NULL;
-	jPick = NULL;
+	pSite.reset();
+	wpHypo.reset();
+	jPick.reset();
 
 	sAss = "";
 	sPhs = "";
@@ -297,10 +297,10 @@ void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
 
 	// Add hypo data reference to this pick
 	if (force == true) {
-		pHypo = hyp;
+		wpHypo = hyp;
 		sAss = ass;
-	} else if (!pHypo) {
-		pHypo = hyp;
+	} else if (wpHypo.expired() == true) {
+		wpHypo = hyp;
 		sAss = ass;
 	}
 }
@@ -316,15 +316,21 @@ void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
-	// Remove hypo reference from this pick
-	if (pHypo->getPid() == hyp->getPid()) {
-		pHypo = NULL;
+	// is the pointer still valid
+	if (auto pHypo = wpHypo.lock()) {
+		// Remove hypo reference from this pick
+		if (pHypo->getPid() == hyp->getPid()) {
+			clearHypo();
+		}
+	} else {
+		// remove invalid pointer
+		clearHypo();
 	}
 }
 
 void CPick::clearHypo() {
 	std::lock_guard<std::recursive_mutex> guard(pickMutex);
-	pHypo = NULL;
+	wpHypo.reset();
 }
 
 void CPick::setAss(std::string ass) {
@@ -524,9 +530,9 @@ const std::shared_ptr<json::Object>& CPick::getJPick() const {
 	return (jPick);
 }
 
-const std::shared_ptr<CHypo>& CPick::getHypo() const {
+const std::shared_ptr<CHypo> CPick::getHypo() const {
 	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
-	return (pHypo);
+	return (wpHypo.lock());
 }
 
 const std::shared_ptr<CSite>& CPick::getSite() const {

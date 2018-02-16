@@ -439,7 +439,8 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 
 	// add pick to site pick vector
 	// NOTE: Need to add duplicate pick protection
-	vPick.push_back(pck);
+	std::weak_ptr<CPick> wpPck = pck;
+	vPick.push_back(wpPck);
 }
 
 // ---------------------------------------------------------remPick
@@ -455,9 +456,20 @@ void CSite::remPick(std::shared_ptr<CPick> pck) {
 	}
 
 	// remove pick from site pick vector
-	auto it = std::find(vPick.begin(), vPick.end(), pck);
-	if (it != vPick.end()) {
-		vPick.erase(it);
+	for (auto it = vPick.begin(); it != vPick.end();) {
+		if ((*it).expired() == true) {
+			// clean up expired pointers
+			it = vPick.erase(it);
+		} else if (auto aPck = (*it).lock()) {
+			// erase target pick
+			if (aPck->getPid() == pck->getPid()) {
+				it = vPick.erase(it);
+			} else {
+				++it;
+			}
+		} else {
+			++it;
+		}
 	}
 }
 
@@ -501,32 +513,27 @@ void CSite::remNode(std::string nodeID) {
 		return;
 	}
 
-	NodeLink nodeLinkToDelete;
-
-	// remove the node identified by the id
-	for (const auto &link : vNode) {
-		// third is shared pointer to node
-		std::shared_ptr<CNode> aNode = std::get< LINK_PTR>(link);
-
-		// nullcheck
-		if (aNode == NULL) {
-			continue;
-		}
-
-		// check to see if we have a match
-		if (aNode->getPid() == nodeID) {
-			// remember which one to delete
-			nodeLinkToDelete = link;
-
-			// we're done
-			break;
+	// clean up expired pointers
+	for (auto it = vNode.begin(); it != vNode.end();) {
+		if (std::get<LINK_PTR>(*it).expired() == true) {
+			it = vNode.erase(it);
+		} else {
+			++it;
 		}
 	}
 
-	// remove link from vector
-	auto it = std::find(vNode.begin(), vNode.end(), nodeLinkToDelete);
-	if (it != vNode.end()) {
-		vNode.erase(it);
+	for (auto it = vNode.begin(); it != vNode.end();) {
+		if (auto aNode = std::get<LINK_PTR>(*it).lock()) {
+			// erase target pick
+			if (aNode->getPid() == nodeID) {
+				it = vNode.erase(it);
+				return;
+			} else {
+				++it;
+			}
+		} else {
+			++it;
+		}
 	}
 }
 
@@ -549,7 +556,11 @@ void CSite::nucleate(double tPick) {
 		double travelTime2 = std::get< LINK_TT2>(link);
 
 		// third get shared pointer to node
-		std::shared_ptr<CNode> node = std::get< LINK_PTR>(link);
+		std::shared_ptr<CNode> node = std::get<LINK_PTR>(link).lock();
+
+		if (node == NULL) {
+			continue;
+		}
 
 		// compute first origin time
 		double tOrigin1 = -1;
@@ -696,7 +707,17 @@ const std::string& CSite::getSite() const {
 
 const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
 	std::lock_guard<std::mutex> guard(vPickMutex);
-	return (vPick);
+
+	std::vector<std::shared_ptr<CPick>> picks;
+	for (auto awpPck : vPick) {
+		std::shared_ptr<CPick> aPck = awpPck.lock();
+
+		if (aPck != NULL) {
+			picks.push_back(aPck);
+		}
+	}
+
+	return (picks);
 }
 
 const std::vector<std::shared_ptr<CNode> > CSite::getVTrigger() const {
