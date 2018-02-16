@@ -92,6 +92,8 @@ class CSite {
 	 */
 	void clear();
 
+	void clearVPick();
+
 	/**
 	 * \brief CSite update function
 	 *
@@ -303,12 +305,23 @@ class CSite {
 	 */
 	const std::string& getLoc() const;
 
-	// NOTE: Make these private in the future!!!!!!!
+	/**
+	 * \brief vPick getter
+	 * \return the vPick
+	 */
+	const std::vector<std::shared_ptr<CPick>> getVPick() const;
 
+	/**
+	 * \brief vTrigger getter
+	 * \return the vTrigger
+	 */
+	const std::vector<std::shared_ptr<CNode>> getVTrigger() const;
+
+ private:
 	/**
 	 * \brief A mutex to control threading access to vPick.
 	 */
-	std::mutex vPickMutex;
+	mutable std::mutex vPickMutex;
 
 	/**
 	 * \brief A std::vector of std::shared_ptr's to the picks mad at this this
@@ -327,9 +340,8 @@ class CSite {
 	/**
 	 * \brief A mutex to control threading access to vTrigger.
 	 */
-	std::mutex vTriggerMutex;
+	mutable std::mutex vTriggerMutex;
 
- private:
 	/**
 	 * \brief A pointer to the main CGlass class used encode/decode time and
 	 * get debugging flags

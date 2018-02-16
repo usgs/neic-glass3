@@ -121,8 +121,8 @@ TEST(SiteTest, Construction) {
 
 	// lists
 	ASSERT_EQ(0, testSite->getNodeLinksCount())<< "vNode.size() 0";
-	ASSERT_EQ(0, testSite->vPick.size())<< "vPick.size() 0";
-	ASSERT_EQ(0, testSite->vTrigger.size())<< "vTrigger.size() 0";
+	ASSERT_EQ(0, testSite->getVPick().size())<< "vPick.size() 0";
+	ASSERT_EQ(0, testSite->getVTrigger().size())<< "vTrigger.size() 0";
 
 	// now init
 	testSite->initialize(std::string(SITE), std::string(COMP), std::string(NET),
@@ -209,17 +209,17 @@ TEST(SiteTest, PickOperations) {
 	// test adding pick to site
 	testSite->addPick(sharedTestPick);
 	int expectedSize = 1;
-	ASSERT_EQ(expectedSize, testSite->vPick.size())<< "Added Pick";
+	ASSERT_EQ(expectedSize, testSite->getVPick().size())<< "Added Pick";
 
 	// test adding pick from different station
 	testSite->addPick(sharedTestPick2);
-	ASSERT_EQ(expectedSize, testSite->vPick.size())<<
+	ASSERT_EQ(expectedSize, testSite->getVPick().size())<<
 			"Added pick from different station";
 
 	// test removing pick
 	testSite->remPick(sharedTestPick);
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testSite->vPick.size())<< "Removed pick";
+	ASSERT_EQ(expectedSize, testSite->getVPick().size())<< "Removed pick";
 }
 
 // tests to see if nodes can be added to and removed from the site

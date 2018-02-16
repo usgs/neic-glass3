@@ -271,13 +271,11 @@ class CNode {
 	 */
 	int getCount() const;
 
-	// NOTE: Make private....
 	/**
-	 * \brief A std::vector of std::shared_ptr's to CPick objects
-	 * used in calculating the likelihood of a hypocenter
-	 * centered on this node during the last call to nucleate()
+	 * \brief vPick getter
+	 * \return the vPick
 	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
+	const std::vector<std::shared_ptr<CPick>> getVPick() const;
 
  private:
 	/**
@@ -341,7 +339,18 @@ class CNode {
 	 */
 	double tOrg;
 
+	/**
+	 * \brief A boolean flag indicating whether this node is enabled for
+	 * nucleation
+	 */
 	bool bEnabled;
+
+	/**
+	 * \brief A std::vector of std::shared_ptr's to CPick objects
+	 * used in calculating the likelihood of a hypocenter
+	 * centered on this node during the last call to nucleate()
+	 */
+	std::vector<std::shared_ptr<CPick>> vPick;
 
 	/**
 	 * \brief A std::vector of tuples linking node to site

@@ -325,9 +325,7 @@ void CSite::clear() {
 	vNode.clear();
 	vNodeMutex.unlock();
 
-	vPickMutex.lock();
-	vPick.clear();
-	vPickMutex.unlock();
+	clearVPick();
 
 	vTriggerMutex.lock();
 	vTrigger.clear();
@@ -335,6 +333,12 @@ void CSite::clear() {
 
 	// reset max picks
 	nSitePickMax = 200;
+}
+
+void CSite::clearVPick() {
+	vPickMutex.lock();
+	vPick.clear();
+	vPickMutex.unlock();
 }
 
 void CSite::update(CSite *site) {
@@ -689,4 +693,15 @@ const std::string& CSite::getScnl() const {
 const std::string& CSite::getSite() const {
 	return (sSite);
 }
+
+const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
+	std::lock_guard<std::mutex> guard(vPickMutex);
+	return (vPick);
+}
+
+const std::vector<std::shared_ptr<CNode> > CSite::getVTrigger() const {
+	std::lock_guard<std::mutex> guard(vTriggerMutex);
+	return (vTrigger);
+}
+
 }  // namespace glasscore

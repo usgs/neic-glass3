@@ -5,6 +5,7 @@
 #include <tuple>
 #include <mutex>
 #include <algorithm>
+#include <vector>
 #include "Node.h"
 #include "Glass.h"
 #include "Web.h"
@@ -286,9 +287,11 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 			continue;
 		}
 
-		site->vPickMutex.lock();
+		// site->vPickMutex.lock();
+		std::vector<std::shared_ptr<CPick>> vPick = site->getVPick();
+
 		// search through each pick at this site
-		for (const auto &pick : site->vPick) {
+		for (const auto &pick : vPick) {
 			// get the pick's arrival time
 			double tPick = pick->getTPick();
 
@@ -361,7 +364,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 			}
 		}
 
-		site->vPickMutex.unlock();
+		// site->vPickMutex.unlock();
 
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site
@@ -599,6 +602,11 @@ double CNode::getSum() const {
 int CNode::getCount() const {
 	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	return (nCount);
+}
+
+const std::vector<std::shared_ptr<CPick> > CNode::getVPick() const {
+	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
+	return (vPick);
 }
 
 }  // namespace glasscore

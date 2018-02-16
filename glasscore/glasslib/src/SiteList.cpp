@@ -36,7 +36,7 @@ void CSiteList::clearSites() {
 	std::lock_guard<std::mutex> guard(vSiteMutex);
 	// remove all picks from sites
 	for (auto site : vSite) {
-		site->vPick.clear();
+		site->clearVPick();
 	}
 
 	// clear the vector and map

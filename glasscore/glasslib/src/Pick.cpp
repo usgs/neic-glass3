@@ -1,6 +1,7 @@
 #include <json.h>
 #include <memory>
 #include <string>
+#include <vector>
 #include "Pid.h"
 #include "Web.h"
 #include "Node.h"
@@ -354,8 +355,9 @@ bool CPick::nucleate() {
 
 	// for each node that triggered linked to this
 	// pick's site
-	pSite->vTriggerMutex.lock();
-	for (auto node : pSite->vTrigger) {
+	std::vector<std::shared_ptr<CNode>> vTrigger = pSite->getVTrigger();
+
+	for (auto node : vTrigger) {
 		snprintf(sLog, sizeof(sLog), "CPick::nucleate: %s %d %.2f",
 					pGlass->sWeb.c_str(), pGlass->nCount, pGlass->dSum);
 		glassutil::CLogit::log(sLog);
@@ -384,7 +386,8 @@ bool CPick::nucleate() {
 		hypo->setCutMin(pGlass->dCutMin);
 
 		// add links to all the picks that support the hypo
-		for (auto pick : node->vPick) {
+		std::vector<std::shared_ptr<CPick>> vPick = node->getVPick();
+		for (auto pick : vPick) {
 			// they're not associated yet, just potentially
 			pick->setAss("N");
 			hypo->addPick(pick);
@@ -483,8 +486,7 @@ bool CPick::nucleate() {
 		}
 	}
 
-	int triggerCount = pSite->vTrigger.size();
-	pSite->vTriggerMutex.unlock();
+	int triggerCount = vTrigger.size();
 
 	// If any webs triggered, return true to prevent further association
 	if (triggerCount > 0) {
