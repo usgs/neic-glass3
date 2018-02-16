@@ -29,10 +29,10 @@ TEST(WebListTest, Construction) {
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
 
 	// lists
-	ASSERT_EQ(0, (int)testWebList->vWeb.size())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testWebList->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testWebList->getGlass())<< "getGlass() null";
 
 	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
 
@@ -71,16 +71,16 @@ TEST(WebListTest, AddWeb) {
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
-	testWebList->pSiteList = testSiteList;
+	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->vWeb.size())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
 
 	// add a web
 	testWebList->dispatch(&gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->vWeb.size())<< "web list added";
+	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
 
 	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
 
@@ -120,16 +120,16 @@ TEST(WebListTest, RemWeb) {
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
-	testWebList->pSiteList = testSiteList;
+	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->vWeb.size())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
 
 	// add a web
 	testWebList->dispatch(&gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->vWeb.size())<< "web list added";
+	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
 
 	json::Object remGridConfig = json::Deserialize(std::string(REMWEB));
 
@@ -137,7 +137,7 @@ TEST(WebListTest, RemWeb) {
 	testWebList->dispatch(&remGridConfig);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->vWeb.size())<< "web list removed";
+	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list removed";
 
 	delete (testSiteList);
 	delete (testWebList);
@@ -175,16 +175,16 @@ TEST(WebListTest, SiteOperations) {
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
-	testWebList->pSiteList = testSiteList;
+	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->vWeb.size())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
 
 	// add a web
 	testWebList->dispatch(&gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->vWeb.size())<< "web list added";
+	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
 
 	// create site to add
 	json::Object siteJSON = json::Deserialize(std::string(ADDSITE));

@@ -20,11 +20,10 @@ TEST(SiteListTest, Construction) {
 
 	// assert default values
 	// lists
-	ASSERT_EQ(0, testSiteList->vSite.size())<< "vSite is empty";
-	ASSERT_EQ(0, testSiteList->mSite.size())<< "mSite.size() 0";
+	ASSERT_EQ(0, testSiteList->getVSiteSize())<< "vSite is empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testSiteList->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testSiteList->getGlass())<< "pGlass null";
 
 	// cleanup
 	delete (testSiteList);

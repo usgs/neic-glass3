@@ -235,7 +235,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 		return (false);
 	}
 	// check web pGlass
-	if (pWeb->pGlass == NULL) {
+	if (pWeb->getGlass() == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CNode::nucleate: NULL web glass pointer.");
 		return (false);
@@ -251,9 +251,9 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 
 	// get the cut and threshold from our
 	// parent web
-	int nCut = pWeb->nNucleate;
-	double dThresh = pWeb->dThresh;
-	double dAzimuthRange = pWeb->pGlass->beamMatchingAzimuthWindow;
+	int nCut = pWeb->getNucleate();
+	double dThresh = pWeb->getThresh();
+	double dAzimuthRange = pWeb->getGlass()->beamMatchingAzimuthWindow;
 	// commented out because slowness matching of beams is not yet implemented
 	// but is scheduled to be soon
 	// double dDistanceRange = pWeb->pGlass->beamMatchingDistanceWindow;
@@ -288,10 +288,10 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 		}
 
 		// site->vPickMutex.lock();
-		std::vector<std::shared_ptr<CPick>> vPick = site->getVPick();
+		std::vector<std::shared_ptr<CPick>> vSitePicks = site->getVPick();
 
 		// search through each pick at this site
-		for (const auto &pick : vPick) {
+		for (const auto &pick : vSitePicks) {
 			// get the pick's arrival time
 			double tPick = pick->getTPick();
 
@@ -412,8 +412,9 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 		std::string sOrg = dt.dateTime();
 		char sLog[1024];
 		snprintf(sLog, sizeof(sLog),
-					"**Nucleate %s Web:%s Cut:%d Thresh:%.2f\n", sOrg.c_str(),
-					pWeb->sName.c_str(), nCut, dSum);
+					"**Nucleate %s Web:%s Cut:%d Thresh:%.2f nPick:%d\n",
+					sOrg.c_str(), pWeb->getName().c_str(), nCut, dSum,
+					vPick.size());
 		glassutil::CLogit::Out(sLog);
 	}
 
@@ -457,11 +458,11 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 	// and detection grid resolution
 	double dSig1 = 0;
 	if (dRes1 > 0) {
-		dSig1 = pWeb->pGlass->sig(dRes1, dResolution);
+		dSig1 = pWeb->getGlass()->sig(dRes1, dResolution);
 	}
 	double dSig2 = 0;
 	if (dRes2 > 0) {
-		dSig2 = pWeb->pGlass->sig(dRes2, dResolution);
+		dSig2 = pWeb->getGlass()->sig(dRes2, dResolution);
 	}
 
 	// return the higher of the two significances

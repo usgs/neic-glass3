@@ -40,15 +40,15 @@ TEST(PickListTest, Construction) {
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
 
 	// assert default values
-	ASSERT_EQ(-1, testPickList->nPickTotal)<< "nPickTotal is 0";
-	ASSERT_EQ(0, testPickList->nPick)<< "nPick is 0";
+	ASSERT_EQ(-1, testPickList->getNPickTotal())<< "nPickTotal is 0";
+	ASSERT_EQ(0, testPickList->getNPick())<< "nPick is 0";
 
 	// lists
-	ASSERT_EQ(0, testPickList->vPick.size())<< "vPick.size() is 0";
-	ASSERT_EQ(0, testPickList->mPick.size())<< "mPick.size() is 0";
+	ASSERT_EQ(0, testPickList->getVPickSize())<< "getVPickSize() is 0";
 
 	// pointers
-	ASSERT_EQ(NULL, testPickList->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testPickList->getGlass())<< "pGlass null";
+	ASSERT_EQ(NULL, testPickList->getSiteList())<< "pSiteList null";
 
 	// cleanup
 	delete (testPickList);
@@ -80,8 +80,8 @@ TEST(PickListTest, PickOperations) {
 
 	// construct a picklist
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
-	testPickList->pSiteList = testSiteList;
-	testPickList->nPickMax = MAXNPICK;
+	testPickList->setSiteList(testSiteList);
+	testPickList->setNPickMax(MAXNPICK);
 
 	// test indexpick when empty
 	ASSERT_EQ(-2, testPickList->indexPick(0))<< "test indexpick when empty";
@@ -90,7 +90,7 @@ TEST(PickListTest, PickOperations) {
 	testPickList->addPick(&pickJSON);
 	testPickList->dispatch(&pick3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testPickList->nPick)<< "Added Picks";
+	ASSERT_EQ(expectedSize, testPickList->getNPick())<< "Added Picks";
 
 	// test getting a pick (first pick, id 1)
 	std::shared_ptr<glasscore::CPick> testPick = testPickList->getPick(1);
@@ -118,7 +118,7 @@ TEST(PickListTest, PickOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNPICK;
-	ASSERT_EQ(expectedSize, testPickList->vPick.size())<<
+	ASSERT_EQ(expectedSize, testPickList->getVPickSize())<<
 			"testPickList not larger than max";
 
 	// get first pick, which is now id 2
@@ -133,7 +133,7 @@ TEST(PickListTest, PickOperations) {
 	// test clearing picks
 	testPickList->clearPicks();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testPickList->nPick)<< "Cleared Picks";
+	ASSERT_EQ(expectedSize, testPickList->getNPick())<< "Cleared Picks";
 
 	// cleanup
 	delete (testPickList);

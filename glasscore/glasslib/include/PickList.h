@@ -193,6 +193,67 @@ class CPickList {
 												double tDuration = 2400.0);
 
 	/**
+	 * \brief check to see if each thread is still functional
+	 *
+	 * Checks each thread to see if it is still responsive.
+	 */
+	bool statusCheck();
+
+	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	const CGlass* getGlass() const;
+
+	/**
+	 * \brief CGlass setter
+	 * \param glass - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+	/**
+	 * \brief CSiteList getter
+	 * \return the CSiteList pointer
+	 */
+	const CSiteList* getSiteList() const;
+
+	/**
+	 * \brief CSiteList setter
+	 * \param siteList - the CSiteList pointer
+	 */
+	void setSiteList(CSiteList* siteList);
+
+	/**
+	 * \brief nPick getter
+	 * \return the nPick
+	 */
+	int getNPick() const;
+
+	/**
+	 * \brief nPickMax getter
+	 * \return the nPickMax
+	 */
+	int getNPickMax() const;
+
+	/**
+	 * \brief nPickMax Setter
+	 * \param correlationMax - the nPickMax
+	 */
+	void setNPickMax(int picknMax);
+
+	/**
+	 * \brief nPickTotal getter
+	 * \return the nPickTotal
+	 */
+	int getNPickTotal() const;
+
+	/**
+	 * \brief Get the current size of the pick list
+	 */
+	int getVPickSize() const;
+
+ private:
+	/**
 	 * \brief Process the next pick on the queue
 	 *
 	 * Attempts to associate and nuclate the next pick on the queue.
@@ -205,13 +266,6 @@ class CPickList {
 	 * The function that performs the sleep between jobs
 	 */
 	void jobSleep();
-
-	/**
-	 * \brief check to see if each thread is still functional
-	 *
-	 * Checks each thread to see if it is still responsive.
-	 */
-	bool statusCheck();
 
 	/**
 	 * \brief thread status update function
@@ -329,7 +383,16 @@ class CPickList {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex m_vPickMutex;
+	mutable std::recursive_mutex m_vPickMutex;
+
+	/**
+	 * \brief A recursive_mutex to control threading access to CPickList.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex m_PickListMutex;
 };
 }  // namespace glasscore
 #endif  // PICKLIST_H

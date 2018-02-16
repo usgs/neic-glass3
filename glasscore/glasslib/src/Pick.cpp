@@ -386,24 +386,18 @@ bool CPick::nucleate() {
 		hypo->setCutMin(pGlass->dCutMin);
 
 		// add links to all the picks that support the hypo
-		std::vector<std::shared_ptr<CPick>> vPick = node->getVPick();
-		for (auto pick : vPick) {
+		std::vector<std::shared_ptr<CPick>> vNodePicks = node->getVPick();
+
+		for (auto pick : vNodePicks) {
 			// they're not associated yet, just potentially
 			pick->setAss("N");
 			hypo->addPick(pick);
-
-			// debug logging
-			if (pGlass->bTrack) {
-				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: Adding to hyp %s\n",
-							pick->pSite->getScnl().c_str());
-				glassutil::CLogit::log(sLog);
-			}
 		}
 
 		// use the hypo's nucleation threshold, which is really the
 		// web's nucleation threshold
 		int ncut = hypo->getCut();
+		double thresh = hypo->getThresh();
 		bool bad = false;
 
 		// First localization attempt after nucleation
@@ -415,10 +409,9 @@ bool CPick::nucleate() {
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
-
-			hypo->anneal(10000, node->getResolution() / 2.,
-							node->getResolution() / 10.,
-							node->getResolution() / 10.0, .1);
+			double bayes = hypo->anneal(10000, node->getResolution() / 2.,
+										node->getResolution() / 10.,
+										node->getResolution() / 10.0, .1);
 
 			// get the number of picks we have now
 			int npick = hypo->getVPickSize();
@@ -426,6 +419,22 @@ bool CPick::nucleate() {
 			snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass %d %d/%d %s",
 						ipass, npick, ncut, hypo->getPid().c_str());
 			glassutil::CLogit::log(sLog);
+
+			// check to see if we still have a high enough bayes value for this
+			// hypo to survive.
+			if (bayes < thresh) {
+				// it isn't
+				snprintf(sLog, sizeof(sLog),
+							"CPick::nucleate: -- Abandoning solution %s "
+							"due to low bayes value "
+							"(bayes: %f, thresh:%f)",
+							hypo->getPid().c_str(), bayes, thresh);
+				glassutil::CLogit::log(sLog);
+
+				// don't bother making additional passes
+				bad = true;
+				break;
+			}
 
 			// check to see if we still have enough picks for this hypo to
 			// survive.
@@ -435,8 +444,10 @@ bool CPick::nucleate() {
 			if (npick < ncut) {
 				// we don't
 				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning this solution %s",
-							hypo->getPid().c_str());
+							"CPick::nucleate: -- Abandoning solution %s "
+							"due to lack of picks "
+							"(npick: %d, ncut:%d)",
+							hypo->getPid().c_str(), npick, ncut);
 				glassutil::CLogit::log(sLog);
 
 				// don't bother making additional passes

@@ -199,6 +199,24 @@ class CSiteList {
 	bool reqSiteList();
 
 	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	const CGlass* getGlass() const;
+
+	/**
+	 * \brief CGlass setter
+	 * \param glass - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+	/**
+	 * \brief Get the current size of the site list
+	 */
+	int getVSiteSize() const;
+
+ private:
+	/**
 	 * \brief A pointer to the main CGlass class, used to pass this information
 	 * to sites added to CSiteList
 	 */
@@ -207,7 +225,7 @@ class CSiteList {
 	/**
 	 * \brief A mutex to control threading access to vSite.
 	 */
-	std::mutex vSiteMutex;
+	mutable std::mutex vSiteMutex;
 
 	/**
 	 * \brief A std::vector of all the sites in CSiteList.
@@ -219,6 +237,15 @@ class CSiteList {
 	 * in CSiteList indexed by the std::string scnl id.
 	 */
 	std::map<std::string, std::shared_ptr<CSite>> mSite;
+
+	/**
+	 * \brief A recursive_mutex to control threading access to CSiteList.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex m_SiteListMutex;
 };
 }  // namespace glasscore
 #endif  // SITELIST_H

@@ -32,7 +32,7 @@ CCorrelationList::~CCorrelationList() {
 
 // ---------------------------------------------------------clear
 void CCorrelationList::clear() {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
+	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
 
 	pGlass = NULL;
 	pSiteList = NULL;
@@ -616,4 +616,50 @@ std::vector<std::shared_ptr<CCorrelation>> CCorrelationList::rogues(
 
 	return (vRogue);
 }
+
+const CSiteList* CCorrelationList::getSiteList() const {
+	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
+	return (pSiteList);
+}
+
+void CCorrelationList::setSiteList(CSiteList* siteList) {
+	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
+	pSiteList = siteList;
+}
+
+const CGlass* CCorrelationList::getGlass() const {
+	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
+	return (pGlass);
+}
+
+void CCorrelationList::setGlass(CGlass* glass) {
+	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
+	pGlass = glass;
+}
+
+int CCorrelationList::getNCorrelation() const {
+	std::lock_guard<std::recursive_mutex> vCorrelationGuard(m_vCorrelationMutex);
+	return (nCorrelation);
+}
+
+int CCorrelationList::getNCorrelationMax() const {
+	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
+	return (nCorrelationMax);
+}
+
+void CCorrelationList::setNCorrelationMax(int correlationMax) {
+	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
+	nCorrelationMax = correlationMax;
+}
+
+int CCorrelationList::getNCorrelationTotal() const {
+	std::lock_guard<std::recursive_mutex> vCorrelationGuard(m_vCorrelationMutex);
+	return (nCorrelationTotal);
+}
+
+int CCorrelationList::getVCorrelationSize() const {
+	std::lock_guard<std::recursive_mutex> vCorrelationGuard(m_vCorrelationMutex);
+	return (vCorrelation.size());
+}
+
 }  // namespace glasscore

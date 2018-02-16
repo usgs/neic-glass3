@@ -121,19 +121,6 @@ class CGlass {
 	void clear();
 
 	/**
-	 * \brief CGlass input synchronization confirmation function
-	 *
-	 * The function used by CGlass to confirm that glasscore has processed
-	 * all previously sent input data.  Once glasscore has completed
-	 * processing all input, a confirmation "pong" message is sent.
-	 *
-	 * \param com - A pointer to a json::object containing the
-	 * confirmation query.
-	 * \return Always returns true
-	 */
-	bool ping(json::Object *com);
-
-	/**
 	 * \brief CGlass earth model test function
 	 *
 	 * This function is used by CGlass to test the loading and

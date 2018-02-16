@@ -96,10 +96,6 @@ bool CGlass::dispatch(json::Object *com) {
 									"CGlass::dispatch: Cmd:" + v.ToString());
 		}
 
-		if (v == "Ping") {
-			return (ping(com));
-		}
-
 		// reset debugging values
 		nIterate = 0;
 		nLocate = 0;
@@ -1018,7 +1014,7 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create site list
 	pSiteList = new CSiteList();
-	pSiteList->pGlass = this;
+	pSiteList->setGlass(this);
 
 	// clean out old web list if any
 	if (pWebList) {
@@ -1027,8 +1023,8 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create detection web list
 	pWebList = new CWebList(webBackgroundUpdate);
-	pWebList->pGlass = this;
-	pWebList->pSiteList = pSiteList;
+	pWebList->setGlass(this);
+	pWebList->setSiteList(pSiteList);
 
 	// clean out old pick list if any
 	if (pPickList) {
@@ -1037,8 +1033,8 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create pick list
 	pPickList = new CPickList(numNucleationThreads);
-	pPickList->pGlass = this;
-	pPickList->pSiteList = pSiteList;
+	pPickList->setGlass(this);
+	pPickList->setSiteList(pSiteList);
 
 	// clean out old correlation list if any
 	if (pCorrelationList) {
@@ -1047,8 +1043,8 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create correlation list
 	pCorrelationList = new CCorrelationList();
-	pCorrelationList->pGlass = this;
-	pCorrelationList->pSiteList = pSiteList;
+	pCorrelationList->setGlass(this);
+	pCorrelationList->setSiteList(pSiteList);
 
 	// clean out old hypo list if any
 	if (pHypoList) {
@@ -1057,36 +1053,7 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create hypo list
 	pHypoList = new CHypoList(numHypoThreads);
-	pHypoList->pGlass = this;
-
-	// configure output format
-	if ((com->HasKey("OutputFormat"))
-			&& ((*com)["OutputFormat"].GetType() == json::ValueType::StringVal)) {
-		// get the output format
-		std::string outputformat = (*com)["OutputFormat"].ToString();
-
-		// set up based on output format
-		if (outputformat == "Event") {
-			pHypoList->bSendEvent = true;
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using output format Event");
-		} else {
-			pHypoList->bSendEvent = false;
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using default output format Event");
-		}
-	} else {
-		// default to sending quake messages
-		pHypoList->bSendEvent = false;
-
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::initialize: Using default output format Quake");
-	}
+	pHypoList->setGlass(this);
 
 	// create detection processor
 	pDetection = new CDetection();
@@ -1095,29 +1062,6 @@ bool CGlass::initialize(json::Object *com) {
 	return (true);
 }
 
-// ---------------------------------------------------------Ping
-bool CGlass::ping(json::Object *com) {
-	// NOTE: This function only had relevance for Caryl, consider removing
-	json::Object pong;
-	pong["Cmd"] = "Pong";
-	int npicks = 0;
-	int nquakes = 0;
-	if (pPickList) {
-		npicks = pPickList->vPick.size();
-	}
-	if (pHypoList) {
-		nquakes = pHypoList->vHypo.size();
-	}
-	pong["nPicks"] = npicks;
-	pong["nQuakes"] = nquakes;
-	pong["nLoc"] = nLocate;
-	pong["nIter"] = nIterate;
-	pong["Web"] = sWeb;
-	pong["Sum"] = dSum;
-	pong["Count"] = nCount;
-	send(&pong);
-	return true;
-}
 /* NOTE: Leave these in place as examples for Travel Time unit tests.
  *
  // ---------------------------------------------------------Test

@@ -25,6 +25,7 @@ CSiteList::~CSiteList() {
 
 // ---------------------------------------------------------clear
 void CSiteList::clear() {
+	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	pGlass = NULL;
 
 	// clear sites
@@ -420,4 +421,20 @@ bool CSiteList::reqSiteList() {
 
 	return (true);
 }
+
+const CGlass* CSiteList::getGlass() const {
+	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
+	return (pGlass);
+}
+
+void CSiteList::setGlass(CGlass* glass) {
+	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
+	pGlass = glass;
+}
+
+int CSiteList::getVSiteSize() const {
+	std::lock_guard<std::mutex> vSiteGuard(vSiteMutex);
+	return (vSite.size());
+}
+
 }  // namespace glasscore

@@ -41,18 +41,17 @@ TEST(CorrelationListTest, Construction) {
 			new glasscore::CCorrelationList();
 
 	// assert default values
-	ASSERT_EQ(-1, testCorrelationList->nCorrelationTotal)<<
+	ASSERT_EQ(-1, testCorrelationList->getNCorrelationTotal())<<
 			"nCorrelationTotal is 0";
-	ASSERT_EQ(0, testCorrelationList->nCorrelation)<< "nCorrelation is 0";
+	ASSERT_EQ(0, testCorrelationList->getNCorrelation())<< "nCorrelation is 0";
 
 	// lists
-	ASSERT_EQ(0, testCorrelationList->vCorrelation.size())<<
+	ASSERT_EQ(0, testCorrelationList->getVCorrelationSize())<<
 			"vCorrelation.size() is 0";
-	ASSERT_EQ(0, testCorrelationList->mCorrelation.size())<<
-			"mCorrelation.size() is 0";
 
 	// pointers
-	ASSERT_EQ(NULL, testCorrelationList->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testCorrelationList->getGlass())<< "pGlass null";
+	ASSERT_EQ(NULL, testCorrelationList->getSiteList())<< "pSiteList null";
 
 	// cleanup
 	delete (testCorrelationList);
@@ -91,8 +90,8 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	// construct a correlationlist
 	glasscore::CCorrelationList * testCorrelationList =
 			new glasscore::CCorrelationList();
-	testCorrelationList->pSiteList = testSiteList;
-	testCorrelationList->nCorrelationMax = MAXNCORRELATION;
+	testCorrelationList->setSiteList(testSiteList);
+	testCorrelationList->setNCorrelationMax(MAXNCORRELATION);
 
 	// test indexcorrelation when empty
 	ASSERT_EQ(-2, testCorrelationList->indexCorrelation(0))<<
@@ -102,7 +101,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	testCorrelationList->addCorrelation(&correlationJSON);
 	testCorrelationList->dispatch(&correlation3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testCorrelationList->nCorrelation)<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getNCorrelation())<<
 			"Added Correlations";
 
 	// test getting a correlation (first correlation, id 1)
@@ -132,7 +131,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNCORRELATION;
-	ASSERT_EQ(expectedSize, testCorrelationList->vCorrelation.size())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getVCorrelationSize())<<
 			"testCorrelationList not larger than max";
 
 	// get first correlation, which is now id 2
@@ -148,7 +147,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	// test clearing correlations
 	testCorrelationList->clearCorrelations();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testCorrelationList->nCorrelation)<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getNCorrelation())<<
 			"Cleared Correlations";
 
 	// cleanup

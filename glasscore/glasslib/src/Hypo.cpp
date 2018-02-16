@@ -92,14 +92,13 @@ CHypo::CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt) {
 		return;
 	}
 
-	// lock for trv copying
-	std::lock_guard<std::mutex> ttGuard(node->getWeb()->m_TrvMutex);
-
 	if (!initialize(node->getLat(), node->getLon(), node->getZ(),
 					node->getTOrg(), glassutil::CPid::pid(),
-					node->getWeb()->sName, 0.0, node->getWeb()->dThresh,
-					node->getWeb()->nNucleate, node->getWeb()->pTrv1.get(),
-					node->getWeb()->pTrv2.get(), ttt, node->getResolution())) {
+					node->getWeb()->getName(), 0.0, node->getWeb()->getThresh(),
+					node->getWeb()->getNucleate(),
+					node->getWeb()->getTrv1().get(),
+					node->getWeb()->getTrv2().get(), ttt,
+					node->getResolution())) {
 		clear();
 	}
 }

@@ -94,6 +94,7 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 // ---------------------------------------------------------~CWeb
 CWeb::~CWeb() {
 	glassutil::CLogit::log("CWeb::~CWeb");
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 
 	clear();
 
@@ -112,6 +113,7 @@ CWeb::~CWeb() {
 
 // ---------------------------------------------------------clear
 void CWeb::clear() {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 	nRow = 0;
 	nCol = 0;
 	nZ = 0;
@@ -125,17 +127,21 @@ void CWeb::clear() {
 	bUpdate = false;
 
 	// clear out all the nodes in the web
+	m_vNodeMutex.lock();
 	for (auto &node : vNode) {
 		node->clear();
 	}
 	vNode.clear();
+	m_vNodeMutex.unlock();
 
 	// clear the network and site filters
 	vNetFilter.clear();
 	vSitesFilter.clear();
 
 	// clear sites
+	vSiteMutex.lock();
 	vSite.clear();
+	vSiteMutex.unlock();
 
 	pTrv1 = NULL;
 	pTrv2 = NULL;
@@ -147,6 +153,8 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 						int numCols, int numZ, bool update,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav) {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+
 	sName = name;
 	dThresh = thresh;
 	nDetect = numDetect;
@@ -1139,6 +1147,8 @@ bool CWeb::genSiteFilters(json::Object *com) {
 		return (false);
 	}
 
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+
 	// Get the network names to be included in this web.
 	if ((*com).HasKey("Nets")
 			&& ((*com)["Nets"].GetType() == json::ValueType::ArrayVal)) {
@@ -1344,6 +1354,7 @@ bool CWeb::addNode(std::shared_ptr<CNode> node) {
 	if (node == NULL) {
 		return (false);
 	}
+	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
 
 	vNode.push_back(node);
 
@@ -1451,6 +1462,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 						+ " not allowed in web " + sName + ".");
 		return;
 	}
+
+	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
 
 	int nodeModCount = 0;
 	int nodeCount = 0;
@@ -1584,6 +1597,8 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 	// yet
 	bool bSiteList = false;
 	int nodeCount = 0;
+
+	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
 
 	// for each node in web
 	for (auto &node : vNode) {
@@ -1830,6 +1845,8 @@ bool CWeb::hasSite(std::shared_ptr<CSite> site) {
 		return (false);
 	}
 
+	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
+
 	// for each node in web
 	for (auto &node : vNode) {
 		// check to see if we have this site
@@ -1841,4 +1858,88 @@ bool CWeb::hasSite(std::shared_ptr<CSite> site) {
 	// site not found
 	return (false);
 }
+
+const CSiteList* CWeb::getSiteList() const {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	return (pSiteList);
+}
+
+void CWeb::setSiteList(CSiteList* siteList) {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	pSiteList = siteList;
+}
+
+CGlass* CWeb::getGlass() const {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	return (pGlass);
+}
+
+void CWeb::setGlass(CGlass* glass) {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	pGlass = glass;
+}
+
+bool CWeb::getUpdate() const {
+	return (bUpdate);
+}
+
+double CWeb::getResolution() const {
+	return (dResolution);
+}
+
+double CWeb::getThresh() const {
+	return (dThresh);
+}
+
+int CWeb::getCol() const {
+	return (nCol);
+}
+
+int CWeb::getDetect() const {
+	return (nDetect);
+}
+
+int CWeb::getNucleate() const {
+	return (nNucleate);
+}
+
+int CWeb::getRow() const {
+	return (nRow);
+}
+
+int CWeb::getZ() const {
+	return (nZ);
+}
+
+const std::string& CWeb::getName() const {
+	return (sName);
+}
+
+const std::shared_ptr<traveltime::CTravelTime>& CWeb::getTrv1() const {
+	std::lock_guard<std::mutex> webGuard(m_TrvMutex);
+	return (pTrv1);
+}
+
+const std::shared_ptr<traveltime::CTravelTime>& CWeb::getTrv2() const {
+	std::lock_guard<std::mutex> webGuard(m_TrvMutex);
+	return (pTrv2);
+}
+
+int CWeb::getVNetFilterSize() const {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	return(vNetFilter.size());
+}
+
+int CWeb::getVSitesFilterSize() const {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	return(vSitesFilter.size());
+}
+
+int CWeb::getVNodeSize() const {
+	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
+	return(vNode.size());
+}
+
 }  // namespace glasscore
+
+

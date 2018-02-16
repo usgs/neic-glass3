@@ -25,6 +25,8 @@ CWebList::~CWebList() {
 
 // ---------------------------------------------------------clear
 void CWebList::clear() {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+
 	pGlass = NULL;
 	pSiteList = NULL;
 
@@ -87,7 +89,7 @@ bool CWebList::addWeb(json::Object *com) {
 		std::shared_ptr<CWeb> web = vWeb[i];
 
 		// look for name match
-		if (web->sName == name) {
+		if (web->getName() == name) {
 			glassutil::CLogit::log(
 					glassutil::log_level::warn,
 					"CWebList::addWeb: Already have a web with the name " + name
@@ -99,10 +101,10 @@ bool CWebList::addWeb(json::Object *com) {
 	// Create a new web object
 	std::shared_ptr<CWeb> web(new CWeb(m_bUseBackgroundThreads));
 	if (pGlass != NULL) {
-		web->pGlass = pGlass;
+		web->setGlass(pGlass);
 	}
 	if (pSiteList != NULL) {
-		web->pSiteList = pSiteList;
+		web->setSiteList(pSiteList);
 	}
 
 	// send the config to web so that it can generate itself
@@ -147,7 +149,7 @@ bool CWebList::removeWeb(json::Object *com) {
 	for (int i = 0; i < vWeb.size(); i++) {
 		std::shared_ptr<CWeb> web = vWeb[i];
 
-		if (web->sName == name) {
+		if (web->getName() == name) {
 			// clear the web and remove it
 			web->clear();
 			vWeb.erase(vWeb.begin() + i);
@@ -173,7 +175,7 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 	// Update all web node site lists that might be changed
 	// by the addition of this site
 	for (auto &web : vWeb) {
-		if (web->bUpdate == true) {
+		if (web->getUpdate() == true) {
 			if (web->isSiteAllowed(site) == true) {
 				web->addJob(std::bind(&CWeb::addSite, web, site));
 			}
@@ -195,7 +197,7 @@ void CWebList::remSite(std::shared_ptr<CSite> site) {
 	// Remove site from all web nodes that link to it and restructure
 	// node site lists
 	for (auto &web : vWeb) {
-		if (web->bUpdate == true) {
+		if (web->getUpdate() == true) {
 			if (web->isSiteAllowed(site) == true) {
 				web->addJob(std::bind(&CWeb::remSite, web, site));
 			}
@@ -246,5 +248,30 @@ bool CWebList::statusCheck() {
 
 	// all's well
 	return (true);
+}
+
+const CSiteList* CWebList::getSiteList() const {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+	return (pSiteList);
+}
+
+void CWebList::setSiteList(CSiteList* siteList) {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+	pSiteList = siteList;
+}
+
+const CGlass* CWebList::getGlass() const {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+	return (pGlass);
+}
+
+void CWebList::setGlass(CGlass* glass) {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+	pGlass = glass;
+}
+
+int CWebList::getVWebSize() const {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+	return(vWeb.size());
 }
 }  // namespace glasscore

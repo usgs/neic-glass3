@@ -76,7 +76,7 @@ CPickList::~CPickList() {
 
 // ---------------------------------------------------------~clear
 void CPickList::clear() {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
+	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 
 	pGlass = NULL;
 	pSiteList = NULL;
@@ -797,4 +797,50 @@ bool CPickList::statusCheck() {
 	// everything is awesome
 	return (true);
 }
+
+const CSiteList* CPickList::getSiteList() const {
+	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
+	return (pSiteList);
+}
+
+void CPickList::setSiteList(CSiteList* siteList) {
+	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
+	pSiteList = siteList;
+}
+
+const CGlass* CPickList::getGlass() const {
+	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
+	return (pGlass);
+}
+
+void CPickList::setGlass(CGlass* glass) {
+	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
+	pGlass = glass;
+}
+
+int CPickList::getNPick() const {
+	std::lock_guard<std::recursive_mutex> vPickGuard(m_vPickMutex);
+	return (nPick);
+}
+
+int CPickList::getNPickMax() const {
+	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
+	return (nPickMax);
+}
+
+void CPickList::setNPickMax(int picknMax) {
+	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
+	nPickMax = picknMax;
+}
+
+int CPickList::getNPickTotal() const {
+	std::lock_guard<std::recursive_mutex> vPickGuard(m_vPickMutex);
+	return (nPickTotal);
+}
+
+int CPickList::getVPickSize() const {
+	std::lock_guard<std::recursive_mutex> vPickGuard(m_vPickMutex);
+	return (vPick.size());
+}
+
 }  // namespace glasscore

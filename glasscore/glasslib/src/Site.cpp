@@ -581,7 +581,7 @@ void CSite::nucleate(double tPick) {
 					"CSite::nucleate: " + sScnl + " No valid travel times. ("
 							+ std::to_string(travelTime1) + ", "
 							+ std::to_string(travelTime2) + ") web: "
-							+ node->getWeb()->sName);
+							+ node->getWeb()->getName());
 		}
 	}
 }
@@ -596,7 +596,7 @@ void CSite::addTrigger(std::shared_ptr<CNode> node) {
 		auto q = vTrigger[iq];
 
 		// if current triggered node is part of latest node's web
-		if (node->getWeb()->sName == q->getWeb()->sName) {
+		if (node->getWeb()->getName() == q->getWeb()->getName()) {
 			// if latest node's sum is greater than current triggered node's
 			// sum, replace it
 

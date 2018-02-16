@@ -276,11 +276,58 @@ class CHypoList {
 
 	/** \brief Merge event **/
 	// bool merge(std::shared_ptr<CHypo> hyp);
+	/**
+	 * \brief check to see if each thread is still functional
+	 *
+	 * Checks each thread to see if it is still responsive.
+	 */
+	bool statusCheck();
 
+	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	const CGlass* getGlass() const;
+
+	/**
+	 * \brief CGlass setter
+	 * \param glass - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+	/**
+	 * \brief nHypo getter
+	 * \return the nHypo
+	 */
+	int getNHypo() const;
+
+	/**
+	 * \brief nHypoMax getter
+	 * \return the nHypoMax
+	 */
+	int getNHypoMax() const;
+
+	/**
+	 * \brief nHypoMax Setter
+	 * \param hypoMax - the nHypoMax
+	 */
+	void setNHypoMax(int hypoMax);
+
+	/**
+	 * \brief nHypoTotal getter
+	 * \return the nHypoTotal
+	 */
+	int getNHypoTotal() const;
+
+	/**
+	 * \brief Get the current size of the hypocenter list
+	 */
+	int getVHypoSize() const;
+
+ private:
 	/**
 	 * \brief HypoList sort function
 	 */
-
 	void sort();
 
 	/**
@@ -296,13 +343,6 @@ class CHypoList {
 	 * The function that performs the sleep between jobs
 	 */
 	void jobSleep();
-
-	/**
-	 * \brief check to see if each thread is still functional
-	 *
-	 * Checks each thread to see if it is still responsive.
-	 */
-	bool statusCheck();
 
 	/**
 	 * \brief thread status update function
@@ -369,12 +409,16 @@ class CHypoList {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex m_vHypoMutex;
+	mutable std::recursive_mutex m_vHypoMutex;
 
 	/**
-	 * \brief A boolean indicating whether to send Event json messages.
+	 * \brief A recursive_mutex to control threading access to CHypoList.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
 	 */
-	bool bSendEvent;
+	mutable std::recursive_mutex m_HypoListMutex;
 
 	/**
 	 * \brief the std::vector of std::threads
