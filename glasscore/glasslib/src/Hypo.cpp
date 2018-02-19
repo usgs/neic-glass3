@@ -1149,9 +1149,10 @@ bool CHypo::cancel() {
 	char sHypo[1024];
 
 	glassutil::CDate dt = glassutil::CDate(tOrg);
-	snprintf(sHypo, sizeof(sHypo), "%s %s%9.4f%10.4f%6.1f %d", sPid.c_str(),
-				dt.dateTime().c_str(), dLat, dLon, dZ,
-				static_cast<int>(vPick.size()));
+	snprintf(sHypo, sizeof(sHypo), "CHypo::cancel: %s tOrg:%s; dLat:%9.4f; "
+				"dLon:%10.4f; dZ:%6.1f; bayes:%.2f; nPick:%d; nCorr:%d",
+				sPid.c_str(), dt.dateTime().c_str(), dLat, dLon, dZ, dBayes,
+				static_cast<int>(vPick.size()), static_cast<int>(vCorr.size()));
 
 	// check to see if there is enough supporting data for this hypocenter
 	// NOTE, in Node, ncut is used as a threshold for the number of
