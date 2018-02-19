@@ -1305,11 +1305,6 @@ bool CHypoList::reqHypo(json::Object *com) {
 		return (false);
 	}
 
-	// log
-	char sLog[1024];
-	snprintf(sLog, sizeof(sLog), "ReqHypo %s\n", sPid.c_str());
-	glassutil::CLogit::Out(sLog);
-
 	// get the hypo
 	std::shared_ptr<CHypo> hyp = mHypo[sPid];
 

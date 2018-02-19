@@ -94,8 +94,8 @@ CHypo::CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt) {
 
 	if (!initialize(node->getLat(), node->getLon(), node->getZ(),
 					node->getTOrg(), glassutil::CPid::pid(),
-					node->getWeb()->getName(), 0.0, node->getWeb()->getThresh(),
-					node->getWeb()->getNucleate(),
+					node->getWeb()->getName(), node->getSum(),
+					node->getWeb()->getThresh(), node->getWeb()->getNucleate(),
 					node->getWeb()->getTrv1().get(),
 					node->getWeb()->getTrv2().get(), ttt,
 					node->getResolution())) {
@@ -1780,11 +1780,6 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 				<< std::to_string(valStart) << " 0 0 0 \n";
 	}
 
-	snprintf(sLog, sizeof(sLog), "CHypo::annealingLocate: old bayes value "
-				"%.4f sPid:%s",
-				valStart, sPid.c_str());
-	glassutil::CLogit::log(sLog);
-
 	// set the starting location as the current best stack value
 	valBest = valStart;
 
@@ -1875,15 +1870,14 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 	if (nucleate == 1) {
 		dBayesInitial = valBest;
 	}
-	snprintf(sLog, sizeof(sLog),
-				"CHypo::annealingLocate: total movement (%.4f,%.4f,%.4f,%.4f)"
-				" (%.4f,%.4f,%.4f,%.4f) sPid:%s",
-				dLat, dLon, dZ, tOrg, ddx, ddy, ddz, ddt, sPid.c_str());
-	glassutil::CLogit::log(sLog);
 
-	snprintf(sLog, sizeof(sLog), "CHypo::annealingLocate: new bayes value "
-				"%.4f sPid:%s",
-				valBest, sPid.c_str());
+	snprintf(
+			sLog, sizeof(sLog),
+			"CHypo::annealingLocate: total movement (%.4f,%.4f,%.4f,%.4f)"
+			" (%.4f,%.4f,%.4f,%.4f) sPid:%s; new bayes value:%.4f; old bayes"
+			" value:%.4f",
+			dLat, dLon, dZ, tOrg, ddx, ddy, ddz, ddt, sPid.c_str(), valBest,
+			valStart);
 	glassutil::CLogit::log(sLog);
 
 	if (pGlass->getGraphicsOut() == true) {

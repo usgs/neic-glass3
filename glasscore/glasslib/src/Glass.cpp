@@ -77,7 +77,7 @@ bool CGlass::dispatch(json::Object *com) {
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CGlass::dispatch: NULL json communication.");
-		return(false);
+		return (false);
 	}
 
 	// check for a command
@@ -87,7 +87,8 @@ bool CGlass::dispatch(json::Object *com) {
 		json::Value v = (*com)["Cmd"].ToString();
 
 		// log cmd if it isn't one of the common ones
-		if ((v != "Site") && (v != "Ping") && (v != "Pick")) {
+		if ((v != "Site") && (v != "ReqHypo") && (v != "Correlation")
+				&& (v != "Pick")) {
 			glassutil::CLogit::log(glassutil::log_level::debug,
 									"CGlass::dispatch: Cmd:" + v.ToString());
 		}
@@ -107,7 +108,7 @@ bool CGlass::dispatch(json::Object *com) {
 
 		// Initialize glass
 		if (v == "Initialize") {
-			return(initialize(com));
+			return (initialize(com));
 		}
 
 		// clear glass configuration
@@ -124,27 +125,27 @@ bool CGlass::dispatch(json::Object *com) {
 
 			glassutil::CLogit::log(glassutil::log_level::debug,
 									"CGlass::dispatch: Cmd is:" + v.ToString());
-			return(false);
+			return (false);
 		}
 
 		// send any other commands to any of the configurable / input classes
 		if (pPickList->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 		if (pSiteList->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 		if (pHypoList->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 		if (pCorrelationList->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 		if (pDetection->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 		if (pWebList->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 	}
 
@@ -153,21 +154,21 @@ bool CGlass::dispatch(json::Object *com) {
 			&& ((*com)["Type"].GetType() == json::ValueType::StringVal)) {
 		// send any input to any of the input processing classes
 		if (pPickList->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 		if (pSiteList->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 		if (pCorrelationList->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 		if (pDetection->dispatch(com)) {
-			return(true);
+			return (true);
 		}
 	}
 
 	// this communication was not handled
-	return(false);
+	return (false);
 }
 
 // ---------------------------------------------------------send
@@ -178,11 +179,11 @@ bool CGlass::send(json::Object *com) {
 		piSend->Send(com);
 
 		// done
-		return(true);
+		return (true);
 	}
 
 	// communication not sent
-	return(false);
+	return (false);
 }
 
 // ---------------------------------------------------------Clear
@@ -223,7 +224,7 @@ bool CGlass::initialize(json::Object *com) {
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CGlass::initialize: NULL json.");
-		return(false);
+		return (false);
 	}
 
 	// check cmd
@@ -235,14 +236,14 @@ bool CGlass::initialize(json::Object *com) {
 			glassutil::CLogit::log(
 					glassutil::log_level::warn,
 					"CGlass::initialize: Non-Initialize Cmd passed in.");
-			return(false);
+			return (false);
 		}
 	} else {
 		// no command or type
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CGlass::initialize: Missing required Cmd Key.");
-		return(false);
+		return (false);
 	}
 
 	// Reset parameters
@@ -435,7 +436,7 @@ bool CGlass::initialize(json::Object *com) {
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"No association Phase array provided");
-		return(false);
+		return (false);
 	}
 
 	// setup if we are going to print phase travel times for debuging
@@ -1037,7 +1038,7 @@ bool CGlass::initialize(json::Object *com) {
 	pDetection = new CDetection();
 	pDetection->setGlass(this);
 
-	return(true);
+	return (true);
 }
 
 /* NOTE: Leave these in place as examples for Travel Time unit tests.
@@ -1135,7 +1136,7 @@ bool CGlass::initialize(json::Object *com) {
 // It is used for pruning and association, and is roughly
 // analogous to residual pruning in least squares approaches
 double CGlass::sig(double x, double sigma) {
-	return(exp(-0.5 * x * x / sigma / sigma));
+	return (exp(-0.5 * x * x / sigma / sigma));
 }
 // ---------------------------------------------------------Sig
 // Calculate the laplacian significance function, which is just
@@ -1143,9 +1144,9 @@ double CGlass::sig(double x, double sigma) {
 // analogous to residual pruning in L1 approach.
 double CGlass::sig_laplace_pdf(double x, double sigma) {
 	if (x > 0) {
-		return((1. / (2. * sigma)) * exp(-1. * x / sigma));
+		return ((1. / (2. * sigma)) * exp(-1. * x / sigma));
 	} else {
-		return((1. / (2. * sigma)) * exp(x / sigma));
+		return ((1. / (2. * sigma)) * exp(x / sigma));
 	}
 }
 
@@ -1153,184 +1154,184 @@ double CGlass::sig_laplace_pdf(double x, double sigma) {
 bool CGlass::statusCheck() {
 	// nullcheck
 	if (pPickList == NULL) {
-		return(false);
+		return (false);
 	}
 
 	// check pick list
 	if (pPickList->statusCheck() == false) {
-		return(false);
+		return (false);
 	}
 
 	// hypo list
 	if (pHypoList->statusCheck() == false) {
-		return(false);
+		return (false);
 	}
 
 	// webs
 	if (pWebList->statusCheck() == false) {
-		return(false);
+		return (false);
 	}
 
 	// all is well
-	return(true);
+	return (true);
 }
 
 double CGlass::getAvgDelta() const {
-	return(avgDelta);
+	return (avgDelta);
 }
 
 double CGlass::getAvgSigma() const {
-	return(avgSigma);
+	return (avgSigma);
 }
 
 double CGlass::getBeamMatchingAzimuthWindow() const {
-	return(beamMatchingAzimuthWindow);
+	return (beamMatchingAzimuthWindow);
 }
 
 double CGlass::getBeamMatchingDistanceWindow() const {
-	return(beamMatchingDistanceWindow);
+	return (beamMatchingDistanceWindow);
 }
 
 int CGlass::getCorrelationCancelAge() const {
-	return(correlationCancelAge);
+	return (correlationCancelAge);
 }
 
 double CGlass::getCorrelationMatchingTWindow() const {
-	return(correlationMatchingTWindow);
+	return (correlationMatchingTWindow);
 }
 
 double CGlass::getCorrelationMatchingXWindow() const {
-	return(correlationMatchingXWindow);
+	return (correlationMatchingXWindow);
 }
 
 double CGlass::getCutFactor() const {
-	return(dCutFactor);
+	return (dCutFactor);
 }
 
 double CGlass::getCutMin() const {
-	return(dCutMin);
+	return (dCutMin);
 }
 
 double CGlass::getCutPercentage() const {
-	return(dCutPercentage);
+	return (dCutPercentage);
 }
 
 double CGlass::getReportThresh() const {
-	return(dReportThresh);
+	return (dReportThresh);
 }
 
 double CGlass::getThresh() const {
-	return(dThresh);
+	return (dThresh);
 }
 
 double CGlass::getExpAffinity() const {
-	return(expAffinity);
+	return (expAffinity);
 }
 
 bool CGlass::getGraphicsOut() const {
-	return(graphicsOut);
+	return (graphicsOut);
 }
 
 const std::string& CGlass::getGraphicsOutFolder() const {
-	return(graphicsOutFolder);
+	return (graphicsOutFolder);
 }
 
 double CGlass::getGraphicsStepKm() const {
-	return(graphicsStepKM);
+	return (graphicsStepKM);
 }
 
 int CGlass::getGraphicsSteps() const {
-	return(graphicsSteps);
+	return (graphicsSteps);
 }
 
 int CGlass::getCycleLimit() const {
-	return(iCycleLimit);
+	return (iCycleLimit);
 }
 
 bool CGlass::getMinimizeTtLocator() const {
-	return(minimizeTTLocator);
+	return (minimizeTTLocator);
 }
 
 int CGlass::getCorrelationMax() const {
-	return(nCorrelationMax);
+	return (nCorrelationMax);
 }
 
 int CGlass::getDetect() const {
-	return(nDetect);
+	return (nDetect);
 }
 
 int CGlass::getHypoMax() const {
-	return(nHypoMax);
+	return (nHypoMax);
 }
 
 int CGlass::getNucleate() const {
-	return(nNucleate);
+	return (nNucleate);
 }
 
 int CGlass::getPickMax() const {
-	return(nPickMax);
+	return (nPickMax);
 }
 
 double CGlass::getReportCut() const {
-	return(nReportCut);
+	return (nReportCut);
 }
 
 int CGlass::getSitePickMax() const {
-	return(nSitePickMax);
+	return (nSitePickMax);
 }
 
 CCorrelationList*& CGlass::getCorrelationList() {
-	return(pCorrelationList);
+	return (pCorrelationList);
 }
 
 CDetection*& CGlass::getDetection() {
-	return(pDetection);
+	return (pDetection);
 }
 
 CHypoList*& CGlass::getHypoList() {
-	return(pHypoList);
+	return (pHypoList);
 }
 
 double CGlass::getPickDuplicateWindow() const {
-	return(pickDuplicateWindow);
+	return (pickDuplicateWindow);
 }
 
 CPickList*& CGlass::getPickList() {
-	return(pPickList);
+	return (pPickList);
 }
 
 CSiteList*& CGlass::getSiteList() {
-	return(pSiteList);
+	return (pSiteList);
 }
 
 std::shared_ptr<traveltime::CTravelTime>& CGlass::getTrvDefault() {
 	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
-	return(pTrvDefault);
+	return (pTrvDefault);
 }
 
 traveltime::CTTT*& CGlass::getTTT() {
 	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
-	return(pTTT);
+	return (pTTT);
 }
 
 CWebList*& CGlass::getWebList() {
-	return(pWebList);
+	return (pWebList);
 }
 
 double CGlass::getSdAssociate() const {
-	return(sdAssociate);
+	return (sdAssociate);
 }
 
 double CGlass::getSdPrune() const {
-	return(sdPrune);
+	return (sdPrune);
 }
 
 bool CGlass::getTestLocator() const {
-	return(testLocator);
+	return (testLocator);
 }
 
 bool CGlass::getTestTimes() const {
-	return(testTimes);
+	return (testTimes);
 }
 
 }  // namespace glasscore

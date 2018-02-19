@@ -419,8 +419,10 @@ bool CPick::nucleate() {
 			// get the number of picks we have now
 			int npick = hypo->getVPickSize();
 
-			snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass %d %d/%d %s",
-						ipass, npick, ncut, hypo->getPid().c_str());
+			snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass:%d; nPick:%d"
+						"/nCut:%d; bayes:%f/thresh:%f; %s",
+						ipass, npick, ncut, bayes, thresh,
+						hypo->getPid().c_str());
 			glassutil::CLogit::log(sLog);
 
 			// check to see if we still have a high enough bayes value for this
@@ -430,7 +432,7 @@ bool CPick::nucleate() {
 				snprintf(sLog, sizeof(sLog),
 							"CPick::nucleate: -- Abandoning solution %s "
 							"due to low bayes value "
-							"(bayes: %f, thresh:%f)",
+							"(bayes:%f/thresh:%f)",
 							hypo->getPid().c_str(), bayes, thresh);
 				glassutil::CLogit::log(sLog);
 
@@ -449,7 +451,7 @@ bool CPick::nucleate() {
 				snprintf(sLog, sizeof(sLog),
 							"CPick::nucleate: -- Abandoning solution %s "
 							"due to lack of picks "
-							"(npick: %d, ncut:%d)",
+							"(npick:%d/ncut:%d)",
 							hypo->getPid().c_str(), npick, ncut);
 				glassutil::CLogit::log(sLog);
 
