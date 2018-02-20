@@ -21,7 +21,7 @@ namespace glasscore {
 class CGlass;
 class CPick;
 class CCorrelation;
-class CNode;
+class CTrigger;
 
 /**
  * \brief glasscore hypocenter class
@@ -92,7 +92,7 @@ class CHypo {
 	 * \param node - A shared pointer to a CNode object containing the node to
 	 * construct this hypo from.
 	 */
-	explicit CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt);
+	explicit CHypo(std::shared_ptr<CTrigger> trigger, traveltime::CTTT *ttt);
 
 	/**
 	 * \brief CHypo alternate constructor

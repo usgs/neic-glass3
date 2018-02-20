@@ -122,7 +122,6 @@ TEST(SiteTest, Construction) {
 	// lists
 	ASSERT_EQ(0, testSite->getNodeLinksCount())<< "vNode.size() 0";
 	ASSERT_EQ(0, testSite->getVPick().size())<< "vPick.size() 0";
-	ASSERT_EQ(0, testSite->getVTrigger().size())<< "vTrigger.size() 0";
 
 	// now init
 	testSite->initialize(std::string(SITE), std::string(COMP), std::string(NET),

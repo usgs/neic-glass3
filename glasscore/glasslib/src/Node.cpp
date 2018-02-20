@@ -9,6 +9,7 @@
 #include "Node.h"
 #include "Glass.h"
 #include "Web.h"
+#include "Trigger.h"
 #include "Site.h"
 #include "Pick.h"
 #include "Date.h"
@@ -68,10 +69,6 @@ void CNode::clear() {
 	dLon = 0;
 	dZ = 0;
 	dResolution = 0;
-	tOrg = 0;
-	nCount = 0;
-	dSum = 0;
-	nCount = 0;
 	sPid = "";
 	bEnabled = false;
 }
@@ -226,28 +223,26 @@ bool CNode::unlinkLastSite() {
 }
 
 // ---------------------------------------------------------Nucleate
-bool CNode::nucleate(double tOrigin, bool bList) {
+std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
+	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
+
 	// nullchecks
 	// check web
 	if (pWeb == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CNode::nucleate: NULL web pointer.");
-		return (false);
+		return (NULL);
 	}
 	// check web pGlass
 	if (pWeb->getGlass() == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CNode::nucleate: NULL web glass pointer.");
-		return (false);
+		return (NULL);
 	}
 	// don't nucleate if this node is disabled
 	if (bEnabled == false) {
-		return (false);
+		return (NULL);
 	}
-
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
-
-	tOrg = 0.0;
 
 	// get the cut and threshold from our
 	// parent web
@@ -260,13 +255,10 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 
 	// init overall significance sum and node site count
 	// to 0
-	dSum = 0.0;
-	nCount = 0;
+	double dSum = 0.0;
+	int nCount = 0;
 
-	// clear the pick vector
-	if (bList) {
-		vPick.clear();
-	}
+	std::vector<std::shared_ptr<CPick>> vPick;
 
 	// lock mutex for this scope
 	std::lock_guard<std::mutex> guard(vSiteMutex);
@@ -369,7 +361,6 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site
 		// NOTE: This significance threshold is hard coded.
-
 		if (dSigBest >= 0.1) {
 			// count this site
 			nCount++;
@@ -379,9 +370,7 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 			dSum += dSigBest;
 
 			// add the pick to the pick vector
-			if (bList) {
-				vPick.push_back(pickBest);
-			}
+			vPick.push_back(pickBest);
 		}
 	}
 
@@ -395,36 +384,23 @@ bool CNode::nucleate(double tOrigin, bool bList) {
 	// exceeds the nucleation threshold
 	if (nCount < nCut) {
 		// the node did not nucleate an event
-		return (false);
+		return (NULL);
 	}
 
 	// make sure the total node significance exceeds the
 	// significance threshold
 	if (dSum < dThresh) {
 		// the node did not nucleate an event
-		return (false);
+		return (NULL);
 	}
 
-	// Log nucleation statistics
-	if (bList) {
-		// convert time to human readable
-		glassutil::CDate dt = glassutil::CDate(tOrigin);
-		std::string sOrg = dt.dateTime();
-		char sLog[1024];
-		snprintf(
-				sLog, sizeof(sLog),
-				"**Nucleate %s Web:%s Cut:%d Thresh:%.2f nPick:%d dSum: %.2f",
-				sOrg.c_str(), pWeb->getName().c_str(), nCut, dThresh,
-				static_cast<int>(vPick.size()), dSum);
-		glassutil::CLogit::Out(sLog);
-	}
-
-	// remember tOrigin, it will be used when a hypocenter is created
-	// from this node
-	tOrg = tOrigin;
+	// create trigger
+	std::shared_ptr<CTrigger> trigger(
+			new CTrigger(dLat, dLon, dZ, tOrigin, dResolution, dSum, nCount,
+							vPick, pWeb));
 
 	// the node nucleated an event
-	return (true);
+	return (trigger);
 }
 
 double CNode::getBestSig(double tObservedTT, SiteLink link) {
@@ -590,25 +566,4 @@ const std::string& CNode::getName() const {
 const std::string& CNode::getPid() const {
 	return (sPid);
 }
-
-double CNode::getTOrg() const {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
-	return (tOrg);
-}
-
-double CNode::getSum() const {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
-	return (dSum);
-}
-
-int CNode::getCount() const {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
-	return (nCount);
-}
-
-const std::vector<std::shared_ptr<CPick> > CNode::getVPick() const {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
-	return (vPick);
-}
-
 }  // namespace glasscore

@@ -4,6 +4,7 @@
 #include <vector>
 #include "Pid.h"
 #include "Web.h"
+#include "Trigger.h"
 #include "Node.h"
 #include "PickList.h"
 #include "HypoList.h"
@@ -352,35 +353,45 @@ bool CPick::nucleate() {
 		return (false);
 	}
 
+	std::string pt = glassutil::CDate::encodeDateTime(tPick);
 	char sLog[1024];
 
 	// Use site nucleate to scan all nodes
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
-	pSite->nucleate(tPick);
+	std::vector<std::shared_ptr<CTrigger>> vTrigger = pSite->nucleate(tPick);
 
-	// for each node that triggered linked to this
-	// pick's site
-	std::vector<std::shared_ptr<CNode>> vTrigger = pSite->getVTrigger();
+	// if there were no triggers, we're done
+	if (vTrigger.size() == 0) {
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CPick::nucleate: NOTRG site:" + pSite->getScnl() + "; tPick:"
+						+ pt + "; idPick:" + std::to_string(idPick) + "; sPid:"
+						+ sPid);
 
-	for (auto node : vTrigger) {
+		return (false);
+	}
+
+	for (const auto &trigger : vTrigger) {
+		if (trigger->getWeb() == NULL) {
+			continue;
+		}
+
 		// nucleate at the node to build the
 		// list of picks that support this node
 		// tOrg was set during nucleation pass
 		// NOTE: this did not used to check the nucleate return here
 		// it seems that this should improve computational performance
 		// but MIGHT have unintended consequences.
-		if (!node->nucleate(node->getTOrg(), true)) {
+		// if (!node->nucleate(node->getTOrg(), true)) {
 			// didn't nucleate anything
-			continue;
-		}
+			// continue;
+		// }
 
 		// create the hypo using the node
-		// pGlass->m_TTTMutex.lock();
 		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
-				node, pGlass->getTTT());
-		// pGlass->m_TTTMutex.unlock();
+				trigger, pGlass->getTTT());
 
 		// set hypo glass pointer and such
 		hypo->setGlass(pGlass);
@@ -389,9 +400,9 @@ bool CPick::nucleate() {
 		hypo->setCutMin(pGlass->getCutMin());
 
 		// add links to all the picks that support the hypo
-		std::vector<std::shared_ptr<CPick>> vNodePicks = node->getVPick();
+		std::vector<std::shared_ptr<CPick>> vTriggerPicks = trigger->getVPick();
 
-		for (auto pick : vNodePicks) {
+		for (auto pick : vTriggerPicks) {
 			// they're not associated yet, just potentially
 			pick->setAss("N");
 			hypo->addPick(pick);
@@ -412,9 +423,9 @@ bool CPick::nucleate() {
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
-			double bayes = hypo->anneal(10000, node->getResolution() / 2.,
-										node->getResolution() / 10.,
-										node->getResolution() / 10.0, .1);
+			double bayes = hypo->anneal(10000, trigger->getResolution() / 2.,
+										trigger->getResolution() / 10.,
+										trigger->getResolution() / 10.0, .1);
 
 			// get the number of picks we have now
 			int npick = hypo->getVPickSize();
@@ -472,14 +483,13 @@ bool CPick::nucleate() {
 		if (pGlass->getHypoList()->evolve(hypo, 1)) {
 			// the hypo survived evolve,
 			// log the hypo
-			std::string pt = glassutil::CDate::encodeDateTime(tPick);
 			std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
 
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
 					"CPick::nucleate: TRG site:" + pSite->getScnl() + "; tPick:"
 							+ pt + "; idPick:" + std::to_string(idPick)
-							+ "; sPid:" + sPid + " => web:" + node->getName()
+							+ "; sPid:" + sPid + " => web:" + hypo->getWebName()
 							+ "; hyp: " + hypo->getPid() + "; lat:"
 							+ std::to_string(hypo->getLat()) + "; lon:"
 							+ std::to_string(hypo->getLon()) + "; z:"
@@ -502,21 +512,8 @@ bool CPick::nucleate() {
 		}
 	}
 
-	int triggerCount = vTrigger.size();
-
-	// If any webs triggered, return true to prevent further association
-	if (triggerCount > 0) {
-		return (true);
-	}
-
-	std::string pt = glassutil::CDate::encodeDateTime(tPick);
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CPick::nucleate: NOTRG site:" + pSite->getScnl() + "; tPick:" + pt
-					+ "; idPick:" + std::to_string(idPick) + "; sPid:" + sPid);
-
 	// done
-	return (false);
+	return (true);
 }
 
 double CPick::getBackAzimuth() const {

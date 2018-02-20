@@ -15,7 +15,7 @@
 #include "HypoList.h"
 #include "Pick.h"
 #include "Correlation.h"
-#include "Node.h"
+#include "Trigger.h"
 #include "Web.h"
 #include "Glass.h"
 #include "Logit.h"
@@ -67,7 +67,7 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 }
 
 // ---------------------------------------------------------CHypo
-CHypo::CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt) {
+CHypo::CHypo(std::shared_ptr<CTrigger> trigger, traveltime::CTTT *ttt) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
@@ -76,7 +76,7 @@ CHypo::CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt) {
 	pTrv2 = NULL;
 
 	// null checks
-	if (node == NULL) {
+	if (trigger == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::CHypo: NULL node.");
 
@@ -84,7 +84,7 @@ CHypo::CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt) {
 		return;
 	}
 
-	if (node->getWeb() == NULL) {
+	if (trigger->getWeb() == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::CHypo: NULL node->getWeb().");
 
@@ -92,13 +92,14 @@ CHypo::CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt) {
 		return;
 	}
 
-	if (!initialize(node->getLat(), node->getLon(), node->getZ(),
-					node->getTOrg(), glassutil::CPid::pid(),
-					node->getWeb()->getName(), node->getSum(),
-					node->getWeb()->getThresh(), node->getWeb()->getNucleate(),
-					node->getWeb()->getTrv1().get(),
-					node->getWeb()->getTrv2().get(), ttt,
-					node->getResolution())) {
+	if (!initialize(trigger->getLat(), trigger->getLon(), trigger->getZ(),
+					trigger->getTOrg(), glassutil::CPid::pid(),
+					trigger->getWeb()->getName(), trigger->getSum(),
+					trigger->getWeb()->getThresh(),
+					trigger->getWeb()->getNucleate(),
+					trigger->getWeb()->getTrv1().get(),
+					trigger->getWeb()->getTrv2().get(), ttt,
+					trigger->getResolution())) {
 		clear();
 	}
 }

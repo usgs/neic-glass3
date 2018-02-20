@@ -13,6 +13,7 @@
 #include "Site.h"
 #include "Logit.h"
 #include "Node.h"
+#include "Trigger.h"
 #include "Web.h"
 
 namespace glasscore {
@@ -327,10 +328,6 @@ void CSite::clear() {
 
 	clearVPick();
 
-	vTriggerMutex.lock();
-	vTrigger.clear();
-	vTriggerMutex.unlock();
-
 	// reset max picks
 	nSitePickMax = 200;
 }
@@ -538,13 +535,11 @@ void CSite::remNode(std::string nodeID) {
 }
 
 // ---------------------------------------------------------Nucleate
-void CSite::nucleate(double tPick) {
+std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 	std::lock_guard<std::mutex> guard(vNodeMutex);
 
-	// clear any previous triggering nodes
-	vTriggerMutex.lock();
-	vTrigger.clear();
-	vTriggerMutex.unlock();
+	// create trigger vector
+	std::vector<std::shared_ptr<CTrigger>> vTrigger;
 
 	// for each node linked to this site
 	for (const auto &link : vNode) {
@@ -562,6 +557,10 @@ void CSite::nucleate(double tPick) {
 			continue;
 		}
 
+		if (node->getEnabled() == false) {
+			continue;
+		}
+
 		// compute first origin time
 		double tOrigin1 = -1;
 		if (travelTime1 > 0) {
@@ -576,17 +575,29 @@ void CSite::nucleate(double tPick) {
 
 		// attempt to nucleate an event located
 		// at the current node with the potential origin times
+		bool primarySuccessful = false;
 		if (tOrigin1 > 0) {
-			if (node->nucleate(tOrigin1)) {
+			std::shared_ptr<CTrigger> trigger1 = node->nucleate(tOrigin1);
+
+			if (trigger1 != NULL) {
 				// if node triggered, add to triggered vector
-				addTrigger(node);
+				addTrigger(&vTrigger, trigger1);
+				primarySuccessful = true;
 			}
-		} else if (tOrigin2 > 0) {
-			if (node->nucleate(tOrigin2)) {
+		}
+
+		// only attempt secondary phase nucleation if primary nucleation
+		// was unsuccessful
+		if ((primarySuccessful == false) && (tOrigin2 > 0)) {
+			std::shared_ptr<CTrigger> trigger2 = node->nucleate(tOrigin2);
+
+			if (trigger2 != NULL) {
 				// if node triggered, add to triggered vector
-				addTrigger(node);
+				addTrigger(&vTrigger, trigger2);
 			}
-		} else {
+		}
+
+		if ((tOrigin1 < 0) && (tOrigin2 < 0)) {
 			glassutil::CLogit::log(
 					glassutil::log_level::warn,
 					"CSite::nucleate: " + sScnl + " No valid travel times. ("
@@ -595,45 +606,84 @@ void CSite::nucleate(double tPick) {
 							+ node->getWeb()->getName());
 		}
 	}
+
+	return (vTrigger);
 }
 
 // ---------------------------------------------------------addTrigger
-void CSite::addTrigger(std::shared_ptr<CNode> node) {
-	std::lock_guard<std::mutex> guard(vTriggerMutex);
+void CSite::addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
+						std::shared_ptr<CTrigger> trigger) {
+	if (trigger == NULL) {
+		return;
+	}
+	if (trigger->getWeb() == NULL) {
+		return;
+	}
 
-	// for each known triggering node
-	for (int iq = 0; iq < vTrigger.size(); iq++) {
-		// get current triggered node
-		auto q = vTrigger[iq];
+	// clean up expired pointers
+	for (auto it = vTrigger->begin(); it != vTrigger->end();) {
+		std::shared_ptr<CTrigger> aTrigger = (*it);
 
-		// if current triggered node is part of latest node's web
-		if (node->getWeb()->getName() == q->getWeb()->getName()) {
-			// if latest node's sum is greater than current triggered node's
-			// sum, replace it
-
-			// glassutil::CLogit::log(
-			// glassutil::log_level::debug,
-			// "CSite::addTrigger Node 1:"
-			// + std::to_string(node->dLat) + ", "
-			// + std::to_string(node->dLon) + ", "
-			// + std::to_string(node->dZ) + ", "
-			// + std::to_string(node->dSum) + ", Node 2:"
-			// + std::to_string(q->dLat) + ", "
-			// + std::to_string(q->dLon) + ", "
-			// + std::to_string(q->dZ) + ", "
-			// + std::to_string(q->dSum));
-
-			if (node->getSum() > q->getSum()) {
-				vTrigger[iq] = node;
+		// if current trigger is part of latest trigger's web
+		if (trigger->getWeb()->getName() == aTrigger->getWeb()->getName()) {
+			/* glassutil::CLogit::log(
+			 glassutil::log_level::debug,
+			 "CSite::addTrigger Trigger 1:" + std::to_string(trigger->dLat)
+			 + ", " + std::to_string(trigger->dLon) + ", "
+			 + std::to_string(trigger->dZ) + ", "
+			 + std::to_string(trigger->dSum) + ", Trigger 2:"
+			 + std::to_string(aTrigger->dLat) + ", "
+			 + std::to_string(aTrigger->dLon) + ", "
+			 + std::to_string(aTrigger->dZ) + ", "
+			 + std::to_string(aTrigger->dSum));*/
+			if (trigger->getSum() > aTrigger->getSum()) {
+				it = vTrigger->erase(it);
+				it = vTrigger->insert(it, trigger);
 			}
 
 			// we're done
 			return;
+		} else {
+			++it;
 		}
 	}
 
+	/*	// for each known trigger
+	 for (int triggerIndex = 0; triggerIndex < vTrigger->size();
+	 triggerIndex++) {
+	 // get current trigger
+	 std::shared_ptr<CTrigger> aTrigger = vTrigger->at(triggerIndex);
+	 // if current trigger is part of latest trigger's web
+	 if (trigger->pWeb->sName == aTrigger->pWeb->sName) {
+	 // if latest triger''s sum is greater than current trigger's
+	 // sum, replace it
+	 glassutil::CLogit::log(
+	 glassutil::log_level::debug,
+	 "CSite::addTrigger Trigger 1:" + std::to_string(trigger->dLat)
+	 + ", " + std::to_string(trigger->dLon) + ", "
+	 + std::to_string(trigger->dZ) + ", "
+	 + std::to_string(trigger->dSum) + ", Trigger 2:"
+	 + std::to_string(aTrigger->dLat) + ", "
+	 + std::to_string(aTrigger->dLon) + ", "
+	 + std::to_string(aTrigger->dZ) + ", "
+	 + std::to_string(aTrigger->dSum));
+	 if (trigger->dSum > aTrigger->dSum) {
+	 vTrigger[triggerIndex] = trigger;
+	 }
+	 // we're done
+	 return;
+	 }
+	 }*/
+
+	/*	glassutil::CLogit::log(
+	 glassutil::log_level::debug,
+	 "CSite::addTrigger New Trigger:" + std::to_string(trigger->dLat)
+	 + ", " + std::to_string(trigger->dLon) + ", "
+	 + std::to_string(trigger->dZ) + ", "
+	 + std::to_string(trigger->dSum));*/
+
 	// add triggering node to vector of triggered nodes
-	vTrigger.push_back(node);
+	vTrigger->push_back(trigger);
 }
 
 int CSite::getNodeLinksCount() const {
@@ -719,10 +769,4 @@ const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
 
 	return (picks);
 }
-
-const std::vector<std::shared_ptr<CNode> > CSite::getVTrigger() const {
-	std::lock_guard<std::mutex> guard(vTriggerMutex);
-	return (vTrigger);
-}
-
 }  // namespace glasscore

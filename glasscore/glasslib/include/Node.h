@@ -22,6 +22,7 @@ namespace glasscore {
 class CPick;
 class CSite;
 class CWeb;
+class CTrigger;
 
 /**
  * \brief glasscore detection node class
@@ -138,7 +139,7 @@ class CNode {
 	 * picks used in calculation
 	 * \return Returns true if the node nucleated an event, false otherwise
 	 */
-	bool nucleate(double tOrigin, bool bList = false);
+	std::shared_ptr<CTrigger> nucleate(double tOrigin);
 
 	/**
 	 * \brief CNode significance function
@@ -253,30 +254,6 @@ class CNode {
 	 */
 	const std::string& getPid() const;
 
-	/**
-	 * \brief tOrg getter
-	 * \return the tOrg
-	 */
-	double getTOrg() const;
-
-	/**
-	 * \brief dSum getter
-	 * \return the dSum
-	 */
-	double getSum() const;
-
-	/**
-	 * \brief nCount getter
-	 * \return the nCount
-	 */
-	int getCount() const;
-
-	/**
-	 * \brief vPick getter
-	 * \return the vPick
-	 */
-	const std::vector<std::shared_ptr<CPick>> getVPick() const;
-
  private:
 	/**
 	 * \brief A pointer to the parent CWeb class, used get configuration,
@@ -318,39 +295,10 @@ class CNode {
 	double dResolution;
 
 	/**
-	 * \brief A double value that accumulates the Bayesian
-	 * sum when evaluating the agoric at each node in a web.
-	 * It is compared to the threshold value set for the
-	 * web which owns this node.
-	 */
-	double dSum;
-
-	/**
-	 * \brief A integer value that tallies the number of sites
-	 * that are included in this solution. This value is
-	 * compared against the Nucleation parameter in the
-	 * parameters for the web for which this node is a memeber
-	 */
-	int nCount;
-
-	/**
-	 * \brief A double value with the origin time calculated the last time
-	 * this node was nucleated.
-	 */
-	double tOrg;
-
-	/**
 	 * \brief A boolean flag indicating whether this node is enabled for
 	 * nucleation
 	 */
 	bool bEnabled;
-
-	/**
-	 * \brief A std::vector of std::shared_ptr's to CPick objects
-	 * used in calculating the likelihood of a hypocenter
-	 * centered on this node during the last call to nucleate()
-	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
 
 	/**
 	 * \brief A std::vector of tuples linking node to site

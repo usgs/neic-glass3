@@ -23,6 +23,7 @@ namespace glasscore {
 class CPick;
 class CNode;
 class CGlass;
+class CTrigger;
 
 /**
  * \brief glasscore site (station) class
@@ -207,13 +208,14 @@ class CSite {
 	 * \param tpick - A double value containing the pick time to nucleate with
 	 * in julian seconds
 	 */
-	void nucleate(double tpick);
+	std::vector<std::shared_ptr<CTrigger>> nucleate(double tpick);
 
 	/**
 	 * \brief Add triggering node to triggered node list if value exceeds
 	 * current value of if named node's web is not yet present.
 	 */
-	void addTrigger(std::shared_ptr<CNode> node);
+	void addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
+					std::shared_ptr<CTrigger> trigger);
 
 	/**
 	 * \brief Node link count getter
@@ -311,12 +313,6 @@ class CSite {
 	 */
 	const std::vector<std::shared_ptr<CPick>> getVPick() const;
 
-	/**
-	 * \brief vTrigger getter
-	 * \return the vTrigger
-	 */
-	const std::vector<std::shared_ptr<CNode>> getVTrigger() const;
-
  private:
 	/**
 	 * \brief A mutex to control threading access to vPick.
@@ -324,23 +320,10 @@ class CSite {
 	mutable std::mutex vPickMutex;
 
 	/**
-	 * \brief A std::vector of std::shared_ptr's to the picks mad at this this
+	 * \brief A std::vector of std::shared_ptr's to the picks made at this this
 	 * CSite
 	 */
 	std::vector<std::weak_ptr<CPick>> vPick;
-
-	/*
-	 * /brief A std::vector of shared node pointers that contain a list
-	 * of nodes that triggered for an input pick. It supports the concept
-	 * that each node can generate trigger event independently from other
-	 * webs. It is set by the method 'addTrigger'.
-	 */
-	std::vector<std::shared_ptr<CNode>> vTrigger;
-
-	/**
-	 * \brief A mutex to control threading access to vTrigger.
-	 */
-	mutable std::mutex vTriggerMutex;
 
 	/**
 	 * \brief A pointer to the main CGlass class used encode/decode time and
