@@ -2753,4 +2753,21 @@ int CHypo::getReportCount() const {
 	return (reportCount);
 }
 
+bool CHypo::isLockedForProcessing() {
+	if (processingMutex.try_lock() == false) {
+		return (true);
+	}
+
+	processingMutex.unlock();
+	return (false);
+}
+
+void CHypo::lockForProcessing() {
+	processingMutex.lock();
+}
+
+void CHypo::unlockAfterProcessing() {
+	processingMutex.unlock();
+}
+
 }  // namespace glasscore

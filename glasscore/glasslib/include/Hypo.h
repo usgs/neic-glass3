@@ -745,6 +745,10 @@ class CHypo {
 	 */
 	int getReportCount() const;
 
+	bool isLockedForProcessing();
+	void lockForProcessing();
+	void unlockAfterProcessing();
+
  private:
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
@@ -985,6 +989,11 @@ class CHypo {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex hypoMutex;
+
+	/**
+	 * \brief A mutex to control processing access to CHypo.
+	 */
+	std::mutex processingMutex;
 
 	/**
 	 * \brief A random engine used to generate random numbers

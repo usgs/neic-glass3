@@ -828,6 +828,9 @@ void CHypoList::darwin() {
 		return;
 	}
 
+	// only allow one thread to process a hypo at at time
+	hyp->lockForProcessing();
+
 	// log the hypo we're working on
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
@@ -844,6 +847,8 @@ void CHypoList::darwin() {
 				"CHypoList::darwin canceling sPid:" + hyp->getPid()
 						+ " processCount:"
 						+ std::to_string(hyp->getProcessCount()));
+
+		hyp->unlockAfterProcessing();
 
 		// remove hypo from the hypo list
 		remHypo(hyp);
@@ -864,11 +869,16 @@ void CHypoList::darwin() {
 						+ " at cycle limit:" + std::to_string(hyp->getCycle())
 						+ +" processCount:"
 						+ std::to_string(hyp->getProcessCount()));
+
+		hyp->unlockAfterProcessing();
+
 		return;
 	}
 
 	// process this hypocenter
 	evolve(hyp);
+
+	hyp->unlockAfterProcessing();
 
 	// resort the hypocenter list to maintain
 	// time order
