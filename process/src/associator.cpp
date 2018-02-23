@@ -5,6 +5,8 @@
 #include <memory>
 #include <Logit.h>
 #include <Glass.h>
+#include <HypoList.h>
+#include <PickList.h>
 
 namespace glass {
 // Construction/Destruction
@@ -211,6 +213,15 @@ bool Associator::work() {
 									static_cast<int>(tNow - tLastWorkReport))
 							+ " seconds.");
 		} else {
+			int hypoListSize = 0;
+			int pickListSize = 0;
+			if (m_pGlass->getHypoList()) {
+				hypoListSize = m_pGlass->getHypoList()->getVHypoSize();
+			}
+			if (m_pGlass->getPickList()) {
+				pickListSize = m_pGlass->getPickList()->getVPickSize();
+			}
+
 			m_iTotalWorkCounter += m_iWorkCounter;
 
 			// calculate data per second average
@@ -231,16 +242,17 @@ bool Associator::work() {
 					"info",
 					"Associator::work(): Sent " + std::to_string(m_iWorkCounter)
 							+ " data to glass (" + std::to_string(pendingdata)
-							+ " pending, " + std::to_string(m_iTotalWorkCounter)
-							+ " total) in the last "
+							+ " in queue, " + std::to_string(m_iTotalWorkCounter)
+							+ " total) in "
 							+ std::to_string(
 									static_cast<int>(tNow - tLastWorkReport))
 							+ " seconds. (" + std::to_string(dataAverage)
-							+ " data per second) ("
-							+ std::to_string(m_dRunningAverage)
-							+ " running average data per second) ("
+							+ " dps) (" + std::to_string(m_dRunningAverage)
+							+ " avg dps) ("
 							+ std::to_string(averageglasstime)
-							+ " average per pick time).");
+							+ " avg glass time) (" + "vPickSize: "
+							+ std::to_string(pickListSize) + " vHypoSize: "
+							+ std::to_string(hypoListSize) + ").");
 		}
 
 		tLastWorkReport = tNow;
