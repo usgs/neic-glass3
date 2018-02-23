@@ -77,6 +77,9 @@ TEST(Output, TrackingTests) {
 	ASSERT_FALSE(
 			outputThread.addTrackingData(new json::Object(json::Deserialize(BADTRACKING2))));  // NOLINT
 
+	tracking1 = new json::Object(json::Deserialize(TRACKING1));
+	tracking2 = new json::Object(json::Deserialize(TRACKING2));
+
 	// have successes
 	ASSERT_TRUE(outputThread.haveTrackingData(tracking1));
 	ASSERT_TRUE(outputThread.haveTrackingData(tracking2));
@@ -88,6 +91,9 @@ TEST(Output, TrackingTests) {
 
 	// remove successes
 	ASSERT_TRUE(outputThread.removeTrackingData(tracking1));
+
+	tracking1 = new json::Object(json::Deserialize(TRACKING1));
+
 	ASSERT_FALSE(outputThread.haveTrackingData(tracking1));
 
 	// remove fail

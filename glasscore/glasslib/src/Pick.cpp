@@ -105,6 +105,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 			// cleanup
 			delete (pick);
+			pick = NULL;
 
 			return;
 		}
@@ -128,6 +129,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 			// cleanup
 			delete (pick);
+			pick = NULL;
 
 			return;
 		}
@@ -146,6 +148,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 		// cleanup
 		delete (pick);
+		pick = NULL;
 
 		return;
 	}
@@ -162,6 +165,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 		// cleanup
 		delete (pick);
+		pick = NULL;
 
 		return;
 	}
@@ -170,7 +174,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 	if (!site->getUse()) {
 		// cleanup
 		delete (pick);
-
+		pick = NULL;
 		return;
 	}
 
@@ -195,6 +199,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 		// cleanup
 		delete (pick);
+		pick = NULL;
 
 		return;
 	}
@@ -214,6 +219,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 		// cleanup
 		delete (pick);
+		pick = NULL;
 
 		return;
 	}
@@ -254,6 +260,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 		// cleanup
 		delete (pick);
+		pick = NULL;
 
 		return;
 	}
@@ -267,6 +274,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 	// cleanup
 	delete (pick);
+	pick = NULL;
 }
 
 // ---------------------------------------------------------~CPick

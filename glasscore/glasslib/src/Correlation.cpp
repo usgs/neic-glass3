@@ -117,6 +117,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 			// cleanup
 			delete (correlation);
+		correlation = NULL;
 
 			return;
 		}
@@ -140,6 +141,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 			// cleanup
 			delete (correlation);
+		correlation = NULL;
 
 			return;
 		}
@@ -158,6 +160,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 				"CCorrelation::CCorrelation: Missing required Site Key.");
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -173,6 +176,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 								"CCorrelation::CCorrelation: site is null.");
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -181,6 +185,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 	if (!site->getUse()) {
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -199,6 +204,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -215,6 +221,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -230,6 +237,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -254,6 +262,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 			// cleanup
 			delete (correlation);
+		correlation = NULL;
 
 			return;
 		}
@@ -269,6 +278,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					" Longitude Key.");
 			// cleanup
 			delete (correlation);
+		correlation = NULL;
 
 			return;
 		}
@@ -285,6 +295,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 			// cleanup
 			delete (correlation);
+		correlation = NULL;
 
 			return;
 		}
@@ -305,6 +316,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 			// cleanup
 			delete (correlation);
+		correlation = NULL;
 
 			return;
 		}
@@ -317,6 +329,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -333,6 +346,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -346,6 +360,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 		// cleanup
 		delete (correlation);
+		correlation = NULL;
 
 		return;
 	}
@@ -359,6 +374,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 	// cleanup
 	delete (correlation);
+		correlation = NULL;
 }
 
 // ---------------------------------------------------------~CCorrelation

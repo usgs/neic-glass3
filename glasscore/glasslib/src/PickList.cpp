@@ -206,7 +206,7 @@ bool CPickList::addPick(json::Object *pick) {
 			|| (newPick->getPid() == "")) {
 		// cleanup
 		delete (newPick);
-		return (false);
+		return (true);
 	}
 
 	// check if pick is duplicate, if pGlass exists
@@ -220,7 +220,7 @@ bool CPickList::addPick(json::Object *pick) {
 					glassutil::log_level::warn,
 					"CPickList::addPick: Duplicate pick not passed in.");
 			delete (newPick);
-			return (false);
+			return (true);
 		}
 	}
 

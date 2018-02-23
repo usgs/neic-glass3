@@ -114,6 +114,11 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CSite::CSite: Missing required Station Key.");
+
+			// cleanup
+				delete(site);
+				site = NULL;
+
 			return;
 		}
 
@@ -133,6 +138,11 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CSite::CSite: Missing required Network Key.");
+
+			// cleanup
+				delete(site);
+				site = NULL;
+
 			return;
 		}
 
@@ -152,6 +162,11 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::CSite: Missing required Site Object.");
+
+		// cleanup
+			delete(site);
+			site = NULL;
+
 		return;
 	}
 
@@ -162,6 +177,11 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::CSite: Missing required Latitude Key.");
+
+		// cleanup
+			delete(site);
+			site = NULL;
+
 		return;
 	}
 
@@ -173,6 +193,11 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CSite::CSite: Missing required Longitude Key.");
+
+		// cleanup
+			delete(site);
+			site = NULL;
+
 		return;
 	}
 
@@ -184,6 +209,11 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CSite::CSite: Missing required Elevation Key.");
+
+		// cleanup
+			delete(site);
+			site = NULL;
+
 		return;
 	}
 
@@ -218,6 +248,7 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 
 	// cleanup
 	delete(site);
+	site = NULL;
 }
 
 // ---------------------------------------------------------CSite

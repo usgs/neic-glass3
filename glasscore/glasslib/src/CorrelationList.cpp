@@ -147,7 +147,7 @@ bool CCorrelationList::addCorrelation(json::Object *correlation) {
 			|| (newCorrelation->getPid() == "")) {
 		// cleanup
 		delete (newCorrelation);
-		return (false);
+		return (true);
 	}
 
 	// check if correlation is duplicate, if pGlass exists
@@ -163,7 +163,7 @@ bool CCorrelationList::addCorrelation(json::Object *correlation) {
 					"CCorrelationList::addCorrelation: Duplicate correlation "
 					"not passed in.");
 			delete (newCorrelation);
-			return (false);
+			return (true);
 		}
 	}
 

@@ -213,6 +213,10 @@ void output::clear() {
 }
 
 void output::sendToOutput(json::Object* message) {
+	if (message == NULL) {
+		return;
+	}
+
 	if (m_MessageQueue != NULL) {
 		m_MessageQueue->addDataToQueue(message);
 	}
@@ -260,6 +264,10 @@ bool output::addTrackingData(json::Object* data) {
 
 	// make a new copy to add
 	json::Object * newData = new json::Object(*data);
+
+	// cleanup
+	delete (data);
+	data = NULL;
 
 	logger::log(
 			"debug",
@@ -315,8 +323,17 @@ bool output::removeTrackingData(json::Object* data) {
 		logger::log(
 				"error",
 				"output::removetrackingdata(): Bad json hypo object passed in.");
+
+		// cleanup
+		delete (data);
+		data = NULL;
+
 		return (false);
 	}
+
+	// cleanup
+	delete (data);
+	data = NULL;
 
 	return (removeTrackingData(ID));
 }
@@ -489,11 +506,6 @@ bool output::work() {
 			// add the event to the tracking cache
 			addTrackingData(message);
 
-			// cleanup
-			// cppcheck-suppress nullPointerRedundantCheck
-			if (message != NULL) {
-				delete (message);
-			}
 			m_iEventCounter++;
 		} else if (messagetype == "Cancel") {
 			json::Object * trackingData = getTrackingData(messageid);

@@ -1320,11 +1320,19 @@ bool CHypoList::reqHypo(json::Object *com) {
 
 	// check the hypo
 	if (!hyp) {
-		return (false);
+		// cleanup
+		delete (com);
+		com = NULL;
+
+		return (true);
 	}
 
 	// generate the hypo message
 	hyp->hypo();
+
+	// cleanup
+	delete (com);
+	com = NULL;
 
 	// done
 	return (true);
