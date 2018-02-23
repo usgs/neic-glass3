@@ -56,7 +56,7 @@ void CCorrelationList::clearCorrelations() {
 }
 
 // ---------------------------------------------------------dispatch
-bool CCorrelationList::dispatch(json::Object *com) {
+bool CCorrelationList::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -97,7 +97,8 @@ bool CCorrelationList::dispatch(json::Object *com) {
 }
 
 // ---------------------------------------------------------addCorrelation
-bool CCorrelationList::addCorrelation(json::Object *correlation) {
+bool CCorrelationList::addCorrelation(
+		std::shared_ptr<json::Object> correlation) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
 
 	// null check json

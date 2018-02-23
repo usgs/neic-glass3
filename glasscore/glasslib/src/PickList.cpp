@@ -106,7 +106,7 @@ void CPickList::clearPicks() {
 }
 
 // ---------------------------------------------------------Dispatch
-bool CPickList::dispatch(json::Object *com) {
+bool CPickList::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -154,7 +154,7 @@ bool CPickList::dispatch(json::Object *com) {
 }
 
 // ---------------------------------------------------------addPick
-bool CPickList::addPick(json::Object *pick) {
+bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// null check json
 	if (pick == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,

@@ -266,17 +266,19 @@ TEST(WebTest, GlobalTest) {
 	std::getline(globalFile, globalLine);
 	globalFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object globalConfig = json::Deserialize(globalLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+			json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> globalConfig = std::make_shared<json::Object>(
+			json::Deserialize(globalLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGlobalWeb(UPDATE);
 	testGlobalWeb.setSiteList(testSiteList);
-	testGlobalWeb.dispatch(&globalConfig);
+	testGlobalWeb.dispatch(globalConfig);
 
 	// name
 	ASSERT_STREQ(std::string(GLOBALNAME).c_str(),
@@ -360,17 +362,19 @@ TEST(WebTest, GridTest) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+				json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+					json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(UPDATE);
 	testGridWeb.setSiteList(testSiteList);
-	testGridWeb.dispatch(&gridConfig);
+	testGridWeb.dispatch(gridConfig);
 
 	// name
 	ASSERT_STREQ(std::string(GRIDNAME).c_str(), testGridWeb.getName().c_str())<<
@@ -450,17 +454,19 @@ TEST(WebTest, GridExplicitTest) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+				json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+					json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(UPDATE);
 	testGridWeb.setSiteList(testSiteList);
-	testGridWeb.dispatch(&gridConfig);
+	testGridWeb.dispatch(gridConfig);
 
 	// name
 	ASSERT_STREQ(std::string(GRIDEXPLICITNAME).c_str(),
@@ -536,21 +542,23 @@ TEST(WebTest, AddTest) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+				json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+					json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(UPDATE);
 	testGridWeb.setSiteList(testSiteList);
-	testGridWeb.dispatch(&gridConfig);
+	testGridWeb.dispatch(gridConfig);
 
 	// create site to add
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(ADDSITE)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(ADDSITE))));
 	glasscore::CSite * addSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
 
@@ -593,21 +601,23 @@ TEST(WebTest, RemoveTest) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+				json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+				json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(UPDATE);
 	testGridWeb.setSiteList(testSiteList);
-	testGridWeb.dispatch(&gridConfig);
+	testGridWeb.dispatch(gridConfig);
 
 	// create site to remove
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(REMOVESITE)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(REMOVESITE))));
 	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
 
@@ -651,7 +661,6 @@ TEST(WebTest, FailTests) {
 	// grid fails
 	std::ifstream badGridFile;
 	std::string badGridLine = "";
-	json::Object badGridConfig;
 
 	// global
 	// bad tt
@@ -662,8 +671,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global1 false";
+	std::shared_ptr<json::Object> badGridConfig = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig))<< "bad global1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -673,8 +683,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global2 false";
+	std::shared_ptr<json::Object> badGridConfig2 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig2))<< "bad global2 false";
 
 	// no depths
 	badGridFile.open(
@@ -684,8 +695,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global4 false";
+	std::shared_ptr<json::Object> badGridConfig3 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig3))<< "bad global4 false";
 
 	// grid
 	// bad tt
@@ -695,8 +707,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid1 false";
+	std::shared_ptr<json::Object> badGridConfig4 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig4))<< "bad grid1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -705,8 +718,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid2 false";
+	std::shared_ptr<json::Object> badGridConfig5 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig5))<< "bad grid2 false";
 
 	// no depths
 	badGridFile.open(
@@ -715,8 +729,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid3 false";
+	std::shared_ptr<json::Object> badGridConfig6 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig6))<< "bad grid3 false";
 
 	// explicit
 	// bad tt
@@ -727,8 +742,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid1 false";
+	std::shared_ptr<json::Object> badGridConfig7 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig7))<< "bad grid1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -738,6 +754,7 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid2 false";
+	std::shared_ptr<json::Object> badGridConfig8 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig8))<< "bad grid2 false";
 }

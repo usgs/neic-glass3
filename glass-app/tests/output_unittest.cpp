@@ -40,7 +40,7 @@
 #define OUTPUT3FILE "0BB39FF59826AA4BA63AAA07FFFE713F.jsondetect"
 #define RETRACT3FILE "0BB39FF59826AA4BA63AAA07FFFE713F.jsonrtct"
 
-json::Object* GetDataFromFile(std::string filename) {
+std::shared_ptr<json::Object> GetDataFromFile(std::string filename) {
 	std::ifstream infile;
 	if (std::ifstream(filename).good() != true) {
 		return (NULL);
@@ -64,7 +64,8 @@ json::Object* GetDataFromFile(std::string filename) {
 	// make sure we got valid json
 	if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
 		// convert our resulting value to a json object
-		json::Object *newdata = new json::Object(deserializedJSON.ToObject());
+		std::shared_ptr<json::Object> newdata = std::make_shared<json::Object>(
+				json::Object(deserializedJSON.ToObject()));
 		return (newdata);
 	}
 
@@ -92,7 +93,7 @@ class AssociatorStub : public util::iAssociator {
 	virtual ~AssociatorStub() {
 	}
 
-	void sendToAssociator(json::Object* message) override {
+	void sendToAssociator(std::shared_ptr<json::Object> message) override {
 		if (message == NULL) {
 			return;
 		}
@@ -215,20 +216,23 @@ class OutputTest : public ::testing::Test {
 
 	bool configurefail2() {
 		// configure fail
-		return (OutputThread->setup(new json::Object(json::Deserialize(CONFIGFAIL1))));
+		return (OutputThread->setup(
+				new json::Object(json::Deserialize(CONFIGFAIL1))));
 	}
 
 	bool configurefail3() {
 		// configure fail
-		return (OutputThread->setup(new json::Object(json::Deserialize(CONFIGFAIL2))));
+		return (OutputThread->setup(
+				new json::Object(json::Deserialize(CONFIGFAIL2))));
 	}
 
 	bool emptyconfig() {
 		// configure empty
-		return (OutputThread->setup(new json::Object(json::Deserialize(EMPTYCONFIG))));
+		return (OutputThread->setup(
+				new json::Object(json::Deserialize(EMPTYCONFIG))));
 	}
 
-	void CheckData(json::Object * dataone, json::Object * datatwo) {
+	void CheckData(std::shared_ptr<json::Object> dataone, std::shared_ptr<json::Object> datatwo) {
 		if (dataone == NULL) {
 			return;
 		}
@@ -416,7 +420,7 @@ TEST_F(OutputTest, Output) {
 	// start input thread
 	OutputThread->start();
 
-	json::Object * outputevent = GetDataFromFile(eventfile);
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(eventfile);
 	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
 			glassutil::CDate::now());
 	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
@@ -432,8 +436,8 @@ TEST_F(OutputTest, Output) {
 	ASSERT_TRUE(std::ifstream(outputfile).good()) << "hypo output file created";
 
 	// get the data
-	json::Object * senthypo = GetDataFromFile(hypofile);
-	json::Object * outputorigin = GetDataFromFile(outputfile);
+	std::shared_ptr<json::Object> senthypo = GetDataFromFile(hypofile);
+	std::shared_ptr<json::Object> outputorigin = GetDataFromFile(outputfile);
 
 	// check the output data against the input
 	CheckData(senthypo, outputorigin);
@@ -446,7 +450,7 @@ TEST_F(OutputTest, Update) {
 	// start input thread
 	OutputThread->start();
 
-	json::Object * outputevent = GetDataFromFile(event2file);
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event2file);
 	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
 			glassutil::CDate::now());
 	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
@@ -463,8 +467,8 @@ TEST_F(OutputTest, Update) {
 	<< "hypo output file created";
 
 	// get the data
-	json::Object * senthypo2 = GetDataFromFile(hypo2file);
-	json::Object * output2origin = GetDataFromFile(output2file);
+	std::shared_ptr<json::Object> senthypo2 = GetDataFromFile(hypo2file);
+	std::shared_ptr<json::Object> output2origin = GetDataFromFile(output2file);
 
 	// check the output data against the update
 	CheckData(senthypo2, output2origin);
@@ -472,7 +476,7 @@ TEST_F(OutputTest, Update) {
 	//remove output for update
 	std::remove(output2file.c_str());
 
-	json::Object * updateevent = GetDataFromFile(event2updatefile);
+	std::shared_ptr<json::Object> updateevent = GetDataFromFile(event2updatefile);
 	(*updateevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
 			glassutil::CDate::now());
 	(*updateevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
@@ -489,8 +493,8 @@ TEST_F(OutputTest, Update) {
 	<< "hypo update file created";
 
 	// get the data
-	json::Object * sentupdatehypo2 = GetDataFromFile(hypo2updatefile);
-	json::Object * output2origin2 = GetDataFromFile(output2file);
+	std::shared_ptr<json::Object> sentupdatehypo2 = GetDataFromFile(hypo2updatefile);
+	std::shared_ptr<json::Object> output2origin2 = GetDataFromFile(output2file);
 
 	// check the output data against the update
 	CheckData(sentupdatehypo2, output2origin2);
@@ -503,13 +507,13 @@ TEST_F(OutputTest, Cancel) {
 	// start input thread
 	OutputThread->start();
 
-	json::Object * outputevent = GetDataFromFile(event3file);
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
 	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
 			glassutil::CDate::now());
 	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
 			glassutil::CDate::now());
 
-	json::Object * cancelmessage = GetDataFromFile(cancel3file);
+	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
 
 	// add data to output
 	OutputThread->sendToOutput(outputevent);
@@ -534,7 +538,7 @@ TEST_F(OutputTest, Retract) {
 	// start input thread
 	OutputThread->start();
 
-	json::Object * outputevent = GetDataFromFile(event3file);
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
 	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
 			glassutil::CDate::now());
 	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
@@ -550,7 +554,7 @@ TEST_F(OutputTest, Retract) {
 	ASSERT_TRUE(std::ifstream(output3file).good())
 	<< "output file created";
 
-	json::Object * cancelmessage = GetDataFromFile(cancel3file);
+	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
 
 	// send cancel to output
 	OutputThread->sendToOutput(cancelmessage);

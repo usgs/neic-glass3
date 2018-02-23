@@ -76,7 +76,7 @@ class CPick {
 	 * \param pickId - An integer containing the pick id to use.
 	 * \param pSiteList - A pointer to the CSiteList class
 	 */
-	CPick(json::Object *pick, int pickId, CSiteList *pSiteList);
+	CPick(std::shared_ptr<json::Object> pick, int pickId, CSiteList *pSiteList);
 
 	/**
 	 * \brief CPick destructor

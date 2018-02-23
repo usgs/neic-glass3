@@ -125,8 +125,8 @@ TEST(CorrelationTest, Construction) {
 	ASSERT_TRUE(testCorrelation->getJCorrelation() == NULL)<< "jCorrelation null";
 
 	// create  shared pointer to the site
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
 			new glasscore::CSite(siteJSON, NULL));
 
@@ -149,15 +149,15 @@ TEST(CorrelationTest, JSONConstruction) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// create json objects from the strings
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// add site to site list
 	testSiteList->addSite(siteJSON);
 
 	// construct a correlation using a JSON object
-	json::Object * correlationJSON = new json::Object(
-			json::Deserialize(std::string(CORRELATIONJSON)));
+	std::shared_ptr<json::Object> correlationJSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(CORRELATIONJSON))));
 	glasscore::CCorrelation * testCorrelation = new glasscore::CCorrelation(
 			correlationJSON, CORRELATIONID, testSiteList);
 
@@ -172,10 +172,10 @@ TEST(CorrelationTest, HypoOperations) {
 	glassutil::CLogit::disable();
 
 	// create  shared pointer to the site
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-			new glasscore::CSite(siteJSON, NULL));
+				new glasscore::CSite(siteJSON, NULL));
 
 	// create correlation
 	glasscore::CCorrelation *testCorrelation = new glasscore::CCorrelation(

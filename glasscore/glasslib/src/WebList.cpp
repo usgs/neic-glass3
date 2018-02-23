@@ -38,7 +38,7 @@ void CWebList::clear() {
 }
 
 // ---------------------------------------------------------Dispatch
-bool CWebList::dispatch(json::Object *com) {
+bool CWebList::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -68,7 +68,7 @@ bool CWebList::dispatch(json::Object *com) {
 }
 
 // ---------------------------------------------------------AddWeb
-bool CWebList::addWeb(json::Object *com) {
+bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -120,7 +120,7 @@ bool CWebList::addWeb(json::Object *com) {
 }
 
 // ---------------------------------------------------------RemoveWeb
-bool CWebList::removeWeb(json::Object *com) {
+bool CWebList::removeWeb(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(

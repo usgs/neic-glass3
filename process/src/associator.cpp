@@ -2,6 +2,7 @@
 #include <logger.h>
 #include <ctime>
 #include <string>
+#include <memory>
 #include <Logit.h>
 #include <Glass.h>
 
@@ -94,9 +95,10 @@ bool Associator::setup(json::Object *config) {
 					"associator::setup(): Class Core interface is NULL .");
 		return (false);
 	}
-
+	std::shared_ptr<json::Object> pConfig = std::make_shared<json::Object>(
+			*config);
 	// send the config to glass
-	m_pGlass->dispatch(config);
+	m_pGlass->dispatch(pConfig);
 	logger::log("debug",
 				"associator::setup(): Done Passing in provided config.");
 
@@ -141,13 +143,13 @@ void Associator::logGlass(glassutil::logMessageStruct message) {
 	}
 }
 
-void Associator::Send(json::Object *communication) {
+void Associator::Send(std::shared_ptr<json::Object> communication) {
 	// this probably could be the same function as dispatch...
 	// ...except the interface won't let it be
 	dispatch(communication);
 }
 
-void Associator::sendToAssociator(json::Object* message) {
+void Associator::sendToAssociator(std::shared_ptr<json::Object> message) {
 	if (m_MessageQueue != NULL) {
 		m_MessageQueue->addDataToQueue(message);
 	}
@@ -167,7 +169,7 @@ bool Associator::work() {
 	}
 
 	// first check to see if we have any messages to send
-	json::Object* message = m_MessageQueue->getDataFromQueue();
+	std::shared_ptr<json::Object> message = m_MessageQueue->getDataFromQueue();
 
 	if (message != NULL) {
 		// send the message into glass
@@ -178,7 +180,7 @@ bool Associator::work() {
 	std::time(&tNow);
 
 	// now grab whatever input might have for us and send it into glass
-	json::Object* data = Input->getData();
+	std::shared_ptr<json::Object> data = Input->getData();
 
 	// only send in something if we got something
 	if (data != NULL) {
@@ -269,7 +271,7 @@ bool Associator::check() {
 }
 
 // process any messages glasscore sends us
-bool Associator::dispatch(json::Object *communication) {
+bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 	// tell base class we're still alive
 	ThreadBaseClass::setWorkCheck();
 
@@ -283,7 +285,7 @@ bool Associator::dispatch(json::Object *communication) {
 	if (Output != NULL) {
 		// Allocate a new json object to avoid
 		// multi-thread pointer issues.
-		Output->sendToOutput(new json::Object(*communication));
+		Output->sendToOutput(communication);
 	} else {
 		logger::log("error",
 					"associator::dispatch(): Output interface is NULL, nothing "

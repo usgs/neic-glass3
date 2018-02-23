@@ -124,7 +124,7 @@ class CWeb {
 	 * \return Returns true if the communication was handled by CWeb,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CWeb initialization function
@@ -168,7 +168,7 @@ class CWeb {
 	 * configuration
 	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool grid(json::Object *com);
+	bool grid(std::shared_ptr<json::Object>  com);
 
 	/**
 	 * \brief Generate a detection grid with explicit nodes
@@ -179,7 +179,7 @@ class CWeb {
 	 * configuration
 	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool grid_explicit(json::Object *com);
+	bool grid_explicit(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Generate a global detection grid
@@ -191,7 +191,7 @@ class CWeb {
 	 * configuration
 	 * \return Always returns true
 	 */
-	bool global(json::Object *com);
+	bool global(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Load the travel times for this web
@@ -212,7 +212,7 @@ class CWeb {
 	 * \param com - A pointer to a json::object containing the web configuration
 	 * \return Returns true if successful, false otherwise.
 	 */
-	bool genSiteFilters(json::Object *com);
+	bool genSiteFilters(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Generate node site list

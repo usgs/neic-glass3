@@ -33,7 +33,7 @@ void CDetection::clear() {
 }
 
 // ---------------------------------------------------------Dispatch
-bool CDetection::dispatch(json::Object *com) {
+bool CDetection::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -74,7 +74,7 @@ bool CDetection::dispatch(json::Object *com) {
 }
 
 // ---------------------------------------------------------process
-bool CDetection::process(json::Object *com) {
+bool CDetection::process(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -85,8 +85,6 @@ bool CDetection::process(json::Object *com) {
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CDetection::process: NULL pGlass.");
-
-		delete (com);
 
 		return (false);
 	}
@@ -118,8 +116,6 @@ bool CDetection::process(json::Object *com) {
 					glassutil::log_level::error,
 					"CDetection::process: Missing required Hypocenter Time Key.");
 
-			delete (com);
-
 			return (false);
 		}
 
@@ -135,8 +131,6 @@ bool CDetection::process(json::Object *com) {
 					"CDetection::process: Missing required Hypocenter Latitude"
 					" Key.");
 
-			delete (com);
-
 			return (false);
 		}
 
@@ -151,8 +145,6 @@ bool CDetection::process(json::Object *com) {
 					"CDetection::process: Missing required Hypocenter Longitude"
 					" Key.");
 
-			delete (com);
-
 			return (false);
 		}
 
@@ -166,8 +158,6 @@ bool CDetection::process(json::Object *com) {
 					"CDetection::process: Missing required Hypocenter Depth"
 					" Key.");
 
-			delete (com);
-
 			return (false);
 		}
 	} else {
@@ -175,12 +165,8 @@ bool CDetection::process(json::Object *com) {
 				glassutil::log_level::error,
 				"CDetection::process: Missing required Hypocenter Key.");
 
-		delete (com);
-
 		return (false);
 	}
-
-	delete (com);
 
 	// Check to see if hypo already exists. We could also
 	// check location at this point, but it seems unlikely

@@ -81,7 +81,7 @@ class CCorrelationList {
 	 * \return Returns true if the communication was handled by CCorrelationList,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CCorrelationList add correlation function
@@ -103,7 +103,7 @@ class CCorrelationList {
 	 * \return Returns true if the correlation was usable and added by CCorrelationList,
 	 * false otherwise
 	 */
-	bool addCorrelation(json::Object *com);
+	bool addCorrelation(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CCorrelationList get correlation function

@@ -4,6 +4,7 @@
 #include <fileutil.h>
 
 #include <string>
+#include <memory>
 
 #define CONFIGFILENAME "inputtest.d"
 #define TESTPATH "testdata"
@@ -246,7 +247,7 @@ TEST_F(InputTest, Run) {
 	ASSERT_TRUE(std::ifstream(jsonorigfile).good()) << "jsonorigfile archived";
 	ASSERT_TRUE(std::ifstream(badfile).good()) << "badfile errored";
 
-	json::Object* data = InputThread->getData();
+	std::shared_ptr<json::Object> data = InputThread->getData();
 
 	// assert input data ok
 	ASSERT_TRUE(data != NULL) << "input data is not null";

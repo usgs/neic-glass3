@@ -37,15 +37,14 @@ TEST(SiteListTest, SiteOperations) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// create json objects from the strings
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
-	json::Object * site2JSON = new json::Object(
-			json::Deserialize(std::string(SITE2JSON)));
-	json::Object * site3JSON = new json::Object(
-			json::Deserialize(std::string(SITE3JSON)));
-	json::Object * site4JSON = new json::Object(
-			json::Deserialize(std::string(SITE4JSON)));
-
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITEJSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITE2JSON))));
+	std::shared_ptr<json::Object> site3JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITE3JSON))));
+	std::shared_ptr<json::Object> site4JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITE4JSON))));
 
 	// construct sites using JSON objects
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);

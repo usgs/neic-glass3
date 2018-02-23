@@ -91,7 +91,7 @@ class CPickList {
 	 * \return Returns true if the communication was handled by CPickList,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CPickList add pick function
@@ -114,7 +114,7 @@ class CPickList {
 	 * \return Returns true if the pick was usable and added by CPickList,
 	 * false otherwise
 	 */
-	bool addPick(json::Object *pick);
+	bool addPick(std::shared_ptr<json::Object> pick);
 
 	/**
 	 * \brief CPickList get pick function

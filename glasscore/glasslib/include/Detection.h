@@ -69,7 +69,7 @@ class CDetection {
 	 * \return Returns true if the communication was handled by CDetection,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Process detection message
@@ -89,7 +89,7 @@ class CDetection {
 	 * \param com -  A pointer to a json::object containing the incoming
 	 * 'Detection' message
 	 */
-	bool process(json::Object *com);
+	bool process(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass getter

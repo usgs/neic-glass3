@@ -17,6 +17,7 @@
 #include <threadbaseclass.h>
 #include <queue.h>
 #include <ctime>
+#include <memory>
 
 /**
  * \namespace glass
@@ -103,7 +104,7 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	 * \param communication - A json::Object containing the message from
 	 * glasscore.
 	 */
-	void Send(json::Object *communication) override;
+	void Send(std::shared_ptr<json::Object> communication) override;
 
 	/**
 	 * \brief glasscore message sending function
@@ -113,7 +114,7 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	 * \param message - A json::Object containing the message to send to
 	 * glasscore.
 	 */
-	void sendToAssociator(json::Object* message) override;
+	void sendToAssociator(std::shared_ptr<json::Object> message) override;
 
 	/**
 	 * \brief thread pool check function
@@ -166,7 +167,7 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	 * glasscore.
 	 * \return returns true if the dispatch was successful, false otherwise.
 	 */
-	bool dispatch(json::Object *communication);
+	bool dispatch(std::shared_ptr<json::Object> communication);
 
 	/**
 	 * \brief glasscore logging function

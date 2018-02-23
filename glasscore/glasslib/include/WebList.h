@@ -66,7 +66,7 @@ class CWebList {
 	 * \return Returns true if the communication was handled by CWeb,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Add subnet web ('Grid', etc) from detection fabric
@@ -80,7 +80,7 @@ class CWebList {
 	 *
 	 * \return Always returns true
 	 */
-	bool addWeb(json::Object *com);
+	bool addWeb(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Remove subnet compoent ('Grid', etc) from detection fabric
@@ -95,7 +95,7 @@ class CWebList {
 	 *
 	 * \return Always returns true
 	 */
-	bool removeWeb(json::Object *com);
+	bool removeWeb(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Add a site to the webs

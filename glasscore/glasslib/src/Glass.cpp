@@ -72,7 +72,7 @@ CGlass::~CGlass() {
 }
 
 // ---------------------------------------------------------dispatch
-bool CGlass::dispatch(json::Object *com) {
+bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -172,7 +172,7 @@ bool CGlass::dispatch(json::Object *com) {
 }
 
 // ---------------------------------------------------------send
-bool CGlass::send(json::Object *com) {
+bool CGlass::send(std::shared_ptr<json::Object> com) {
 	// make sure we have something to send to
 	if (piSend) {
 		// send the communication
@@ -219,7 +219,7 @@ void CGlass::clear() {
 }
 
 // ---------------------------------------------------------Initialize
-bool CGlass::initialize(json::Object *com) {
+bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,

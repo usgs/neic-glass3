@@ -7,10 +7,11 @@
 #include <string>
 #include <ctime>
 #include <vector>
+#include <memory>
 
 namespace parse {
 
-std::string hypoToJSONDetection(json::Object *data,
+std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor) {
 	if (data == NULL) {
@@ -384,14 +385,11 @@ std::string hypoToJSONDetection(json::Object *data,
 			detection.tojson(detectiondocument,
 								detectiondocument.GetAllocator()));
 
-	// cleanup
-	delete (data);
-
 	// done
 	return (OutputData);
 }
 
-std::string cancelToJSONRetract(json::Object *data,
+std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor) {
 	if (data == NULL) {
@@ -452,14 +450,11 @@ std::string cancelToJSONRetract(json::Object *data,
 	OutputData = detectionformats::ToJSONString(
 			retract.tojson(retractdocument, retractdocument.GetAllocator()));
 
-	// cleanup
-	delete (data);
-
 	// done
 	return (OutputData);
 }
 
-std::string siteListToStationList(json::Object *data) {
+std::string siteListToStationList(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
 		logger::log(
 				"error",
@@ -543,14 +538,11 @@ std::string siteListToStationList(json::Object *data) {
 
 	OutputData = json::Serialize(stationListObj);
 
-	// cleanup
-	delete (data);
-
 	// done
 	return (OutputData);
 }
 
-std::string siteLookupToStationInfoRequest(json::Object *data,
+std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 											const std::string &outputAgencyID,
 											const std::string &outputAuthor) {
 	if (data == NULL) {
@@ -650,9 +642,6 @@ std::string siteLookupToStationInfoRequest(json::Object *data,
 				"siteLookupToStationInfoRequest: Invalid station info request "
 						"message: " + errorstring);
 	}
-
-	// cleanup
-	delete (data);
 
 	// done
 	return (OutputString);

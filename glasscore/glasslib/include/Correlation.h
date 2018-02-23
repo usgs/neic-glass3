@@ -84,7 +84,7 @@ class CCorrelation {
 	 * \param correlationId - An integer containing the correlation id to use.
 	 * \param pSiteList - A pointer to the CSiteList class
 	 */
-	CCorrelation(json::Object *correlation, int correlationId,
+	CCorrelation(std::shared_ptr<json::Object> correlation, int correlationId,
 					CSiteList *pSiteList);
 
 	/**

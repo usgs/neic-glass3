@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <memory>
 
 namespace util {
 
@@ -107,7 +108,8 @@ void Cache::clear() {
 }
 
 // cache managment
-bool Cache::addToCache(json::Object * data, std::string id, bool lock) {
+bool Cache::addToCache(std::shared_ptr<json::Object> data, std::string id,
+						bool lock) {
 	if (data == NULL) {
 		logger::log("error", "cache::addtocache(): Bad json object passed in.");
 		return (false);
@@ -127,15 +129,8 @@ bool Cache::addToCache(json::Object * data, std::string id, bool lock) {
 	// see if we have it already
 	if (m_Cache.find(id) != m_Cache.end()) {
 		// we do, replace what we have
-		// grab the old
-		json::Object * olddata = m_Cache[id];
-
 		// update the cache
 		m_Cache[id] = data;
-
-		// cleanup
-		if (olddata != NULL)
-			delete (olddata);
 
 		if (lock) {
 			m_CacheMutex.unlock();
@@ -195,15 +190,8 @@ bool Cache::removeFromCache(std::string id, bool lock) {
 		return (false);
 	}
 
-	// grab the old
-	json::Object * olddata = m_Cache[id];
-
 	// erase the element from the map
 	m_Cache.erase(m_Cache.find(id));
-
-	// cleanup
-	if (olddata != NULL)
-		delete (olddata);
 
 	if (lock) {
 		m_CacheMutex.unlock();
@@ -247,7 +235,7 @@ bool Cache::isInCache(std::string id, bool lock) {
 	return (true);
 }
 
-json::Object * Cache::getFromCache(std::string id, bool lock, bool copy) {
+std::shared_ptr<json::Object> Cache::getFromCache(std::string id, bool lock) {
 	// don't do anything if we didn't get an id
 	if (id == "") {
 		logger::log("error", "cache::getfromcache(): Bad ID passed in.");
@@ -276,11 +264,7 @@ json::Object * Cache::getFromCache(std::string id, bool lock, bool copy) {
 	}
 
 	// get result from cache
-	json::Object *data;
-	if (copy)
-		data = new json::Object(*m_Cache[id]);
-	else
-		data = m_Cache[id];
+	std::shared_ptr<json::Object> data = m_Cache[id];
 
 	if (lock) {
 		m_CacheMutex.unlock();
@@ -295,7 +279,7 @@ json::Object * Cache::getFromCache(std::string id, bool lock, bool copy) {
 	return (data);
 }
 
-json::Object * Cache::getNextFromCache(bool restart, bool lock) {
+std::shared_ptr<json::Object> Cache::getNextFromCache(bool restart, bool lock) {
 	// lock in case someone else is using the cache
 	if (lock) {
 		m_CacheMutex.lock();
@@ -322,7 +306,8 @@ json::Object * Cache::getNextFromCache(bool restart, bool lock) {
 	}
 
 	// get current data from the iterator
-	json::Object * data = (json::Object *) m_CacheDumpItr->second;
+	std::shared_ptr<json::Object> data =
+			(std::shared_ptr<json::Object>) m_CacheDumpItr->second;
 
 	// advance the iterator
 	++m_CacheDumpItr;
@@ -390,7 +375,7 @@ bool Cache::loadCacheFromDisk(bool lock) {
 			// make sure we've not got the empty line at the end of the file
 			if (line.length() > 0) {
 				// try to convert the line to a json object
-				json::Object *datatoadd = NULL;
+				std::shared_ptr<json::Object> datatoadd;
 				try {
 					json::Value deserializeddata = json::Deserialize(line);
 
@@ -405,7 +390,8 @@ bool Cache::loadCacheFromDisk(bool lock) {
 					}
 
 					// convert our resulting value to a json object
-					datatoadd = new json::Object(deserializeddata.ToObject());
+					datatoadd = std::make_shared<json::Object>(
+							json::Object(deserializeddata.ToObject()));
 				} catch (const std::runtime_error &e) {
 					// oopse
 					std::string exceptionstring = e.what();
@@ -564,11 +550,12 @@ bool Cache::writeCacheToDisk(bool lock) {
 		}
 
 		// now go through the whole station cache
-		std::map<std::string, json::Object *>::iterator CacheItr;
+		std::map<std::string, std::shared_ptr<json::Object>>::iterator CacheItr;
 		for (CacheItr = m_Cache.begin(); CacheItr != m_Cache.end();
 				++CacheItr) {
 			// get the current station
-			json::Object * data = (json::Object *) CacheItr->second;
+			std::shared_ptr<json::Object> data =
+					(std::shared_ptr<json::Object>) CacheItr->second;
 			std::string id = CacheItr->first;
 
 			// make sure we have an id

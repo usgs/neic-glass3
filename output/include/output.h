@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <memory>
 
 namespace glass {
 /**
@@ -81,7 +82,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 *
 	 * \param message - A json::Object containing the message to send to output.
 	 */
-	void sendToOutput(json::Object* message) override;
+	void sendToOutput(std::shared_ptr<json::Object> message) override;
 
 	/**
 	 * \brief thread pool check function
@@ -144,9 +145,9 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * \param data - A pointer to a json::Object containing the detection data.
 	 * \return Returns true if successful, false otherwise
 	 */
-	bool addTrackingData(json::Object* data);
+	bool addTrackingData(std::shared_ptr<json::Object> data);
 
-	json::Object * getTrackingData(std::string id);
+	std::shared_ptr<json::Object> getTrackingData(std::string id);
 
 	/**
 	 * \brief get data from the output tracking cache
@@ -157,7 +158,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * \return Returns a pointer to the json::Object containing the detection
 	 * data ready for output, NULL if no data found that is ready.
 	 */
-	json::Object * getNextTrackingData();
+	std::shared_ptr<json::Object> getNextTrackingData();
 
 	/**
 	 * \brief check if data is in output tracking cache
@@ -168,7 +169,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * \param data - A pointer to a json::Object containing the detection data.
 	 * \return Returns true if the data is in the cache, false otherwise
 	 */
-	bool haveTrackingData(json::Object* data);
+	bool haveTrackingData(std::shared_ptr<json::Object> data);
 	bool haveTrackingData(std::string ID);
 
 	/**
@@ -179,7 +180,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * \param data - A pointer to a json::Object containing the detection data.
 	 * \return Returns true if successful, false otherwise
 	 */
-	bool removeTrackingData(json::Object* data);
+	bool removeTrackingData(std::shared_ptr<json::Object> data);
 	bool removeTrackingData(std::string ID);
 
 	/**
@@ -198,9 +199,10 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * data to check
 	 * \return Returns true if the data is ready, false if not.
 	 */
-	bool isDataReady(json::Object *data);
-	bool isDataChanged(json::Object *data);
-	bool isDataPublished(json::Object *data, bool ignoreVersion = true);
+	bool isDataReady(std::shared_ptr<json::Object> data);
+	bool isDataChanged(std::shared_ptr<json::Object> data);
+	bool isDataPublished(std::shared_ptr<json::Object> data,
+							bool ignoreVersion = true);
 
  protected:
 	/**
@@ -220,7 +222,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * \param data - A pointer to a json::Object containing the data to be
 	 * output.
 	 */
-	void writeOutput(json::Object *data);
+	void writeOutput(std::shared_ptr<json::Object> data);
 
 	virtual void sendOutput(const std::string &type, const std::string &id,
 							const std::string &message) = 0;

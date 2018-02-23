@@ -172,7 +172,7 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 }
 
 // ---------------------------------------------------------Dispatch
-bool CWeb::dispatch(json::Object *com) {
+bool CWeb::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -207,7 +207,7 @@ bool CWeb::dispatch(json::Object *com) {
 }
 
 // ---------------------------------------------------------Global
-bool CWeb::global(json::Object*com) {
+bool CWeb::global(std::shared_ptr<json::Object> com) {
 	glassutil::CLogit::log(glassutil::log_level::debug, "CWeb::global");
 
 	// nullchecks
@@ -452,7 +452,7 @@ bool CWeb::global(json::Object*com) {
 }
 
 // ---------------------------------------------------------Grid
-bool CWeb::grid(json::Object *com) {
+bool CWeb::grid(std::shared_ptr<json::Object> com) {
 	glassutil::CLogit::log(glassutil::log_level::debug, "CWeb::grid");
 	// nullchecks
 	// check json
@@ -752,7 +752,7 @@ bool CWeb::grid(json::Object *com) {
 }
 
 // ---------------------------------------------Grid w/ explicit nodes
-bool CWeb::grid_explicit(json::Object *com) {
+bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 	glassutil::CLogit::log(glassutil::log_level::debug, "CWeb::grid_explicit");
 
 	// nullchecks
@@ -1138,7 +1138,7 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 }
 
 // ---------------------------------------------------------genSiteFilters
-bool CWeb::genSiteFilters(json::Object *com) {
+bool CWeb::genSiteFilters(std::shared_ptr<json::Object> com) {
 	// nullchecks
 	// check json
 	if (com == NULL) {

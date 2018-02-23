@@ -81,7 +81,7 @@ class CGlass {
 	 * \return Returns true if the communication was handled by CGlass,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass communication sending function
@@ -95,7 +95,7 @@ class CGlass {
 	 * \return Returns true if the communication was sent via
 	 * a valid IGlassSend interface pointer, false otherwise
 	 */
-	bool send(json::Object *com);
+	bool send(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass initialization function
@@ -112,7 +112,7 @@ class CGlass {
 	 * \return Returns true if the initialization was successful,
 	 * false otherwise
 	 */
-	bool initialize(json::Object *com);
+	bool initialize(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass clear function

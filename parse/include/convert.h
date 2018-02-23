@@ -9,6 +9,7 @@
 
 #include <json.h>
 #include <string>
+#include <memory>
 
 namespace parse {
 
@@ -25,7 +26,7 @@ namespace parse {
  * \return Returns a string containing the converted json detection, empty
  * string otherwise
  */
-std::string hypoToJSONDetection(json::Object *data,
+std::string hypoToJSONDetection(std::shared_ptr<json::Object>,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor);
 
@@ -43,7 +44,7 @@ std::string hypoToJSONDetection(json::Object *data,
  * \return Returns a string containing the converted json detection, empty
  * string otherwise
  */
-std::string cancelToJSONRetract(json::Object *data,
+std::string cancelToJSONRetract(std::shared_ptr<json::Object>,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor);
 
@@ -58,7 +59,7 @@ std::string cancelToJSONRetract(json::Object *data,
  * \return Returns a string containing the converted json detection, empty
  * string otherwise
  */
-std::string siteListToStationList(json::Object *data);
+std::string siteListToStationList(std::shared_ptr<json::Object>);
 
 /**
  * \brief json station list conversion function
@@ -74,7 +75,7 @@ std::string siteListToStationList(json::Object *data);
  * \return Returns a string containing the converted json detection, empty
  * string otherwise
  */
-std::string siteLookupToStationInfoRequest(json::Object *data,
+std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object>,
 											const std::string &outputAgencyID,
 											const std::string &outputAuthor);
 

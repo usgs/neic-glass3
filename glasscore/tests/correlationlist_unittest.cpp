@@ -62,25 +62,31 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	glassutil::CLogit::disable();
 
 	// create json objects from the strings
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
-	json::Object * site2JSON = new json::Object(
-			json::Deserialize(std::string(SITE2JSON)));
-	json::Object * site3JSON = new json::Object(
-			json::Deserialize(std::string(SITE3JSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITE2JSON))));
+	std::shared_ptr<json::Object> site3JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITE3JSON))));
 
-	json::Object * correlationJSON = new json::Object(
-			json::Deserialize(std::string(CORRELATIONJSON)));
-	json::Object * correlation2JSON = new json::Object(
-			json::Deserialize(std::string(CORRELATION2JSON)));
-	json::Object * correlation3JSON = new json::Object(
-			json::Deserialize(std::string(CORRELATION3JSON)));
-	json::Object * correlation4JSON = new json::Object(
-			json::Deserialize(std::string(CORRELATION4JSON)));
-	json::Object * correlation5JSON = new json::Object(
-			json::Deserialize(std::string(CORRELATION5JSON)));
-	json::Object * correlation6JSON = new json::Object(
-			json::Deserialize(std::string(CORRELATION6JSON)));
+	std::shared_ptr<json::Object> correlationJSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATIONJSON))));
+	std::shared_ptr<json::Object> correlation2JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION2JSON))));
+	std::shared_ptr<json::Object> correlation3JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION3JSON))));
+	std::shared_ptr<json::Object> correlation4JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION4JSON))));
+	std::shared_ptr<json::Object> correlation5JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION5JSON))));
+	std::shared_ptr<json::Object> correlation6JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION6JSON))));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();

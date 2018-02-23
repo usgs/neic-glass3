@@ -100,8 +100,8 @@ TEST(PickTest, Construction) {
 	ASSERT_TRUE(testPick->getJPick() == NULL)<< "jPick null";
 
 	// create  shared pointer to the site
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
 			new glasscore::CSite(siteJSON, NULL));
 
@@ -123,15 +123,16 @@ TEST(PickTest, JSONConstruction) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// create json objects from the strings
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// add site to site list
 	testSiteList->addSite(siteJSON);
 
 	// construct a pick using a JSON object
-	json::Object * pickJSON = new json::Object(
-			json::Deserialize(std::string(PICKJSON)));
+	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(PICKJSON))));
+
 	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, PICKID,
 														testSiteList);
 
@@ -144,10 +145,10 @@ TEST(PickTest, HypoOperations) {
 	glassutil::CLogit::disable();
 
 	// create  shared pointer to the site
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-			new glasscore::CSite(siteJSON, NULL));
+					new glasscore::CSite(siteJSON, NULL));
 
 	// create pick
 	glasscore::CPick * testPick = new glasscore::CPick(

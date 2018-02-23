@@ -3,6 +3,7 @@
 #include <logger.h>
 #include <stringutil.h>
 #include <timeutil.h>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <queue>
@@ -21,7 +22,7 @@ Queue::~Queue() {
 	clearQueue();
 }
 
-bool Queue::addDataToQueue(json::Object * data, bool lock) {
+bool Queue::addDataToQueue(std::shared_ptr<json::Object> data, bool lock) {
 	if (lock) {
 		m_QueueMutex.lock();
 	}
@@ -36,7 +37,7 @@ bool Queue::addDataToQueue(json::Object * data, bool lock) {
 	return (true);
 }
 
-json::Object * Queue::getDataFromQueue(bool lock, bool copy) {
+std::shared_ptr<json::Object> Queue::getDataFromQueue(bool lock) {
 	if (lock) {
 		m_QueueMutex.lock();
 	}
@@ -50,12 +51,8 @@ json::Object * Queue::getDataFromQueue(bool lock, bool copy) {
 	}
 
 	// get the next element
-	json::Object *data;
-	if (copy) {
-		data = new json::Object(*m_DataQueue.front());
-	} else {
-		data = m_DataQueue.front();
-	}
+	std::shared_ptr<json::Object> data;
+	data = m_DataQueue.front();
 
 	// remove that element now that we got it
 	m_DataQueue.pop();

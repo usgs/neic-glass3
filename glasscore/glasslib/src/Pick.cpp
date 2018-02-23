@@ -35,7 +35,8 @@ CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime, int pickId,
 }
 
 // ---------------------------------------------------------CPick
-CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
+CPick::CPick(std::shared_ptr<json::Object> pick, int pickId,
+				CSiteList *pSiteList) {
 	clear();
 
 	// null check json
@@ -103,10 +104,6 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 					glassutil::log_level::error,
 					"CPick::CPick: Missing required Station Key.");
 
-			// cleanup
-			delete (pick);
-			pick = NULL;
-
 			return;
 		}
 
@@ -127,10 +124,6 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 					glassutil::log_level::error,
 					"CPick::CPick: Missing required Network Key.");
 
-			// cleanup
-			delete (pick);
-			pick = NULL;
-
 			return;
 		}
 
@@ -146,10 +139,6 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CPick::CPick: Missing required Site Key.");
 
-		// cleanup
-		delete (pick);
-		pick = NULL;
-
 		return;
 	}
 
@@ -163,18 +152,11 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CPick::CPick: site is null.");
 
-		// cleanup
-		delete (pick);
-		pick = NULL;
-
 		return;
 	}
 
 	// check to see if we're using this site
 	if (!site->getUse()) {
-		// cleanup
-		delete (pick);
-		pick = NULL;
 		return;
 	}
 
@@ -197,10 +179,6 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 				glassutil::log_level::error,
 				"CPick::CPick: Missing required Time or T Key.");
 
-		// cleanup
-		delete (pick);
-		pick = NULL;
-
 		return;
 	}
 
@@ -216,10 +194,6 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
 				"CPick::CPick: Missing required ID or Pid Key.");
-
-		// cleanup
-		delete (pick);
-		pick = NULL;
 
 		return;
 	}
@@ -257,11 +231,6 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 	if (!initialize(site, tpick, pickId, pid, backAzimuth, slowness)) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CPick::CPick: Failed to initialize pick.");
-
-		// cleanup
-		delete (pick);
-		pick = NULL;
-
 		return;
 	}
 
@@ -269,12 +238,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 	// remember input json for hypo message generation
 	// note, move to init?
-	// std::shared_ptr<json::Object> jpck(new json::Object(*pick));
-	jPick = std::make_shared<json::Object>(json::Object(*pick));
-
-	// cleanup
-	delete (pick);
-	pick = NULL;
+	jPick = pick;
 }
 
 // ---------------------------------------------------------~CPick

@@ -99,7 +99,7 @@ void CHypoList::clearHypos() {
 }
 
 // ---------------------------------------------------------Dispatch
-bool CHypoList::dispatch(json::Object *com) {
+bool CHypoList::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -331,13 +331,14 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 						+ " Removing Hypo: " + pdx.second);
 
 		// create expiration message
-		json::Object expire;
-		expire["Cmd"] = "Expire";
-		expire["Pid"] = pdx.second;
+		std::shared_ptr<json::Object> expire = std::make_shared<json::Object>(
+				json::Object());
+		(*expire)["Cmd"] = "Expire";
+		(*expire)["Pid"] = pdx.second;
 
 		// send message
 		if (pGlass) {
-			pGlass->send(&expire);
+			pGlass->send(expire);
 		}
 	}
 
@@ -428,13 +429,14 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	if (reportCancel == true) {
 		if (hypo->getEvent()) {
 			// create cancellation message
-			json::Object can;
-			can["Cmd"] = "Cancel";
-			can["Pid"] = pid;
+			std::shared_ptr<json::Object> cancel =
+					std::make_shared<json::Object>(json::Object());
+			(*cancel)["Cmd"] = "Cancel";
+			(*cancel)["Pid"] = pid;
 
 			// send message
 			if (pGlass) {
-				pGlass->send(&can);
+				pGlass->send(cancel);
 			}
 		}
 	}
@@ -1266,7 +1268,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
  }
  */
 // ---------------------------------------------------------ReqHypo
-bool CHypoList::reqHypo(json::Object *com) {
+bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// null check json
@@ -1320,19 +1322,11 @@ bool CHypoList::reqHypo(json::Object *com) {
 
 	// check the hypo
 	if (!hyp) {
-		// cleanup
-		delete (com);
-		com = NULL;
-
 		return (true);
 	}
 
 	// generate the hypo message
 	hyp->hypo();
-
-	// cleanup
-	delete (com);
-	com = NULL;
 
 	// done
 	return (true);

@@ -59,7 +59,7 @@ CSite::CSite(std::string sta, std::string comp, std::string net,
 }
 
 // ---------------------------------------------------------CSite
-CSite::CSite(json::Object *site, CGlass *glassPtr) {
+CSite::CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr) {
 	clear();
 
 	// null check json
@@ -115,10 +115,6 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 					glassutil::log_level::error,
 					"CSite::CSite: Missing required Station Key.");
 
-			// cleanup
-				delete(site);
-				site = NULL;
-
 			return;
 		}
 
@@ -138,10 +134,6 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CSite::CSite: Missing required Network Key.");
-
-			// cleanup
-				delete(site);
-				site = NULL;
 
 			return;
 		}
@@ -163,10 +155,6 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::CSite: Missing required Site Object.");
 
-		// cleanup
-			delete(site);
-			site = NULL;
-
 		return;
 	}
 
@@ -177,10 +165,6 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::CSite: Missing required Latitude Key.");
-
-		// cleanup
-			delete(site);
-			site = NULL;
 
 		return;
 	}
@@ -194,10 +178,6 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 				glassutil::log_level::error,
 				"CSite::CSite: Missing required Longitude Key.");
 
-		// cleanup
-			delete(site);
-			site = NULL;
-
 		return;
 	}
 
@@ -209,10 +189,6 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CSite::CSite: Missing required Elevation Key.");
-
-		// cleanup
-			delete(site);
-			site = NULL;
 
 		return;
 	}
@@ -245,10 +221,6 @@ CSite::CSite(json::Object *site, CGlass *glassPtr) {
 	// pass to initialization function
 	initialize(station, channel, network, location, latitude, longitude,
 				elevation, quality, enable, useForTelesiesmic, glassPtr);
-
-	// cleanup
-	delete(site);
-	site = NULL;
 }
 
 // ---------------------------------------------------------CSite

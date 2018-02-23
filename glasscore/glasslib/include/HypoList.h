@@ -95,7 +95,7 @@ class CHypoList {
 	 * \return Returns true if the communication was handled by CGlass,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Get insertion index for hypo
@@ -272,7 +272,7 @@ class CHypoList {
 	 * \param com - A pointer to a json::object containing the id of the
 	 * hypocenter to use
 	 */
-	bool reqHypo(json::Object *com);
+	bool reqHypo(std::shared_ptr<json::Object> com);
 
 	/** \brief Merge event **/
 	// bool merge(std::shared_ptr<CHypo> hyp);

@@ -46,7 +46,7 @@ void CSiteList::clearSites() {
 }
 
 // ---------------------------------------------------------dispatch
-bool CSiteList::dispatch(json::Object *com) {
+bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -98,7 +98,7 @@ bool CSiteList::dispatch(json::Object *com) {
 }
 
 // ---------------------------------------------------------addSite
-bool CSiteList::addSite(json::Object *com) {
+bool CSiteList::addSite(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -141,7 +141,7 @@ bool CSiteList::addSite(json::Object *com) {
 }
 
 // ---------------------------------------------------------addSiteList
-bool CSiteList::addSiteList(json::Object *com) {
+bool CSiteList::addSiteList(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -176,7 +176,8 @@ bool CSiteList::addSiteList(json::Object *com) {
 		for (auto v : stationList) {
 			if (v.GetType() == json::ValueType::ObjectVal) {
 				// convert object to json pointer
-				json::Object * siteObj = new json::Object(v.ToObject());
+				std::shared_ptr<json::Object> siteObj = std::make_shared<
+						json::Object>(v.ToObject());
 
 				// create a new a site from the station json;
 				CSite * site = new CSite(siteObj, pGlass);
@@ -344,23 +345,22 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 	if (lookup) {
 		if (pGlass) {
 			// construct request json message
-			json::Object obj;
-			obj["Type"] = "SiteLookup";
-			obj["Site"] = site;
-			obj["Comp"] = comp;
-			obj["Net"] = net;
-			obj["Loc"] = loc;
+			std::shared_ptr<json::Object> request = std::make_shared<
+					json::Object>(json::Object());
+			(*request)["Type"] = "SiteLookup";
+			(*request)["Site"] = site;
+			(*request)["Comp"] = comp;
+			(*request)["Net"] = net;
+			(*request)["Loc"] = loc;
 
 			// send request
-			pGlass->send(&obj);
+			pGlass->send(request);
 
 			char sLog[1024];
-			snprintf(
-					sLog,
-					sizeof(sLog),
-					"CSiteList::getSite: SCNL:%s not on station list, "
-					"requesting information.",
-					scnl.c_str());
+			snprintf(sLog, sizeof(sLog),
+						"CSiteList::getSite: SCNL:%s not on station list, "
+						"requesting information.",
+						scnl.c_str());
 			glassutil::CLogit::log(sLog);
 		}
 	}
@@ -371,8 +371,9 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 // ---------------------------------------------------------getSiteList
 bool CSiteList::reqSiteList() {
 	// construct request json message
-	json::Object sitelistObj;
-	sitelistObj["Cmd"] = "SiteList";
+	std::shared_ptr<json::Object> sitelistObj = std::make_shared<json::Object>(
+			json::Object());
+	(*sitelistObj)["Cmd"] = "SiteList";
 
 	// array to hold data
 	json::Array stationList;
@@ -413,10 +414,10 @@ bool CSiteList::reqSiteList() {
 		stationList.push_back(stationObj);
 	}
 
-	sitelistObj["SiteList"] = stationList;
+	(*sitelistObj)["SiteList"] = stationList;
 
 	if (pGlass) {
-		pGlass->send(&sitelistObj);
+		pGlass->send(sitelistObj);
 	}
 
 	return (true);

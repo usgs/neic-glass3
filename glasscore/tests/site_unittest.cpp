@@ -143,8 +143,8 @@ TEST(SiteTest, JSONConstruction) {
 	glassutil::CLogit::disable();
 
 	// create a json object from the string
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct a site using a JSON object
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
@@ -161,10 +161,10 @@ TEST(SiteTest, Distance) {
 	glassutil::CLogit::disable();
 
 	// create json objects from the strings
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
-	json::Object * site2JSON = new json::Object(
-			json::Deserialize(std::string(SITE2JSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(SITEJSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(SITE2JSON))));
 
 	// construct sites using JSON objects
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
@@ -187,18 +187,18 @@ TEST(SiteTest, PickOperations) {
 	glassutil::CLogit::disable();
 
 	// create a json object from the string
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
-	json::Object * site2JSON = new json::Object(
-			json::Deserialize(std::string(SITE2JSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
+		std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+						json::Object(json::Deserialize(std::string(SITE2JSON))));
 
 	// construct a site using a JSON object
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
 	glasscore::CSite * testSite2 = new glasscore::CSite(site2JSON, NULL);
-
-	// create new shared pointers to the sites
-	std::shared_ptr<glasscore::CSite> sharedTestSite(testSite);
-	std::shared_ptr<glasscore::CSite> sharedTestSite2(testSite2);
+	std::shared_ptr<glasscore::CSite> sharedTestSite(
+						new glasscore::CSite(siteJSON, NULL));
+	std::shared_ptr<glasscore::CSite> sharedTestSite2(
+						new glasscore::CSite(site2JSON, NULL));
 
 	// create pick objects
 	glasscore::CPick * testPick = new glasscore::CPick(sharedTestSite, 10.0, 1,
@@ -231,8 +231,8 @@ TEST(SiteTest, NodeOperations) {
 	glassutil::CLogit::disable();
 
 	// create a json object from the string
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(SITEJSON)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+							json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct a site using a JSON object
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);

@@ -68,10 +68,11 @@ TEST(NodeTest, SiteOperations) {
 														std::string(NODEID));
 
 	// create json object from the string
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct sites using JSON objects
-	glasscore::CSite * testSite = new glasscore::CSite(&siteJSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
 
 	// create new shared pointer to the node
 	std::shared_ptr<glasscore::CNode> sharedTestNode(testNode);

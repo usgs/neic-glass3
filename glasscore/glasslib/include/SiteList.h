@@ -78,7 +78,7 @@ class CSiteList {
 	 * \return Returns true if the communication was handled by CSiteList,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList add/update  site function
@@ -91,7 +91,7 @@ class CSiteList {
 	 * \return Returns true if the site was complete and added by CSiteList,
 	 * false otherwise
 	 */
-	bool addSite(json::Object *com);
+	bool addSite(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList add list of sites function
@@ -103,7 +103,7 @@ class CSiteList {
 	 * \return Returns true if the site was complete and added by CSiteList,
 	 * false otherwise
 	 */
-	bool addSiteList(json::Object *com);
+	bool addSiteList(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList  add/update  site function

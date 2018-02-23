@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <string>
+#include <memory>
 
 #define HYPOSTRING "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Type\":\"Correlation\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Phase\":\"P\",\"Time\":\"2015-12-28T21:32:24.017Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2015-12-28T21:30:44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\",\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}},{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"ID\":\"20311B8E10AF5649BDC52ED099CF173E\",\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\",\"Type\":\"Hypo\"}" // NOLINT
 #define BADHYPOSTRING1 "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"ID\":\"20311B8E10AF5649BDC52ED099CF173E\",\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\"}" // NOLINT
@@ -35,18 +36,20 @@ TEST(Convert, HypoTest) {
 	ASSERT_STREQ(parse::hypoToJSONDetection(NULL, agencyid, author).c_str(),
 					"");
 	ASSERT_STREQ(
-			parse::hypoToJSONDetection(new json::Object(json::Deserialize(BADHYPOSTRING1)), agencyid, author).c_str(),  // NOLINT
+			parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(BADHYPOSTRING1))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::hypoToJSONDetection(new json::Object( json::Deserialize(BADHYPOSTRING2)), agencyid, author).c_str(),  // NOLINT
+			parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(BADHYPOSTRING2))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::hypoToJSONDetection(new json::Object( json::Deserialize(CANCELSTRING)), agencyid, author).c_str(),  // NOLINT
+			parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(CANCELSTRING))), agencyid, author).c_str(),  // NOLINT
 			"");
 
 	// Hypo
 	std::string detectionoutput = parse::hypoToJSONDetection(
-			new json::Object(json::Deserialize(HYPOSTRING)), agencyid, author);
+			std::make_shared<json::Object>(
+					json::Object(json::Deserialize(HYPOSTRING))),
+			agencyid, author);
 	// build detection object
 	rapidjson::Document detectiondocument;
 	detectionformats::detection detectionobject(
@@ -121,19 +124,20 @@ TEST(Convert, CancelTest) {
 	ASSERT_STREQ(parse::cancelToJSONRetract(NULL, agencyid, author).c_str(),
 					"");
 	ASSERT_STREQ(
-			parse::cancelToJSONRetract(new json::Object(json::Deserialize(BADCANCELSTRING1)), agencyid, author).c_str(),  // NOLINT
+			parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(BADCANCELSTRING1))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::cancelToJSONRetract(new json::Object( json::Deserialize(BADCANCELSTRING2)), agencyid, author).c_str(),  // NOLINT
+			parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(BADCANCELSTRING2))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::cancelToJSONRetract(new json::Object( json::Deserialize(HYPOSTRING)), agencyid, author).c_str(),  // NOLINT
+			parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(HYPOSTRING))), agencyid, author).c_str(),  // NOLINT
 			"");
 
 	// Cancel
 	std::string retractoutput = parse::cancelToJSONRetract(
-			new json::Object(json::Deserialize(CANCELSTRING)), agencyid,
-			author);
+			std::make_shared<json::Object>(
+					json::Object(json::Deserialize(CANCELSTRING))),
+			agencyid, author);
 	// build detection object
 	rapidjson::Document retractdocument;
 	detectionformats::retract retractobject(
@@ -163,10 +167,10 @@ TEST(Convert, SiteListTest) {
 	// failure cases
 	ASSERT_STREQ(parse::siteListToStationList(NULL).c_str(), "");
 	ASSERT_STREQ(
-			parse::siteListToStationList(new json::Object( json::Deserialize(BADSITELISTSTRING1))).c_str(), // NOLINT
+			parse::siteListToStationList(std::make_shared<json::Object>(json::Object( json::Deserialize(BADSITELISTSTRING1)))).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::siteListToStationList(new json::Object( json::Deserialize(BADSITELISTSTRING2))).c_str(), // NOLINT
+			parse::siteListToStationList(std::make_shared<json::Object>(json::Object( json::Deserialize(BADSITELISTSTRING2)))).c_str(),  // NOLINT
 			"");
 
 	std::string sitelistfile = "./" + std::string(TESTPATH) + "/"
@@ -182,14 +186,15 @@ TEST(Convert, SiteListTest) {
 
 	inFile.close();
 
-	json::Object* sitelistobject = new json::Object(
-			json::Deserialize(sitelist));
+	std::shared_ptr<json::Object> sitelistobject =
+			std::make_shared<json::Object>(
+					json::Object(json::Deserialize(sitelist)));
 	int numsites = (*sitelistobject)["SiteList"].ToArray().size();
 
 	std::string stationlist = parse::siteListToStationList(sitelistobject);
 
-	json::Object* stationlistobject = new json::Object(
-			json::Deserialize(stationlist));
+	std::shared_ptr<json::Object> stationlistobject = std::make_shared<
+			json::Object>(json::Object(json::Deserialize(stationlist)));
 
 	ASSERT_TRUE(stationlistobject->HasKey("Type"));
 	ASSERT_STREQ((*stationlistobject)["Type"].ToString().c_str(),
@@ -209,16 +214,17 @@ TEST(Convert, SiteLookupTest) {
 			parse::siteLookupToStationInfoRequest(NULL, agencyid, author).c_str(),
 			"");
 	ASSERT_STREQ(
-			parse::siteLookupToStationInfoRequest(new json::Object(json::Deserialize(BADSITELOOKUPSTRING1)), agencyid, author).c_str(),  // NOLINT
+			parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object(json::Deserialize(BADSITELOOKUPSTRING1))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::siteLookupToStationInfoRequest(new json::Object( json::Deserialize(CANCELSTRING)), agencyid, author).c_str(),  // NOLINT
+			parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object( json::Deserialize(CANCELSTRING))), agencyid, author).c_str(),  // NOLINT
 			"");
 
 	// sitelookup
 	std::string stationinforequestoutput =
 			parse::siteLookupToStationInfoRequest(
-					new json::Object(json::Deserialize(SITELOOKUPSTRING)),
+					std::make_shared<json::Object>(
+							json::Object(json::Deserialize(SITELOOKUPSTRING))),
 					agencyid, author);
 	// build detection object
 	rapidjson::Document stationdocument;

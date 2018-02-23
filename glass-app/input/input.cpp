@@ -12,6 +12,7 @@
 #include <chrono>
 #include <mutex>
 #include <string>
+#include <memory>
 
 namespace glass {
 // Construction/Destruction
@@ -240,7 +241,9 @@ bool input::setup(json::Object *config) {
 					"input::setup(): Defaulting to 30 for ShutdownWait");
 	} else {
 		m_iShutdownWait = (*config)["ShutdownWait"].ToInt();
-		logger::log("info", "input::setup(): Using ShutdownWait: "
+		logger::log(
+				"info",
+				"input::setup(): Using ShutdownWait: "
 						+ std::to_string(m_iShutdownWait));
 	}
 
@@ -304,7 +307,7 @@ void input::clear() {
 }
 
 // get next data from input
-json::Object* input::getData() {
+std::shared_ptr<json::Object> input::getData() {
 	// just get the value from the queue
 	return (m_DataQueue->getDataFromQueue());
 }
@@ -444,7 +447,7 @@ bool input::readFiles(std::string extension, const std::string &inputdir,
 				continue;
 
 			// parse the line
-			json::Object * newdata = parse(extension, line);
+			std::shared_ptr<json::Object> newdata = parse(extension, line);
 
 			// validate the data
 			if (validate(extension, newdata) == true) {
@@ -493,7 +496,8 @@ bool input::readFiles(std::string extension, const std::string &inputdir,
 }
 
 // parse a json object from an input string
-json::Object* input::parse(std::string extension, std::string input) {
+std::shared_ptr<json::Object> input::parse(std::string extension,
+											std::string input) {
 	// choose the parser based on the extension
 	// global pick
 	if (((extension == GPICK_EXTENSION) || (extension == GPICKS_EXTENSION))
@@ -511,7 +515,8 @@ json::Object* input::parse(std::string extension, std::string input) {
 }
 
 // validate a json object
-bool input::validate(std::string extension, json::Object* input) {
+bool input::validate(std::string extension,
+						std::shared_ptr<json::Object> input) {
 	// choose the validator based on the extension
 	// global pick
 	if (((extension == GPICK_EXTENSION) || (extension == GPICKS_EXTENSION))

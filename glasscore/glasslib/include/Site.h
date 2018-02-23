@@ -81,7 +81,7 @@ class CSite {
 	 * \param com - A pointer to a json::Object to construct the site from
 	 * \param glassPtr - A pointer to the CGlass class
 	 */
-	CSite(json::Object *com, CGlass *glassPtr);
+	CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr);
 
 	/**
 	 * \brief CSite destructor

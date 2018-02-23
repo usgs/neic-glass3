@@ -490,11 +490,13 @@ double CHypo::Rand(double x, double y) {
 }
 
 // ---------------------------------------------------------Hypo
-json::Object CHypo::hypo() {
+std::shared_ptr<json::Object> CHypo::hypo() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
-	json::Object hypo;
+	std::shared_ptr<json::Object> hypo = std::make_shared<json::Object>(
+			json::Object());
+
 	// null check
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -526,9 +528,9 @@ json::Object CHypo::hypo() {
 	// the quake format?
 
 	// basic info
-	hypo["Cmd"] = "Hypo";
-	hypo["Type"] = "Hypo";
-	hypo["ID"] = sPid;
+	(*hypo)["Cmd"] = "Hypo";
+	(*hypo)["Type"] = "Hypo";
+	(*hypo)["ID"] = sPid;
 
 	// source
 	// NOTE: THIS NEEDS TO BE NOT HARDCODED EVENTUALLY
@@ -536,23 +538,23 @@ json::Object CHypo::hypo() {
 	json::Object src;
 	src["AgencyID"] = "US";
 	src["Author"] = "glass";
-	hypo["Source"] = src;
+	(*hypo)["Source"] = src;
 
 	// time
-	hypo["T"] = glassutil::CDate::encodeDateTime(tOrg);
-	hypo["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
+	(*hypo)["T"] = glassutil::CDate::encodeDateTime(tOrg);
+	(*hypo)["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
 
 	// location
-	hypo["Latitude"] = dLat;
-	hypo["Longitude"] = dLon;
-	hypo["Depth"] = dZ;
+	(*hypo)["Latitude"] = dLat;
+	(*hypo)["Longitude"] = dLon;
+	(*hypo)["Depth"] = dZ;
 
 	// supplementary info
-	hypo["MinimumDistance"] = dMin;
-	hypo["Gap"] = dGap;
-	hypo["Bayes"] = dBayes;
-	hypo["InitialBayes"] = dBayesInitial;
-	hypo["Web"] = sWebName;
+	(*hypo)["MinimumDistance"] = dMin;
+	(*hypo)["Gap"] = dGap;
+	(*hypo)["Bayes"] = dBayes;
+	(*hypo)["InitialBayes"] = dBayesInitial;
+	(*hypo)["Web"] = sWebName;
 
 	// generate data array for this hypo
 	// set up traveltime object
@@ -654,10 +656,10 @@ json::Object CHypo::hypo() {
 	}
 
 	// add data array to object
-	hypo["Data"] = data;
+	(*hypo)["Data"] = data;
 
 	if (pGlass) {
-		pGlass->send(&hypo);
+		pGlass->send(hypo);
 	}
 
 	// done
@@ -671,28 +673,29 @@ void CHypo::event() {
 
 	bEvent = true;
 	reportCount++;
-	json::Object evt;
+	std::shared_ptr<json::Object> event = std::make_shared<json::Object>(
+				json::Object());
 
 	// fill in Event command from current hypocenter
-	evt["Cmd"] = "Event";
-	evt["Pid"] = sPid;
-	evt["CreateTime"] = glassutil::CDate::encodeISO8601Time(tCreate);
-	evt["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+	(*event)["Cmd"] = "Event";
+	(*event)["Pid"] = sPid;
+	(*event)["CreateTime"] = glassutil::CDate::encodeISO8601Time(tCreate);
+	(*event)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
 			glassutil::CDate::now());
-	evt["Version"] = reportCount;
+	(*event)["Version"] = reportCount;
 
 	// basic hypo information
-	evt["Latitude"] = dLat;
-	evt["Longitude"] = dLon;
-	evt["Depth"] = dZ;
-	evt["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
-	evt["Bayes"] = dBayes;
-	evt["Ndata"] = static_cast<int>(vPick.size())
+	(*event)["Latitude"] = dLat;
+	(*event)["Longitude"] = dLon;
+	(*event)["Depth"] = dZ;
+	(*event)["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
+	(*event)["Bayes"] = dBayes;
+	(*event)["Ndata"] = static_cast<int>(vPick.size())
 			+ static_cast<int>(vCorr.size());
 
 	// send it
 	if (pGlass) {
-		pGlass->send(&evt);
+		pGlass->send(event);
 	}
 }
 

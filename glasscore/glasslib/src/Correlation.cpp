@@ -41,8 +41,8 @@ CCorrelation::CCorrelation(std::shared_ptr<CSite> correlationSite,
 }
 
 // ---------------------------------------------------------CCorrelation
-CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
-							CSiteList *pSiteList) {
+CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
+							int correlationId, CSiteList *pSiteList) {
 	clear();
 
 	// null check json
@@ -115,10 +115,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Station Key.");
 
-			// cleanup
-			delete (correlation);
-		correlation = NULL;
-
 			return;
 		}
 
@@ -139,10 +135,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Network Key.");
 
-			// cleanup
-			delete (correlation);
-		correlation = NULL;
-
 			return;
 		}
 
@@ -158,9 +150,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Missing required Site Key.");
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
 
 		return;
 	}
@@ -174,19 +163,12 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 	if (site == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CCorrelation::CCorrelation: site is null.");
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
 
 		return;
 	}
 
 	// check to see if we're using this site
 	if (!site->getUse()) {
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
-
 		return;
 	}
 
@@ -202,10 +184,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Missing required Time Key.");
 
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
-
 		return;
 	}
 
@@ -219,10 +197,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 				glassutil::log_level::warn,
 				"CCorrelation::CCorrelation: Missing required ID Key.");
 
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
-
 		return;
 	}
 
@@ -234,10 +208,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Missing required Phase Key.");
-
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
 
 		return;
 	}
@@ -260,10 +230,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Latitude Key.");
 
-			// cleanup
-			delete (correlation);
-		correlation = NULL;
-
 			return;
 		}
 
@@ -276,9 +242,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Longitude Key.");
-			// cleanup
-			delete (correlation);
-		correlation = NULL;
 
 			return;
 		}
@@ -292,10 +255,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Depth Key.");
-
-			// cleanup
-			delete (correlation);
-		correlation = NULL;
 
 			return;
 		}
@@ -314,10 +273,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Time Key.");
 
-			// cleanup
-			delete (correlation);
-		correlation = NULL;
-
 			return;
 		}
 
@@ -326,10 +281,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Missing required Hypocenter Key.");
-
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
 
 		return;
 	}
@@ -344,10 +295,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 				glassutil::log_level::warn,
 				"CCorrelation::CCorrelation: Missing required Correlation Key.");
 
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
-
 		return;
 	}
 
@@ -358,10 +305,6 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Failed to initialize correlation.");
 
-		// cleanup
-		delete (correlation);
-		correlation = NULL;
-
 		return;
 	}
 
@@ -370,11 +313,7 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 	// remember input json for hypo message generation
 	// note move to init?
 	// std::shared_ptr<json::Object> jcorr(new json::Object(*correlation));
-	jCorrelation = std::make_shared<json::Object>(json::Object(*correlation));
-
-	// cleanup
-	delete (correlation);
-		correlation = NULL;
+	jCorrelation = correlation;
 }
 
 // ---------------------------------------------------------~CCorrelation

@@ -5,6 +5,7 @@
 #include <detection-formats.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace parse {
 JSONParser::JSONParser(const std::string &newAgencyID,
@@ -15,7 +16,7 @@ JSONParser::~JSONParser() {
 }
 
 // parse a json object from an input string
-json::Object* JSONParser::parse(const std::string &input) {
+std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0) {
 		return (NULL);
@@ -26,7 +27,7 @@ json::Object* JSONParser::parse(const std::string &input) {
 	// JSON format
 	// JSON doesn't have a fixed format
 	// try to convert the string to a json object
-	json::Object *newobject = NULL;
+	std::shared_ptr<json::Object> newobject;
 	try {
 		json::Value deserializedvalue = json::Deserialize(input);
 
@@ -39,7 +40,8 @@ json::Object* JSONParser::parse(const std::string &input) {
 		}
 
 		// convert our resulting value to a json object
-		newobject = new json::Object(deserializedvalue.ToObject());
+		newobject = std::make_shared<json::Object>(
+				json::Object(deserializedvalue.ToObject()));
 	} catch (const std::runtime_error &e) {
 		// oopse
 		std::string exceptionstring = e.what();
@@ -67,7 +69,7 @@ json::Object* JSONParser::parse(const std::string &input) {
 }
 
 // validate a json object
-bool JSONParser::validate(json::Object* input) {
+bool JSONParser::validate(std::shared_ptr<json::Object> input) {
 	// nullcheck
 	if (input == NULL) {
 		return (false);

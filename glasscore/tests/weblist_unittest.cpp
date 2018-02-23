@@ -62,12 +62,14 @@ TEST(WebListTest, AddWeb) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+			json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+			json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
@@ -77,7 +79,7 @@ TEST(WebListTest, AddWeb) {
 	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
 
 	// add a web
-	testWebList->dispatch(&gridConfig);
+	testWebList->dispatch(gridConfig);
 
 	// web list
 	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
@@ -111,12 +113,14 @@ TEST(WebListTest, RemWeb) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+			json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+			json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
@@ -126,15 +130,17 @@ TEST(WebListTest, RemWeb) {
 	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
 
 	// add a web
-	testWebList->dispatch(&gridConfig);
+	testWebList->dispatch(gridConfig);
 
 	// web list
 	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
 
-	json::Object remGridConfig = json::Deserialize(std::string(REMWEB));
+	std::shared_ptr<json::Object> remGridConfig =
+			std::make_shared<json::Object>(
+					json::Deserialize(std::string(REMWEB)));
 
 	// remove a web
-	testWebList->dispatch(&remGridConfig);
+	testWebList->dispatch(remGridConfig);
 
 	// web list
 	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list removed";
@@ -166,12 +172,14 @@ TEST(WebListTest, SiteOperations) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+			json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+			json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
@@ -181,14 +189,14 @@ TEST(WebListTest, SiteOperations) {
 	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
 
 	// add a web
-	testWebList->dispatch(&gridConfig);
+	testWebList->dispatch(gridConfig);
 
 	// web list
 	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
 
 	// create site to add
-	json::Object * siteJSON = new json::Object(
-			json::Deserialize(std::string(ADDSITE)));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(ADDSITE))));
 	glasscore::CSite * addSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
 
@@ -203,8 +211,8 @@ TEST(WebListTest, SiteOperations) {
 	ASSERT_TRUE(testWebList->hasSite(sharedAddSite))<< "site added";
 
 	// create site to remove
-	json::Object * siteJSON2 = new json::Object(
-			json::Deserialize(std::string(REMOVESITE)));
+	std::shared_ptr<json::Object> siteJSON2 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(REMOVESITE))));
 	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON2, NULL);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
 

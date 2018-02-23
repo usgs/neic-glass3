@@ -246,7 +246,7 @@ class CHypo {
 	 *
 	 * \return Returns the generated json object.
 	 */
-	json::Object hypo();
+	std::shared_ptr<json::Object> hypo();
 
 	/**
 	 * \brief Generate Event message

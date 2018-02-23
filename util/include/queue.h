@@ -9,6 +9,7 @@
 
 #include <json.h>
 
+#include <memory>
 #include <mutex>
 #include <string>
 #include <queue>
@@ -45,7 +46,7 @@ class Queue {
 	 * Defaults to true
 	 * \return returns true if successful, false otherwise.
 	 */
-	bool addDataToQueue(json::Object * data, bool lock = true);
+	bool addDataToQueue(std::shared_ptr<json::Object> data, bool lock = true);
 
 	/**
 	 *\brief get data from queue
@@ -60,7 +61,7 @@ class Queue {
 	 * there was no
 	 * data in the queue
 	 */
-	json::Object * getDataFromQueue(bool lock = true, bool copy = false);
+	std::shared_ptr<json::Object> getDataFromQueue(bool lock = true);
 
 	/**
 	 *\brief clear data from queue
@@ -86,7 +87,7 @@ class Queue {
 	/**
 	 * \brief the std::queue used to store the queue
 	 */
-	std::queue<json::Object *> m_DataQueue;
+	std::queue<std::shared_ptr<json::Object>> m_DataQueue;
 
 	/**
 	 * \brief the mutex for the queue
