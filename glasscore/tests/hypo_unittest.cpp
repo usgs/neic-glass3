@@ -132,32 +132,38 @@ TEST(HypoTest, PickOperations) {
 														TIME, std::string(ID),
 														std::string(WEB), BAYES,
 														THRESH,
-														CUT, nullTrav,
-														nullTrav, NULL);
+														CUT, nullTrav, nullTrav,
+														NULL);
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
-	json::Object site2JSON = json::Deserialize(std::string(SITE2JSON));
-	json::Object site3JSON = json::Deserialize(std::string(SITE3JSON));
+	json::Object * siteJSON = new json::Object(
+			json::Deserialize(std::string(SITEJSON)));
+	json::Object * site2JSON = new json::Object(
+			json::Deserialize(std::string(SITE2JSON)));
+	json::Object * site3JSON = new json::Object(
+			json::Deserialize(std::string(SITE3JSON)));
 
-	json::Object pickJSON = json::Deserialize(std::string(PICKJSON));
-	json::Object pick2JSON = json::Deserialize(std::string(PICK2JSON));
-	json::Object pick3JSON = json::Deserialize(std::string(PICK3JSON));
+	json::Object * pickJSON = new json::Object(
+			json::Deserialize(std::string(PICKJSON)));
+	json::Object * pick2JSON = new json::Object(
+			json::Deserialize(std::string(PICK2JSON)));
+	json::Object * pick3JSON = new json::Object(
+			json::Deserialize(std::string(PICK3JSON)));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// add sites to site list
-	testSiteList->addSite(&siteJSON);
-	testSiteList->addSite(&site2JSON);
-	testSiteList->addSite(&site3JSON);
+	testSiteList->addSite(siteJSON);
+	testSiteList->addSite(site2JSON);
+	testSiteList->addSite(site3JSON);
 
 	// create picks
-	glasscore::CPick * testPick = new glasscore::CPick(&pickJSON, 1,
+	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, 1,
 														testSiteList);
-	glasscore::CPick * testPick2 = new glasscore::CPick(&pick2JSON, 2,
+	glasscore::CPick * testPick2 = new glasscore::CPick(pick2JSON, 2,
 														testSiteList);
-	glasscore::CPick * testPick3 = new glasscore::CPick(&pick3JSON, 3,
+	glasscore::CPick * testPick3 = new glasscore::CPick(pick3JSON, 3,
 														testSiteList);
 
 	// create new shared pointers to the picks

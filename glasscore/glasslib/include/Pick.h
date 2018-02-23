@@ -224,7 +224,7 @@ class CPick {
 	std::shared_ptr<CSite> pSite;
 
 	/**
-	 * \brief A std::vector of std::shared_ptr's to CHypo objects
+	 * \brief A std::weak_ptr to a CHypo object
 	 * representing the links between this pick and associated hypocenter
 	 */
 	std::weak_ptr<CHypo> wpHypo;

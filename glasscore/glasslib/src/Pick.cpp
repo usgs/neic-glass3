@@ -102,6 +102,10 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CPick::CPick: Missing required Station Key.");
+
+			// cleanup
+			delete (pick);
+
 			return;
 		}
 
@@ -121,6 +125,10 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CPick::CPick: Missing required Network Key.");
+
+			// cleanup
+			delete (pick);
+
 			return;
 		}
 
@@ -135,6 +143,10 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		// no site key
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CPick::CPick: Missing required Site Key.");
+
+		// cleanup
+		delete (pick);
+
 		return;
 	}
 
@@ -147,11 +159,18 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 	if (site == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CPick::CPick: site is null.");
+
+		// cleanup
+		delete (pick);
+
 		return;
 	}
 
 	// check to see if we're using this site
 	if (!site->getUse()) {
+		// cleanup
+		delete (pick);
+
 		return;
 	}
 
@@ -173,6 +192,10 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CPick::CPick: Missing required Time or T Key.");
+
+		// cleanup
+		delete (pick);
+
 		return;
 	}
 
@@ -188,6 +211,10 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
 				"CPick::CPick: Missing required ID or Pid Key.");
+
+		// cleanup
+		delete (pick);
+
 		return;
 	}
 
@@ -224,6 +251,10 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 	if (!initialize(site, tpick, pickId, pid, backAzimuth, slowness)) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CPick::CPick: Failed to initialize pick.");
+
+		// cleanup
+		delete (pick);
+
 		return;
 	}
 
@@ -231,8 +262,11 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 
 	// remember input json for hypo message generation
 	// note, move to init?
-	std::shared_ptr<json::Object> jpck(new json::Object(*pick));
-	jPick = jpck;
+	// std::shared_ptr<json::Object> jpck(new json::Object(*pick));
+	jPick = std::make_shared<json::Object>(json::Object(*pick));
+
+	// cleanup
+	delete (pick);
 }
 
 // ---------------------------------------------------------~CPick
@@ -385,8 +419,8 @@ bool CPick::nucleate() {
 		// it seems that this should improve computational performance
 		// but MIGHT have unintended consequences.
 		// if (!node->nucleate(node->getTOrg(), true)) {
-			// didn't nucleate anything
-			// continue;
+		// didn't nucleate anything
+		// continue;
 		// }
 
 		// create the hypo using the node

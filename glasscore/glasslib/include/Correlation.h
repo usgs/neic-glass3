@@ -258,10 +258,10 @@ class CCorrelation {
 	std::shared_ptr<CSite> pSite;
 
 	/**
-	 * \brief A std::vector of std::shared_ptr's to CHypo objects
+	 * \brief A std::weak_ptr to a CHypo object
 	 * representing the links between this correlation and associated hypocenter
 	 */
-	std::shared_ptr<CHypo> pHypo;
+	std::weak_ptr<CHypo> wpHypo;
 
 	/**
 	 * \brief A std::string containing a character representing the action

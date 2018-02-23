@@ -114,6 +114,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Station Key.");
+
+			// cleanup
+			delete (correlation);
+
 			return;
 		}
 
@@ -133,6 +137,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Network Key.");
+
+			// cleanup
+			delete (correlation);
+
 			return;
 		}
 
@@ -148,6 +156,9 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Missing required Site Key.");
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
@@ -160,11 +171,17 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 	if (site == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CCorrelation::CCorrelation: site is null.");
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
 	// check to see if we're using this site
 	if (!site->getUse()) {
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
@@ -179,6 +196,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Missing required Time Key.");
+
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
@@ -191,6 +212,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
 				"CCorrelation::CCorrelation: Missing required ID Key.");
+
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
@@ -202,6 +227,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Missing required Phase Key.");
+
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
@@ -222,6 +251,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Latitude Key.");
+
+			// cleanup
+			delete (correlation);
+
 			return;
 		}
 
@@ -234,6 +267,9 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Longitude Key.");
+			// cleanup
+			delete (correlation);
+
 			return;
 		}
 
@@ -246,6 +282,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Depth Key.");
+
+			// cleanup
+			delete (correlation);
+
 			return;
 		}
 
@@ -262,6 +302,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 					glassutil::log_level::error,
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Time Key.");
+
+			// cleanup
+			delete (correlation);
+
 			return;
 		}
 
@@ -270,6 +314,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Missing required Hypocenter Key.");
+
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
@@ -282,6 +330,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
 				"CCorrelation::CCorrelation: Missing required Correlation Key.");
+
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
@@ -291,6 +343,10 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelation::CCorrelation: Failed to initialize correlation.");
+
+		// cleanup
+		delete (correlation);
+
 		return;
 	}
 
@@ -298,8 +354,11 @@ CCorrelation::CCorrelation(json::Object *correlation, int correlationId,
 
 	// remember input json for hypo message generation
 	// note move to init?
-	std::shared_ptr<json::Object> jcorr(new json::Object(*correlation));
-	jCorrelation = jcorr;
+	// std::shared_ptr<json::Object> jcorr(new json::Object(*correlation));
+	jCorrelation = std::make_shared<json::Object>(json::Object(*correlation));
+
+	// cleanup
+	delete (correlation);
 }
 
 // ---------------------------------------------------------~CCorrelation
@@ -311,9 +370,10 @@ CCorrelation::~CCorrelation() {
 void CCorrelation::clear() {
 	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
 
-	pSite = NULL;
-	pHypo = NULL;
-	jCorrelation = NULL;
+	pSite.reset();
+	wpHypo.reset();
+	jCorrelation.reset();
+
 	sAss = "";
 	sPhs = "";
 	sPid = "";
@@ -374,6 +434,8 @@ bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
 // ---------------------------------------------------------addHypo
 void CCorrelation::addHypo(std::shared_ptr<CHypo> hyp, std::string ass,
 							bool force) {
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(
@@ -382,20 +444,20 @@ void CCorrelation::addHypo(std::shared_ptr<CHypo> hyp, std::string ass,
 		return;
 	}
 
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-
-	// Add hypo data reference to this correlation
+	// Add hypo data reference to this pick
 	if (force == true) {
-		pHypo = hyp;
+		wpHypo = hyp;
 		sAss = ass;
-	} else	if (!pHypo) {
-		pHypo = hyp;
+	} else if (wpHypo.expired() == true) {
+		wpHypo = hyp;
 		sAss = ass;
 	}
 }
 
 // ---------------------------------------------------------remHypo
 void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -403,17 +465,21 @@ void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-
-	// Remove hypo reference from this corrleation
-	if (pHypo->getPid() == hyp->getPid()) {
-		pHypo = NULL;
+	// is the pointer still valid
+	if (auto pHypo = wpHypo.lock()) {
+		// Remove hypo reference from this pick
+		if (pHypo->getPid() == hyp->getPid()) {
+			clearHypo();
+		}
+	} else {
+		// remove invalid pointer
+		clearHypo();
 	}
 }
 
 void CCorrelation::clearHypo() {
 	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-	pHypo = NULL;
+	wpHypo.reset();
 }
 
 double CCorrelation::getCorrelation() const {
@@ -441,7 +507,8 @@ const std::shared_ptr<json::Object>& CCorrelation::getJCorrelation() const {
 }
 
 const std::shared_ptr<CHypo>& CCorrelation::getHypo() const {
-	return (pHypo);
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+	return (wpHypo.lock());
 }
 
 const std::shared_ptr<CSite>& CCorrelation::getSite() const {

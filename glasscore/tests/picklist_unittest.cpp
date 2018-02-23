@@ -59,24 +59,33 @@ TEST(PickListTest, PickOperations) {
 	glassutil::CLogit::disable();
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
-	json::Object site2JSON = json::Deserialize(std::string(SITE2JSON));
-	json::Object site3JSON = json::Deserialize(std::string(SITE3JSON));
+	json::Object * siteJSON = new json::Object(
+			json::Deserialize(std::string(SITEJSON)));
+	json::Object * site2JSON = new json::Object(
+			json::Deserialize(std::string(SITE2JSON)));
+	json::Object * site3JSON = new json::Object(
+			json::Deserialize(std::string(SITE3JSON)));
 
-	json::Object pickJSON = json::Deserialize(std::string(PICKJSON));
-	json::Object pick2JSON = json::Deserialize(std::string(PICK2JSON));
-	json::Object pick3JSON = json::Deserialize(std::string(PICK3JSON));
-	json::Object pick4JSON = json::Deserialize(std::string(PICK4JSON));
-	json::Object pick5JSON = json::Deserialize(std::string(PICK5JSON));
-	json::Object pick6JSON = json::Deserialize(std::string(PICK6JSON));
+	json::Object *pickJSON = new json::Object(
+			json::Deserialize(std::string(PICKJSON)));
+	json::Object *pick2JSON = new json::Object(
+			json::Deserialize(std::string(PICK2JSON)));
+	json::Object *pick3JSON = new json::Object(
+			json::Deserialize(std::string(PICK3JSON)));
+	json::Object *pick4JSON = new json::Object(
+			json::Deserialize(std::string(PICK4JSON)));
+	json::Object *pick5JSON = new json::Object(
+			json::Deserialize(std::string(PICK5JSON)));
+	json::Object *pick6JSON = new json::Object(
+			json::Deserialize(std::string(PICK6JSON)));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// add sites to site list
-	testSiteList->addSite(&siteJSON);
-	testSiteList->addSite(&site2JSON);
-	testSiteList->addSite(&site3JSON);
+	testSiteList->addSite(siteJSON);
+	testSiteList->addSite(site2JSON);
+	testSiteList->addSite(site3JSON);
 
 	// construct a picklist
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
@@ -87,8 +96,8 @@ TEST(PickListTest, PickOperations) {
 	ASSERT_EQ(-2, testPickList->indexPick(0))<< "test indexpick when empty";
 
 	// test adding picks by addPick and dispatch
-	testPickList->addPick(&pickJSON);
-	testPickList->dispatch(&pick3JSON);
+	testPickList->addPick(pickJSON);
+	testPickList->dispatch(pick3JSON);
 	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testPickList->getNPick())<< "Added Picks";
 
@@ -100,26 +109,26 @@ TEST(PickListTest, PickOperations) {
 	std::string sitescnl = testPick->getSite()->getScnl();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-			"testPick has right scnl";
+	"testPick has right scnl";
 
 	// test indexpick
 	ASSERT_EQ(-1, testPickList->indexPick(TPICK))<<
-			"test indexpick with time before";
+	"test indexpick with time before";
 	ASSERT_EQ(1, testPickList->indexPick(TPICK2))<<
-			"test indexpick with time after";
+	"test indexpick with time after";
 	ASSERT_EQ(0, testPickList->indexPick(TPICK3))<<
-			"test indexpick with time within";
+	"test indexpick with time within";
 
 	// add more picks
-	testPickList->addPick(&pick2JSON);
-	testPickList->addPick(&pick4JSON);
-	testPickList->addPick(&pick5JSON);
-	testPickList->addPick(&pick6JSON);
+	testPickList->addPick(pick2JSON);
+	testPickList->addPick(pick4JSON);
+	testPickList->addPick(pick5JSON);
+	testPickList->addPick(pick6JSON);
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNPICK;
 	ASSERT_EQ(expectedSize, testPickList->getVPickSize())<<
-			"testPickList not larger than max";
+	"testPickList not larger than max";
 
 	// get first pick, which is now id 2
 	std::shared_ptr<glasscore::CPick> test2Pick = testPickList->getPick(2);
@@ -128,7 +137,7 @@ TEST(PickListTest, PickOperations) {
 	sitescnl = test2Pick->getSite()->getScnl();
 	expectedscnl = std::string(SCNL2);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-			"test2Pick has right scnl";
+	"test2Pick has right scnl";
 
 	// test clearing picks
 	testPickList->clearPicks();

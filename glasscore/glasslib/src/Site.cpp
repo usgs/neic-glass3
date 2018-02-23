@@ -59,20 +59,20 @@ CSite::CSite(std::string sta, std::string comp, std::string net,
 }
 
 // ---------------------------------------------------------CSite
-CSite::CSite(json::Object *com, CGlass *glassPtr) {
+CSite::CSite(json::Object *site, CGlass *glassPtr) {
 	clear();
 
 	// null check json
-	if (com == NULL) {
+	if (site == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
-								"CSite::CSite: NULL json communication.");
+								"CSite::CSite: NULL json site.");
 		return;
 	}
 
 	// check type
-	if (com->HasKey("Type")
-			&& ((*com)["Type"].GetType() == json::ValueType::StringVal)) {
-		std::string type = (*com)["Type"].ToString();
+	if (site->HasKey("Type")
+			&& ((*site)["Type"].GetType() == json::ValueType::StringVal)) {
+		std::string type = (*site)["Type"].ToString();
 
 		if (type != "StationInfo") {
 			glassutil::CLogit::log(
@@ -102,9 +102,9 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 
 	// get site information from json
 	// scnl
-	if (((*com).HasKey("Site"))
-			&& ((*com)["Site"].GetType() == json::ValueType::ObjectVal)) {
-		json::Object siteobj = (*com)["Site"].ToObject();
+	if (((*site).HasKey("Site"))
+			&& ((*site)["Site"].GetType() == json::ValueType::ObjectVal)) {
+		json::Object siteobj = (*site)["Site"].ToObject();
 
 		// station
 		if (siteobj.HasKey("Station")
@@ -156,9 +156,9 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 	}
 
 	// latitude for this site
-	if (((*com).HasKey("Latitude"))
-			&& ((*com)["Latitude"].GetType() == json::ValueType::DoubleVal)) {
-		latitude = (*com)["Latitude"].ToDouble();
+	if (((*site).HasKey("Latitude"))
+			&& ((*site)["Latitude"].GetType() == json::ValueType::DoubleVal)) {
+		latitude = (*site)["Latitude"].ToDouble();
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::CSite: Missing required Latitude Key.");
@@ -166,9 +166,9 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 	}
 
 	// longitude for this site
-	if (((*com).HasKey("Longitude"))
-			&& ((*com)["Longitude"].GetType() == json::ValueType::DoubleVal)) {
-		longitude = (*com)["Longitude"].ToDouble();
+	if (((*site).HasKey("Longitude"))
+			&& ((*site)["Longitude"].GetType() == json::ValueType::DoubleVal)) {
+		longitude = (*site)["Longitude"].ToDouble();
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -177,9 +177,9 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 	}
 
 	// elevation for this site
-	if (((*com).HasKey("Elevation"))
-			&& ((*com)["Elevation"].GetType() == json::ValueType::DoubleVal)) {
-		elevation = (*com)["Elevation"].ToDouble();
+	if (((*site).HasKey("Elevation"))
+			&& ((*site)["Elevation"].GetType() == json::ValueType::DoubleVal)) {
+		elevation = (*site)["Elevation"].ToDouble();
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -188,26 +188,26 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 	}
 
 	// quality for this site (if present)
-	if (((*com).HasKey("Quality"))
-			&& ((*com)["Quality"].GetType() == json::ValueType::DoubleVal)) {
-		quality = (*com)["Quality"].ToDouble();
+	if (((*site).HasKey("Quality"))
+			&& ((*site)["Quality"].GetType() == json::ValueType::DoubleVal)) {
+		quality = (*site)["Quality"].ToDouble();
 	} else {
 		quality = 1.0;
 	}
 
 	// enable for this site (if present)
-	if (((*com).HasKey("Enable"))
-			&& ((*com)["Enable"].GetType() == json::ValueType::BoolVal)) {
-		enable = (*com)["Enable"].ToBool();
+	if (((*site).HasKey("Enable"))
+			&& ((*site)["Enable"].GetType() == json::ValueType::BoolVal)) {
+		enable = (*site)["Enable"].ToBool();
 	} else {
 		enable = true;
 	}
 
 	// enable for this site (if present)
-	if (((*com).HasKey("UseForTeleseismic"))
-			&& ((*com)["UseForTeleseismic"].GetType()
+	if (((*site).HasKey("UseForTeleseismic"))
+			&& ((*site)["UseForTeleseismic"].GetType()
 					== json::ValueType::BoolVal)) {
-		useForTelesiesmic = (*com)["UseForTeleseismic"].ToBool();
+		useForTelesiesmic = (*site)["UseForTeleseismic"].ToBool();
 	} else {
 		useForTelesiesmic = true;
 	}
@@ -215,6 +215,9 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 	// pass to initialization function
 	initialize(station, channel, network, location, latitude, longitude,
 				elevation, quality, enable, useForTelesiesmic, glassPtr);
+
+	// cleanup
+	delete(site);
 }
 
 // ---------------------------------------------------------CSite

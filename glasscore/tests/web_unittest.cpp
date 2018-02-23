@@ -280,24 +280,24 @@ TEST(WebTest, GlobalTest) {
 
 	// name
 	ASSERT_STREQ(std::string(GLOBALNAME).c_str(),
-				 testGlobalWeb.getName().c_str())<<
-						 "Web getName() Matches";
+			testGlobalWeb.getName().c_str())<<
+	"Web getName() Matches";
 
 	// threshold
 	ASSERT_EQ(GLOBALTHRESH, testGlobalWeb.getThresh())<<
-			"Web getThresh() Check";
+	"Web getThresh() Check";
 
 	// getDetect()
 	ASSERT_EQ(GLOBALNUMDETECT, testGlobalWeb.getDetect())<<
-			"Web getDetect() Check";
+	"Web getDetect() Check";
 
 	// getNucleate()
 	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.getNucleate())<<
-			"Web getNucleate() Check";
+	"Web getNucleate() Check";
 
 	// getResolution()
 	ASSERT_EQ(GLOBALRESOLUTION, testGlobalWeb.getResolution())<<
-			"Web getResolution() Check";
+	"Web getResolution() Check";
 
 	// getRow()
 	ASSERT_EQ(0, testGlobalWeb.getRow())<< "Web getRow() Check";
@@ -384,11 +384,11 @@ TEST(WebTest, GridTest) {
 
 	// getNucleate()
 	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.getNucleate())<<
-			"Web getNucleate() Check";
+	"Web getNucleate() Check";
 
 	// getResolution()
 	ASSERT_EQ(GRIDRESOLUTION, testGridWeb.getResolution())<<
-			"Web getResolution() Check";
+	"Web getResolution() Check";
 
 	// getRow()
 	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getRow())<< "Web getRow() Check";
@@ -549,8 +549,9 @@ TEST(WebTest, AddTest) {
 	testGridWeb.dispatch(&gridConfig);
 
 	// create site to add
-	json::Object siteJSON = json::Deserialize(std::string(ADDSITE));
-	glasscore::CSite * addSite = new glasscore::CSite(&siteJSON, NULL);
+	json::Object * siteJSON = new json::Object(
+			json::Deserialize(std::string(ADDSITE)));
+	glasscore::CSite * addSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
 
 	// add to site list
@@ -605,8 +606,9 @@ TEST(WebTest, RemoveTest) {
 	testGridWeb.dispatch(&gridConfig);
 
 	// create site to remove
-	json::Object siteJSON = json::Deserialize(std::string(REMOVESITE));
-	glasscore::CSite * removeSite = new glasscore::CSite(&siteJSON, NULL);
+	json::Object * siteJSON = new json::Object(
+			json::Deserialize(std::string(REMOVESITE)));
+	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
 
 	// update in site list

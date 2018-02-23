@@ -1427,6 +1427,11 @@ std::shared_ptr<CNode> CWeb::genNodeSites(std::shared_ptr<CNode> node) {
 			travelTime2 = pTrv2->T(delta);
 		}
 
+		// skip site if there are no valid times
+		if ((travelTime1 < 0) && (travelTime2 < 0)) {
+			continue;
+		}
+
 		// Link node to site using traveltimes
 		node->linkSite(site, node, travelTime1, travelTime2);
 	}

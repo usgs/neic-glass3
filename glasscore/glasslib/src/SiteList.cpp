@@ -176,10 +176,10 @@ bool CSiteList::addSiteList(json::Object *com) {
 		for (auto v : stationList) {
 			if (v.GetType() == json::ValueType::ObjectVal) {
 				// convert object to json pointer
-				json::Object siteObj = v.ToObject();
+				json::Object * siteObj = new json::Object(v.ToObject());
 
 				// create a new a site from the station json;
-				CSite * site = new CSite(&siteObj, pGlass);
+				CSite * site = new CSite(siteObj, pGlass);
 
 				// make sure a site was actually created
 				if (site->getScnl() == "") {

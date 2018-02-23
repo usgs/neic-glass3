@@ -100,9 +100,10 @@ TEST(PickTest, Construction) {
 	ASSERT_TRUE(testPick->getJPick() == NULL)<< "jPick null";
 
 	// create  shared pointer to the site
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	json::Object * siteJSON = new json::Object(
+			json::Deserialize(std::string(SITEJSON)));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-			new glasscore::CSite(&siteJSON, NULL));
+			new glasscore::CSite(siteJSON, NULL));
 
 	// now init
 	testPick->initialize(sharedTestSite, PICKTIME, PICKID,
@@ -111,7 +112,7 @@ TEST(PickTest, Construction) {
 	// check results
 	checkdata(testPick, "initialize check");
 
-	delete(testPick);
+	delete (testPick);
 }
 
 // tests to see if the pick can be constructed from JSON
@@ -122,14 +123,16 @@ TEST(PickTest, JSONConstruction) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	json::Object * siteJSON = new json::Object(
+			json::Deserialize(std::string(SITEJSON)));
 
 	// add site to site list
-	testSiteList->addSite(&siteJSON);
+	testSiteList->addSite(siteJSON);
 
 	// construct a pick using a JSON object
-	json::Object pickJSON = json::Deserialize(std::string(PICKJSON));
-	glasscore::CPick * testPick = new glasscore::CPick(&pickJSON, PICKID,
+	json::Object * pickJSON = new json::Object(
+			json::Deserialize(std::string(PICKJSON)));
+	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, PICKID,
 														testSiteList);
 
 	// check results
@@ -141,9 +144,10 @@ TEST(PickTest, HypoOperations) {
 	glassutil::CLogit::disable();
 
 	// create  shared pointer to the site
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	json::Object * siteJSON = new json::Object(
+			json::Deserialize(std::string(SITEJSON)));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-			new glasscore::CSite(&siteJSON, NULL));
+			new glasscore::CSite(siteJSON, NULL));
 
 	// create pick
 	glasscore::CPick * testPick = new glasscore::CPick(

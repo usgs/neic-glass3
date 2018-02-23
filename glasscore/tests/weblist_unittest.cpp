@@ -187,8 +187,9 @@ TEST(WebListTest, SiteOperations) {
 	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
 
 	// create site to add
-	json::Object siteJSON = json::Deserialize(std::string(ADDSITE));
-	glasscore::CSite * addSite = new glasscore::CSite(&siteJSON, NULL);
+	json::Object * siteJSON = new json::Object(
+			json::Deserialize(std::string(ADDSITE)));
+	glasscore::CSite * addSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
 
 	// add to site list
@@ -202,8 +203,9 @@ TEST(WebListTest, SiteOperations) {
 	ASSERT_TRUE(testWebList->hasSite(sharedAddSite))<< "site added";
 
 	// create site to remove
-	json::Object siteJSON2 = json::Deserialize(std::string(REMOVESITE));
-	glasscore::CSite * removeSite = new glasscore::CSite(&siteJSON2, NULL);
+	json::Object * siteJSON2 = new json::Object(
+			json::Deserialize(std::string(REMOVESITE)));
+	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON2, NULL);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
 
 	// update in site list

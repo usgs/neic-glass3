@@ -85,6 +85,9 @@ bool CDetection::process(json::Object *com) {
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CDetection::process: NULL pGlass.");
+
+		delete (com);
+
 		return (false);
 	}
 
@@ -114,6 +117,9 @@ bool CDetection::process(json::Object *com) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CDetection::process: Missing required Hypocenter Time Key.");
+
+			delete (com);
+
 			return (false);
 		}
 
@@ -128,6 +134,9 @@ bool CDetection::process(json::Object *com) {
 					glassutil::log_level::error,
 					"CDetection::process: Missing required Hypocenter Latitude"
 					" Key.");
+
+			delete (com);
+
 			return (false);
 		}
 
@@ -141,6 +150,9 @@ bool CDetection::process(json::Object *com) {
 					glassutil::log_level::error,
 					"CDetection::process: Missing required Hypocenter Longitude"
 					" Key.");
+
+			delete (com);
+
 			return (false);
 		}
 
@@ -153,14 +165,22 @@ bool CDetection::process(json::Object *com) {
 					glassutil::log_level::error,
 					"CDetection::process: Missing required Hypocenter Depth"
 					" Key.");
+
+			delete (com);
+
 			return (false);
 		}
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CDetection::process: Missing required Hypocenter Key.");
+
+		delete (com);
+
 		return (false);
 	}
+
+	delete (com);
 
 	// Check to see if hypo already exists. We could also
 	// check location at this point, but it seems unlikely
