@@ -172,9 +172,6 @@ bool Associator::work() {
 	if (message != NULL) {
 		// send the message into glass
 		m_pGlass->dispatch(message);
-
-		// done with message
-		delete (message);
 	}
 
 	std::time_t tNow;
