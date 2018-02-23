@@ -18,6 +18,7 @@
 #include <queue>
 #include <mutex>
 #include <string>
+#include <memory>
 
 namespace glass {
 /**
@@ -101,7 +102,7 @@ class input : public util::iInput, public util::ThreadBaseClass {
 	 *
 	 * \return Returns a pointer to a json::Object containing the data.
 	 */
-	json::Object* getData() override;
+	std::shared_ptr<json::Object> getData() override;
 
 	/**
 	 * \brief input data count function
