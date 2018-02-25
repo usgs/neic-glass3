@@ -40,9 +40,6 @@ CHypo::CHypo() {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
-	pTTT = NULL;
-	pTrv1 = NULL;
-	pTrv2 = NULL;
 
 	clear();
 }
@@ -56,9 +53,6 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
-	pTTT = NULL;
-	pTrv1 = NULL;
-	pTrv2 = NULL;
 
 	if (!initialize(lat, lon, z, time, pid, web, bayes, thresh, cut, firstTrav,
 					secondTrav, ttt, resolution)) {
@@ -71,9 +65,6 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger, traveltime::CTTT *ttt) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
-	pTTT = NULL;
-	pTrv1 = NULL;
-	pTrv2 = NULL;
 
 	// null checks
 	if (trigger == NULL) {
@@ -169,20 +160,9 @@ void CHypo::clear() {
 
 	pGlass = NULL;
 
-	if (pTrv1) {
-		delete (pTrv1);
-	}
-	pTrv1 = NULL;
-
-	if (pTrv2) {
-		delete (pTrv2);
-	}
-	pTrv2 = NULL;
-
-	if (pTTT) {
-		delete (pTTT);
-	}
-	pTTT = NULL;
+	pTTT.reset();
+	pTrv1.reset();
+	pTrv2.reset();
 
 	bCorrAdded = false;
 
@@ -232,18 +212,21 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 					+ std::to_string(nCut) + "; resolution:"
 					+ std::to_string(dRes));
 
+	// make local copies of the travel times so that we don't
+	// have cross-thread contention for them between hypos
 	if (firstTrav != NULL) {
-		pTrv1 = new traveltime::CTravelTime(*firstTrav);
+		pTrv1 = std::make_shared<traveltime::CTravelTime>(
+				traveltime::CTravelTime(*firstTrav));
 	}
 
-	if (secondTrav) {
-		pTrv2 = new traveltime::CTravelTime(*secondTrav);
+	if (secondTrav != NULL) {
+		pTrv2 = std::make_shared<traveltime::CTravelTime>(
+				traveltime::CTravelTime(*secondTrav));
 	}
 
 	if (ttt != NULL) {
-		pTTT = new traveltime::CTTT(*ttt);
+		pTTT = std::make_shared<traveltime::CTTT>(traveltime::CTTT(*ttt));
 	}
-
 	tCreate = glassutil::CDate::now();
 
 	return (true);
@@ -674,7 +657,7 @@ void CHypo::event() {
 	bEvent = true;
 	reportCount++;
 	std::shared_ptr<json::Object> event = std::make_shared<json::Object>(
-				json::Object());
+			json::Object());
 
 	// fill in Event command from current hypocenter
 	(*event)["Cmd"] = "Event";

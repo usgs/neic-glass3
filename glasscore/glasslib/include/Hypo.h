@@ -967,19 +967,19 @@ class CHypo {
 	 * \brief A pointer to a CTravelTime object containing
 	 * travel times for the first phase used to nucleate this hypo
 	 */
-	traveltime::CTravelTime* pTrv1;
+	std::shared_ptr<traveltime::CTravelTime> pTrv1;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
 	 * travel times for the second phase used to nucleate this hypo
 	 */
-	traveltime::CTravelTime* pTrv2;
+	std::shared_ptr<traveltime::CTravelTime> pTrv2;
 
 	/**
 	 * \brief A pointer to a CTTT object containing the travel
 	 * time phases and branches used for association and location
 	 */
-	traveltime::CTTT *pTTT;
+	std::shared_ptr<traveltime::CTTT> pTTT;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypo.
