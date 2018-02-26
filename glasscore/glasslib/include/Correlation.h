@@ -205,7 +205,7 @@ class CCorrelation {
 	 * \brief Hypo getter
 	 * \return the hypo
 	 */
-	const std::shared_ptr<CHypo>& getHypo() const;
+	const std::shared_ptr<CHypo> getHypo() const;
 
 	/**
 	 * \brief Site getter

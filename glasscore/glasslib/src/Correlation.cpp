@@ -461,17 +461,9 @@ const std::shared_ptr<json::Object>& CCorrelation::getJCorrelation() const {
 	return (jCorrelation);
 }
 
-const std::shared_ptr<CHypo>& CCorrelation::getHypo() const {
+const std::shared_ptr<CHypo> CCorrelation::getHypo() const {
 	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-	std::shared_ptr<CHypo> spHypo;
-
-	if (wpHypo.expired() == true) {
-		return (spHypo);
-	} else {
-		spHypo = wpHypo.lock();
-	}
-
-	return (spHypo);
+	return (wpHypo.lock());
 }
 
 const std::shared_ptr<CSite>& CCorrelation::getSite() const {
