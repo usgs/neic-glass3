@@ -1894,7 +1894,7 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 		return (0);
 	}
 
-	if (pTTT == NULL) {
+	if (!pTTT) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::getBayes: NULL pTTT.");
 		return (0);
@@ -1940,7 +1940,7 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 
 		// only use nucleation phases if on nucleation branch
 		if (nucleate == 1) {
-			if ((pTrv1) && (pTrv1)) {
+			if ((pTrv1) && (pTrv2)) {
 				// we have both nucleation phases
 				// first nucleation phase
 				// calculate the residual using the phase name
