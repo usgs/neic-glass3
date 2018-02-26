@@ -313,7 +313,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		json::Array phases = (*com)["AssociationPhases"].ToArray();
 
 		// create and initialize travel time list
-		pTTT = new traveltime::CTTT();
+		pTTT = std::make_shared<traveltime::CTTT>();
 
 		// for each phase in the array
 		for (auto val : phases) {
@@ -1309,7 +1309,7 @@ std::shared_ptr<traveltime::CTravelTime>& CGlass::getTrvDefault() {
 	return (pTrvDefault);
 }
 
-traveltime::CTTT*& CGlass::getTTT() {
+std::shared_ptr<traveltime::CTTT>& CGlass::getTTT() {
 	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 	return (pTTT);
 }

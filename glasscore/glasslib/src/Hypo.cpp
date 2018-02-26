@@ -47,9 +47,9 @@ CHypo::CHypo() {
 // ---------------------------------------------------------CHypo
 CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 				std::string web, double bayes, double thresh, int cut,
-				traveltime::CTravelTime* firstTrav,
-				traveltime::CTravelTime* secondTrav, traveltime::CTTT *ttt,
-				double resolution) {
+				std::shared_ptr<traveltime::CTravelTime> firstTrav,
+				std::shared_ptr<traveltime::CTravelTime> secondTrav,
+				std::shared_ptr<traveltime::CTTT> ttt, double resolution) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
@@ -61,7 +61,8 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 }
 
 // ---------------------------------------------------------CHypo
-CHypo::CHypo(std::shared_ptr<CTrigger> trigger, traveltime::CTTT *ttt) {
+CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
+				std::shared_ptr<traveltime::CTTT> ttt) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
@@ -88,17 +89,17 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger, traveltime::CTTT *ttt) {
 					trigger->getWeb()->getName(), trigger->getSum(),
 					trigger->getWeb()->getThresh(),
 					trigger->getWeb()->getNucleate(),
-					trigger->getWeb()->getTrv1().get(),
-					trigger->getWeb()->getTrv2().get(), ttt,
-					trigger->getResolution())) {
+					trigger->getWeb()->getTrv1(), trigger->getWeb()->getTrv2(),
+					ttt, trigger->getResolution())) {
 		clear();
 	}
 }
 
 // ---------------------------------------------------------CHypo
 CHypo::CHypo(std::shared_ptr<CCorrelation> corr,
-				traveltime::CTravelTime* firstTrav,
-				traveltime::CTravelTime* secondTrav, traveltime::CTTT *ttt) {
+				std::shared_ptr<traveltime::CTravelTime> firstTrav,
+				std::shared_ptr<traveltime::CTravelTime> secondTrav,
+				std::shared_ptr<traveltime::CTTT> ttt) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
@@ -178,9 +179,10 @@ void CHypo::clear() {
 bool CHypo::initialize(double lat, double lon, double z, double time,
 						std::string pid, std::string web, double bayes,
 						double thresh, int cut,
-						traveltime::CTravelTime* firstTrav,
-						traveltime::CTravelTime* secondTrav,
-						traveltime::CTTT *ttt, double resolution) {
+						std::shared_ptr<traveltime::CTravelTime> firstTrav,
+						std::shared_ptr<traveltime::CTravelTime> secondTrav,
+						std::shared_ptr<traveltime::CTTT> ttt,
+						double resolution) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 

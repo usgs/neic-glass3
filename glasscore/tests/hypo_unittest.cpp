@@ -112,10 +112,11 @@ TEST(HypoTest, Construction) {
 	ASSERT_TRUE(testHypo->getGlass() == NULL)<< "pGlass null";
 
 	// now init
-	traveltime::CTravelTime* nullTrav = NULL;
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
 	testHypo->initialize(LATITUDE, LONGITUDE, DEPTH, TIME, std::string(ID),
 							std::string(WEB), BAYES, THRESH, CUT, nullTrav,
-							nullTrav, NULL);
+							nullTrav, nullTTT);
 
 	// check results
 	checkdata(testHypo, "initialize check");
@@ -126,14 +127,15 @@ TEST(HypoTest, PickOperations) {
 	glassutil::CLogit::disable();
 
 	// construct a hypo
-	traveltime::CTravelTime* nullTrav = NULL;
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
 	glasscore::CHypo * testHypo = new glasscore::CHypo(LATITUDE, LONGITUDE,
 	DEPTH,
 														TIME, std::string(ID),
 														std::string(WEB), BAYES,
 														THRESH,
 														CUT, nullTrav, nullTrav,
-														NULL);
+														nullTTT);
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(

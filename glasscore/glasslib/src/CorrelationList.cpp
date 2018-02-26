@@ -246,12 +246,12 @@ bool CCorrelationList::addCorrelation(
 			// NOTE: maybe move below to CCorrelation function to match pick?
 
 			// correlations don't have a second travel time
-			traveltime::CTravelTime* nullTrav = NULL;
+			std::shared_ptr<traveltime::CTravelTime> nullTrav;
 
 			// create new hypo
 			// pGlass->m_TTTMutex.lock();
 			std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
-					corr, pGlass->getTrvDefault().get(), nullTrav,
+					corr, pGlass->getTrvDefault(), nullTrav,
 					pGlass->getTTT());
 			// pGlass->m_TTTMutex.unlock();
 

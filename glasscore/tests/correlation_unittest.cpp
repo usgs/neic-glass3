@@ -185,11 +185,12 @@ TEST(CorrelationTest, HypoOperations) {
 			LON, Z, CORRELATION);
 
 	// create a hypo
-	traveltime::CTravelTime* nullTrav = NULL;
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
 	glasscore::CHypo * testHypo = new glasscore::CHypo(0.0, 0.0, 0.0, 0.0, "1",
 														"test", 0.0, 0.0, 0,
 														nullTrav, nullTrav,
-														NULL);
+														nullTTT);
 
 	// create new shared pointer to the hypo
 	std::shared_ptr<glasscore::CHypo> sharedHypo(testHypo);

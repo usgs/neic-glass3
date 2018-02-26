@@ -50,40 +50,39 @@ TEST(HypoListTest, Construction) {
 TEST(HypoListTest, HypoOperations) {
 	glassutil::CLogit::disable();
 
-	traveltime::CTTT * nullTTT = NULL;
-
 	// create hypo objects
-	traveltime::CTravelTime* nullTrav = NULL;
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
 	std::shared_ptr<glasscore::CHypo> hypo1 =
 			std::make_shared<glasscore::CHypo>(-21.84, 170.03, 10.0,
 												3648585210.926340, "1", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo2 =
 			std::make_shared<glasscore::CHypo>(22.84, 70.03, 12.0,
 												3648585208.926340, "2", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo3 =
 			std::make_shared<glasscore::CHypo>(41.84, -120.03, 8.0,
 												3648585222.926340, "3", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo4 =
 			std::make_shared<glasscore::CHypo>(-1.84, 10.03, 100.0,
 												3648585250.926340, "4", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo5 =
 			std::make_shared<glasscore::CHypo>(1.84, -170.03, 67.0,
 												3648585233.926340, "5", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo6 =
 			std::make_shared<glasscore::CHypo>(46.84, 135.03, 42.0,
 												3648585211.926340, "6", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 
 	// construct a hypolist
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();

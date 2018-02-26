@@ -194,7 +194,6 @@ TEST(SiteTest, PickOperations) {
 
 	// construct a site using a JSON object
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
-	glasscore::CSite * testSite2 = new glasscore::CSite(site2JSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
 						new glasscore::CSite(siteJSON, NULL));
 	std::shared_ptr<glasscore::CSite> sharedTestSite2(

@@ -193,14 +193,14 @@ bool CDetection::process(std::shared_ptr<json::Object> com) {
 		// NOTE: Hard coded.
 		if (delta > 5.0) {
 			// detections don't have a second travel time
-			traveltime::CTravelTime* nullTrav = NULL;
+			std::shared_ptr<traveltime::CTravelTime> nullTrav;
 
 			// create new hypo
 			// pGlass->m_TTTMutex.lock();
 			hypo = std::make_shared<CHypo>(lat, lon, z, torg,
 											glassutil::CPid::pid(), "Detection",
 											0.0, 0.0, 0,
-											pGlass->getTrvDefault().get(),
+											pGlass->getTrvDefault(),
 											nullTrav, pGlass->getTTT());
 			// pGlass->m_TTTMutex.unlock();
 

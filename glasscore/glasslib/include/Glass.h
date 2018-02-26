@@ -222,7 +222,7 @@ class CGlass {
 	CPickList*& getPickList();
 	CSiteList*& getSiteList();
 	std::shared_ptr<traveltime::CTravelTime>& getTrvDefault();
-	traveltime::CTTT*& getTTT();
+	std::shared_ptr<traveltime::CTTT>& getTTT();
 	CWebList*& getWebList();
 	double getSdAssociate() const;
 	double getSdPrune() const;
@@ -319,7 +319,7 @@ class CGlass {
 	 * \brief A pointer to a CTTT object containing the travel
 	 * time phases and branches used by glasscore for association
 	 */
-	traveltime::CTTT *pTTT;
+	std::shared_ptr<traveltime::CTTT> pTTT;
 
 	/**
 	 * \brief the std::mutex for traveltimes

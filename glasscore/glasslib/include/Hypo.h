@@ -79,9 +79,9 @@ class CHypo {
 	 */
 	CHypo(double lat, double lon, double z, double time, std::string pid,
 			std::string web, double bayes, double thresh, int cut,
-			traveltime::CTravelTime* firstTrav,
-			traveltime::CTravelTime* secondTrav, traveltime::CTTT *ttt,
-			double resolution = 100);
+			std::shared_ptr<traveltime::CTravelTime> firstTrav,
+			std::shared_ptr<traveltime::CTravelTime> secondTrav,
+			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100);
 
 	/**
 	 * \brief CHypo alternate constructor
@@ -92,7 +92,8 @@ class CHypo {
 	 * \param node - A shared pointer to a CNode object containing the node to
 	 * construct this hypo from.
 	 */
-	explicit CHypo(std::shared_ptr<CTrigger> trigger, traveltime::CTTT *ttt);
+	explicit CHypo(std::shared_ptr<CTrigger> trigger,
+					std::shared_ptr<traveltime::CTTT> ttt);
 
 	/**
 	 * \brief CHypo alternate constructor
@@ -104,8 +105,9 @@ class CHypo {
 	 * correlation to construct this hypo from.
 	 */
 	explicit CHypo(std::shared_ptr<CCorrelation> corr,
-					traveltime::CTravelTime* firstTrav,
-					traveltime::CTravelTime* secondTrav, traveltime::CTTT *ttt);
+					std::shared_ptr<traveltime::CTravelTime> firstTrav,
+					std::shared_ptr<traveltime::CTravelTime> secondTrav,
+					std::shared_ptr<traveltime::CTTT> ttt);
 
 	/**
 	 * \brief CHypo destructor
@@ -142,9 +144,11 @@ class CHypo {
 	 */
 	bool initialize(double lat, double lon, double z, double time,
 					std::string pid, std::string web, double bayes,
-					double thresh, int cut, traveltime::CTravelTime* firstTrav,
-					traveltime::CTravelTime* secondTrav, traveltime::CTTT *ttt,
-					double resolution = 100);
+					double thresh, int cut,
+					std::shared_ptr<traveltime::CTravelTime> firstTrav,
+					std::shared_ptr<traveltime::CTravelTime> secondTrav,
+					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
+							100);
 
 	/**
 	 * \brief Add pick reference to this hypo
