@@ -1888,6 +1888,12 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
+	if ((!pTrv1) && (!pTrv2)) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::getBayes: NULL pTrv1 and pTrv2.");
+		return (0);
+	}
+
 	if (pTTT == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::getBayes: NULL pTTT.");
@@ -1908,10 +1914,10 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 	geo.setGeographic(xlat, xlon, 6371.0 - xZ);
 
 	// This sets the travel-time look up location
-	if (pTrv1 != NULL) {
+	if (pTrv1) {
 		pTrv1->setOrigin(xlat, xlon, xZ);
 	}
-	if (pTrv2 != NULL) {
+	if (pTrv2) {
 		pTrv2->setOrigin(xlat, xlon, xZ);
 	}
 
@@ -1930,29 +1936,46 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 		// calculate residual
 		double tobs = pick->getTPick() - oT;
 		std::shared_ptr<CSite> site = pick->getSite();
+		glassutil::CGeo siteGeo = site->getGeo();
 
-		// only use nucleation phase if on nucleation branch
-		if (nucleate == 1 && pTrv2 == NULL) {
-			tcal = pTrv1->T(&site->getGeo());
-			resi = tobs - tcal;
-		} else if (nucleate == 1 && pTrv1 == NULL) {
-			tcal = pTrv2->T(&site->getGeo());
-			resi = tobs - tcal;
-		} else {
-			// take whichever has the smallest residual, P or S
-			tcal = pTTT->T(&site->getGeo(), tobs);
-			if (pTTT->sPhase == "P") {
-				resi = tobs - tcal;
-			} else if (pTTT->sPhase == "S") {
-				resi = (tobs - tcal) * 2.;  // Effectively halving the weight of S
-											// this value was selected by testing specific
-											// events with issues
-			} else {
-				resi = (tobs - tcal) * 10.;  // Down weighting all other phases
-											 // Value was chosen so that other phases would
-											 // still contribute (reducing instabilities)
-											 // but remain insignificant
+		// only use nucleation phases if on nucleation branch
+		if (nucleate == 1) {
+			if ((pTrv1) && (pTrv1)) {
+				// we have both nucleation phases
+				// first nucleation phase
+				// calculate the residual using the phase name
+				double tcal1 = pTrv1->T(&siteGeo);
+				double resi1 = getResidual(pTrv1->sPhase, tobs, tcal1);
+
+				// second nucleation phase
+				// calculate the residual using the phase name
+				double tcal2 = pTrv2->T(&siteGeo);
+				double resi2 = getResidual(pTrv2->sPhase, tobs, tcal2);
+
+				// use the smallest residual
+				if (resi1 < resi2) {
+					tcal = tcal1;
+					resi = resi1;
+				} else {
+					tcal = tcal2;
+					resi = resi2;
+				}
+			} else if ((pTrv1) && (!pTrv2)) {
+				// we have just the first nucleation phase
+				tcal = pTrv1->T(&siteGeo);
+				resi = getResidual(pTrv1->sPhase, tobs, tcal);
+			} else if ((!pTrv1) && (pTrv2)) {
+				// we have just the second ducleation phase
+				tcal = pTrv2->T(&siteGeo);
+				resi = getResidual(pTrv2->sPhase, tobs, tcal);
 			}
+		} else {
+			// use all available association phases
+			// take whichever phase has the smallest residual
+			tcal = pTTT->T(&siteGeo, tobs);
+
+			// calculate the residual using the phase name
+			resi = getResidual(pTTT->sPhase, tobs, tcal);
 		}
 
 		// calculate distance to station to get sigma
@@ -1963,6 +1986,26 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 		value += pGlass->sig(resi, sigma);
 	}
 	return value;
+}
+
+// ---------------------------------------------------------getResidual
+double CHypo::getResidual(std::string sPhase, double tObs, double tCal) {
+	if (sPhase == "P") {
+		return (tObs - tCal);
+	} else if (sPhase == "S") {
+		// Effectively halving the weight of S
+		// this value was selected by testing specific
+		// events with issues
+		// NOTE: Hard Coded
+		return ((tObs - tCal) * 2.0);
+	} else {
+		// Down weighting all other phases
+		// Value was chosen so that other phases would
+		// still contribute (reducing instabilities)
+		// but remain insignificant
+		// NOTE: Hard Coded
+		return ((tObs - tCal) * 10.0);
+	}
 }
 
 // ---------------------------------------------------------annealingLocate

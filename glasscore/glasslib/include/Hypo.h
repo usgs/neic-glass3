@@ -476,6 +476,8 @@ class CHypo {
 	double getBayes(double xlat, double xlon, double xZ, double oT,
 					int nucleate);
 
+	double getResidual(std::string sPhase, double tObs, double tCal);
+
 	/**
 	 * Get the sum of the absolute residuals at a location
 	 *
