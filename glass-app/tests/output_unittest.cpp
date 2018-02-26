@@ -93,7 +93,7 @@ class AssociatorStub : public util::iAssociator {
 	virtual ~AssociatorStub() {
 	}
 
-	void sendToAssociator(std::shared_ptr<json::Object> message) override {
+	void sendToAssociator(std::shared_ptr<json::Object> &message) override {
 		if (message == NULL) {
 			return;
 		}
@@ -111,17 +111,23 @@ class AssociatorStub : public util::iAssociator {
 		}
 
 		if (id == OUTPUTID) {
-			Output->sendToOutput(GetDataFromFile(hypofile));
+			std::shared_ptr<json::Object> hypo = GetDataFromFile(hypofile);
+			Output->sendToOutput(hypo);
 		} else if (id == OUTPUT2ID) {
 			if (sentone == false) {
-				Output->sendToOutput(GetDataFromFile(hypo2file));
+				std::shared_ptr<json::Object> hypo2 = GetDataFromFile(
+						hypo2file);
+				Output->sendToOutput(hypo2);
 				sentone = true;
 			} else {
-				Output->sendToOutput(GetDataFromFile(hypo2updatefile));
+				std::shared_ptr<json::Object> hypo2Update = GetDataFromFile(
+						hypo2updatefile);
+				Output->sendToOutput(hypo2Update);
 			}
 
 		} else if (id == OUTPUT3ID) {
-			Output->sendToOutput(GetDataFromFile(hypo3file));
+			std::shared_ptr<json::Object> hypo3 = GetDataFromFile(hypo3file);
+			Output->sendToOutput(hypo3);
 		}
 	}
 	bool sentone;
@@ -232,7 +238,8 @@ class OutputTest : public ::testing::Test {
 				new json::Object(json::Deserialize(EMPTYCONFIG))));
 	}
 
-	void CheckData(std::shared_ptr<json::Object> dataone, std::shared_ptr<json::Object> datatwo) {
+	void CheckData(std::shared_ptr<json::Object> dataone,
+					std::shared_ptr<json::Object> datatwo) {
 		if (dataone == NULL) {
 			return;
 		}

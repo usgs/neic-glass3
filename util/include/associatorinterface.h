@@ -41,7 +41,7 @@ class iAssociator {
 	 * \param message - A pointer to a json::object containing the data
 	 * to send to the associator library.
 	 */
-	virtual void sendToAssociator(std::shared_ptr<json::Object> message) = 0;
+	virtual void sendToAssociator(std::shared_ptr<json::Object> &message) = 0; // NOLINT
 };
 }  // namespace util
 #endif  // ASSOCINTERFACE_H

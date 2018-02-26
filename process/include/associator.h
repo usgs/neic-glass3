@@ -114,7 +114,7 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	 * \param message - A json::Object containing the message to send to
 	 * glasscore.
 	 */
-	void sendToAssociator(std::shared_ptr<json::Object> message) override;
+	void sendToAssociator(std::shared_ptr<json::Object> &message) override;
 
 	/**
 	 * \brief thread pool check function

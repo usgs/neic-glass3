@@ -20,7 +20,7 @@ class parserstub : public parse::Parser {
 		return (NULL);
 	}
 
-	bool validate(std::shared_ptr<json::Object> input) override {
+	bool validate(std::shared_ptr<json::Object> &input) override {
 		return (true);
 	}
 };

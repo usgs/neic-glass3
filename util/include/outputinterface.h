@@ -25,7 +25,7 @@ struct iOutput {
 	 * \param data - A pointer to a json::object containing the output
 	 * data.
 	 */
-	virtual void sendToOutput(std::shared_ptr<json::Object> data) = 0;
+	virtual void sendToOutput(std::shared_ptr<json::Object> &data) = 0; // NOLINT
 };
 }  // namespace util
 #endif  // OUTPUTINTERFACE_H

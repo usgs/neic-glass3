@@ -69,7 +69,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 }
 
 // validate a json object
-bool JSONParser::validate(std::shared_ptr<json::Object> input) {
+bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 	// nullcheck
 	if (input == NULL) {
 		return (false);

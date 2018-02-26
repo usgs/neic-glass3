@@ -64,7 +64,7 @@ class CCParser : public Parser {
 	 * validate.
 	 * \return Returns true if valid, false otherwise.
 	 */
-	bool validate(std::shared_ptr<json::Object> input) override;
+	bool validate(std::shared_ptr<json::Object> &input) override;
 };
 }  // namespace parse
 #endif  // CCPARSER_H

@@ -62,7 +62,7 @@ class Parser {
 	 * validate.
 	 * \return Returns true if valid, false otherwise.
 	 */
-	virtual bool validate(std::shared_ptr<json::Object> input) = 0;
+	virtual bool validate(std::shared_ptr<json::Object> &input) = 0; // NOLINT
 
 	/**
 	 * \brief getter for the agencyid configuration variable

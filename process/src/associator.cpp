@@ -151,7 +151,7 @@ void Associator::Send(std::shared_ptr<json::Object> communication) {
 	dispatch(communication);
 }
 
-void Associator::sendToAssociator(std::shared_ptr<json::Object> message) {
+void Associator::sendToAssociator(std::shared_ptr<json::Object> &message) {
 	if (m_MessageQueue != NULL) {
 		m_MessageQueue->addDataToQueue(message);
 	}

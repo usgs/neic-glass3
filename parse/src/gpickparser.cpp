@@ -196,7 +196,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 }
 
 // validate a json object
-bool GPickParser::validate(std::shared_ptr<json::Object> input) {
+bool GPickParser::validate(std::shared_ptr<json::Object> &input) {
 	// nullcheck
 	if (input == NULL) {
 		return (false);

@@ -138,7 +138,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 }
 
 // validate a json object
-bool CCParser::validate(std::shared_ptr<json::Object> input) {
+bool CCParser::validate(std::shared_ptr<json::Object> &input) {
 	// nullcheck
 	if (input == NULL) {
 		return (false);
