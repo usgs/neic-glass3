@@ -100,13 +100,53 @@ class CTrigger {
 	 * \brief CTrigger clear function
 	 */
 	void clear();
+
+	/**
+	 * \brief Latitude getter
+	 * \return the latitude
+	 */
 	double getLat() const;
+
+	/**
+	 * \brief Longitude getter
+	 * \return the longitude
+	 */
 	double getLon() const;
+
+	/**
+	 * \brief Depth getter
+	 * \return the depth
+	 */
 	double getZ() const;
+
+	/**
+	 * \brief Origin time getter
+	 * \return the origin time
+	 */
 	double getTOrg() const;
+
+	/**
+	 * \brief Resolution getter
+	 * \return the resolution
+	 */
 	double getResolution() const;
+
+	/**
+	 * \brief Sum getter
+	 * \return the sum
+	 */
 	double getSum() const;
+
+	/**
+	 * \brief Count getter
+	 * \return the count
+	 */
 	int getCount() const;
+
+	/**
+	 * \brief Web pointer getter
+	 * \return the CWeb pointer
+	 */
 	const CWeb* getWeb() const;
 
 	/**
