@@ -70,9 +70,6 @@ void Config::loadConfigfile() {
 		configline += currentline;
 	}
 
-	logger::log("debug",
-				"config::load_configfile: read from configfile: " + configline);
-
 	// set the whole config line as our current config
 	if (setConfigString(configline) == true)
 		logger::log(

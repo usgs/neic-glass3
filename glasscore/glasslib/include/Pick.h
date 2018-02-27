@@ -136,6 +136,9 @@ class CPick {
 	 */
 	void remHypo(std::shared_ptr<CHypo> hyp);
 
+	/**
+	 * \brief Clear any hypo reference to this pick
+	 */
 	void clearHypo();
 
 	/**
