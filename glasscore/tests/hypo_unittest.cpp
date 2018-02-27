@@ -35,47 +35,47 @@
 // check site data for validity
 void checkdata(glasscore::CHypo *hypoobject, const std::string &testinfo) {
 	// check lat
-	double latitude = hypoobject->dLat;
+	double latitude = hypoobject->getLat();
 	double expectedLatitude = LATITUDE;
 	ASSERT_NEAR(latitude, expectedLatitude, 0.0001);
 
 	// check lon
-	double longitude = hypoobject->dLon;
+	double longitude = hypoobject->getLon();
 	double expectedLongitude = LONGITUDE;
 	ASSERT_NEAR(longitude, expectedLongitude, 0.0001);
 
 	// check depth
-	double depth = hypoobject->dZ;
+	double depth = hypoobject->getZ();
 	double expectedDepth = DEPTH;
 	ASSERT_NEAR(depth, expectedDepth, 0.0001);
 
 	// check time
-	double time = hypoobject->tOrg;
+	double time = hypoobject->getTOrg();
 	double expectedTime = TIME;
 	ASSERT_NEAR(time, expectedTime, 0.0001);
 
 	// check id
-	std::string id = hypoobject->sPid;
+	std::string id = hypoobject->getPid();
 	std::string expectedId = ID;
 	ASSERT_STREQ(id.c_str(), expectedId.c_str());
 
 	// check web
-	std::string web = hypoobject->sWeb;
+	std::string web = hypoobject->getWebName();
 	std::string expectedWeb = std::string(WEB);
 	ASSERT_STREQ(web.c_str(), expectedWeb.c_str());
 
 	// check bayes
-	double bayes = hypoobject->dBayes;
+	double bayes = hypoobject->getBayes();
 	double expectedBayes = BAYES;
 	ASSERT_NEAR(bayes, expectedBayes, 0.0001);
 
 	// check bayes
-	double thresh = hypoobject->dThresh;
+	double thresh = hypoobject->getThresh();
 	double expectedThresh = THRESH;
 	ASSERT_NEAR(thresh, expectedThresh, 0.0001);
 
 	// check cut
-	int cut = hypoobject->nCut;
+	int cut = hypoobject->getCut();
 	int expectedCut = CUT;
 	ASSERT_EQ(cut, expectedCut);
 }
@@ -88,38 +88,35 @@ TEST(HypoTest, Construction) {
 	glasscore::CHypo * testHypo = new glasscore::CHypo();
 
 	// assert default values
-	ASSERT_EQ(0, testHypo->dLat)<< "dLat is zero";
-	ASSERT_EQ(0, testHypo->dLon)<< "dLon is zero";
-	ASSERT_EQ(0, testHypo->dZ)<< "dZ is zero";
-	ASSERT_EQ(0, testHypo->tOrg)<< "tOrg is zero";
-	ASSERT_STREQ("", testHypo->sPid.c_str())<< "sPid is empty";
-	ASSERT_STREQ("", testHypo->sWeb.c_str())<< "sWeb is empty";
-	ASSERT_EQ(0, testHypo->dBayes)<< "dBayes is zero";
-	ASSERT_EQ(0, testHypo->dThresh)<< "dThresh is zero";
-	ASSERT_EQ(0, testHypo->nCut)<< "nCut is zero";
-	ASSERT_EQ(0, testHypo->iCycle)<< "iCycle is zero";
-	ASSERT_EQ(0, testHypo->nWts)<< "nWts is zero";
-	ASSERT_EQ(0, testHypo->dMed)<< "dMed is zero";
-	ASSERT_EQ(0, testHypo->dMin)<< "dMin is zero";
-	ASSERT_EQ(0, testHypo->dGap)<< "dGap is zero";
-	ASSERT_EQ(0, testHypo->dSig)<< "dSig is zero";
-	ASSERT_EQ(0, testHypo->dKrt)<< "dKrt is zero";
-	ASSERT_FALSE(testHypo->bFixed)<< "bFixed is false";
-	ASSERT_FALSE(testHypo->bRefine)<< "bRefine is false";
-	ASSERT_FALSE(testHypo->bQuake)<< "bQuake is false";
-	ASSERT_FALSE(testHypo->bEvent)<< "bEvent is false";
+	ASSERT_EQ(0, testHypo->getLat())<< "dLat is zero";
+	ASSERT_EQ(0, testHypo->getLon())<< "dLon is zero";
+	ASSERT_EQ(0, testHypo->getZ())<< "dZ is zero";
+	ASSERT_EQ(0, testHypo->getTOrg())<< "tOrg is zero";
+	ASSERT_STREQ("", testHypo->getPid().c_str())<< "sPid is empty";
+	ASSERT_STREQ("", testHypo->getWebName().c_str())<< "sWeb is empty";
+	ASSERT_EQ(0, testHypo->getBayes())<< "dBayes is zero";
+	ASSERT_EQ(0, testHypo->getThresh())<< "dThresh is zero";
+	ASSERT_EQ(0, testHypo->getCut())<< "nCut is zero";
+	ASSERT_EQ(0, testHypo->getCycle())<< "iCycle is zero";
+	ASSERT_EQ(0, testHypo->getMed())<< "dMed is zero";
+	ASSERT_EQ(0, testHypo->getMin())<< "dMin is zero";
+	ASSERT_EQ(0, testHypo->getGap())<< "dGap is zero";
+	ASSERT_EQ(0, testHypo->getSig())<< "dSig is zero";
+	ASSERT_EQ(0, testHypo->getKrt())<< "dKrt is zero";
+	ASSERT_FALSE(testHypo->getFixed())<< "bFixed is false";
+	ASSERT_FALSE(testHypo->getEvent())<< "bEvent is false";
 
-	ASSERT_EQ(0, testHypo->vPick.size())<< "vPick size is zero";
-	ASSERT_EQ(0, testHypo->vWts.size())<< "vWts size is zero";
+	ASSERT_EQ(0, testHypo->getVPickSize())<< "vPick size is zero";
 
 	// pointers
-	ASSERT_TRUE(testHypo->pGlass == NULL)<< "pGlass null";
+	ASSERT_TRUE(testHypo->getGlass() == NULL)<< "pGlass null";
 
 	// now init
-	traveltime::CTravelTime* nullTrav = NULL;
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
 	testHypo->initialize(LATITUDE, LONGITUDE, DEPTH, TIME, std::string(ID),
 							std::string(WEB), BAYES, THRESH, CUT, nullTrav,
-							nullTrav, NULL);
+							nullTrav, nullTTT);
 
 	// check results
 	checkdata(testHypo, "initialize check");
@@ -130,38 +127,45 @@ TEST(HypoTest, PickOperations) {
 	glassutil::CLogit::disable();
 
 	// construct a hypo
-	traveltime::CTravelTime* nullTrav = NULL;
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
 	glasscore::CHypo * testHypo = new glasscore::CHypo(LATITUDE, LONGITUDE,
 	DEPTH,
 														TIME, std::string(ID),
 														std::string(WEB), BAYES,
 														THRESH,
-														CUT, nullTrav,
-														nullTrav, NULL);
+														CUT, nullTrav, nullTrav,
+														nullTTT);
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
-	json::Object site2JSON = json::Deserialize(std::string(SITE2JSON));
-	json::Object site3JSON = json::Deserialize(std::string(SITE3JSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITE2JSON))));
+	std::shared_ptr<json::Object> site3JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITE3JSON))));
 
-	json::Object pickJSON = json::Deserialize(std::string(PICKJSON));
-	json::Object pick2JSON = json::Deserialize(std::string(PICK2JSON));
-	json::Object pick3JSON = json::Deserialize(std::string(PICK3JSON));
+	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(PICKJSON))));
+	std::shared_ptr<json::Object> pick2JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(PICK2JSON))));
+	std::shared_ptr<json::Object> pick3JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(PICK3JSON))));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// add sites to site list
-	testSiteList->addSite(&siteJSON);
-	testSiteList->addSite(&site2JSON);
-	testSiteList->addSite(&site3JSON);
+	testSiteList->addSite(siteJSON);
+	testSiteList->addSite(site2JSON);
+	testSiteList->addSite(site3JSON);
 
 	// create picks
-	glasscore::CPick * testPick = new glasscore::CPick(&pickJSON, 1,
+	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, 1,
 														testSiteList);
-	glasscore::CPick * testPick2 = new glasscore::CPick(&pick2JSON, 2,
+	glasscore::CPick * testPick2 = new glasscore::CPick(pick2JSON, 2,
 														testSiteList);
-	glasscore::CPick * testPick3 = new glasscore::CPick(&pick3JSON, 3,
+	glasscore::CPick * testPick3 = new glasscore::CPick(pick3JSON, 3,
 														testSiteList);
 
 	// create new shared pointers to the picks
@@ -176,7 +180,7 @@ TEST(HypoTest, PickOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	int expectedSize = MAXNPICK;
-	ASSERT_EQ(expectedSize, testHypo->vPick.size())<<
+	ASSERT_EQ(expectedSize, testHypo->getVPickSize())<<
 	"hypo vPick not larger than max";
 
 	// remove picks from hypo
@@ -185,5 +189,5 @@ TEST(HypoTest, PickOperations) {
 
 	// check to see that only one pick remains
 	expectedSize = 1;
-	ASSERT_EQ(expectedSize, testHypo->vPick.size())<< "hypo has only one pick";
+	ASSERT_EQ(expectedSize, testHypo->getVPickSize())<< "hypo has only one pick";
 }

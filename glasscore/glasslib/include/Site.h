@@ -23,6 +23,7 @@ namespace glasscore {
 class CPick;
 class CNode;
 class CGlass;
+class CTrigger;
 
 /**
  * \brief glasscore site (station) class
@@ -80,7 +81,7 @@ class CSite {
 	 * \param com - A pointer to a json::Object to construct the site from
 	 * \param glassPtr - A pointer to the CGlass class
 	 */
-	CSite(json::Object *com, CGlass *glassPtr);
+	CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr);
 
 	/**
 	 * \brief CSite destructor
@@ -91,6 +92,8 @@ class CSite {
 	 * \brief CSite clear function
 	 */
 	void clear();
+
+	void clearVPick();
 
 	/**
 	 * \brief CSite update function
@@ -205,40 +208,123 @@ class CSite {
 	 * \param tpick - A double value containing the pick time to nucleate with
 	 * in julian seconds
 	 */
-	void nucleate(double tpick);
+	std::vector<std::shared_ptr<CTrigger>> nucleate(double tpick);
 
 	/**
 	 * \brief Add triggering node to triggered node list if value exceeds
 	 * current value of if named node's web is not yet present.
 	 */
-	void addTrigger(std::shared_ptr<CNode> node);
-
-	int getNodeLinksCount();
-
-	/**
-	 * \brief A std::vector of std::shared_ptr's to the picks mad at this this
-	 * CSite
-	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
+	void addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
+					std::shared_ptr<CTrigger> trigger);
 
 	/**
-	 * \brief A std::shared_ptr to the node with the best PDF the last time
-	 * nucleate() was called that exceeded web specific thresholds.
+	 * \brief Node link count getter
+	 * \return the node link count
 	 */
-	std::shared_ptr<CNode> pNode;
+	int getNodeLinksCount() const;
 
 	/**
-	 * \brief A std::shared_ptr to the node with the best PDF the last time
-	 * nucleate() was called with the largest value for the current pick.
+	 * \brief Use flag getter
+	 * \return the use flag
 	 */
-	std::shared_ptr<CNode> qNode;
+	bool getUse() const;
 
 	/**
-	 * \brief A double value containing the P travel time
-	 * between the node with the best PDF the last time
-	 * nucleate() was called and the site in seconds
+	 * \brief Use flag setter
+	 * \param use - the use flag
 	 */
-	double dTrav;
+	void setUse(bool use);
+
+	/**
+	 * \brief Use for teleseismic flag getter
+	 * \return the use for teleseismic flag
+	 */
+	bool getUseForTele() const;
+
+	/**
+	 * \brief Use for teleseismic flag setter
+	 * \param useForTele - the use for teleseismic flag
+	 */
+	void setUseForTele(bool useForTele);
+
+	/**
+	 * \brief Quality getter
+	 * \return the quality
+	 */
+	double getQual() const;
+
+	/**
+	 * \brief Quality setter
+	 * \param qual - the quality
+	 */
+	void setQual(double qual);
+
+	/**
+	 * \brief CGeo getter
+	 * \return the CGeo
+	 */
+	glassutil::CGeo& getGeo();
+
+	/**
+	 * \brief Max picks for site getter
+	 * \return the max picks for site
+	 */
+	int getSitePickMax() const;
+
+	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	CGlass* getGlass() const;
+
+	/**
+	 * \brief SCNL getter
+	 * \return the SCNL
+	 */
+	const std::string& getScnl() const;
+
+	/**
+	 * \brief Site getter
+	 * \return the site
+	 */
+	const std::string& getSite() const;
+
+	/**
+	 * \brief Comp getter
+	 * \return the comp
+	 */
+	const std::string& getComp() const;
+
+	/**
+	 * \brief Net getter
+	 * \return the net
+	 */
+	const std::string& getNet() const;
+
+	/**
+	 * \brief Loc getter
+	 * \return the loc
+	 */
+	const std::string& getLoc() const;
+
+	/**
+	 * \brief vPick getter
+	 * \return the vPick
+	 */
+	const std::vector<std::shared_ptr<CPick>> getVPick() const;
+
+ private:
+	/**
+	 * \brief A mutex to control threading access to vPick.
+	 */
+	mutable std::mutex vPickMutex;
+
+	/**
+	 * \brief A std::vector of std::weak_ptr's to the picks made at this this
+	 * CSite. A weak_ptr is used here instead of a shared_ptr to prevent a
+	 * cyclical reference between CPick and CSite.
+	 */
+	std::vector<std::weak_ptr<CPick>> vPick;
 
 	/**
 	 * \brief A pointer to the main CGlass class used encode/decode time and
@@ -305,25 +391,11 @@ class CSite {
 	 */
 	int nSitePickMax;
 
-	/*
-	 * /brief A std::vector of shared node pointers that contain a list
-	 * of nodes that triggered for an input pick. It supports the concept
-	 * that each node can generate trigger event independently from other
-	 * webs. It is set by the method 'addTrigger'.
-	 */
-	std::vector<std::shared_ptr<CNode>> vTrigger;
-
 	/**
-	 * \brief A mutex to control threading access to vPick.
+	 * \brief A mutex to control threading access to vNode.
 	 */
-	std::mutex vPickMutex;
+	mutable std::mutex vNodeMutex;
 
-	/**
-	 * \brief A mutex to control threading access to vTrigger.
-	 */
-	std::mutex vTriggerMutex;
-
- private:
 	/**
 	 * \brief A std::vector of tuples linking site to node
 	 * {shared node pointer, travel-time 1, travel-time 2}
@@ -331,9 +403,13 @@ class CSite {
 	std::vector<NodeLink> vNode;
 
 	/**
-	 * \brief A mutex to control threading access to vNode.
+	 * \brief A recursive_mutex to control threading access to CSite.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
 	 */
-	std::mutex vNodeMutex;
+	mutable std::recursive_mutex siteMutex;
 };
 }  // namespace glasscore
 #endif  // SITE_H

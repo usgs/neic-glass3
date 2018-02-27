@@ -22,9 +22,10 @@ class CSite;
 #define LINK_TT2 2  // Second travel time
 
 /**
- * \brief Typedef to simplify use of a site-node link
+ * \brief Typedef to simplify use of a site-node link uses weak_ptr to
+ * prevent a cyclical reference
  */
-typedef std::tuple<std::shared_ptr<CNode>, double, double> NodeLink;
+typedef std::tuple<std::weak_ptr<CNode>, double, double> NodeLink;
 
 /**
  * \brief Typedef to simplify use of a node-site link

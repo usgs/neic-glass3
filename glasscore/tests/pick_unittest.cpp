@@ -28,52 +28,52 @@
 // check site data for validity
 void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 	// check scnl
-	std::string sitescnl = pickobject->pSite->sScnl;
+	std::string sitescnl = pickobject->getSite()->getScnl();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str());
 
 	// check site
-	std::string sitesite = pickobject->pSite->sSite;
+	std::string sitesite = pickobject->getSite()->getSite();
 	std::string expectedsite = std::string(SITE);
 	ASSERT_STREQ(sitesite.c_str(), expectedsite.c_str());
 
 	// check comp
-	std::string sitecomp = pickobject->pSite->sComp;
+	std::string sitecomp = pickobject->getSite()->getComp();
 	std::string expectedcomp = std::string(COMP);
 	ASSERT_STREQ(sitecomp.c_str(), expectedcomp.c_str());
 
 	// check net
-	std::string sitenet = pickobject->pSite->sNet;
+	std::string sitenet = pickobject->getSite()->getNet();
 	std::string expectednet = std::string(NET);
 	ASSERT_STREQ(sitenet.c_str(), expectednet.c_str());
 
 	// check loc
-	std::string siteloc = pickobject->pSite->sLoc;
+	std::string siteloc = pickobject->getSite()->getLoc();
 	std::string expectedloc = std::string(LOC);
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 
 	// check time
-	double picktime = pickobject->tPick;
+	double picktime = pickobject->getTPick();
 	double expectedtime = PICKTIME;
 	ASSERT_NEAR(picktime, expectedtime, 0.0001);
 
 	// check backazimuth
-	double beambackazimuth = pickobject->dBackAzimuth;
+	double beambackazimuth = pickobject->getBackAzimuth();
 	double expectedbackazimuth = BACKAZIMUTH;
 	ASSERT_EQ(beambackazimuth, expectedbackazimuth);
 
 	// check slowness
-	double beamslowness = pickobject->dSlowness;
+	double beamslowness = pickobject->getSlowness();
 	double expectedslowness = SLOWNESS;
 	ASSERT_EQ(beamslowness, expectedslowness);
 
 	// check id
-	int pickid = pickobject->idPick;
+	int pickid = pickobject->getIdPick();
 	double expectedpickid = PICKID;
 	ASSERT_EQ(pickid, expectedpickid);
 
 	// check string id
-	std::string pickstringid = pickobject->sPid;
+	std::string pickstringid = pickobject->getPid();
 	std::string expectedstringid = std::string(PICKIDSTRING);
 	ASSERT_STREQ(pickstringid.c_str(), expectedstringid.c_str());
 }
@@ -86,23 +86,24 @@ TEST(PickTest, Construction) {
 	glasscore::CPick * testPick = new glasscore::CPick();
 
 	// assert default values
-	ASSERT_EQ(0, testPick->tPick)<< "time is zero";
-	ASSERT_EQ(-1, testPick->dBackAzimuth)<< "backazimuth is -1";
-	ASSERT_EQ(-1, testPick->dSlowness)<< "slowness is -1";
-	ASSERT_EQ(0, testPick->idPick)<< "id is zero";
-	ASSERT_STREQ("", testPick->sAss.c_str());
-	ASSERT_STREQ("", testPick->sPhs.c_str());
-	ASSERT_STREQ("", testPick->sPid.c_str());
+	ASSERT_EQ(0, testPick->getTPick())<< "time is zero";
+	ASSERT_EQ(-1, testPick->getBackAzimuth())<< "backazimuth is -1";
+	ASSERT_EQ(-1, testPick->getSlowness())<< "slowness is -1";
+	ASSERT_EQ(0, testPick->getIdPick())<< "id is zero";
+	ASSERT_STREQ("", testPick->getAss().c_str());
+	ASSERT_STREQ("", testPick->getPhs().c_str());
+	ASSERT_STREQ("", testPick->getPid().c_str());
 
 	// pointers
-	ASSERT_TRUE(testPick->pSite == NULL)<< "pSite null";
-	ASSERT_TRUE(testPick->pHypo == NULL)<< "pHypo null";
-	ASSERT_TRUE(testPick->jPick == NULL)<< "jPick null";
+	ASSERT_TRUE(testPick->getSite() == NULL)<< "pSite null";
+	ASSERT_TRUE(testPick->getHypo() == NULL)<< "pHypo null";
+	ASSERT_TRUE(testPick->getJPick() == NULL)<< "jPick null";
 
 	// create  shared pointer to the site
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-			new glasscore::CSite(&siteJSON, NULL));
+			new glasscore::CSite(siteJSON, NULL));
 
 	// now init
 	testPick->initialize(sharedTestSite, PICKTIME, PICKID,
@@ -111,7 +112,7 @@ TEST(PickTest, Construction) {
 	// check results
 	checkdata(testPick, "initialize check");
 
-	delete(testPick);
+	delete (testPick);
 }
 
 // tests to see if the pick can be constructed from JSON
@@ -122,14 +123,17 @@ TEST(PickTest, JSONConstruction) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// add site to site list
-	testSiteList->addSite(&siteJSON);
+	testSiteList->addSite(siteJSON);
 
 	// construct a pick using a JSON object
-	json::Object pickJSON = json::Deserialize(std::string(PICKJSON));
-	glasscore::CPick * testPick = new glasscore::CPick(&pickJSON, PICKID,
+	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(PICKJSON))));
+
+	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, PICKID,
 														testSiteList);
 
 	// check results
@@ -141,9 +145,10 @@ TEST(PickTest, HypoOperations) {
 	glassutil::CLogit::disable();
 
 	// create  shared pointer to the site
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-			new glasscore::CSite(&siteJSON, NULL));
+					new glasscore::CSite(siteJSON, NULL));
 
 	// create pick
 	glasscore::CPick * testPick = new glasscore::CPick(
@@ -152,11 +157,12 @@ TEST(PickTest, HypoOperations) {
 			std::string(PICKIDSTRING), BACKAZIMUTH, SLOWNESS);
 
 	// create a hypo
-	traveltime::CTravelTime* nullTrav = NULL;
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
 	glasscore::CHypo * testHypo = new glasscore::CHypo(0.0, 0.0, 0.0, 0.0, "1",
 														"test", 0.0, 0.0, 0,
 														nullTrav, nullTrav,
-														NULL);
+														nullTTT);
 
 	// create new shared pointer to the hypo
 	std::shared_ptr<glasscore::CHypo> sharedHypo(testHypo);
@@ -165,11 +171,11 @@ TEST(PickTest, HypoOperations) {
 	testPick->addHypo(sharedHypo);
 
 	// check hypo
-	ASSERT_TRUE(testPick->pHypo != NULL)<< "pHypo  not null";
+	ASSERT_TRUE(testPick->getHypo() != NULL)<< "pHypo  not null";
 
 	// remove hypo from pick
 	testPick->remHypo(sharedHypo);
 
 	// check hypo
-	ASSERT_TRUE(testPick->pHypo == NULL)<< "pHypo null";
+	ASSERT_TRUE(testPick->getHypo() == NULL)<< "pHypo null";
 }

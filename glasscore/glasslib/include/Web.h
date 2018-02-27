@@ -43,7 +43,7 @@ class CWeb {
 	 * The constructor for the CWeb class.
 	 * \param createBackgroundThread - A boolean flag indicating whether
 	 * to create a background thread for web updates. If set to false, glass will
-   * halt until the web update is completed. Default true.
+	 * halt until the web update is completed. Default true.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
@@ -78,9 +78,9 @@ class CWeb {
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
 	 * use for travel time lookups.
-   * \param createBackgroundThread - A boolean flag indicating whether
-   * to create a background thread for web updates. If set to false, glass will
-   * halt until the web update is completed. Default true.
+	 * \param createBackgroundThread - A boolean flag indicating whether
+	 * to create a background thread for web updates. If set to false, glass will
+	 * halt until the web update is completed. Default true.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
@@ -124,7 +124,7 @@ class CWeb {
 	 * \return Returns true if the communication was handled by CWeb,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CWeb initialization function
@@ -168,7 +168,7 @@ class CWeb {
 	 * configuration
 	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool grid(json::Object *com);
+	bool grid(std::shared_ptr<json::Object>  com);
 
 	/**
 	 * \brief Generate a detection grid with explicit nodes
@@ -179,7 +179,7 @@ class CWeb {
 	 * configuration
 	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool grid_explicit(json::Object *com);
+	bool grid_explicit(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Generate a global detection grid
@@ -191,7 +191,7 @@ class CWeb {
 	 * configuration
 	 * \return Always returns true
 	 */
-	bool global(json::Object *com);
+	bool global(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Load the travel times for this web
@@ -212,7 +212,7 @@ class CWeb {
 	 * \param com - A pointer to a json::object containing the web configuration
 	 * \return Returns true if successful, false otherwise.
 	 */
-	bool genSiteFilters(json::Object *com);
+	bool genSiteFilters(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Generate node site list
@@ -328,6 +328,55 @@ class CWeb {
 	bool statusCheck();
 
 	/**
+	 * \brief add a job
+	 *
+	 * Adds a job to the queue of jobs to be run by the background
+	 * thread
+	 * \param newjob - A std::function<void()> bound to the function
+	 * containing the job to run
+	 */
+	void addJob(std::function<void()> newjob);
+
+	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	CGlass* getGlass() const;
+
+	/**
+	 * \brief CGlass setter
+	 * \param glass - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+	/**
+	 * \brief CSiteList getter
+	 * \return the CSiteList pointer
+	 */
+	const CSiteList* getSiteList() const;
+
+	/**
+	 * \brief CSiteList setter
+	 * \param siteList - the CSiteList pointer
+	 */
+	void setSiteList(CSiteList* siteList);
+	bool getUpdate() const;
+	double getResolution() const;
+	double getThresh() const;
+	int getCol() const;
+	int getDetect() const;
+	int getNucleate() const;
+	int getRow() const;
+	int getZ() const;
+	const std::string& getName() const;
+	const std::shared_ptr<traveltime::CTravelTime>& getTrv1() const;
+	const std::shared_ptr<traveltime::CTravelTime>& getTrv2() const;
+	int getVNetFilterSize() const;
+	int getVSitesFilterSize() const;
+	int getVNodeSize() const;
+
+ private:
+	/**
 	 * \brief the job sleep
 	 *
 	 * The function that performs the sleep between jobs
@@ -342,7 +391,6 @@ class CWeb {
 	 */
 	void setStatus(bool status);
 
-	// Local Attributes
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
 	 * get default values, encode/decode time, and get debug flags
@@ -382,6 +430,11 @@ class CWeb {
 	 * node in the detection graph database
 	 */
 	std::vector<std::shared_ptr<CNode>> vNode;
+
+	/**
+	 * \brief the std::mutex for m_QueueMutex
+	 */
+	mutable std::mutex m_vNodeMutex;
 
 	/**
 	 * \brief String name of web used in tuning
@@ -454,7 +507,7 @@ class CWeb {
 	/**
 	 * \brief the std::mutex for traveltimes
 	 */
-	std::mutex m_TrvMutex;
+	mutable std::mutex m_TrvMutex;
 
 	/**
 	 * \brief A mutex to control threading access to vSite.
@@ -517,14 +570,13 @@ class CWeb {
 	bool m_bUseBackgroundThread;
 
 	/**
-	 * \brief add a job
-	 *
-	 * Adds a job to the queue of jobs to be run by the background
-	 * thread
-	 * \param newjob - A std::function<void()> bound to the function
-	 * containing the job to run
+	 * \brief A recursive_mutex to control threading access to CWeb.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
 	 */
-	void addJob(std::function<void()> newjob);
+	mutable std::recursive_mutex m_WebMutex;
 };
 }  // namespace glasscore
 #endif  // WEB_H

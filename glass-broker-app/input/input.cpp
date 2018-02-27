@@ -253,7 +253,7 @@ void input::clear() {
 }
 
 // get next data from input
-json::Object* input::getData() {
+std::shared_ptr<json::Object> input::getData() {
 	// just get the value from the queue
 	return (m_DataQueue->getDataFromQueue());
 }
@@ -275,7 +275,7 @@ bool input::work() {
 
 	if (message != "") {
 		logger::log("trace", "input::work(): Got message: " + message);
-		json::Object* newdata = NULL;
+		std::shared_ptr<json::Object> newdata;
 		try {
 			newdata = m_JSONParser->parse(message);
 		} catch (const std::exception &e) {

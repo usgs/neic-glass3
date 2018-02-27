@@ -8,6 +8,7 @@
 #define INPUTINTERFACE_H
 
 #include <json.h>
+#include <memory>
 
 namespace util {
 
@@ -31,7 +32,7 @@ class iInput {
 	 * \return Returns a pointer to a json::object containing the input
 	 * data.
 	 */
-	virtual json::Object* getData() = 0;
+	virtual std::shared_ptr<json::Object> getData() = 0;
 
 	/**
 	 * \brief Get count of remaining input data

@@ -23,6 +23,7 @@
 #include <chrono>
 #include <mutex>
 #include <string>
+#include <memory>
 
 #define GPICK_EXTENSION "gpick"
 #define GPICKS_EXTENSION "gpicks"
@@ -111,7 +112,7 @@ class input : public util::iInput, public util::ThreadBaseClass {
 	 *
 	 * \return Returns a pointer to a json::Object containing the data.
 	 */
-	json::Object* getData() override;
+	std::shared_ptr<json::Object> getData() override;
 
 	/**
 	 * \brief input data count function
@@ -261,7 +262,8 @@ class input : public util::iInput, public util::ThreadBaseClass {
 	 * \param extension - A std::string containing the extension to parse
 	 * \return returns a pointer to a json::Object containing the parsed data
 	 */
-	virtual json::Object* parse(std::string extension, std::string input);
+	virtual std::shared_ptr<json::Object> parse(std::string extension,
+												std::string input);
 
 	/**
 	 * \brief validate data function
@@ -272,7 +274,8 @@ class input : public util::iInput, public util::ThreadBaseClass {
 	 * \param input - A json::Object containing the data to validate
 	 * \return returns true if valid, false otherwise
 	 */
-	virtual bool validate(std::string extension, json::Object* input);
+	virtual bool validate(std::string extension,
+							std::shared_ptr<json::Object> input);
 
 	/**
 	 * \brief cleanup file function

@@ -32,23 +32,23 @@ TEST(NodeTest, Construction) {
 														std::string(NODEID));
 
 	// name
-	ASSERT_STREQ(std::string(NAME).c_str(), testNode->sName.c_str())<<
+	ASSERT_STREQ(std::string(NAME).c_str(), testNode->getName().c_str())<<
 			"Node Name Matches";
 
 	// latitude
-	ASSERT_EQ(LATITUDE, testNode->dLat)<< "Node Latitude Check";
+	ASSERT_EQ(LATITUDE, testNode->getLat())<< "Node Latitude Check";
 
 	// longitude
-	ASSERT_EQ(LONGITUDE, testNode->dLon)<< "Node Longitude Check";
+	ASSERT_EQ(LONGITUDE, testNode->getLon())<< "Node Longitude Check";
 
 	// depth
-	ASSERT_EQ(DEPTH, testNode->dZ)<< "Node Depth Check";
+	ASSERT_EQ(DEPTH, testNode->getZ())<< "Node Depth Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testNode->dResolution)<< "Node Resolution Check";
+	ASSERT_EQ(RESOLUTION, testNode->getResolution())<< "Node Resolution Check";
 
 	// id
-	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->sPid.c_str())<<
+	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->getPid().c_str())<<
 			"Node ID Matches";
 
 	// site list
@@ -68,10 +68,11 @@ TEST(NodeTest, SiteOperations) {
 														std::string(NODEID));
 
 	// create json object from the string
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct sites using JSON objects
-	glasscore::CSite * testSite = new glasscore::CSite(&siteJSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
 
 	// create new shared pointer to the node
 	std::shared_ptr<glasscore::CNode> sharedTestNode(testNode);

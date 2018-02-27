@@ -20,11 +20,10 @@ TEST(SiteListTest, Construction) {
 
 	// assert default values
 	// lists
-	ASSERT_EQ(0, testSiteList->vSite.size())<< "vSite is empty";
-	ASSERT_EQ(0, testSiteList->mSite.size())<< "mSite.size() 0";
+	ASSERT_EQ(0, testSiteList->getVSiteSize())<< "vSite is empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testSiteList->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testSiteList->getGlass())<< "pGlass null";
 
 	// cleanup
 	delete (testSiteList);
@@ -38,36 +37,38 @@ TEST(SiteListTest, SiteOperations) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
-	json::Object site2JSON = json::Deserialize(std::string(SITE2JSON));
-	json::Object site3JSON = json::Deserialize(std::string(SITE3JSON));
-	json::Object site4JSON = json::Deserialize(std::string(SITE4JSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITEJSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITE2JSON))));
+	std::shared_ptr<json::Object> site3JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITE3JSON))));
+	std::shared_ptr<json::Object> site4JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITE4JSON))));
 
 	// construct sites using JSON objects
-	glasscore::CSite * testSite = new glasscore::CSite(&siteJSON, NULL);
-	glasscore::CSite * testSite2 = new glasscore::CSite(&site2JSON, NULL);
-	glasscore::CSite * testSite3 = new glasscore::CSite(&site3JSON, NULL);
-	glasscore::CSite * testSite4 = new glasscore::CSite(&site4JSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * testSite4 = new glasscore::CSite(site4JSON, NULL);
+
 
 	// create new shared pointer to the sites
 	std::shared_ptr<glasscore::CSite> sharedTestSite(testSite);
-	std::shared_ptr<glasscore::CSite> sharedTestSite2(testSite2);
-	std::shared_ptr<glasscore::CSite> sharedTestSite3(testSite3);
 	std::shared_ptr<glasscore::CSite> sharedTestSite4(testSite4);
 
 	// test adding sites to site list via all three methods
 	// shared_ptr, json, and dispatch (also json)
 	testSiteList->addSite(sharedTestSite);
-	testSiteList->addSite(&site2JSON);
-	testSiteList->dispatch(&site3JSON);
+	testSiteList->addSite(site2JSON);
+	testSiteList->dispatch(site3JSON);
 	int expectedSize = 3;
 	ASSERT_EQ(expectedSize, testSiteList->getSiteCount())<< "Added Sites";
+
 
 	// test updating a site, and get site
 	testSiteList->addSite(sharedTestSite4);
 	std::shared_ptr<glasscore::CSite> updatedSite = testSiteList->getSite(
-			sharedTestSite4->sScnl);
-	ASSERT_FALSE(updatedSite->bUse)<< "Updated site";
+			sharedTestSite4->getScnl());
+	ASSERT_FALSE(updatedSite->getUse())<< "Updated site";
 
 	// cleanup
 	delete (testSiteList);

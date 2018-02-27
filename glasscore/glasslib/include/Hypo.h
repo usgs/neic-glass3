@@ -21,7 +21,7 @@ namespace glasscore {
 class CGlass;
 class CPick;
 class CCorrelation;
-class CNode;
+class CTrigger;
 
 /**
  * \brief glasscore hypocenter class
@@ -79,9 +79,9 @@ class CHypo {
 	 */
 	CHypo(double lat, double lon, double z, double time, std::string pid,
 			std::string web, double bayes, double thresh, int cut,
-			traveltime::CTravelTime* firstTrav,
-			traveltime::CTravelTime* secondTrav, traveltime::CTTT *ttt,
-			double resolution = 100);
+			std::shared_ptr<traveltime::CTravelTime> firstTrav,
+			std::shared_ptr<traveltime::CTravelTime> secondTrav,
+			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100);
 
 	/**
 	 * \brief CHypo alternate constructor
@@ -92,7 +92,8 @@ class CHypo {
 	 * \param node - A shared pointer to a CNode object containing the node to
 	 * construct this hypo from.
 	 */
-	explicit CHypo(std::shared_ptr<CNode> node, traveltime::CTTT *ttt);
+	explicit CHypo(std::shared_ptr<CTrigger> trigger,
+					std::shared_ptr<traveltime::CTTT> ttt);
 
 	/**
 	 * \brief CHypo alternate constructor
@@ -104,8 +105,9 @@ class CHypo {
 	 * correlation to construct this hypo from.
 	 */
 	explicit CHypo(std::shared_ptr<CCorrelation> corr,
-					traveltime::CTravelTime* firstTrav,
-					traveltime::CTravelTime* secondTrav, traveltime::CTTT *ttt);
+					std::shared_ptr<traveltime::CTravelTime> firstTrav,
+					std::shared_ptr<traveltime::CTravelTime> secondTrav,
+					std::shared_ptr<traveltime::CTTT> ttt);
 
 	/**
 	 * \brief CHypo destructor
@@ -142,9 +144,11 @@ class CHypo {
 	 */
 	bool initialize(double lat, double lon, double z, double time,
 					std::string pid, std::string web, double bayes,
-					double thresh, int cut, traveltime::CTravelTime* firstTrav,
-					traveltime::CTravelTime* secondTrav, traveltime::CTTT *ttt,
-					double resolution = 100);
+					double thresh, int cut,
+					std::shared_ptr<traveltime::CTravelTime> firstTrav,
+					std::shared_ptr<traveltime::CTravelTime> secondTrav,
+					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
+							100);
 
 	/**
 	 * \brief Add pick reference to this hypo
@@ -246,7 +250,7 @@ class CHypo {
 	 *
 	 * \return Returns the generated json object.
 	 */
-	json::Object hypo();
+	std::shared_ptr<json::Object> hypo();
 
 	/**
 	 * \brief Generate Event message
@@ -472,6 +476,8 @@ class CHypo {
 	double getBayes(double xlat, double xlon, double xZ, double oT,
 					int nucleate);
 
+	double getResidual(std::string sPhase, double tObs, double tCal);
+
 	/**
 	 * Get the sum of the absolute residuals at a location
 	 *
@@ -490,13 +496,6 @@ class CHypo {
 	 *
 	 */
 	void graphicsOutput();
-
-	/**
-	 * \brief Sets the processing cycle count
-	 *
-	 * \param newCycle - An integer value containing the new cycle count
-	 */
-	void setCycle(int newCycle);
 
 	/**
 	 * \brief Calculate station weights
@@ -518,8 +517,245 @@ class CHypo {
 	 */
 	void trap();
 
-	void incrementProcessCount();
+	/**
+	 * \brief Latitude getter
+	 * \return the latitude
+	 */
+	double getLat() const;
 
+	/**
+	 * \brief Longitude getter
+	 * \return the longitude
+	 */
+	double getLon() const;
+
+	/**
+	 * \brief Depth getter
+	 * \return the depth
+	 */
+	double getZ() const;
+
+	/**
+	 * \brief Origin time getter
+	 * \return the origin time
+	 */
+	double getTOrg() const;
+
+	/**
+	 * \brief Bayes value getter
+	 * \return the bayes value
+	 */
+	double getBayes() const;
+
+	/**
+	 * \brief Correlation added flag getter
+	 * \return the correlation added flag
+	 */
+	bool getCorrAdded() const;
+
+	/**
+	 * \brief Correlation added flag setter
+	 * \param corrAdded - the correlation added flag
+	 */
+	void setCorrAdded(bool corrAdded);
+
+	/**
+	 * \brief Event reported flag getter
+	 * \return the event reported flag
+	 */
+	bool getEvent() const;
+
+	/**
+	 * \brief Fixed flag getter
+	 * \return the fixed flag
+	 */
+	bool getFixed() const;
+
+	/**
+	 * \brief Fixed flag setter
+	 * \param fixed - the fixed flag
+	 */
+	void setFixed(bool fixed);
+
+	/**
+	 * \brief Bayes initial value getter
+	 * \return the intial bayes value
+	 */
+	double getBayesInitial() const;
+
+	/**
+	 * \brief Cut factor getter
+	 * \return the cut factor value
+	 */
+	double getCutFactor() const;
+
+	/**
+	 * \brief Cut factor setter
+	 * \param cutFactor -  the cut factor
+	 */
+	void setCutFactor(double cutFactor);
+
+	/**
+	 * \brief Cut min getter
+	 * \return the cut min value
+	 */
+	double getCutMin() const;
+
+	/**
+	 * \brief Cut min setter
+	 * \param cutMin - the cut min value
+	 */
+	void setCutMin(double cutMin);
+
+	/**
+	 * \brief Cut percentage getter
+	 * \return the cut percentage value
+	 */
+	double getCutPercentage() const;
+
+	/**
+	 * \brief Cut factor setter
+	 * \param cutPercentage - the cut percentage value
+	 */
+	void setCutPercentage(double cutPercentage);
+
+	/**
+	 * \brief Cut getter
+	 * \return the cut value
+	 */
+	int getCut() const;
+
+	/**
+	 * \brief Cut setter
+	 * \param cut - the cut value
+	 */
+	void setCut(double cut);
+
+	/**
+	 * \brief Thresh getter
+	 * \return the thresh value
+	 */
+	double getThresh() const;
+
+	/**
+	 * \brief Thresh setter
+	 * \param thresh - the thresh value
+	 */
+	void setThresh(double thresh);
+
+	/**
+	 * \brief Gap getter
+	 * \return the gap value
+	 */
+	double getGap() const;
+
+	/**
+	 * \brief Kurtosis getter
+	 * \return the kurtosis value
+	 */
+	double getKrt() const;
+
+	/**
+	 * \brief Med distance getter
+	 * \return the med distance value
+	 */
+	double getMed() const;
+
+	/**
+	 * \brief Min distance getter
+	 * \return the min distance value
+	 */
+	double getMin() const;
+
+	/**
+	 * \brief Residual getter
+	 * \return the residual value
+	 */
+	double getRes() const;
+
+	/**
+	 * \brief Sig getter
+	 * \return the sig value
+	 */
+	double getSig() const;
+
+	/**
+	 * \brief Cycle getter
+	 * \return the cycle value
+	 */
+	int getCycle() const;
+
+	/**
+	 * \brief Cycle setter
+	 * \param newCycle - the cycle value
+	 */
+	int setCycle(int newCycle);
+
+	/**
+	 * \brief Process count getter
+	 * \return the process count value
+	 */
+	int getProcessCount() const;
+
+	/**
+	 * \brief Process count incrementer
+	 * \return the process count value
+	 */
+	int incrementProcessCount();
+
+	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	const CGlass* getGlass() const;
+
+	/**
+	 * \brief CGlass setter
+	 * \param glass - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+	/**
+	 * \brief Pid getter
+	 * \return the Pid
+	 */
+	const std::string& getPid() const;
+
+	/**
+	 * \brief Web Name getter
+	 * \return the Web Name
+	 */
+	const std::string& getWebName() const;
+
+	/**
+	 * \brief Pick vector size getter
+	 * \return the pick vector size
+	 */
+	int getVPickSize() const;
+
+	/**
+	 * \brief Correlation vector size getter
+	 * \return the correlation vector size
+	 */
+	int getVCorrSize() const;
+
+	/**
+	 * \brief Creation time getter
+	 * \return the creation time
+	 */
+	double getTCreate() const;
+
+	/**
+	 * \brief Report count getter
+	 * \return the report count
+	 */
+	int getReportCount() const;
+
+	bool isLockedForProcessing();
+	void lockForProcessing();
+	void unlockAfterProcessing();
+
+ private:
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
 	 * look up travel times, encode/decode time, and call significance
@@ -531,7 +767,7 @@ class CHypo {
 	 * \brief  A std::string with the name of the initiating subnet trigger
 	 * used during the nucleation process
 	 */
-	std::string sWeb;
+	std::string sWebName;
 
 	/**
 	 * \brief An integer containing the number of stations needed to maintain
@@ -575,16 +811,6 @@ class CHypo {
 	 * \brief A double value containing this hypo's depth in kilometers
 	 */
 	double dZ;
-
-	/**
-	 * \brief A boolean indicating whether this hypo needs to be refined.
-	 */
-	bool bRefine;
-
-	/**
-	 * \brief A boolean indicating if a Quake message was sent for this hypo.
-	 */
-	bool bQuake;
 
 	/**
 	 * \brief A boolean indicating if an Event message was sent for this hypo.
@@ -747,19 +973,19 @@ class CHypo {
 	 * \brief A pointer to a CTravelTime object containing
 	 * travel times for the first phase used to nucleate this hypo
 	 */
-	traveltime::CTravelTime* pTrv1;
+	std::shared_ptr<traveltime::CTravelTime> pTrv1;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
 	 * travel times for the second phase used to nucleate this hypo
 	 */
-	traveltime::CTravelTime* pTrv2;
+	std::shared_ptr<traveltime::CTravelTime> pTrv2;
 
 	/**
 	 * \brief A pointer to a CTTT object containing the travel
 	 * time phases and branches used for association and location
 	 */
-	traveltime::CTTT *pTTT;
+	std::shared_ptr<traveltime::CTTT> pTTT;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypo.
@@ -768,7 +994,12 @@ class CHypo {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex hypoMutex;
+	mutable std::recursive_mutex hypoMutex;
+
+	/**
+	 * \brief A mutex to control processing access to CHypo.
+	 */
+	std::mutex processingMutex;
 
 	/**
 	 * \brief A random engine used to generate random numbers

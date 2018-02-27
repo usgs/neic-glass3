@@ -13,6 +13,7 @@
 #include "Site.h"
 #include "Logit.h"
 #include "Node.h"
+#include "Trigger.h"
 #include "Web.h"
 
 namespace glasscore {
@@ -34,7 +35,7 @@ std::vector<std::string> &split(const std::string &s, char delim,
 }
 
 std::vector<std::string> split(const std::string &s, char delim) {
-	std::vector < std::string > elems;
+	std::vector<std::string> elems;
 
 	// split using string and delimiter
 	split(s, delim, elems);
@@ -58,20 +59,20 @@ CSite::CSite(std::string sta, std::string comp, std::string net,
 }
 
 // ---------------------------------------------------------CSite
-CSite::CSite(json::Object *com, CGlass *glassPtr) {
+CSite::CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr) {
 	clear();
 
 	// null check json
-	if (com == NULL) {
+	if (site == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
-								"CSite::CSite: NULL json communication.");
+								"CSite::CSite: NULL json site.");
 		return;
 	}
 
 	// check type
-	if (com->HasKey("Type")
-			&& ((*com)["Type"].GetType() == json::ValueType::StringVal)) {
-		std::string type = (*com)["Type"].ToString();
+	if (site->HasKey("Type")
+			&& ((*site)["Type"].GetType() == json::ValueType::StringVal)) {
+		std::string type = (*site)["Type"].ToString();
 
 		if (type != "StationInfo") {
 			glassutil::CLogit::log(
@@ -101,9 +102,9 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 
 	// get site information from json
 	// scnl
-	if (((*com).HasKey("Site"))
-			&& ((*com)["Site"].GetType() == json::ValueType::ObjectVal)) {
-		json::Object siteobj = (*com)["Site"].ToObject();
+	if (((*site).HasKey("Site"))
+			&& ((*site)["Site"].GetType() == json::ValueType::ObjectVal)) {
+		json::Object siteobj = (*site)["Site"].ToObject();
 
 		// station
 		if (siteobj.HasKey("Station")
@@ -113,6 +114,7 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CSite::CSite: Missing required Station Key.");
+
 			return;
 		}
 
@@ -132,6 +134,7 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CSite::CSite: Missing required Network Key.");
+
 			return;
 		}
 
@@ -151,62 +154,66 @@ CSite::CSite(json::Object *com, CGlass *glassPtr) {
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::CSite: Missing required Site Object.");
+
 		return;
 	}
 
 	// latitude for this site
-	if (((*com).HasKey("Latitude"))
-			&& ((*com)["Latitude"].GetType() == json::ValueType::DoubleVal)) {
-		latitude = (*com)["Latitude"].ToDouble();
+	if (((*site).HasKey("Latitude"))
+			&& ((*site)["Latitude"].GetType() == json::ValueType::DoubleVal)) {
+		latitude = (*site)["Latitude"].ToDouble();
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::CSite: Missing required Latitude Key.");
+
 		return;
 	}
 
 	// longitude for this site
-	if (((*com).HasKey("Longitude"))
-			&& ((*com)["Longitude"].GetType() == json::ValueType::DoubleVal)) {
-		longitude = (*com)["Longitude"].ToDouble();
+	if (((*site).HasKey("Longitude"))
+			&& ((*site)["Longitude"].GetType() == json::ValueType::DoubleVal)) {
+		longitude = (*site)["Longitude"].ToDouble();
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CSite::CSite: Missing required Longitude Key.");
+
 		return;
 	}
 
 	// elevation for this site
-	if (((*com).HasKey("Elevation"))
-			&& ((*com)["Elevation"].GetType() == json::ValueType::DoubleVal)) {
-		elevation = (*com)["Elevation"].ToDouble();
+	if (((*site).HasKey("Elevation"))
+			&& ((*site)["Elevation"].GetType() == json::ValueType::DoubleVal)) {
+		elevation = (*site)["Elevation"].ToDouble();
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CSite::CSite: Missing required Elevation Key.");
+
 		return;
 	}
 
 	// quality for this site (if present)
-	if (((*com).HasKey("Quality"))
-			&& ((*com)["Quality"].GetType() == json::ValueType::DoubleVal)) {
-		quality = (*com)["Quality"].ToDouble();
+	if (((*site).HasKey("Quality"))
+			&& ((*site)["Quality"].GetType() == json::ValueType::DoubleVal)) {
+		quality = (*site)["Quality"].ToDouble();
 	} else {
 		quality = 1.0;
 	}
 
 	// enable for this site (if present)
-	if (((*com).HasKey("Enable"))
-			&& ((*com)["Enable"].GetType() == json::ValueType::BoolVal)) {
-		enable = (*com)["Enable"].ToBool();
+	if (((*site).HasKey("Enable"))
+			&& ((*site)["Enable"].GetType() == json::ValueType::BoolVal)) {
+		enable = (*site)["Enable"].ToBool();
 	} else {
 		enable = true;
 	}
 
 	// enable for this site (if present)
-	if (((*com).HasKey("UseForTeleseismic"))
-			&& ((*com)["UseForTeleseismic"].GetType()
+	if (((*site).HasKey("UseForTeleseismic"))
+			&& ((*site)["UseForTeleseismic"].GetType()
 					== json::ValueType::BoolVal)) {
-		useForTelesiesmic = (*com)["UseForTeleseismic"].ToBool();
+		useForTelesiesmic = (*site)["UseForTeleseismic"].ToBool();
 	} else {
 		useForTelesiesmic = true;
 	}
@@ -222,6 +229,8 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 						double qual, bool enable, bool useTele,
 						CGlass *glassPtr) {
 	clear();
+
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 
 	// generate scnl
 	sScnl = "";
@@ -274,19 +283,8 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	pGlass = glassPtr;
 
 	if (pGlass) {
-		nSitePickMax = pGlass->nSitePickMax;
+		nSitePickMax = pGlass->getSitePickMax();
 	}
-
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CSite::initialize: sScnl:" + sScnl + "; sSite:" + sSite
-					+ "; sComp:" + sComp + "; sNet:" + sNet + "; sLoc:" + sLoc
-					+ "; dLat:" + std::to_string(geo.dLat) + "; dLon:"
-					+ std::to_string(geo.dLon) + "; dZ:"
-					+ std::to_string(geo.dZ) + "; dQual:"
-					+ std::to_string(dQual) + "; bUse:" + std::to_string(bUse)
-					+ "; bUseForTele:" + std::to_string(bUseForTele)
-					+ "; nSitePickMax:" + std::to_string(nSitePickMax));
 
 	return (true);
 }
@@ -297,6 +295,7 @@ CSite::~CSite() {
 }
 
 void CSite::clear() {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	// clear scnl
 	sScnl = "";
 	sSite = "";
@@ -307,11 +306,8 @@ void CSite::clear() {
 	bUse = true;
 	bUseForTele = true;
 	dQual = 1.0;
-	dTrav = 0.0;
 
 	pGlass = NULL;
-	pNode = NULL;
-	qNode = NULL;
 
 	// clear geographic
 	geo = glassutil::CGeo();
@@ -324,19 +320,20 @@ void CSite::clear() {
 	vNode.clear();
 	vNodeMutex.unlock();
 
-	vPickMutex.lock();
-	vPick.clear();
-	vPickMutex.unlock();
-
-	vTriggerMutex.lock();
-	vTrigger.clear();
-	vTriggerMutex.unlock();
+	clearVPick();
 
 	// reset max picks
 	nSitePickMax = 200;
 }
 
+void CSite::clearVPick() {
+	vPickMutex.lock();
+	vPick.clear();
+	vPickMutex.unlock();
+}
+
 void CSite::update(CSite *site) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	// scnl check
 	if (sScnl != site->sScnl) {
 		return;
@@ -358,6 +355,7 @@ void CSite::update(CSite *site) {
 
 // ---------------------------------------------------------setLocation
 void CSite::setLocation(double lat, double lon, double z) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	// construct unit vector in cartesian earth coordinates
 	double rxy = cos(DEG2RAD * lat);
 	dVec[0] = rxy * cos(DEG2RAD * lon);
@@ -406,7 +404,7 @@ double CSite::getDistance(std::shared_ptr<CSite> site) {
 // ---------------------------------------------------------addPick
 void CSite::addPick(std::shared_ptr<CPick> pck) {
 	// lock for editing
-	std::lock_guard < std::mutex > guard(vPickMutex);
+	std::lock_guard<std::mutex> guard(vPickMutex);
 
 	// nullcheck
 	if (pck == NULL) {
@@ -416,11 +414,11 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 	}
 
 	// ensure this pick is for this site
-	if (pck->pSite->sScnl != sScnl) {
+	if (pck->getSite()->sScnl != sScnl) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
 				"CSite::addPick: CPick for different site: (" + sScnl + "!="
-						+ pck->pSite->sScnl + ")");
+						+ pck->getSite()->sScnl + ")");
 		return;
 	}
 
@@ -432,13 +430,14 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 
 	// add pick to site pick vector
 	// NOTE: Need to add duplicate pick protection
-	vPick.push_back(pck);
+	std::weak_ptr<CPick> wpPck = pck;
+	vPick.push_back(wpPck);
 }
 
 // ---------------------------------------------------------remPick
 void CSite::remPick(std::shared_ptr<CPick> pck) {
 	// lock for editing
-	std::lock_guard < std::mutex > guard(vPickMutex);
+	std::lock_guard<std::mutex> guard(vPickMutex);
 
 	// nullcheck
 	if (pck == NULL) {
@@ -448,9 +447,20 @@ void CSite::remPick(std::shared_ptr<CPick> pck) {
 	}
 
 	// remove pick from site pick vector
-	auto it = std::find(vPick.begin(), vPick.end(), pck);
-	if (it != vPick.end()) {
-		vPick.erase(it);
+	for (auto it = vPick.begin(); it != vPick.end();) {
+		if ((*it).expired() == true) {
+			// clean up expired pointers
+			it = vPick.erase(it);
+		} else if (auto aPck = (*it).lock()) {
+			// erase target pick
+			if (aPck->getPid() == pck->getPid()) {
+				it = vPick.erase(it);
+			} else {
+				++it;
+			}
+		} else {
+			++it;
+		}
 	}
 }
 
@@ -458,7 +468,7 @@ void CSite::remPick(std::shared_ptr<CPick> pck) {
 void CSite::addNode(std::shared_ptr<CNode> node, double travelTime1,
 					double travelTime2) {
 	// lock for editing
-	std::lock_guard < std::mutex > guard(vNodeMutex);
+	std::lock_guard<std::mutex> guard(vNodeMutex);
 
 	// nullcheck
 	if (node == NULL) {
@@ -485,7 +495,7 @@ void CSite::addNode(std::shared_ptr<CNode> node, double travelTime1,
 // ---------------------------------------------------------remNode
 void CSite::remNode(std::string nodeID) {
 	// lock for editing
-	std::lock_guard < std::mutex > guard(vNodeMutex);
+	std::lock_guard<std::mutex> guard(vNodeMutex);
 
 	// nullcheck
 	if (nodeID == "") {
@@ -494,55 +504,56 @@ void CSite::remNode(std::string nodeID) {
 		return;
 	}
 
-	NodeLink nodeLinkToDelete;
-
-	// remove the node identified by the id
-	for (const auto &link : vNode) {
-		// third is shared pointer to node
-		std::shared_ptr<CNode> aNode = std::get < LINK_PTR > (link);
-
-		// nullcheck
-		if (aNode == NULL) {
-			continue;
-		}
-
-		// check to see if we have a match
-		if (aNode->sPid == nodeID) {
-			// remember which one to delete
-			nodeLinkToDelete = link;
-
-			// we're done
-			break;
+	// clean up expired pointers
+	for (auto it = vNode.begin(); it != vNode.end();) {
+		if (std::get<LINK_PTR>(*it).expired() == true) {
+			it = vNode.erase(it);
+		} else {
+			++it;
 		}
 	}
 
-	// remove link from vector
-	auto it = std::find(vNode.begin(), vNode.end(), nodeLinkToDelete);
-	if (it != vNode.end()) {
-		vNode.erase(it);
+	for (auto it = vNode.begin(); it != vNode.end();) {
+		if (auto aNode = std::get<LINK_PTR>(*it).lock()) {
+			// erase target pick
+			if (aNode->getPid() == nodeID) {
+				it = vNode.erase(it);
+				return;
+			} else {
+				++it;
+			}
+		} else {
+			++it;
+		}
 	}
 }
 
 // ---------------------------------------------------------Nucleate
-void CSite::nucleate(double tPick) {
-	std::lock_guard < std::mutex > guard(vNodeMutex);
+std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
+	std::lock_guard<std::mutex> guard(vNodeMutex);
 
-	// clear any previous triggering nodes
-	vTriggerMutex.lock();
-	vTrigger.clear();
-	vTriggerMutex.unlock();
+	// create trigger vector
+	std::vector<std::shared_ptr<CTrigger>> vTrigger;
 
 	// for each node linked to this site
 	for (const auto &link : vNode) {
 		// compute potential origin time from tpick and traveltime to node
 		// first get traveltime1 to node
-		double travelTime1 = std::get < LINK_TT1 > (link);
+		double travelTime1 = std::get< LINK_TT1>(link);
 
 		// second get traveltime2 to node
-		double travelTime2 = std::get < LINK_TT2 > (link);
+		double travelTime2 = std::get< LINK_TT2>(link);
 
 		// third get shared pointer to node
-		std::shared_ptr<CNode> node = std::get < LINK_PTR > (link);
+		std::shared_ptr<CNode> node = std::get<LINK_PTR>(link).lock();
+
+		if (node == NULL) {
+			continue;
+		}
+
+		if (node->getEnabled() == false) {
+			continue;
+		}
 
 		// compute first origin time
 		double tOrigin1 = -1;
@@ -558,70 +569,155 @@ void CSite::nucleate(double tPick) {
 
 		// attempt to nucleate an event located
 		// at the current node with the potential origin times
+		bool primarySuccessful = false;
 		if (tOrigin1 > 0) {
-			if (node->nucleate(tOrigin1)) {
+			std::shared_ptr<CTrigger> trigger1 = node->nucleate(tOrigin1);
+
+			if (trigger1 != NULL) {
 				// if node triggered, add to triggered vector
-				addTrigger(node);
+				addTrigger(&vTrigger, trigger1);
+				primarySuccessful = true;
 			}
-		} else if (tOrigin2 > 0) {
-			if (node->nucleate(tOrigin2)) {
+		}
+
+		// only attempt secondary phase nucleation if primary nucleation
+		// was unsuccessful
+		if ((primarySuccessful == false) && (tOrigin2 > 0)) {
+			std::shared_ptr<CTrigger> trigger2 = node->nucleate(tOrigin2);
+
+			if (trigger2 != NULL) {
 				// if node triggered, add to triggered vector
-				addTrigger(node);
+				addTrigger(&vTrigger, trigger2);
 			}
-		} else {
+		}
+
+		if ((tOrigin1 < 0) && (tOrigin2 < 0)) {
 			glassutil::CLogit::log(
 					glassutil::log_level::warn,
 					"CSite::nucleate: " + sScnl + " No valid travel times. ("
 							+ std::to_string(travelTime1) + ", "
 							+ std::to_string(travelTime2) + ") web: "
-							+ node->pWeb->sName);
+							+ node->getWeb()->getName());
 		}
 	}
+
+	return (vTrigger);
 }
 
 // ---------------------------------------------------------addTrigger
-void CSite::addTrigger(std::shared_ptr<CNode> node) {
-	std::lock_guard < std::mutex > guard(vTriggerMutex);
+void CSite::addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
+						std::shared_ptr<CTrigger> trigger) {
+	if (trigger == NULL) {
+		return;
+	}
+	if (trigger->getWeb() == NULL) {
+		return;
+	}
 
-	// for each known triggering node
-	for (int iq = 0; iq < vTrigger.size(); iq++) {
-		// get current triggered node
-		auto q = vTrigger[iq];
+	// clean up expired pointers
+	for (auto it = vTrigger->begin(); it != vTrigger->end();) {
+		std::shared_ptr<CTrigger> aTrigger = (*it);
 
-		// if current triggered node is part of latest node's web
-		if (node->pWeb->sName == q->pWeb->sName) {
-			// if latest node's sum is greater than current triggered node's
-			// sum, replace it
-
-			// glassutil::CLogit::log(
-			// glassutil::log_level::debug,
-			// "CSite::addTrigger Node 1:"
-			// + std::to_string(node->dLat) + ", "
-			// + std::to_string(node->dLon) + ", "
-			// + std::to_string(node->dZ) + ", "
-			// + std::to_string(node->dSum) + ", Node 2:"
-			// + std::to_string(q->dLat) + ", "
-			// + std::to_string(q->dLon) + ", "
-			// + std::to_string(q->dZ) + ", "
-			// + std::to_string(q->dSum));
-
-			if (node->dSum > q->dSum) {
-				vTrigger[iq] = node;
+		// if current trigger is part of latest trigger's web
+		if (trigger->getWeb()->getName() == aTrigger->getWeb()->getName()) {
+			// if current trigger's sum is less than latest trigger's sum
+			if (trigger->getSum() > aTrigger->getSum()) {
+				it = vTrigger->erase(it);
+				it = vTrigger->insert(it, trigger);
 			}
 
 			// we're done
 			return;
+		} else {
+			++it;
 		}
 	}
 
 	// add triggering node to vector of triggered nodes
-	vTrigger.push_back(node);
+	vTrigger->push_back(trigger);
 }
 
-int CSite::getNodeLinksCount() {
-	std::lock_guard < std::mutex > guard(vNodeMutex);
+int CSite::getNodeLinksCount() const {
+	std::lock_guard<std::mutex> guard(vNodeMutex);
 	int size = vNode.size();
 
 	return (size);
+}
+
+bool CSite::getUse() const {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (bUse);
+}
+
+void CSite::setUse(bool use) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	bUse = use;
+}
+
+bool CSite::getUseForTele() const {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (bUseForTele);
+}
+
+void CSite::setUseForTele(bool useForTele) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	bUseForTele = useForTele;
+}
+
+double CSite::getQual() const {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (dQual);
+}
+
+void CSite::setQual(double qual) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	dQual = qual;
+}
+
+glassutil::CGeo& CSite::getGeo() {
+	return (geo);
+}
+
+int CSite::getSitePickMax() const {
+	return (nSitePickMax);
+}
+
+CGlass* CSite::getGlass() const {
+	return (pGlass);
+}
+
+const std::string& CSite::getComp() const {
+	return (sComp);
+}
+
+const std::string& CSite::getLoc() const {
+	return (sLoc);
+}
+
+const std::string& CSite::getNet() const {
+	return (sNet);
+}
+
+const std::string& CSite::getScnl() const {
+	return (sScnl);
+}
+
+const std::string& CSite::getSite() const {
+	return (sSite);
+}
+
+const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
+	std::lock_guard<std::mutex> guard(vPickMutex);
+
+	std::vector<std::shared_ptr<CPick>> picks;
+	for (auto awpPck : vPick) {
+		std::shared_ptr<CPick> aPck = awpPck.lock();
+
+		if (aPck != NULL) {
+			picks.push_back(aPck);
+		}
+	}
+
+	return (picks);
 }
 }  // namespace glasscore

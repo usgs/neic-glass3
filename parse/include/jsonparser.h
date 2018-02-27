@@ -10,6 +10,7 @@
 #include <json.h>
 #include <parser.h>
 #include <string>
+#include <memory>
 
 namespace parse {
 /**
@@ -52,7 +53,7 @@ class JSONParser : public Parser {
 	 * \return Returns a pointer to the json::Object containing
 	 * the data.
 	 */
-	json::Object* parse(const std::string &input) override;
+	std::shared_ptr<json::Object> parse(const std::string &input) override; // NOLINT
 
 	/**
 	 * \brief json validation function
@@ -63,7 +64,7 @@ class JSONParser : public Parser {
 	 * validate.
 	 * \return Returns true if valid, false otherwise.
 	 */
-	bool validate(json::Object* input) override;
+	bool validate(std::shared_ptr<json::Object> &input) override;
 };
 }  // namespace parse
 #endif  // JSONPARSER_H

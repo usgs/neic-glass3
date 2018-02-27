@@ -14,6 +14,7 @@
 #include <mutex>
 #include <string>
 #include <map>
+#include <memory>
 
 namespace util {
 /**
@@ -81,8 +82,8 @@ class Cache : public util::BaseClass {
 	 * Defaults to true
 	 * \return returns true if successful, false otherwise.
 	 */
-	virtual bool addToCache(json::Object * data, std::string id, bool lock =
-									true);
+	virtual bool addToCache(std::shared_ptr<json::Object> data, std::string id,
+							bool lock = true);
 
 	/**
 	 *\brief remove data from cache
@@ -123,8 +124,8 @@ class Cache : public util::BaseClass {
 	 * if the data
 	 * was not found
 	 */
-	virtual json::Object * getFromCache(std::string id, bool lock = true,
-										bool copy = false);
+	virtual std::shared_ptr<json::Object> getFromCache(std::string id,
+														bool lock = true);
 
 	/**
 	 * \brief get next data from cache
@@ -138,8 +139,8 @@ class Cache : public util::BaseClass {
 	 * NULL if there is no
 	 * more data available.
 	 */
-	virtual json::Object * getNextFromCache(bool restart = false, bool lock =
-													true);
+	virtual std::shared_ptr<json::Object> getNextFromCache(bool restart = false,
+															bool lock = true);
 
 	/**
 	 *\brief clear data from cache
@@ -216,7 +217,7 @@ class Cache : public util::BaseClass {
 	/**
 	 * \brief the std::map used to store the cache
 	 */
-	std::map<std::string, json::Object *> m_Cache;
+	std::map<std::string, std::shared_ptr<json::Object>> m_Cache;
 
 	/**
 	 * \brief a boolean flag indicating whether the cache has
@@ -227,7 +228,7 @@ class Cache : public util::BaseClass {
 	/**
 	 * \brief a std::map iterator used to output the cache
 	 */
-	std::map<std::string, json::Object *>::iterator m_CacheDumpItr;
+	std::map<std::string, std::shared_ptr<json::Object>>::iterator m_CacheDumpItr;
 
 	/**
 	 * \brief the mutex for the cache

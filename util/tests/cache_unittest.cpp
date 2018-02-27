@@ -2,6 +2,7 @@
 #include <json.h>
 #include <cache.h>
 #include <string>
+#include <memory>
 
 #define TESTDATA1 "{\"HighPass\":1.000000,\"LowPass\":1.000000,\"cacheid\":\"test1\"}" // NOLINT
 #define TESTDATA1ID "test1"
@@ -59,18 +60,18 @@ TEST(CacheTest, CombinedTest) {
 
 	// create input data
 	std::string inputstring1 = std::string(TESTDATA1);
-	json::Object* inputdata1 = new json::Object(
-			json::Deserialize(inputstring1));
+	std::shared_ptr<json::Object> inputdata1 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(inputstring1)));
 	std::string inputid1 = std::string(TESTDATA1ID);
 
 	std::string inputstring2 = std::string(TESTDATA2);
-	json::Object* inputdata2 = new json::Object(
-			json::Deserialize(inputstring2));
+	std::shared_ptr<json::Object> inputdata2 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(inputstring2)));
 	std::string inputid2 = std::string(TESTDATA2ID);
 
 	std::string inputstring3 = std::string(TESTDATA3);
-	json::Object* inputdata3 = new json::Object(
-			json::Deserialize(inputstring3));
+	std::shared_ptr<json::Object> inputdata3 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(inputstring3)));
 	std::string inputid3 = std::string(TESTDATA3ID);
 
 	// add data to cache
@@ -93,9 +94,12 @@ TEST(CacheTest, CombinedTest) {
 
 	// get data from cache
 	ASSERT_TRUE(NULL == TestCache->getFromCache(""));
-	json::Object* outputobject1 = TestCache->getFromCache(inputid1);
-	json::Object* outputobject2 = TestCache->getFromCache(inputid2);
-	json::Object* outputobject3 = TestCache->getFromCache(inputid3);
+	std::shared_ptr<json::Object> outputobject1 = TestCache->getFromCache(
+			inputid1);
+	std::shared_ptr<json::Object> outputobject2 = TestCache->getFromCache(
+			inputid2);
+	std::shared_ptr<json::Object> outputobject3 = TestCache->getFromCache(
+			inputid3);
 
 	// assert that we got something
 	ASSERT_TRUE(outputobject1 != NULL)<< "non-null cache data 1 (getfromcache)";

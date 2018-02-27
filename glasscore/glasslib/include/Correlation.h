@@ -84,7 +84,7 @@ class CCorrelation {
 	 * \param correlationId - An integer containing the correlation id to use.
 	 * \param pSiteList - A pointer to the CSiteList class
 	 */
-	CCorrelation(json::Object *correlation, int correlationId,
+	CCorrelation(std::shared_ptr<json::Object> correlation, int correlationId,
 					CSiteList *pSiteList);
 
 	/**
@@ -142,8 +142,6 @@ class CCorrelation {
 	void addHypo(std::shared_ptr<CHypo> hyp, std::string ass = "", bool force =
 							false);
 
-	void setAss(std::string ass);
-
 	/**
 	 * \brief Remove hypo reference to this correlation
 	 *
@@ -161,7 +159,97 @@ class CCorrelation {
 
 	void clearHypo();
 
-	// Local Attributes
+	/**
+	 * \brief Correlation value getter
+	 * \return the correlation value
+	 */
+	double getCorrelation() const;
+
+	/**
+	 * \brief Latitude getter
+	 * \return the latitude
+	 */
+	double getLat() const;
+
+	/**
+	 * \brief Longitude getter
+	 * \return the longitude
+	 */
+	double getLon() const;
+
+	/**
+	 * \brief Depth getter
+	 * \return the depth
+	 */
+	double getZ() const;
+
+	/**
+	 * \brief Origin time getter
+	 * \return the origin time
+	 */
+	double getTOrg() const;
+
+	/**
+	 * \brief Correlation id getter
+	 * \return the correlation id
+	 */
+	int getIdCorrelation() const;
+
+	/**
+	 * \brief Json correlation getter
+	 * \return the json correlation
+	 */
+	const std::shared_ptr<json::Object>& getJCorrelation() const;
+
+	/**
+	 * \brief Hypo getter
+	 * \return the hypo
+	 */
+	const std::shared_ptr<CHypo> getHypo() const;
+
+	/**
+	 * \brief Site getter
+	 * \return the site
+	 */
+	const std::shared_ptr<CSite>& getSite() const;
+
+	/**
+	 * \brief Association string getter
+	 * \return the association string
+	 */
+	const std::string& getAss() const;
+
+	/**
+	 * \brief Association string setter
+	 * \param ass - the association string
+	 */
+	void setAss(std::string ass);
+
+	/**
+	 * \brief Phase getter
+	 * \return the phase
+	 */
+	const std::string& getPhs() const;
+
+	/**
+	 * \brief Pid getter
+	 * \return the pid
+	 */
+	const std::string& getPid() const;
+
+	/**
+	 * \brief Correlation time getter
+	 * \return the correlation time
+	 */
+	double getTCorrelation() const;
+
+	/**
+	 * \brief Creation time getter
+	 * \return the creation time
+	 */
+	double getTGlassCreate() const;
+
+ private:
 	/**
 	 * \brief A std::shared_ptr to a CSite object
 	 * representing the link between this correlation and the site it was
@@ -170,10 +258,10 @@ class CCorrelation {
 	std::shared_ptr<CSite> pSite;
 
 	/**
-	 * \brief A std::vector of std::shared_ptr's to CHypo objects
+	 * \brief A std::weak_ptr to a CHypo object
 	 * representing the links between this correlation and associated hypocenter
 	 */
-	std::shared_ptr<CHypo> pHypo;
+	std::weak_ptr<CHypo> wpHypo;
 
 	/**
 	 * \brief A std::string containing a character representing the action
@@ -241,7 +329,14 @@ class CCorrelation {
 	 */
 	std::shared_ptr<json::Object> jCorrelation;
 
-	std::mutex correlationMutex;
+	/**
+	 * \brief A recursive_mutex to control threading access to CCorrelation.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex correlationMutex;
 };
 }  // namespace glasscore
 #endif  // CORRELATION_H

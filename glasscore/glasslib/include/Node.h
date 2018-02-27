@@ -22,6 +22,7 @@ namespace glasscore {
 class CPick;
 class CSite;
 class CWeb;
+class CTrigger;
 
 /**
  * \brief glasscore detection node class
@@ -138,7 +139,7 @@ class CNode {
 	 * picks used in calculation
 	 * \return Returns true if the node nucleated an event, false otherwise
 	 */
-	bool nucleate(double tOrigin, bool bList = false);
+	std::shared_ptr<CTrigger> nucleate(double tOrigin);
 
 	/**
 	 * \brief CNode significance function
@@ -164,14 +165,96 @@ class CNode {
 	 */
 	std::shared_ptr<CSite> getSite(std::string sScnl);
 
+	/**
+	 * \brief CNode get last site function
+	 *
+	 * Get the last site linked to the node
+	 *
+	 * \return Returns a shared pointer to the last CSite object if found, null
+	 * otherwise
+	 */
 	std::shared_ptr<CSite> getLastSite();
 
+	/**
+	 * \brief CNode site link sort function
+	 *
+	 * Sort the list of sites linked to this node
+	 */
 	void sortSiteLinks();
 
+	/**
+	 * \brief Sites string getter
+	 * \return the sites string
+	 */
 	std::string getSitesString();
 
-	int getSiteLinksCount();
+	/**
+	 * \brief Site links count getter
+	 * \return the site links count
+	 */
+	int getSiteLinksCount() const;
 
+	/**
+	 * \brief Enabled flag getter
+	 * \return the enabled flag
+	 */
+	bool getEnabled() const;
+
+	/**
+	 * \brief Enabled flag setter
+	 * \param enable - the enabled flag
+	 */
+	void setEnabled(bool enabled);
+
+	/**
+	 * \brief Latitude getter
+	 * \return the latitude
+	 */
+	double getLat() const;
+
+	/**
+	 * \brief Longitude getter
+	 * \return the longitude
+	 */
+	double getLon() const;
+
+	/**
+	 * \brief Depth getter
+	 * \return the Depth
+	 */
+	double getZ() const;
+
+	/**
+	 * \brief Resolution getter
+	 * \return the Resolution
+	 */
+	double getResolution() const;
+
+	/**
+	 * \brief CWeb pointer getter
+	 * \return the CWeb pointer
+	 */
+	CWeb* getWeb() const;
+
+	/**
+	 * \brief CWeb pointer setter
+	 * \param web - the CWeb pointer
+	 */
+	void setWeb(CWeb* web);
+
+	/**
+	 * \brief Name getter
+	 * \return the name
+	 */
+	const std::string& getName() const;
+
+	/**
+	 * \brief Pid getter
+	 * \return the pid
+	 */
+	const std::string& getPid() const;
+
+ private:
 	/**
 	 * \brief A pointer to the parent CWeb class, used get configuration,
 	 * values, perform significance calculations, and debug flags
@@ -212,37 +295,11 @@ class CNode {
 	double dResolution;
 
 	/**
-	 * \brief A std::vector of std::shared_ptr's to CPick objects
-	 * used in calculating the likelihood of a hypocenter
-	 * centered on this node during the last call to nucleate()
+	 * \brief A boolean flag indicating whether this node is enabled for
+	 * nucleation
 	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
-
-	/**
-	 * \brief A double value that accumulates the Bayesian
-	 * sum when evaluating the agoric at each node in a web.
-	 * It is compared to the threshold value set for the
-	 * web which owns this node.
-	 */
-	double dSum;
-
-	/**
-	 * \brief A integer value that tallies the number of sites
-	 * that are included in this solution. This value is
-	 * compared against the Nucleation parameter in the
-	 * parameters for the web for which this node is a memeber
-	 */
-	int nCount;
-
-	/**
-	 * \brief A double value with the origin time calculated the last time
-	 * this node was nucleated.
-	 */
-	double tOrg;
-
 	bool bEnabled;
 
- private:
 	/**
 	 * \brief A std::vector of tuples linking node to site
 	 * {shared site pointer, travel time 1, travel time 2}
@@ -252,7 +309,16 @@ class CNode {
 	/**
 	 * \brief A mutex to control threading access to vSite.
 	 */
-	std::mutex vSiteMutex;
+	mutable std::mutex vSiteMutex;
+
+	/**
+	 * \brief A recursive_mutex to control threading access to CNode.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex nodeMutex;
 };
 }  // namespace glasscore
 #endif  // NODE_H

@@ -10,6 +10,7 @@
 #include <json.h>
 #include <vector>
 #include <memory>
+#include <mutex>
 
 namespace glasscore {
 
@@ -65,7 +66,7 @@ class CWebList {
 	 * \return Returns true if the communication was handled by CWeb,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Add subnet web ('Grid', etc) from detection fabric
@@ -79,7 +80,7 @@ class CWebList {
 	 *
 	 * \return Always returns true
 	 */
-	bool addWeb(json::Object *com);
+	bool addWeb(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Remove subnet compoent ('Grid', etc) from detection fabric
@@ -94,7 +95,7 @@ class CWebList {
 	 *
 	 * \return Always returns true
 	 */
-	bool removeWeb(json::Object *com);
+	bool removeWeb(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Add a site to the webs
@@ -131,6 +132,36 @@ class CWebList {
 	bool statusCheck();
 
 	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	const CGlass* getGlass() const;
+
+	/**
+	 * \brief CGlass setter
+	 * \param glass - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+	/**
+	 * \brief CSiteList getter
+	 * \return the CSiteList pointer
+	 */
+	const CSiteList* getSiteList() const;
+
+	/**
+	 * \brief CSiteList setter
+	 * \param siteList - the CSiteList pointer
+	 */
+	void setSiteList(CSiteList* siteList);
+
+	/**
+	 * \brief Get the current size of the web list
+	 */
+	int getVWebSize() const;
+
+ private:
+	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
 	 * get sites (stations), encode/decode time, and get debug flags
 	 */
@@ -152,6 +183,15 @@ class CWebList {
 	 * a background thread.
 	 */
 	bool m_bUseBackgroundThreads;
+
+	/**
+	 * \brief A recursive_mutex to control threading access to CCorrelationList.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex m_WebListMutex;
 };
 }  // namespace glasscore
 #endif  // WEBLIST_H

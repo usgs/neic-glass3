@@ -40,15 +40,15 @@ TEST(PickListTest, Construction) {
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
 
 	// assert default values
-	ASSERT_EQ(-1, testPickList->nPickTotal)<< "nPickTotal is 0";
-	ASSERT_EQ(0, testPickList->nPick)<< "nPick is 0";
+	ASSERT_EQ(-1, testPickList->getNPickTotal())<< "nPickTotal is 0";
+	ASSERT_EQ(0, testPickList->getNPick())<< "nPick is 0";
 
 	// lists
-	ASSERT_EQ(0, testPickList->vPick.size())<< "vPick.size() is 0";
-	ASSERT_EQ(0, testPickList->mPick.size())<< "mPick.size() is 0";
+	ASSERT_EQ(0, testPickList->getVPickSize())<< "getVPickSize() is 0";
 
 	// pointers
-	ASSERT_EQ(NULL, testPickList->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testPickList->getGlass())<< "pGlass null";
+	ASSERT_EQ(NULL, testPickList->getSiteList())<< "pSiteList null";
 
 	// cleanup
 	delete (testPickList);
@@ -59,81 +59,90 @@ TEST(PickListTest, PickOperations) {
 	glassutil::CLogit::disable();
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
-	json::Object site2JSON = json::Deserialize(std::string(SITE2JSON));
-	json::Object site3JSON = json::Deserialize(std::string(SITE3JSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITEJSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITE2JSON))));
+	std::shared_ptr<json::Object> site3JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(SITE3JSON))));
 
-	json::Object pickJSON = json::Deserialize(std::string(PICKJSON));
-	json::Object pick2JSON = json::Deserialize(std::string(PICK2JSON));
-	json::Object pick3JSON = json::Deserialize(std::string(PICK3JSON));
-	json::Object pick4JSON = json::Deserialize(std::string(PICK4JSON));
-	json::Object pick5JSON = json::Deserialize(std::string(PICK5JSON));
-	json::Object pick6JSON = json::Deserialize(std::string(PICK6JSON));
+	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(PICKJSON))));
+	std::shared_ptr<json::Object> pick2JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(PICK2JSON))));
+	std::shared_ptr<json::Object> pick3JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(PICK3JSON))));
+	std::shared_ptr<json::Object> pick4JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(PICK4JSON))));
+	std::shared_ptr<json::Object> pick5JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(PICK5JSON))));
+	std::shared_ptr<json::Object> pick6JSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(PICK6JSON))));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// add sites to site list
-	testSiteList->addSite(&siteJSON);
-	testSiteList->addSite(&site2JSON);
-	testSiteList->addSite(&site3JSON);
+	testSiteList->addSite(siteJSON);
+	testSiteList->addSite(site2JSON);
+	testSiteList->addSite(site3JSON);
 
 	// construct a picklist
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
-	testPickList->pSiteList = testSiteList;
-	testPickList->nPickMax = MAXNPICK;
+	testPickList->setSiteList(testSiteList);
+	testPickList->setNPickMax(MAXNPICK);
 
 	// test indexpick when empty
 	ASSERT_EQ(-2, testPickList->indexPick(0))<< "test indexpick when empty";
 
 	// test adding picks by addPick and dispatch
-	testPickList->addPick(&pickJSON);
-	testPickList->dispatch(&pick3JSON);
+	testPickList->addPick(pickJSON);
+	testPickList->dispatch(pick3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testPickList->nPick)<< "Added Picks";
+	ASSERT_EQ(expectedSize, testPickList->getNPick())<< "Added Picks";
 
 	// test getting a pick (first pick, id 1)
 	std::shared_ptr<glasscore::CPick> testPick = testPickList->getPick(1);
 	// check testpick
 	ASSERT_TRUE(testPick != NULL)<< "testPick not null";
 	// check scnl
-	std::string sitescnl = testPick->pSite->sScnl;
+	std::string sitescnl = testPick->getSite()->getScnl();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-			"testPick has right scnl";
+	"testPick has right scnl";
 
 	// test indexpick
 	ASSERT_EQ(-1, testPickList->indexPick(TPICK))<<
-			"test indexpick with time before";
+	"test indexpick with time before";
 	ASSERT_EQ(1, testPickList->indexPick(TPICK2))<<
-			"test indexpick with time after";
+	"test indexpick with time after";
 	ASSERT_EQ(0, testPickList->indexPick(TPICK3))<<
-			"test indexpick with time within";
+	"test indexpick with time within";
 
 	// add more picks
-	testPickList->addPick(&pick2JSON);
-	testPickList->addPick(&pick4JSON);
-	testPickList->addPick(&pick5JSON);
-	testPickList->addPick(&pick6JSON);
+	testPickList->addPick(pick2JSON);
+	testPickList->addPick(pick4JSON);
+	testPickList->addPick(pick5JSON);
+	testPickList->addPick(pick6JSON);
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNPICK;
-	ASSERT_EQ(expectedSize, testPickList->vPick.size())<<
-			"testPickList not larger than max";
+	ASSERT_EQ(expectedSize, testPickList->getVPickSize())<<
+	"testPickList not larger than max";
 
 	// get first pick, which is now id 2
 	std::shared_ptr<glasscore::CPick> test2Pick = testPickList->getPick(2);
 
 	// check scnl
-	sitescnl = test2Pick->pSite->sScnl;
+	sitescnl = test2Pick->getSite()->getScnl();
 	expectedscnl = std::string(SCNL2);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-			"test2Pick has right scnl";
+	"test2Pick has right scnl";
 
 	// test clearing picks
 	testPickList->clearPicks();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testPickList->nPick)<< "Cleared Picks";
+	ASSERT_EQ(expectedSize, testPickList->getNPick())<< "Cleared Picks";
 
 	// cleanup
 	delete (testPickList);

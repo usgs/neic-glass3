@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <queue.h>
 #include <string>
+#include <memory>
 
 #define TESTDATA1 "{\"HighPass\":1.000000,\"LowPass\":1.000000}"
 #define TESTDATA2 "{\"HighPass\":2.000000,\"LowPass\":2.000000}"
@@ -16,24 +17,27 @@ TEST(QueueTest, CombinedTest) {
 
 	// create input data
 	std::string inputstring1 = std::string(TESTDATA1);
-	json::Object inputdata1 = json::Deserialize(inputstring1);
+	std::shared_ptr<json::Object> inputdata1 = std::make_shared<json::Object>(
+			json::Deserialize(inputstring1));
 
 	std::string inputstring2 = std::string(TESTDATA2);
-	json::Object inputdata2 = json::Deserialize(inputstring2);
+	std::shared_ptr<json::Object> inputdata2 = std::make_shared<json::Object>(
+			json::Deserialize(inputstring2));
 
 	std::string inputstring3 = std::string(TESTDATA3);
-	json::Object inputdata3 = json::Deserialize(inputstring3);
+	std::shared_ptr<json::Object> inputdata3 = std::make_shared<json::Object>(
+			json::Deserialize(inputstring3));
 
 	// add data to queue
-	TestQueue->addDataToQueue(&inputdata1);
-	TestQueue->addDataToQueue(&inputdata2);
-	TestQueue->addDataToQueue(&inputdata3);
+	TestQueue->addDataToQueue(inputdata1);
+	TestQueue->addDataToQueue(inputdata2);
+	TestQueue->addDataToQueue(inputdata3);
 
 	// assert three items in the queue
 	ASSERT_EQ(TestQueue->size(), 3)<< "3 items in queue";
 
 	// get data from queue
-	json::Object* outputobject = TestQueue->getDataFromQueue();
+	std::shared_ptr<json::Object> outputobject = TestQueue->getDataFromQueue();
 
 	// assert that we got something
 	ASSERT_TRUE(outputobject != NULL)<< "non-null queue data";

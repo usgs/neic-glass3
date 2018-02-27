@@ -6,6 +6,7 @@
 
 #include <string>
 #include <ctime>
+#include <memory>
 
 #define EMPTYCONFIG "{\"Cmd\":\"GlassOutput\"}"
 #define CONFIGFAIL1 "{\"PublicationTimes\":[3, 6]}"
@@ -39,6 +40,7 @@ class OutputStub : public glass::output {
 TEST(Output, TrackingTests) {
 	// create output stub
 	OutputStub outputThread;
+	std::shared_ptr<json::Object> nullTrack;
 
 	time_t tNow;
 	std::time(&tNow);
@@ -50,17 +52,20 @@ TEST(Output, TrackingTests) {
 	ASSERT_TRUE(
 			outputThread.setup(new json::Object(json::Deserialize(EMPTYCONFIG))));  // NOLINT
 
-	json::Object *tracking1 = new json::Object(json::Deserialize(TRACKING1));
+	std::shared_ptr<json::Object> tracking1 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(TRACKING1)));
 
 	(*tracking1)["CreateTime"] = util::convertEpochTimeToISO8601(tNow);
 	(*tracking1)["ReportTime"] = util::convertEpochTimeToISO8601(tNow);
 
-	json::Object *tracking2 = new json::Object(json::Deserialize(TRACKING2));
+	std::shared_ptr<json::Object> tracking2 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(TRACKING2)));
 
 	(*tracking2)["CreateTime"] = util::convertEpochTimeToISO8601(tNow);
 	(*tracking2)["ReportTime"] = util::convertEpochTimeToISO8601(tNow);
 
-	json::Object *tracking3 = new json::Object(json::Deserialize(TRACKING3));
+	std::shared_ptr<json::Object> tracking3 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(TRACKING3)));
 
 	(*tracking3)["CreateTime"] = util::convertEpochTimeToISO8601(tNow);
 	(*tracking3)["ReportTime"] = util::convertEpochTimeToISO8601(tNow);
@@ -73,25 +78,34 @@ TEST(Output, TrackingTests) {
 	// add fails
 	ASSERT_FALSE(outputThread.addTrackingData(NULL));
 	ASSERT_FALSE(
-			outputThread.addTrackingData(new json::Object(json::Deserialize(BADTRACKING1))));  // NOLINT
+			outputThread.addTrackingData(std::make_shared<json::Object>(json::Object(json::Deserialize(BADTRACKING1)))));  // NOLINT
 	ASSERT_FALSE(
-			outputThread.addTrackingData(new json::Object(json::Deserialize(BADTRACKING2))));  // NOLINT
+			outputThread.addTrackingData(std::make_shared<json::Object>(json::Object(json::Deserialize(BADTRACKING2)))));  // NOLINT
+
+	std::shared_ptr<json::Object> tracking4 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(TRACKING1)));
+	std::shared_ptr<json::Object> tracking5 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(TRACKING2)));
 
 	// have successes
-	ASSERT_TRUE(outputThread.haveTrackingData(tracking1));
-	ASSERT_TRUE(outputThread.haveTrackingData(tracking2));
+	ASSERT_TRUE(outputThread.haveTrackingData(tracking4));
+	ASSERT_TRUE(outputThread.haveTrackingData(tracking5));
 	ASSERT_TRUE(outputThread.haveTrackingData(std::string(ID1)));
 
 	// have fails
-	ASSERT_FALSE(outputThread.haveTrackingData(NULL));
+	ASSERT_FALSE(outputThread.haveTrackingData(nullTrack));
 	ASSERT_FALSE(outputThread.haveTrackingData(""));
 
 	// remove successes
-	ASSERT_TRUE(outputThread.removeTrackingData(tracking1));
-	ASSERT_FALSE(outputThread.haveTrackingData(tracking1));
+	ASSERT_TRUE(outputThread.removeTrackingData(tracking4));
+
+	std::shared_ptr<json::Object> tracking6 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(TRACKING1)));
+
+	ASSERT_FALSE(outputThread.haveTrackingData(tracking6));
 
 	// remove fail
-	ASSERT_FALSE(outputThread.removeTrackingData(NULL));
+	ASSERT_FALSE(outputThread.removeTrackingData(nullTrack));
 	ASSERT_FALSE(outputThread.removeTrackingData(""));
 
 	// clear

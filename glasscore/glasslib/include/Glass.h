@@ -81,7 +81,7 @@ class CGlass {
 	 * \return Returns true if the communication was handled by CGlass,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass communication sending function
@@ -95,7 +95,7 @@ class CGlass {
 	 * \return Returns true if the communication was sent via
 	 * a valid IGlassSend interface pointer, false otherwise
 	 */
-	bool send(json::Object *com);
+	bool send(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass initialization function
@@ -112,26 +112,13 @@ class CGlass {
 	 * \return Returns true if the initialization was successful,
 	 * false otherwise
 	 */
-	bool initialize(json::Object *com);
+	bool initialize(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass clear function
 	 *
 	 */
 	void clear();
-
-	/**
-	 * \brief CGlass input synchronization confirmation function
-	 *
-	 * The function used by CGlass to confirm that glasscore has processed
-	 * all previously sent input data.  Once glasscore has completed
-	 * processing all input, a confirmation "pong" message is sent.
-	 *
-	 * \param com - A pointer to a json::object containing the
-	 * confirmation query.
-	 * \return Always returns true
-	 */
-	bool ping(json::Object *com);
 
 	/**
 	 * \brief CGlass earth model test function
@@ -190,25 +177,60 @@ class CGlass {
 	double sig_laplace_pdf(double tdif, double sig);
 
 	/**
+	 * \brief An IGlassSend interface pointer used to send communication
+	 * (such as output data), to outside the glasscore library
+	 */
+	glasscore::IGlassSend *piSend;
+
+	/**
 	 * \brief check to see if each thread is still functional
 	 *
 	 * Checks each thread to see if it is still responsive.
 	 */
 	bool statusCheck();
+	double getAvgDelta() const;
+	double getAvgSigma() const;
+	double getBeamMatchingAzimuthWindow() const;
+	double getBeamMatchingDistanceWindow() const;
+	int getCorrelationCancelAge() const;
+	double getCorrelationMatchingTWindow() const;
+	double getCorrelationMatchingXWindow() const;
+	double getCutFactor() const;
+	double getCutMin() const;
+	double getCutPercentage() const;
+	double getReportThresh() const;
+	double getThresh() const;
+	double getExpAffinity() const;
+	bool getGraphicsOut() const;
+	const std::string& getGraphicsOutFolder() const;
+	double getGraphicsStepKm() const;
+	int getGraphicsSteps() const;
+	int getCycleLimit() const;
+	bool getMinimizeTtLocator() const;
+	int getCorrelationMax() const;
+	int getCount() const;
+	int getDetect() const;
+	int getHypoMax() const;
+	int getNucleate() const;
+	int getPickMax() const;
+	double getReportCut() const;
+	int getSitePickMax() const;
+	CCorrelationList*& getCorrelationList();
+	CDetection*& getDetection();
+	CHypoList*& getHypoList();
+	double getPickDuplicateWindow() const;
+	CPickList*& getPickList();
+	CSiteList*& getSiteList();
+	std::shared_ptr<traveltime::CTravelTime>& getTrvDefault();
+	std::shared_ptr<traveltime::CTTT>& getTTT();
+	CWebList*& getWebList();
+	double getSdAssociate() const;
+	double getSdPrune() const;
+	const std::string& getWeb() const;
+	bool getTestLocator() const;
+	bool getTestTimes() const;
 
-	// Local Attributes
-	/**
-	 * \brief A std::string used in debugging to keep track of the id of the
-	 * last pick added to glass.
-	 */
-	std::string sTrack;
-
-	/**
-	 * \brief A boolean set to true to turn on process tracking using
-	 * printf strings (saved in sTrack)
-	 */
-	bool bTrack;
-
+ private:
 	/**
 	 * \brief A double value containing the default number of picks that
 	 * that need to be gathered to trigger the nucleation of an event.
@@ -283,12 +305,6 @@ class CGlass {
 	double dCutMin;
 
 	/**
-	 * \brief An IGlassSend interface pointer used to send communication
-	 * (such as output data), to outside the glasscore library
-	 */
-	glasscore::IGlassSend *piSend;
-
-	/**
 	 * \brief A pointer to a CWeb object containing the detection web
 	 */
 	CWebList *pWebList;
@@ -303,12 +319,12 @@ class CGlass {
 	 * \brief A pointer to a CTTT object containing the travel
 	 * time phases and branches used by glasscore for association
 	 */
-	traveltime::CTTT *pTTT;
+	std::shared_ptr<traveltime::CTTT> pTTT;
 
 	/**
 	 * \brief the std::mutex for traveltimes
 	 */
-	std::mutex m_TTTMutex;
+	mutable std::mutex m_TTTMutex;
 
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites
@@ -364,36 +380,6 @@ class CGlass {
 	 * pHypoList
 	 */
 	int nHypoMax;
-
-	/**
-	 * \brief An integer containing the count of the number of times
-	 * Hypo::iterate is called. Used for debugging.
-	 */
-	int nIterate;
-
-	/**
-	 * \brief An integer containing the count of the number of times
-	 * Hypo::localize is called. Used for debugging.
-	 */
-	int nLocate;
-
-	/**
-	 * \brief A string containing the most recent nucleated web. Used for
-	 * debugging.
-	 */
-	std::string sWeb;
-
-	/**
-	 * \brief An integer containing the count of supporting stations for the most
-	 * recently nucleated node. Used for debugging.
-	 */
-	int nCount;
-
-	/**
-	 * \brief A double containing the Bayesian sum for the most recently
-	 * nucleated node. Used for debugging.
-	 */
-	double dSum;
 
 	/**
 	 * \brief Window to check for 'duplicate' picks at same station. If new pick is

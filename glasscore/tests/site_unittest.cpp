@@ -33,61 +33,61 @@
 // check site data for validity
 void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	// check scnl
-	std::string sitescnl = siteobject->sScnl;
+	std::string sitescnl = siteobject->getScnl();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str());
 
 	// check site
-	std::string sitesite = siteobject->sSite;
+	std::string sitesite = siteobject->getSite();
 	std::string expectedsite = std::string(SITE);
 	ASSERT_STREQ(sitesite.c_str(), expectedsite.c_str());
 
 	// check comp
-	std::string sitecomp = siteobject->sComp;
+	std::string sitecomp = siteobject->getComp();
 	std::string expectedcomp = std::string(COMP);
 	ASSERT_STREQ(sitecomp.c_str(), expectedcomp.c_str());
 
 	// check net
-	std::string sitenet = siteobject->sNet;
+	std::string sitenet = siteobject->getNet();
 	std::string expectednet = std::string(NET);
 	ASSERT_STREQ(sitenet.c_str(), expectednet.c_str());
 
 	// check loc
-	std::string siteloc = siteobject->sLoc;
+	std::string siteloc = siteobject->getLoc();
 	std::string expectedloc = std::string(LOC);
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 
 	// check latitude
-	double sitelatitude = siteobject->geo.dLat;
+	double sitelatitude = siteobject->getGeo().dLat;
 	// NOTE: expected latitude is in geocentric coordinates
 	double expectedlatitude = GEOCENTRIC_LATITUDE;
 	ASSERT_NEAR(sitelatitude, expectedlatitude, 0.000001);
 
 	// check longitude
-	double sitelongitude = siteobject->geo.dLon;
+	double sitelongitude = siteobject->getGeo().dLon;
 	// NOTE: expected longitude is the same in geocentric and geographic
 	// coordinates
 	double expectedlongitude = LONGITUDE;
 	ASSERT_NEAR(sitelongitude, expectedlongitude, 0.000001);
 
 	// check elevation
-	double siteelevation = siteobject->geo.dZ;
+	double siteelevation = siteobject->getGeo().dZ;
 	// NOTE: expected elevation is in geocentric coordinates
 	double expectedelevation = GEOCENTRID_ELEVATION;
 	ASSERT_NEAR(siteelevation, expectedelevation, 0.000001);
 
 	// check use
-	bool siteuse = siteobject->bUse;
+	bool siteuse = siteobject->getUse();
 	bool expecteduse = USE;
 	ASSERT_EQ(siteuse, expecteduse);
 
 	// check useforTele
-	bool siteusefortele = siteobject->bUseForTele;
+	bool siteusefortele = siteobject->getUseForTele();
 	bool expectedusefortele = USEFORTELE;
 	ASSERT_EQ(siteusefortele, expectedusefortele);
 
 	// check qual
-	double sitequal = siteobject->dQual;
+	double sitequal = siteobject->getQual();
 	double expectedqual = QUALITY;
 	ASSERT_NEAR(sitequal, expectedqual, 0.000001);
 }
@@ -101,34 +101,27 @@ TEST(SiteTest, Construction) {
 
 	// assert default values
 	// scnl
-	ASSERT_STREQ("", testSite->sScnl.c_str())<< "sScnl Empty";
-	ASSERT_STREQ("", testSite->sSite.c_str())<< "sSite Empty";
-	ASSERT_STREQ("", testSite->sComp.c_str())<< "sComp Empty";
-	ASSERT_STREQ("", testSite->sNet.c_str())<< "sNet Empty";
-	ASSERT_STREQ("", testSite->sLoc.c_str())<< "sLoc Empty";
+	ASSERT_STREQ("", testSite->getScnl().c_str())<< "sScnl Empty";
+	ASSERT_STREQ("", testSite->getSite().c_str())<< "sSite Empty";
+	ASSERT_STREQ("", testSite->getComp().c_str())<< "sComp Empty";
+	ASSERT_STREQ("", testSite->getNet().c_str())<< "sNet Empty";
+	ASSERT_STREQ("", testSite->getLoc().c_str())<< "sLoc Empty";
 
-	ASSERT_EQ(true, testSite->bUse)<< "bUse false";
-	ASSERT_EQ(true, testSite->bUseForTele)<< "bUseForTele false";
-	ASSERT_EQ(0, testSite->dTrav)<< "dTrav zero";
-	ASSERT_EQ(1, testSite->dQual)<< "dQual one";
+	ASSERT_EQ(true, testSite->getUse())<< "bUse false";
+	ASSERT_EQ(true, testSite->getUseForTele())<< "bUseForTele false";
+	ASSERT_EQ(1, testSite->getQual())<< "dQual one";
 
 	// pointers
-	ASSERT_EQ(NULL, testSite->pGlass)<< "pGlass null";
-	ASSERT_EQ(NULL, testSite->pNode.get())<< "pNode null";
-	ASSERT_EQ(NULL, testSite->qNode.get())<< "qNode null";
+	ASSERT_EQ(NULL, testSite->getGlass())<< "pGlass null";
 
 	// geographic
-	ASSERT_EQ(0, testSite->geo.dLat)<< "geo.dLat 0";
-	ASSERT_EQ(0, testSite->geo.dLon)<< "geo.dLon 0";
-	ASSERT_EQ(0, testSite->geo.dZ)<< "geo.dZ 0";
-	ASSERT_EQ(0, testSite->dVec[0])<< "dVec[0] 0";
-	ASSERT_EQ(0, testSite->dVec[1])<< "dVec[1] 0";
-	ASSERT_EQ(0, testSite->dVec[2])<< "dVec[2] 0";
+	ASSERT_EQ(0, testSite->getGeo().dLat)<< "geo.dLat 0";
+	ASSERT_EQ(0, testSite->getGeo().dLon)<< "geo.dLon 0";
+	ASSERT_EQ(0, testSite->getGeo().dZ)<< "geo.dZ 0";
 
 	// lists
 	ASSERT_EQ(0, testSite->getNodeLinksCount())<< "vNode.size() 0";
-	ASSERT_EQ(0, testSite->vPick.size())<< "vPick.size() 0";
-	ASSERT_EQ(0, testSite->vTrigger.size())<< "vTrigger.size() 0";
+	ASSERT_EQ(0, testSite->getVPick().size())<< "vPick.size() 0";
 
 	// now init
 	testSite->initialize(std::string(SITE), std::string(COMP), std::string(NET),
@@ -150,10 +143,11 @@ TEST(SiteTest, JSONConstruction) {
 	glassutil::CLogit::disable();
 
 	// create a json object from the string
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct a site using a JSON object
-	glasscore::CSite * testSite = new glasscore::CSite(&siteJSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
 
 	// check results
 	checkdata(testSite, "json construction check");
@@ -167,12 +161,14 @@ TEST(SiteTest, Distance) {
 	glassutil::CLogit::disable();
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
-	json::Object site2JSON = json::Deserialize(std::string(SITE2JSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(SITEJSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+					json::Object(json::Deserialize(std::string(SITE2JSON))));
 
 	// construct sites using JSON objects
-	glasscore::CSite * testSite = new glasscore::CSite(&siteJSON, NULL);
-	glasscore::CSite * testSite2 = new glasscore::CSite(&site2JSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * testSite2 = new glasscore::CSite(site2JSON, NULL);
 
 	// create new shared pointer to the site
 	std::shared_ptr<glasscore::CSite> sharedTestSite2(testSite2);
@@ -183,7 +179,7 @@ TEST(SiteTest, Distance) {
 
 	// test getDelta
 	double expectedDelta = SITE2DELTA;
-	ASSERT_DOUBLE_EQ(expectedDelta, testSite->getDelta(&testSite2->geo));
+	ASSERT_DOUBLE_EQ(expectedDelta, testSite->getDelta(&testSite2->getGeo()));
 }
 
 // tests to see if picks can be added to and removed from the site
@@ -191,16 +187,17 @@ TEST(SiteTest, PickOperations) {
 	glassutil::CLogit::disable();
 
 	// create a json object from the string
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
-	json::Object site2JSON = json::Deserialize(std::string(SITE2JSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
+		std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+						json::Object(json::Deserialize(std::string(SITE2JSON))));
 
 	// construct a site using a JSON object
-	glasscore::CSite * testSite = new glasscore::CSite(&siteJSON, NULL);
-	glasscore::CSite * testSite2 = new glasscore::CSite(&site2JSON, NULL);
-
-	// create new shared pointers to the sites
-	std::shared_ptr<glasscore::CSite> sharedTestSite(testSite);
-	std::shared_ptr<glasscore::CSite> sharedTestSite2(testSite2);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
+	std::shared_ptr<glasscore::CSite> sharedTestSite(
+						new glasscore::CSite(siteJSON, NULL));
+	std::shared_ptr<glasscore::CSite> sharedTestSite2(
+						new glasscore::CSite(site2JSON, NULL));
 
 	// create pick objects
 	glasscore::CPick * testPick = new glasscore::CPick(sharedTestSite, 10.0, 1,
@@ -215,17 +212,17 @@ TEST(SiteTest, PickOperations) {
 	// test adding pick to site
 	testSite->addPick(sharedTestPick);
 	int expectedSize = 1;
-	ASSERT_EQ(expectedSize, testSite->vPick.size())<< "Added Pick";
+	ASSERT_EQ(expectedSize, testSite->getVPick().size())<< "Added Pick";
 
 	// test adding pick from different station
 	testSite->addPick(sharedTestPick2);
-	ASSERT_EQ(expectedSize, testSite->vPick.size())<<
-			"Added pick from different station";
+	ASSERT_EQ(expectedSize, testSite->getVPick().size())<<
+	"Added pick from different station";
 
 	// test removing pick
 	testSite->remPick(sharedTestPick);
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testSite->vPick.size())<< "Removed pick";
+	ASSERT_EQ(expectedSize, testSite->getVPick().size())<< "Removed pick";
 }
 
 // tests to see if nodes can be added to and removed from the site
@@ -233,10 +230,11 @@ TEST(SiteTest, NodeOperations) {
 	glassutil::CLogit::disable();
 
 	// create a json object from the string
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+							json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct a site using a JSON object
-	glasscore::CSite * testSite = new glasscore::CSite(&siteJSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
 
 	// create node objects
 	glasscore::CNode * testNode = new glasscore::CNode("test", 0.0, 0.0, 10,
@@ -255,7 +253,7 @@ TEST(SiteTest, NodeOperations) {
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Added Nodes";
 
 	// test removing nodes from site
-	testSite->remNode(testNode->sPid);
+	testSite->remNode(testNode->getPid());
 	expectedSize = 1;
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Removed Node";
 }

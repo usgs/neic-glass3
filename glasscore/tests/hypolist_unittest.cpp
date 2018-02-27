@@ -32,16 +32,15 @@ TEST(HypoListTest, Construction) {
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
 
 	// assert default values
-	ASSERT_EQ(-1, testHypoList->nHypoTotal)<< "nPickTotal is 0";
-	ASSERT_EQ(0, testHypoList->nHypo)<< "nHypo is 0";
+	ASSERT_EQ(-1, testHypoList->getNHypoTotal())<< "nPickTotal is 0";
+	ASSERT_EQ(0, testHypoList->getNHypo())<< "nHypo is 0";
 
 	// lists
-	ASSERT_EQ(0, testHypoList->vHypo.size())<< "vHypo.size() is 0";
-	ASSERT_EQ(0, testHypoList->mHypo.size())<< "mHypo.size() is 0";
-	ASSERT_EQ(0, testHypoList->qFifo.size())<< "qFifo.size() is 0";
+	ASSERT_EQ(0, testHypoList->getVHypoSize())<< "vHypo.size() is 0";
+	ASSERT_EQ(0, testHypoList->getFifoSize())<< "qFifo.size() is 0";
 
 	// pointers
-	ASSERT_EQ(NULL, testHypoList->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testHypoList->getGlass())<< "pGlass null";
 
 	// cleanup
 	delete (testHypoList);
@@ -51,45 +50,44 @@ TEST(HypoListTest, Construction) {
 TEST(HypoListTest, HypoOperations) {
 	glassutil::CLogit::disable();
 
-	traveltime::CTTT * nullTTT = NULL;
-
 	// create hypo objects
-	traveltime::CTravelTime* nullTrav = NULL;
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
 	std::shared_ptr<glasscore::CHypo> hypo1 =
 			std::make_shared<glasscore::CHypo>(-21.84, 170.03, 10.0,
 												3648585210.926340, "1", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo2 =
 			std::make_shared<glasscore::CHypo>(22.84, 70.03, 12.0,
 												3648585208.926340, "2", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo3 =
 			std::make_shared<glasscore::CHypo>(41.84, -120.03, 8.0,
 												3648585222.926340, "3", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo4 =
 			std::make_shared<glasscore::CHypo>(-1.84, 10.03, 100.0,
 												3648585250.926340, "4", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo5 =
 			std::make_shared<glasscore::CHypo>(1.84, -170.03, 67.0,
 												3648585233.926340, "5", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 	std::shared_ptr<glasscore::CHypo> hypo6 =
 			std::make_shared<glasscore::CHypo>(46.84, 135.03, 42.0,
 												3648585211.926340, "6", "Test",
-												0.0, 0.5, 6, nullTrav,
-												nullTrav, nullTTT);
+												0.0, 0.5, 6, nullTrav, nullTrav,
+												nullTTT);
 
 	// construct a hypolist
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
 
-	testHypoList->nHypoMax = MAXNHYPO;
+	testHypoList->setNHypoMax(MAXNHYPO);
 
 	// test indexpick when empty
 	ASSERT_EQ(-2, testHypoList->indexHypo(0))<< "test indexHypo when empty";
@@ -98,7 +96,7 @@ TEST(HypoListTest, HypoOperations) {
 	testHypoList->addHypo(hypo1, false);
 	testHypoList->addHypo(hypo2, false);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testHypoList->nHypo)<< "Added Hypos";
+	ASSERT_EQ(expectedSize, testHypoList->getNHypo())<< "Added Hypos";
 
 	// test indexHypo
 	ASSERT_EQ(-1, testHypoList->indexHypo(TORG))<<
@@ -116,7 +114,7 @@ TEST(HypoListTest, HypoOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNHYPO;
-	ASSERT_EQ(expectedSize, (int)testHypoList->vHypo.size())<<
+	ASSERT_EQ(expectedSize, (int)testHypoList->getVHypoSize())<<
 	"testHypoList not larger than max";
 
 	// test getting a hypo
@@ -127,7 +125,7 @@ TEST(HypoListTest, HypoOperations) {
 	ASSERT_TRUE(testHypo != NULL)<< "testHypo not null";
 
 	// check id
-	std::string hypoId = testHypo->sPid;
+	std::string hypoId = testHypo->getPid();
 	std::string expectedId = std::string(TESTHYPOID);
 	ASSERT_STREQ(hypoId.c_str(), expectedId.c_str())<< "testHypo has right id";
 
@@ -136,13 +134,13 @@ TEST(HypoListTest, HypoOperations) {
 
 	// check to make sure the size is now one less
 	expectedSize = MAXNHYPO - 1;
-	ASSERT_EQ(expectedSize, (int)testHypoList->vHypo.size())<<
+	ASSERT_EQ(expectedSize, (int)testHypoList->getVHypoSize())<<
 	"testHypoList is one smaller";
 
 	// test clearing hypos
 	testHypoList->clearHypos();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testHypoList->nHypo)<< "Cleared Hypos";
+	ASSERT_EQ(expectedSize, (int)testHypoList->getNHypo())<< "Cleared Hypos";
 
 	// cleanup
 	delete (testHypoList);

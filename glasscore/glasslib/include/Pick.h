@@ -76,7 +76,7 @@ class CPick {
 	 * \param pickId - An integer containing the pick id to use.
 	 * \param pSiteList - A pointer to the CSiteList class
 	 */
-	CPick(json::Object *pick, int pickId, CSiteList *pSiteList);
+	CPick(std::shared_ptr<json::Object> pick, int pickId, CSiteList *pSiteList);
 
 	/**
 	 * \brief CPick destructor
@@ -122,8 +122,6 @@ class CPick {
 	void addHypo(std::shared_ptr<CHypo> hyp, std::string ass = "", bool force =
 							false);
 
-	void setAss(std::string ass);
-
 	/**
 	 * \brief Remove hypo reference to this pick
 	 *
@@ -138,6 +136,9 @@ class CPick {
 	 */
 	void remHypo(std::shared_ptr<CHypo> hyp);
 
+	/**
+	 * \brief Clear any hypo reference to this pick
+	 */
 	void clearHypo();
 
 	/**
@@ -151,7 +152,73 @@ class CPick {
 	 */
 	bool nucleate();
 
-	// Local Attributes
+	/**
+	 * \brief Back azimuth getter
+	 * \return the back azimuth
+	 */
+	double getBackAzimuth() const;
+
+	/**
+	 * \brief Slowness getter
+	 * \return the slowness
+	 */
+	double getSlowness() const;
+
+	/**
+	 * \brief Pick id getter
+	 * \return the pick id
+	 */
+	int getIdPick() const;
+
+	/**
+	 * \brief Json pick getter
+	 * \return the json pick
+	 */
+	const std::shared_ptr<json::Object>& getJPick() const;
+
+	/**
+	 * \brief Hypo getter
+	 * \return the hypo
+	 */
+	const std::shared_ptr<CHypo> getHypo() const;
+
+	/**
+	 * \brief Site getter
+	 * \return the site
+	 */
+	const std::shared_ptr<CSite>& getSite() const;
+
+	/**
+	 * \brief Association string getter
+	 * \return the association string
+	 */
+	const std::string& getAss() const;
+
+	/**
+	 * \brief Association string setter
+	 * \param ass - the association string
+	 */
+	void setAss(std::string ass);
+
+	/**
+	 * \brief Phase getter
+	 * \return the phase
+	 */
+	const std::string& getPhs() const;
+
+	/**
+	 * \brief Pid getter
+	 * \return the pid
+	 */
+	const std::string& getPid() const;
+
+	/**
+	 * \brief Pick time getter
+	 * \return the pick time
+	 */
+	double getTPick() const;
+
+ private:
 	/**
 	 * \brief A std::shared_ptr to a CSite object
 	 * representing the link between this pick and the site it was
@@ -160,10 +227,12 @@ class CPick {
 	std::shared_ptr<CSite> pSite;
 
 	/**
-	 * \brief A std::vector of std::shared_ptr's to CHypo objects
-	 * representing the links between this pick and associated hypocenter
+	 * \brief A std::weak_ptr to a CHypo object
+	 * representing the links between this pick and associated hypocenter.
+	 * A weak_ptr is used here instead of a shared_ptr to prevent a cyclical
+	 * reference between CPick and CHypo.
 	 */
-	std::shared_ptr<CHypo> pHypo;
+	std::weak_ptr<CHypo> wpHypo;
 
 	/**
 	 * \brief A std::string containing a character representing the action
@@ -208,7 +277,14 @@ class CPick {
 	 */
 	std::shared_ptr<json::Object> jPick;
 
-	std::recursive_mutex pickMutex;
+	/**
+	 * \brief A recursive_mutex to control threading access to CPick.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex pickMutex;
 };
 }  // namespace glasscore
 #endif  // PICK_H

@@ -6,6 +6,7 @@
 #include <detection-formats.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace parse {
 CCParser::CCParser(const std::string &newAgencyID, const std::string &newAuthor)
@@ -15,7 +16,7 @@ CCParser::~CCParser() {
 }
 
 // parse a json object from an input string
-json::Object* CCParser::parse(const std::string &input) {
+std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0)
 		return (NULL);
@@ -119,8 +120,9 @@ json::Object* CCParser::parse(const std::string &input) {
 
 		// make sure we got valid json
 		if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
-			json::Object* newjsoncorrelation = new json::Object(
-					deserializedJSON.ToObject());
+			std::shared_ptr<json::Object> newjsoncorrelation = std::make_shared<
+								json::Object>(json::Object(deserializedJSON.ToObject()));
+
 			logger::log(
 					"trace",
 					"ccparser::parse: Output JSON: "
@@ -136,7 +138,7 @@ json::Object* CCParser::parse(const std::string &input) {
 }
 
 // validate a json object
-bool CCParser::validate(json::Object* input) {
+bool CCParser::validate(std::shared_ptr<json::Object> &input) {
 	// nullcheck
 	if (input == NULL) {
 		return (false);

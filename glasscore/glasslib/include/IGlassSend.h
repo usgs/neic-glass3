@@ -8,6 +8,7 @@
 #define IGLASSSEND_H
 
 #include <json.h>
+#include <memory>
 
 namespace glasscore {
 
@@ -30,7 +31,7 @@ struct IGlassSend {
 	 * \param com - A pointer to a json::object containing the data
 	 * to send to glasscore.
 	 */
-	virtual void Send(json::Object *com) = 0;
+	virtual void Send(std::shared_ptr<json::Object> com) = 0;
 };
 }  // namespace glasscore
 #endif  // IGLASSSEND_H

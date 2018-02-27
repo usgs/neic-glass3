@@ -81,7 +81,7 @@ class CCorrelationList {
 	 * \return Returns true if the communication was handled by CCorrelationList,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CCorrelationList add correlation function
@@ -103,7 +103,7 @@ class CCorrelationList {
 	 * \return Returns true if the correlation was usable and added by CCorrelationList,
 	 * false otherwise
 	 */
-	bool addCorrelation(json::Object *com);
+	bool addCorrelation(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CCorrelationList get correlation function
@@ -182,6 +182,60 @@ class CCorrelationList {
 														double tDuration = 2.5);
 
 	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	const CGlass* getGlass() const;
+
+	/**
+	 * \brief CGlass setter
+	 * \param glass - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+	/**
+	 * \brief CSiteList getter
+	 * \return the CSiteList pointer
+	 */
+	const CSiteList* getSiteList() const;
+
+	/**
+	 * \brief CSiteList setter
+	 * \param siteList - the CSiteList pointer
+	 */
+	void setSiteList(CSiteList* siteList);
+
+	/**
+	 * \brief nCorrelation getter
+	 * \return the nCorrelation
+	 */
+	int getNCorrelation() const;
+
+	/**
+	 * \brief nCorrelationMax getter
+	 * \return the nCorrelationMax
+	 */
+	int getNCorrelationMax() const;
+
+	/**
+	 * \brief nCorrelationMax Setter
+	 * \param correlationMax - the nCorrelationMax
+	 */
+	void setNCorrelationMax(int correlationMax);
+
+	/**
+	 * \brief nCorrelationTotal getter
+	 * \return the nCorrelationTotal
+	 */
+	int getNCorrelationTotal() const;
+
+	/**
+	 * \brief Get the current size of the correlation list
+	 */
+	int getVCorrelationSize() const;
+
+ private:
+	/**
 	 * \brief A pointer to the parent CGlass class, used to send output,
 	 * look up site information, encode/decode time, get configuration values,
 	 * call association functions, and debug flags
@@ -233,7 +287,16 @@ class CCorrelationList {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	std::recursive_mutex m_vCorrelationMutex;
+	mutable std::recursive_mutex m_vCorrelationMutex;
+
+	/**
+	 * \brief A recursive_mutex to control threading access to CCorrelationList.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex m_CorrelationListMutex;
 };
 }   // namespace glasscore
 #endif  // CORRELATIONLIST_H

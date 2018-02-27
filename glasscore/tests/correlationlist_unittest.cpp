@@ -41,18 +41,17 @@ TEST(CorrelationListTest, Construction) {
 			new glasscore::CCorrelationList();
 
 	// assert default values
-	ASSERT_EQ(-1, testCorrelationList->nCorrelationTotal)<<
-			"nCorrelationTotal is 0";
-	ASSERT_EQ(0, testCorrelationList->nCorrelation)<< "nCorrelation is 0";
+	ASSERT_EQ(-1, testCorrelationList->getNCorrelationTotal())<<
+	"nCorrelationTotal is 0";
+	ASSERT_EQ(0, testCorrelationList->getNCorrelation())<< "nCorrelation is 0";
 
 	// lists
-	ASSERT_EQ(0, testCorrelationList->vCorrelation.size())<<
-			"vCorrelation.size() is 0";
-	ASSERT_EQ(0, testCorrelationList->mCorrelation.size())<<
-			"mCorrelation.size() is 0";
+	ASSERT_EQ(0, testCorrelationList->getVCorrelationSize())<<
+	"vCorrelation.size() is 0";
 
 	// pointers
-	ASSERT_EQ(NULL, testCorrelationList->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testCorrelationList->getGlass())<< "pGlass null";
+	ASSERT_EQ(NULL, testCorrelationList->getSiteList())<< "pSiteList null";
 
 	// cleanup
 	delete (testCorrelationList);
@@ -63,47 +62,56 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	glassutil::CLogit::disable();
 
 	// create json objects from the strings
-	json::Object siteJSON = json::Deserialize(std::string(SITEJSON));
-	json::Object site2JSON = json::Deserialize(std::string(SITE2JSON));
-	json::Object site3JSON = json::Deserialize(std::string(SITE3JSON));
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITE2JSON))));
+	std::shared_ptr<json::Object> site3JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITE3JSON))));
 
-	json::Object correlationJSON = json::Deserialize(
-			std::string(CORRELATIONJSON));
-	json::Object correlation2JSON = json::Deserialize(
-			std::string(CORRELATION2JSON));
-	json::Object correlation3JSON = json::Deserialize(
-			std::string(CORRELATION3JSON));
-	json::Object correlation4JSON = json::Deserialize(
-			std::string(CORRELATION4JSON));
-	json::Object correlation5JSON = json::Deserialize(
-			std::string(CORRELATION5JSON));
-	json::Object correlation6JSON = json::Deserialize(
-			std::string(CORRELATION6JSON));
+	std::shared_ptr<json::Object> correlationJSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATIONJSON))));
+	std::shared_ptr<json::Object> correlation2JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION2JSON))));
+	std::shared_ptr<json::Object> correlation3JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION3JSON))));
+	std::shared_ptr<json::Object> correlation4JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION4JSON))));
+	std::shared_ptr<json::Object> correlation5JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION5JSON))));
+	std::shared_ptr<json::Object> correlation6JSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATION6JSON))));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// add sites to site list
-	testSiteList->addSite(&siteJSON);
-	testSiteList->addSite(&site2JSON);
-	testSiteList->addSite(&site3JSON);
+	testSiteList->addSite(siteJSON);
+	testSiteList->addSite(site2JSON);
+	testSiteList->addSite(site3JSON);
 
 	// construct a correlationlist
 	glasscore::CCorrelationList * testCorrelationList =
 			new glasscore::CCorrelationList();
-	testCorrelationList->pSiteList = testSiteList;
-	testCorrelationList->nCorrelationMax = MAXNCORRELATION;
+	testCorrelationList->setSiteList(testSiteList);
+	testCorrelationList->setNCorrelationMax(MAXNCORRELATION);
 
 	// test indexcorrelation when empty
 	ASSERT_EQ(-2, testCorrelationList->indexCorrelation(0))<<
-			"test indexcorrelation when empty";
+	"test indexcorrelation when empty";
 
 	// test adding correlations by addCorrelation and dispatch
-	testCorrelationList->addCorrelation(&correlationJSON);
-	testCorrelationList->dispatch(&correlation3JSON);
+	testCorrelationList->addCorrelation(correlationJSON);
+	testCorrelationList->dispatch(correlation3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testCorrelationList->nCorrelation)<<
-			"Added Correlations";
+	ASSERT_EQ(expectedSize, testCorrelationList->getNCorrelation())<<
+	"Added Correlations";
 
 	// test getting a correlation (first correlation, id 1)
 	std::shared_ptr<glasscore::CCorrelation> testCorrelation =
@@ -111,45 +119,45 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	// check testcorrelation
 	ASSERT_TRUE(testCorrelation != NULL)<< "testCorrelation not null";
 	// check scnl
-	std::string sitescnl = testCorrelation->pSite->sScnl;
+	std::string sitescnl = testCorrelation->getSite()->getScnl();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-			"testCorrelation has right scnl";
+	"testCorrelation has right scnl";
 
 	// test indexcorrelation
 	ASSERT_EQ(-1, testCorrelationList->indexCorrelation(TCORRELATION))<<
-			"test indexcorrelation with time before";
+	"test indexcorrelation with time before";
 	ASSERT_EQ(1, testCorrelationList->indexCorrelation(TCORRELATION2))<<
-			"test indexcorrelation with time after";
+	"test indexcorrelation with time after";
 	ASSERT_EQ(0, testCorrelationList->indexCorrelation(TCORRELATION3))<<
-			"test indexcorrelation with time within";
+	"test indexcorrelation with time within";
 
 	// add more correlations
-	testCorrelationList->addCorrelation(&correlation2JSON);
-	testCorrelationList->addCorrelation(&correlation4JSON);
-	testCorrelationList->addCorrelation(&correlation5JSON);
-	testCorrelationList->addCorrelation(&correlation6JSON);
+	testCorrelationList->addCorrelation(correlation2JSON);
+	testCorrelationList->addCorrelation(correlation4JSON);
+	testCorrelationList->addCorrelation(correlation5JSON);
+	testCorrelationList->addCorrelation(correlation6JSON);
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNCORRELATION;
-	ASSERT_EQ(expectedSize, testCorrelationList->vCorrelation.size())<<
-			"testCorrelationList not larger than max";
+	ASSERT_EQ(expectedSize, testCorrelationList->getVCorrelationSize())<<
+	"testCorrelationList not larger than max";
 
 	// get first correlation, which is now id 2
 	std::shared_ptr<glasscore::CCorrelation> test2Correlation =
 			testCorrelationList->getCorrelation(2);
 
 	// check scnl
-	sitescnl = test2Correlation->pSite->sScnl;
+	sitescnl = test2Correlation->getSite()->getScnl();
 	expectedscnl = std::string(SCNL2);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-			"test2Correlation has right scnl";
+	"test2Correlation has right scnl";
 
 	// test clearing correlations
 	testCorrelationList->clearCorrelations();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testCorrelationList->nCorrelation)<<
-			"Cleared Correlations";
+	ASSERT_EQ(expectedSize, testCorrelationList->getNCorrelation())<<
+	"Cleared Correlations";
 
 	// cleanup
 	delete (testCorrelationList);

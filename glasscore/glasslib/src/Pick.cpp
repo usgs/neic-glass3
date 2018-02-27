@@ -1,8 +1,10 @@
 #include <json.h>
 #include <memory>
 #include <string>
+#include <vector>
 #include "Pid.h"
 #include "Web.h"
+#include "Trigger.h"
 #include "Node.h"
 #include "PickList.h"
 #include "HypoList.h"
@@ -33,7 +35,8 @@ CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime, int pickId,
 }
 
 // ---------------------------------------------------------CPick
-CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
+CPick::CPick(std::shared_ptr<json::Object> pick, int pickId,
+				CSiteList *pSiteList) {
 	clear();
 
 	// null check json
@@ -100,6 +103,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CPick::CPick: Missing required Station Key.");
+
 			return;
 		}
 
@@ -119,6 +123,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CPick::CPick: Missing required Network Key.");
+
 			return;
 		}
 
@@ -133,6 +138,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		// no site key
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CPick::CPick: Missing required Site Key.");
+
 		return;
 	}
 
@@ -145,11 +151,12 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 	if (site == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CPick::CPick: site is null.");
+
 		return;
 	}
 
 	// check to see if we're using this site
-	if (!site->bUse) {
+	if (!site->getUse()) {
 		return;
 	}
 
@@ -171,6 +178,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CPick::CPick: Missing required Time or T Key.");
+
 		return;
 	}
 
@@ -186,6 +194,7 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
 				"CPick::CPick: Missing required ID or Pid Key.");
+
 		return;
 	}
 
@@ -225,12 +234,11 @@ CPick::CPick(json::Object *pick, int pickId, CSiteList *pSiteList) {
 		return;
 	}
 
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// remember input json for hypo message generation
 	// note, move to init?
-	std::shared_ptr<json::Object> jpck(new json::Object(*pick));
-	jPick = jpck;
+	jPick = pick;
 }
 
 // ---------------------------------------------------------~CPick
@@ -240,11 +248,11 @@ CPick::~CPick() {
 
 // ---------------------------------------------------------~clear
 void CPick::clear() {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
-	pSite = NULL;
-	pHypo = NULL;
-	jPick = NULL;
+	pSite.reset();
+	wpHypo.reset();
+	jPick.reset();
 
 	sAss = "";
 	sPhs = "";
@@ -258,9 +266,9 @@ void CPick::clear() {
 bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 						int pickId, std::string pickIdString,
 						double backAzimuth, double slowness) {
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+
 	clear();
-	// lock after clear to avoid deadlock
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
 
 	// nullcheck
 	if (pickSite == NULL) {
@@ -274,18 +282,19 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 	dBackAzimuth = backAzimuth;
 	dSlowness = slowness;
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CPick::initialize: site:" + pSite->sScnl + "; tPick:"
-					+ std::to_string(tPick) + "; idPick:"
-					+ std::to_string(idPick) + "; sPid:" + sPid);
+	/* glassutil::CLogit::log(
+	 glassutil::log_level::debug,
+	 "CPick::initialize: site:" + pSite->getScnl() + "; tPick:"
+	 + std::to_string(tPick) + "; idPick:"
+	 + std::to_string(idPick) + "; sPid:" + sPid);
+	 */
 
 	return (true);
 }
 
 // ---------------------------------------------------------addHypo
 void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -296,17 +305,17 @@ void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
 
 	// Add hypo data reference to this pick
 	if (force == true) {
-		pHypo = hyp;
+		wpHypo = hyp;
 		sAss = ass;
-	} else if (!pHypo) {
-		pHypo = hyp;
+	} else if (wpHypo.expired() == true) {
+		wpHypo = hyp;
 		sAss = ass;
 	}
 }
 
 // ---------------------------------------------------------remHypo
 void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -315,19 +324,25 @@ void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
-	// Remove hypo reference from this pick
-	if (pHypo->sPid == hyp->sPid) {
-		pHypo = NULL;
+	// is the pointer still valid
+	if (auto pHypo = wpHypo.lock()) {
+		// Remove hypo reference from this pick
+		if (pHypo->getPid() == hyp->getPid()) {
+			clearHypo();
+		}
+	} else {
+		// remove invalid pointer
+		clearHypo();
 	}
 }
 
 void CPick::clearHypo() {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
-	pHypo = NULL;
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+	wpHypo.reset();
 }
 
 void CPick::setAss(std::string ass) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	sAss = ass;
 }
@@ -335,7 +350,7 @@ void CPick::setAss(std::string ass) {
 // ---------------------------------------------------------Nucleate
 bool CPick::nucleate() {
 	// get CGlass pointer from site
-	CGlass *pGlass = pSite->pGlass;
+	CGlass *pGlass = pSite->getGlass();
 
 	// nullcheck
 	if (pGlass == NULL) {
@@ -344,31 +359,30 @@ bool CPick::nucleate() {
 		return (false);
 	}
 
+	std::string pt = glassutil::CDate::encodeDateTime(tPick);
 	char sLog[1024];
 
 	// Use site nucleate to scan all nodes
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
-	pSite->nucleate(tPick);
+	std::vector<std::shared_ptr<CTrigger>> vTrigger = pSite->nucleate(tPick);
 
-	// Set glass values for debugging
-	pGlass->sWeb = "";
-	pGlass->nCount = 0;
-	pGlass->dSum = 0.0;
+	// if there were no triggers, we're done
+	if (vTrigger.size() == 0) {
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CPick::nucleate: NOTRG site:" + pSite->getScnl() + "; tPick:"
+						+ pt + "; idPick:" + std::to_string(idPick) + "; sPid:"
+						+ sPid);
 
-	// for each node that triggered linked to this
-	// pick's site
-	pSite->vTriggerMutex.lock();
-	for (auto node : pSite->vTrigger) {
-		// Set glass values for debugging
-		pGlass->sWeb = node->pWeb->sName;
-		pGlass->nCount = node->nCount;
-		pGlass->dSum = node->dSum;
+		return (false);
+	}
 
-		snprintf(sLog, sizeof(sLog), "CPick::nucleate: %s %d %.2f",
-					pGlass->sWeb.c_str(), pGlass->nCount, pGlass->dSum);
-		glassutil::CLogit::log(sLog);
+	for (const auto &trigger : vTrigger) {
+		if (trigger->getWeb() == NULL) {
+			continue;
+		}
 
 		// nucleate at the node to build the
 		// list of picks that support this node
@@ -376,41 +390,34 @@ bool CPick::nucleate() {
 		// NOTE: this did not used to check the nucleate return here
 		// it seems that this should improve computational performance
 		// but MIGHT have unintended consequences.
-		if (!node->nucleate(node->tOrg, true)) {
-			// didn't nucleate anything
-			continue;
-		}
+		// if (!node->nucleate(node->getTOrg(), true)) {
+		// didn't nucleate anything
+		// continue;
+		// }
 
 		// create the hypo using the node
-		pGlass->m_TTTMutex.lock();
-		std::shared_ptr<CHypo> hypo = std::make_shared < CHypo
-				> (node, pGlass->pTTT);
-		pGlass->m_TTTMutex.unlock();
+		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
+				trigger, pGlass->getTTT());
 
 		// set hypo glass pointer and such
-		hypo->pGlass = pGlass;
-		hypo->dCutFactor = pGlass->dCutFactor;
-		hypo->dCutPercentage = pGlass->dCutPercentage;
-		hypo->dCutMin = pGlass->dCutMin;
+		hypo->setGlass(pGlass);
+		hypo->setCutFactor(pGlass->getCutFactor());
+		hypo->setCutPercentage(pGlass->getCutPercentage());
+		hypo->setCutMin(pGlass->getCutMin());
 
 		// add links to all the picks that support the hypo
-		for (auto pick : node->vPick) {
+		std::vector<std::shared_ptr<CPick>> vTriggerPicks = trigger->getVPick();
+
+		for (auto pick : vTriggerPicks) {
 			// they're not associated yet, just potentially
 			pick->setAss("N");
 			hypo->addPick(pick);
-
-			// debug logging
-			if (pGlass->bTrack) {
-				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: Adding to hyp %s\n",
-							pick->pSite->sScnl.c_str());
-				glassutil::CLogit::log(sLog);
-			}
 		}
 
 		// use the hypo's nucleation threshold, which is really the
 		// web's nucleation threshold
-		int ncut = hypo->nCut;
+		int ncut = hypo->getCut();
+		double thresh = hypo->getThresh();
 		bool bad = false;
 
 		// First localization attempt after nucleation
@@ -422,16 +429,34 @@ bool CPick::nucleate() {
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
-
-			hypo->anneal(10000, node->dResolution / 2., node->dResolution / 10.,
-							node->dResolution / 10.0, .1);
+			double bayes = hypo->anneal(10000, trigger->getResolution() / 2.,
+										trigger->getResolution() / 10.,
+										trigger->getResolution() / 10.0, .1);
 
 			// get the number of picks we have now
-			int npick = hypo->vPick.size();
+			int npick = hypo->getVPickSize();
 
-			snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass %d %d/%d %s",
-						ipass, npick, ncut, hypo->sPid.c_str());
+			snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass:%d; nPick:%d"
+						"/nCut:%d; bayes:%f/thresh:%f; %s",
+						ipass, npick, ncut, bayes, thresh,
+						hypo->getPid().c_str());
 			glassutil::CLogit::log(sLog);
+
+			// check to see if we still have a high enough bayes value for this
+			// hypo to survive.
+			if (bayes < thresh) {
+				// it isn't
+				snprintf(sLog, sizeof(sLog),
+							"CPick::nucleate: -- Abandoning solution %s "
+							"due to low bayes value "
+							"(bayes:%f/thresh:%f)",
+							hypo->getPid().c_str(), bayes, thresh);
+				glassutil::CLogit::log(sLog);
+
+				// don't bother making additional passes
+				bad = true;
+				break;
+			}
 
 			// check to see if we still have enough picks for this hypo to
 			// survive.
@@ -441,8 +466,10 @@ bool CPick::nucleate() {
 			if (npick < ncut) {
 				// we don't
 				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning this solution %s",
-							hypo->sPid.c_str());
+							"CPick::nucleate: -- Abandoning solution %s "
+							"due to lack of picks "
+							"(npick:%d/ncut:%d)",
+							hypo->getPid().c_str(), npick, ncut);
 				glassutil::CLogit::log(sLog);
 
 				// don't bother making additional passes
@@ -459,20 +486,20 @@ bool CPick::nucleate() {
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit looking at it closer.  Process it using evolve
-		if (pGlass->pHypoList->evolve(hypo, 1)) {
+		if (pGlass->getHypoList()->evolve(hypo, 1)) {
 			// the hypo survived evolve,
 			// log the hypo
-			std::string st = glassutil::CDate::encodeDateTime(hypo->tOrg);
-			snprintf(sLog, sizeof(sLog),
-						"CPick::nucleate: TRG hypo:%s %s %9.4f %10.4f %6.1f %d",
-						hypo->sPid.c_str(), st.c_str(), hypo->dLat, hypo->dLon,
-						hypo->dZ, static_cast<int>(hypo->vPick.size()));
-			glassutil::CLogit::log(sLog);
+			std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
 
-			// log the triggering web
-			snprintf(sLog, sizeof(sLog), "CPick::nucleate: WEB %s\n",
-						node->sName.c_str());
-			glassutil::CLogit::log(sLog);
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CPick::nucleate: TRG site:" + pSite->getScnl() + "; tPick:"
+							+ pt + "; idPick:" + std::to_string(idPick)
+							+ "; sPid:" + sPid + " => web:" + hypo->getWebName()
+							+ "; hyp: " + hypo->getPid() + "; lat:"
+							+ std::to_string(hypo->getLat()) + "; lon:"
+							+ std::to_string(hypo->getLon()) + "; z:"
+							+ std::to_string(hypo->getZ()) + "; tOrg:" + st);
 
 			// add a link to the hypo for each pick
 			// NOTE: Why is this done? Shouldn't evolve have already
@@ -487,23 +514,54 @@ bool CPick::nucleate() {
 			 }*/
 
 			// add new hypo to hypo list
-			pGlass->pHypoList->addHypo(hypo);
+			pGlass->getHypoList()->addHypo(hypo);
 		}
 	}
 
-	int triggerCount = pSite->vTrigger.size();
-	pSite->vTriggerMutex.unlock();
-
-	// If any webs triggered, return true to prevent further association
-	if (triggerCount > 0) {
-		return (true);
-	}
-
-	snprintf(sLog, sizeof(sLog), "CPick::nucleate: NOTRG idPick:%d sPid:%s",
-				idPick, sPid.c_str());
-	glassutil::CLogit::log(sLog);
-
 	// done
-	return (false);
+	return (true);
 }
+
+double CPick::getBackAzimuth() const {
+	return (dBackAzimuth);
+}
+
+double CPick::getSlowness() const {
+	return (dSlowness);
+}
+
+int CPick::getIdPick() const {
+	return (idPick);
+}
+
+const std::shared_ptr<json::Object>& CPick::getJPick() const {
+	return (jPick);
+}
+
+const std::shared_ptr<CHypo> CPick::getHypo() const {
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
+	return (wpHypo.lock());
+}
+
+const std::shared_ptr<CSite>& CPick::getSite() const {
+	return (pSite);
+}
+
+const std::string& CPick::getAss() const {
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
+	return (sAss);
+}
+
+const std::string& CPick::getPhs() const {
+	return (sPhs);
+}
+
+const std::string& CPick::getPid() const {
+	return (sPid);
+}
+
+double CPick::getTPick() const {
+	return (tPick);
+}
+
 }  // namespace glasscore

@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <memory>
 
 #define TESTAGENCYID "US"
 #define TESTAUTHOR "glasstest"
@@ -15,11 +16,11 @@ class parserstub : public parse::Parser {
 	~parserstub() {
 	}
 
-	json::Object* parse(const std::string &input) override {
+	std::shared_ptr<json::Object> parse(const std::string &input) override {
 		return (NULL);
 	}
 
-	bool validate(json::Object* input) override {
+	bool validate(std::shared_ptr<json::Object> &input) override {
 		return (true);
 	}
 };
@@ -33,7 +34,7 @@ TEST(ParserTest, Construction) {
 
 	// assert that agencyid is ok
 	ASSERT_STREQ(Parser->getAgencyid().c_str(), agencyid.c_str())<<
-			"AgencyID check";
+	"AgencyID check";
 
 	// assert that author is ok
 	ASSERT_STREQ(Parser->getAuthor().c_str(), author.c_str())<< "Author check";

@@ -38,10 +38,6 @@ CGlass::CGlass() {
 	nCorrelationMax = 1000;
 	nSitePickMax = 200;
 	nHypoMax = 100;
-	bTrack = false;
-	sWeb = "Nada";
-	nCount = 0;
-	dSum = 0.0;
 	graphicsOut = false;
 	graphicsOutFolder = "./";
 	graphicsStepKM = 1.;
@@ -76,7 +72,7 @@ CGlass::~CGlass() {
 }
 
 // ---------------------------------------------------------dispatch
-bool CGlass::dispatch(json::Object *com) {
+bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -91,30 +87,23 @@ bool CGlass::dispatch(json::Object *com) {
 		json::Value v = (*com)["Cmd"].ToString();
 
 		// log cmd if it isn't one of the common ones
-		if ((v != "Site") && (v != "Ping") && (v != "Pick")) {
+		if ((v != "Site") && (v != "ReqHypo") && (v != "Correlation")
+				&& (v != "Pick")) {
 			glassutil::CLogit::log(glassutil::log_level::debug,
 									"CGlass::dispatch: Cmd:" + v.ToString());
 		}
 
-		if (v == "Ping") {
-			return (ping(com));
-		}
-
-		// reset debugging values
-		nIterate = 0;
-		nLocate = 0;
-
 		// generate travel time file
 		// NOTE: Move to stand alone program
 		// if (v == "GenTrv") {
-		// return (genTrv(com));
+		// return((genTrv(com));
 		// }
 
 		// test travel time classes
 		// NOTE: Move to unit tests.
 		// if (v == "TestTTT") {
 		// testTTT(com);
-		// return (true);
+		// return(true);
 		// }
 
 		// Initialize glass
@@ -183,7 +172,7 @@ bool CGlass::dispatch(json::Object *com) {
 }
 
 // ---------------------------------------------------------send
-bool CGlass::send(json::Object *com) {
+bool CGlass::send(std::shared_ptr<json::Object> com) {
 	// make sure we have something to send to
 	if (piSend) {
 		// send the communication
@@ -230,7 +219,7 @@ void CGlass::clear() {
 }
 
 // ---------------------------------------------------------Initialize
-bool CGlass::initialize(json::Object *com) {
+bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -324,7 +313,7 @@ bool CGlass::initialize(json::Object *com) {
 		json::Array phases = (*com)["AssociationPhases"].ToArray();
 
 		// create and initialize travel time list
-		pTTT = new traveltime::CTTT();
+		pTTT = std::make_shared<traveltime::CTTT>();
 
 		// for each phase in the array
 		for (auto val : phases) {
@@ -838,20 +827,6 @@ bool CGlass::initialize(json::Object *com) {
 				"parameters");
 	}
 
-	// bTrack
-	if ((com->HasKey("Track"))
-			&& ((*com)["Track"].GetType() == json::ValueType::BoolVal)) {
-		bTrack = (*com)["Track"].ToBool();
-
-		if (bTrack) {
-			glassutil::CLogit::log(glassutil::log_level::info,
-									"CGlass::initialize: Track set to true");
-		} else {
-			glassutil::CLogit::log(glassutil::log_level::info,
-									"CGlass::initialize: Track set to false");
-		}
-	}
-
 	// Test Locator
 	if ((com->HasKey("TestLocator"))
 			&& ((*com)["TestLocator"].GetType() == json::ValueType::BoolVal)) {
@@ -1018,7 +993,7 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create site list
 	pSiteList = new CSiteList();
-	pSiteList->pGlass = this;
+	pSiteList->setGlass(this);
 
 	// clean out old web list if any
 	if (pWebList) {
@@ -1027,8 +1002,8 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create detection web list
 	pWebList = new CWebList(webBackgroundUpdate);
-	pWebList->pGlass = this;
-	pWebList->pSiteList = pSiteList;
+	pWebList->setGlass(this);
+	pWebList->setSiteList(pSiteList);
 
 	// clean out old pick list if any
 	if (pPickList) {
@@ -1037,8 +1012,8 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create pick list
 	pPickList = new CPickList(numNucleationThreads);
-	pPickList->pGlass = this;
-	pPickList->pSiteList = pSiteList;
+	pPickList->setGlass(this);
+	pPickList->setSiteList(pSiteList);
 
 	// clean out old correlation list if any
 	if (pCorrelationList) {
@@ -1047,8 +1022,8 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create correlation list
 	pCorrelationList = new CCorrelationList();
-	pCorrelationList->pGlass = this;
-	pCorrelationList->pSiteList = pSiteList;
+	pCorrelationList->setGlass(this);
+	pCorrelationList->setSiteList(pSiteList);
 
 	// clean out old hypo list if any
 	if (pHypoList) {
@@ -1057,67 +1032,15 @@ bool CGlass::initialize(json::Object *com) {
 
 	// create hypo list
 	pHypoList = new CHypoList(numHypoThreads);
-	pHypoList->pGlass = this;
-
-	// configure output format
-	if ((com->HasKey("OutputFormat"))
-			&& ((*com)["OutputFormat"].GetType() == json::ValueType::StringVal)) {
-		// get the output format
-		std::string outputformat = (*com)["OutputFormat"].ToString();
-
-		// set up based on output format
-		if (outputformat == "Event") {
-			pHypoList->bSendEvent = true;
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using output format Event");
-		} else {
-			pHypoList->bSendEvent = false;
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using default output format Event");
-		}
-	} else {
-		// default to sending quake messages
-		pHypoList->bSendEvent = false;
-
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::initialize: Using default output format Quake");
-	}
+	pHypoList->setGlass(this);
 
 	// create detection processor
 	pDetection = new CDetection();
-	pDetection->pGlass = this;
+	pDetection->setGlass(this);
 
 	return (true);
 }
 
-// ---------------------------------------------------------Ping
-bool CGlass::ping(json::Object *com) {
-	// NOTE: This function only had relevance for Caryl, consider removing
-	json::Object pong;
-	pong["Cmd"] = "Pong";
-	int npicks = 0;
-	int nquakes = 0;
-	if (pPickList) {
-		npicks = pPickList->vPick.size();
-	}
-	if (pHypoList) {
-		nquakes = pHypoList->vHypo.size();
-	}
-	pong["nPicks"] = npicks;
-	pong["nQuakes"] = nquakes;
-	pong["nLoc"] = nLocate;
-	pong["nIter"] = nIterate;
-	pong["Web"] = sWeb;
-	pong["Sum"] = dSum;
-	pong["Count"] = nCount;
-	send(&pong);
-	return true;
-}
 /* NOTE: Leave these in place as examples for Travel Time unit tests.
  *
  // ---------------------------------------------------------Test
@@ -1133,7 +1056,7 @@ bool CGlass::ping(json::Object *com) {
 
  bool bload = terra->load(mdl.c_str());
  if (!bload)
- return false;
+ return(false;
  printf("Terra nLayer:%ld dRadius:%.2f\n", terra->nLayer, terra->dRadius);
  double r = terra->dRadius;
 
@@ -1152,7 +1075,7 @@ bool CGlass::ping(json::Object *com) {
  printf("T %6.2f %6.2f %6.2f %6.2f\n", deg, t1, t2, t2 - t1);
  }
 
- return true;
+ return(true;
  }
 
  // ---------------------------------------------------------GenTrv
@@ -1163,7 +1086,7 @@ bool CGlass::ping(json::Object *com) {
  gentrv = new CGenTrv();
  bool bres = gentrv->Generate(com);
  delete gentrv;
- return bres;
+ return(bres;
  }
 
  // ---------------------------------------------------------TestTTT
@@ -1213,7 +1136,7 @@ bool CGlass::ping(json::Object *com) {
 // It is used for pruning and association, and is roughly
 // analogous to residual pruning in least squares approaches
 double CGlass::sig(double x, double sigma) {
-	return exp(-0.5 * x * x / sigma / sigma);
+	return (exp(-0.5 * x * x / sigma / sigma));
 }
 // ---------------------------------------------------------Sig
 // Calculate the laplacian significance function, which is just
@@ -1221,9 +1144,9 @@ double CGlass::sig(double x, double sigma) {
 // analogous to residual pruning in L1 approach.
 double CGlass::sig_laplace_pdf(double x, double sigma) {
 	if (x > 0) {
-		return (1. / (2. * sigma)) * exp(-1. * x / sigma);
+		return ((1. / (2. * sigma)) * exp(-1. * x / sigma));
 	} else {
-		return (1. / (2. * sigma)) * exp(x / sigma);
+		return ((1. / (2. * sigma)) * exp(x / sigma));
 	}
 }
 
@@ -1252,4 +1175,163 @@ bool CGlass::statusCheck() {
 	// all is well
 	return (true);
 }
+
+double CGlass::getAvgDelta() const {
+	return (avgDelta);
+}
+
+double CGlass::getAvgSigma() const {
+	return (avgSigma);
+}
+
+double CGlass::getBeamMatchingAzimuthWindow() const {
+	return (beamMatchingAzimuthWindow);
+}
+
+double CGlass::getBeamMatchingDistanceWindow() const {
+	return (beamMatchingDistanceWindow);
+}
+
+int CGlass::getCorrelationCancelAge() const {
+	return (correlationCancelAge);
+}
+
+double CGlass::getCorrelationMatchingTWindow() const {
+	return (correlationMatchingTWindow);
+}
+
+double CGlass::getCorrelationMatchingXWindow() const {
+	return (correlationMatchingXWindow);
+}
+
+double CGlass::getCutFactor() const {
+	return (dCutFactor);
+}
+
+double CGlass::getCutMin() const {
+	return (dCutMin);
+}
+
+double CGlass::getCutPercentage() const {
+	return (dCutPercentage);
+}
+
+double CGlass::getReportThresh() const {
+	return (dReportThresh);
+}
+
+double CGlass::getThresh() const {
+	return (dThresh);
+}
+
+double CGlass::getExpAffinity() const {
+	return (expAffinity);
+}
+
+bool CGlass::getGraphicsOut() const {
+	return (graphicsOut);
+}
+
+const std::string& CGlass::getGraphicsOutFolder() const {
+	return (graphicsOutFolder);
+}
+
+double CGlass::getGraphicsStepKm() const {
+	return (graphicsStepKM);
+}
+
+int CGlass::getGraphicsSteps() const {
+	return (graphicsSteps);
+}
+
+int CGlass::getCycleLimit() const {
+	return (iCycleLimit);
+}
+
+bool CGlass::getMinimizeTtLocator() const {
+	return (minimizeTTLocator);
+}
+
+int CGlass::getCorrelationMax() const {
+	return (nCorrelationMax);
+}
+
+int CGlass::getDetect() const {
+	return (nDetect);
+}
+
+int CGlass::getHypoMax() const {
+	return (nHypoMax);
+}
+
+int CGlass::getNucleate() const {
+	return (nNucleate);
+}
+
+int CGlass::getPickMax() const {
+	return (nPickMax);
+}
+
+double CGlass::getReportCut() const {
+	return (nReportCut);
+}
+
+int CGlass::getSitePickMax() const {
+	return (nSitePickMax);
+}
+
+CCorrelationList*& CGlass::getCorrelationList() {
+	return (pCorrelationList);
+}
+
+CDetection*& CGlass::getDetection() {
+	return (pDetection);
+}
+
+CHypoList*& CGlass::getHypoList() {
+	return (pHypoList);
+}
+
+double CGlass::getPickDuplicateWindow() const {
+	return (pickDuplicateWindow);
+}
+
+CPickList*& CGlass::getPickList() {
+	return (pPickList);
+}
+
+CSiteList*& CGlass::getSiteList() {
+	return (pSiteList);
+}
+
+std::shared_ptr<traveltime::CTravelTime>& CGlass::getTrvDefault() {
+	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+	return (pTrvDefault);
+}
+
+std::shared_ptr<traveltime::CTTT>& CGlass::getTTT() {
+	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+	return (pTTT);
+}
+
+CWebList*& CGlass::getWebList() {
+	return (pWebList);
+}
+
+double CGlass::getSdAssociate() const {
+	return (sdAssociate);
+}
+
+double CGlass::getSdPrune() const {
+	return (sdPrune);
+}
+
+bool CGlass::getTestLocator() const {
+	return (testLocator);
+}
+
+bool CGlass::getTestTimes() const {
+	return (testTimes);
+}
+
 }  // namespace glasscore

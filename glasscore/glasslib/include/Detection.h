@@ -69,7 +69,7 @@ class CDetection {
 	 * \return Returns true if the communication was handled by CDetection,
 	 * false otherwise
 	 */
-	bool dispatch(json::Object *com);
+	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Process detection message
@@ -89,15 +89,36 @@ class CDetection {
 	 * \param com -  A pointer to a json::object containing the incoming
 	 * 'Detection' message
 	 */
-	bool process(json::Object *com);
+	bool process(std::shared_ptr<json::Object> com);
 
-	// Local Attributes
+	/**
+	 * \brief CGlass getter
+	 * \return the CGlass pointer
+	 */
+	const CGlass* getGlass() const;
+
+	/**
+	 * \brief CGlass setter
+	 * \param glass - the CGlass pointer
+	 */
+	void setGlass(CGlass* glass);
+
+ private:
 	/**
 	 * \brief A pointer to the parent CGlass class, used to send output,
 	 * look up site information, encode/decode time, get configuration
 	 * values, call association functions, and debug flags
 	 */
 	CGlass *pGlass;
+
+	/**
+	 * \brief A recursive_mutex to control threading access to CDetection.
+	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
+	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
+	 * However a recursive_mutex allows us to maintain the original class
+	 * design as delivered by the contractor.
+	 */
+	mutable std::recursive_mutex detectionMutex;
 };
 }  // namespace glasscore
 #endif  // DETECTION_H

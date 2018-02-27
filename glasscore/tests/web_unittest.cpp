@@ -92,43 +92,43 @@ TEST(WebTest, Construction) {
 													nullTrav, nullTrav);
 
 	// name
-	ASSERT_STREQ(std::string(NAME).c_str(), testWeb->sName.c_str())<<
-	"Web sName Matches";
+	ASSERT_STREQ(std::string(NAME).c_str(), testWeb->getName().c_str())<<
+	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(THRESH, testWeb->dThresh)<< "Web dThresh Check";
+	ASSERT_EQ(THRESH, testWeb->getThresh())<< "Web getThresh() Check";
 
-	// nDetect
-	ASSERT_EQ(NUMDETECT, testWeb->nDetect)<< "Web nDetect Check";
+	// getDetect()
+	ASSERT_EQ(NUMDETECT, testWeb->getDetect())<< "Web getDetect() Check";
 
-	// nNucleate
-	ASSERT_EQ(NUMNUCLEATE, testWeb->nNucleate)<< "Web nNucleate Check";
+	// getNucleate()
+	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleate())<< "Web getNucleate() Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testWeb->dResolution)<< "Web resolution Check";
+	ASSERT_EQ(RESOLUTION, testWeb->getResolution())<< "Web resolution Check";
 
-	// nRow
-	ASSERT_EQ(NUMROWS, testWeb->nRow)<< "Web nRow Check";
+	// getRow()
+	ASSERT_EQ(NUMROWS, testWeb->getRow())<< "Web getRow() Check";
 
-	// nCol
-	ASSERT_EQ(NUMCOLS, testWeb->nCol)<< "Web nCol Check";
+	// getCol()
+	ASSERT_EQ(NUMCOLS, testWeb->getCol())<< "Web getCol() Check";
 
-	// nZ
-	ASSERT_EQ(NUMZ, testWeb->nZ)<< "Web nZ Check";
+	// getZ()
+	ASSERT_EQ(NUMZ, testWeb->getZ())<< "Web getZ() Check";
 
-	// bUpdate
-	ASSERT_EQ(UPDATE, testWeb->bUpdate)<< "Web bUpdate Check";
+	// getUpdate()
+	ASSERT_EQ(UPDATE, testWeb->getUpdate())<< "Web getUpdate() Check";
 
 	// lists
 	int expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testWeb->vNode.size())<< "node list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb->vSitesFilter.size())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getVNodeSize())<< "node list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
 	"site filter list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb->vNetFilter.size())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getVNetFilterSize())<<
 	"net filter list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testWeb->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testWeb->getGlass())<< "getGlass() null";
 
 	// construct a web
 	glasscore::CWeb * testWeb2 = new glasscore::CWeb(std::string(NAME),
@@ -142,42 +142,42 @@ TEST(WebTest, Construction) {
 														nullTrav, nullTrav);
 
 	// name
-	ASSERT_STREQ(std::string(NAME).c_str(), testWeb2->sName.c_str())<<
-	"Web sName Matches";
+	ASSERT_STREQ(std::string(NAME).c_str(), testWeb2->getName().c_str())<<
+	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(THRESH, testWeb2->dThresh)<< "Web dThresh Check";
+	ASSERT_EQ(THRESH, testWeb2->getThresh())<< "Web getThresh() Check";
 
-	// nDetect
-	ASSERT_EQ(NUMDETECT, testWeb2->nDetect)<< "Web nDetect Check";
+	// getDetect()
+	ASSERT_EQ(NUMDETECT, testWeb2->getDetect())<< "Web getDetect() Check";
 
-	// nNucleate
-	ASSERT_EQ(NUMNUCLEATE, testWeb2->nNucleate)<< "Web nNucleate Check";
+	// getNucleate()
+	ASSERT_EQ(NUMNUCLEATE, testWeb2->getNucleate())<< "Web getNucleate() Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testWeb2->dResolution)<< "Web resolution Check";
+	ASSERT_EQ(RESOLUTION, testWeb2->getResolution())<< "Web resolution Check";
 
-	// nRow
-	ASSERT_EQ(NUMROWS, testWeb2->nRow)<< "Web nRow Check";
+	// getRow()
+	ASSERT_EQ(NUMROWS, testWeb2->getRow())<< "Web getRow() Check";
 
-	// nCol
-	ASSERT_EQ(NUMCOLS, testWeb2->nCol)<< "Web nCol Check";
+	// getCol()
+	ASSERT_EQ(NUMCOLS, testWeb2->getCol())<< "Web getCol() Check";
 
-	// nZ
-	ASSERT_EQ(NUMZ, testWeb2->nZ)<< "Web nZ Check";
+	// getZ()
+	ASSERT_EQ(NUMZ, testWeb2->getZ())<< "Web getZ() Check";
 
-	// bUpdate
-	ASSERT_EQ(NOUPDATE, testWeb2->bUpdate)<< "Web bUpdate Check";
+	// getUpdate()
+	ASSERT_EQ(NOUPDATE, testWeb2->getUpdate())<< "Web getUpdate() Check";
 
 	// lists
-	ASSERT_EQ(expectedSize, (int)testWeb2->vNode.size())<< "node list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb2->vSitesFilter.size())<<
+	ASSERT_EQ(expectedSize, (int)testWeb2->getVNodeSize())<< "node list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb2->getVSitesFilterSize())<<
 	"site filter list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb2->vNetFilter.size())<<
+	ASSERT_EQ(expectedSize, (int)testWeb2->getVNetFilterSize())<<
 	"net filter list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testWeb2->pGlass)<< "pGlass null";
+	ASSERT_EQ(NULL, testWeb2->getGlass())<< "getGlass() null";
 
 	delete (testWeb);
 	delete (testWeb2);
@@ -202,39 +202,39 @@ TEST(WebTest, Initialize) {
 						nullTrav, nullTrav);
 
 	// name
-	ASSERT_STREQ(std::string(NAME).c_str(), testWeb.sName.c_str())<<
-	"Web sName Matches";
+	ASSERT_STREQ(std::string(NAME).c_str(), testWeb.getName().c_str())<<
+	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(THRESH, testWeb.dThresh)<< "Web dThresh Check";
+	ASSERT_EQ(THRESH, testWeb.getThresh())<< "Web getThresh() Check";
 
-	// nDetect
-	ASSERT_EQ(NUMDETECT, testWeb.nDetect)<< "Web nDetect Check";
+	// getDetect()
+	ASSERT_EQ(NUMDETECT, testWeb.getDetect())<< "Web getDetect() Check";
 
-	// nNucleate
-	ASSERT_EQ(NUMNUCLEATE, testWeb.nNucleate)<< "Web nNucleate Check";
+	// getNucleate()
+	ASSERT_EQ(NUMNUCLEATE, testWeb.getNucleate())<< "Web getNucleate() Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testWeb.dResolution)<< "Web resolution Check";
+	ASSERT_EQ(RESOLUTION, testWeb.getResolution())<< "Web resolution Check";
 
-	// nRow
-	ASSERT_EQ(NUMROWS, testWeb.nRow)<< "Web nRow Check";
+	// getRow()
+	ASSERT_EQ(NUMROWS, testWeb.getRow())<< "Web getRow() Check";
 
-	// nCol
-	ASSERT_EQ(NUMCOLS, testWeb.nCol)<< "Web nCol Check";
+	// getCol()
+	ASSERT_EQ(NUMCOLS, testWeb.getCol())<< "Web getCol() Check";
 
-	// nZ
-	ASSERT_EQ(NUMZ, testWeb.nZ)<< "Web nZ Check";
+	// getZ()
+	ASSERT_EQ(NUMZ, testWeb.getZ())<< "Web getZ() Check";
 
-	// bUpdate
-	ASSERT_EQ(UPDATE, testWeb.bUpdate)<< "Web bUpdate Check";
+	// getUpdate()
+	ASSERT_EQ(UPDATE, testWeb.getUpdate())<< "Web getUpdate() Check";
 
 	// lists
 	int expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testWeb.vNode.size())<< "node list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb.vSitesFilter.size())<<
+	ASSERT_EQ(expectedSize, (int)testWeb.getVNodeSize())<< "node list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb.getVSitesFilterSize())<<
 	"site filter list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb.vNetFilter.size())<<
+	ASSERT_EQ(expectedSize, (int)testWeb.getVNetFilterSize())<<
 	"net filter list empty";
 
 	ASSERT_TRUE(testWeb.statusCheck())<< "status check";
@@ -266,64 +266,70 @@ TEST(WebTest, GlobalTest) {
 	std::getline(globalFile, globalLine);
 	globalFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object globalConfig = json::Deserialize(globalLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+			json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> globalConfig = std::make_shared<json::Object>(
+			json::Deserialize(globalLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGlobalWeb(UPDATE);
-	testGlobalWeb.pSiteList = testSiteList;
-	testGlobalWeb.dispatch(&globalConfig);
+	testGlobalWeb.setSiteList(testSiteList);
+	testGlobalWeb.dispatch(globalConfig);
 
 	// name
-	ASSERT_STREQ(std::string(GLOBALNAME).c_str(), testGlobalWeb.sName.c_str())<<
-	"Web sName Matches";
+	ASSERT_STREQ(std::string(GLOBALNAME).c_str(),
+			testGlobalWeb.getName().c_str())<<
+	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(GLOBALTHRESH, testGlobalWeb.dThresh)<< "Web dThresh Check";
+	ASSERT_EQ(GLOBALTHRESH, testGlobalWeb.getThresh())<<
+	"Web getThresh() Check";
 
-	// nDetect
-	ASSERT_EQ(GLOBALNUMDETECT, testGlobalWeb.nDetect)<< "Web nDetect Check";
+	// getDetect()
+	ASSERT_EQ(GLOBALNUMDETECT, testGlobalWeb.getDetect())<<
+	"Web getDetect() Check";
 
-	// nNucleate
-	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.nNucleate)<< "Web nNucleate Check";
+	// getNucleate()
+	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.getNucleate())<<
+	"Web getNucleate() Check";
 
-	// dResolution
-	ASSERT_EQ(GLOBALRESOLUTION, testGlobalWeb.dResolution)<< "Web dResolution "
-	"Check";
+	// getResolution()
+	ASSERT_EQ(GLOBALRESOLUTION, testGlobalWeb.getResolution())<<
+	"Web getResolution() Check";
 
-	// nRow
-	ASSERT_EQ(0, testGlobalWeb.nRow)<< "Web nRow Check";
+	// getRow()
+	ASSERT_EQ(0, testGlobalWeb.getRow())<< "Web getRow() Check";
 
-	// nCol
-	ASSERT_EQ(0, testGlobalWeb.nCol)<< "Web nCol Check";
+	// getCol()
+	ASSERT_EQ(0, testGlobalWeb.getCol())<< "Web getCol() Check";
 
-	// nCol
-	ASSERT_EQ(GLOBALNUMZ, testGlobalWeb.nZ)<< "Web nZ Check";
+	// getCol()
+	ASSERT_EQ(GLOBALNUMZ, testGlobalWeb.getZ())<< "Web getZ() Check";
 
-	// bUpdate
-	ASSERT_EQ(UPDATE, testGlobalWeb.bUpdate)<< "Web bUpdate Check";
+	// getUpdate()
+	ASSERT_EQ(UPDATE, testGlobalWeb.getUpdate())<< "Web getUpdate() Check";
 
 	// lists
-	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.vNode.size())<< "node list";
-	ASSERT_EQ(0, (int)testGlobalWeb.vSitesFilter.size())<<
+	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.getVNodeSize())<< "node list";
+	ASSERT_EQ(0, (int)testGlobalWeb.getVSitesFilterSize())<<
 	"site filter list empty";
-	ASSERT_EQ(GLOBALNUMNETEXLUDE, (int)testGlobalWeb.vNetFilter.size())<<
+	ASSERT_EQ(GLOBALNUMNETEXLUDE, (int)testGlobalWeb.getVNetFilterSize())<<
 	"net filter list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testGlobalWeb.pGlass)<< "pGlass null";
-	ASSERT_TRUE(NULL != testGlobalWeb.pTrv1)<< "pTrv1 not null";
-	ASSERT_TRUE(NULL != testGlobalWeb.pTrv2)<< "pTrv2 not null";
+	ASSERT_EQ(NULL, testGlobalWeb.getGlass())<< "getGlass() null";
+	ASSERT_TRUE(NULL != testGlobalWeb.getTrv1())<< "getTrv1() not null";
+	ASSERT_TRUE(NULL != testGlobalWeb.getTrv2())<< "getTrv2() not null";
 
 	// phase name
-	ASSERT_STREQ(testGlobalWeb.pTrv1->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGlobalWeb.getTrv1()->sPhase.c_str(), phasename1.c_str());
 
 	// phase name
-	ASSERT_STREQ(testGlobalWeb.pTrv2->sPhase.c_str(), phasename2.c_str());
+	ASSERT_STREQ(testGlobalWeb.getTrv2()->sPhase.c_str(), phasename2.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -356,64 +362,67 @@ TEST(WebTest, GridTest) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+				json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+					json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(UPDATE);
-	testGridWeb.pSiteList = testSiteList;
-	testGridWeb.dispatch(&gridConfig);
+	testGridWeb.setSiteList(testSiteList);
+	testGridWeb.dispatch(gridConfig);
 
 	// name
-	ASSERT_STREQ(std::string(GRIDNAME).c_str(), testGridWeb.sName.c_str())<<
-	"Web sName Matches";
+	ASSERT_STREQ(std::string(GRIDNAME).c_str(), testGridWeb.getName().c_str())<<
+	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(GRIDTHRESH, testGridWeb.dThresh)<< "Web dThresh Check";
+	ASSERT_EQ(GRIDTHRESH, testGridWeb.getThresh())<< "Web getThresh() Check";
 
-	// nDetect
-	ASSERT_EQ(GRIDNUMDETECT, testGridWeb.nDetect)<< "Web nDetect Check";
+	// getDetect()
+	ASSERT_EQ(GRIDNUMDETECT, testGridWeb.getDetect())<< "Web getDetect() Check";
 
-	// nNucleate
-	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.nNucleate)<< "Web nNucleate Check";
+	// getNucleate()
+	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.getNucleate())<<
+	"Web getNucleate() Check";
 
-	// dResolution
-	ASSERT_EQ(GRIDRESOLUTION, testGridWeb.dResolution)<< "Web dResolution "
-	"Check";
+	// getResolution()
+	ASSERT_EQ(GRIDRESOLUTION, testGridWeb.getResolution())<<
+	"Web getResolution() Check";
 
-	// nRow
-	ASSERT_EQ(GRIDNUMROWS, testGridWeb.nRow)<< "Web nRow Check";
+	// getRow()
+	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getRow())<< "Web getRow() Check";
 
-	// nCol
-	ASSERT_EQ(GRIDNUMROWS, testGridWeb.nCol)<< "Web nCol Check";
+	// getCol()
+	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getCol())<< "Web getCol() Check";
 
-	// nCol
-	ASSERT_EQ(GRIDNUMZ, testGridWeb.nZ)<< "Web nZ Check";
+	// getCol()
+	ASSERT_EQ(GRIDNUMZ, testGridWeb.getZ())<< "Web getZ() Check";
 
-	// bUpdate
-	ASSERT_EQ(UPDATE, testGridWeb.bUpdate)<< "Web bUpdate Check";
+	// getUpdate()
+	ASSERT_EQ(UPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
 
 	// lists
-	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.vNode.size())<< "node list";
-	ASSERT_EQ(0, (int)testGridWeb.vSitesFilter.size())<<
+	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
+	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
 	"site filter list empty";
-	ASSERT_EQ(0, (int)testGridWeb.vNetFilter.size())<<
+	ASSERT_EQ(0, (int)testGridWeb.getVNetFilterSize())<<
 	"net filter list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testGridWeb.pGlass)<< "pGlass null";
-	ASSERT_TRUE(NULL != testGridWeb.pTrv1)<< "pTrv1 not null";
-	ASSERT_TRUE(NULL != testGridWeb.pTrv2)<< "pTrv2 not null";
+	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
+	ASSERT_TRUE(NULL != testGridWeb.getTrv1())<< "getTrv1() not null";
+	ASSERT_TRUE(NULL != testGridWeb.getTrv2())<< "getTrv2() not null";
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.pTrv1->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGridWeb.getTrv1()->sPhase.c_str(), phasename1.c_str());
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.pTrv2->sPhase.c_str(), phasename2.c_str());
+	ASSERT_STREQ(testGridWeb.getTrv2()->sPhase.c_str(), phasename2.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -445,64 +454,66 @@ TEST(WebTest, GridExplicitTest) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+				json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+					json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(UPDATE);
-	testGridWeb.pSiteList = testSiteList;
-	testGridWeb.dispatch(&gridConfig);
+	testGridWeb.setSiteList(testSiteList);
+	testGridWeb.dispatch(gridConfig);
 
 	// name
 	ASSERT_STREQ(std::string(GRIDEXPLICITNAME).c_str(),
-			testGridWeb.sName.c_str())<< "Web sName Matches";
+			testGridWeb.getName().c_str())<< "Web getName() Matches";
 
 	// threshold
 	ASSERT_EQ(GRIDEXPLICITTHRESH,
-			testGridWeb.dThresh)<< "Web dThresh Check";
+			testGridWeb.getThresh())<< "Web getThresh() Check";
 
-	// nDetect
+	// getDetect()
 	ASSERT_EQ(GRIDEXPLICITNUMDETECT,
-			testGridWeb.nDetect)<< "Web nDetect Check";
+			testGridWeb.getDetect())<< "Web getDetect() Check";
 
-	// nNucleate
+	// getNucleate()
 	ASSERT_EQ(GRIDEXPLICITNUMNUCLEATE,
-			testGridWeb.nNucleate)<< "Web nNucleate Check";
+			testGridWeb.getNucleate())<< "Web getNucleate() Check";
 
-	// dResolution
+	// getResolution()
 	ASSERT_EQ(GRIDEXPLICITRESOLUTION,
-			testGridWeb.dResolution)<< "Web dResolution Check";
+			testGridWeb.getResolution())<< "Web getResolution() Check";
 
-	// nRow
-	ASSERT_EQ(0, testGridWeb.nRow)<< "Web nRow Check";
+	// getRow()
+	ASSERT_EQ(0, testGridWeb.getRow())<< "Web getRow() Check";
 
-	// nCol
-	ASSERT_EQ(0, testGridWeb.nCol)<< "Web nCol Check";
+	// getCol()
+	ASSERT_EQ(0, testGridWeb.getCol())<< "Web getCol() Check";
 
-	// nCol
-	ASSERT_EQ(0, testGridWeb.nZ)<< "Web nZ Check";
+	// getCol()
+	ASSERT_EQ(0, testGridWeb.getZ())<< "Web getZ() Check";
 
-	// bUpdate
-	ASSERT_EQ(NOUPDATE, testGridWeb.bUpdate)<< "Web bUpdate Check";
+	// getUpdate()
+	ASSERT_EQ(NOUPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
 
 	// lists
-	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.vNode.size())<< "node list";
-	ASSERT_EQ(0, (int)testGridWeb.vSitesFilter.size())<<
+	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
+	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
 	"site filter list empty";
-	ASSERT_EQ(0, (int)testGridWeb.vNetFilter.size())<<
+	ASSERT_EQ(0, (int)testGridWeb.getVNetFilterSize())<<
 	"net filter list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testGridWeb.pGlass)<< "pGlass null";
-	ASSERT_TRUE(NULL != testGridWeb.pTrv1)<< "pTrv1 not null";
-	ASSERT_TRUE(NULL == testGridWeb.pTrv2)<< "pTrv2 null";
+	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
+	ASSERT_TRUE(NULL != testGridWeb.getTrv1())<< "getTrv1() not null";
+	ASSERT_TRUE(NULL == testGridWeb.getTrv2())<< "getTrv2() null";
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.pTrv1->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGridWeb.getTrv1()->sPhase.c_str(), phasename1.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -531,21 +542,24 @@ TEST(WebTest, AddTest) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+				json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+					json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(UPDATE);
-	testGridWeb.pSiteList = testSiteList;
-	testGridWeb.dispatch(&gridConfig);
+	testGridWeb.setSiteList(testSiteList);
+	testGridWeb.dispatch(gridConfig);
 
 	// create site to add
-	json::Object siteJSON = json::Deserialize(std::string(ADDSITE));
-	glasscore::CSite * addSite = new glasscore::CSite(&siteJSON, NULL);
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(ADDSITE))));
+	glasscore::CSite * addSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
 
 	// add to site list
@@ -587,21 +601,24 @@ TEST(WebTest, RemoveTest) {
 	std::getline(gridFile, gridLine);
 	gridFile.close();
 
-	json::Object siteList = json::Deserialize(stationLine);
-	json::Object gridConfig = json::Deserialize(gridLine);
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+				json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
+				json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(&siteList);
+	testSiteList->dispatch(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(UPDATE);
-	testGridWeb.pSiteList = testSiteList;
-	testGridWeb.dispatch(&gridConfig);
+	testGridWeb.setSiteList(testSiteList);
+	testGridWeb.dispatch(gridConfig);
 
 	// create site to remove
-	json::Object siteJSON = json::Deserialize(std::string(REMOVESITE));
-	glasscore::CSite * removeSite = new glasscore::CSite(&siteJSON, NULL);
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+				json::Object(json::Deserialize(std::string(REMOVESITE))));
+	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
 
 	// update in site list
@@ -644,7 +661,6 @@ TEST(WebTest, FailTests) {
 	// grid fails
 	std::ifstream badGridFile;
 	std::string badGridLine = "";
-	json::Object badGridConfig;
 
 	// global
 	// bad tt
@@ -655,8 +671,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global1 false";
+	std::shared_ptr<json::Object> badGridConfig = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig))<< "bad global1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -666,8 +683,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global2 false";
+	std::shared_ptr<json::Object> badGridConfig2 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig2))<< "bad global2 false";
 
 	// no depths
 	badGridFile.open(
@@ -677,8 +695,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad global4 false";
+	std::shared_ptr<json::Object> badGridConfig3 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig3))<< "bad global4 false";
 
 	// grid
 	// bad tt
@@ -688,8 +707,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid1 false";
+	std::shared_ptr<json::Object> badGridConfig4 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig4))<< "bad grid1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -698,8 +718,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid2 false";
+	std::shared_ptr<json::Object> badGridConfig5 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig5))<< "bad grid2 false";
 
 	// no depths
 	badGridFile.open(
@@ -708,8 +729,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid3 false";
+	std::shared_ptr<json::Object> badGridConfig6 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig6))<< "bad grid3 false";
 
 	// explicit
 	// bad tt
@@ -720,8 +742,9 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid1 false";
+	std::shared_ptr<json::Object> badGridConfig7 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig7))<< "bad grid1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -731,6 +754,7 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	badGridConfig = json::Deserialize(badGridLine);
-	ASSERT_FALSE(aWeb.global(&badGridConfig))<< "bad grid2 false";
+	std::shared_ptr<json::Object> badGridConfig8 = std::make_shared<json::Object>(
+					json::Deserialize(badGridLine));
+	ASSERT_FALSE(aWeb.global(badGridConfig8))<< "bad grid2 false";
 }

@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.4)
 
 # ----- PROJECT VERSION NUMBER ----- #
 set (glasscore_VERSION_MAJOR 0)
-set (glasscore_VERSION_MINOR 4)
+set (glasscore_VERSION_MINOR 5)
 set (glasscore_VERSION_PATCH 0)
 
 # ----- PROJECT ----- #

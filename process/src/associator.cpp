@@ -2,8 +2,11 @@
 #include <logger.h>
 #include <ctime>
 #include <string>
+#include <memory>
 #include <Logit.h>
 #include <Glass.h>
+#include <HypoList.h>
+#include <PickList.h>
 
 namespace glass {
 // Construction/Destruction
@@ -12,6 +15,10 @@ Associator::Associator()
 	logger::log("debug", "associator::Associator(): Construction.");
 
 	m_iWorkCounter = 0;
+	m_iTotalWorkCounter = 0;
+	m_iRunningAverageCounter = 0;
+	m_dRunningAverage = 0;
+
 	ReportInterval = 60;
 	std::time(&tLastWorkReport);
 
@@ -22,7 +29,6 @@ Associator::Associator()
 
 	m_iCheckInterval = 600;
 
-	tQueueDuration = std::chrono::duration<double>::zero();
 	tGlassDuration = std::chrono::duration<double>::zero();
 
 	// clear / create object(s)
@@ -36,6 +42,9 @@ Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
 	m_pGlass = NULL;
 	m_MessageQueue = NULL;
 	m_iWorkCounter = 0;
+	m_iTotalWorkCounter = 0;
+	m_iRunningAverageCounter = 0;
+	m_dRunningAverage = 0;
 
 	ReportInterval = 60;
 	std::time(&tLastWorkReport);
@@ -49,7 +58,6 @@ Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
 
 	m_iCheckInterval = 600;
 
-	tQueueDuration = std::chrono::duration<double>::zero();
 	tGlassDuration = std::chrono::duration<double>::zero();
 }
 
@@ -89,9 +97,10 @@ bool Associator::setup(json::Object *config) {
 					"associator::setup(): Class Core interface is NULL .");
 		return (false);
 	}
-
+	std::shared_ptr<json::Object> pConfig = std::make_shared<json::Object>(
+			*config);
 	// send the config to glass
-	m_pGlass->dispatch(config);
+	m_pGlass->dispatch(pConfig);
 	logger::log("debug",
 				"associator::setup(): Done Passing in provided config.");
 
@@ -136,13 +145,13 @@ void Associator::logGlass(glassutil::logMessageStruct message) {
 	}
 }
 
-void Associator::Send(json::Object *communication) {
+void Associator::Send(std::shared_ptr<json::Object> communication) {
 	// this probably could be the same function as dispatch...
 	// ...except the interface won't let it be
 	dispatch(communication);
 }
 
-void Associator::sendToAssociator(json::Object* message) {
+void Associator::sendToAssociator(std::shared_ptr<json::Object> &message) {
 	if (m_MessageQueue != NULL) {
 		m_MessageQueue->addDataToQueue(message);
 	}
@@ -162,36 +171,22 @@ bool Associator::work() {
 	}
 
 	// first check to see if we have any messages to send
-	json::Object* message = m_MessageQueue->getDataFromQueue();
+	std::shared_ptr<json::Object> message = m_MessageQueue->getDataFromQueue();
 
 	if (message != NULL) {
-		logger::log(
-				"debug",
-				"associator::work: Got message:" + json::Serialize(*message));
-
 		// send the message into glass
 		m_pGlass->dispatch(message);
 	}
 
-	time_t tNow;
+	std::time_t tNow;
 	std::time(&tNow);
 
-	std::chrono::high_resolution_clock::time_point tQueueStartTime =
-			std::chrono::high_resolution_clock::now();
 	// now grab whatever input might have for us and send it into glass
-	json::Object* data = Input->getData();
-	std::chrono::high_resolution_clock::time_point tQueueEndTime =
-			std::chrono::high_resolution_clock::now();
-
-	tQueueDuration += std::chrono::duration_cast<std::chrono::duration<double>>(
-			tQueueEndTime - tQueueStartTime);
+	std::shared_ptr<json::Object> data = Input->getData();
 
 	// only send in something if we got something
 	if (data != NULL) {
 		m_iWorkCounter++;
-
-		logger::log("debug",
-					"Associator::work: Got data:" + json::Serialize(*data));
 
 		std::chrono::high_resolution_clock::time_point tGlassStartTime =
 				std::chrono::high_resolution_clock::now();
@@ -204,44 +199,64 @@ bool Associator::work() {
 
 		tGlassDuration += std::chrono::duration_cast<
 				std::chrono::duration<double>>(tGlassEndTime - tGlassStartTime);
-
-		// logger::log("debug", "associator::work(): Sent data to glass.");
 	}
 
 	if ((tNow - tLastWorkReport) >= ReportInterval) {
 		int pendingdata = Input->dataCount();
-		double averagequeuetime = tQueueDuration.count() / m_iWorkCounter;
 		double averageglasstime = tGlassDuration.count() / m_iWorkCounter;
-		if (m_iWorkCounter == 0)
+
+		if (m_iWorkCounter == 0) {
 			logger::log(
 					"warning",
 					"associator::work(): Sent NO data to glass in the last "
 							+ std::to_string(
 									static_cast<int>(tNow - tLastWorkReport))
 							+ " seconds.");
-		else
+		} else {
+			int hypoListSize = 0;
+			int pickListSize = 0;
+			if (m_pGlass->getHypoList()) {
+				hypoListSize = m_pGlass->getHypoList()->getVHypoSize();
+			}
+			if (m_pGlass->getPickList()) {
+				pickListSize = m_pGlass->getPickList()->getVPickSize();
+			}
+
+			m_iTotalWorkCounter += m_iWorkCounter;
+
+			// calculate data per second average
+			double dataAverage = static_cast<double>(m_iWorkCounter)
+					/ static_cast<double>((tNow - tLastWorkReport));
+
+			// calculate running average
+			m_iRunningAverageCounter++;
+			if (m_iRunningAverageCounter == 1) {
+				m_dRunningAverage = dataAverage;
+			}
+
+			m_dRunningAverage = (m_dRunningAverage
+					* (m_iRunningAverageCounter - 1) + dataAverage)
+					/ m_iRunningAverageCounter;
+
 			logger::log(
 					"info",
 					"Associator::work(): Sent " + std::to_string(m_iWorkCounter)
 							+ " data to glass (" + std::to_string(pendingdata)
-							+ " pending) in the last "
+							+ " in queue, " + std::to_string(m_iTotalWorkCounter)
+							+ " total) in "
 							+ std::to_string(
 									static_cast<int>(tNow - tLastWorkReport))
-							+ " seconds. ("
-							+ std::to_string(
-									static_cast<double>(m_iWorkCounter)
-											/ static_cast<double>((tNow
-													- tLastWorkReport)))
-							+ " data per second) ("
-							+ std::to_string(averagequeuetime)
-							+ " average queue time; "
+							+ " seconds. (" + std::to_string(dataAverage)
+							+ " dps) (" + std::to_string(m_dRunningAverage)
+							+ " avg dps) ("
 							+ std::to_string(averageglasstime)
-							+ " average glass time).");
+							+ " avg glass time) (" + "vPickSize: "
+							+ std::to_string(pickListSize) + " vHypoSize: "
+							+ std::to_string(hypoListSize) + ").");
+		}
 
 		tLastWorkReport = tNow;
 		m_iWorkCounter = 0;
-
-		tQueueDuration = std::chrono::duration<double>::zero();
 		tGlassDuration = std::chrono::duration<double>::zero();
 	}
 
@@ -268,7 +283,7 @@ bool Associator::check() {
 }
 
 // process any messages glasscore sends us
-bool Associator::dispatch(json::Object *communication) {
+bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 	// tell base class we're still alive
 	ThreadBaseClass::setWorkCheck();
 
@@ -282,7 +297,7 @@ bool Associator::dispatch(json::Object *communication) {
 	if (Output != NULL) {
 		// Allocate a new json object to avoid
 		// multi-thread pointer issues.
-		Output->sendToOutput(new json::Object(*communication));
+		Output->sendToOutput(communication);
 	} else {
 		logger::log("error",
 					"associator::dispatch(): Output interface is NULL, nothing "
