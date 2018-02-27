@@ -833,58 +833,67 @@ void CHypoList::darwin() {
 	// only allow one thread to process a hypo at at time
 	hyp->lockForProcessing();
 
-	// log the hypo we're working on
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CHypoList::darwin Processing Hypo sPid:" + hyp->getPid()
-					+ " Cycle:" + std::to_string(hyp->getCycle())
-					+ " Fifo Size:" + std::to_string(getFifoSize()));
-
-	// check to see if this hypo is viable.
-	if (hyp->cancel()) {
-		// this hypo is no longer viable
-		// log
+	try {
+		// log the hypo we're working on
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::darwin canceling sPid:" + hyp->getPid()
-						+ " processCount:"
-						+ std::to_string(hyp->getProcessCount()));
+				"CHypoList::darwin Processing Hypo sPid:" + hyp->getPid()
+						+ " Cycle:" + std::to_string(hyp->getCycle())
+						+ " Fifo Size:" + std::to_string(getFifoSize()));
+
+		// check to see if this hypo is viable.
+		if (hyp->cancel()) {
+			hyp->unlockAfterProcessing();
+
+			// this hypo is no longer viable
+			// log
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CHypoList::darwin canceling sPid:" + hyp->getPid()
+							+ " processCount:"
+							+ std::to_string(hyp->getProcessCount()));
+
+			// remove hypo from the hypo list
+			remHypo(hyp);
+
+			sort();
+
+			// done with processing
+			return;
+		}
+
+		// check to see if we've hit the iCycle Limit for this
+		// hypo
+		if (hyp->getCycle() >= pGlass->getCycleLimit()) {
+			hyp->unlockAfterProcessing();
+			// log
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CHypoList::darwin skipping sPid:" + hyp->getPid()
+							+ " at cycle limit:"
+							+ std::to_string(hyp->getCycle())
+							+ +" processCount:"
+							+ std::to_string(hyp->getProcessCount()));
+
+			return;
+		}
+
+		// process this hypocenter
+		evolve(hyp);
 
 		hyp->unlockAfterProcessing();
 
-		// remove hypo from the hypo list
-		remHypo(hyp);
-
+		// resort the hypocenter list to maintain
+		// time order
 		sort();
+	} catch (const std::exception &e) {
+		// ensure the hypo is unlocked
+		if (hyp->isLockedForProcessing()) {
+			hyp->unlockAfterProcessing();
+		}
 
-		// done with processing
-		return;
+		throw e;
 	}
-
-	// check to see if we've hit the iCycle Limit for this
-	// hypo
-	if (hyp->getCycle() >= pGlass->getCycleLimit()) {
-		// log
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
-				"CHypoList::darwin skipping sPid:" + hyp->getPid()
-						+ " at cycle limit:" + std::to_string(hyp->getCycle())
-						+ +" processCount:"
-						+ std::to_string(hyp->getProcessCount()));
-
-		hyp->unlockAfterProcessing();
-
-		return;
-	}
-
-	// process this hypocenter
-	evolve(hyp);
-
-	hyp->unlockAfterProcessing();
-
-	// resort the hypocenter list to maintain
-	// time order
-	sort();
 }
 
 // ---------------------------------------------------------evolve

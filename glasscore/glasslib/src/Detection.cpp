@@ -196,13 +196,11 @@ bool CDetection::process(std::shared_ptr<json::Object> com) {
 			std::shared_ptr<traveltime::CTravelTime> nullTrav;
 
 			// create new hypo
-			// pGlass->m_TTTMutex.lock();
 			hypo = std::make_shared<CHypo>(lat, lon, z, torg,
 											glassutil::CPid::pid(), "Detection",
 											0.0, 0.0, 0,
 											pGlass->getTrvDefault(),
 											nullTrav, pGlass->getTTT());
-			// pGlass->m_TTTMutex.unlock();
 
 			// set hypo glass pointer and such
 			hypo->setGlass(pGlass);

@@ -228,7 +228,9 @@ class CPick {
 
 	/**
 	 * \brief A std::weak_ptr to a CHypo object
-	 * representing the links between this pick and associated hypocenter
+	 * representing the links between this pick and associated hypocenter.
+	 * A weak_ptr is used here instead of a shared_ptr to prevent a cyclical
+	 * reference between CPick and CHypo.
 	 */
 	std::weak_ptr<CHypo> wpHypo;
 

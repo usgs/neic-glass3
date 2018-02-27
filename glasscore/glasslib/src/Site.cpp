@@ -286,18 +286,6 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 		nSitePickMax = pGlass->getSitePickMax();
 	}
 
-	/*glassutil::CLogit::log(
-	 glassutil::log_level::debug,
-	 "CSite::initialize: sScnl:" + sScnl + "; sSite:" + sSite
-	 + "; sComp:" + sComp + "; sNet:" + sNet + "; sLoc:" + sLoc
-	 + "; dLat:" + std::to_string(geo.dLat) + "; dLon:"
-	 + std::to_string(geo.dLon) + "; dZ:"
-	 + std::to_string(geo.dZ) + "; dQual:"
-	 + std::to_string(dQual) + "; bUse:" + std::to_string(bUse)
-	 + "; bUseForTele:" + std::to_string(bUseForTele)
-	 + "; nSitePickMax:" + std::to_string(nSitePickMax));
-	 */
-
 	return (true);
 }
 
@@ -632,16 +620,7 @@ void CSite::addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
 
 		// if current trigger is part of latest trigger's web
 		if (trigger->getWeb()->getName() == aTrigger->getWeb()->getName()) {
-			/* glassutil::CLogit::log(
-			 glassutil::log_level::debug,
-			 "CSite::addTrigger Trigger 1:" + std::to_string(trigger->dLat)
-			 + ", " + std::to_string(trigger->dLon) + ", "
-			 + std::to_string(trigger->dZ) + ", "
-			 + std::to_string(trigger->dSum) + ", Trigger 2:"
-			 + std::to_string(aTrigger->dLat) + ", "
-			 + std::to_string(aTrigger->dLon) + ", "
-			 + std::to_string(aTrigger->dZ) + ", "
-			 + std::to_string(aTrigger->dSum));*/
+			// if current trigger's sum is less than latest trigger's sum
 			if (trigger->getSum() > aTrigger->getSum()) {
 				it = vTrigger->erase(it);
 				it = vTrigger->insert(it, trigger);
@@ -653,40 +632,6 @@ void CSite::addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
 			++it;
 		}
 	}
-
-	/*	// for each known trigger
-	 for (int triggerIndex = 0; triggerIndex < vTrigger->size();
-	 triggerIndex++) {
-	 // get current trigger
-	 std::shared_ptr<CTrigger> aTrigger = vTrigger->at(triggerIndex);
-	 // if current trigger is part of latest trigger's web
-	 if (trigger->pWeb->sName == aTrigger->pWeb->sName) {
-	 // if latest triger''s sum is greater than current trigger's
-	 // sum, replace it
-	 glassutil::CLogit::log(
-	 glassutil::log_level::debug,
-	 "CSite::addTrigger Trigger 1:" + std::to_string(trigger->dLat)
-	 + ", " + std::to_string(trigger->dLon) + ", "
-	 + std::to_string(trigger->dZ) + ", "
-	 + std::to_string(trigger->dSum) + ", Trigger 2:"
-	 + std::to_string(aTrigger->dLat) + ", "
-	 + std::to_string(aTrigger->dLon) + ", "
-	 + std::to_string(aTrigger->dZ) + ", "
-	 + std::to_string(aTrigger->dSum));
-	 if (trigger->dSum > aTrigger->dSum) {
-	 vTrigger[triggerIndex] = trigger;
-	 }
-	 // we're done
-	 return;
-	 }
-	 }*/
-
-	/*	glassutil::CLogit::log(
-	 glassutil::log_level::debug,
-	 "CSite::addTrigger New Trigger:" + std::to_string(trigger->dLat)
-	 + ", " + std::to_string(trigger->dLon) + ", "
-	 + std::to_string(trigger->dZ) + ", "
-	 + std::to_string(trigger->dSum));*/
 
 	// add triggering node to vector of triggered nodes
 	vTrigger->push_back(trigger);

@@ -127,11 +127,18 @@ void CWeb::clear() {
 	bUpdate = false;
 
 	// clear out all the nodes in the web
-	m_vNodeMutex.lock();
-	for (auto &node : vNode) {
-		node->clear();
+	try {
+		m_vNodeMutex.lock();
+		for (auto &node : vNode) {
+			node->clear();
+		}
+		vNode.clear();
+	} catch (const std::exception &e) {
+		// ensure the vNode mutex is unlocked
+		m_vNodeMutex.unlock();
+
+		throw e;
 	}
-	vNode.clear();
 	m_vNodeMutex.unlock();
 
 	// clear the network and site filters
@@ -139,8 +146,15 @@ void CWeb::clear() {
 	vSitesFilter.clear();
 
 	// clear sites
-	vSiteMutex.lock();
-	vSite.clear();
+	try {
+		vSiteMutex.lock();
+		vSite.clear();
+	} catch (const std::exception &e) {
+		// ensure the vSite mutex is unlocked
+		vSiteMutex.unlock();
+
+		throw e;
+	}
 	vSiteMutex.unlock();
 
 	pTrv1 = NULL;

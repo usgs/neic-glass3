@@ -279,7 +279,6 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			continue;
 		}
 
-		// site->vPickMutex.lock();
 		std::vector<std::shared_ptr<CPick>> vSitePicks = site->getVPick();
 
 		// search through each pick at this site
@@ -355,8 +354,6 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 				pickBest = pick;
 			}
 		}
-
-		// site->vPickMutex.unlock();
 
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site

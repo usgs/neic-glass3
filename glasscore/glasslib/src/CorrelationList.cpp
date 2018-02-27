@@ -148,6 +148,7 @@ bool CCorrelationList::addCorrelation(
 			|| (newCorrelation->getPid() == "")) {
 		// cleanup
 		delete (newCorrelation);
+		// message was processed
 		return (true);
 	}
 
@@ -164,6 +165,7 @@ bool CCorrelationList::addCorrelation(
 					"CCorrelationList::addCorrelation: Duplicate correlation "
 					"not passed in.");
 			delete (newCorrelation);
+			// message was processed
 			return (true);
 		}
 	}
@@ -249,11 +251,9 @@ bool CCorrelationList::addCorrelation(
 			std::shared_ptr<traveltime::CTravelTime> nullTrav;
 
 			// create new hypo
-			// pGlass->m_TTTMutex.lock();
 			std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
 					corr, pGlass->getTrvDefault(), nullTrav,
 					pGlass->getTTT());
-			// pGlass->m_TTTMutex.unlock();
 
 			// set hypo glass pointer and such
 			hypo->setGlass(pGlass);
@@ -292,7 +292,7 @@ bool CCorrelationList::addCorrelation(
 		}
 	}
 
-	// we're done
+	// we're done, message was processed
 	return (true);
 }
 

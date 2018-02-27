@@ -78,7 +78,7 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 
 	if (trigger->getWeb() == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::CHypo: NULL node->getWeb().");
+								"CHypo::CHypo: NULL trigger->getWeb().");
 
 		clear();
 		return;
@@ -2450,18 +2450,6 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		// check which affinity is better
 		if (aff1 > aff2) {
 			// this pick has a higher affinity with the provided hypo
-			/*
-			 snprintf(
-			 sLog,
-			 sizeof(sLog),
-			 "CHypo::resolve: SCV %s %s %s %s (%.2f)",
-			 sPid.c_str(),
-			 sOtherPid.c_str(),
-			 glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-			 pck->getSite()->getScnl().c_str(), aff1);
-			 glassutil::CLogit::log(sLog);
-			 */
-
 			// remove the pick from it's original hypo
 			pickHyp->remPick(pck);
 
@@ -2541,20 +2529,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 
 		// check which affinity is better
 		if (aff1 > aff2) {
-			// this pick has a higher affinity with the provided hypo
-			/*
-			 snprintf(
-			 sLog,
-			 sizeof(sLog),
-			 "CHypo::resolve: C SCV %s %s %s %s (%.2f)\n",
-			 sPid.c_str(),
-			 sOtherPid.c_str(),
-			 glassutil::CDate::encodeDateTime(
-			 corr->getTCorrelation()).c_str(),
-			 corr->getSite()->getScnl().c_str(), aff1);
-			 glassutil::CLogit::log(sLog);
-			 */
-
+			// this correlation has a higher affinity with the provided hypo
 			// remove the correlation from it's original hypo
 			corrHyp->remCorrelation(corr);
 

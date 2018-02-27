@@ -206,6 +206,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 			|| (newPick->getPid() == "")) {
 		// cleanup
 		delete (newPick);
+		// message was processed
 		return (true);
 	}
 
@@ -220,6 +221,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 					glassutil::log_level::warn,
 					"CPickList::addPick: Duplicate pick not passed in.");
 			delete (newPick);
+			// message was processed
 			return (true);
 		}
 	}
@@ -327,7 +329,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		m_qProcessMutex.unlock();
 	}
 
-	// we're done
+	// we're done, message was processed
 	return (true);
 }
 
