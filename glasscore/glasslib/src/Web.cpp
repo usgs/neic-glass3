@@ -133,11 +133,11 @@ void CWeb::clear() {
 			node->clear();
 		}
 		vNode.clear();
-	} catch (const std::exception &e) {
+	} catch (...) {
 		// ensure the vNode mutex is unlocked
 		m_vNodeMutex.unlock();
 
-		throw e;
+		throw;
 	}
 	m_vNodeMutex.unlock();
 
@@ -149,11 +149,11 @@ void CWeb::clear() {
 	try {
 		vSiteMutex.lock();
 		vSite.clear();
-	} catch (const std::exception &e) {
+	} catch (...) {
 		// ensure the vSite mutex is unlocked
 		vSiteMutex.unlock();
 
-		throw e;
+		throw;
 	}
 	vSiteMutex.unlock();
 
