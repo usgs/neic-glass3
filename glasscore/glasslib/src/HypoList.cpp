@@ -886,13 +886,13 @@ void CHypoList::darwin() {
 		// resort the hypocenter list to maintain
 		// time order
 		sort();
-	} catch (const std::exception &e) {
+	} catch (...) {
 		// ensure the hypo is unlocked
 		if (hyp->isLockedForProcessing()) {
 			hyp->unlockAfterProcessing();
 		}
 
-		throw e;
+		throw;
 	}
 }
 
