@@ -99,20 +99,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IGLASSSEND_H</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;json.h&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span>glasscore {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="structglasscore_1_1IGlassSend.html">   23</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structglasscore_1_1IGlassSend.html">IGlassSend</a> {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="structglasscore_1_1IGlassSend.html#a445d00a5d6adb529455b7e44c42a03b3">Send</a>(json::Object *com) = 0;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;};</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#endif  // IGLASSSEND_H</span></div>
-<div class="ttc" id="structglasscore_1_1IGlassSend_html_a445d00a5d6adb529455b7e44c42a03b3"><div class="ttname"><a href="structglasscore_1_1IGlassSend.html#a445d00a5d6adb529455b7e44c42a03b3">glasscore::IGlassSend::Send</a></div><div class="ttdeci">virtual void Send(json::Object *com)=0</div><div class="ttdoc">Send data to glasscore. </div></div>
-<div class="ttc" id="structglasscore_1_1IGlassSend_html"><div class="ttname"><a href="structglasscore_1_1IGlassSend.html">glasscore::IGlassSend</a></div><div class="ttdoc">glasscore messaging interface </div><div class="ttdef"><b>Definition:</b> IGlassSend.h:23</div></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span>glasscore {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="structglasscore_1_1IGlassSend.html">   24</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structglasscore_1_1IGlassSend.html">IGlassSend</a> {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="structglasscore_1_1IGlassSend.html#ae097332c9a83eb4f783145328b394df2">Send</a>(std::shared_ptr&lt;json::Object&gt; com) = 0;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;};</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#endif  // IGLASSSEND_H</span></div>
+<div class="ttc" id="structglasscore_1_1IGlassSend_html"><div class="ttname"><a href="structglasscore_1_1IGlassSend.html">glasscore::IGlassSend</a></div><div class="ttdoc">glasscore messaging interface </div><div class="ttdef"><b>Definition:</b> IGlassSend.h:24</div></div>
+<div class="ttc" id="structglasscore_1_1IGlassSend_html_ae097332c9a83eb4f783145328b394df2"><div class="ttname"><a href="structglasscore_1_1IGlassSend.html#ae097332c9a83eb4f783145328b394df2">glasscore::IGlassSend::Send</a></div><div class="ttdeci">virtual void Send(std::shared_ptr&lt; json::Object &gt; com)=0</div><div class="ttdoc">Send data to glasscore. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:18:49 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:12:45 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

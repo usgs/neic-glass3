@@ -100,31 +100,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;json.h&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="parser_8h.html">parser.h</a>&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="line" href="namespaceparse.html">   14</a></span>&#160;<span class="keyword">namespace </span>parse {</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classparse_1_1CCParser.html">   23</a></span>&#160;<span class="keyword">class </span><a class="code" href="classparse_1_1CCParser.html">CCParser</a> : <span class="keyword">public</span> <a class="code" href="classparse_1_1Parser.html">Parser</a> {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="classparse_1_1CCParser.html#a859bf704b744617757416e42c2ba5d71">CCParser</a>(<span class="keyword">const</span> std::string &amp;newAgencyID, <span class="keyword">const</span> std::string &amp;newAuthor);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <a class="code" href="classparse_1_1CCParser.html#a81ad12ecface5f88a2a459c2230ffdc4">~CCParser</a>();</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    json::Object* <a class="code" href="classparse_1_1CCParser.html#ab69e4730fa219a7531724abffb16afc2">parse</a>(<span class="keyword">const</span> std::string &amp;input) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classparse_1_1CCParser.html#a3312b9c9a33feb74c75df3a4c00febf4">validate</a>(json::Object* input) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;};</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}  <span class="comment">// namespace parse</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#endif  // CCPARSER_H</span></div>
-<div class="ttc" id="classparse_1_1CCParser_html_ab69e4730fa219a7531724abffb16afc2"><div class="ttname"><a href="classparse_1_1CCParser.html#ab69e4730fa219a7531724abffb16afc2">parse::CCParser::parse</a></div><div class="ttdeci">json::Object * parse(const std::string &amp;input) override</div><div class="ttdoc">cross correlation parsing function </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:18</div></div>
-<div class="ttc" id="classparse_1_1CCParser_html_a859bf704b744617757416e42c2ba5d71"><div class="ttname"><a href="classparse_1_1CCParser.html#a859bf704b744617757416e42c2ba5d71">parse::CCParser::CCParser</a></div><div class="ttdeci">CCParser(const std::string &amp;newAgencyID, const std::string &amp;newAuthor)</div><div class="ttdoc">ccparser constructor </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:11</div></div>
-<div class="ttc" id="classparse_1_1Parser_html"><div class="ttname"><a href="classparse_1_1Parser.html">parse::Parser</a></div><div class="ttdoc">glass parser class </div><div class="ttdef"><b>Definition:</b> parser.h:22</div></div>
-<div class="ttc" id="classparse_1_1CCParser_html_a81ad12ecface5f88a2a459c2230ffdc4"><div class="ttname"><a href="classparse_1_1CCParser.html#a81ad12ecface5f88a2a459c2230ffdc4">parse::CCParser::~CCParser</a></div><div class="ttdeci">~CCParser()</div><div class="ttdoc">ccparser destructor </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:14</div></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="namespaceparse.html">   15</a></span>&#160;<span class="keyword">namespace </span>parse {</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classparse_1_1CCParser.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="classparse_1_1CCParser.html">CCParser</a> : <span class="keyword">public</span> <a class="code" href="classparse_1_1Parser.html">Parser</a> {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="classparse_1_1CCParser.html#a859bf704b744617757416e42c2ba5d71">CCParser</a>(<span class="keyword">const</span> std::string &amp;newAgencyID, <span class="keyword">const</span> std::string &amp;newAuthor);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="classparse_1_1CCParser.html#a81ad12ecface5f88a2a459c2230ffdc4">~CCParser</a>();</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classparse_1_1CCParser.html#ae44238e665d6cc9b8212da282c6f8ab3">parse</a>(<span class="keyword">const</span> std::string &amp;input) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classparse_1_1CCParser.html#a4022e2c633214d9dd6baa14b797ad05a">validate</a>(std::shared_ptr&lt;json::Object&gt; &amp;input) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;};</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;}  <span class="comment">// namespace parse</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor">#endif  // CCPARSER_H</span></div>
+<div class="ttc" id="classparse_1_1CCParser_html_a859bf704b744617757416e42c2ba5d71"><div class="ttname"><a href="classparse_1_1CCParser.html#a859bf704b744617757416e42c2ba5d71">parse::CCParser::CCParser</a></div><div class="ttdeci">CCParser(const std::string &amp;newAgencyID, const std::string &amp;newAuthor)</div><div class="ttdoc">ccparser constructor </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:12</div></div>
+<div class="ttc" id="classparse_1_1Parser_html"><div class="ttname"><a href="classparse_1_1Parser.html">parse::Parser</a></div><div class="ttdoc">glass parser class </div><div class="ttdef"><b>Definition:</b> parser.h:23</div></div>
+<div class="ttc" id="classparse_1_1CCParser_html_a81ad12ecface5f88a2a459c2230ffdc4"><div class="ttname"><a href="classparse_1_1CCParser.html#a81ad12ecface5f88a2a459c2230ffdc4">parse::CCParser::~CCParser</a></div><div class="ttdeci">~CCParser()</div><div class="ttdoc">ccparser destructor </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:15</div></div>
 <div class="ttc" id="parser_8h_html"><div class="ttname"><a href="parser_8h.html">parser.h</a></div></div>
-<div class="ttc" id="classparse_1_1CCParser_html"><div class="ttname"><a href="classparse_1_1CCParser.html">parse::CCParser</a></div><div class="ttdoc">glass cross correlation parser class </div><div class="ttdef"><b>Definition:</b> ccparser.h:23</div></div>
-<div class="ttc" id="classparse_1_1CCParser_html_a3312b9c9a33feb74c75df3a4c00febf4"><div class="ttname"><a href="classparse_1_1CCParser.html#a3312b9c9a33feb74c75df3a4c00febf4">parse::CCParser::validate</a></div><div class="ttdeci">bool validate(json::Object *input) override</div><div class="ttdoc">cross correlation validation function </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:139</div></div>
+<div class="ttc" id="classparse_1_1CCParser_html"><div class="ttname"><a href="classparse_1_1CCParser.html">parse::CCParser</a></div><div class="ttdoc">glass cross correlation parser class </div><div class="ttdef"><b>Definition:</b> ccparser.h:24</div></div>
+<div class="ttc" id="classparse_1_1CCParser_html_a4022e2c633214d9dd6baa14b797ad05a"><div class="ttname"><a href="classparse_1_1CCParser.html#a4022e2c633214d9dd6baa14b797ad05a">parse::CCParser::validate</a></div><div class="ttdeci">bool validate(std::shared_ptr&lt; json::Object &gt; &amp;input) override</div><div class="ttdoc">cross correlation validation function </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:141</div></div>
+<div class="ttc" id="classparse_1_1CCParser_html_ae44238e665d6cc9b8212da282c6f8ab3"><div class="ttname"><a href="classparse_1_1CCParser.html#ae44238e665d6cc9b8212da282c6f8ab3">parse::CCParser::parse</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; parse(const std::string &amp;input) override</div><div class="ttdoc">cross correlation parsing function </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:20:25 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:14:52 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -1,15 +1,2 @@
 <map id="glasscore::CHypo" name="glasscore::CHypo">
-<area shape="rect" id="node7" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="789,1168,924,1392"/>
-<area shape="rect" id="node8" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="171,587,292,723"/>
-<area shape="rect" id="node11" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="776,747,939,957"/>
-<area shape="rect" id="node12" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="602,294,728,562"/>
-<area shape="rect" id="node13" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="984,338,1141,518"/>
-<area shape="rect" id="node17" href="$classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1448,1469,1667,1811"/>
-<area shape="rect" id="node18" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="2663,2838,2805,3135"/>
-<area shape="rect" id="node32" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="2998,2116,3145,2545"/>
-<area shape="rect" id="node38" href="$classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="982,2875,1161,3099"/>
-<area shape="rect" id="node36" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="1771,2882,1915,3091"/>
-<area shape="rect" id="node24" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="1958,2204,2097,2457"/>
-<area shape="rect" id="node29" href="$classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="872,2263,1024,2399"/>
-<area shape="rect" id="node31" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="1480,1241,1633,1319"/>
 </map>

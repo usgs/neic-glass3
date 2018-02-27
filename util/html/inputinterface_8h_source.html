@@ -99,24 +99,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define INPUTINTERFACE_H</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;json.h&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span>util {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="classutil_1_1iInput.html">   23</a></span>&#160;<span class="keyword">class </span><a class="code" href="classutil_1_1iInput.html">iInput</a> {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">virtual</span> json::Object* <a class="code" href="classutil_1_1iInput.html#ab2035783a502185939e31129afd67ce1">getData</a>() = 0;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">int</span> <a class="code" href="classutil_1_1iInput.html#aceb4aec523df449ed1d4899152e0844e">dataCount</a>() = 0;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;};</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif  // INPUTINTERFACE_H</span></div>
-<div class="ttc" id="classutil_1_1iInput_html"><div class="ttname"><a href="classutil_1_1iInput.html">util::iInput</a></div><div class="ttdef"><b>Definition:</b> inputinterface.h:23</div></div>
-<div class="ttc" id="classutil_1_1iInput_html_ab2035783a502185939e31129afd67ce1"><div class="ttname"><a href="classutil_1_1iInput.html#ab2035783a502185939e31129afd67ce1">util::iInput::getData</a></div><div class="ttdeci">virtual json::Object * getData()=0</div><div class="ttdoc">Get input data. </div></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span>util {</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classutil_1_1iInput.html">   24</a></span>&#160;<span class="keyword">class </span><a class="code" href="classutil_1_1iInput.html">iInput</a> {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">virtual</span> std::shared_ptr&lt;json::Object&gt; <a class="code" href="classutil_1_1iInput.html#a579477f6a96d7e695f184c21ea6b4afb">getData</a>() = 0;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">int</span> <a class="code" href="classutil_1_1iInput.html#aceb4aec523df449ed1d4899152e0844e">dataCount</a>() = 0;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;};</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#endif  // INPUTINTERFACE_H</span></div>
+<div class="ttc" id="classutil_1_1iInput_html"><div class="ttname"><a href="classutil_1_1iInput.html">util::iInput</a></div><div class="ttdef"><b>Definition:</b> inputinterface.h:24</div></div>
+<div class="ttc" id="classutil_1_1iInput_html_a579477f6a96d7e695f184c21ea6b4afb"><div class="ttname"><a href="classutil_1_1iInput.html#a579477f6a96d7e695f184c21ea6b4afb">util::iInput::getData</a></div><div class="ttdeci">virtual std::shared_ptr&lt; json::Object &gt; getData()=0</div><div class="ttdoc">Get input data. </div></div>
 <div class="ttc" id="classutil_1_1iInput_html_aceb4aec523df449ed1d4899152e0844e"><div class="ttname"><a href="classutil_1_1iInput.html#aceb4aec523df449ed1d4899152e0844e">util::iInput::dataCount</a></div><div class="ttdeci">virtual int dataCount()=0</div><div class="ttdoc">Get count of remaining input data. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:15:41 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:08:44 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

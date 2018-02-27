@@ -94,15 +94,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p>This is the complete list of members for <a class="el" href="classutil_1_1Cache.html">util::Cache</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classutil_1_1Cache.html#afeb64e97f9e6c06342808eb2bf0e3c9f">addToCache</a>(json::Object *data, std::string id, bool lock=true)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classutil_1_1Cache.html#a58d9786cdb35519d98cd8c5625b6db0d">addToCache</a>(std::shared_ptr&lt; json::Object &gt; data, std::string id, bool lock=true)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr><td class="entry"><a class="el" href="classutil_1_1BaseClass.html#a93832203a07fd4298eee0d0be2e682fc">BaseClass</a>()</td><td class="entry"><a class="el" href="classutil_1_1BaseClass.html">util::BaseClass</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classutil_1_1Cache.html#ac92066e408059d9401682a9768475679">Cache</a>()</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="classutil_1_1Cache.html#ad69168193c1395a8f7938bd3c3ca2970">Cache</a>(json::Object *config)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classutil_1_1Cache.html#a70b03a3b1c3363ca8c654a7c7675fd66">clear</a>() override</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr><td class="entry"><a class="el" href="classutil_1_1Cache.html#a54778ea322ac19bae8b56096ee22a9ed">clearCache</a>(bool lock=true)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classutil_1_1Cache.html#a9781a63ac624bf640d914fb5ab9f2e70">getBCacheModified</a>()</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classutil_1_1Cache.html#a72b1a24cb03682d2e595381931153bb1">getFromCache</a>(std::string id, bool lock=true, bool copy=false)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classutil_1_1Cache.html#a6b607a1d12a24a0751252a7e99d043ee">getNextFromCache</a>(bool restart=false, bool lock=true)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="classutil_1_1Cache.html#a2af53ed0d8fd679beb37d6fc8dca05af">getFromCache</a>(std::string id, bool lock=true)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classutil_1_1Cache.html#a9c8fd7bea5c0171a1b86ff8c7e7d8dda">getNextFromCache</a>(bool restart=false, bool lock=true)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr><td class="entry"><a class="el" href="classutil_1_1Cache.html#ad62d6b46d77c9a103f5aa082ea9e0271">getSDiskCacheFile</a>()</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classutil_1_1Cache.html#a0c86a5e6ad7dddf5a6525230968e5085">isEmpty</a>(bool lock=true)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
   <tr><td class="entry"><a class="el" href="classutil_1_1Cache.html#a9af8351b8cb18838f27290a3dd0d861a">isInCache</a>(std::string id, bool lock=true)</td><td class="entry"><a class="el" href="classutil_1_1Cache.html">util::Cache</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
@@ -118,7 +118,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:15:41 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:08:44 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

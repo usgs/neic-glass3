@@ -1,14 +1,3 @@
 <map id="glasscore::CGlass" name="glasscore::CGlass">
-<area shape="rect" id="node3" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="1109,2294,1251,2591"/>
-<area shape="rect" id="node12" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="2227,1888,2367,2141"/>
-<area shape="rect" id="node17" href="$classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="2837,1947,2989,2083"/>
-<area shape="rect" id="node27" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="1471,1800,1619,2229"/>
-<area shape="rect" id="node31" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="3168,2338,3312,2547"/>
-<area shape="rect" id="node33" href="$classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="2513,2331,2692,2555"/>
-<area shape="rect" id="node18" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="2685,1093,2820,1317"/>
-<area shape="rect" id="node19" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="3255,587,3376,723"/>
-<area shape="rect" id="node21" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="2673,747,2836,957"/>
-<area shape="rect" id="node22" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="2945,294,3071,562"/>
-<area shape="rect" id="node23" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="2481,338,2639,518"/>
-<area shape="rect" id="node26" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="2845,1167,2999,1244"/>
+<area shape="rect" id="node2" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="51,5,204,83"/>
 </map>

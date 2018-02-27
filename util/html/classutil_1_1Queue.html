@@ -113,12 +113,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5eaeb186d15fc0e69f3f791a8d4c3739"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Queue.html#a5eaeb186d15fc0e69f3f791a8d4c3739">~Queue</a> ()</td></tr>
 <tr class="memdesc:a5eaeb186d15fc0e69f3f791a8d4c3739"><td class="mdescLeft">&#160;</td><td class="mdescRight">queue destructor  <a href="#a5eaeb186d15fc0e69f3f791a8d4c3739">More...</a><br/></td></tr>
 <tr class="separator:a5eaeb186d15fc0e69f3f791a8d4c3739"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a310617dbca132273b9705b3d274edee1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Queue.html#a310617dbca132273b9705b3d274edee1">addDataToQueue</a> (json::Object *data, bool lock=true)</td></tr>
-<tr class="memdesc:a310617dbca132273b9705b3d274edee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">add data to queue  <a href="#a310617dbca132273b9705b3d274edee1">More...</a><br/></td></tr>
-<tr class="separator:a310617dbca132273b9705b3d274edee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff4b636cd2270dafbe5ff54db27913c4"><td class="memItemLeft" align="right" valign="top">json::Object *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Queue.html#aff4b636cd2270dafbe5ff54db27913c4">getDataFromQueue</a> (bool lock=true, bool copy=false)</td></tr>
-<tr class="memdesc:aff4b636cd2270dafbe5ff54db27913c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">get data from queue  <a href="#aff4b636cd2270dafbe5ff54db27913c4">More...</a><br/></td></tr>
-<tr class="separator:aff4b636cd2270dafbe5ff54db27913c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adac796fa6a802b006487a9ef97a3facf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Queue.html#adac796fa6a802b006487a9ef97a3facf">addDataToQueue</a> (std::shared_ptr&lt; json::Object &gt; data, bool lock=true)</td></tr>
+<tr class="memdesc:adac796fa6a802b006487a9ef97a3facf"><td class="mdescLeft">&#160;</td><td class="mdescRight">add data to queue  <a href="#adac796fa6a802b006487a9ef97a3facf">More...</a><br/></td></tr>
+<tr class="separator:adac796fa6a802b006487a9ef97a3facf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa998516bc3c705c680f40560eaa8ebbb"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Queue.html#aa998516bc3c705c680f40560eaa8ebbb">getDataFromQueue</a> (bool lock=true)</td></tr>
+<tr class="memdesc:aa998516bc3c705c680f40560eaa8ebbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">get data from queue  <a href="#aa998516bc3c705c680f40560eaa8ebbb">More...</a><br/></td></tr>
+<tr class="separator:aa998516bc3c705c680f40560eaa8ebbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a10d6dd308323652999e80dd66a1ff8b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Queue.html#a10d6dd308323652999e80dd66a1ff8b7">clearQueue</a> (bool lock=true)</td></tr>
 <tr class="memdesc:a10d6dd308323652999e80dd66a1ff8b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">clear data from queue  <a href="#a10d6dd308323652999e80dd66a1ff8b7">More...</a><br/></td></tr>
 <tr class="separator:a10d6dd308323652999e80dd66a1ff8b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,14 +167,14 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a310617dbca132273b9705b3d274edee1"></a>
+<a class="anchor" id="adac796fa6a802b006487a9ef97a3facf"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool util::Queue::addDataToQueue </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
@@ -229,26 +229,16 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aff4b636cd2270dafbe5ff54db27913c4"></a>
+<a class="anchor" id="aa998516bc3c705c680f40560eaa8ebbb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">json::Object * util::Queue::getDataFromQueue </td>
+          <td class="memname">std::shared_ptr&lt; json::Object &gt; util::Queue::getDataFromQueue </td>
           <td>(</td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>lock</em> = <code>true</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>lock</em> = <code>true</code></td><td>)</td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>copy</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -299,7 +289,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:15:41 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:08:44 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

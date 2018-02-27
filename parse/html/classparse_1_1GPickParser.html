@@ -122,12 +122,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5cadddc42d63ca6ced7fb3785298fb93"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1GPickParser.html#a5cadddc42d63ca6ced7fb3785298fb93">~GPickParser</a> ()</td></tr>
 <tr class="memdesc:a5cadddc42d63ca6ced7fb3785298fb93"><td class="mdescLeft">&#160;</td><td class="mdescRight">gpickparser destructor  <a href="#a5cadddc42d63ca6ced7fb3785298fb93">More...</a><br/></td></tr>
 <tr class="separator:a5cadddc42d63ca6ced7fb3785298fb93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a130afa934aa4a514c669ec88120b7e7f"><td class="memItemLeft" align="right" valign="top">json::Object *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1GPickParser.html#a130afa934aa4a514c669ec88120b7e7f">parse</a> (const std::string &amp;input) override</td></tr>
-<tr class="memdesc:a130afa934aa4a514c669ec88120b7e7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">global pick parsing function  <a href="#a130afa934aa4a514c669ec88120b7e7f">More...</a><br/></td></tr>
-<tr class="separator:a130afa934aa4a514c669ec88120b7e7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac90474cbee5db280d59a20de004ffc4e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1GPickParser.html#ac90474cbee5db280d59a20de004ffc4e">validate</a> (json::Object *input) override</td></tr>
-<tr class="memdesc:ac90474cbee5db280d59a20de004ffc4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">pick validation function  <a href="#ac90474cbee5db280d59a20de004ffc4e">More...</a><br/></td></tr>
-<tr class="separator:ac90474cbee5db280d59a20de004ffc4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a352a8ab69771e6b4d89a23172c51e03f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1GPickParser.html#a352a8ab69771e6b4d89a23172c51e03f">parse</a> (const std::string &amp;input) override</td></tr>
+<tr class="memdesc:a352a8ab69771e6b4d89a23172c51e03f"><td class="mdescLeft">&#160;</td><td class="mdescRight">global pick parsing function  <a href="#a352a8ab69771e6b4d89a23172c51e03f">More...</a><br/></td></tr>
+<tr class="separator:a352a8ab69771e6b4d89a23172c51e03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c15c5be3da2753dcecdedb6da3a05fb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1GPickParser.html#a5c15c5be3da2753dcecdedb6da3a05fb">validate</a> (std::shared_ptr&lt; json::Object &gt; &amp;input) override</td></tr>
+<tr class="memdesc:a5c15c5be3da2753dcecdedb6da3a05fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">pick validation function  <a href="#a5c15c5be3da2753dcecdedb6da3a05fb">More...</a><br/></td></tr>
+<tr class="separator:a5c15c5be3da2753dcecdedb6da3a05fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classparse_1_1Parser"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classparse_1_1Parser')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classparse_1_1Parser.html">parse::Parser</a></td></tr>
 <tr class="memitem:a86535831e7493385da1b8f50c922fff6 inherit pub_methods_classparse_1_1Parser"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1Parser.html#a86535831e7493385da1b8f50c922fff6">Parser</a> (const std::string &amp;newAgencyID, const std::string &amp;newAuthor)</td></tr>
 <tr class="memdesc:a86535831e7493385da1b8f50c922fff6 inherit pub_methods_classparse_1_1Parser"><td class="mdescLeft">&#160;</td><td class="mdescRight">parser constructor  <a href="#a86535831e7493385da1b8f50c922fff6">More...</a><br/></td></tr>
@@ -212,7 +212,7 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a130afa934aa4a514c669ec88120b7e7f"></a>
+<a class="anchor" id="a352a8ab69771e6b4d89a23172c51e03f"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -220,7 +220,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">json::Object * parse::GPickParser::parse </td>
+          <td class="memname">std::shared_ptr&lt; json::Object &gt; parse::GPickParser::parse </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>input</em></td><td>)</td>
@@ -244,11 +244,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the json::Object containing the data. </dd></dl>
 
-<p>Implements <a class="el" href="classparse_1_1Parser.html#a047763bdd4ac8e3600512e87386083e1">parse::Parser</a>.</p>
+<p>Implements <a class="el" href="classparse_1_1Parser.html#a6758cc58501c27effdd47becf786fb7e">parse::Parser</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ac90474cbee5db280d59a20de004ffc4e"></a>
+<a class="anchor" id="a5c15c5be3da2753dcecdedb6da3a05fb"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -258,7 +258,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool parse::GPickParser::validate </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt; &amp;&#160;</td>
           <td class="paramname"><em>input</em></td><td>)</td>
           <td></td>
         </tr>
@@ -280,7 +280,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if valid, false otherwise. </dd></dl>
 
-<p>Implements <a class="el" href="classparse_1_1Parser.html#ae87b5c6f87277f0b5c4ed69fd46e0300">parse::Parser</a>.</p>
+<p>Implements <a class="el" href="classparse_1_1Parser.html#a48fa2d2866b078bba0374f6c98c6d07f">parse::Parser</a>.</p>
 
 </div>
 </div>
@@ -291,7 +291,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:20:25 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:14:52 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -129,12 +129,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6a954b681e50421827b974d225afaf50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#a6a954b681e50421827b974d225afaf50">clear</a> () override</td></tr>
 <tr class="memdesc:a6a954b681e50421827b974d225afaf50"><td class="mdescLeft">&#160;</td><td class="mdescRight">associator clear function  <a href="#a6a954b681e50421827b974d225afaf50">More...</a><br/></td></tr>
 <tr class="separator:a6a954b681e50421827b974d225afaf50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ea0b37bca87532430b8003462893662"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#a3ea0b37bca87532430b8003462893662">Send</a> (json::Object *communication) override</td></tr>
-<tr class="memdesc:a3ea0b37bca87532430b8003462893662"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore message receiver function  <a href="#a3ea0b37bca87532430b8003462893662">More...</a><br/></td></tr>
-<tr class="separator:a3ea0b37bca87532430b8003462893662"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a864ebbbb2fb2712e02435a4ad40320af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#a864ebbbb2fb2712e02435a4ad40320af">sendToAssociator</a> (json::Object *message) override</td></tr>
-<tr class="memdesc:a864ebbbb2fb2712e02435a4ad40320af"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore message sending function  <a href="#a864ebbbb2fb2712e02435a4ad40320af">More...</a><br/></td></tr>
-<tr class="separator:a864ebbbb2fb2712e02435a4ad40320af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3da1d57837fabc7c94a598c1268b42a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#ad3da1d57837fabc7c94a598c1268b42a">Send</a> (std::shared_ptr&lt; json::Object &gt; communication) override</td></tr>
+<tr class="memdesc:ad3da1d57837fabc7c94a598c1268b42a"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore message receiver function  <a href="#ad3da1d57837fabc7c94a598c1268b42a">More...</a><br/></td></tr>
+<tr class="separator:ad3da1d57837fabc7c94a598c1268b42a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74c05890a34039224d5af8bd7607bc11"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#a74c05890a34039224d5af8bd7607bc11">sendToAssociator</a> (std::shared_ptr&lt; json::Object &gt; &amp;message) override</td></tr>
+<tr class="memdesc:a74c05890a34039224d5af8bd7607bc11"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore message sending function  <a href="#a74c05890a34039224d5af8bd7607bc11">More...</a><br/></td></tr>
+<tr class="separator:a74c05890a34039224d5af8bd7607bc11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86846d326f49cb5b6b5f11c147b81609"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#a86846d326f49cb5b6b5f11c147b81609">check</a> () override</td></tr>
 <tr class="memdesc:a86846d326f49cb5b6b5f11c147b81609"><td class="mdescLeft">&#160;</td><td class="mdescRight">thread pool check function  <a href="#a86846d326f49cb5b6b5f11c147b81609">More...</a><br/></td></tr>
 <tr class="separator:a86846d326f49cb5b6b5f11c147b81609"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,9 +156,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:aae00a31688e7b567db50d16b9dc30f91"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#aae00a31688e7b567db50d16b9dc30f91">work</a> () override</td></tr>
 <tr class="memdesc:aae00a31688e7b567db50d16b9dc30f91"><td class="mdescLeft">&#160;</td><td class="mdescRight">associator work function  <a href="#aae00a31688e7b567db50d16b9dc30f91">More...</a><br/></td></tr>
 <tr class="separator:aae00a31688e7b567db50d16b9dc30f91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3502750c283c1c1d96d6afc8dc29b389"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#a3502750c283c1c1d96d6afc8dc29b389">dispatch</a> (json::Object *communication)</td></tr>
-<tr class="memdesc:a3502750c283c1c1d96d6afc8dc29b389"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore dispatch function  <a href="#a3502750c283c1c1d96d6afc8dc29b389">More...</a><br/></td></tr>
-<tr class="separator:a3502750c283c1c1d96d6afc8dc29b389"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9cb7f5544a043aeab86d9886a2f0b1d0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#a9cb7f5544a043aeab86d9886a2f0b1d0">dispatch</a> (std::shared_ptr&lt; json::Object &gt; communication)</td></tr>
+<tr class="memdesc:a9cb7f5544a043aeab86d9886a2f0b1d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore dispatch function  <a href="#a9cb7f5544a043aeab86d9886a2f0b1d0">More...</a><br/></td></tr>
+<tr class="separator:a9cb7f5544a043aeab86d9886a2f0b1d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e2b7a14ceefaae82359fa36dbed77f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1Associator.html#a1e2b7a14ceefaae82359fa36dbed77f5">logGlass</a> (glassutil::logMessageStruct message)</td></tr>
 <tr class="memdesc:a1e2b7a14ceefaae82359fa36dbed77f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore logging function  <a href="#a1e2b7a14ceefaae82359fa36dbed77f5">More...</a><br/></td></tr>
 <tr class="separator:a1e2b7a14ceefaae82359fa36dbed77f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -296,7 +296,7 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3502750c283c1c1d96d6afc8dc29b389"></a>
+<a class="anchor" id="a9cb7f5544a043aeab86d9886a2f0b1d0"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -306,7 +306,7 @@ Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">bool glass::Associator::dispatch </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>communication</em></td><td>)</td>
           <td></td>
         </tr>
@@ -363,7 +363,7 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3ea0b37bca87532430b8003462893662"></a>
+<a class="anchor" id="ad3da1d57837fabc7c94a598c1268b42a"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -373,7 +373,7 @@ Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void glass::Associator::Send </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>communication</em></td><td>)</td>
           <td></td>
         </tr>
@@ -396,7 +396,7 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a864ebbbb2fb2712e02435a4ad40320af"></a>
+<a class="anchor" id="a74c05890a34039224d5af8bd7607bc11"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -406,7 +406,7 @@ Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void glass::Associator::sendToAssociator </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt; &amp;&#160;</td>
           <td class="paramname"><em>message</em></td><td>)</td>
           <td></td>
         </tr>
@@ -543,7 +543,7 @@ Protected Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:18:57 for process by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:12:58 for process by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

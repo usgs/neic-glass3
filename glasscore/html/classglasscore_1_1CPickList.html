@@ -88,7 +88,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classglasscore_1_1CPickList-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">glasscore::CPickList Class Reference</div>  </div>
@@ -103,8 +102,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Collaboration diagram for glasscore::CPickList:</div>
 <div class="dyncontent">
 <div class="center"><img src="classglasscore_1_1CPickList__coll__graph.png" border="0" usemap="#glasscore_1_1CPickList_coll__map" alt="Collaboration graph"/></div>
-<map name="glasscore_1_1CPickList_coll__map" id="glasscore_1_1CPickList_coll__map">
-<area shape="rect" id="node9" href="classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1029,1469,1248,1811"/><area shape="rect" id="node21" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="2669,1875,2816,2304"/><area shape="rect" id="node31" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="1698,2368,1877,2592"/><area shape="rect" id="node28" href="classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="1542,1963,1681,2216"/><area shape="rect" id="node12" href="classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="449,1131,584,1355"/><area shape="rect" id="node15" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="625,747,788,957"/><area shape="rect" id="node16" href="classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="759,294,885,562"/><area shape="rect" id="node17" href="classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="497,338,655,518"/><area shape="rect" id="node26" href="classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="701,2375,845,2585"/><area shape="rect" id="node11" href="classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="989,2021,1141,2157"/><area shape="rect" id="node13" href="classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="126,587,247,723"/><area shape="rect" id="node20" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="1061,1204,1215,1281"/></map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -121,12 +118,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8a8c458fdb17a5ee776ef078b5ba4c11"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a8a8c458fdb17a5ee776ef078b5ba4c11">clearPicks</a> ()</td></tr>
 <tr class="memdesc:a8a8c458fdb17a5ee776ef078b5ba4c11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all picks from pick list.  <a href="#a8a8c458fdb17a5ee776ef078b5ba4c11">More...</a><br/></td></tr>
 <tr class="separator:a8a8c458fdb17a5ee776ef078b5ba4c11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a251728f9ea10d7e3e2585c8155c13fb9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a251728f9ea10d7e3e2585c8155c13fb9">dispatch</a> (json::Object *com)</td></tr>
-<tr class="memdesc:a251728f9ea10d7e3e2585c8155c13fb9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> communication receiving function.  <a href="#a251728f9ea10d7e3e2585c8155c13fb9">More...</a><br/></td></tr>
-<tr class="separator:a251728f9ea10d7e3e2585c8155c13fb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa855403660d3260e2908be73c2523e2f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#aa855403660d3260e2908be73c2523e2f">addPick</a> (json::Object *pick)</td></tr>
-<tr class="memdesc:aa855403660d3260e2908be73c2523e2f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> add pick function.  <a href="#aa855403660d3260e2908be73c2523e2f">More...</a><br/></td></tr>
-<tr class="separator:aa855403660d3260e2908be73c2523e2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af45247dfc6af6fdf3934adf5d03a2afe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#af45247dfc6af6fdf3934adf5d03a2afe">dispatch</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:af45247dfc6af6fdf3934adf5d03a2afe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> communication receiving function.  <a href="#af45247dfc6af6fdf3934adf5d03a2afe">More...</a><br/></td></tr>
+<tr class="separator:af45247dfc6af6fdf3934adf5d03a2afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa442b0950031402230133340a0d0d94"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#aaa442b0950031402230133340a0d0d94">addPick</a> (std::shared_ptr&lt; json::Object &gt; pick)</td></tr>
+<tr class="memdesc:aaa442b0950031402230133340a0d0d94"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> add pick function.  <a href="#aaa442b0950031402230133340a0d0d94">More...</a><br/></td></tr>
+<tr class="separator:aaa442b0950031402230133340a0d0d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4843ccb36b37ae31704187964c6a1db"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#ab4843ccb36b37ae31704187964c6a1db">getPick</a> (int idPick)</td></tr>
 <tr class="memdesc:ab4843ccb36b37ae31704187964c6a1db"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> get pick function.  <a href="#ab4843ccb36b37ae31704187964c6a1db">More...</a><br/></td></tr>
 <tr class="separator:ab4843ccb36b37ae31704187964c6a1db"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -146,78 +143,36 @@ Public Member Functions</h2></td></tr>
 &lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#aac5ae36e088de4ee62542c987ccb6174">rogues</a> (std::string pidHyp, double tOrg, double tDuration=2400.0)</td></tr>
 <tr class="memdesc:aac5ae36e088de4ee62542c987ccb6174"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate rogue list for tuning process.  <a href="#aac5ae36e088de4ee62542c987ccb6174">More...</a><br/></td></tr>
 <tr class="separator:aac5ae36e088de4ee62542c987ccb6174"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef52e87e3faa8a79991daa32d1402ae9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#aef52e87e3faa8a79991daa32d1402ae9">processPick</a> ()</td></tr>
-<tr class="memdesc:aef52e87e3faa8a79991daa32d1402ae9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the next pick on the queue.  <a href="#aef52e87e3faa8a79991daa32d1402ae9">More...</a><br/></td></tr>
-<tr class="separator:aef52e87e3faa8a79991daa32d1402ae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f5c23a243990d2e0d9565c5f2e10935"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a6f5c23a243990d2e0d9565c5f2e10935">jobSleep</a> ()</td></tr>
-<tr class="memdesc:a6f5c23a243990d2e0d9565c5f2e10935"><td class="mdescLeft">&#160;</td><td class="mdescRight">the job sleep  <a href="#a6f5c23a243990d2e0d9565c5f2e10935">More...</a><br/></td></tr>
-<tr class="separator:a6f5c23a243990d2e0d9565c5f2e10935"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b0ba9737ea5646502f047e356b823bf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a7b0ba9737ea5646502f047e356b823bf">statusCheck</a> ()</td></tr>
 <tr class="memdesc:a7b0ba9737ea5646502f047e356b823bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if each thread is still functional  <a href="#a7b0ba9737ea5646502f047e356b823bf">More...</a><br/></td></tr>
 <tr class="separator:a7b0ba9737ea5646502f047e356b823bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a1efc40119d44009ea79ed91ea4bed8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a7a1efc40119d44009ea79ed91ea4bed8">setStatus</a> (bool status)</td></tr>
-<tr class="memdesc:a7a1efc40119d44009ea79ed91ea4bed8"><td class="mdescLeft">&#160;</td><td class="mdescRight">thread status update function  <a href="#a7a1efc40119d44009ea79ed91ea4bed8">More...</a><br/></td></tr>
-<tr class="separator:a7a1efc40119d44009ea79ed91ea4bed8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a25afa29293c277cd2d255e26eb7ca09e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a25afa29293c277cd2d255e26eb7ca09e">pGlass</a></td></tr>
-<tr class="memdesc:a25afa29293c277cd2d255e26eb7ca09e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the parent <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class, used to look up site information, configuration values, call association functions, and debug flags.  <a href="#a25afa29293c277cd2d255e26eb7ca09e">More...</a><br/></td></tr>
-<tr class="separator:a25afa29293c277cd2d255e26eb7ca09e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2807e50ef99c0c746f332d46e2c2cb89"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a2807e50ef99c0c746f332d46e2c2cb89">pSiteList</a></td></tr>
-<tr class="memdesc:a2807e50ef99c0c746f332d46e2c2cb89"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to a <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> object containing all the sites for lookups.  <a href="#a2807e50ef99c0c746f332d46e2c2cb89">More...</a><br/></td></tr>
-<tr class="separator:a2807e50ef99c0c746f332d46e2c2cb89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a18677135f1f28639e6a1e8126ccfb6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a3a18677135f1f28639e6a1e8126ccfb6">nPickTotal</a></td></tr>
-<tr class="memdesc:a3a18677135f1f28639e6a1e8126ccfb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the total number of picks ever added to <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a>.  <a href="#a3a18677135f1f28639e6a1e8126ccfb6">More...</a><br/></td></tr>
-<tr class="separator:a3a18677135f1f28639e6a1e8126ccfb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc633b89755176d1833695cb7aecd5e6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#afc633b89755176d1833695cb7aecd5e6">nPickMax</a></td></tr>
-<tr class="memdesc:afc633b89755176d1833695cb7aecd5e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the maximum number of picks allowed in <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a>. This value is overridden by pGlass-&gt;nPickMax if provided. Defaults to 10000.  <a href="#afc633b89755176d1833695cb7aecd5e6">More...</a><br/></td></tr>
-<tr class="separator:afc633b89755176d1833695cb7aecd5e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3f453a775d089cded710e90e53f056a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#aa3f453a775d089cded710e90e53f056a">nPick</a></td></tr>
-<tr class="memdesc:aa3f453a775d089cded710e90e53f056a"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the current number of picks in <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a>. Used to generate the pick id.  <a href="#aa3f453a775d089cded710e90e53f056a">More...</a><br/></td></tr>
-<tr class="separator:aa3f453a775d089cded710e90e53f056a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90dc0fbffc870e67c0c06517d28600b4"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; double, <br class="typebreak"/>
-int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a90dc0fbffc870e67c0c06517d28600b4">vPick</a></td></tr>
-<tr class="memdesc:a90dc0fbffc870e67c0c06517d28600b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::vector mapping the arrival time of each pick in <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> to it's integer pick id. The elements in this vector object are inserted in a manner to keep it in sequential time order from oldest to youngest.  <a href="#a90dc0fbffc870e67c0c06517d28600b4">More...</a><br/></td></tr>
-<tr class="separator:a90dc0fbffc870e67c0c06517d28600b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ae68b7c02fb30835c5365f00089fe31"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, std::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a0ae68b7c02fb30835c5365f00089fe31">mPick</a></td></tr>
-<tr class="memdesc:a0ae68b7c02fb30835c5365f00089fe31"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::map containing a std::shared_ptr to each pick in <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> indexed by the integer pick id.  <a href="#a0ae68b7c02fb30835c5365f00089fe31">More...</a><br/></td></tr>
-<tr class="separator:a0ae68b7c02fb30835c5365f00089fe31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f14430b89ba2ec28778a41f1c579737"><td class="memItemLeft" align="right" valign="top">std::queue&lt; std::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a1f14430b89ba2ec28778a41f1c579737">qProcessList</a></td></tr>
-<tr class="memdesc:a1f14430b89ba2ec28778a41f1c579737"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::queue containing a std::shared_ptr to each pick in that needs to be processed.  <a href="#a1f14430b89ba2ec28778a41f1c579737">More...</a><br/></td></tr>
-<tr class="separator:a1f14430b89ba2ec28778a41f1c579737"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f7e573785cd6dd035b7ca7fc84bf6cc"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a6f7e573785cd6dd035b7ca7fc84bf6cc">m_qProcessMutex</a></td></tr>
-<tr class="memdesc:a6f7e573785cd6dd035b7ca7fc84bf6cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">the std::mutex for qProcessList  <a href="#a6f7e573785cd6dd035b7ca7fc84bf6cc">More...</a><br/></td></tr>
-<tr class="separator:a6f7e573785cd6dd035b7ca7fc84bf6cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6383df201b2350b968742f3f116e1aa"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::thread &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#ab6383df201b2350b968742f3f116e1aa">vProcessThreads</a></td></tr>
-<tr class="memdesc:ab6383df201b2350b968742f3f116e1aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">the std::vector of std::threads  <a href="#ab6383df201b2350b968742f3f116e1aa">More...</a><br/></td></tr>
-<tr class="separator:ab6383df201b2350b968742f3f116e1aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83d66fcfcc4d072f11e8465b0f456de3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a83d66fcfcc4d072f11e8465b0f456de3">m_iNumThreads</a></td></tr>
-<tr class="memdesc:a83d66fcfcc4d072f11e8465b0f456de3"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the number of threads in the pool.  <a href="#a83d66fcfcc4d072f11e8465b0f456de3">More...</a><br/></td></tr>
-<tr class="separator:a83d66fcfcc4d072f11e8465b0f456de3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93dcc5937daa512227436175a95bacec"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::thread::id, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a93dcc5937daa512227436175a95bacec">m_ThreadStatusMap</a></td></tr>
-<tr class="memdesc:a93dcc5937daa512227436175a95bacec"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::map containing the status of each thread.  <a href="#a93dcc5937daa512227436175a95bacec">More...</a><br/></td></tr>
-<tr class="separator:a93dcc5937daa512227436175a95bacec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa64ec64c021f877a73b5b438926b27a9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#aa64ec64c021f877a73b5b438926b27a9">m_iSleepTimeMS</a></td></tr>
-<tr class="memdesc:aa64ec64c021f877a73b5b438926b27a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the amount of time to sleep in milliseconds between picks.  <a href="#aa64ec64c021f877a73b5b438926b27a9">More...</a><br/></td></tr>
-<tr class="separator:aa64ec64c021f877a73b5b438926b27a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1410b43c98921ee8bbdc5494ed12115c"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a1410b43c98921ee8bbdc5494ed12115c">m_StatusMutex</a></td></tr>
-<tr class="memdesc:a1410b43c98921ee8bbdc5494ed12115c"><td class="mdescLeft">&#160;</td><td class="mdescRight">the std::mutex for m_ThreadStatusMap  <a href="#a1410b43c98921ee8bbdc5494ed12115c">More...</a><br/></td></tr>
-<tr class="separator:a1410b43c98921ee8bbdc5494ed12115c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a662bd1cdd0a53cb4dc8d659bf6d0e78d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a662bd1cdd0a53cb4dc8d659bf6d0e78d">m_iStatusCheckInterval</a></td></tr>
-<tr class="memdesc:a662bd1cdd0a53cb4dc8d659bf6d0e78d"><td class="mdescLeft">&#160;</td><td class="mdescRight">the integer interval in seconds after which the work thread will be considered dead. A negative check interval disables thread status checks  <a href="#a662bd1cdd0a53cb4dc8d659bf6d0e78d">More...</a><br/></td></tr>
-<tr class="separator:a662bd1cdd0a53cb4dc8d659bf6d0e78d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86615a93d7bab0384fb9e4d70cc861c4"><td class="memItemLeft" align="right" valign="top">time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a86615a93d7bab0384fb9e4d70cc861c4">tLastStatusCheck</a></td></tr>
-<tr class="memdesc:a86615a93d7bab0384fb9e4d70cc861c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">the time_t holding the last time the thread status was checked  <a href="#a86615a93d7bab0384fb9e4d70cc861c4">More...</a><br/></td></tr>
-<tr class="separator:a86615a93d7bab0384fb9e4d70cc861c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32556f181d7da7d808b73e08c1c7022b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a32556f181d7da7d808b73e08c1c7022b">m_bRunProcessLoop</a></td></tr>
-<tr class="memdesc:a32556f181d7da7d808b73e08c1c7022b"><td class="mdescLeft">&#160;</td><td class="mdescRight">the boolean flags indicating that the process threads should keep running.  <a href="#a32556f181d7da7d808b73e08c1c7022b">More...</a><br/></td></tr>
-<tr class="separator:a32556f181d7da7d808b73e08c1c7022b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2d9ce288104374004b38bf9ea0332e4"><td class="memItemLeft" align="right" valign="top">std::recursive_mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#ae2d9ce288104374004b38bf9ea0332e4">m_vPickMutex</a></td></tr>
-<tr class="memdesc:ae2d9ce288104374004b38bf9ea0332e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">A recursive_mutex to control threading access to vPick. NOTE: recursive mutexes are frowned upon, so maybe redesign around it see: <a href="http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/">http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/</a> However a recursive_mutex allows us to maintain the original class design as delivered by the contractor.  <a href="#ae2d9ce288104374004b38bf9ea0332e4">More...</a><br/></td></tr>
-<tr class="separator:ae2d9ce288104374004b38bf9ea0332e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2aa5924f19f14c67de8b174e268fb72"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#aa2aa5924f19f14c67de8b174e268fb72">getGlass</a> () const </td></tr>
+<tr class="memdesc:aa2aa5924f19f14c67de8b174e268fb72"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> getter.  <a href="#aa2aa5924f19f14c67de8b174e268fb72">More...</a><br/></td></tr>
+<tr class="separator:aa2aa5924f19f14c67de8b174e268fb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d843d54e7f236afa00f1e22e68d7f06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a7d843d54e7f236afa00f1e22e68d7f06">setGlass</a> (<a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *glass)</td></tr>
+<tr class="memdesc:a7d843d54e7f236afa00f1e22e68d7f06"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> setter.  <a href="#a7d843d54e7f236afa00f1e22e68d7f06">More...</a><br/></td></tr>
+<tr class="separator:a7d843d54e7f236afa00f1e22e68d7f06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c556fe54732fdd395048f4763f5c2a4"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a9c556fe54732fdd395048f4763f5c2a4">getSiteList</a> () const </td></tr>
+<tr class="memdesc:a9c556fe54732fdd395048f4763f5c2a4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> getter.  <a href="#a9c556fe54732fdd395048f4763f5c2a4">More...</a><br/></td></tr>
+<tr class="separator:a9c556fe54732fdd395048f4763f5c2a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c86c035e39fc3b68901e35bfff308ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a5c86c035e39fc3b68901e35bfff308ea">setSiteList</a> (<a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *siteList)</td></tr>
+<tr class="memdesc:a5c86c035e39fc3b68901e35bfff308ea"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> setter.  <a href="#a5c86c035e39fc3b68901e35bfff308ea">More...</a><br/></td></tr>
+<tr class="separator:a5c86c035e39fc3b68901e35bfff308ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4af195951c0ba468ad79dad651ca8d6f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a4af195951c0ba468ad79dad651ca8d6f">getNPick</a> () const </td></tr>
+<tr class="memdesc:a4af195951c0ba468ad79dad651ca8d6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">nPick getter  <a href="#a4af195951c0ba468ad79dad651ca8d6f">More...</a><br/></td></tr>
+<tr class="separator:a4af195951c0ba468ad79dad651ca8d6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7293dc8b7363ac680e0e73e86d01b1f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#aa7293dc8b7363ac680e0e73e86d01b1f">getNPickMax</a> () const </td></tr>
+<tr class="memdesc:aa7293dc8b7363ac680e0e73e86d01b1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">nPickMax getter  <a href="#aa7293dc8b7363ac680e0e73e86d01b1f">More...</a><br/></td></tr>
+<tr class="separator:aa7293dc8b7363ac680e0e73e86d01b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7c8729dc5ae4226aa0b548e14a17d8c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#ad7c8729dc5ae4226aa0b548e14a17d8c">setNPickMax</a> (int picknMax)</td></tr>
+<tr class="memdesc:ad7c8729dc5ae4226aa0b548e14a17d8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">nPickMax Setter  <a href="#ad7c8729dc5ae4226aa0b548e14a17d8c">More...</a><br/></td></tr>
+<tr class="separator:ad7c8729dc5ae4226aa0b548e14a17d8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a878d286b5c23c5a9c237fb730ddd2b7f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a878d286b5c23c5a9c237fb730ddd2b7f">getNPickTotal</a> () const </td></tr>
+<tr class="memdesc:a878d286b5c23c5a9c237fb730ddd2b7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">nPickTotal getter  <a href="#a878d286b5c23c5a9c237fb730ddd2b7f">More...</a><br/></td></tr>
+<tr class="separator:a878d286b5c23c5a9c237fb730ddd2b7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f48b0c2be31cf0e6fbca9b19c76a626"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a9f48b0c2be31cf0e6fbca9b19c76a626">getVPickSize</a> () const </td></tr>
+<tr class="memdesc:a9f48b0c2be31cf0e6fbca9b19c76a626"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current size of the pick list.  <a href="#a9f48b0c2be31cf0e6fbca9b19c76a626">More...</a><br/></td></tr>
+<tr class="separator:a9f48b0c2be31cf0e6fbca9b19c76a626"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore pick list class </p>
@@ -296,14 +251,14 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="aa855403660d3260e2908be73c2523e2f"></a>
+<a class="anchor" id="aaa442b0950031402230133340a0d0d94"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CPickList::addPick </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>pick</em></td><td>)</td>
           <td></td>
         </tr>
@@ -388,14 +343,14 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a class="anchor" id="a251728f9ea10d7e3e2585c8155c13fb9"></a>
+<a class="anchor" id="af45247dfc6af6fdf3934adf5d03a2afe"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CPickList::dispatch </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
@@ -412,6 +367,78 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the communication was handled by <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a>, false otherwise </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa2aa5924f19f14c67de8b174e268fb72"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> * glasscore::CPickList::getGlass </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4af195951c0ba468ad79dad651ca8d6f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CPickList::getNPick </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nPick getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nPick </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa7293dc8b7363ac680e0e73e86d01b1f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CPickList::getNPickMax </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nPickMax getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nPickMax </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a878d286b5c23c5a9c237fb730ddd2b7f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CPickList::getNPickTotal </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nPickTotal getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nPickTotal </dd></dl>
 
 </div>
 </div>
@@ -441,6 +468,41 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
+<a class="anchor" id="a9c556fe54732fdd395048f4763f5c2a4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> * glasscore::CPickList::getSiteList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> pointer </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a9f48b0c2be31cf0e6fbca9b19c76a626"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CPickList::getVPickSize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current size of the pick list. </p>
+
+</div>
+</div>
 <a class="anchor" id="afb3f3dc3d59791dbb1a83e87f992dfbd"></a>
 <div class="memitem">
 <div class="memproto">
@@ -467,24 +529,6 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a class="anchor" id="a6f5c23a243990d2e0d9565c5f2e10935"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glasscore::CPickList::jobSleep </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the job sleep </p>
-<p>The function that performs the sleep between jobs </p>
-
-</div>
-</div>
 <a class="anchor" id="a6741fd0e68da71a8b89ede3f78443afd"></a>
 <div class="memitem">
 <div class="memproto">
@@ -500,24 +544,6 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 <p>Print basic values to screen for pick list. </p>
 <p>Causes <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> to print basic values to the console for each pick in the list </p>
-
-</div>
-</div>
-<a class="anchor" id="aef52e87e3faa8a79991daa32d1402ae9"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glasscore::CPickList::processPick </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Process the next pick on the queue. </p>
-<p>Attempts to associate and nuclate the next pick on the queue. </p>
 
 </div>
 </div>
@@ -601,25 +627,72 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a class="anchor" id="a7a1efc40119d44009ea79ed91ea4bed8"></a>
+<a class="anchor" id="a7d843d54e7f236afa00f1e22e68d7f06"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void glasscore::CPickList::setStatus </td>
+          <td class="memname">void glasscore::CPickList::setGlass </td>
           <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>status</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td>
+          <td class="paramname"><em>glass</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>thread status update function </p>
-<p>Updates the status for the current thread </p>
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> setter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">status</td><td>- A boolean flag containing the status to set </td></tr>
+    <tr><td class="paramname">glass</td><td>- the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ad7c8729dc5ae4226aa0b548e14a17d8c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CPickList::setNPickMax </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>picknMax</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nPickMax Setter </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">correlationMax</td><td>- the nPickMax </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a5c86c035e39fc3b68901e35bfff308ea"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CPickList::setSiteList </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td>
+          <td class="paramname"><em>siteList</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> setter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">siteList</td><td>- the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> pointer </td></tr>
   </table>
   </dd>
 </dl>
@@ -644,259 +717,6 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a32556f181d7da7d808b73e08c1c7022b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CPickList::m_bRunProcessLoop</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the boolean flags indicating that the process threads should keep running. </p>
-
-</div>
-</div>
-<a class="anchor" id="a83d66fcfcc4d072f11e8465b0f456de3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CPickList::m_iNumThreads</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the number of threads in the pool. </p>
-
-</div>
-</div>
-<a class="anchor" id="aa64ec64c021f877a73b5b438926b27a9"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CPickList::m_iSleepTimeMS</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the amount of time to sleep in milliseconds between picks. </p>
-
-</div>
-</div>
-<a class="anchor" id="a662bd1cdd0a53cb4dc8d659bf6d0e78d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CPickList::m_iStatusCheckInterval</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the integer interval in seconds after which the work thread will be considered dead. A negative check interval disables thread status checks </p>
-
-</div>
-</div>
-<a class="anchor" id="a6f7e573785cd6dd035b7ca7fc84bf6cc"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::mutex glasscore::CPickList::m_qProcessMutex</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the std::mutex for qProcessList </p>
-
-</div>
-</div>
-<a class="anchor" id="a1410b43c98921ee8bbdc5494ed12115c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::mutex glasscore::CPickList::m_StatusMutex</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the std::mutex for m_ThreadStatusMap </p>
-
-</div>
-</div>
-<a class="anchor" id="a93dcc5937daa512227436175a95bacec"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;std::thread::id, bool&gt; glasscore::CPickList::m_ThreadStatusMap</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::map containing the status of each thread. </p>
-
-</div>
-</div>
-<a class="anchor" id="ae2d9ce288104374004b38bf9ea0332e4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::recursive_mutex glasscore::CPickList::m_vPickMutex</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A recursive_mutex to control threading access to vPick. NOTE: recursive mutexes are frowned upon, so maybe redesign around it see: <a href="http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/">http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/</a> However a recursive_mutex allows us to maintain the original class design as delivered by the contractor. </p>
-
-</div>
-</div>
-<a class="anchor" id="a0ae68b7c02fb30835c5365f00089fe31"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;int, std::shared_ptr&lt;<a class="el" href="classglasscore_1_1CPick.html">CPick</a>&gt; &gt; glasscore::CPickList::mPick</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::map containing a std::shared_ptr to each pick in <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> indexed by the integer pick id. </p>
-
-</div>
-</div>
-<a class="anchor" id="aa3f453a775d089cded710e90e53f056a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CPickList::nPick</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the current number of picks in <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a>. Used to generate the pick id. </p>
-
-</div>
-</div>
-<a class="anchor" id="afc633b89755176d1833695cb7aecd5e6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CPickList::nPickMax</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the maximum number of picks allowed in <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a>. This value is overridden by pGlass-&gt;nPickMax if provided. Defaults to 10000. </p>
-
-</div>
-</div>
-<a class="anchor" id="a3a18677135f1f28639e6a1e8126ccfb6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CPickList::nPickTotal</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the total number of picks ever added to <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a>. </p>
-
-</div>
-</div>
-<a class="anchor" id="a25afa29293c277cd2d255e26eb7ca09e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a>* glasscore::CPickList::pGlass</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to the parent <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class, used to look up site information, configuration values, call association functions, and debug flags. </p>
-
-</div>
-</div>
-<a class="anchor" id="a2807e50ef99c0c746f332d46e2c2cb89"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a>* glasscore::CPickList::pSiteList</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to a <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> object containing all the sites for lookups. </p>
-
-</div>
-</div>
-<a class="anchor" id="a1f14430b89ba2ec28778a41f1c579737"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::queue&lt;std::shared_ptr&lt;<a class="el" href="classglasscore_1_1CPick.html">CPick</a>&gt; &gt; glasscore::CPickList::qProcessList</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::queue containing a std::shared_ptr to each pick in that needs to be processed. </p>
-
-</div>
-</div>
-<a class="anchor" id="a86615a93d7bab0384fb9e4d70cc861c4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">time_t glasscore::CPickList::tLastStatusCheck</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the time_t holding the last time the thread status was checked </p>
-
-</div>
-</div>
-<a class="anchor" id="a90dc0fbffc870e67c0c06517d28600b4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::pair&lt;double, int&gt; &gt; glasscore::CPickList::vPick</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::vector mapping the arrival time of each pick in <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> to it's integer pick id. The elements in this vector object are inserted in a manner to keep it in sequential time order from oldest to youngest. </p>
-
-</div>
-</div>
-<a class="anchor" id="ab6383df201b2350b968742f3f116e1aa"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::thread&gt; glasscore::CPickList::vProcessThreads</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the std::vector of std::threads </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>glasslib/include/<a class="el" href="PickList_8h_source.html">PickList.h</a></li>
 <li>glasslib/src/<a class="el" href="PickList_8cpp.html">PickList.cpp</a></li>
@@ -904,7 +724,7 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:18:49 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:12:46 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

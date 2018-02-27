@@ -1,15 +1,2 @@
 <map id="glasscore::CSite" name="glasscore::CSite">
-<area shape="rect" id="node6" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="971,294,1097,562"/>
-<area shape="rect" id="node9" href="$classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1307,1381,1525,1723"/>
-<area shape="rect" id="node22" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="1132,1093,1267,1317"/>
-<area shape="rect" id="node23" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="1433,587,1553,723"/>
-<area shape="rect" id="node24" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="1123,747,1285,957"/>
-<area shape="rect" id="node25" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="1775,338,1932,518"/>
-<area shape="rect" id="node10" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="2039,2294,2181,2591"/>
-<area shape="rect" id="node16" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="2041,1888,2180,2141"/>
-<area shape="rect" id="node29" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="2871,1800,3019,2229"/>
-<area shape="rect" id="node35" href="$classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="641,2331,820,2555"/>
-<area shape="rect" id="node33" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="3265,2338,3409,2547"/>
-<area shape="rect" id="node21" href="$classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="859,1947,1011,2083"/>
-<area shape="rect" id="node28" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="1519,1167,1672,1244"/>
 </map>

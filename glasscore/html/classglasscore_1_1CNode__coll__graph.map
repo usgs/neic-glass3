@@ -1,16 +1,2 @@
 <map id="glasscore::CNode" name="glasscore::CNode">
-<area shape="rect" id="node7" href="$classglasscore_1_1CWeb.html" title="glasscore detection web class " alt="" coords="848,2189,986,2619"/>
-<area shape="rect" id="node14" href="$classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1952,1411,2170,1752"/>
-<area shape="rect" id="node26" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="1401,1051,1536,1275"/>
-<area shape="rect" id="node27" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="1286,587,1406,723"/>
-<area shape="rect" id="node28" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="1509,747,1672,957"/>
-<area shape="rect" id="node29" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="1440,294,1566,562"/>
-<area shape="rect" id="node30" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="1742,338,1900,518"/>
-<area shape="rect" id="node15" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="3156,2255,3298,2553"/>
-<area shape="rect" id="node33" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="4360,2189,4508,2619"/>
-<area shape="rect" id="node38" href="$classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="1811,2292,1990,2516"/>
-<area shape="rect" id="node36" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="4774,2299,4918,2509"/>
-<area shape="rect" id="node20" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="2703,1859,2842,2112"/>
-<area shape="rect" id="node25" href="$classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="1500,1917,1652,2053"/>
-<area shape="rect" id="node32" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="2054,1124,2208,1201"/>
 </map>

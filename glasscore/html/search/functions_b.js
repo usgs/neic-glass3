@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['merge',['merge',['../classglasscore_1_1CHypoList.html#a33c4d38b6cb5759db83febb1d8039ab5',1,'glasscore::CHypoList']]],
-  ['minimize',['Minimize',['../namespaceglasscore.html#a141ebccf1544e274435953443ea26328',1,'glasscore']]],
-  ['minute',['minute',['../classglassutil_1_1CDate.html#ac7d4aa7abf70fad0ae8b78ed230f290e',1,'glassutil::CDate']]],
-  ['month',['month',['../classglassutil_1_1CDate.html#a342374a43aa85d9eddc90e2e0e2470b2',1,'glassutil::CDate']]]
+  ['now',['now',['../classglassutil_1_1CDate.html#a55349b531442620b162371681ad66c9f',1,'glassutil::CDate']]],
+  ['nucleate',['nucleate',['../classglasscore_1_1CNode.html#a1e3b72adfc0f3067f8af4aeae7fa9736',1,'glasscore::CNode::nucleate()'],['../classglasscore_1_1CPick.html#a7bc9730805c61733f67e4bba810c1099',1,'glasscore::CPick::nucleate()'],['../classglasscore_1_1CSite.html#a6bcd4c0b553af67863b2af7244c48f98',1,'glasscore::CSite::nucleate()']]]
 ];

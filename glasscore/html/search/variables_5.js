@@ -1,9 +1,14 @@
 var searchData=
 [
-  ['geo',['geo',['../classglasscore_1_1CSite.html#af3b4ebde1194414bb27d22184edddf3a',1,'glasscore::CSite']]],
-  ['geoorg',['geoOrg',['../classtraveltime_1_1CTravelTime.html#ad5fd7c4bc4ddf7e4ff56503015f93154',1,'traveltime::CTravelTime']]],
-  ['graphicsout',['graphicsOut',['../classglasscore_1_1CGlass.html#a42f058b7e1672ecea17cd082e6ca01f7',1,'glasscore::CGlass']]],
-  ['graphicsoutfolder',['graphicsOutFolder',['../classglasscore_1_1CGlass.html#a59b9a46d8beecc62057cc9cda2e19478',1,'glasscore::CGlass']]],
-  ['graphicsstepkm',['graphicsStepKM',['../classglasscore_1_1CGlass.html#af3039bf32ce21fa94a9fc529e56289fa',1,'glasscore::CGlass']]],
-  ['graphicssteps',['graphicsSteps',['../classglasscore_1_1CGlass.html#af61559fb7756907c8835f2b821cb4970',1,'glasscore::CGlass']]]
+  ['m_5fdseconds',['m_dSeconds',['../classglassutil_1_1CDate.html#a6eb53b0415f4a4f90b705bee41aa4e1e',1,'glassutil::CDate']]],
+  ['m_5fdtime',['m_dTime',['../classglassutil_1_1CDate.html#aff076ac62a98b57433e304b231a2d2f6',1,'glassutil::CDate']]],
+  ['m_5ffileextension',['m_FileExtension',['../classtraveltime_1_1CGenTrv.html#a5133f4ad4cc4105b18fdbec56c2bfdb3',1,'traveltime::CGenTrv']]],
+  ['m_5flogcallback',['m_logCallback',['../classglassutil_1_1CLogit.html#ad89fdada73467957c8adf72fb71ff43b',1,'glassutil::CLogit']]],
+  ['m_5fnday',['m_nDay',['../classglassutil_1_1CDate.html#a9b24446d312097d6cf521bbac6fabe77',1,'glassutil::CDate']]],
+  ['m_5fnhour',['m_nHour',['../classglassutil_1_1CDate.html#a19c001cf75430a2048c67bf03fb8ccdf',1,'glassutil::CDate']]],
+  ['m_5fnminute',['m_nMinute',['../classglassutil_1_1CDate.html#a8019d54fda8a3be118e18cacb8cbd9a4',1,'glassutil::CDate']]],
+  ['m_5fnmonth',['m_nMonth',['../classglassutil_1_1CDate.html#a329931df6665de0a601ec7d8d11a686f',1,'glassutil::CDate']]],
+  ['m_5fnyear',['m_nYear',['../classglassutil_1_1CDate.html#a4da62fb776960f5ddc72f18789935144',1,'glassutil::CDate']]],
+  ['m_5foutputpath',['m_OutputPath',['../classtraveltime_1_1CGenTrv.html#ae6380fc560f58f2989fe8031f56cb1ae',1,'traveltime::CGenTrv']]],
+  ['message',['message',['../structglassutil_1_1logMessageStruct.html#a00bece0e9b82680d19b2f1ff03b563fb',1,'glassutil::logMessageStruct']]]
 ];

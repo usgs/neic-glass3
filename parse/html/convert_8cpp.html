@@ -100,12 +100,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &lt;string&gt;</code><br/>
 <code>#include &lt;ctime&gt;</code><br/>
 <code>#include &lt;vector&gt;</code><br/>
+<code>#include &lt;memory&gt;</code><br/>
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for convert.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="convert_8cpp__incl.png" border="0" usemap="#src_2convert_8cpp" alt=""/></div>
 <map name="src_2convert_8cpp" id="src_2convert_8cpp">
-<area shape="rect" id="node2" href="convert_8h.html" title="convert.h" alt="" coords="54,80,129,107"/></map>
+<area shape="rect" id="node2" href="convert_8h.html" title="convert.h" alt="" coords="67,80,143,107"/></map>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
@@ -115,23 +116,23 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa9baaacbe1c343ff482bd178bad68232"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceparse.html#aa9baaacbe1c343ff482bd178bad68232">parse::hypoToJSONDetection</a> (json::Object *data, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
-<tr class="memdesc:aa9baaacbe1c343ff482bd178bad68232"><td class="mdescLeft">&#160;</td><td class="mdescRight">json hypo conversion function  <a href="#aa9baaacbe1c343ff482bd178bad68232">More...</a><br/></td></tr>
-<tr class="separator:aa9baaacbe1c343ff482bd178bad68232"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5654605a3e584ed103eed59e36e18df5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceparse.html#a5654605a3e584ed103eed59e36e18df5">parse::cancelToJSONRetract</a> (json::Object *data, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
-<tr class="memdesc:a5654605a3e584ed103eed59e36e18df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">json cancel conversion function  <a href="#a5654605a3e584ed103eed59e36e18df5">More...</a><br/></td></tr>
-<tr class="separator:a5654605a3e584ed103eed59e36e18df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73016a2b2ea638dac705d3b747f9e86e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceparse.html#a73016a2b2ea638dac705d3b747f9e86e">parse::siteListToStationList</a> (json::Object *data)</td></tr>
-<tr class="memdesc:a73016a2b2ea638dac705d3b747f9e86e"><td class="mdescLeft">&#160;</td><td class="mdescRight">json station list conversion function  <a href="#a73016a2b2ea638dac705d3b747f9e86e">More...</a><br/></td></tr>
-<tr class="separator:a73016a2b2ea638dac705d3b747f9e86e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae488f26dbe83ae7740fb8d797671ac8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceparse.html#aae488f26dbe83ae7740fb8d797671ac8">parse::siteLookupToStationInfoRequest</a> (json::Object *data, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
-<tr class="memdesc:aae488f26dbe83ae7740fb8d797671ac8"><td class="mdescLeft">&#160;</td><td class="mdescRight">json station list conversion function  <a href="#aae488f26dbe83ae7740fb8d797671ac8">More...</a><br/></td></tr>
-<tr class="separator:aae488f26dbe83ae7740fb8d797671ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b92f49fe5516eeb11d9b9406b72aa9a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceparse.html#a4b92f49fe5516eeb11d9b9406b72aa9a">parse::hypoToJSONDetection</a> (std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
+<tr class="memdesc:a4b92f49fe5516eeb11d9b9406b72aa9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">json hypo conversion function  <a href="#a4b92f49fe5516eeb11d9b9406b72aa9a">More...</a><br/></td></tr>
+<tr class="separator:a4b92f49fe5516eeb11d9b9406b72aa9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab43155f3507159666f3c01eb2c564948"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceparse.html#ab43155f3507159666f3c01eb2c564948">parse::cancelToJSONRetract</a> (std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
+<tr class="memdesc:ab43155f3507159666f3c01eb2c564948"><td class="mdescLeft">&#160;</td><td class="mdescRight">json cancel conversion function  <a href="#ab43155f3507159666f3c01eb2c564948">More...</a><br/></td></tr>
+<tr class="separator:ab43155f3507159666f3c01eb2c564948"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb31c72bd58940e930a4e8d09a41507c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceparse.html#afb31c72bd58940e930a4e8d09a41507c">parse::siteListToStationList</a> (std::shared_ptr&lt; json::Object &gt;)</td></tr>
+<tr class="memdesc:afb31c72bd58940e930a4e8d09a41507c"><td class="mdescLeft">&#160;</td><td class="mdescRight">json station list conversion function  <a href="#afb31c72bd58940e930a4e8d09a41507c">More...</a><br/></td></tr>
+<tr class="separator:afb31c72bd58940e930a4e8d09a41507c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64e7487582f87709493ec03c829958fa"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceparse.html#a64e7487582f87709493ec03c829958fa">parse::siteLookupToStationInfoRequest</a> (std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
+<tr class="memdesc:a64e7487582f87709493ec03c829958fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">json station list conversion function  <a href="#a64e7487582f87709493ec03c829958fa">More...</a><br/></td></tr>
+<tr class="separator:a64e7487582f87709493ec03c829958fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:20:25 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:14:52 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

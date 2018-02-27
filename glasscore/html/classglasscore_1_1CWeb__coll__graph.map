@@ -1,15 +1,2 @@
 <map id="glasscore::CWeb" name="glasscore::CWeb">
-<area shape="rect" id="node13" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="2525,1094,2667,1391"/>
-<area shape="rect" id="node31" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="2965,1888,3112,2317"/>
-<area shape="rect" id="node12" href="$classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1784,1469,2003,1811"/>
-<area shape="rect" id="node24" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="1236,1131,1371,1355"/>
-<area shape="rect" id="node25" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="638,587,759,723"/>
-<area shape="rect" id="node26" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="1223,747,1385,957"/>
-<area shape="rect" id="node27" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="1278,294,1404,562"/>
-<area shape="rect" id="node28" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="965,338,1123,518"/>
-<area shape="rect" id="node18" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="2299,1976,2439,2229"/>
-<area shape="rect" id="node36" href="$classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="2741,2484,2920,2708"/>
-<area shape="rect" id="node34" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="1863,2491,2007,2701"/>
-<area shape="rect" id="node23" href="$classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="1573,2035,1725,2171"/>
-<area shape="rect" id="node30" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="1775,1204,1928,1281"/>
 </map>

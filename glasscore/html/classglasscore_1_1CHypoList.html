@@ -88,7 +88,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classglasscore_1_1CHypoList-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">glasscore::CHypoList Class Reference</div>  </div>
@@ -103,8 +102,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Collaboration diagram for glasscore::CHypoList:</div>
 <div class="dyncontent">
 <div class="center"><img src="classglasscore_1_1CHypoList__coll__graph.png" border="0" usemap="#glasscore_1_1CHypoList_coll__map" alt="Collaboration graph"/></div>
-<map name="glasscore_1_1CHypoList_coll__map" id="glasscore_1_1CHypoList_coll__map">
-<area shape="rect" id="node11" href="classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1761,1544,1980,1885"/><area shape="rect" id="node13" href="classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="729,2267,871,2565"/><area shape="rect" id="node33" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="1543,2304,1723,2528"/><area shape="rect" id="node16" href="classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="1563,1949,1703,2203"/><area shape="rect" id="node22" href="classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="2440,1153,2575,1377"/><area shape="rect" id="node25" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="2319,747,2481,957"/><area shape="rect" id="node26" href="classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="2026,294,2152,562"/><area shape="rect" id="node27" href="classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="2177,338,2335,518"/><area shape="rect" id="node31" href="classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="2453,2311,2597,2521"/><area shape="rect" id="node21" href="classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="2224,2008,2376,2144"/><area shape="rect" id="node23" href="classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="2751,587,2872,723"/><area shape="rect" id="node30" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="2039,1227,2192,1304"/></map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -121,9 +118,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0cd9e343baccfee7e44626af604de66d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a0cd9e343baccfee7e44626af604de66d">clearHypos</a> ()</td></tr>
 <tr class="memdesc:a0cd9e343baccfee7e44626af604de66d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all hypos from hypo list.  <a href="#a0cd9e343baccfee7e44626af604de66d">More...</a><br/></td></tr>
 <tr class="separator:a0cd9e343baccfee7e44626af604de66d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ce8aad8753f2e6e43d60cf5d2751edf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a8ce8aad8753f2e6e43d60cf5d2751edf">dispatch</a> (json::Object *com)</td></tr>
-<tr class="memdesc:a8ce8aad8753f2e6e43d60cf5d2751edf"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> communication receiving function.  <a href="#a8ce8aad8753f2e6e43d60cf5d2751edf">More...</a><br/></td></tr>
-<tr class="separator:a8ce8aad8753f2e6e43d60cf5d2751edf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4a88788099fb10fbf84c1b9da42d503"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#ab4a88788099fb10fbf84c1b9da42d503">dispatch</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:ab4a88788099fb10fbf84c1b9da42d503"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> communication receiving function.  <a href="#ab4a88788099fb10fbf84c1b9da42d503">More...</a><br/></td></tr>
+<tr class="separator:ab4a88788099fb10fbf84c1b9da42d503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af057ac332aeeec03a442ea161eafd33f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#af057ac332aeeec03a442ea161eafd33f">indexHypo</a> (double tOrg)</td></tr>
 <tr class="memdesc:af057ac332aeeec03a442ea161eafd33f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get insertion index for hypo.  <a href="#af057ac332aeeec03a442ea161eafd33f">More...</a><br/></td></tr>
 <tr class="separator:af057ac332aeeec03a442ea161eafd33f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -163,86 +160,33 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a27e347659c72d699921b63d89a48d908"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a27e347659c72d699921b63d89a48d908">evolve</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp, int announce=0)</td></tr>
 <tr class="memdesc:a27e347659c72d699921b63d89a48d908"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evolve provided hypocenter.  <a href="#a27e347659c72d699921b63d89a48d908">More...</a><br/></td></tr>
 <tr class="separator:a27e347659c72d699921b63d89a48d908"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a878736e89f7c7f8da2c527434a5af7ba"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a878736e89f7c7f8da2c527434a5af7ba">reqHypo</a> (json::Object *com)</td></tr>
-<tr class="memdesc:a878736e89f7c7f8da2c527434a5af7ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cause <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> to generate a Hypo message for a hypocenter.  <a href="#a878736e89f7c7f8da2c527434a5af7ba">More...</a><br/></td></tr>
-<tr class="separator:a878736e89f7c7f8da2c527434a5af7ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33c4d38b6cb5759db83febb1d8039ab5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a33c4d38b6cb5759db83febb1d8039ab5">merge</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp)</td></tr>
-<tr class="memdesc:a33c4d38b6cb5759db83febb1d8039ab5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merge event.  <a href="#a33c4d38b6cb5759db83febb1d8039ab5">More...</a><br/></td></tr>
-<tr class="separator:a33c4d38b6cb5759db83febb1d8039ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6df0a3cd20d7588c9aacdd56f23fd96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#aa6df0a3cd20d7588c9aacdd56f23fd96">sort</a> ()</td></tr>
-<tr class="memdesc:aa6df0a3cd20d7588c9aacdd56f23fd96"><td class="mdescLeft">&#160;</td><td class="mdescRight">HypoList sort function.  <a href="#aa6df0a3cd20d7588c9aacdd56f23fd96">More...</a><br/></td></tr>
-<tr class="separator:aa6df0a3cd20d7588c9aacdd56f23fd96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a030467b7dcdf8ca4d4f6a786784500b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a030467b7dcdf8ca4d4f6a786784500b0">processHypos</a> ()</td></tr>
-<tr class="memdesc:a030467b7dcdf8ca4d4f6a786784500b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the next pick on the queue.  <a href="#a030467b7dcdf8ca4d4f6a786784500b0">More...</a><br/></td></tr>
-<tr class="separator:a030467b7dcdf8ca4d4f6a786784500b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b3667e771985da15c3e60adad555176"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a2b3667e771985da15c3e60adad555176">jobSleep</a> ()</td></tr>
-<tr class="memdesc:a2b3667e771985da15c3e60adad555176"><td class="mdescLeft">&#160;</td><td class="mdescRight">the job sleep  <a href="#a2b3667e771985da15c3e60adad555176">More...</a><br/></td></tr>
-<tr class="separator:a2b3667e771985da15c3e60adad555176"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0017940461040b4b43e1f65086188c85"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a0017940461040b4b43e1f65086188c85">reqHypo</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:a0017940461040b4b43e1f65086188c85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cause <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> to generate a Hypo message for a hypocenter.  <a href="#a0017940461040b4b43e1f65086188c85">More...</a><br/></td></tr>
+<tr class="separator:a0017940461040b4b43e1f65086188c85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95d646ad7a94b9547d312a0faeb79825"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a95d646ad7a94b9547d312a0faeb79825">statusCheck</a> ()</td></tr>
-<tr class="memdesc:a95d646ad7a94b9547d312a0faeb79825"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if each thread is still functional  <a href="#a95d646ad7a94b9547d312a0faeb79825">More...</a><br/></td></tr>
+<tr class="memdesc:a95d646ad7a94b9547d312a0faeb79825"><td class="mdescLeft">&#160;</td><td class="mdescRight">Merge event.  <a href="#a95d646ad7a94b9547d312a0faeb79825">More...</a><br/></td></tr>
 <tr class="separator:a95d646ad7a94b9547d312a0faeb79825"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0563b2d8475e4c3748eabe4db3e2efc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#ab0563b2d8475e4c3748eabe4db3e2efc">setStatus</a> (bool status)</td></tr>
-<tr class="memdesc:ab0563b2d8475e4c3748eabe4db3e2efc"><td class="mdescLeft">&#160;</td><td class="mdescRight">thread status update function  <a href="#ab0563b2d8475e4c3748eabe4db3e2efc">More...</a><br/></td></tr>
-<tr class="separator:ab0563b2d8475e4c3748eabe4db3e2efc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a1406b26939c9ae2c5454f07b0abe1c41"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a1406b26939c9ae2c5454f07b0abe1c41">pGlass</a></td></tr>
-<tr class="memdesc:a1406b26939c9ae2c5454f07b0abe1c41"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the parent <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class, used to send output, encode/decode time, get configuration values, and debug flags.  <a href="#a1406b26939c9ae2c5454f07b0abe1c41">More...</a><br/></td></tr>
-<tr class="separator:a1406b26939c9ae2c5454f07b0abe1c41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac10e2384c7b80b6acb8d48b23b9d5164"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#ac10e2384c7b80b6acb8d48b23b9d5164">nHypoTotal</a></td></tr>
-<tr class="memdesc:ac10e2384c7b80b6acb8d48b23b9d5164"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the total number of hypocenters ever added to <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a>.  <a href="#ac10e2384c7b80b6acb8d48b23b9d5164">More...</a><br/></td></tr>
-<tr class="separator:ac10e2384c7b80b6acb8d48b23b9d5164"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b01afd435b6b7d48594358dda506c70"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a1b01afd435b6b7d48594358dda506c70">nHypoMax</a></td></tr>
-<tr class="memdesc:a1b01afd435b6b7d48594358dda506c70"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the maximum number of hypocenters stored by <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a>.  <a href="#a1b01afd435b6b7d48594358dda506c70">More...</a><br/></td></tr>
-<tr class="separator:a1b01afd435b6b7d48594358dda506c70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6f9fb8321de794e734f4b9fe2b31df1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#aa6f9fb8321de794e734f4b9fe2b31df1">nHypo</a></td></tr>
-<tr class="memdesc:aa6f9fb8321de794e734f4b9fe2b31df1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Also an integer containing the total number of hypocenters ever added to <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a>, but one larger.  <a href="#aa6f9fb8321de794e734f4b9fe2b31df1">More...</a><br/></td></tr>
-<tr class="separator:aa6f9fb8321de794e734f4b9fe2b31df1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67932aa9cafa8998f3e0b4e1ddcc40f6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a67932aa9cafa8998f3e0b4e1ddcc40f6">qFifo</a></td></tr>
-<tr class="memdesc:a67932aa9cafa8998f3e0b4e1ddcc40f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::vector containing the queue of hypocenters that need to be processed.  <a href="#a67932aa9cafa8998f3e0b4e1ddcc40f6">More...</a><br/></td></tr>
-<tr class="separator:a67932aa9cafa8998f3e0b4e1ddcc40f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63842b9ca7d769ab2b2b9abddff72dcc"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a63842b9ca7d769ab2b2b9abddff72dcc">m_QueueMutex</a></td></tr>
-<tr class="memdesc:a63842b9ca7d769ab2b2b9abddff72dcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">the std::mutex for qFifo  <a href="#a63842b9ca7d769ab2b2b9abddff72dcc">More...</a><br/></td></tr>
-<tr class="separator:a63842b9ca7d769ab2b2b9abddff72dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae43fd6fec716d6c7416898e1842f7870"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; double, <br class="typebreak"/>
-std::string &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#ae43fd6fec716d6c7416898e1842f7870">vHypo</a></td></tr>
-<tr class="memdesc:ae43fd6fec716d6c7416898e1842f7870"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::vector mapping the origin time of each hypocenter in <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> to it's std::string hypo id.  <a href="#ae43fd6fec716d6c7416898e1842f7870">More...</a><br/></td></tr>
-<tr class="separator:ae43fd6fec716d6c7416898e1842f7870"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb76e18374313bfe6afc66b7f30a79b1"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, <br class="typebreak"/>
-std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#afb76e18374313bfe6afc66b7f30a79b1">mHypo</a></td></tr>
-<tr class="memdesc:afb76e18374313bfe6afc66b7f30a79b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::map containing a std::shared_ptr to each hypocenter in <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> indexed by the std::string hypo id.  <a href="#afb76e18374313bfe6afc66b7f30a79b1">More...</a><br/></td></tr>
-<tr class="separator:afb76e18374313bfe6afc66b7f30a79b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1247c1c1fae45754c5940190bd9dc85"><td class="memItemLeft" align="right" valign="top">std::recursive_mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#ae1247c1c1fae45754c5940190bd9dc85">m_vHypoMutex</a></td></tr>
-<tr class="memdesc:ae1247c1c1fae45754c5940190bd9dc85"><td class="mdescLeft">&#160;</td><td class="mdescRight">A recursive_mutex to control threading access to vHypo. NOTE: recursive mutexes are frowned upon, so maybe redesign around it see: <a href="http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/">http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/</a> However a recursive_mutex allows us to maintain the original class design as delivered by the contractor.  <a href="#ae1247c1c1fae45754c5940190bd9dc85">More...</a><br/></td></tr>
-<tr class="separator:ae1247c1c1fae45754c5940190bd9dc85"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33ff2129b465f00237c331a411fad64e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a33ff2129b465f00237c331a411fad64e">bSendEvent</a></td></tr>
-<tr class="memdesc:a33ff2129b465f00237c331a411fad64e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A boolean indicating whether to send Event json messages.  <a href="#a33ff2129b465f00237c331a411fad64e">More...</a><br/></td></tr>
-<tr class="separator:a33ff2129b465f00237c331a411fad64e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2da4d6c4a789b019d3f0ed392fb7dea2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::thread &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a2da4d6c4a789b019d3f0ed392fb7dea2">vProcessThreads</a></td></tr>
-<tr class="memdesc:a2da4d6c4a789b019d3f0ed392fb7dea2"><td class="mdescLeft">&#160;</td><td class="mdescRight">the std::vector of std::threads  <a href="#a2da4d6c4a789b019d3f0ed392fb7dea2">More...</a><br/></td></tr>
-<tr class="separator:a2da4d6c4a789b019d3f0ed392fb7dea2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a021edd726171524c54eb24eecfdda16f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a021edd726171524c54eb24eecfdda16f">m_iNumThreads</a></td></tr>
-<tr class="memdesc:a021edd726171524c54eb24eecfdda16f"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the number of threads in the pool.  <a href="#a021edd726171524c54eb24eecfdda16f">More...</a><br/></td></tr>
-<tr class="separator:a021edd726171524c54eb24eecfdda16f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f387d9c963eec00ccc28419430a3415"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::thread::id, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a8f387d9c963eec00ccc28419430a3415">m_ThreadStatusMap</a></td></tr>
-<tr class="memdesc:a8f387d9c963eec00ccc28419430a3415"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::map containing the status of each thread.  <a href="#a8f387d9c963eec00ccc28419430a3415">More...</a><br/></td></tr>
-<tr class="separator:a8f387d9c963eec00ccc28419430a3415"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ea3150223984b8fe514cdcec69b5c4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a4ea3150223984b8fe514cdcec69b5c4a">m_iSleepTimeMS</a></td></tr>
-<tr class="memdesc:a4ea3150223984b8fe514cdcec69b5c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the amount of time to sleep in milliseconds between picks.  <a href="#a4ea3150223984b8fe514cdcec69b5c4a">More...</a><br/></td></tr>
-<tr class="separator:a4ea3150223984b8fe514cdcec69b5c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1780e8a885457cbf68f9946390acc8a7"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a1780e8a885457cbf68f9946390acc8a7">m_StatusMutex</a></td></tr>
-<tr class="memdesc:a1780e8a885457cbf68f9946390acc8a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">the std::mutex for m_ThreadStatusMap  <a href="#a1780e8a885457cbf68f9946390acc8a7">More...</a><br/></td></tr>
-<tr class="separator:a1780e8a885457cbf68f9946390acc8a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6673107768637e5625a06f66833aeaa"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#aa6673107768637e5625a06f66833aeaa">m_iStatusCheckInterval</a></td></tr>
-<tr class="memdesc:aa6673107768637e5625a06f66833aeaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">the integer interval in seconds after which the work thread will be considered dead. A negative check interval disables thread status checks  <a href="#aa6673107768637e5625a06f66833aeaa">More...</a><br/></td></tr>
-<tr class="separator:aa6673107768637e5625a06f66833aeaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab01697550871b4775b55b2e70f28b21e"><td class="memItemLeft" align="right" valign="top">time_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#ab01697550871b4775b55b2e70f28b21e">tLastStatusCheck</a></td></tr>
-<tr class="memdesc:ab01697550871b4775b55b2e70f28b21e"><td class="mdescLeft">&#160;</td><td class="mdescRight">the time_t holding the last time the thread status was checked  <a href="#ab01697550871b4775b55b2e70f28b21e">More...</a><br/></td></tr>
-<tr class="separator:ab01697550871b4775b55b2e70f28b21e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4068bf058249283dfb7b92ae38c16347"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a4068bf058249283dfb7b92ae38c16347">m_bRunProcessLoop</a></td></tr>
-<tr class="memdesc:a4068bf058249283dfb7b92ae38c16347"><td class="mdescLeft">&#160;</td><td class="mdescRight">the boolean flags indicating that the process threads should keep running.  <a href="#a4068bf058249283dfb7b92ae38c16347">More...</a><br/></td></tr>
-<tr class="separator:a4068bf058249283dfb7b92ae38c16347"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad858a531208f6983ccd7ab92a0c316d5"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#ad858a531208f6983ccd7ab92a0c316d5">getGlass</a> () const </td></tr>
+<tr class="memdesc:ad858a531208f6983ccd7ab92a0c316d5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> getter.  <a href="#ad858a531208f6983ccd7ab92a0c316d5">More...</a><br/></td></tr>
+<tr class="separator:ad858a531208f6983ccd7ab92a0c316d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01040d51855e895ac1da102a10e1c03b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a01040d51855e895ac1da102a10e1c03b">setGlass</a> (<a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *glass)</td></tr>
+<tr class="memdesc:a01040d51855e895ac1da102a10e1c03b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> setter.  <a href="#a01040d51855e895ac1da102a10e1c03b">More...</a><br/></td></tr>
+<tr class="separator:a01040d51855e895ac1da102a10e1c03b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a4422c10f3e1458f6c35a8c84b710f3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a4a4422c10f3e1458f6c35a8c84b710f3">getNHypo</a> () const </td></tr>
+<tr class="memdesc:a4a4422c10f3e1458f6c35a8c84b710f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">nHypo getter  <a href="#a4a4422c10f3e1458f6c35a8c84b710f3">More...</a><br/></td></tr>
+<tr class="separator:a4a4422c10f3e1458f6c35a8c84b710f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24b1346164a9a798e3165db67ecaa92f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a24b1346164a9a798e3165db67ecaa92f">getNHypoMax</a> () const </td></tr>
+<tr class="memdesc:a24b1346164a9a798e3165db67ecaa92f"><td class="mdescLeft">&#160;</td><td class="mdescRight">nHypoMax getter  <a href="#a24b1346164a9a798e3165db67ecaa92f">More...</a><br/></td></tr>
+<tr class="separator:a24b1346164a9a798e3165db67ecaa92f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3eb688ff9869f4b4da058d651f503a1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a3eb688ff9869f4b4da058d651f503a1b">setNHypoMax</a> (int hypoMax)</td></tr>
+<tr class="memdesc:a3eb688ff9869f4b4da058d651f503a1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">nHypoMax Setter  <a href="#a3eb688ff9869f4b4da058d651f503a1b">More...</a><br/></td></tr>
+<tr class="separator:a3eb688ff9869f4b4da058d651f503a1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b6d2e6b0f661f0031ca08448c05dd2c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a6b6d2e6b0f661f0031ca08448c05dd2c">getNHypoTotal</a> () const </td></tr>
+<tr class="memdesc:a6b6d2e6b0f661f0031ca08448c05dd2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">nHypoTotal getter  <a href="#a6b6d2e6b0f661f0031ca08448c05dd2c">More...</a><br/></td></tr>
+<tr class="separator:a6b6d2e6b0f661f0031ca08448c05dd2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98f126bca5440900ab2b1dc4aed62e88"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypoList.html#a98f126bca5440900ab2b1dc4aed62e88">getVHypoSize</a> () const </td></tr>
+<tr class="memdesc:a98f126bca5440900ab2b1dc4aed62e88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current size of the hypocenter list.  <a href="#a98f126bca5440900ab2b1dc4aed62e88">More...</a><br/></td></tr>
+<tr class="separator:a98f126bca5440900ab2b1dc4aed62e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore hypocenter list class </p>
@@ -469,14 +413,14 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
 
 </div>
 </div>
-<a class="anchor" id="a8ce8aad8753f2e6e43d60cf5d2751edf"></a>
+<a class="anchor" id="ab4a88788099fb10fbf84c1b9da42d503"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CHypoList::dispatch </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
@@ -586,6 +530,95 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
 
 </div>
 </div>
+<a class="anchor" id="ad858a531208f6983ccd7ab92a0c316d5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> * glasscore::CHypoList::getGlass </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4a4422c10f3e1458f6c35a8c84b710f3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CHypoList::getNHypo </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nHypo getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nHypo </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a24b1346164a9a798e3165db67ecaa92f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CHypoList::getNHypoMax </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nHypoMax getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nHypoMax </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6b6d2e6b0f661f0031ca08448c05dd2c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CHypoList::getNHypoTotal </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nHypoTotal getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nHypoTotal </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a98f126bca5440900ab2b1dc4aed62e88"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CHypoList::getVHypoSize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current size of the hypocenter list. </p>
+
+</div>
+</div>
 <a class="anchor" id="af057ac332aeeec03a442ea161eafd33f"></a>
 <div class="memitem">
 <div class="memproto">
@@ -612,24 +645,6 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
 
 </div>
 </div>
-<a class="anchor" id="a2b3667e771985da15c3e60adad555176"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glasscore::CHypoList::jobSleep </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the job sleep </p>
-<p>The function that performs the sleep between jobs </p>
-
-</div>
-</div>
 <a class="anchor" id="a870a09a60057cb9c61adbd2b5120d8e5"></a>
 <div class="memitem">
 <div class="memproto">
@@ -645,24 +660,6 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
 
 <p>Print basic values to screen for hypocenter list. </p>
 <p>Causes <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> to print basic values to the console for each hypocenter in the list </p>
-
-</div>
-</div>
-<a class="anchor" id="a33c4d38b6cb5759db83febb1d8039ab5"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CHypoList::merge </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt;&#160;</td>
-          <td class="paramname"><em>hyp</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Merge event. </p>
 
 </div>
 </div>
@@ -682,24 +679,6 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
 <p>Get hypo from processing queue. </p>
 <p>Get the first hypocenter from the processing queue.</p>
 <dl class="section return"><dt>Returns</dt><dd>Returns a std::shared_ptr to the hypocenter retrieved from the queue. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a030467b7dcdf8ca4d4f6a786784500b0"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glasscore::CHypoList::processHypos </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Process the next pick on the queue. </p>
-<p>Attempts to run evolve for every pending hypo. </p>
 
 </div>
 </div>
@@ -765,14 +744,14 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
 
 </div>
 </div>
-<a class="anchor" id="a878736e89f7c7f8da2c527434a5af7ba"></a>
+<a class="anchor" id="a0017940461040b4b43e1f65086188c85"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CHypoList::reqHypo </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
@@ -810,45 +789,51 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
 
 </div>
 </div>
-<a class="anchor" id="ab0563b2d8475e4c3748eabe4db3e2efc"></a>
+<a class="anchor" id="a01040d51855e895ac1da102a10e1c03b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void glasscore::CHypoList::setStatus </td>
+          <td class="memname">void glasscore::CHypoList::setGlass </td>
           <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>status</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td>
+          <td class="paramname"><em>glass</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>thread status update function </p>
-<p>Updates the status for the current thread </p>
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> setter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">status</td><td>- A boolean flag containing the status to set </td></tr>
+    <tr><td class="paramname">glass</td><td>- the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="aa6df0a3cd20d7588c9aacdd56f23fd96"></a>
+<a class="anchor" id="a3eb688ff9869f4b4da058d651f503a1b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void glasscore::CHypoList::sort </td>
+          <td class="memname">void glasscore::CHypoList::setNHypoMax </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>hypoMax</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>HypoList sort function. </p>
+<p>nHypoMax Setter </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hypoMax</td><td>- the nHypoMax </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -865,262 +850,9 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
       </table>
 </div><div class="memdoc">
 
-<p>check to see if each thread is still functional </p>
+<p>Merge event. </p>
+<p>check to see if each thread is still functional</p>
 <p>Checks each thread to see if it is still responsive. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a33ff2129b465f00237c331a411fad64e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CHypoList::bSendEvent</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A boolean indicating whether to send Event json messages. </p>
-
-</div>
-</div>
-<a class="anchor" id="a4068bf058249283dfb7b92ae38c16347"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CHypoList::m_bRunProcessLoop</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the boolean flags indicating that the process threads should keep running. </p>
-
-</div>
-</div>
-<a class="anchor" id="a021edd726171524c54eb24eecfdda16f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CHypoList::m_iNumThreads</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the number of threads in the pool. </p>
-
-</div>
-</div>
-<a class="anchor" id="a4ea3150223984b8fe514cdcec69b5c4a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CHypoList::m_iSleepTimeMS</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the amount of time to sleep in milliseconds between picks. </p>
-
-</div>
-</div>
-<a class="anchor" id="aa6673107768637e5625a06f66833aeaa"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CHypoList::m_iStatusCheckInterval</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the integer interval in seconds after which the work thread will be considered dead. A negative check interval disables thread status checks </p>
-
-</div>
-</div>
-<a class="anchor" id="a63842b9ca7d769ab2b2b9abddff72dcc"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::mutex glasscore::CHypoList::m_QueueMutex</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the std::mutex for qFifo </p>
-
-</div>
-</div>
-<a class="anchor" id="a1780e8a885457cbf68f9946390acc8a7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::mutex glasscore::CHypoList::m_StatusMutex</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the std::mutex for m_ThreadStatusMap </p>
-
-</div>
-</div>
-<a class="anchor" id="a8f387d9c963eec00ccc28419430a3415"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;std::thread::id, bool&gt; glasscore::CHypoList::m_ThreadStatusMap</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::map containing the status of each thread. </p>
-
-</div>
-</div>
-<a class="anchor" id="ae1247c1c1fae45754c5940190bd9dc85"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::recursive_mutex glasscore::CHypoList::m_vHypoMutex</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A recursive_mutex to control threading access to vHypo. NOTE: recursive mutexes are frowned upon, so maybe redesign around it see: <a href="http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/">http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/</a> However a recursive_mutex allows us to maintain the original class design as delivered by the contractor. </p>
-
-</div>
-</div>
-<a class="anchor" id="afb76e18374313bfe6afc66b7f30a79b1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::map&lt;std::string, std::shared_ptr&lt;<a class="el" href="classglasscore_1_1CHypo.html">CHypo</a>&gt; &gt; glasscore::CHypoList::mHypo</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::map containing a std::shared_ptr to each hypocenter in <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> indexed by the std::string hypo id. </p>
-
-</div>
-</div>
-<a class="anchor" id="aa6f9fb8321de794e734f4b9fe2b31df1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CHypoList::nHypo</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Also an integer containing the total number of hypocenters ever added to <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a>, but one larger. </p>
-
-</div>
-</div>
-<a class="anchor" id="a1b01afd435b6b7d48594358dda506c70"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CHypoList::nHypoMax</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the maximum number of hypocenters stored by <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a>. </p>
-
-</div>
-</div>
-<a class="anchor" id="ac10e2384c7b80b6acb8d48b23b9d5164"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CHypoList::nHypoTotal</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the total number of hypocenters ever added to <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a>. </p>
-
-</div>
-</div>
-<a class="anchor" id="a1406b26939c9ae2c5454f07b0abe1c41"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a>* glasscore::CHypoList::pGlass</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to the parent <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class, used to send output, encode/decode time, get configuration values, and debug flags. </p>
-
-</div>
-</div>
-<a class="anchor" id="a67932aa9cafa8998f3e0b4e1ddcc40f6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::string&gt; glasscore::CHypoList::qFifo</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::vector containing the queue of hypocenters that need to be processed. </p>
-
-</div>
-</div>
-<a class="anchor" id="ab01697550871b4775b55b2e70f28b21e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">time_t glasscore::CHypoList::tLastStatusCheck</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the time_t holding the last time the thread status was checked </p>
-
-</div>
-</div>
-<a class="anchor" id="ae43fd6fec716d6c7416898e1842f7870"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::pair&lt;double, std::string&gt; &gt; glasscore::CHypoList::vHypo</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::vector mapping the origin time of each hypocenter in <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> to it's std::string hypo id. </p>
-<p>Note that the origin time is never updated after the hypocenter is first added to <a class="el" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class ">CHypoList</a> </p>
-
-</div>
-</div>
-<a class="anchor" id="a2da4d6c4a789b019d3f0ed392fb7dea2"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::thread&gt; glasscore::CHypoList::vProcessThreads</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>the std::vector of std::threads </p>
 
 </div>
 </div>
@@ -1131,7 +863,7 @@ std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> 
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:18:49 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:12:46 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

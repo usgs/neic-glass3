@@ -93,20 +93,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define OUTPUTINTERFACE_H</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;json.h&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>util {</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="structutil_1_1iOutput.html">   17</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structutil_1_1iOutput.html">iOutput</a> {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="structutil_1_1iOutput.html#acdfe99ec1628137a14a3b6fe990f36ba">sendToOutput</a>(json::Object* data) = 0;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;};</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#endif  // OUTPUTINTERFACE_H</span></div>
-<div class="ttc" id="structutil_1_1iOutput_html"><div class="ttname"><a href="structutil_1_1iOutput.html">util::iOutput</a></div><div class="ttdef"><b>Definition:</b> outputinterface.h:17</div></div>
-<div class="ttc" id="structutil_1_1iOutput_html_acdfe99ec1628137a14a3b6fe990f36ba"><div class="ttname"><a href="structutil_1_1iOutput.html#acdfe99ec1628137a14a3b6fe990f36ba">util::iOutput::sendToOutput</a></div><div class="ttdeci">virtual void sendToOutput(json::Object *data)=0</div><div class="ttdoc">Send output data. </div></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>util {</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="structutil_1_1iOutput.html">   18</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structutil_1_1iOutput.html">iOutput</a> {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="structutil_1_1iOutput.html#a4c36442caf3b95857ee57b5db732c652">sendToOutput</a>(std::shared_ptr&lt;json::Object&gt; &amp;data) = 0; <span class="comment">// NOLINT</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;};</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif  // OUTPUTINTERFACE_H</span></div>
+<div class="ttc" id="structutil_1_1iOutput_html"><div class="ttname"><a href="structutil_1_1iOutput.html">util::iOutput</a></div><div class="ttdef"><b>Definition:</b> outputinterface.h:18</div></div>
+<div class="ttc" id="structutil_1_1iOutput_html_a4c36442caf3b95857ee57b5db732c652"><div class="ttname"><a href="structutil_1_1iOutput.html#a4c36442caf3b95857ee57b5db732c652">util::iOutput::sendToOutput</a></div><div class="ttdeci">virtual void sendToOutput(std::shared_ptr&lt; json::Object &gt; &amp;data)=0</div><div class="ttdoc">Send output data. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:15:41 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:08:44 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

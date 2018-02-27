@@ -9,7 +9,6 @@ An example `glass_init.d` configuration file:
   "PickMax": 10000,
   "SitePickMax": 30,
   "CorrelationMax": 1000,
-  "Track": false,
   "PickDuplicateWindow": 2.5,
   "NumNucleationThreads": 5,
   "NumHypoThreads": 5,
@@ -90,16 +89,15 @@ detection performance.
 maximum size is reached, glass will start expiring the oldest correlations from
 this list as new correlations are received. This value is used for computational
 performance tuning.
-* **Track** - A mostly depreciated flag controlling whether tracking debug
-statements are logged.
 * **PickDuplicateWindow** - The time window (+/-) within which to consider a
 pick a duplicate of an existing pick from the same station.
 * **NumNucleationThreads** - The number of nucleation/detection threads to run
 in glass. This value should always be at least one. The upper limit depends
-on local machine capabilities.
+on local machine capabilities. This value is used for computational performance 
+tuning.
 * **NumHypoThreads** - The number of hypocenter location threads to run in
 glass.  In general this value should be equal to **NumNucleationThreads** to
-avoid race conditions.
+avoid race conditions. This value is used for computational performance tuning.
 * **WebBackgroundUpdate** - A flag indicating whether to process station updates
 to grids on a background thread. If station updates are not processed on a
 background thread, glass will halt while the updates are processed.

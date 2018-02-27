@@ -122,12 +122,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a81ad12ecface5f88a2a459c2230ffdc4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1CCParser.html#a81ad12ecface5f88a2a459c2230ffdc4">~CCParser</a> ()</td></tr>
 <tr class="memdesc:a81ad12ecface5f88a2a459c2230ffdc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">ccparser destructor  <a href="#a81ad12ecface5f88a2a459c2230ffdc4">More...</a><br/></td></tr>
 <tr class="separator:a81ad12ecface5f88a2a459c2230ffdc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab69e4730fa219a7531724abffb16afc2"><td class="memItemLeft" align="right" valign="top">json::Object *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1CCParser.html#ab69e4730fa219a7531724abffb16afc2">parse</a> (const std::string &amp;input) override</td></tr>
-<tr class="memdesc:ab69e4730fa219a7531724abffb16afc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">cross correlation parsing function  <a href="#ab69e4730fa219a7531724abffb16afc2">More...</a><br/></td></tr>
-<tr class="separator:ab69e4730fa219a7531724abffb16afc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3312b9c9a33feb74c75df3a4c00febf4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1CCParser.html#a3312b9c9a33feb74c75df3a4c00febf4">validate</a> (json::Object *input) override</td></tr>
-<tr class="memdesc:a3312b9c9a33feb74c75df3a4c00febf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">cross correlation validation function  <a href="#a3312b9c9a33feb74c75df3a4c00febf4">More...</a><br/></td></tr>
-<tr class="separator:a3312b9c9a33feb74c75df3a4c00febf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae44238e665d6cc9b8212da282c6f8ab3"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1CCParser.html#ae44238e665d6cc9b8212da282c6f8ab3">parse</a> (const std::string &amp;input) override</td></tr>
+<tr class="memdesc:ae44238e665d6cc9b8212da282c6f8ab3"><td class="mdescLeft">&#160;</td><td class="mdescRight">cross correlation parsing function  <a href="#ae44238e665d6cc9b8212da282c6f8ab3">More...</a><br/></td></tr>
+<tr class="separator:ae44238e665d6cc9b8212da282c6f8ab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4022e2c633214d9dd6baa14b797ad05a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1CCParser.html#a4022e2c633214d9dd6baa14b797ad05a">validate</a> (std::shared_ptr&lt; json::Object &gt; &amp;input) override</td></tr>
+<tr class="memdesc:a4022e2c633214d9dd6baa14b797ad05a"><td class="mdescLeft">&#160;</td><td class="mdescRight">cross correlation validation function  <a href="#a4022e2c633214d9dd6baa14b797ad05a">More...</a><br/></td></tr>
+<tr class="separator:a4022e2c633214d9dd6baa14b797ad05a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classparse_1_1Parser"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classparse_1_1Parser')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classparse_1_1Parser.html">parse::Parser</a></td></tr>
 <tr class="memitem:a86535831e7493385da1b8f50c922fff6 inherit pub_methods_classparse_1_1Parser"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1Parser.html#a86535831e7493385da1b8f50c922fff6">Parser</a> (const std::string &amp;newAgencyID, const std::string &amp;newAuthor)</td></tr>
 <tr class="memdesc:a86535831e7493385da1b8f50c922fff6 inherit pub_methods_classparse_1_1Parser"><td class="mdescLeft">&#160;</td><td class="mdescRight">parser constructor  <a href="#a86535831e7493385da1b8f50c922fff6">More...</a><br/></td></tr>
@@ -212,7 +212,7 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ab69e4730fa219a7531724abffb16afc2"></a>
+<a class="anchor" id="ae44238e665d6cc9b8212da282c6f8ab3"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -220,7 +220,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">json::Object * parse::CCParser::parse </td>
+          <td class="memname">std::shared_ptr&lt; json::Object &gt; parse::CCParser::parse </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>input</em></td><td>)</td>
@@ -244,11 +244,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the json::Object containing the data. </dd></dl>
 
-<p>Implements <a class="el" href="classparse_1_1Parser.html#a047763bdd4ac8e3600512e87386083e1">parse::Parser</a>.</p>
+<p>Implements <a class="el" href="classparse_1_1Parser.html#a6758cc58501c27effdd47becf786fb7e">parse::Parser</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a3312b9c9a33feb74c75df3a4c00febf4"></a>
+<a class="anchor" id="a4022e2c633214d9dd6baa14b797ad05a"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -258,7 +258,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">bool parse::CCParser::validate </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt; &amp;&#160;</td>
           <td class="paramname"><em>input</em></td><td>)</td>
           <td></td>
         </tr>
@@ -280,7 +280,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if valid, false otherwise. </dd></dl>
 
-<p>Implements <a class="el" href="classparse_1_1Parser.html#ae87b5c6f87277f0b5c4ed69fd46e0300">parse::Parser</a>.</p>
+<p>Implements <a class="el" href="classparse_1_1Parser.html#a48fa2d2866b078bba0374f6c98c6d07f">parse::Parser</a>.</p>
 
 </div>
 </div>
@@ -291,7 +291,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:20:25 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:14:52 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

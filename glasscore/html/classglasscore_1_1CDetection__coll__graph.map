@@ -1,14 +1,2 @@
 <map id="glasscore::CDetection" name="glasscore::CDetection">
-<area shape="rect" id="node2" href="$classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1043,1381,1261,1723"/>
-<area shape="rect" id="node4" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="2063,2294,2205,2591"/>
-<area shape="rect" id="node13" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="677,1888,816,2141"/>
-<area shape="rect" id="node27" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="2691,1800,2839,2229"/>
-<area shape="rect" id="node31" href="$classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="1080,2338,1224,2547"/>
-<area shape="rect" id="node33" href="$classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="366,2331,545,2555"/>
-<area shape="rect" id="node18" href="$classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="312,1093,447,1317"/>
-<area shape="rect" id="node19" href="$classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="249,587,369,723"/>
-<area shape="rect" id="node21" href="$classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="553,747,716,957"/>
-<area shape="rect" id="node22" href="$classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="541,294,667,562"/>
-<area shape="rect" id="node23" href="$classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="692,338,849,518"/>
-<area shape="rect" id="node26" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="1503,1167,1656,1244"/>
 </map>

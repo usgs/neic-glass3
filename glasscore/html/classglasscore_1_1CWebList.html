@@ -88,7 +88,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classglasscore_1_1CWebList-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">glasscore::CWebList Class Reference</div>  </div>
@@ -103,8 +102,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Collaboration diagram for glasscore::CWebList:</div>
 <div class="dyncontent">
 <div class="center"><img src="classglasscore_1_1CWebList__coll__graph.png" border="0" usemap="#glasscore_1_1CWebList_coll__map" alt="Collaboration graph"/></div>
-<map name="glasscore_1_1CWebList_coll__map" id="glasscore_1_1CWebList_coll__map">
-<area shape="rect" id="node4" href="classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1073,1381,1292,1723"/><area shape="rect" id="node6" href="classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="1934,2294,2076,2591"/><area shape="rect" id="node25" href="classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="878,338,1036,518"/><area shape="rect" id="node29" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="2712,1800,2860,2229"/><area shape="rect" id="node14" href="classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="1580,1888,1720,2141"/><area shape="rect" id="node19" href="classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="833,1947,985,2083"/><area shape="rect" id="node33" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class " alt="" coords="666,2331,845,2555"/><area shape="rect" id="node20" href="classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="748,1093,882,1317"/><area shape="rect" id="node21" href="classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="160,587,281,723"/><area shape="rect" id="node23" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="670,747,833,957"/><area shape="rect" id="node24" href="classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="496,294,622,562"/><area shape="rect" id="node28" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="1452,1167,1605,1244"/></map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -118,15 +115,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2060394a147c6d7b632976bdeb910be0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a2060394a147c6d7b632976bdeb910be0">clear</a> ()</td></tr>
 <tr class="memdesc:a2060394a147c6d7b632976bdeb910be0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co...">CWebList</a> clear function.  <a href="#a2060394a147c6d7b632976bdeb910be0">More...</a><br/></td></tr>
 <tr class="separator:a2060394a147c6d7b632976bdeb910be0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af957e3666220aae034c9195bcbba0b32"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#af957e3666220aae034c9195bcbba0b32">dispatch</a> (json::Object *com)</td></tr>
-<tr class="memdesc:af957e3666220aae034c9195bcbba0b32"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a> communication recieveing function.  <a href="#af957e3666220aae034c9195bcbba0b32">More...</a><br/></td></tr>
-<tr class="separator:af957e3666220aae034c9195bcbba0b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3398ae13faf2c6f1765a11205bc58bcf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a3398ae13faf2c6f1765a11205bc58bcf">addWeb</a> (json::Object *com)</td></tr>
-<tr class="memdesc:a3398ae13faf2c6f1765a11205bc58bcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add subnet web ('Grid', etc) from detection fabric.  <a href="#a3398ae13faf2c6f1765a11205bc58bcf">More...</a><br/></td></tr>
-<tr class="separator:a3398ae13faf2c6f1765a11205bc58bcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3690064c05a8a5c07ea0c63ebe2d7fd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#af3690064c05a8a5c07ea0c63ebe2d7fd">removeWeb</a> (json::Object *com)</td></tr>
-<tr class="memdesc:af3690064c05a8a5c07ea0c63ebe2d7fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove subnet compoent ('Grid', etc) from detection fabric.  <a href="#af3690064c05a8a5c07ea0c63ebe2d7fd">More...</a><br/></td></tr>
-<tr class="separator:af3690064c05a8a5c07ea0c63ebe2d7fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af86f55b651f24b567e2964b55b106eee"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#af86f55b651f24b567e2964b55b106eee">dispatch</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:af86f55b651f24b567e2964b55b106eee"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a> communication recieveing function.  <a href="#af86f55b651f24b567e2964b55b106eee">More...</a><br/></td></tr>
+<tr class="separator:af86f55b651f24b567e2964b55b106eee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab68a050102c410ee4b8c7dd15797e8f0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#ab68a050102c410ee4b8c7dd15797e8f0">addWeb</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:ab68a050102c410ee4b8c7dd15797e8f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add subnet web ('Grid', etc) from detection fabric.  <a href="#ab68a050102c410ee4b8c7dd15797e8f0">More...</a><br/></td></tr>
+<tr class="separator:ab68a050102c410ee4b8c7dd15797e8f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70a95824032c7f8b303c41c1c33d9fc4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a70a95824032c7f8b303c41c1c33d9fc4">removeWeb</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:a70a95824032c7f8b303c41c1c33d9fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove subnet compoent ('Grid', etc) from detection fabric.  <a href="#a70a95824032c7f8b303c41c1c33d9fc4">More...</a><br/></td></tr>
+<tr class="separator:a70a95824032c7f8b303c41c1c33d9fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea634ecbfdbf8df2cec7ee352fe675e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#aea634ecbfdbf8df2cec7ee352fe675e4">addSite</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; site)</td></tr>
 <tr class="memdesc:aea634ecbfdbf8df2cec7ee352fe675e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a site to the webs This function adds the given site to all appropriate web detection arrays in the list of wweb detection arrays.  <a href="#aea634ecbfdbf8df2cec7ee352fe675e4">More...</a><br/></td></tr>
 <tr class="separator:aea634ecbfdbf8df2cec7ee352fe675e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,22 +136,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5ea58743f44735a666662e3a882b4d92"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a5ea58743f44735a666662e3a882b4d92">statusCheck</a> ()</td></tr>
 <tr class="memdesc:a5ea58743f44735a666662e3a882b4d92"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if each web thread is still functional  <a href="#a5ea58743f44735a666662e3a882b4d92">More...</a><br/></td></tr>
 <tr class="separator:a5ea58743f44735a666662e3a882b4d92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a592a6d17d788a0d9dd6a84f005166a02"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a592a6d17d788a0d9dd6a84f005166a02">pGlass</a></td></tr>
-<tr class="memdesc:a592a6d17d788a0d9dd6a84f005166a02"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the main <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class, used to send output, get sites (stations), encode/decode time, and get debug flags.  <a href="#a592a6d17d788a0d9dd6a84f005166a02">More...</a><br/></td></tr>
-<tr class="separator:a592a6d17d788a0d9dd6a84f005166a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b56f673ee976941d45799c956a4e73c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a7b56f673ee976941d45799c956a4e73c">pSiteList</a></td></tr>
-<tr class="memdesc:a7b56f673ee976941d45799c956a4e73c"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> class, used get sites (stations)  <a href="#a7b56f673ee976941d45799c956a4e73c">More...</a><br/></td></tr>
-<tr class="separator:a7b56f673ee976941d45799c956a4e73c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20bd8234a76056366431bf570499d0d6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classglasscore_1_1CWeb.html">CWeb</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a20bd8234a76056366431bf570499d0d6">vWeb</a></td></tr>
-<tr class="memdesc:a20bd8234a76056366431bf570499d0d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">A vector of shared pointers to all currently defined web detection arrays.  <a href="#a20bd8234a76056366431bf570499d0d6">More...</a><br/></td></tr>
-<tr class="separator:a20bd8234a76056366431bf570499d0d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8fe4212d166de57c8ce7fc82e9a024c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#aa8fe4212d166de57c8ce7fc82e9a024c">m_bUseBackgroundThreads</a></td></tr>
-<tr class="memdesc:aa8fe4212d166de57c8ce7fc82e9a024c"><td class="mdescLeft">&#160;</td><td class="mdescRight">A boolean flag indicating whether to perform web updates on a background thread.  <a href="#aa8fe4212d166de57c8ce7fc82e9a024c">More...</a><br/></td></tr>
-<tr class="separator:aa8fe4212d166de57c8ce7fc82e9a024c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6215e949f7b156ca805a905358de0435"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a6215e949f7b156ca805a905358de0435">getGlass</a> () const </td></tr>
+<tr class="memdesc:a6215e949f7b156ca805a905358de0435"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> getter.  <a href="#a6215e949f7b156ca805a905358de0435">More...</a><br/></td></tr>
+<tr class="separator:a6215e949f7b156ca805a905358de0435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9d3210c67c9eed484b76200865e2c57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#ac9d3210c67c9eed484b76200865e2c57">setGlass</a> (<a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *glass)</td></tr>
+<tr class="memdesc:ac9d3210c67c9eed484b76200865e2c57"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> setter.  <a href="#ac9d3210c67c9eed484b76200865e2c57">More...</a><br/></td></tr>
+<tr class="separator:ac9d3210c67c9eed484b76200865e2c57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5f7201ba6ddbc1dd152e01737891295"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#ab5f7201ba6ddbc1dd152e01737891295">getSiteList</a> () const </td></tr>
+<tr class="memdesc:ab5f7201ba6ddbc1dd152e01737891295"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> getter.  <a href="#ab5f7201ba6ddbc1dd152e01737891295">More...</a><br/></td></tr>
+<tr class="separator:ab5f7201ba6ddbc1dd152e01737891295"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84bee09486ad929b6acb64e3e277c2eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a84bee09486ad929b6acb64e3e277c2eb">setSiteList</a> (<a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *siteList)</td></tr>
+<tr class="memdesc:a84bee09486ad929b6acb64e3e277c2eb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> setter.  <a href="#a84bee09486ad929b6acb64e3e277c2eb">More...</a><br/></td></tr>
+<tr class="separator:a84bee09486ad929b6acb64e3e277c2eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb1c3d49b613ba100db87cac3bf3c1e0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#afb1c3d49b613ba100db87cac3bf3c1e0">getVWebSize</a> () const </td></tr>
+<tr class="memdesc:afb1c3d49b613ba100db87cac3bf3c1e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current size of the web list.  <a href="#afb1c3d49b613ba100db87cac3bf3c1e0">More...</a><br/></td></tr>
+<tr class="separator:afb1c3d49b613ba100db87cac3bf3c1e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore detection node class The detection fabric consists of a collection of nets which in turn contain a list of nodes, each of which is capable of detecting and nucleating a new event. The individual nets are added to the detection fabric (<a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a>) by such commands as 'Grid' or 'Global'. </p>
@@ -228,14 +224,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3398ae13faf2c6f1765a11205bc58bcf"></a>
+<a class="anchor" id="ab68a050102c410ee4b8c7dd15797e8f0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CWebList::addWeb </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
@@ -272,14 +268,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af957e3666220aae034c9195bcbba0b32"></a>
+<a class="anchor" id="af86f55b651f24b567e2964b55b106eee"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CWebList::dispatch </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
@@ -296,6 +292,59 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the communication was handled by <a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a>, false otherwise </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6215e949f7b156ca805a905358de0435"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> * glasscore::CWebList::getGlass </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab5f7201ba6ddbc1dd152e01737891295"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> * glasscore::CWebList::getSiteList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> pointer </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afb1c3d49b613ba100db87cac3bf3c1e0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CWebList::getVWebSize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current size of the web list. </p>
 
 </div>
 </div>
@@ -323,14 +372,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af3690064c05a8a5c07ea0c63ebe2d7fd"></a>
+<a class="anchor" id="a70a95824032c7f8b303c41c1c33d9fc4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CWebList::removeWeb </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
@@ -373,6 +422,54 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ac9d3210c67c9eed484b76200865e2c57"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CWebList::setGlass </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td>
+          <td class="paramname"><em>glass</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> setter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">glass</td><td>- the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a84bee09486ad929b6acb64e3e277c2eb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CWebList::setSiteList </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td>
+          <td class="paramname"><em>siteList</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> setter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">siteList</td><td>- the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> pointer </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a5ea58743f44735a666662e3a882b4d92"></a>
 <div class="memitem">
 <div class="memproto">
@@ -391,63 +488,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="aa8fe4212d166de57c8ce7fc82e9a024c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CWebList::m_bUseBackgroundThreads</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A boolean flag indicating whether to perform web updates on a background thread. </p>
-
-</div>
-</div>
-<a class="anchor" id="a592a6d17d788a0d9dd6a84f005166a02"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a>* glasscore::CWebList::pGlass</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to the main <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class, used to send output, get sites (stations), encode/decode time, and get debug flags. </p>
-
-</div>
-</div>
-<a class="anchor" id="a7b56f673ee976941d45799c956a4e73c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a>* glasscore::CWebList::pSiteList</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> class, used get sites (stations) </p>
-
-</div>
-</div>
-<a class="anchor" id="a20bd8234a76056366431bf570499d0d6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::shared_ptr&lt;<a class="el" href="classglasscore_1_1CWeb.html">CWeb</a>&gt; &gt; glasscore::CWebList::vWeb</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A vector of shared pointers to all currently defined web detection arrays. </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>glasslib/include/<a class="el" href="WebList_8h_source.html">WebList.h</a></li>
 <li>glasslib/src/<a class="el" href="WebList_8cpp.html">WebList.cpp</a></li>
@@ -455,7 +495,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:18:49 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:12:46 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

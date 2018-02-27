@@ -88,7 +88,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classglasscore_1_1CCorrelationList-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">glasscore::CCorrelationList Class Reference</div>  </div>
@@ -103,8 +102,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Collaboration diagram for glasscore::CCorrelationList:</div>
 <div class="dyncontent">
 <div class="center"><img src="classglasscore_1_1CCorrelationList__coll__graph.png" border="0" usemap="#glasscore_1_1CCorrelationList_coll__map" alt="Collaboration graph"/></div>
-<map name="glasscore_1_1CCorrelationList_coll__map" id="glasscore_1_1CCorrelationList_coll__map">
-<area shape="rect" id="node5" href="classglasscore_1_1CGlass.html" title="glasscore interface class " alt="" coords="1064,1381,1283,1723"/><area shape="rect" id="node7" href="classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="1955,2294,2097,2591"/><area shape="rect" id="node29" href="classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="2606,1800,2753,2229"/><area shape="rect" id="node20" href="classtraveltime_1_1CTTT.html" title="travel time interface class " alt="" coords="927,1093,1061,1317"/><area shape="rect" id="node23" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="796,747,959,957"/><area shape="rect" id="node24" href="classglassutil_1_1CGeo.html" title="glassutil geographic coordinate conversion class " alt="" coords="571,294,697,562"/><area shape="rect" id="node14" href="classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="1381,1888,1520,2141"/><area shape="rect" id="node19" href="classglasscore_1_1CDetection.html" title="glasscore pick class " alt="" coords="884,1947,1036,2083"/><area shape="rect" id="node33" href="classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co..." alt="" coords="659,2338,803,2547"/><area shape="rect" id="node21" href="classglassutil_1_1CTaper.html" title="glassutil taper class " alt="" coords="126,587,247,723"/><area shape="rect" id="node25" href="classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="1004,338,1161,518"/><area shape="rect" id="node28" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="1636,1167,1789,1244"/></map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -121,12 +118,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a18c65f9cfea3f6f1a2f2ac4947f708f6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a18c65f9cfea3f6f1a2f2ac4947f708f6">clearCorrelations</a> ()</td></tr>
 <tr class="memdesc:a18c65f9cfea3f6f1a2f2ac4947f708f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all correlations from correlation list.  <a href="#a18c65f9cfea3f6f1a2f2ac4947f708f6">More...</a><br/></td></tr>
 <tr class="separator:a18c65f9cfea3f6f1a2f2ac4947f708f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ddb69b49b68de840d7cb2fd6f8fc77f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a0ddb69b49b68de840d7cb2fd6f8fc77f">dispatch</a> (json::Object *com)</td></tr>
-<tr class="memdesc:a0ddb69b49b68de840d7cb2fd6f8fc77f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> communication receiving function.  <a href="#a0ddb69b49b68de840d7cb2fd6f8fc77f">More...</a><br/></td></tr>
-<tr class="separator:a0ddb69b49b68de840d7cb2fd6f8fc77f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a414134d1c4b19921309c4884f29520e5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a414134d1c4b19921309c4884f29520e5">addCorrelation</a> (json::Object *com)</td></tr>
-<tr class="memdesc:a414134d1c4b19921309c4884f29520e5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> add correlation function.  <a href="#a414134d1c4b19921309c4884f29520e5">More...</a><br/></td></tr>
-<tr class="separator:a414134d1c4b19921309c4884f29520e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72d85f5c292eeee2143d925e1e013a01"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a72d85f5c292eeee2143d925e1e013a01">dispatch</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:a72d85f5c292eeee2143d925e1e013a01"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> communication receiving function.  <a href="#a72d85f5c292eeee2143d925e1e013a01">More...</a><br/></td></tr>
+<tr class="separator:a72d85f5c292eeee2143d925e1e013a01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4f4ba1b17deab5f85752a14a33fa902"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#af4f4ba1b17deab5f85752a14a33fa902">addCorrelation</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:af4f4ba1b17deab5f85752a14a33fa902"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> add correlation function.  <a href="#af4f4ba1b17deab5f85752a14a33fa902">More...</a><br/></td></tr>
+<tr class="separator:af4f4ba1b17deab5f85752a14a33fa902"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac51542806906f366dfae85d41e886a40"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CCorrelation.html">CCorrelation</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#ac51542806906f366dfae85d41e886a40">getCorrelation</a> (int idCorrelation)</td></tr>
 <tr class="memdesc:ac51542806906f366dfae85d41e886a40"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> get correlation function.  <a href="#ac51542806906f366dfae85d41e886a40">More...</a><br/></td></tr>
 <tr class="separator:ac51542806906f366dfae85d41e886a40"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,35 +140,33 @@ Public Member Functions</h2></td></tr>
 &lt; <a class="el" href="classglasscore_1_1CCorrelation.html">CCorrelation</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a2bf39a65cbe6d00b36fc77442249863e">rogues</a> (std::string pidHyp, double tOrg, double tDuration=2.5)</td></tr>
 <tr class="memdesc:a2bf39a65cbe6d00b36fc77442249863e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate rogue list for tuning process.  <a href="#a2bf39a65cbe6d00b36fc77442249863e">More...</a><br/></td></tr>
 <tr class="separator:a2bf39a65cbe6d00b36fc77442249863e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a1361dee32b46e5ba8c43cf49b733d756"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a1361dee32b46e5ba8c43cf49b733d756">pGlass</a></td></tr>
-<tr class="memdesc:a1361dee32b46e5ba8c43cf49b733d756"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the parent <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class, used to send output, look up site information, encode/decode time, get configuration values, call association functions, and debug flags.  <a href="#a1361dee32b46e5ba8c43cf49b733d756">More...</a><br/></td></tr>
-<tr class="separator:a1361dee32b46e5ba8c43cf49b733d756"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14eab8ddb778975ec975bf5d8e19042e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a14eab8ddb778975ec975bf5d8e19042e">pSiteList</a></td></tr>
-<tr class="memdesc:a14eab8ddb778975ec975bf5d8e19042e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to a <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> object containing all the sites for lookups.  <a href="#a14eab8ddb778975ec975bf5d8e19042e">More...</a><br/></td></tr>
-<tr class="separator:a14eab8ddb778975ec975bf5d8e19042e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c4af50875c84f3c4eca5989ecf98beb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a7c4af50875c84f3c4eca5989ecf98beb">nCorrelationMax</a></td></tr>
-<tr class="memdesc:a7c4af50875c84f3c4eca5989ecf98beb"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the maximum number of correlations allowed in <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a>. This value is overridden by pGlass-&gt;nPickMax if provided. Defaults to 10000.  <a href="#a7c4af50875c84f3c4eca5989ecf98beb">More...</a><br/></td></tr>
-<tr class="separator:a7c4af50875c84f3c4eca5989ecf98beb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2070643b985fa8aa4ac3cde12870b40f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a2070643b985fa8aa4ac3cde12870b40f">nCorrelation</a></td></tr>
-<tr class="memdesc:a2070643b985fa8aa4ac3cde12870b40f"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the current number of correlations in <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a>. Used to generate the correlation id.  <a href="#a2070643b985fa8aa4ac3cde12870b40f">More...</a><br/></td></tr>
-<tr class="separator:a2070643b985fa8aa4ac3cde12870b40f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a932912b928c912caf510977c9305ce98"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a932912b928c912caf510977c9305ce98">nCorrelationTotal</a></td></tr>
-<tr class="memdesc:a932912b928c912caf510977c9305ce98"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer containing the total number of correlations ever added to <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a>.  <a href="#a932912b928c912caf510977c9305ce98">More...</a><br/></td></tr>
-<tr class="separator:a932912b928c912caf510977c9305ce98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a99f5c529e73a00cfb2c3136087c4ada3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; double, <br class="typebreak"/>
-int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a99f5c529e73a00cfb2c3136087c4ada3">vCorrelation</a></td></tr>
-<tr class="memdesc:a99f5c529e73a00cfb2c3136087c4ada3"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::vector mapping the arrival time of each correlation in <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> to it's integer correlation id. The elements in this vector object are inserted in a manner to keep it in sequential time order from oldest to youngest.  <a href="#a99f5c529e73a00cfb2c3136087c4ada3">More...</a><br/></td></tr>
-<tr class="separator:a99f5c529e73a00cfb2c3136087c4ada3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9116965706bbdec8e34af1000a13a33e"><td class="memItemLeft" align="right" valign="top">std::map&lt; int, std::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classglasscore_1_1CCorrelation.html">CCorrelation</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a9116965706bbdec8e34af1000a13a33e">mCorrelation</a></td></tr>
-<tr class="memdesc:a9116965706bbdec8e34af1000a13a33e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::map containing a std::shared_ptr to each correlation in <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> indexed by the integer correlation id.  <a href="#a9116965706bbdec8e34af1000a13a33e">More...</a><br/></td></tr>
-<tr class="separator:a9116965706bbdec8e34af1000a13a33e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b043bfb989ff13e107bde473c9e4acd"><td class="memItemLeft" align="right" valign="top">std::recursive_mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a6b043bfb989ff13e107bde473c9e4acd">m_vCorrelationMutex</a></td></tr>
-<tr class="memdesc:a6b043bfb989ff13e107bde473c9e4acd"><td class="mdescLeft">&#160;</td><td class="mdescRight">A recursive_mutex to control threading access to vCorrelation. NOTE: recursive mutexes are frowned upon, so maybe redesign around it see: <a href="http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/">http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/</a> However a recursive_mutex allows us to maintain the original class design as delivered by the contractor.  <a href="#a6b043bfb989ff13e107bde473c9e4acd">More...</a><br/></td></tr>
-<tr class="separator:a6b043bfb989ff13e107bde473c9e4acd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd81233c52c48642cd68a343ccd4b5bc"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#afd81233c52c48642cd68a343ccd4b5bc">getGlass</a> () const </td></tr>
+<tr class="memdesc:afd81233c52c48642cd68a343ccd4b5bc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> getter.  <a href="#afd81233c52c48642cd68a343ccd4b5bc">More...</a><br/></td></tr>
+<tr class="separator:afd81233c52c48642cd68a343ccd4b5bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac13d333fdd27ac6e7f3c2290d8e82214"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#ac13d333fdd27ac6e7f3c2290d8e82214">setGlass</a> (<a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *glass)</td></tr>
+<tr class="memdesc:ac13d333fdd27ac6e7f3c2290d8e82214"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> setter.  <a href="#ac13d333fdd27ac6e7f3c2290d8e82214">More...</a><br/></td></tr>
+<tr class="separator:ac13d333fdd27ac6e7f3c2290d8e82214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3078ea00a984cc8d29db04cbaf159a29"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a3078ea00a984cc8d29db04cbaf159a29">getSiteList</a> () const </td></tr>
+<tr class="memdesc:a3078ea00a984cc8d29db04cbaf159a29"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> getter.  <a href="#a3078ea00a984cc8d29db04cbaf159a29">More...</a><br/></td></tr>
+<tr class="separator:a3078ea00a984cc8d29db04cbaf159a29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9c40a9eede370408e894d037d7fed57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#ac9c40a9eede370408e894d037d7fed57">setSiteList</a> (<a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *siteList)</td></tr>
+<tr class="memdesc:ac9c40a9eede370408e894d037d7fed57"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> setter.  <a href="#ac9c40a9eede370408e894d037d7fed57">More...</a><br/></td></tr>
+<tr class="separator:ac9c40a9eede370408e894d037d7fed57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa171510de950c68a857aef408be185cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#aa171510de950c68a857aef408be185cf">getNCorrelation</a> () const </td></tr>
+<tr class="memdesc:aa171510de950c68a857aef408be185cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">nCorrelation getter  <a href="#aa171510de950c68a857aef408be185cf">More...</a><br/></td></tr>
+<tr class="separator:aa171510de950c68a857aef408be185cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6954415bc3251d655d0333530934d00e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a6954415bc3251d655d0333530934d00e">getNCorrelationMax</a> () const </td></tr>
+<tr class="memdesc:a6954415bc3251d655d0333530934d00e"><td class="mdescLeft">&#160;</td><td class="mdescRight">nCorrelationMax getter  <a href="#a6954415bc3251d655d0333530934d00e">More...</a><br/></td></tr>
+<tr class="separator:a6954415bc3251d655d0333530934d00e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a185f71af54d03969ce3bd46245520fd2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a185f71af54d03969ce3bd46245520fd2">setNCorrelationMax</a> (int correlationMax)</td></tr>
+<tr class="memdesc:a185f71af54d03969ce3bd46245520fd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">nCorrelationMax Setter  <a href="#a185f71af54d03969ce3bd46245520fd2">More...</a><br/></td></tr>
+<tr class="separator:a185f71af54d03969ce3bd46245520fd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c8e042c988e56b958841e85f8473845"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a5c8e042c988e56b958841e85f8473845">getNCorrelationTotal</a> () const </td></tr>
+<tr class="memdesc:a5c8e042c988e56b958841e85f8473845"><td class="mdescLeft">&#160;</td><td class="mdescRight">nCorrelationTotal getter  <a href="#a5c8e042c988e56b958841e85f8473845">More...</a><br/></td></tr>
+<tr class="separator:a5c8e042c988e56b958841e85f8473845"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92f78b1e1870d9e61a375bd08cb6aaa9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelationList.html#a92f78b1e1870d9e61a375bd08cb6aaa9">getVCorrelationSize</a> () const </td></tr>
+<tr class="memdesc:a92f78b1e1870d9e61a375bd08cb6aaa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current size of the correlation list.  <a href="#a92f78b1e1870d9e61a375bd08cb6aaa9">More...</a><br/></td></tr>
+<tr class="separator:a92f78b1e1870d9e61a375bd08cb6aaa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore correlation list class </p>
@@ -216,14 +211,14 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a414134d1c4b19921309c4884f29520e5"></a>
+<a class="anchor" id="af4f4ba1b17deab5f85752a14a33fa902"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CCorrelationList::addCorrelation </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
@@ -322,14 +317,14 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<a class="anchor" id="a0ddb69b49b68de840d7cb2fd6f8fc77f"></a>
+<a class="anchor" id="a72d85f5c292eeee2143d925e1e013a01"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glasscore::CCorrelationList::dispatch </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
@@ -372,6 +367,113 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a shared_ptr to the found <a class="el" href="classglasscore_1_1CCorrelation.html" title="glasscore correlation class ">CCorrelation</a>, or null if no correlation found. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afd81233c52c48642cd68a343ccd4b5bc"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> * glasscore::CCorrelationList::getGlass </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa171510de950c68a857aef408be185cf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CCorrelationList::getNCorrelation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nCorrelation getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nCorrelation </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6954415bc3251d655d0333530934d00e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CCorrelationList::getNCorrelationMax </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nCorrelationMax getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nCorrelationMax </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5c8e042c988e56b958841e85f8473845"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CCorrelationList::getNCorrelationTotal </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>nCorrelationTotal getter </p>
+<dl class="section return"><dt>Returns</dt><dd>the nCorrelationTotal </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3078ea00a984cc8d29db04cbaf159a29"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> * glasscore::CCorrelationList::getSiteList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> pointer </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a92f78b1e1870d9e61a375bd08cb6aaa9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CCorrelationList::getVCorrelationSize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current size of the correlation list. </p>
 
 </div>
 </div>
@@ -481,116 +583,75 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a6b043bfb989ff13e107bde473c9e4acd"></a>
+<a class="anchor" id="ac13d333fdd27ac6e7f3c2290d8e82214"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::recursive_mutex glasscore::CCorrelationList::m_vCorrelationMutex</td>
+          <td class="memname">void glasscore::CCorrelationList::setGlass </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a> *&#160;</td>
+          <td class="paramname"><em>glass</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>A recursive_mutex to control threading access to vCorrelation. NOTE: recursive mutexes are frowned upon, so maybe redesign around it see: <a href="http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/">http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/</a> However a recursive_mutex allows us to maintain the original class design as delivered by the contractor. </p>
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> setter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">glass</td><td>- the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a class="anchor" id="a9116965706bbdec8e34af1000a13a33e"></a>
+<a class="anchor" id="a185f71af54d03969ce3bd46245520fd2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;int, std::shared_ptr&lt;<a class="el" href="classglasscore_1_1CCorrelation.html">CCorrelation</a>&gt; &gt; glasscore::CCorrelationList::mCorrelation</td>
+          <td class="memname">void glasscore::CCorrelationList::setNCorrelationMax </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>correlationMax</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>A std::map containing a std::shared_ptr to each correlation in <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> indexed by the integer correlation id. </p>
+<p>nCorrelationMax Setter </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">correlationMax</td><td>- the nCorrelationMax </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a class="anchor" id="a2070643b985fa8aa4ac3cde12870b40f"></a>
+<a class="anchor" id="ac9c40a9eede370408e894d037d7fed57"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int glasscore::CCorrelationList::nCorrelation</td>
+          <td class="memname">void glasscore::CCorrelationList::setSiteList </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td>
+          <td class="paramname"><em>siteList</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>An integer containing the current number of correlations in <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a>. Used to generate the correlation id. </p>
-
-</div>
-</div>
-<a class="anchor" id="a7c4af50875c84f3c4eca5989ecf98beb"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CCorrelationList::nCorrelationMax</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the maximum number of correlations allowed in <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a>. This value is overridden by pGlass-&gt;nPickMax if provided. Defaults to 10000. </p>
-
-</div>
-</div>
-<a class="anchor" id="a932912b928c912caf510977c9305ce98"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CCorrelationList::nCorrelationTotal</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer containing the total number of correlations ever added to <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a>. </p>
-
-</div>
-</div>
-<a class="anchor" id="a1361dee32b46e5ba8c43cf49b733d756"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CGlass.html">CGlass</a>* glasscore::CCorrelationList::pGlass</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to the parent <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class, used to send output, look up site information, encode/decode time, get configuration values, call association functions, and debug flags. </p>
-
-</div>
-</div>
-<a class="anchor" id="a14eab8ddb778975ec975bf5d8e19042e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a>* glasscore::CCorrelationList::pSiteList</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to a <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> object containing all the sites for lookups. </p>
-
-</div>
-</div>
-<a class="anchor" id="a99f5c529e73a00cfb2c3136087c4ada3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::pair&lt;double, int&gt; &gt; glasscore::CCorrelationList::vCorrelation</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::vector mapping the arrival time of each correlation in <a class="el" href="classglasscore_1_1CCorrelationList.html" title="glasscore correlation list class ">CCorrelationList</a> to it's integer correlation id. The elements in this vector object are inserted in a manner to keep it in sequential time order from oldest to youngest. </p>
+<p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> setter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">siteList</td><td>- the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> pointer </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -601,7 +662,7 @@ int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:18:49 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:12:46 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

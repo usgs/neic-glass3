@@ -88,7 +88,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classglasscore_1_1CCorrelation-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">glasscore::CCorrelation Class Reference</div>  </div>
@@ -113,9 +112,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:afd314470d02a8931409460d01cc8d122"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#afd314470d02a8931409460d01cc8d122">CCorrelation</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; correlationSite, double correlationTime, int correlationId, std::string correlationIdString, std::string phase, double orgTime, double orgLat, double orgLon, double orgZ, double corrVal)</td></tr>
 <tr class="memdesc:afd314470d02a8931409460d01cc8d122"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelation.html" title="glasscore correlation class ">CCorrelation</a> alternate constructor.  <a href="#afd314470d02a8931409460d01cc8d122">More...</a><br/></td></tr>
 <tr class="separator:afd314470d02a8931409460d01cc8d122"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61c74e1afdcd2a7580bab2d8e9d02163"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a61c74e1afdcd2a7580bab2d8e9d02163">CCorrelation</a> (json::Object *correlation, int correlationId, <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *pSiteList)</td></tr>
-<tr class="memdesc:a61c74e1afdcd2a7580bab2d8e9d02163"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelation.html" title="glasscore correlation class ">CCorrelation</a> alternate constructor.  <a href="#a61c74e1afdcd2a7580bab2d8e9d02163">More...</a><br/></td></tr>
-<tr class="separator:a61c74e1afdcd2a7580bab2d8e9d02163"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50220d0434abe2f1e603114383cd1511"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a50220d0434abe2f1e603114383cd1511">CCorrelation</a> (std::shared_ptr&lt; json::Object &gt; correlation, int correlationId, <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *pSiteList)</td></tr>
+<tr class="memdesc:a50220d0434abe2f1e603114383cd1511"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelation.html" title="glasscore correlation class ">CCorrelation</a> alternate constructor.  <a href="#a50220d0434abe2f1e603114383cd1511">More...</a><br/></td></tr>
+<tr class="separator:a50220d0434abe2f1e603114383cd1511"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0b05c6b784209de2081954a7b089ba8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#af0b05c6b784209de2081954a7b089ba8">~CCorrelation</a> ()</td></tr>
 <tr class="memdesc:af0b05c6b784209de2081954a7b089ba8"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CCorrelation.html" title="glasscore correlation class ">CCorrelation</a> destructor.  <a href="#af0b05c6b784209de2081954a7b089ba8">More...</a><br/></td></tr>
 <tr class="separator:af0b05c6b784209de2081954a7b089ba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,60 +127,57 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad17a71146c931dab4f67ce50c4acb28f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ad17a71146c931dab4f67ce50c4acb28f">addHypo</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp, std::string ass=&quot;&quot;, bool force=false)</td></tr>
 <tr class="memdesc:ad17a71146c931dab4f67ce50c4acb28f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add hypo reference to this correlation.  <a href="#ad17a71146c931dab4f67ce50c4acb28f">More...</a><br/></td></tr>
 <tr class="separator:ad17a71146c931dab4f67ce50c4acb28f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a92270ef3745aa7d34f06da2dee9fca37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a92270ef3745aa7d34f06da2dee9fca37">setAss</a> (std::string ass)</td></tr>
-<tr class="separator:a92270ef3745aa7d34f06da2dee9fca37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ac1c6e8fb9e9e801e317eaa7c3281b448">remHypo</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp)</td></tr>
 <tr class="memdesc:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this correlation.  <a href="#ac1c6e8fb9e9e801e317eaa7c3281b448">More...</a><br/></td></tr>
 <tr class="separator:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1c39351ec54067f117532360bb54479"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#af1c39351ec54067f117532360bb54479">clearHypo</a> ()</td></tr>
 <tr class="separator:af1c39351ec54067f117532360bb54479"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a0f992a39182ca8db2cac3d94ce15f6c0"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a0f992a39182ca8db2cac3d94ce15f6c0">pSite</a></td></tr>
-<tr class="memdesc:a0f992a39182ca8db2cac3d94ce15f6c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::shared_ptr to a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> object representing the link between this correlation and the site it was correlated at.  <a href="#a0f992a39182ca8db2cac3d94ce15f6c0">More...</a><br/></td></tr>
-<tr class="separator:a0f992a39182ca8db2cac3d94ce15f6c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5648dce95dd00291a06958da860fcce"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ab5648dce95dd00291a06958da860fcce">pHypo</a></td></tr>
-<tr class="memdesc:ab5648dce95dd00291a06958da860fcce"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::vector of std::shared_ptr's to <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> objects representing the links between this correlation and associated hypocenter.  <a href="#ab5648dce95dd00291a06958da860fcce">More...</a><br/></td></tr>
-<tr class="separator:ab5648dce95dd00291a06958da860fcce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08df3c7f65b3aee04b92753d936367f4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a08df3c7f65b3aee04b92753d936367f4">sAss</a></td></tr>
-<tr class="memdesc:a08df3c7f65b3aee04b92753d936367f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::string containing a character representing the action that caused this correlation to be associated.  <a href="#a08df3c7f65b3aee04b92753d936367f4">More...</a><br/></td></tr>
-<tr class="separator:a08df3c7f65b3aee04b92753d936367f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e679ccdb569a973a227dfaa6a7465f3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a9e679ccdb569a973a227dfaa6a7465f3">sPhs</a></td></tr>
-<tr class="memdesc:a9e679ccdb569a973a227dfaa6a7465f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::string containing the phase name of this correlation.  <a href="#a9e679ccdb569a973a227dfaa6a7465f3">More...</a><br/></td></tr>
-<tr class="separator:a9e679ccdb569a973a227dfaa6a7465f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1dbe35575af4f470384148b7cf34faee"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a1dbe35575af4f470384148b7cf34faee">sPid</a></td></tr>
-<tr class="memdesc:a1dbe35575af4f470384148b7cf34faee"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::string containing the string unique id of this correlation.  <a href="#a1dbe35575af4f470384148b7cf34faee">More...</a><br/></td></tr>
-<tr class="separator:a1dbe35575af4f470384148b7cf34faee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cbb2e82d6b7ca8f301788cfcefec70b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a7cbb2e82d6b7ca8f301788cfcefec70b">idCorrelation</a></td></tr>
-<tr class="memdesc:a7cbb2e82d6b7ca8f301788cfcefec70b"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer value containing the numeric id of the correlation.  <a href="#a7cbb2e82d6b7ca8f301788cfcefec70b">More...</a><br/></td></tr>
-<tr class="separator:a7cbb2e82d6b7ca8f301788cfcefec70b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad10f2b090b0f3beac653684d58e6739d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ad10f2b090b0f3beac653684d58e6739d">tCorrelation</a></td></tr>
-<tr class="memdesc:ad10f2b090b0f3beac653684d58e6739d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value containing the arrival time of the correlation.  <a href="#ad10f2b090b0f3beac653684d58e6739d">More...</a><br/></td></tr>
-<tr class="separator:ad10f2b090b0f3beac653684d58e6739d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd8316456374006343579cb88adaf6a6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#afd8316456374006343579cb88adaf6a6">tOrg</a></td></tr>
-<tr class="memdesc:afd8316456374006343579cb88adaf6a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value containing this correlation's origin time in julian seconds.  <a href="#afd8316456374006343579cb88adaf6a6">More...</a><br/></td></tr>
-<tr class="separator:afd8316456374006343579cb88adaf6a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7afaaa0077ad68c127e4d5f0487a33a4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a7afaaa0077ad68c127e4d5f0487a33a4">dLat</a></td></tr>
-<tr class="memdesc:a7afaaa0077ad68c127e4d5f0487a33a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value containing this correlation's latitude in degrees.  <a href="#a7afaaa0077ad68c127e4d5f0487a33a4">More...</a><br/></td></tr>
-<tr class="separator:a7afaaa0077ad68c127e4d5f0487a33a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9288634c97ba56acf796ef292e45c9c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ae9288634c97ba56acf796ef292e45c9c">dLon</a></td></tr>
-<tr class="memdesc:ae9288634c97ba56acf796ef292e45c9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value containing this correlation's longitude in degrees.  <a href="#ae9288634c97ba56acf796ef292e45c9c">More...</a><br/></td></tr>
-<tr class="separator:ae9288634c97ba56acf796ef292e45c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a441a9eb9d118af3a79450f898fc96893"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a441a9eb9d118af3a79450f898fc96893">dZ</a></td></tr>
-<tr class="memdesc:a441a9eb9d118af3a79450f898fc96893"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value containing this correlation's depth in kilometers.  <a href="#a441a9eb9d118af3a79450f898fc96893">More...</a><br/></td></tr>
-<tr class="separator:a441a9eb9d118af3a79450f898fc96893"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fdc231fa3e460123b02488d5968a352"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a7fdc231fa3e460123b02488d5968a352">dCorrelation</a></td></tr>
-<tr class="memdesc:a7fdc231fa3e460123b02488d5968a352"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value containing this correlation's correlation value.  <a href="#a7fdc231fa3e460123b02488d5968a352">More...</a><br/></td></tr>
-<tr class="separator:a7fdc231fa3e460123b02488d5968a352"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8db05951f1f5176a9eb40fbe365bc03"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ac8db05951f1f5176a9eb40fbe365bc03">tGlassCreate</a></td></tr>
-<tr class="memdesc:ac8db05951f1f5176a9eb40fbe365bc03"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value containing the creation time of the correlation in glass.  <a href="#ac8db05951f1f5176a9eb40fbe365bc03">More...</a><br/></td></tr>
-<tr class="separator:ac8db05951f1f5176a9eb40fbe365bc03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc7fa896cc7161d07c4e4c888decef94"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#afc7fa896cc7161d07c4e4c888decef94">jCorrelation</a></td></tr>
-<tr class="memdesc:afc7fa896cc7161d07c4e4c888decef94"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::shared_ptr to a json object representing the original correlation input, used in accessing information not relevant to glass that are needed for generating outputs.  <a href="#afc7fa896cc7161d07c4e4c888decef94">More...</a><br/></td></tr>
-<tr class="separator:afc7fa896cc7161d07c4e4c888decef94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada815af8db70ae71f94659993920690b"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ada815af8db70ae71f94659993920690b">correlationMutex</a></td></tr>
-<tr class="separator:ada815af8db70ae71f94659993920690b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba02351776ae911a822b35d2ec6945f0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#aba02351776ae911a822b35d2ec6945f0">getCorrelation</a> () const </td></tr>
+<tr class="memdesc:aba02351776ae911a822b35d2ec6945f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correlation value getter.  <a href="#aba02351776ae911a822b35d2ec6945f0">More...</a><br/></td></tr>
+<tr class="separator:aba02351776ae911a822b35d2ec6945f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe6a4f8313e8cb7b1e4b2acbb2c59fc0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#abe6a4f8313e8cb7b1e4b2acbb2c59fc0">getLat</a> () const </td></tr>
+<tr class="memdesc:abe6a4f8313e8cb7b1e4b2acbb2c59fc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latitude getter.  <a href="#abe6a4f8313e8cb7b1e4b2acbb2c59fc0">More...</a><br/></td></tr>
+<tr class="separator:abe6a4f8313e8cb7b1e4b2acbb2c59fc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9e56deec07d57c8d821b274cac35dc6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ad9e56deec07d57c8d821b274cac35dc6">getLon</a> () const </td></tr>
+<tr class="memdesc:ad9e56deec07d57c8d821b274cac35dc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitude getter.  <a href="#ad9e56deec07d57c8d821b274cac35dc6">More...</a><br/></td></tr>
+<tr class="separator:ad9e56deec07d57c8d821b274cac35dc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad02ca6b74fa47dbaedbc740739aa2e42"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ad02ca6b74fa47dbaedbc740739aa2e42">getZ</a> () const </td></tr>
+<tr class="memdesc:ad02ca6b74fa47dbaedbc740739aa2e42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Depth getter.  <a href="#ad02ca6b74fa47dbaedbc740739aa2e42">More...</a><br/></td></tr>
+<tr class="separator:ad02ca6b74fa47dbaedbc740739aa2e42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ca9bdf364426ab69faff42de171bde1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a4ca9bdf364426ab69faff42de171bde1">getTOrg</a> () const </td></tr>
+<tr class="memdesc:a4ca9bdf364426ab69faff42de171bde1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Origin time getter.  <a href="#a4ca9bdf364426ab69faff42de171bde1">More...</a><br/></td></tr>
+<tr class="separator:a4ca9bdf364426ab69faff42de171bde1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a72f2f9b6720d4711849b35748a4894"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a5a72f2f9b6720d4711849b35748a4894">getIdCorrelation</a> () const </td></tr>
+<tr class="memdesc:a5a72f2f9b6720d4711849b35748a4894"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correlation id getter.  <a href="#a5a72f2f9b6720d4711849b35748a4894">More...</a><br/></td></tr>
+<tr class="separator:a5a72f2f9b6720d4711849b35748a4894"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc9923bca6f757185cb53fa13f500935"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr<br class="typebreak"/>
+&lt; json::Object &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#adc9923bca6f757185cb53fa13f500935">getJCorrelation</a> () const </td></tr>
+<tr class="memdesc:adc9923bca6f757185cb53fa13f500935"><td class="mdescLeft">&#160;</td><td class="mdescRight">Json correlation getter.  <a href="#adc9923bca6f757185cb53fa13f500935">More...</a><br/></td></tr>
+<tr class="separator:adc9923bca6f757185cb53fa13f500935"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4cb783fe0529cc7927c1ccf876ced4d"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#aa4cb783fe0529cc7927c1ccf876ced4d">getHypo</a> () const </td></tr>
+<tr class="memdesc:aa4cb783fe0529cc7927c1ccf876ced4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hypo getter.  <a href="#aa4cb783fe0529cc7927c1ccf876ced4d">More...</a><br/></td></tr>
+<tr class="separator:aa4cb783fe0529cc7927c1ccf876ced4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae45c54ff2ffe61ea9f11db08a1a49c46"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ae45c54ff2ffe61ea9f11db08a1a49c46">getSite</a> () const </td></tr>
+<tr class="memdesc:ae45c54ff2ffe61ea9f11db08a1a49c46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Site getter.  <a href="#ae45c54ff2ffe61ea9f11db08a1a49c46">More...</a><br/></td></tr>
+<tr class="separator:ae45c54ff2ffe61ea9f11db08a1a49c46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3a087efbb52a6465977df3bb915fa90"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ad3a087efbb52a6465977df3bb915fa90">getAss</a> () const </td></tr>
+<tr class="memdesc:ad3a087efbb52a6465977df3bb915fa90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Association string getter.  <a href="#ad3a087efbb52a6465977df3bb915fa90">More...</a><br/></td></tr>
+<tr class="separator:ad3a087efbb52a6465977df3bb915fa90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92270ef3745aa7d34f06da2dee9fca37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a92270ef3745aa7d34f06da2dee9fca37">setAss</a> (std::string ass)</td></tr>
+<tr class="memdesc:a92270ef3745aa7d34f06da2dee9fca37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Association string setter.  <a href="#a92270ef3745aa7d34f06da2dee9fca37">More...</a><br/></td></tr>
+<tr class="separator:a92270ef3745aa7d34f06da2dee9fca37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf5972da424cde77afd468337b265718"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#adf5972da424cde77afd468337b265718">getPhs</a> () const </td></tr>
+<tr class="memdesc:adf5972da424cde77afd468337b265718"><td class="mdescLeft">&#160;</td><td class="mdescRight">Phase getter.  <a href="#adf5972da424cde77afd468337b265718">More...</a><br/></td></tr>
+<tr class="separator:adf5972da424cde77afd468337b265718"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae99a00a039968290d53ebbdbfada8e48"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ae99a00a039968290d53ebbdbfada8e48">getPid</a> () const </td></tr>
+<tr class="memdesc:ae99a00a039968290d53ebbdbfada8e48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pid getter.  <a href="#ae99a00a039968290d53ebbdbfada8e48">More...</a><br/></td></tr>
+<tr class="separator:ae99a00a039968290d53ebbdbfada8e48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9762201b7006854bc549299ba045f2ee"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a9762201b7006854bc549299ba045f2ee">getTCorrelation</a> () const </td></tr>
+<tr class="memdesc:a9762201b7006854bc549299ba045f2ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correlation time getter.  <a href="#a9762201b7006854bc549299ba045f2ee">More...</a><br/></td></tr>
+<tr class="separator:a9762201b7006854bc549299ba045f2ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84b4cf4721a57b099da810ba97de2865"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a84b4cf4721a57b099da810ba97de2865">getTGlassCreate</a> () const </td></tr>
+<tr class="memdesc:a84b4cf4721a57b099da810ba97de2865"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creation time getter.  <a href="#a84b4cf4721a57b099da810ba97de2865">More...</a><br/></td></tr>
+<tr class="separator:a84b4cf4721a57b099da810ba97de2865"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore correlation class </p>
@@ -300,14 +296,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a61c74e1afdcd2a7580bab2d8e9d02163"></a>
+<a class="anchor" id="a50220d0434abe2f1e603114383cd1511"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">glasscore::CCorrelation::CCorrelation </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>correlation</em>, </td>
         </tr>
         <tr>
@@ -432,6 +428,258 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ad3a087efbb52a6465977df3bb915fa90"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; glasscore::CCorrelation::getAss </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Association string getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the association string </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aba02351776ae911a822b35d2ec6945f0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CCorrelation::getCorrelation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Correlation value getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the correlation value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa4cb783fe0529cc7927c1ccf876ced4d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; glasscore::CCorrelation::getHypo </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Hypo getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the hypo </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5a72f2f9b6720d4711849b35748a4894"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CCorrelation::getIdCorrelation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Correlation id getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the correlation id </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="adc9923bca6f757185cb53fa13f500935"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::shared_ptr&lt; json::Object &gt; &amp; glasscore::CCorrelation::getJCorrelation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Json correlation getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the json correlation </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="abe6a4f8313e8cb7b1e4b2acbb2c59fc0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CCorrelation::getLat </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Latitude getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the latitude </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad9e56deec07d57c8d821b274cac35dc6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CCorrelation::getLon </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Longitude getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the longitude </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="adf5972da424cde77afd468337b265718"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; glasscore::CCorrelation::getPhs </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Phase getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the phase </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae99a00a039968290d53ebbdbfada8e48"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; glasscore::CCorrelation::getPid </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pid getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the pid </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae45c54ff2ffe61ea9f11db08a1a49c46"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; &amp; glasscore::CCorrelation::getSite </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Site getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the site </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a9762201b7006854bc549299ba045f2ee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CCorrelation::getTCorrelation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Correlation time getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the correlation time </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a84b4cf4721a57b099da810ba97de2865"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CCorrelation::getTGlassCreate </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creation time getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the creation time </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4ca9bdf364426ab69faff42de171bde1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CCorrelation::getTOrg </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Origin time getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the origin time </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad02ca6b74fa47dbaedbc740739aa2e42"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CCorrelation::getZ </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Depth getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the depth </dd></dl>
 
 </div>
 </div>
@@ -568,214 +816,13 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="ada815af8db70ae71f94659993920690b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::mutex glasscore::CCorrelation::correlationMutex</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a7fdc231fa3e460123b02488d5968a352"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CCorrelation::dCorrelation</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A double value containing this correlation's correlation value. </p>
-
-</div>
-</div>
-<a class="anchor" id="a7afaaa0077ad68c127e4d5f0487a33a4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CCorrelation::dLat</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A double value containing this correlation's latitude in degrees. </p>
-
-</div>
-</div>
-<a class="anchor" id="ae9288634c97ba56acf796ef292e45c9c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CCorrelation::dLon</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A double value containing this correlation's longitude in degrees. </p>
-
-</div>
-</div>
-<a class="anchor" id="a441a9eb9d118af3a79450f898fc96893"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CCorrelation::dZ</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A double value containing this correlation's depth in kilometers. </p>
-
-</div>
-</div>
-<a class="anchor" id="a7cbb2e82d6b7ca8f301788cfcefec70b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CCorrelation::idCorrelation</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An integer value containing the numeric id of the correlation. </p>
-
-</div>
-</div>
-<a class="anchor" id="afc7fa896cc7161d07c4e4c888decef94"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;json::Object&gt; glasscore::CCorrelation::jCorrelation</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::shared_ptr to a json object representing the original correlation input, used in accessing information not relevant to glass that are needed for generating outputs. </p>
-
-</div>
-</div>
-<a class="anchor" id="ab5648dce95dd00291a06958da860fcce"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classglasscore_1_1CHypo.html">CHypo</a>&gt; glasscore::CCorrelation::pHypo</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::vector of std::shared_ptr's to <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> objects representing the links between this correlation and associated hypocenter. </p>
-
-</div>
-</div>
-<a class="anchor" id="a0f992a39182ca8db2cac3d94ce15f6c0"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classglasscore_1_1CSite.html">CSite</a>&gt; glasscore::CCorrelation::pSite</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::shared_ptr to a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> object representing the link between this correlation and the site it was correlated at. </p>
-
-</div>
-</div>
-<a class="anchor" id="a08df3c7f65b3aee04b92753d936367f4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string glasscore::CCorrelation::sAss</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::string containing a character representing the action that caused this correlation to be associated. </p>
-
-</div>
-</div>
-<a class="anchor" id="a9e679ccdb569a973a227dfaa6a7465f3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string glasscore::CCorrelation::sPhs</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::string containing the phase name of this correlation. </p>
-
-</div>
-</div>
-<a class="anchor" id="a1dbe35575af4f470384148b7cf34faee"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string glasscore::CCorrelation::sPid</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A std::string containing the string unique id of this correlation. </p>
-
-</div>
-</div>
-<a class="anchor" id="ad10f2b090b0f3beac653684d58e6739d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CCorrelation::tCorrelation</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A double value containing the arrival time of the correlation. </p>
-
-</div>
-</div>
-<a class="anchor" id="ac8db05951f1f5176a9eb40fbe365bc03"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CCorrelation::tGlassCreate</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A double value containing the creation time of the correlation in glass. </p>
-
-</div>
-</div>
-<a class="anchor" id="afd8316456374006343579cb88adaf6a6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CCorrelation::tOrg</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A double value containing this correlation's origin time in julian seconds. </p>
+<p>Association string setter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ass</td><td>- the association string </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -786,7 +833,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:18:49 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:12:46 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

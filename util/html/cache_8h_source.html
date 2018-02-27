@@ -105,105 +105,106 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;mutex&gt;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>util {</div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classutil_1_1Cache.html">   28</a></span>&#160;<span class="keyword">class </span><a class="code" href="classutil_1_1Cache.html">Cache</a> : <span class="keyword">public</span> <a class="code" href="classutil_1_1BaseClass.html">util::BaseClass</a> {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="classutil_1_1Cache.html#ac92066e408059d9401682a9768475679">Cache</a>();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classutil_1_1Cache.html#ac92066e408059d9401682a9768475679">Cache</a>(json::Object *config);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classutil_1_1Cache.html#a62cf27569ac31411ca87b6aeb2f33125">~Cache</a>();</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a49ddca07ca46453ef60545c3417d4c14">setup</a>(json::Object *config) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classutil_1_1Cache.html#a70b03a3b1c3363ca8c654a7c7675fd66">clear</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#afeb64e97f9e6c06342808eb2bf0e3c9f">addToCache</a>(json::Object * data, std::string <span class="keywordtype">id</span>, <span class="keywordtype">bool</span> lock =</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                                    <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a08400529e9c947d252f4423b5221d2f3">removeFromCache</a>(std::string <span class="keywordtype">id</span>, <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a9af8351b8cb18838f27290a3dd0d861a">isInCache</a>(std::string <span class="keywordtype">id</span>, <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keyword">virtual</span> json::Object * <a class="code" href="classutil_1_1Cache.html#a72b1a24cb03682d2e595381931153bb1">getFromCache</a>(std::string <span class="keywordtype">id</span>, <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>,</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                                        <span class="keywordtype">bool</span> copy = <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keyword">virtual</span> json::Object * <a class="code" href="classutil_1_1Cache.html#a6b607a1d12a24a0751252a7e99d043ee">getNextFromCache</a>(<span class="keywordtype">bool</span> restart = <span class="keyword">false</span>, <span class="keywordtype">bool</span> lock =</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                                                    <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classutil_1_1Cache.html#a54778ea322ac19bae8b56096ee22a9ed">clearCache</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a0c86a5e6ad7dddf5a6525230968e5085">isEmpty</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#ab95dfe15e520999406cf61f9665c7cea">loadCacheFromDisk</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a15ae5be7a1ed4b90b55aa7b8a5fb97e5">writeCacheToDisk</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;</div>
-<div class="line"><a name="l00186"></a><span class="lineno"><a class="line" href="classutil_1_1Cache.html#ad62d6b46d77c9a103f5aa082ea9e0271">  186</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="classutil_1_1Cache.html#ad62d6b46d77c9a103f5aa082ea9e0271">getSDiskCacheFile</a>() {</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        m_ConfigMutex.lock();</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        std::string diskcachefile = m_sDiskCacheFile;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        m_ConfigMutex.unlock();</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <span class="keywordflow">return</span> (diskcachefile);</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    }</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
-<div class="line"><a name="l00196"></a><span class="lineno"><a class="line" href="classutil_1_1Cache.html#a9781a63ac624bf640d914fb5ab9f2e70">  196</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a9781a63ac624bf640d914fb5ab9f2e70">getBCacheModified</a>() {</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        <span class="keywordflow">return</span> (m_bCacheModified);</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    }</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;</div>
-<div class="line"><a name="l00203"></a><span class="lineno"><a class="line" href="classutil_1_1Cache.html#a044be918b5419b72d30e8eee243bfeed">  203</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classutil_1_1Cache.html#a044be918b5419b72d30e8eee243bfeed">size</a>() {</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        <span class="keywordtype">int</span> cachesize = 0;</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        m_CacheMutex.lock();</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordflow">if</span> (m_Cache.empty() != <span class="keyword">true</span>) {</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            cachesize = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(m_Cache.size());</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        }</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        m_CacheMutex.unlock();</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        <span class="keywordflow">return</span> (cachesize);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    }</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    std::map&lt;std::string, json::Object *&gt; m_Cache;</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordtype">bool</span> m_bCacheModified;</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    std::map&lt;std::string, json::Object *&gt;::iterator m_CacheDumpItr;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    std::mutex m_CacheMutex;</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    std::string m_sDiskCacheFile;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    std::mutex m_ConfigMutex;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    std::mutex m_DiskFileMutex;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;};</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="preprocessor">#endif  // CACHE_H</span></div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="preprocessor"></span></div>
-<div class="ttc" id="classutil_1_1Cache_html_a044be918b5419b72d30e8eee243bfeed"><div class="ttname"><a href="classutil_1_1Cache.html#a044be918b5419b72d30e8eee243bfeed">util::Cache::size</a></div><div class="ttdeci">int size()</div><div class="ttdoc">getter for m_Cache size </div><div class="ttdef"><b>Definition:</b> cache.h:203</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_afeb64e97f9e6c06342808eb2bf0e3c9f"><div class="ttname"><a href="classutil_1_1Cache.html#afeb64e97f9e6c06342808eb2bf0e3c9f">util::Cache::addToCache</a></div><div class="ttdeci">virtual bool addToCache(json::Object *data, std::string id, bool lock=true)</div><div class="ttdoc">add data to cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:110</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a15ae5be7a1ed4b90b55aa7b8a5fb97e5"><div class="ttname"><a href="classutil_1_1Cache.html#a15ae5be7a1ed4b90b55aa7b8a5fb97e5">util::Cache::writeCacheToDisk</a></div><div class="ttdeci">bool writeCacheToDisk(bool lock=true)</div><div class="ttdoc">write cache to disk </div><div class="ttdef"><b>Definition:</b> cache.cpp:488</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a9af8351b8cb18838f27290a3dd0d861a"><div class="ttname"><a href="classutil_1_1Cache.html#a9af8351b8cb18838f27290a3dd0d861a">util::Cache::isInCache</a></div><div class="ttdeci">virtual bool isInCache(std::string id, bool lock=true)</div><div class="ttdoc">check for data in cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:222</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a0c86a5e6ad7dddf5a6525230968e5085"><div class="ttname"><a href="classutil_1_1Cache.html#a0c86a5e6ad7dddf5a6525230968e5085">util::Cache::isEmpty</a></div><div class="ttdeci">virtual bool isEmpty(bool lock=true)</div><div class="ttdoc">check if cache empty </div><div class="ttdef"><b>Definition:</b> cache.cpp:474</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a08400529e9c947d252f4423b5221d2f3"><div class="ttname"><a href="classutil_1_1Cache.html#a08400529e9c947d252f4423b5221d2f3">util::Cache::removeFromCache</a></div><div class="ttdeci">virtual bool removeFromCache(std::string id, bool lock=true)</div><div class="ttdoc">remove data from cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:173</div></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>util {</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classutil_1_1Cache.html">   29</a></span>&#160;<span class="keyword">class </span><a class="code" href="classutil_1_1Cache.html">Cache</a> : <span class="keyword">public</span> <a class="code" href="classutil_1_1BaseClass.html">util::BaseClass</a> {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="classutil_1_1Cache.html#ac92066e408059d9401682a9768475679">Cache</a>();</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classutil_1_1Cache.html#ac92066e408059d9401682a9768475679">Cache</a>(json::Object *config);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classutil_1_1Cache.html#a62cf27569ac31411ca87b6aeb2f33125">~Cache</a>();</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a49ddca07ca46453ef60545c3417d4c14">setup</a>(json::Object *config) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classutil_1_1Cache.html#a70b03a3b1c3363ca8c654a7c7675fd66">clear</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a58d9786cdb35519d98cd8c5625b6db0d">addToCache</a>(std::shared_ptr&lt;json::Object&gt; data, std::string <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                            <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a08400529e9c947d252f4423b5221d2f3">removeFromCache</a>(std::string <span class="keywordtype">id</span>, <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a9af8351b8cb18838f27290a3dd0d861a">isInCache</a>(std::string <span class="keywordtype">id</span>, <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">virtual</span> std::shared_ptr&lt;json::Object&gt; <a class="code" href="classutil_1_1Cache.html#a2af53ed0d8fd679beb37d6fc8dca05af">getFromCache</a>(std::string <span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                                                        <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keyword">virtual</span> std::shared_ptr&lt;json::Object&gt; <a class="code" href="classutil_1_1Cache.html#a9c8fd7bea5c0171a1b86ff8c7e7d8dda">getNextFromCache</a>(<span class="keywordtype">bool</span> restart = <span class="keyword">false</span>,</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                                                            <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classutil_1_1Cache.html#a54778ea322ac19bae8b56096ee22a9ed">clearCache</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a0c86a5e6ad7dddf5a6525230968e5085">isEmpty</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#ab95dfe15e520999406cf61f9665c7cea">loadCacheFromDisk</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a15ae5be7a1ed4b90b55aa7b8a5fb97e5">writeCacheToDisk</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
+<div class="line"><a name="l00187"></a><span class="lineno"><a class="line" href="classutil_1_1Cache.html#ad62d6b46d77c9a103f5aa082ea9e0271">  187</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="classutil_1_1Cache.html#ad62d6b46d77c9a103f5aa082ea9e0271">getSDiskCacheFile</a>() {</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        m_ConfigMutex.lock();</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        std::string diskcachefile = m_sDiskCacheFile;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        m_ConfigMutex.unlock();</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        <span class="keywordflow">return</span> (diskcachefile);</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    }</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;</div>
+<div class="line"><a name="l00197"></a><span class="lineno"><a class="line" href="classutil_1_1Cache.html#a9781a63ac624bf640d914fb5ab9f2e70">  197</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Cache.html#a9781a63ac624bf640d914fb5ab9f2e70">getBCacheModified</a>() {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        <span class="keywordflow">return</span> (m_bCacheModified);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    }</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;</div>
+<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="classutil_1_1Cache.html#a044be918b5419b72d30e8eee243bfeed">  204</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classutil_1_1Cache.html#a044be918b5419b72d30e8eee243bfeed">size</a>() {</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="keywordtype">int</span> cachesize = 0;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        m_CacheMutex.lock();</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        <span class="keywordflow">if</span> (m_Cache.empty() != <span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;            cachesize = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(m_Cache.size());</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        }</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        m_CacheMutex.unlock();</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        <span class="keywordflow">return</span> (cachesize);</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    }</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    std::map&lt;std::string, std::shared_ptr&lt;json::Object&gt;&gt; m_Cache;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="keywordtype">bool</span> m_bCacheModified;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    std::map&lt;std::string, std::shared_ptr&lt;json::Object&gt;&gt;::iterator m_CacheDumpItr;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    std::mutex m_CacheMutex;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    std::string m_sDiskCacheFile;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    std::mutex m_ConfigMutex;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    std::mutex m_DiskFileMutex;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;};</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="preprocessor">#endif  // CACHE_H</span></div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="preprocessor"></span></div>
+<div class="ttc" id="classutil_1_1Cache_html_a044be918b5419b72d30e8eee243bfeed"><div class="ttname"><a href="classutil_1_1Cache.html#a044be918b5419b72d30e8eee243bfeed">util::Cache::size</a></div><div class="ttdeci">int size()</div><div class="ttdoc">getter for m_Cache size </div><div class="ttdef"><b>Definition:</b> cache.h:204</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a15ae5be7a1ed4b90b55aa7b8a5fb97e5"><div class="ttname"><a href="classutil_1_1Cache.html#a15ae5be7a1ed4b90b55aa7b8a5fb97e5">util::Cache::writeCacheToDisk</a></div><div class="ttdeci">bool writeCacheToDisk(bool lock=true)</div><div class="ttdoc">write cache to disk </div><div class="ttdef"><b>Definition:</b> cache.cpp:474</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a9af8351b8cb18838f27290a3dd0d861a"><div class="ttname"><a href="classutil_1_1Cache.html#a9af8351b8cb18838f27290a3dd0d861a">util::Cache::isInCache</a></div><div class="ttdeci">virtual bool isInCache(std::string id, bool lock=true)</div><div class="ttdoc">check for data in cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:210</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a2af53ed0d8fd679beb37d6fc8dca05af"><div class="ttname"><a href="classutil_1_1Cache.html#a2af53ed0d8fd679beb37d6fc8dca05af">util::Cache::getFromCache</a></div><div class="ttdeci">virtual std::shared_ptr&lt; json::Object &gt; getFromCache(std::string id, bool lock=true)</div><div class="ttdoc">get data from cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:238</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a0c86a5e6ad7dddf5a6525230968e5085"><div class="ttname"><a href="classutil_1_1Cache.html#a0c86a5e6ad7dddf5a6525230968e5085">util::Cache::isEmpty</a></div><div class="ttdeci">virtual bool isEmpty(bool lock=true)</div><div class="ttdoc">check if cache empty </div><div class="ttdef"><b>Definition:</b> cache.cpp:460</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a08400529e9c947d252f4423b5221d2f3"><div class="ttname"><a href="classutil_1_1Cache.html#a08400529e9c947d252f4423b5221d2f3">util::Cache::removeFromCache</a></div><div class="ttdeci">virtual bool removeFromCache(std::string id, bool lock=true)</div><div class="ttdoc">remove data from cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:168</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a58d9786cdb35519d98cd8c5625b6db0d"><div class="ttname"><a href="classutil_1_1Cache.html#a58d9786cdb35519d98cd8c5625b6db0d">util::Cache::addToCache</a></div><div class="ttdeci">virtual bool addToCache(std::shared_ptr&lt; json::Object &gt; data, std::string id, bool lock=true)</div><div class="ttdoc">add data to cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:111</div></div>
 <div class="ttc" id="baseclass_8h_html"><div class="ttname"><a href="baseclass_8h.html">baseclass.h</a></div></div>
 <div class="ttc" id="classutil_1_1BaseClass_html"><div class="ttname"><a href="classutil_1_1BaseClass.html">util::BaseClass</a></div><div class="ttdoc">util baseclass class </div><div class="ttdef"><b>Definition:</b> baseclass.h:26</div></div>
-<div class="ttc" id="classutil_1_1Cache_html"><div class="ttname"><a href="classutil_1_1Cache.html">util::Cache</a></div><div class="ttdoc">util cache class </div><div class="ttdef"><b>Definition:</b> cache.h:28</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a70b03a3b1c3363ca8c654a7c7675fd66"><div class="ttname"><a href="classutil_1_1Cache.html#a70b03a3b1c3363ca8c654a7c7675fd66">util::Cache::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">cache clear function </div><div class="ttdef"><b>Definition:</b> cache.cpp:97</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a6b607a1d12a24a0751252a7e99d043ee"><div class="ttname"><a href="classutil_1_1Cache.html#a6b607a1d12a24a0751252a7e99d043ee">util::Cache::getNextFromCache</a></div><div class="ttdeci">virtual json::Object * getNextFromCache(bool restart=false, bool lock=true)</div><div class="ttdoc">get next data from cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:298</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_ad62d6b46d77c9a103f5aa082ea9e0271"><div class="ttname"><a href="classutil_1_1Cache.html#ad62d6b46d77c9a103f5aa082ea9e0271">util::Cache::getSDiskCacheFile</a></div><div class="ttdeci">const std::string getSDiskCacheFile()</div><div class="ttdoc">getter for m_sDiskCacheFile </div><div class="ttdef"><b>Definition:</b> cache.h:186</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_ac92066e408059d9401682a9768475679"><div class="ttname"><a href="classutil_1_1Cache.html#ac92066e408059d9401682a9768475679">util::Cache::Cache</a></div><div class="ttdeci">Cache()</div><div class="ttdoc">cache constructor </div><div class="ttdef"><b>Definition:</b> cache.cpp:15</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a62cf27569ac31411ca87b6aeb2f33125"><div class="ttname"><a href="classutil_1_1Cache.html#a62cf27569ac31411ca87b6aeb2f33125">util::Cache::~Cache</a></div><div class="ttdeci">virtual ~Cache()</div><div class="ttdoc">cache destructor </div><div class="ttdef"><b>Definition:</b> cache.cpp:30</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a49ddca07ca46453ef60545c3417d4c14"><div class="ttname"><a href="classutil_1_1Cache.html#a49ddca07ca46453ef60545c3417d4c14">util::Cache::setup</a></div><div class="ttdeci">bool setup(json::Object *config) override</div><div class="ttdoc">cache configuration function </div><div class="ttdef"><b>Definition:</b> cache.cpp:39</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_ab95dfe15e520999406cf61f9665c7cea"><div class="ttname"><a href="classutil_1_1Cache.html#ab95dfe15e520999406cf61f9665c7cea">util::Cache::loadCacheFromDisk</a></div><div class="ttdeci">bool loadCacheFromDisk(bool lock=true)</div><div class="ttdoc">load cache from disk </div><div class="ttdef"><b>Definition:</b> cache.cpp:356</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a9781a63ac624bf640d914fb5ab9f2e70"><div class="ttname"><a href="classutil_1_1Cache.html#a9781a63ac624bf640d914fb5ab9f2e70">util::Cache::getBCacheModified</a></div><div class="ttdeci">bool getBCacheModified()</div><div class="ttdoc">getter for m_bCacheModified </div><div class="ttdef"><b>Definition:</b> cache.h:196</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a72b1a24cb03682d2e595381931153bb1"><div class="ttname"><a href="classutil_1_1Cache.html#a72b1a24cb03682d2e595381931153bb1">util::Cache::getFromCache</a></div><div class="ttdeci">virtual json::Object * getFromCache(std::string id, bool lock=true, bool copy=false)</div><div class="ttdoc">get data from cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:250</div></div>
-<div class="ttc" id="classutil_1_1Cache_html_a54778ea322ac19bae8b56096ee22a9ed"><div class="ttname"><a href="classutil_1_1Cache.html#a54778ea322ac19bae8b56096ee22a9ed">util::Cache::clearCache</a></div><div class="ttdeci">virtual void clearCache(bool lock=true)</div><div class="ttdoc">clear data from cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:338</div></div>
+<div class="ttc" id="classutil_1_1Cache_html"><div class="ttname"><a href="classutil_1_1Cache.html">util::Cache</a></div><div class="ttdoc">util cache class </div><div class="ttdef"><b>Definition:</b> cache.h:29</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a70b03a3b1c3363ca8c654a7c7675fd66"><div class="ttname"><a href="classutil_1_1Cache.html#a70b03a3b1c3363ca8c654a7c7675fd66">util::Cache::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">cache clear function </div><div class="ttdef"><b>Definition:</b> cache.cpp:98</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a9c8fd7bea5c0171a1b86ff8c7e7d8dda"><div class="ttname"><a href="classutil_1_1Cache.html#a9c8fd7bea5c0171a1b86ff8c7e7d8dda">util::Cache::getNextFromCache</a></div><div class="ttdeci">virtual std::shared_ptr&lt; json::Object &gt; getNextFromCache(bool restart=false, bool lock=true)</div><div class="ttdoc">get next data from cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:282</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_ad62d6b46d77c9a103f5aa082ea9e0271"><div class="ttname"><a href="classutil_1_1Cache.html#ad62d6b46d77c9a103f5aa082ea9e0271">util::Cache::getSDiskCacheFile</a></div><div class="ttdeci">const std::string getSDiskCacheFile()</div><div class="ttdoc">getter for m_sDiskCacheFile </div><div class="ttdef"><b>Definition:</b> cache.h:187</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_ac92066e408059d9401682a9768475679"><div class="ttname"><a href="classutil_1_1Cache.html#ac92066e408059d9401682a9768475679">util::Cache::Cache</a></div><div class="ttdeci">Cache()</div><div class="ttdoc">cache constructor </div><div class="ttdef"><b>Definition:</b> cache.cpp:16</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a62cf27569ac31411ca87b6aeb2f33125"><div class="ttname"><a href="classutil_1_1Cache.html#a62cf27569ac31411ca87b6aeb2f33125">util::Cache::~Cache</a></div><div class="ttdeci">virtual ~Cache()</div><div class="ttdoc">cache destructor </div><div class="ttdef"><b>Definition:</b> cache.cpp:31</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a49ddca07ca46453ef60545c3417d4c14"><div class="ttname"><a href="classutil_1_1Cache.html#a49ddca07ca46453ef60545c3417d4c14">util::Cache::setup</a></div><div class="ttdeci">bool setup(json::Object *config) override</div><div class="ttdoc">cache configuration function </div><div class="ttdef"><b>Definition:</b> cache.cpp:40</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_ab95dfe15e520999406cf61f9665c7cea"><div class="ttname"><a href="classutil_1_1Cache.html#ab95dfe15e520999406cf61f9665c7cea">util::Cache::loadCacheFromDisk</a></div><div class="ttdeci">bool loadCacheFromDisk(bool lock=true)</div><div class="ttdoc">load cache from disk </div><div class="ttdef"><b>Definition:</b> cache.cpp:341</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a9781a63ac624bf640d914fb5ab9f2e70"><div class="ttname"><a href="classutil_1_1Cache.html#a9781a63ac624bf640d914fb5ab9f2e70">util::Cache::getBCacheModified</a></div><div class="ttdeci">bool getBCacheModified()</div><div class="ttdoc">getter for m_bCacheModified </div><div class="ttdef"><b>Definition:</b> cache.h:197</div></div>
+<div class="ttc" id="classutil_1_1Cache_html_a54778ea322ac19bae8b56096ee22a9ed"><div class="ttname"><a href="classutil_1_1Cache.html#a54778ea322ac19bae8b56096ee22a9ed">util::Cache::clearCache</a></div><div class="ttdeci">virtual void clearCache(bool lock=true)</div><div class="ttdoc">clear data from cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:323</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:15:41 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:08:44 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

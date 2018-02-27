@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['avgdelta',['avgDelta',['../classglasscore_1_1CGlass.html#a8c3569dc50988eeb8ab2c2a64db68ee3',1,'glasscore::CGlass']]],
-  ['avgsigma',['avgSigma',['../classglasscore_1_1CGlass.html#ae8a503903d3efe91b1dcff08874db26b',1,'glasscore::CGlass']]]
+  ['bdisable',['bDisable',['../classglassutil_1_1CLogit.html#a17ab1f54c2fbc146a2b9fa694542fdda',1,'glassutil::CLogit']]],
+  ['bsetup',['bSetup',['../classtraveltime_1_1CGenTrv.html#af0b09f806ea720e4f6119e0a6bb8d305',1,'traveltime::CGenTrv::bSetup()'],['../classtraveltime_1_1CTimeWarp.html#a65821caf73258e934d8d2999ef1dd498',1,'traveltime::CTimeWarp::bSetup()']]]
 ];

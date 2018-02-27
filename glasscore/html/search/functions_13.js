@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['val',['Val',['../classglassutil_1_1CTaper.html#ad67b995b09e728aaad68be00ec49bf03',1,'glassutil::CTaper']]],
-  ['value',['value',['../classtraveltime_1_1CTimeWarp.html#a6d9bb5ba6253cbe66244fdb1f8cf14f5',1,'traveltime::CTimeWarp']]]
+  ['weights',['weights',['../classglasscore_1_1CHypo.html#aae802afb419d6e359e013ca54ea30adc',1,'glasscore::CHypo']]],
+  ['workloop',['workLoop',['../classglasscore_1_1CWeb.html#abb1613a38691a014b5b077393920eb90',1,'glasscore::CWeb']]]
 ];

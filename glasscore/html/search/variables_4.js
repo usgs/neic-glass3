@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['expaffinity',['expAffinity',['../classglasscore_1_1CGlass.html#a5dfb8d22d754517ddd3eaba6f43e25da',1,'glasscore::CGlass']]]
+  ['level',['level',['../structglassutil_1_1logMessageStruct.html#ae244dea9f19acc72de3e3d50c3e1ff41',1,'glassutil::logMessageStruct']]]
 ];

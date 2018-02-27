@@ -126,9 +126,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9b6e31f0e2c6cb30024f1ecac986d7a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a9b6e31f0e2c6cb30024f1ecac986d7a1">clear</a> () override</td></tr>
 <tr class="memdesc:a9b6e31f0e2c6cb30024f1ecac986d7a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">output clear function  <a href="#a9b6e31f0e2c6cb30024f1ecac986d7a1">More...</a><br/></td></tr>
 <tr class="separator:a9b6e31f0e2c6cb30024f1ecac986d7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad62eef27b5417df697f31ff364e4ba46"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#ad62eef27b5417df697f31ff364e4ba46">sendToOutput</a> (json::Object *message) override</td></tr>
-<tr class="memdesc:ad62eef27b5417df697f31ff364e4ba46"><td class="mdescLeft">&#160;</td><td class="mdescRight">output message sending function  <a href="#ad62eef27b5417df697f31ff364e4ba46">More...</a><br/></td></tr>
-<tr class="separator:ad62eef27b5417df697f31ff364e4ba46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a82afd3ab15d5c20c61929dfbdfc721"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a2a82afd3ab15d5c20c61929dfbdfc721">sendToOutput</a> (std::shared_ptr&lt; json::Object &gt; &amp;message) override</td></tr>
+<tr class="memdesc:a2a82afd3ab15d5c20c61929dfbdfc721"><td class="mdescLeft">&#160;</td><td class="mdescRight">output message sending function  <a href="#a2a82afd3ab15d5c20c61929dfbdfc721">More...</a><br/></td></tr>
+<tr class="separator:a2a82afd3ab15d5c20c61929dfbdfc721"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21fc540187a7c91c7ad9584d7f5b450c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a21fc540187a7c91c7ad9584d7f5b450c">check</a> () override</td></tr>
 <tr class="memdesc:a21fc540187a7c91c7ad9584d7f5b450c"><td class="mdescLeft">&#160;</td><td class="mdescRight">thread pool check function  <a href="#a21fc540187a7c91c7ad9584d7f5b450c">More...</a><br/></td></tr>
 <tr class="separator:a21fc540187a7c91c7ad9584d7f5b450c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,34 +140,34 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a786ab89489446f2528941b2cba272856"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28da7c8f5b4696a5594babc64268985a"><td class="memItemLeft" align="right" valign="top">const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a28da7c8f5b4696a5594babc64268985a">getSStationFile</a> ()</td></tr>
 <tr class="separator:a28da7c8f5b4696a5594babc64268985a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9256d2de260c7db87f28efe26d32027d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a9256d2de260c7db87f28efe26d32027d">addTrackingData</a> (json::Object *data)</td></tr>
-<tr class="memdesc:a9256d2de260c7db87f28efe26d32027d"><td class="mdescLeft">&#160;</td><td class="mdescRight">add data to the output tracking cache  <a href="#a9256d2de260c7db87f28efe26d32027d">More...</a><br/></td></tr>
-<tr class="separator:a9256d2de260c7db87f28efe26d32027d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac43b4df09d2dcc39c62cc847a3ba311a"><td class="memItemLeft" align="right" valign="top">json::Object *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#ac43b4df09d2dcc39c62cc847a3ba311a">getTrackingData</a> (std::string id)</td></tr>
-<tr class="separator:ac43b4df09d2dcc39c62cc847a3ba311a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06ba8c46c48bb7866c489b5bc33c946d"><td class="memItemLeft" align="right" valign="top">json::Object *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a06ba8c46c48bb7866c489b5bc33c946d">getNextTrackingData</a> ()</td></tr>
-<tr class="memdesc:a06ba8c46c48bb7866c489b5bc33c946d"><td class="mdescLeft">&#160;</td><td class="mdescRight">get data from the output tracking cache  <a href="#a06ba8c46c48bb7866c489b5bc33c946d">More...</a><br/></td></tr>
-<tr class="separator:a06ba8c46c48bb7866c489b5bc33c946d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0221bb79810dd01e7c7cf1b98ef74c56"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a0221bb79810dd01e7c7cf1b98ef74c56">haveTrackingData</a> (json::Object *data)</td></tr>
-<tr class="memdesc:a0221bb79810dd01e7c7cf1b98ef74c56"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if data is in output tracking cache  <a href="#a0221bb79810dd01e7c7cf1b98ef74c56">More...</a><br/></td></tr>
-<tr class="separator:a0221bb79810dd01e7c7cf1b98ef74c56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc1b9b6dfbae12b4a05d024dba26dbfa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#acc1b9b6dfbae12b4a05d024dba26dbfa">addTrackingData</a> (std::shared_ptr&lt; json::Object &gt; data)</td></tr>
+<tr class="memdesc:acc1b9b6dfbae12b4a05d024dba26dbfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">add data to the output tracking cache  <a href="#acc1b9b6dfbae12b4a05d024dba26dbfa">More...</a><br/></td></tr>
+<tr class="separator:acc1b9b6dfbae12b4a05d024dba26dbfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14d58919ac1c7b425c1fd4ce281eb123"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a14d58919ac1c7b425c1fd4ce281eb123">getTrackingData</a> (std::string id)</td></tr>
+<tr class="separator:a14d58919ac1c7b425c1fd4ce281eb123"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1cf52d65a8517456f760d3ba69f8aca"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#ac1cf52d65a8517456f760d3ba69f8aca">getNextTrackingData</a> ()</td></tr>
+<tr class="memdesc:ac1cf52d65a8517456f760d3ba69f8aca"><td class="mdescLeft">&#160;</td><td class="mdescRight">get data from the output tracking cache  <a href="#ac1cf52d65a8517456f760d3ba69f8aca">More...</a><br/></td></tr>
+<tr class="separator:ac1cf52d65a8517456f760d3ba69f8aca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb65619379e3c75bec803fb02b15f89b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#afb65619379e3c75bec803fb02b15f89b">haveTrackingData</a> (std::shared_ptr&lt; json::Object &gt; data)</td></tr>
+<tr class="memdesc:afb65619379e3c75bec803fb02b15f89b"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if data is in output tracking cache  <a href="#afb65619379e3c75bec803fb02b15f89b">More...</a><br/></td></tr>
+<tr class="separator:afb65619379e3c75bec803fb02b15f89b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3788512f9a38f63df50a43a07096e40f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a3788512f9a38f63df50a43a07096e40f">haveTrackingData</a> (std::string ID)</td></tr>
 <tr class="separator:a3788512f9a38f63df50a43a07096e40f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1234804ec877475d2f944804bd0ed6ac"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a1234804ec877475d2f944804bd0ed6ac">removeTrackingData</a> (json::Object *data)</td></tr>
-<tr class="memdesc:a1234804ec877475d2f944804bd0ed6ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove data from the output tracking cache  <a href="#a1234804ec877475d2f944804bd0ed6ac">More...</a><br/></td></tr>
-<tr class="separator:a1234804ec877475d2f944804bd0ed6ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98a0be1b8be0dd9e1d6683fd3ba5ea51"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a98a0be1b8be0dd9e1d6683fd3ba5ea51">removeTrackingData</a> (std::shared_ptr&lt; json::Object &gt; data)</td></tr>
+<tr class="memdesc:a98a0be1b8be0dd9e1d6683fd3ba5ea51"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove data from the output tracking cache  <a href="#a98a0be1b8be0dd9e1d6683fd3ba5ea51">More...</a><br/></td></tr>
+<tr class="separator:a98a0be1b8be0dd9e1d6683fd3ba5ea51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a4bc5c062dc0cdc5407ca6e762f5f55"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a2a4bc5c062dc0cdc5407ca6e762f5f55">removeTrackingData</a> (std::string ID)</td></tr>
 <tr class="separator:a2a4bc5c062dc0cdc5407ca6e762f5f55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c659f75dc2641f549cdfef55304485f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a8c659f75dc2641f549cdfef55304485f">clearTrackingData</a> ()</td></tr>
 <tr class="memdesc:a8c659f75dc2641f549cdfef55304485f"><td class="mdescLeft">&#160;</td><td class="mdescRight">clear output tracking cache  <a href="#a8c659f75dc2641f549cdfef55304485f">More...</a><br/></td></tr>
 <tr class="separator:a8c659f75dc2641f549cdfef55304485f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab24f2fada24afa192c81e53db1fa2c59"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#ab24f2fada24afa192c81e53db1fa2c59">isDataReady</a> (json::Object *data)</td></tr>
-<tr class="memdesc:ab24f2fada24afa192c81e53db1fa2c59"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if detection data is ready for output  <a href="#ab24f2fada24afa192c81e53db1fa2c59">More...</a><br/></td></tr>
-<tr class="separator:ab24f2fada24afa192c81e53db1fa2c59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af52cfe43b1b1b3d9a5c8a10306620617"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#af52cfe43b1b1b3d9a5c8a10306620617">isDataChanged</a> (json::Object *data)</td></tr>
-<tr class="separator:af52cfe43b1b1b3d9a5c8a10306620617"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a378730cbb1a006486d0748766f55de48"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a378730cbb1a006486d0748766f55de48">isDataPublished</a> (json::Object *data, bool ignoreVersion=true)</td></tr>
-<tr class="separator:a378730cbb1a006486d0748766f55de48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2736fbcfdfac0e46fd7f4e882225f25e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a2736fbcfdfac0e46fd7f4e882225f25e">isDataReady</a> (std::shared_ptr&lt; json::Object &gt; data)</td></tr>
+<tr class="memdesc:a2736fbcfdfac0e46fd7f4e882225f25e"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if detection data is ready for output  <a href="#a2736fbcfdfac0e46fd7f4e882225f25e">More...</a><br/></td></tr>
+<tr class="separator:a2736fbcfdfac0e46fd7f4e882225f25e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac81a7002988b37f724840cc8bb9ef11f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#ac81a7002988b37f724840cc8bb9ef11f">isDataChanged</a> (std::shared_ptr&lt; json::Object &gt; data)</td></tr>
+<tr class="separator:ac81a7002988b37f724840cc8bb9ef11f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83fbc27392a75ae5ead27ebc8c1bd1a8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a83fbc27392a75ae5ead27ebc8c1bd1a8">isDataPublished</a> (std::shared_ptr&lt; json::Object &gt; data, bool ignoreVersion=true)</td></tr>
+<tr class="separator:a83fbc27392a75ae5ead27ebc8c1bd1a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -183,9 +183,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:af52a6084453433ade3f0a1aa26fbd899"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#af52a6084453433ade3f0a1aa26fbd899">work</a> () override</td></tr>
 <tr class="memdesc:af52a6084453433ade3f0a1aa26fbd899"><td class="mdescLeft">&#160;</td><td class="mdescRight">output work function  <a href="#af52a6084453433ade3f0a1aa26fbd899">More...</a><br/></td></tr>
 <tr class="separator:af52a6084453433ade3f0a1aa26fbd899"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2303f5cccf5da74c6f4b5d8caccd41f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a2303f5cccf5da74c6f4b5d8caccd41f5">writeOutput</a> (json::Object *data)</td></tr>
-<tr class="memdesc:a2303f5cccf5da74c6f4b5d8caccd41f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">output file writing function  <a href="#a2303f5cccf5da74c6f4b5d8caccd41f5">More...</a><br/></td></tr>
-<tr class="separator:a2303f5cccf5da74c6f4b5d8caccd41f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a715a617c2cd2a2b8bf196c48cff2e647"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a715a617c2cd2a2b8bf196c48cff2e647">writeOutput</a> (std::shared_ptr&lt; json::Object &gt; data)</td></tr>
+<tr class="memdesc:a715a617c2cd2a2b8bf196c48cff2e647"><td class="mdescLeft">&#160;</td><td class="mdescRight">output file writing function  <a href="#a715a617c2cd2a2b8bf196c48cff2e647">More...</a><br/></td></tr>
+<tr class="separator:a715a617c2cd2a2b8bf196c48cff2e647"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c30ba1db06da8505f70116bed71bea3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a2c30ba1db06da8505f70116bed71bea3">sendOutput</a> (const std::string &amp;type, const std::string &amp;id, const std::string &amp;message)=0</td></tr>
 <tr class="separator:a2c30ba1db06da8505f70116bed71bea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -231,14 +231,14 @@ Protected Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a9256d2de260c7db87f28efe26d32027d"></a>
+<a class="anchor" id="acc1b9b6dfbae12b4a05d024dba26dbfa"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glass::output::addTrackingData </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -351,12 +351,12 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a06ba8c46c48bb7866c489b5bc33c946d"></a>
+<a class="anchor" id="ac1cf52d65a8517456f760d3ba69f8aca"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">json::Object * glass::output::getNextTrackingData </td>
+          <td class="memname">std::shared_ptr&lt; json::Object &gt; glass::output::getNextTrackingData </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -439,12 +439,12 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac43b4df09d2dcc39c62cc847a3ba311a"></a>
+<a class="anchor" id="a14d58919ac1c7b425c1fd4ce281eb123"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">json::Object * glass::output::getTrackingData </td>
+          <td class="memname">std::shared_ptr&lt; json::Object &gt; glass::output::getTrackingData </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>id</em></td><td>)</td>
@@ -455,14 +455,14 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a0221bb79810dd01e7c7cf1b98ef74c56"></a>
+<a class="anchor" id="afb65619379e3c75bec803fb02b15f89b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glass::output::haveTrackingData </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -497,14 +497,14 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af52cfe43b1b1b3d9a5c8a10306620617"></a>
+<a class="anchor" id="ac81a7002988b37f724840cc8bb9ef11f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glass::output::isDataChanged </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -513,14 +513,14 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a378730cbb1a006486d0748766f55de48"></a>
+<a class="anchor" id="a83fbc27392a75ae5ead27ebc8c1bd1a8"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glass::output::isDataPublished </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
@@ -539,14 +539,14 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab24f2fada24afa192c81e53db1fa2c59"></a>
+<a class="anchor" id="a2736fbcfdfac0e46fd7f4e882225f25e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glass::output::isDataReady </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -565,14 +565,14 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1234804ec877475d2f944804bd0ed6ac"></a>
+<a class="anchor" id="a98a0be1b8be0dd9e1d6683fd3ba5ea51"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool glass::output::removeTrackingData </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -647,7 +647,7 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ad62eef27b5417df697f31ff364e4ba46"></a>
+<a class="anchor" id="a2a82afd3ab15d5c20c61929dfbdfc721"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -657,7 +657,7 @@ Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void glass::output::sendToOutput </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt; &amp;&#160;</td>
           <td class="paramname"><em>message</em></td><td>)</td>
           <td></td>
         </tr>
@@ -741,7 +741,7 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2303f5cccf5da74c6f4b5d8caccd41f5"></a>
+<a class="anchor" id="a715a617c2cd2a2b8bf196c48cff2e647"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -751,7 +751,7 @@ Protected Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void glass::output::writeOutput </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>data</em></td><td>)</td>
           <td></td>
         </tr>
@@ -812,7 +812,7 @@ Protected Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:20:47 for output by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:15:15 for output by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

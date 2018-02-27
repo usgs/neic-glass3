@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['weights',['weights',['../classglasscore_1_1CHypo.html#aae802afb419d6e359e013ca54ea30adc',1,'glasscore::CHypo']]],
-  ['workloop',['workLoop',['../classglasscore_1_1CWeb.html#abb1613a38691a014b5b077393920eb90',1,'glasscore::CWeb']]]
+  ['y',['Y',['../classtraveltime_1_1CSpline.html#ace49e173d6e8202b34589dbdd4e0e37f',1,'traveltime::CSpline']]],
+  ['year',['year',['../classglassutil_1_1CDate.html#aa877b0f5c7335894ae7654607e0e0bab',1,'glassutil::CDate']]]
 ];

@@ -121,12 +121,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aed22549ca2b0d989f37b741808240a16"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1Parser.html#aed22549ca2b0d989f37b741808240a16">~Parser</a> ()</td></tr>
 <tr class="memdesc:aed22549ca2b0d989f37b741808240a16"><td class="mdescLeft">&#160;</td><td class="mdescRight">parser destructor  <a href="#aed22549ca2b0d989f37b741808240a16">More...</a><br/></td></tr>
 <tr class="separator:aed22549ca2b0d989f37b741808240a16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a047763bdd4ac8e3600512e87386083e1"><td class="memItemLeft" align="right" valign="top">virtual json::Object *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1Parser.html#a047763bdd4ac8e3600512e87386083e1">parse</a> (const std::string &amp;input)=0</td></tr>
-<tr class="memdesc:a047763bdd4ac8e3600512e87386083e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">parsing function  <a href="#a047763bdd4ac8e3600512e87386083e1">More...</a><br/></td></tr>
-<tr class="separator:a047763bdd4ac8e3600512e87386083e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae87b5c6f87277f0b5c4ed69fd46e0300"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1Parser.html#ae87b5c6f87277f0b5c4ed69fd46e0300">validate</a> (json::Object *input)=0</td></tr>
-<tr class="memdesc:ae87b5c6f87277f0b5c4ed69fd46e0300"><td class="mdescLeft">&#160;</td><td class="mdescRight">validation function  <a href="#ae87b5c6f87277f0b5c4ed69fd46e0300">More...</a><br/></td></tr>
-<tr class="separator:ae87b5c6f87277f0b5c4ed69fd46e0300"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6758cc58501c27effdd47becf786fb7e"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr<br class="typebreak"/>
+&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1Parser.html#a6758cc58501c27effdd47becf786fb7e">parse</a> (const std::string &amp;input)=0</td></tr>
+<tr class="memdesc:a6758cc58501c27effdd47becf786fb7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">parsing function  <a href="#a6758cc58501c27effdd47becf786fb7e">More...</a><br/></td></tr>
+<tr class="separator:a6758cc58501c27effdd47becf786fb7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48fa2d2866b078bba0374f6c98c6d07f"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1Parser.html#a48fa2d2866b078bba0374f6c98c6d07f">validate</a> (std::shared_ptr&lt; json::Object &gt; &amp;input)=0</td></tr>
+<tr class="memdesc:a48fa2d2866b078bba0374f6c98c6d07f"><td class="mdescLeft">&#160;</td><td class="mdescRight">validation function  <a href="#a48fa2d2866b078bba0374f6c98c6d07f">More...</a><br/></td></tr>
+<tr class="separator:a48fa2d2866b078bba0374f6c98c6d07f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad36eb05832e73033a7ab906cf5cc913d"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classparse_1_1Parser.html#ad36eb05832e73033a7ab906cf5cc913d">getAgencyid</a> () const </td></tr>
 <tr class="memdesc:ad36eb05832e73033a7ab906cf5cc913d"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the agencyid configuration variable  <a href="#ad36eb05832e73033a7ab906cf5cc913d">More...</a><br/></td></tr>
 <tr class="separator:ad36eb05832e73033a7ab906cf5cc913d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -261,7 +262,7 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a047763bdd4ac8e3600512e87386083e1"></a>
+<a class="anchor" id="a6758cc58501c27effdd47becf786fb7e"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -269,7 +270,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual json::Object* parse::Parser::parse </td>
+          <td class="memname">virtual std::shared_ptr&lt;json::Object&gt; parse::Parser::parse </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>input</em></td><td>)</td>
@@ -293,11 +294,11 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the json::Object containing the data. </dd></dl>
 
-<p>Implemented in <a class="el" href="classparse_1_1CCParser.html#ab69e4730fa219a7531724abffb16afc2">parse::CCParser</a>, <a class="el" href="classparse_1_1GPickParser.html#a130afa934aa4a514c669ec88120b7e7f">parse::GPickParser</a>, and <a class="el" href="classparse_1_1JSONParser.html#a55061182481d45806348d2a664d58780">parse::JSONParser</a>.</p>
+<p>Implemented in <a class="el" href="classparse_1_1CCParser.html#ae44238e665d6cc9b8212da282c6f8ab3">parse::CCParser</a>, <a class="el" href="classparse_1_1GPickParser.html#a352a8ab69771e6b4d89a23172c51e03f">parse::GPickParser</a>, and <a class="el" href="classparse_1_1JSONParser.html#ab82f0ac53399c54d407d2fb54309f5a2">parse::JSONParser</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ae87b5c6f87277f0b5c4ed69fd46e0300"></a>
+<a class="anchor" id="a48fa2d2866b078bba0374f6c98c6d07f"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -307,7 +308,7 @@ Protected Attributes</h2></td></tr>
         <tr>
           <td class="memname">virtual bool parse::Parser::validate </td>
           <td>(</td>
-          <td class="paramtype">json::Object *&#160;</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt; &amp;&#160;</td>
           <td class="paramname"><em>input</em></td><td>)</td>
           <td></td>
         </tr>
@@ -329,7 +330,7 @@ Protected Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if valid, false otherwise. </dd></dl>
 
-<p>Implemented in <a class="el" href="classparse_1_1CCParser.html#a3312b9c9a33feb74c75df3a4c00febf4">parse::CCParser</a>, <a class="el" href="classparse_1_1GPickParser.html#ac90474cbee5db280d59a20de004ffc4e">parse::GPickParser</a>, and <a class="el" href="classparse_1_1JSONParser.html#a0872584533c028a1439ef52763375a22">parse::JSONParser</a>.</p>
+<p>Implemented in <a class="el" href="classparse_1_1CCParser.html#a4022e2c633214d9dd6baa14b797ad05a">parse::CCParser</a>, <a class="el" href="classparse_1_1GPickParser.html#a5c15c5be3da2753dcecdedb6da3a05fb">parse::GPickParser</a>, and <a class="el" href="classparse_1_1JSONParser.html#a8d767a262fba03d32c3e3497e363f5e2">parse::JSONParser</a>.</p>
 
 </div>
 </div>
@@ -385,7 +386,7 @@ Protected Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 25 2018 17:20:25 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Feb 27 2018 22:14:52 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
