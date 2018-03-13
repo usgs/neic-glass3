@@ -430,8 +430,7 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 
 	// add pick to site pick vector
 	// NOTE: Need to add duplicate pick protection
-	std::weak_ptr<CPick> wpPck = pck;
-	vPick.push_back(wpPck);
+	vPick.push_back(pck);
 }
 
 // ---------------------------------------------------------remPick
@@ -448,16 +447,11 @@ void CSite::remPick(std::shared_ptr<CPick> pck) {
 
 	// remove pick from site pick vector
 	for (auto it = vPick.begin(); it != vPick.end();) {
-		if ((*it).expired() == true) {
-			// clean up expired pointers
+		auto aPck = (*it);
+
+		// erase target pick
+		if (aPck->getPid() == pck->getPid()) {
 			it = vPick.erase(it);
-		} else if (auto aPck = (*it).lock()) {
-			// erase target pick
-			if (aPck->getPid() == pck->getPid()) {
-				it = vPick.erase(it);
-			} else {
-				++it;
-			}
 		} else {
 			++it;
 		}
@@ -708,16 +702,6 @@ const std::string& CSite::getSite() const {
 
 const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
 	std::lock_guard<std::mutex> guard(vPickMutex);
-
-	std::vector<std::shared_ptr<CPick>> picks;
-	for (auto awpPck : vPick) {
-		std::shared_ptr<CPick> aPck = awpPck.lock();
-
-		if (aPck != NULL) {
-			picks.push_back(aPck);
-		}
-	}
-
-	return (picks);
+	return (vPick);
 }
 }  // namespace glasscore

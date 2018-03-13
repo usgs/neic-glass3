@@ -250,7 +250,7 @@ CPick::~CPick() {
 void CPick::clear() {
 	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
-	pSite.reset();
+	wpSite.reset();
 	wpHypo.reset();
 	jPick.reset();
 
@@ -275,7 +275,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 		return (false);
 	}
 
-	pSite = pickSite;
+	wpSite = pickSite;
 	tPick = pickTime;
 	idPick = pickId;
 	sPid = pickIdString;
@@ -284,7 +284,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 
 	/* glassutil::CLogit::log(
 	 glassutil::log_level::debug,
-	 "CPick::initialize: site:" + pSite->getScnl() + "; tPick:"
+	 "CPick::initialize: site:" + pickSite->getScnl() + "; tPick:"
 	 + std::to_string(tPick) + "; idPick:"
 	 + std::to_string(idPick) + "; sPid:" + sPid);
 	 */
@@ -349,8 +349,11 @@ void CPick::setAss(std::string ass) {
 
 // ---------------------------------------------------------Nucleate
 bool CPick::nucleate() {
+	// get the site shared_ptr
+	std::shared_ptr<CSite> pickSite = wpSite.lock();
+
 	// get CGlass pointer from site
-	CGlass *pGlass = pSite->getGlass();
+	CGlass *pGlass = pickSite->getGlass();
 
 	// nullcheck
 	if (pGlass == NULL) {
@@ -366,13 +369,13 @@ bool CPick::nucleate() {
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
-	std::vector<std::shared_ptr<CTrigger>> vTrigger = pSite->nucleate(tPick);
+	std::vector<std::shared_ptr<CTrigger>> vTrigger = pickSite->nucleate(tPick);
 
 	// if there were no triggers, we're done
 	if (vTrigger.size() == 0) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CPick::nucleate: NOTRG site:" + pSite->getScnl() + "; tPick:"
+				"CPick::nucleate: NOTRG site:" + pickSite->getScnl() + "; tPick:"
 						+ pt + "; idPick:" + std::to_string(idPick) + "; sPid:"
 						+ sPid);
 
@@ -493,7 +496,7 @@ bool CPick::nucleate() {
 
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
-					"CPick::nucleate: TRG site:" + pSite->getScnl() + "; tPick:"
+					"CPick::nucleate: TRG site:" + pickSite->getScnl() + "; tPick:"
 							+ pt + "; idPick:" + std::to_string(idPick)
 							+ "; sPid:" + sPid + " => web:" + hypo->getWebName()
 							+ "; hyp: " + hypo->getPid() + "; lat:"
@@ -544,7 +547,8 @@ const std::shared_ptr<CHypo> CPick::getHypo() const {
 }
 
 const std::shared_ptr<CSite>& CPick::getSite() const {
-	return (pSite);
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
+	return (wpSite.lock());
 }
 
 const std::string& CPick::getAss() const {

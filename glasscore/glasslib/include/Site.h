@@ -324,7 +324,7 @@ class CSite {
 	 * CSite. A weak_ptr is used here instead of a shared_ptr to prevent a
 	 * cyclical reference between CPick and CSite.
 	 */
-	std::vector<std::weak_ptr<CPick>> vPick;
+	std::vector<std::shared_ptr<CPick>> vPick;
 
 	/**
 	 * \brief A pointer to the main CGlass class used encode/decode time and

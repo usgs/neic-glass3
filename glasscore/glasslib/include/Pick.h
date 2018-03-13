@@ -220,11 +220,11 @@ class CPick {
 
  private:
 	/**
-	 * \brief A std::shared_ptr to a CSite object
+	 * \brief A std::weak_ptr to a CSite object
 	 * representing the link between this pick and the site it was
 	 * picked at
 	 */
-	std::shared_ptr<CSite> pSite;
+	std::weak_ptr<CSite> wpSite;
 
 	/**
 	 * \brief A std::weak_ptr to a CHypo object
