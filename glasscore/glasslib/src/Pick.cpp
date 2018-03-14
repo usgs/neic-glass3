@@ -269,12 +269,12 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	clear();
-	
+
 	// nullcheck
 	if (pickSite == NULL) {
 		return (false);
 	}
-	
+
 	wpSite = pickSite;
 	tPick = pickTime;
 	idPick = pickId;

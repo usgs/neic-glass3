@@ -93,7 +93,7 @@ TEST(PickTest, Construction) {
 	ASSERT_STREQ("", testPick->getAss().c_str());
 	ASSERT_STREQ("", testPick->getPhs().c_str());
 	ASSERT_STREQ("", testPick->getPid().c_str());
-	
+
 	// pointers
 	ASSERT_TRUE(testPick->getSite() == NULL)<< "pSite null";
 	ASSERT_TRUE(testPick->getHypo() == NULL)<< "pHypo null";
