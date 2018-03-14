@@ -186,7 +186,7 @@ class CPick {
 	 * \brief Site getter
 	 * \return the site
 	 */
-	const std::shared_ptr<CSite>& getSite() const;
+	const std::shared_ptr<CSite> getSite() const;
 
 	/**
 	 * \brief Association string getter

@@ -80,7 +80,7 @@ void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 
 // test to see if the pick can be constructed
 TEST(PickTest, Construction) {
-	glassutil::CLogit::disable();
+	glassutil::CLogit::enable();
 
 	// construct a pick
 	glasscore::CPick * testPick = new glasscore::CPick();
@@ -93,7 +93,7 @@ TEST(PickTest, Construction) {
 	ASSERT_STREQ("", testPick->getAss().c_str());
 	ASSERT_STREQ("", testPick->getPhs().c_str());
 	ASSERT_STREQ("", testPick->getPid().c_str());
-
+	
 	// pointers
 	ASSERT_TRUE(testPick->getSite() == NULL)<< "pSite null";
 	ASSERT_TRUE(testPick->getHypo() == NULL)<< "pHypo null";
@@ -104,7 +104,7 @@ TEST(PickTest, Construction) {
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
 			new glasscore::CSite(siteJSON, NULL));
-
+	
 	// now init
 	testPick->initialize(sharedTestSite, PICKTIME, PICKID,
 							std::string(PICKIDSTRING), BACKAZIMUTH, SLOWNESS);

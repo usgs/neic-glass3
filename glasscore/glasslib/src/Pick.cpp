@@ -269,12 +269,12 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	clear();
-
+	
 	// nullcheck
 	if (pickSite == NULL) {
 		return (false);
 	}
-
+	
 	wpSite = pickSite;
 	tPick = pickTime;
 	idPick = pickId;
@@ -546,7 +546,7 @@ const std::shared_ptr<CHypo> CPick::getHypo() const {
 	return (wpHypo.lock());
 }
 
-const std::shared_ptr<CSite>& CPick::getSite() const {
+const std::shared_ptr<CSite> CPick::getSite() const {
 	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (wpSite.lock());
 }
