@@ -222,7 +222,9 @@ class CPick {
 	/**
 	 * \brief A std::weak_ptr to a CSite object
 	 * representing the link between this pick and the site it was
-	 * picked at
+	 * picked at. A weak_ptr is used here instead of a shared_ptr to prevent
+	 * a cyclical reference between CPick and CSite. The weak_ptr is here
+	 * instead of in site due to performance reasons.
 	 */
 	std::weak_ptr<CSite> wpSite;
 
