@@ -104,7 +104,7 @@ TEST(PickTest, Construction) {
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
 			new glasscore::CSite(siteJSON, NULL));
-	
+
 	// now init
 	testPick->initialize(sharedTestSite, PICKTIME, PICKID,
 							std::string(PICKIDSTRING), BACKAZIMUTH, SLOWNESS);
@@ -148,7 +148,7 @@ TEST(PickTest, HypoOperations) {
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-					new glasscore::CSite(siteJSON, NULL));
+			new glasscore::CSite(siteJSON, NULL));
 
 	// create pick
 	glasscore::CPick * testPick = new glasscore::CPick(

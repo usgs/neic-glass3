@@ -60,24 +60,24 @@ TEST(PickListTest, PickOperations) {
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(SITE2JSON))));
+			json::Object(json::Deserialize(std::string(SITE2JSON))));
 	std::shared_ptr<json::Object> site3JSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(SITE3JSON))));
+			json::Object(json::Deserialize(std::string(SITE3JSON))));
 
 	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(PICKJSON))));
+			json::Object(json::Deserialize(std::string(PICKJSON))));
 	std::shared_ptr<json::Object> pick2JSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(PICK2JSON))));
+			json::Object(json::Deserialize(std::string(PICK2JSON))));
 	std::shared_ptr<json::Object> pick3JSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(PICK3JSON))));
+			json::Object(json::Deserialize(std::string(PICK3JSON))));
 	std::shared_ptr<json::Object> pick4JSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(PICK4JSON))));
+			json::Object(json::Deserialize(std::string(PICK4JSON))));
 	std::shared_ptr<json::Object> pick5JSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(PICK5JSON))));
+			json::Object(json::Deserialize(std::string(PICK5JSON))));
 	std::shared_ptr<json::Object> pick6JSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(PICK6JSON))));
+			json::Object(json::Deserialize(std::string(PICK6JSON))));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
