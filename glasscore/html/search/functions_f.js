@@ -3,7 +3,7 @@ var searchData=
   ['s',['S',['../classtraveltime_1_1CTerra.html#a75baf75c6bd5c888e0e7a690a29be065',1,'traveltime::CTerra']]],
   ['scavenge',['scavenge',['../classglasscore_1_1CCorrelationList.html#aea93ff23f224c4b7ff6394e2e15ef69c',1,'glasscore::CCorrelationList::scavenge()'],['../classglasscore_1_1CPickList.html#a38e7cc626ae749c6ef96a2b5dfed9a38',1,'glasscore::CPickList::scavenge()']]],
   ['seconds',['seconds',['../classglassutil_1_1CDate.html#a4181cda9451001442ec16b064028481e',1,'glassutil::CDate']]],
-  ['send',['send',['../classglasscore_1_1CGlass.html#af92a817318376810b08a801c94b5d209',1,'glasscore::CGlass::send()'],['../structglasscore_1_1IGlassSend.html#ae097332c9a83eb4f783145328b394df2',1,'glasscore::IGlassSend::Send()']]],
+  ['send',['Send',['../structglasscore_1_1IGlassSend.html#ae097332c9a83eb4f783145328b394df2',1,'glasscore::IGlassSend::Send()'],['../classglasscore_1_1CGlass.html#af92a817318376810b08a801c94b5d209',1,'glasscore::CGlass::send()']]],
   ['setass',['setAss',['../classglasscore_1_1CCorrelation.html#a92270ef3745aa7d34f06da2dee9fca37',1,'glasscore::CCorrelation::setAss()'],['../classglasscore_1_1CPick.html#ad327d20728f4c09c1074701a926d7126',1,'glasscore::CPick::setAss()']]],
   ['setcart',['setCart',['../classglassutil_1_1CGeo.html#a2011ba3a54816a58f112eb831ca5c180',1,'glassutil::CGeo']]],
   ['setcorradded',['setCorrAdded',['../classglasscore_1_1CHypo.html#ae328c3c3155d8d63edcfafde05e81b84',1,'glasscore::CHypo']]],

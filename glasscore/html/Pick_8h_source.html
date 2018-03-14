@@ -147,7 +147,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keyword">const</span> std::shared_ptr&lt;CHypo&gt; <a class="code" href="classglasscore_1_1CPick.html#a541fb2748a45fabbc507b6b6d9f894f2">getHypo</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keyword">const</span> std::shared_ptr&lt;CSite&gt;&amp; <a class="code" href="classglasscore_1_1CPick.html#ad00780790fc52001b5a6bd613f349805">getSite</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keyword">const</span> std::shared_ptr&lt;CSite&gt; <a class="code" href="classglasscore_1_1CPick.html#acb6b4e6e63daf0a761d7e42e845bbc0e">getSite</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keyword">const</span> std::string&amp; <a class="code" href="classglasscore_1_1CPick.html#a6ee6466e6d23ad085b27912c65b8b67c">getAss</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;</div>
@@ -160,55 +160,55 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classglasscore_1_1CPick.html#ad4bbd3255f2bb32887f45d12a39bc8d0">getTPick</a>() <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    std::shared_ptr&lt;CSite&gt; pSite;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    std::weak_ptr&lt;CHypo&gt; wpHypo;</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    std::string sAss;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    std::string sPhs;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    std::string sPid;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keywordtype">double</span> dBackAzimuth;</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keywordtype">double</span> dSlowness;</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordtype">double</span> tPick;</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keywordtype">int</span> idPick;</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    std::shared_ptr&lt;json::Object&gt; jPick;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex pickMutex;</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;};</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="preprocessor">#endif  // PICK_H</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    std::weak_ptr&lt;CSite&gt; wpSite;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    std::weak_ptr&lt;CHypo&gt; wpHypo;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    std::string sAss;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    std::string sPhs;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    std::string sPid;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordtype">double</span> dBackAzimuth;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordtype">double</span> dSlowness;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keywordtype">double</span> tPick;</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keywordtype">int</span> idPick;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    std::shared_ptr&lt;json::Object&gt; jPick;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex pickMutex;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;};</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="preprocessor">#endif  // PICK_H</span></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_ad327d20728f4c09c1074701a926d7126"><div class="ttname"><a href="classglasscore_1_1CPick.html#ad327d20728f4c09c1074701a926d7126">glasscore::CPick::setAss</a></div><div class="ttdeci">void setAss(std::string ass)</div><div class="ttdoc">Association string setter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:344</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_a74461201f2cd255097468fde4e6db7f4"><div class="ttname"><a href="classglasscore_1_1CPick.html#a74461201f2cd255097468fde4e6db7f4">glasscore::CPick::clearHypo</a></div><div class="ttdeci">void clearHypo()</div><div class="ttdoc">Clear any hypo reference to this pick. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:339</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_aa0b372f0a0820ef040f96127acc5a602"><div class="ttname"><a href="classglasscore_1_1CPick.html#aa0b372f0a0820ef040f96127acc5a602">glasscore::CPick::getSlowness</a></div><div class="ttdeci">double getSlowness() const </div><div class="ttdoc">Slowness getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:529</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_a551e0f12a8d6265b36865265e8194b08"><div class="ttname"><a href="classglasscore_1_1CPick.html#a551e0f12a8d6265b36865265e8194b08">glasscore::CPick::getPid</a></div><div class="ttdeci">const std::string &amp; getPid() const </div><div class="ttdoc">Pid getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:559</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_ad673957653feb09cdfe3a9092201efb6"><div class="ttname"><a href="classglasscore_1_1CPick.html#ad673957653feb09cdfe3a9092201efb6">glasscore::CPick::getIdPick</a></div><div class="ttdeci">int getIdPick() const </div><div class="ttdoc">Pick id getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:533</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_aa0b372f0a0820ef040f96127acc5a602"><div class="ttname"><a href="classglasscore_1_1CPick.html#aa0b372f0a0820ef040f96127acc5a602">glasscore::CPick::getSlowness</a></div><div class="ttdeci">double getSlowness() const </div><div class="ttdoc">Slowness getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:532</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_a551e0f12a8d6265b36865265e8194b08"><div class="ttname"><a href="classglasscore_1_1CPick.html#a551e0f12a8d6265b36865265e8194b08">glasscore::CPick::getPid</a></div><div class="ttdeci">const std::string &amp; getPid() const </div><div class="ttdoc">Pid getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:563</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_ad673957653feb09cdfe3a9092201efb6"><div class="ttname"><a href="classglasscore_1_1CPick.html#ad673957653feb09cdfe3a9092201efb6">glasscore::CPick::getIdPick</a></div><div class="ttdeci">int getIdPick() const </div><div class="ttdoc">Pick id getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:536</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_a9afacc53aef41ce6af47cbc6815ebd7f"><div class="ttname"><a href="classglasscore_1_1CPick.html#a9afacc53aef41ce6af47cbc6815ebd7f">glasscore::CPick::addHypo</a></div><div class="ttdeci">void addHypo(std::shared_ptr&lt; CHypo &gt; hyp, std::string ass=&quot;&quot;, bool force=false)</div><div class="ttdoc">Add hypo reference to this pick. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:296</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_a29fadd7b6ab0570c6e85189b5098bfb5"><div class="ttname"><a href="classglasscore_1_1CPick.html#a29fadd7b6ab0570c6e85189b5098bfb5">glasscore::CPick::getBackAzimuth</a></div><div class="ttdeci">double getBackAzimuth() const </div><div class="ttdoc">Back azimuth getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:525</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_a29fadd7b6ab0570c6e85189b5098bfb5"><div class="ttname"><a href="classglasscore_1_1CPick.html#a29fadd7b6ab0570c6e85189b5098bfb5">glasscore::CPick::getBackAzimuth</a></div><div class="ttdeci">double getBackAzimuth() const </div><div class="ttdoc">Back azimuth getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:528</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_a7506f509f5b3377d62b5c4f9c3f381d5"><div class="ttname"><a href="classglasscore_1_1CPick.html#a7506f509f5b3377d62b5c4f9c3f381d5">glasscore::CPick::remHypo</a></div><div class="ttdeci">void remHypo(std::shared_ptr&lt; CHypo &gt; hyp)</div><div class="ttdoc">Remove hypo reference to this pick. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:317</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_a303d6d74ceca00f9ad13cc0f425b70b2"><div class="ttname"><a href="classglasscore_1_1CPick.html#a303d6d74ceca00f9ad13cc0f425b70b2">glasscore::CPick::getJPick</a></div><div class="ttdeci">const std::shared_ptr&lt; json::Object &gt; &amp; getJPick() const </div><div class="ttdoc">Json pick getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:537</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_a303d6d74ceca00f9ad13cc0f425b70b2"><div class="ttname"><a href="classglasscore_1_1CPick.html#a303d6d74ceca00f9ad13cc0f425b70b2">glasscore::CPick::getJPick</a></div><div class="ttdeci">const std::shared_ptr&lt; json::Object &gt; &amp; getJPick() const </div><div class="ttdoc">Json pick getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:540</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_a882621fb9fe9bb913af6f25ffb6ab8d5"><div class="ttname"><a href="classglasscore_1_1CPick.html#a882621fb9fe9bb913af6f25ffb6ab8d5">glasscore::CPick::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">CPick clear function. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:250</div></div>
 <div class="ttc" id="classglasscore_1_1CSiteList_html"><div class="ttname"><a href="classglasscore_1_1CSiteList.html">glasscore::CSiteList</a></div><div class="ttdoc">glasscore site list class </div><div class="ttdef"><b>Definition:</b> SiteList.h:37</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_a19862523e51e89687270b45fa4935b8f"><div class="ttname"><a href="classglasscore_1_1CPick.html#a19862523e51e89687270b45fa4935b8f">glasscore::CPick::CPick</a></div><div class="ttdeci">CPick()</div><div class="ttdoc">CPick constructor. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:22</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_a541fb2748a45fabbc507b6b6d9f894f2"><div class="ttname"><a href="classglasscore_1_1CPick.html#a541fb2748a45fabbc507b6b6d9f894f2">glasscore::CPick::getHypo</a></div><div class="ttdeci">const std::shared_ptr&lt; CHypo &gt; getHypo() const </div><div class="ttdoc">Hypo getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:541</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_a6ee6466e6d23ad085b27912c65b8b67c"><div class="ttname"><a href="classglasscore_1_1CPick.html#a6ee6466e6d23ad085b27912c65b8b67c">glasscore::CPick::getAss</a></div><div class="ttdeci">const std::string &amp; getAss() const </div><div class="ttdoc">Association string getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:550</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_ad00780790fc52001b5a6bd613f349805"><div class="ttname"><a href="classglasscore_1_1CPick.html#ad00780790fc52001b5a6bd613f349805">glasscore::CPick::getSite</a></div><div class="ttdeci">const std::shared_ptr&lt; CSite &gt; &amp; getSite() const </div><div class="ttdoc">Site getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:546</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_a541fb2748a45fabbc507b6b6d9f894f2"><div class="ttname"><a href="classglasscore_1_1CPick.html#a541fb2748a45fabbc507b6b6d9f894f2">glasscore::CPick::getHypo</a></div><div class="ttdeci">const std::shared_ptr&lt; CHypo &gt; getHypo() const </div><div class="ttdoc">Hypo getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:544</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_acb6b4e6e63daf0a761d7e42e845bbc0e"><div class="ttname"><a href="classglasscore_1_1CPick.html#acb6b4e6e63daf0a761d7e42e845bbc0e">glasscore::CPick::getSite</a></div><div class="ttdeci">const std::shared_ptr&lt; CSite &gt; getSite() const </div><div class="ttdoc">Site getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:549</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_a6ee6466e6d23ad085b27912c65b8b67c"><div class="ttname"><a href="classglasscore_1_1CPick.html#a6ee6466e6d23ad085b27912c65b8b67c">glasscore::CPick::getAss</a></div><div class="ttdeci">const std::string &amp; getAss() const </div><div class="ttdoc">Association string getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:554</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_af9ac60bde62a7974c728a2f56c070ae9"><div class="ttname"><a href="classglasscore_1_1CPick.html#af9ac60bde62a7974c728a2f56c070ae9">glasscore::CPick::initialize</a></div><div class="ttdeci">bool initialize(std::shared_ptr&lt; CSite &gt; pickSite, double pickTime, int pickId, std::string pickIdString, double backAzimuth, double slowness)</div><div class="ttdoc">CPick initialization function. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:266</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html"><div class="ttname"><a href="classglasscore_1_1CPick.html">glasscore::CPick</a></div><div class="ttdoc">glasscore pick class </div><div class="ttdef"><b>Definition:</b> Pick.h:43</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_a7bc9730805c61733f67e4bba810c1099"><div class="ttname"><a href="classglasscore_1_1CPick.html#a7bc9730805c61733f67e4bba810c1099">glasscore::CPick::nucleate</a></div><div class="ttdeci">bool nucleate()</div><div class="ttdoc">Nucleate new event based on the addition of this pick. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:351</div></div>
 <div class="ttc" id="classglasscore_1_1CPick_html_abe6f66dea6ff986d98775242bc937a8e"><div class="ttname"><a href="classglasscore_1_1CPick.html#abe6f66dea6ff986d98775242bc937a8e">glasscore::CPick::~CPick</a></div><div class="ttdeci">~CPick()</div><div class="ttdoc">CPick destructor. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:245</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_a018ec4067486443dc3bd8279b35754f1"><div class="ttname"><a href="classglasscore_1_1CPick.html#a018ec4067486443dc3bd8279b35754f1">glasscore::CPick::getPhs</a></div><div class="ttdeci">const std::string &amp; getPhs() const </div><div class="ttdoc">Phase getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:555</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html_ad4bbd3255f2bb32887f45d12a39bc8d0"><div class="ttname"><a href="classglasscore_1_1CPick.html#ad4bbd3255f2bb32887f45d12a39bc8d0">glasscore::CPick::getTPick</a></div><div class="ttdeci">double getTPick() const </div><div class="ttdoc">Pick time getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:563</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_a018ec4067486443dc3bd8279b35754f1"><div class="ttname"><a href="classglasscore_1_1CPick.html#a018ec4067486443dc3bd8279b35754f1">glasscore::CPick::getPhs</a></div><div class="ttdeci">const std::string &amp; getPhs() const </div><div class="ttdoc">Phase getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:559</div></div>
+<div class="ttc" id="classglasscore_1_1CPick_html_ad4bbd3255f2bb32887f45d12a39bc8d0"><div class="ttname"><a href="classglasscore_1_1CPick.html#ad4bbd3255f2bb32887f45d12a39bc8d0">glasscore::CPick::getTPick</a></div><div class="ttdeci">double getTPick() const </div><div class="ttdoc">Pick time getter. </div><div class="ttdef"><b>Definition:</b> Pick.cpp:567</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Feb 27 2018 22:12:45 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 14 2018 22:34:11 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
