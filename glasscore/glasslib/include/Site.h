@@ -320,11 +320,11 @@ class CSite {
 	mutable std::mutex vPickMutex;
 
 	/**
-	 * \brief A std::vector of std::weak_ptr's to the picks made at this this
-	 * CSite. A weak_ptr is used here instead of a shared_ptr to prevent a
-	 * cyclical reference between CPick and CSite.
+	 * \brief A std::vector of std::shared_ptr to the picks made at this this
+	 * CSite. A shared_ptr is used here instead of a weak_ptr (to prevent a
+	 * cyclical reference between CPick and CSite) to improve performance
 	 */
-	std::vector<std::weak_ptr<CPick>> vPick;
+	std::vector<std::shared_ptr<CPick>> vPick;
 
 	/**
 	 * \brief A pointer to the main CGlass class used encode/decode time and

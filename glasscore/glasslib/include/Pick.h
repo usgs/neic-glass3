@@ -186,7 +186,7 @@ class CPick {
 	 * \brief Site getter
 	 * \return the site
 	 */
-	const std::shared_ptr<CSite>& getSite() const;
+	const std::shared_ptr<CSite> getSite() const;
 
 	/**
 	 * \brief Association string getter
@@ -220,11 +220,13 @@ class CPick {
 
  private:
 	/**
-	 * \brief A std::shared_ptr to a CSite object
+	 * \brief A std::weak_ptr to a CSite object
 	 * representing the link between this pick and the site it was
-	 * picked at
+	 * picked at. A weak_ptr is used here instead of a shared_ptr to prevent
+	 * a cyclical reference between CPick and CSite. The weak_ptr is here
+	 * instead of in site due to performance reasons.
 	 */
-	std::shared_ptr<CSite> pSite;
+	std::weak_ptr<CSite> wpSite;
 
 	/**
 	 * \brief A std::weak_ptr to a CHypo object

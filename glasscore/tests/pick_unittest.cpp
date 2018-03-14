@@ -80,7 +80,7 @@ void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 
 // test to see if the pick can be constructed
 TEST(PickTest, Construction) {
-	glassutil::CLogit::disable();
+	glassutil::CLogit::enable();
 
 	// construct a pick
 	glasscore::CPick * testPick = new glasscore::CPick();
@@ -148,7 +148,7 @@ TEST(PickTest, HypoOperations) {
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-					new glasscore::CSite(siteJSON, NULL));
+			new glasscore::CSite(siteJSON, NULL));
 
 	// create pick
 	glasscore::CPick * testPick = new glasscore::CPick(

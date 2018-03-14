@@ -283,6 +283,10 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 		// search through each pick at this site
 		for (const auto &pick : vSitePicks) {
+			if (pick == NULL) {
+				continue;
+			}
+
 			// get the pick's arrival time
 			double tPick = pick->getTPick();
 
