@@ -941,7 +941,7 @@ double CHypo::affinity(std::shared_ptr<CPick> pck) {
 	// compute the affinity of this pick to this hypo by multiplying
 	// the gap factor to the hypocenter's current baysian statistic to
 	// the affinity power factor
-	double aff = gapfac * pow(dBayes, expaff);
+	double aff = 10. * gapfac * pow(dBayes, expaff);
 
 	// return the affinity
 	return (aff);
@@ -1222,11 +1222,10 @@ bool CHypo::cancel() {
 		return (true);
 	}
 
-	/**
 	 // Whispy check (does the quake have a gap greater than 180 while being
 	 // shallower than 400km
 	 // NOTE: Hardcoded
-	 if ((dZ > 400.0) && (dGap > 180.0)) {
+	 if ((dZ > 550.0) && (dGap > 270.0)) {
 	 // failure
 	 snprintf(sLog, sizeof(sLog),
 	 "CHypo::cancel: Whispie trap (%.1f>400, %.1f>180) Hypo: %s",
@@ -1236,7 +1235,6 @@ bool CHypo::cancel() {
 	 // this hypo can be canceled
 	 return (true);
 	 }
-	 **/
 	// Hypo is still viable
 	return (false);
 }
