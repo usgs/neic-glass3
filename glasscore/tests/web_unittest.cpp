@@ -122,10 +122,12 @@ TEST(WebTest, Construction) {
 	// lists
 	int expectedSize = 0;
 	ASSERT_EQ(expectedSize, (int)testWeb->getVNodeSize())<< "node list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
-	"site filter list empty";
+	ASSERT_EQ(false, testWeb->getUseOnlyTeleseismicStations())<<
+	"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(expectedSize, (int)testWeb->getVNetFilterSize())<<
 	"net filter list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
+		"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testWeb->getGlass())<< "getGlass() null";
@@ -171,10 +173,12 @@ TEST(WebTest, Construction) {
 
 	// lists
 	ASSERT_EQ(expectedSize, (int)testWeb2->getVNodeSize())<< "node list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb2->getVSitesFilterSize())<<
-	"site filter list empty";
+	ASSERT_EQ(false, testWeb->getUseOnlyTeleseismicStations())<<
+		"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(expectedSize, (int)testWeb2->getVNetFilterSize())<<
 	"net filter list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
+		"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testWeb2->getGlass())<< "getGlass() null";
@@ -232,10 +236,12 @@ TEST(WebTest, Initialize) {
 	// lists
 	int expectedSize = 0;
 	ASSERT_EQ(expectedSize, (int)testWeb.getVNodeSize())<< "node list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb.getVSitesFilterSize())<<
-	"site filter list empty";
+	ASSERT_EQ(false, testWeb.getUseOnlyTeleseismicStations())<<
+		"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(expectedSize, (int)testWeb.getVNetFilterSize())<<
 	"net filter list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb.getVSitesFilterSize())<<
+		"site filter list empty";
 
 	ASSERT_TRUE(testWeb.statusCheck())<< "status check";
 }
@@ -315,10 +321,12 @@ TEST(WebTest, GlobalTest) {
 
 	// lists
 	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.getVNodeSize())<< "node list";
-	ASSERT_EQ(0, (int)testGlobalWeb.getVSitesFilterSize())<<
-	"site filter list empty";
+	ASSERT_EQ(false, testGlobalWeb.getUseOnlyTeleseismicStations())<<
+		"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(GLOBALNUMNETEXLUDE, (int)testGlobalWeb.getVNetFilterSize())<<
 	"net filter list empty";
+	ASSERT_EQ(0, (int)testGlobalWeb.getVSitesFilterSize())<<
+		"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGlobalWeb.getGlass())<< "getGlass() null";
@@ -408,10 +416,12 @@ TEST(WebTest, GridTest) {
 
 	// lists
 	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
-	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
-	"site filter list empty";
+	ASSERT_EQ(false, testGridWeb.getUseOnlyTeleseismicStations())<<
+		"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(0, (int)testGridWeb.getVNetFilterSize())<<
 	"net filter list empty";
+	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
+		"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
@@ -502,10 +512,12 @@ TEST(WebTest, GridExplicitTest) {
 
 	// lists
 	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
-	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
-	"site filter list empty";
+	ASSERT_EQ(false, testGridWeb.getUseOnlyTeleseismicStations())<<
+		"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(0, (int)testGridWeb.getVNetFilterSize())<<
 	"net filter list empty";
+	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
+		"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";

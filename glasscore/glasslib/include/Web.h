@@ -168,7 +168,7 @@ class CWeb {
 	 * configuration
 	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool grid(std::shared_ptr<json::Object>  com);
+	bool grid(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Generate a detection grid with explicit nodes
@@ -373,6 +373,7 @@ class CWeb {
 	const std::shared_ptr<traveltime::CTravelTime>& getTrv2() const;
 	int getVNetFilterSize() const;
 	int getVSitesFilterSize() const;
+	bool getUseOnlyTeleseismicStations() const;
 	int getVNodeSize() const;
 
  private:
@@ -415,6 +416,13 @@ class CWeb {
 	 * and removal of sites as their usage status is changed.
 	 */
 	std::vector<std::string> vSitesFilter;
+
+	/**
+	 * \brief A boolean flag indicating whether to only use sites marked
+	 * "UseForTeleseismic" This needs to be saved to support dynamic addition
+	 * and removal of sites as their usage status is changed.
+	 */
+	bool bUseOnlyTeleseismicStations;
 
 	/**
 	 * \brief A std::vector containing a std::pair for each the sites to use
