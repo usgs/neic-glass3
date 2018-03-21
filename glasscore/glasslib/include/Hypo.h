@@ -296,6 +296,13 @@ class CHypo {
 	bool associate(std::shared_ptr<CPick> pick, double sigma, double sdassoc);
 
 	/**
+	 * returns the residual of a pick to the hypocenter
+	 *
+	 * \param pick - The pick to calculate a residual for
+	 */
+	double getResidual(std::shared_ptr<CPick> pick);
+
+	/**
 	 * \brief Check to see if correlation could be associated
 	 *
 	 * Check to see if a given correlation could be associated to this
@@ -476,7 +483,14 @@ class CHypo {
 	double getBayes(double xlat, double xlon, double xZ, double oT,
 					int nucleate);
 
-	double getResidual(std::string sPhase, double tObs, double tCal);
+	/**
+	 * gets a weight residual (with S down weighted) for locator
+	 *
+	 * \param sPhase - A string with the phase type
+	 * \param tObs - The observed travel time
+	 * \param tCal - The calculated travel time
+	 */
+	double getWeightedResidual(std::string sPhase, double tObs, double tCal);
 
 	/**
 	 * Get the sum of the absolute residuals at a location
