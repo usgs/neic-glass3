@@ -759,7 +759,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 		return (false);
 	}
 
-	double tRes = getResidual(pick)
+	double tRes = getResidual(pick);
 
 	if (std::isnan(tRes) == true) {
 		return (false);
@@ -946,7 +946,7 @@ double CHypo::affinity(std::shared_ptr<CPick> pck) {
 	}
 
 	// get pick residual
-	double tRes = getResidual(pick)
+	double tRes = getResidual(pck);
 
 	// get absolute residual
 	if (tRes < 0.0) {
