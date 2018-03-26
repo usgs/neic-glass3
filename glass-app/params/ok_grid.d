@@ -9,8 +9,8 @@
 	"Lat": 36.0,
 	"Lon": -97.5,
 	"Z": [ 10.0 ],
-	"Detect": 10,
-	"Nucleate": 6,
+	"Detect": 12,
+	"Nucleate": 7,
 	"Thresh": 0.5,
 	"Update":true,
 	"SaveGrid":false,
@@ -18,10 +18,6 @@
 	    "Phase1": {
       		"PhaseName": "P",
       		"TravFile": "./P.trv"
-  		},
-	    "Phase2": {
-      		"PhaseName": "S",
-      		"TravFile": "./S.trv"
   		}
 	}
 }
