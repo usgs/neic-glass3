@@ -11,17 +11,13 @@
 	"Z": [ 10.0 ],
 	"Detect": 10,
 	"Nucleate": 6,
-	"Thresh": 0.5,
+	"Thresh": 5.0,
 	"Update":true,
 	"SaveGrid":false,
 	"NucleationPhases":{
 	    "Phase1": {
       		"PhaseName": "P",
       		"TravFile": "./P.trv"
-  		},
-	    "Phase2": {
-      		"PhaseName": "S",
-      		"TravFile": "./S.trv"
   		}
 	}
 }
