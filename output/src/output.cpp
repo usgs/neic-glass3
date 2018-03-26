@@ -332,15 +332,31 @@ bool output::removeTrackingData(std::string ID) {
 		return (false);
 	}
 
-	if (m_TrackingCache->isInCache(ID) == true)
+	if (m_TrackingCache->isInCache(ID) == true) {
 		return (m_TrackingCache->removeFromCache(ID));
-	else
+	} else {
 		return (false);
+	}
 }
 
 std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
+	std::shared_ptr<json::Object>  nullObj;
+	if (id == "") {
+		logger::log("error",
+					"output::removetrackingdata(): Empty ID passed in.");
+		return (nullObj);
+	} else if (id == "null") {
+		logger::log("warn",
+					"output::removetrackingdata(): Invalid ID passed in.");
+		return (nullObj);
+	}
+
 	// return the value
-	return (m_TrackingCache->getFromCache(id));
+	if (m_TrackingCache->isInCache(id) == true) {
+		return (m_TrackingCache->getFromCache(id));
+	} else {
+		return(nullObj);
+	}
 }
 
 std::shared_ptr<json::Object> output::getNextTrackingData() {
@@ -498,6 +514,7 @@ bool output::work() {
 		} else if (messagetype == "Cancel") {
 			std::shared_ptr<json::Object> trackingData = getTrackingData(
 					messageid);
+
 			// see if we've tracked this event
 			if (trackingData != NULL) {
 				// we have
@@ -525,6 +542,7 @@ bool output::work() {
 				// remove from the tracking cache
 				removeTrackingData(messageid);
 			}
+
 			m_iCancelCounter++;
 		} else if (messagetype == "Expire") {
 			std::shared_ptr<json::Object> trackingData = getTrackingData(
@@ -758,10 +776,11 @@ bool output::isDataReady(std::shared_ptr<json::Object> data) {
 					"output::isdataready(): Bad tracking object passed in, "
 							" missing cmd: " + json::Serialize(*data));
 		return (false);
-	} else if (!(data->HasKey("PubLog"))) {
-		logger::log("error",
-					"output::isdataready(): Bad tracking object passed in, "
-							" missing PubLog:" + json::Serialize(*data));
+	} else if ((!(data->HasKey("PubLog"))) || (!(data->HasKey("Version")))) {
+		logger::log(
+				"error",
+				"output::isdataready(): Bad tracking object passed in, "
+						" missing PubLog or Version:" + json::Serialize(*data));
 		return (false);
 	}
 
@@ -860,10 +879,11 @@ bool output::isDataChanged(std::shared_ptr<json::Object> data) {
 					"output::isDataChanged(): Bad tracking object passed in, "
 							" missing cmd: " + json::Serialize(*data));
 		return (false);
-	} else if (!(data->HasKey("PubLog"))) {
-		logger::log("error",
-					"output::isDataChanged(): Bad tracking object passed in, "
-							" missing PubLog:" + json::Serialize(*data));
+	} else if ((!(data->HasKey("PubLog"))) || (!(data->HasKey("Version")))) {
+		logger::log(
+				"error",
+				"output::isDataChanged(): Bad tracking object passed in, "
+						" missing PubLog or Version:" + json::Serialize(*data));
 		return (false);
 	}
 
@@ -898,10 +918,12 @@ bool output::isDataPublished(std::shared_ptr<json::Object> data,
 		return (false);
 	}
 
-	if ((!(data->HasKey("Cmd"))) || (!(data->HasKey("PubLog")))) {
+	if ((!(data->HasKey("Cmd"))) || (!(data->HasKey("PubLog")))
+			|| (!(data->HasKey("Version")))) {
 		logger::log(
 				"error",
-				"output::isDataPublished(): Bad json hypo object passed in: "
+				"output::isDataPublished(): Bad json hypo object passed in "
+						" missing Cmd, PubLog or Version "
 						+ json::Serialize(*data));
 		return (false);
 	}

@@ -141,9 +141,10 @@ void CWeb::clear() {
 	}
 	m_vNodeMutex.unlock();
 
-	// clear the network and site filters
+	// clear the network filter
 	vNetFilter.clear();
 	vSitesFilter.clear();
+	bUseOnlyTeleseismicStations = false;
 
 	// clear sites
 	try {
@@ -455,10 +456,11 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 			sLog, sizeof(sLog),
 			"CWeb::global sName:%s Phase(s):%s; nZ:%d; resol:%.2f; nDetect:%d;"
 			" nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
-			" vSitesFilter:%d; iNodeCount:%d;",
+			" vSitesFilter:%d; bUseOnlyTeleseismicStations:%d; iNodeCount:%d;",
 			sName.c_str(), phases.c_str(), nZ, dResolution, nDetect, nNucleate,
 			dThresh, static_cast<int>(vNetFilter.size()),
-			static_cast<int>(vSitesFilter.size()), iNodeCount);
+			static_cast<int>(vSitesFilter.size()),
+			static_cast<int>(bUseOnlyTeleseismicStations), iNodeCount);
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
 
 	// success
@@ -752,13 +754,15 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 				"CWeb::grid sName:%s Phase(s):%s; Ranges:Lat(%.2f,%.2f),"
 				"Lon:(%.2f,%.2f); nRow:%d; nCol:%d; nZ:%d; resol:%.2f;"
 				" nDetect:%d; nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
-				" vSitesFilter:%d; iNodeCount:%d;",
+				" vSitesFilter:%d;  bUseOnlyTeleseismicStations:%d;"
+				" iNodeCount:%d;",
 				sName.c_str(), phases.c_str(), lat0,
 				lat0 - (nRow - 1) * latDistance, lon0,
 				lon0 + (nCol - 1) * lonDistance, nRow, nCol, nZ, dResolution,
 				nDetect, nNucleate, dThresh,
 				static_cast<int>(vNetFilter.size()),
-				static_cast<int>(vSitesFilter.size()), iNodeCount);
+				static_cast<int>(vSitesFilter.size()),
+				static_cast<int>(bUseOnlyTeleseismicStations), iNodeCount);
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
 
 	// success
@@ -989,11 +993,12 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 			sLog,
 			sizeof(sLog),
 			"CWeb::grid_explicit sName:%s Phase(s):%s; nDetect:%d; nNucleate:%d;"
-			" dThresh:%.2f; vNetFilter:%d; vSitesFilter:%d;"
-			" iNodeCount:%d;",
+			" dThresh:%.2f; vNetFilter:%d; bUseOnlyTeleseismicStations:%d;"
+			" vSitesFilter:%d; iNodeCount:%d;",
 			sName.c_str(), phases.c_str(), nDetect, nNucleate, dThresh,
 			static_cast<int>(vNetFilter.size()),
-			static_cast<int>(vSitesFilter.size()), iNodeCount);
+			static_cast<int>(vSitesFilter.size()),
+			static_cast<int>(bUseOnlyTeleseismicStations), iNodeCount);
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
 
 	// success
@@ -1223,6 +1228,19 @@ bool CWeb::genSiteFilters(std::shared_ptr<json::Object> com) {
 		}
 	}
 
+	// check to see if we're only to use teleseismic stations.
+	if ((*com).HasKey("UseOnlyTeleseismicStations")
+			&& ((*com)["UseOnlyTeleseismicStations"].GetType()
+					== json::ValueType::BoolVal)) {
+		bUseOnlyTeleseismicStations = (*com)["UseOnlyTeleseismicStations"]
+				.ToBool();
+
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CWeb::genSiteFilters: bUseOnlyTeleseismicStations is "
+						+ std::to_string(bUseOnlyTeleseismicStations) + ".");
+	}
+
 	return (true);
 }
 
@@ -1232,25 +1250,40 @@ bool CWeb::isSiteAllowed(std::shared_ptr<CSite> site) {
 	}
 
 	// If we have do not have a site and/or network filter, just add it
-	if ((vNetFilter.size() == 0) && (vSitesFilter.size() == 0)) {
+	if ((vNetFilter.size() == 0) && (vSitesFilter.size() == 0)
+			&& (bUseOnlyTeleseismicStations == false)) {
 		return (true);
 	}
+
+	// default to false
+	bool returnFlag = false;
 
 	// if we have a network filter, make sure network is allowed before adding
 	if ((vNetFilter.size() > 0)
 			&& (find(vNetFilter.begin(), vNetFilter.end(), site->getNet())
 					!= vNetFilter.end())) {
-		return (true);
+		returnFlag = true;
 	}
 
 	// if we have a site filter, make sure site is allowed before adding
 	if ((vSitesFilter.size() > 0)
 			&& (find(vSitesFilter.begin(), vSitesFilter.end(), site->getScnl())
 					!= vSitesFilter.end())) {
-		return (true);
+		returnFlag = true;
 	}
 
-	return (false);
+	// if we're only using teleseismic stations, make sure site is allowed
+	// before adding
+	if (bUseOnlyTeleseismicStations == true) {
+		// is this site used for teleseismic
+		if (site->getUseForTele() == true) {
+			returnFlag = true;
+		} else {
+			returnFlag = false;
+		}
+	}
+
+	return (returnFlag);
 }
 
 // ---------------------------------------------------------genSiteList
@@ -1956,6 +1989,11 @@ const std::shared_ptr<traveltime::CTravelTime>& CWeb::getTrv2() const {
 int CWeb::getVNetFilterSize() const {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 	return (vNetFilter.size());
+}
+
+bool CWeb::getUseOnlyTeleseismicStations() const {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	return (bUseOnlyTeleseismicStations);
 }
 
 int CWeb::getVSitesFilterSize() const {
