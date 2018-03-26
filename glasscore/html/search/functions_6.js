@@ -121,6 +121,7 @@ var searchData=
   ['getupdate',['getUpdate',['../classglasscore_1_1CWeb.html#a25ea996e97c7ce00f902fb984cd29ca9',1,'glasscore::CWeb']]],
   ['getuse',['getUse',['../classglasscore_1_1CSite.html#a34f61957162354f733a4f0a903204223',1,'glasscore::CSite']]],
   ['getusefortele',['getUseForTele',['../classglasscore_1_1CSite.html#a2d8320d8803481065181734a43936262',1,'glasscore::CSite']]],
+  ['getuseonlyteleseismicstations',['getUseOnlyTeleseismicStations',['../classglasscore_1_1CWeb.html#a0ebcc8d7dcdcdb87284c05e67ddc210b',1,'glasscore::CWeb']]],
   ['getvcorrelationsize',['getVCorrelationSize',['../classglasscore_1_1CCorrelationList.html#a92f78b1e1870d9e61a375bd08cb6aaa9',1,'glasscore::CCorrelationList']]],
   ['getvcorrsize',['getVCorrSize',['../classglasscore_1_1CHypo.html#aeacd6b9ddd6a30fde262ca09f4f05c4d',1,'glasscore::CHypo']]],
   ['getvhyposize',['getVHypoSize',['../classglasscore_1_1CHypoList.html#a98f126bca5440900ab2b1dc4aed62e88',1,'glasscore::CHypoList']]],

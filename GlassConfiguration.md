@@ -93,7 +93,7 @@ performance tuning.
 pick a duplicate of an existing pick from the same station.
 * **NumNucleationThreads** - The number of nucleation/detection threads to run
 in glass. This value should always be at least one. The upper limit depends
-on local machine capabilities. This value is used for computational performance 
+on local machine capabilities. This value is used for computational performance
 tuning.
 * **NumHypoThreads** - The number of hypocenter location threads to run in
 glass.  In general this value should be equal to **NumNucleationThreads** to
@@ -116,7 +116,8 @@ the nucleation of an event. This value can be overridden in a detection grid
 * **sdAssociate** - The standard deviation cutoff used for associating a pick
 with a hypocenter.
 * **expAffinity** - The exponential factor used when calculating the affinity of
-a pick with a hypocenter.
+a pick with a hypocenter. **This value has little effect and likely does not need
+to be changed.**
 * **avgDelta** - The average station distance in degrees.  Used as the defining
 value for a taper compensate for station density.
 * **avgSigma** - The exponent of the gaussian weighting kernel in degrees.  It
@@ -174,16 +175,23 @@ nucleation in a grid to be successful.  Overrides the default **Nucleate** in
 Nucleation Parameters
 * **Detect** - The number of closest stations to each detection node to use in
 a grid.
-* **NucleationPhases** - The one or two phases to use for nucleation in a grid
+* **NucleationPhases** - The one or two phases to use for nucleation in a grid,
+if not present, the grid will use the DefaultNucleationPhase
 	* **Phase1** - The primary nucleation phase for a grid
 		* **PhaseName** - The name of the primary nucleation phase
 		* **TravFile** - The path to the travel-time lookup file for the primary
     nucleation phase.
-	* **Phase2** - The optional secondary nucleation phase for a grid
+	* **Phase2** - The optional secondary nucleation phase for a grid, generally
+  only used in regional and local grids.
 		* **PhaseName** - The name of the secondary nucleation phase
 		* **TravFile** - The path to the travel-time lookup file for the secondary
     nucleation phase.
 * **Nets** - A list of network codes to filter the stations available to a grid.
+* **Sites** - A list of SCNL codes to filter the stations available to a grid,
+generally used only in very small local grids.
+* **UseOnlyTeleseismicStations** - A flag indicating that the grid should only
+use stations flagged as "UseForTeleseismic" in the station list, generally used
+only in global grids.
 * **Z** - The list of depth layers for a grid
 * **Resolution** - The desired inter-node resolution (or spacing) for a grid.
 * **SaveGrid** - A flag indicating whether to save the grid node locations to a
@@ -211,13 +219,14 @@ interest, with the provided depth layers.
   		}
 	},
 	"Nets": ["OK", "US", "N4"],
+  "UseOnlyTeleseismicStations": false,
 	"Lat": 36.0,
 	"Lon": -97.5,
-	"Z": [ 10.0 ],
+	"Z": [ 10.0, 30.0 ],
 	"Resolution": 25.0,
 	"Rows": 51,
 	"Cols": 51,
-	"SaveGrid":true
+	"SaveGrid": true
 }
 ```
 ### Parameters
@@ -253,8 +262,9 @@ detection nodes at the provided depth layers.
 	},
 	"Nets": ["IU", "US", "II", "CU", "G", "GE", "IM", "IC", "GT", "C", "AU", "MX",
     "AT"],
+  "UseOnlyTeleseismicStations": true,
 	"Z": [10.0, 30.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 750.0],
 	"Resolution": 100.0,
-	"SaveGrid":false
+	"SaveGrid": false
 }
 ```
