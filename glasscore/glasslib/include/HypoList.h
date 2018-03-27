@@ -274,8 +274,16 @@ class CHypoList {
 	 */
 	bool reqHypo(std::shared_ptr<json::Object> com);
 
-	/** \brief Merge event **/
-	// bool merge(std::shared_ptr<CHypo> hyp);
+	/** \brief Try to merge events close in space time
+	 *
+	 * 	Tries to created a new event from picks of two nearby events
+	 * 	If it can merge, and the resultant stack value is high enough
+	 * 	then it creates a new event and cancels the two merged events
+	 *
+	 */
+	bool mergeCloseEvents(std::shared_ptr<CHypo> hyp);
+
+
 	/**
 	 * \brief check to see if each thread is still functional
 	 *

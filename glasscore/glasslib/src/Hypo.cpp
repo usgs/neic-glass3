@@ -250,15 +250,14 @@ void CHypo::addPick(std::shared_ptr<CPick> pck) {
 	// for each pick in the vector
 	for (auto q : vPick) {
 		// see if we have this same pick
-		// NOTE: this only checks by ID, need to improve this to
-		// an ID/Source check
 		if (q->getPid() == pck->getPid()) {
-			char sLog[1024];
-			snprintf(sLog, sizeof(sLog), "CHypo::addPick: ** Duplicate pick %s",
-						pck->getSite()->getScnl().c_str());
-			glassutil::CLogit::log(sLog);
+			// char sLog[1024];
+			// snprintf(sLog, sizeof(sLog), "CHypo::addPick: ** Duplicate pick %s %s",
+			// 		 sPid.c_str(), pck->getSite()->getScnl().c_str());
+			// glassutil::CLogit::log(sLog);
 
-			// NOTE: shouldn't we not add this duplicate pick?
+			// Don't add this duplicate pick?
+			return;
 		}
 	}
 
@@ -1068,8 +1067,8 @@ bool CHypo::prune() {
 
 		// Trim whiskers
 		// compute delta between site and hypo
+		// THIS NEEDS TO BE CONVERTER DO DEG BUT NEED TO TEST LATER - WY
 		double delta = geo.delta(&pck->getSite()->getGeo());
-
 		// check if delta is beyond distance limit
 		if (delta > dCut) {
 			snprintf(
@@ -2769,6 +2768,12 @@ int CHypo::getVPickSize() const {
 	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
 	return (vPick.size());
 }
+
+std::vector<std::shared_ptr<CPick>> CHypo::getVPick() const {
+	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
+	return (vPick);
+}
+
 int CHypo::getVCorrSize() const {
 	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
 	return (vCorr.size());
@@ -2776,6 +2781,21 @@ int CHypo::getVCorrSize() const {
 
 double CHypo::getTCreate() const {
 	return (tCreate);
+}
+
+std::shared_ptr<traveltime::CTravelTime> CHypo::getTrv1() const {
+	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
+	return (pTrv1);
+}
+
+std::shared_ptr<traveltime::CTravelTime> CHypo::getTrv2() const {
+	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
+	return (pTrv2);
+}
+
+std::shared_ptr<traveltime::CTTT> CHypo::getTTT() const {
+	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
+	return (pTTT);
 }
 
 int CHypo::getReportCount() const {

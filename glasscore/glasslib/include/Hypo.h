@@ -748,6 +748,12 @@ class CHypo {
 	int getVPickSize() const;
 
 	/**
+	 * \brief Pick vector getter
+	 * \return the pick vector
+	 */
+	std::vector<std::shared_ptr<CPick>> getVPick() const;
+
+	/**
 	 * \brief Correlation vector size getter
 	 * \return the correlation vector size
 	 */
@@ -758,6 +764,24 @@ class CHypo {
 	 * \return the creation time
 	 */
 	double getTCreate() const;
+
+	/**
+	 * \brief get pTrv1
+	 * \return pTrv1
+	 */
+	std::shared_ptr<traveltime::CTravelTime> getTrv1() const;
+
+	/**
+	 * \brief get pTrv2
+	 * \return pTrv2
+	 */
+	std::shared_ptr<traveltime::CTravelTime> getTrv2() const;
+
+	/**
+	 * \brief get TTT
+	 * \return pTTT
+	 */
+	std::shared_ptr<traveltime::CTTT> getTTT() const;
 
 	/**
 	 * \brief Report count getter
