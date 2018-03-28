@@ -505,20 +505,26 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
-	if (hypo->getVPickSize() < hypo->getCut()) {
-		return (false);
-	}
+	char sLog[1024];  // logging string
+	double distanceCut = 2.0;  // distance difference to try merging events
+							   // in degrees
+	double timeCut = 60.;  // origin time difference to merge events
+	double delta;  // this holds delta distance
 
-	char sLog[1024];
-	double distanceCut = 1.5;
-	double timeCut = 45.;
-	double delta;
+	// this events pick list
+	auto hVPick = hypo->getVPick();
+
+	// set up a geo object for this hypo
 	glassutil::CGeo geo;
 	geo.setGeographic(hypo->getLat(), hypo->getLon(), 6371.0);
 
+	// this will hold the hypo are comparing to
 	std::shared_ptr<CHypo> hypo2;
+
+	// get the index of the first hypo in the list
 	int itHypo = indexHypo(hypo->getTOrg());
 
+	// Get the index of the first possible match based on time
 	int it1 = indexHypo(hypo->getTOrg() - timeCut);
 
 	// check to see the index indicates that the time is before the
@@ -528,47 +534,44 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		it1 = 0;
 	}
 
+	// get the index of the second possible match
 	int it2 = indexHypo(hypo->getTOrg() + timeCut);
-
-	std::string pidmax;
 
 	// for each hypo in the list within the
 	// time range
 	for (int it = it1; it <= it2; it++) {
+		// check to make sure the index is not the same as this hypo
 		if (it != itHypo) {
 			// get this hypo id
 			std::string pid = vHypo[it].second;
 			// get this hypo based on the id
 			hypo2 = mHypo[pid];
 
-			// hypo2->lockForProcessing();
+			// make sure this hypo is resolved and get data
+			// wyeck - Really we should lock this for best practice
 			resolve(hypo2);
 			auto h2VPick = hypo2->getVPick();
 			hypo2->localize();
 
-			// hypo2->unlockAfterProcessing();
+			// check to make sure that the hypo2 has a stack
+			if (hypo2->getBayes <= 0.000) {
+				return;
+			}
 
 			// check time difference
 			double diff = hypo->getTOrg() - hypo2->getTOrg();
-			if(diff < 0.) {
+			if (diff < 0.) {
 				diff = diff * -1.;
 			}
-
-			if(diff < timeCut && pid != hypo->getPid()) {
+			if (diff < timeCut && pid != hypo->getPid()) {
 				glassutil::CGeo geo2;
 				geo2.setGeographic(hypo2->getLat(), hypo2->getLon(), 6371.0);
-
-				// resolve picks and relocalize two events
-
-
-				resolve(hypo);
-				auto hVPick = hypo->getVPick();
-				hypo->localize();
 
 				// check distance between events
 				delta = geo.delta(&geo2) / DEG2RAD;
 
 				if (delta < distanceCut) {
+					// Log info on two events
 					snprintf(
 							sLog, sizeof(sLog),
 							"CHypoList::merge: Testing merger of %s and %s\n",
@@ -580,25 +583,25 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 							"CHypoList::merge: %s: %.3f, %.3f, %.3f, %.3f\n",
 							hypo->getPid().c_str(), hypo->getLat(),
 							hypo->getLon(), hypo->getZ(), hypo->getTOrg());
-							glassutil::CLogit::log(sLog);
+					glassutil::CLogit::log(sLog);
 
 					snprintf(
 							sLog, sizeof(sLog),
 							"CHypoList::merge: %s: %.3f, %.3f, %.3f, %.3f\n",
 							hypo2->getPid().c_str(), hypo2->getLat(),
 							hypo2->getLon(), hypo2->getZ(), hypo2->getTOrg());
-							glassutil::CLogit::log(sLog);
+					glassutil::CLogit::log(sLog);
 
+					// create a new merged event hypo3
 					std::shared_ptr<CHypo> hypo3 =
 							std::make_shared < CHypo
 									> ((hypo2->getLat() + hypo->getLat()) / 2., (hypo2
 											->getLon() + hypo->getLon()) / 2., (hypo2
 											->getZ() + hypo->getZ()) / 2., (hypo2
-											->getTOrg() + hypo->getTOrg()) / 2., glassutil::CPid::pid(),
-											 "Merged Hypo", 0.0, hypo
+											->getTOrg() + hypo->getTOrg()) / 2., glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
 											->getThresh(), hypo->getCut(), hypo
 											->getTrv1(), hypo->getTrv2(), pGlass
-											->getTTT(), distanceCut*111.12);
+											->getTTT(), distanceCut * 111.12);
 
 					// set hypo glass pointer and such
 					hypo3->setGlass(pGlass);
@@ -609,19 +612,15 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					// add all picks for other two events
 
 					for (auto pick : hVPick) {
-						// they're not associated yet, just potentially
 						hypo3->addPick(pick);
 					}
 
-
 					for (auto pick : h2VPick) {
-						// they're not associated yet, just potentially
 						hypo3->addPick(pick);
 					}
 
 					// First localization attempt after nucleation
 					// make 3 passes
-
 					hypo3->anneal(10000, (distanceCut / 2.) * 111.1,
 									(distanceCut / 10.) * 111.1, (timeCut / 2.),
 									.1);
@@ -631,15 +630,16 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									.1);
 
 					hypo3->anneal(10000, (distanceCut / 2.) * 111.1,
-									(distanceCut / 100.) * 111.1, (timeCut / 2.),
-									.1);
+									(distanceCut / 100.) * 111.1,
+									(timeCut / 2.), .1);
 
+					// try to grab more picks
 					if (pGlass->getPickList()->scavenge(hypo3)) {
 						// relocate the hypo
 						hypo3->localize();
 					}
 
-					// Remove picks that no longer fit hypo's association criteria
+					// Remove picks that no longer fit
 					if (hypo3->prune()) {
 						// relocate the hypo
 						hypo3->localize();
@@ -647,25 +647,30 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					int npick = hypo3->getVPickSize();
 
-					snprintf(sLog, sizeof(sLog),
-								"CHypoList::merge: -- data new event %s which"
-								" associated %d picks of %d potential picks/n"
-								"CHypoList::merge:    New Bayes %.3f, old bayes %.3f and %.3f",
-								hypo3->getPid().c_str(), npick,
-								(hypo->getVPickSize() + hypo2->getVPickSize()),
-								hypo3->getBayes(), hypo->getBayes(),
-								hypo2->getBayes());
+					snprintf(
+							sLog,
+							sizeof(sLog),
+							"CHypoList::merge: -- data new event %s which"
+							" associated %d picks of %d potential picks/n"
+							"CHypoList::merge:    New Bayes %.3f, old bayes"
+							"%.3f and %.3f",
+							hypo3->getPid().c_str(), npick,
+							(hypo->getVPickSize() + hypo2->getVPickSize()),
+							hypo3->getBayes(), hypo->getBayes(),
+							hypo2->getBayes());
 
 					glassutil::CLogit::log(sLog);
 
-					// check that bayestack is significantly larger
+					// check that bayestack is at leat 70% of sum of others
 					if (hypo3->getBayes()
 							> (.7 * (hypo->getBayes() + hypo2->getBayes()))) {
 						snprintf(
-								sLog, sizeof(sLog),
+								sLog,
+								sizeof(sLog),
 								"CHypoList::merge: -- keeping new event %s which"
 								" associated %d picks of %d potential picks/n"
-								"CHypoList::merge:     New Bayes %.3f, old bayes %.3f and %.3f",
+								"CHypoList::merge:     "
+								"New Bayes %.3f, old bayes %.3f and %.3f",
 								hypo3->getPid().c_str(), npick,
 								(hypo->getVPickSize() + hypo2->getVPickSize()),
 								hypo3->getBayes(), hypo->getBayes(),
@@ -684,6 +689,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						glassutil::CLogit::Out(sLog);
 						remHypo(hypo2);
 
+						// add merged hypo to hypolist
+						pGlass->getHypoList()->addHypo(hypo3);
+
 						return (true);
 					} else {
 						// else delete potential new events
@@ -696,7 +704,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								hypo3->getPid().c_str(),
 								npick,
 								(static_cast<int>(hypo->getVPickSize())
-										+ static_cast<int>(hypo2->getVPickSize())));
+								    + static_cast<int>(hypo2->getVPickSize())));
 						glassutil::CLogit::log(sLog);
 					}
 				}
@@ -1205,11 +1213,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 			std::chrono::duration_cast<std::chrono::duration<double>>(
 					tPruneEndTime - tResolveEndTime).count();
 
-	// check if proximal event can be merged.
-	if (mergeCloseEvents(hyp)) {
-		return (false);
-	}
-
 	// check to see if this hypo is viable.
 	if (hyp->cancel()) {
 		std::chrono::high_resolution_clock::time_point tCancelEndTime =
@@ -1245,6 +1248,11 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 						+ std::to_string(evolveTime));
 
 		// return false since the hypo was canceled.
+		return (false);
+	}
+
+	// check if proximal event can be merged.
+	if (mergeCloseEvents(hyp)) {
 		return (false);
 	}
 
