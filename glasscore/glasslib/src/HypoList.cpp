@@ -554,8 +554,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			hypo2->localize();
 
 			// check to make sure that the hypo2 has a stack
-			if (hypo2->getBayes <= 0.000) {
-				return;
+			if (hypo2->getBayes() <= 0.000) {
+				continue;
 			}
 
 			// check time difference
@@ -598,7 +598,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									> ((hypo2->getLat() + hypo->getLat()) / 2., (hypo2
 											->getLon() + hypo->getLon()) / 2., (hypo2
 											->getZ() + hypo->getZ()) / 2., (hypo2
-											->getTOrg() + hypo->getTOrg()) / 2., glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
+											->getTOrg() + hypo->getTOrg()) / 2.,
+											glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
 											->getThresh(), hypo->getCut(), hypo
 											->getTrv1(), hypo->getTrv2(), pGlass
 											->getTTT(), distanceCut * 111.12);
