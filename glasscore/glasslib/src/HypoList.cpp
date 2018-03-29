@@ -489,6 +489,25 @@ std::shared_ptr<CHypo> CHypoList::findHypo(double t1, double t2) {
 	return (NULL);
 }
 
+
+// --------------------------------------------------------eatEvents
+// bool CHypoList::eatEvents(std::shared_ptr<CHypo> hypo) {
+//	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+
+//	if (pGlass == NULL) {
+//			glassutil::CLogit::log(glassutil::log_level::error,
+//									"CHypoList::eventEater: NULL pGlass.");
+//			return (false);
+//		}
+
+		// are there any hypos to associate with?
+//		if (vHypo.size() < 1) {
+			// nope
+//			return (false);
+//		}
+
+// }
+
 // --------------------------------------------------mergeCloseEvents
 bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
