@@ -413,7 +413,7 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 
 	// use observed travel time, travel times to site, and a dT/dKm of
 	// 0.1 s/km to calculate distance residuals
-	double dRes1 = -1;
+	double tRes1 = -1;
 	if (travelTime1 > 0) {
 		// calculate time residual
 		double tRes1 = tObservedTT - travelTime1;
@@ -435,7 +435,7 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 	// compute significances using residuals
 	// pick sigma is defined as resolution / 5.0 * 2.0
 	// should trigger be a loser cutoff than location cutoff
-	double dSig1 = 0;
+	double tSig1 = 0;
 	if (dRes1 > 0) {
 		dSig1 = pWeb->getGlass()->sig(tRes1, dResolution / 2.5);
 	}
