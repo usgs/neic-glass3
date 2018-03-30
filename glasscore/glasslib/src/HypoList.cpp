@@ -524,10 +524,16 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
+	// Make sure hypo is in good shape
+	if (hypo->getBayes() < hypo->getThresh() || hypo->getVPickSize()
+			< hypo->getCut() ) {
+		return (false);
+	}
+
 	char sLog[1024];  // logging string
-	double distanceCut = 2.0;  // distance difference to try merging events
+	double distanceCut = 1.5;  // distance difference to try merging events
 							   // in degrees
-	double timeCut = 60.;  // origin time difference to merge events
+	double timeCut = 30.;  // origin time difference to merge events
 	double delta;  // this holds delta distance
 
 	// this events pick list
@@ -573,7 +579,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			hypo2->localize();
 
 			// check to make sure that the hypo2 has a stack
-			if (hypo2->getBayes() <= 0.000) {
+			if (hypo2->getBayes() < hypo2->getThresh() || hypo2->getVPickSize()
+					< hypo2->getCut() ) {
 				continue;
 			}
 
@@ -681,9 +688,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					glassutil::CLogit::log(sLog);
 
-					// check that bayestack is at leat 70% of sum of others
+					// check that bayestack is at least 85% of sum of others
 					if (hypo3->getBayes()
-							> (.7 * (hypo->getBayes() + hypo2->getBayes()))) {
+							> (.85 * (hypo->getBayes() + hypo2->getBayes()))) {
 						snprintf(
 								sLog,
 								sizeof(sLog),

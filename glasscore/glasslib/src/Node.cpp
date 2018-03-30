@@ -436,11 +436,11 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 	// should trigger be a loser cutoff than location cutoff
 	double dSig1 = 0;
 	if (tRes1 > 0) {
-		dSig1 = pWeb->getGlass()->sig(tRes1, dResolution / 2.5);
+		dSig1 = pWeb->getGlass()->sig(tRes1, dResolution);
 	}
 	double dSig2 = 0;
 	if (tRes2 > 0) {
-		dSig2 = pWeb->getGlass()->sig(tRes2, dResolution / 2.5);
+		dSig2 = pWeb->getGlass()->sig(tRes2, dResolution);
 	}
 	// printf("getBestSig %.2f, %.2f, %.2f, %.2f, %.2f\n", tRes1, dSig1, tRes2,
 	//	   dSig2, dResolution);
