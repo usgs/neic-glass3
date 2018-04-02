@@ -1192,7 +1192,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 		return (false);
 	}
 
-
 	// Search for any associable picks that match hypo in the pick list
 	// NOTE: This uses the hard coded 2400 second scavenge duration default
 	if (pGlass->getPickList()->scavenge(hyp)) {

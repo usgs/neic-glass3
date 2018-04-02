@@ -954,7 +954,7 @@ double CHypo::affinity(std::shared_ptr<CPick> pck) {
 	// compute a weight factor based on residual
 	// weight goes from 0.25 at a residual of sdassoc to 1.
 	glassutil::CTaper resWeight;
-	resWeight = glassutil::CTaper(-1., -1., 0.0, sdassoc);
+	resWeight = glassutil::CTaper(-1., -1., .75, sdassoc);
 	double resWeightFactor = (resWeight.Val(tRes) * 0.75) + 0.25;
 
 	// now compute the gap factor using a taper
