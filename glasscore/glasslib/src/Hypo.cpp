@@ -2430,7 +2430,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 	// for each pick in this hypo
 	int nPck = vPick.size();
 
-	int addCount = 0;
+	int keptCount = 0;
 	int removeCount = 0;
 
 	// NOTE: Why are we moving backwards through the list?
@@ -2492,7 +2492,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;
-			addCount++;
+			keptCount++;
 		} else {
 			// this pick has higher affinity with the original hypo
 			// remove pick from provided hypo
@@ -2506,7 +2506,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CHypo::resolve " + sPid + " added:" + std::to_string(addCount)
+			"CHypo::resolve " + sPid + " kept:" + std::to_string(keptCount)
 					+ " removed:" + std::to_string(removeCount));
 
 	// handle correlations

@@ -1184,6 +1184,15 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 			std::chrono::duration<double>>(tLocalizeEndTime - tEvolveStartTime)
 			.count();
 
+
+	// check if proximal event can be merged.
+	// Do this first before resolve, otherwise similar events
+	// can steal each others picks and cancel each other
+	if (mergeCloseEvents(hyp)) {
+		return (false);
+	}
+
+
 	// Search for any associable picks that match hypo in the pick list
 	// NOTE: This uses the hard coded 2400 second scavenge duration default
 	if (pGlass->getPickList()->scavenge(hyp)) {
@@ -1275,11 +1284,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 						+ std::to_string(evolveTime));
 
 		// return false since the hypo was canceled.
-		return (false);
-	}
-
-	// check if proximal event can be merged.
-	if (mergeCloseEvents(hyp)) {
 		return (false);
 	}
 
