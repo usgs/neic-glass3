@@ -951,11 +951,16 @@ double CHypo::affinity(std::shared_ptr<CPick> pck) {
 		tRes = -tRes;
 	}
 
+
+	// WLY - I removed this because it was leading to small
+	// events trading picks and canceling....
+	// stack accounts for residual anyways
 	// compute a weight factor based on residual
 	// weight goes from 0.25 at a residual of sdassoc to 1.
-	glassutil::CTaper resWeight;
-	resWeight = glassutil::CTaper(-1., -1., .75, sdassoc);
-	double resWeightFactor = (resWeight.Val(tRes) * 0.75) + 0.25;
+	// glassutil::CTaper resWeight;
+	// resWeight = glassutil::CTaper(-1., -1., sdassoc/2., sdassoc);
+	// double resWeightFactor = (resWeight.Val(tRes) * 0.75) + 0.25;
+
 
 	// now compute the gap factor using a taper
 	glassutil::CTaper gap;
@@ -965,7 +970,7 @@ double CHypo::affinity(std::shared_ptr<CPick> pck) {
 	// compute the affinity of this pick to this hypo by multiplying
 	// the gap factor to the hypocenter's current baysian statistic to
 	// the affinity power factor
-	double aff = resWeightFactor * gapfac * pow(dBayes, expaff);
+	double aff = gapfac * pow(dBayes, expaff);
 
 	// return the affinity
 	return (aff);
