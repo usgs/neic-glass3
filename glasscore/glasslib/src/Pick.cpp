@@ -384,24 +384,33 @@ bool CPick::nucleate() {
 	}
 
 	// get hypo that pick associated with
+	pickMutex.lock();
 	std::shared_ptr<CHypo> assocHypo = getHypo();
+	double tOrg = 0;
+	double dLat = 0;
+	double dLon = 0;
+	double dZ = 0;
+	if (assocHypo != NULL) {
+		 tOrg = assocHypo->getTOrg();
+		 dLat = assocHypo->getLat();
+		 dLon = assocHypo->getLon();
+		 dZ = assocHypo->getZ();
+	}
+	pickMutex.unlock();
 
 	for (const auto &trigger : vTrigger) {
 		if (trigger->getWeb() == NULL) {
 			continue;
 		}
 
-		if (assocHypo != NULL) {
-			glassutil::log_level::debug, "CPick::nucleate: Checking for proximal "
-					"hypo ");
-			double otDiff = assocHypo->getTOrg() - trigger->getTOrg();
+		if (tOrg != 0) {
+			double otDiff = tOrg - trigger->getTOrg();
 			if (otDiff < 0.) {
 				otDiff = otDiff * -1.;
 			}
 			if (otDiff < trigger->getResolution() / 4.0) {
 				glassutil::CGeo geoHypo;
-				geoHypo.setGeographic(assocHypo->getLat(), assocHypo->getLon(),
-										6371.0 - assocHypo->getZ());
+				geoHypo.setGeographic(dLat, dLon, 6371.0 - dZ);
 				glassutil::CGeo * geoTrig;
 				geoTrig->setGeographic(trigger->getLat(), trigger->getLon(),
 										6371.0 - trigger->getZ());
@@ -417,8 +426,6 @@ bool CPick::nucleate() {
 				}
 
 			}
-
-			glassutil::CGeo hypoGeo;
 		}
 
 		// nucleate at the node to build the
