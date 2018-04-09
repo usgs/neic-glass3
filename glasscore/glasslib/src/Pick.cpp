@@ -393,8 +393,7 @@ bool CPick::nucleate() {
 
 		if (assocHypo != NULL) {
 			glassutil::log_level::debug, "CPick::nucleate: Checking for proximal "
-					"hypo "
-			);
+					"hypo ");
 			double otDiff = assocHypo->getTOrg() - trigger->getTOrg();
 			if (otDiff < 0.) {
 				otDiff = otDiff * -1.;
