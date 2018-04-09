@@ -351,13 +351,13 @@ void CPick::setAss(std::string ass) {
 bool CPick::nucleate(bool associated) {
 	// get the site shared_ptr
 	std::shared_ptr<CSite> pickSite = wpSite.lock();
-
+	/*
 	if(associated) {
 		glassutil::CLogit::log(glassutil::log_level::error,
-								"CPick::nucleate: Already Assoicated.");
+								"CPick::nucleate: Already Associated.");
 		return (false);
 	}
-
+	*/
 	// get CGlass pointer from site
 	CGlass *pGlass = pickSite->getGlass();
 
@@ -388,7 +388,7 @@ bool CPick::nucleate(bool associated) {
 
 		return (false);
 	}
-
+	/*
 	double atOrg = 0;
 	double adLat = 0;
 	double adLon = 0;
@@ -417,12 +417,12 @@ bool CPick::nucleate(bool associated) {
 						+ "associated with an event with stack twice threshold");
 		return (false);
 	}
-
+   */
 	for (const auto &trigger : vTrigger) {
 		if (trigger->getWeb() == NULL) {
 			continue;
 		}
-
+		/*
 		// check if trigger is near hypo that is associated with picks ski[
 		if (atOrg != 0) {
 			glassutil::CGeo geoHypo;
@@ -442,7 +442,7 @@ bool CPick::nucleate(bool associated) {
 			}
 
 		}
-
+		*/
 		// create the hypo using the node
 		std::shared_ptr<CHypo> hypo = std::make_shared < CHypo
 				> (trigger, pGlass->getTTT());
@@ -471,14 +471,14 @@ bool CPick::nucleate(bool associated) {
 
 		// First localization attempt after nucleation
 		// make 3 passes
-		for (int ipass = 0; ipass < 1; ipass++) {
+		for (int ipass = 0; ipass < 3; ipass++) {
 			// get an initial location via synthetic annealing,
 			// which also prunes out any poorly fitting picks
 			// the search is based on the grid resolution, and the how
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
-			double bayes = hypo->anneal(15000, trigger->getResolution() / 2.,
+			double bayes = hypo->anneal(10000, trigger->getResolution() / 2.,
 										trigger->getResolution() / 10.,
 										trigger->getResolution() / 10.0, .1);
 
