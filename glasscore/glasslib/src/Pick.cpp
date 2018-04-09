@@ -348,9 +348,15 @@ void CPick::setAss(std::string ass) {
 }
 
 // ---------------------------------------------------------Nucleate
-bool CPick::nucleate() {
+bool CPick::nucleate(bool associated) {
 	// get the site shared_ptr
 	std::shared_ptr<CSite> pickSite = wpSite.lock();
+
+	if(associated) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CPick::nucleate: Already Assoicated.");
+		return (false);
+	}
 
 	// get CGlass pointer from site
 	CGlass *pGlass = pickSite->getGlass();
@@ -383,61 +389,59 @@ bool CPick::nucleate() {
 		return (false);
 	}
 
-	// get hypo that pick associated with
-	// pickMutex.lock();
+	double atOrg = 0;
+	double adLat = 0;
+	double adLon = 0;
+	double adZ = 0;
+	double adBayesRatio = 0;
+
 	std::shared_ptr<CHypo> assocHypo = getHypo();
-	double tOrg = 0;
-	double dLat = 0;
-	double dLon = 0;
-	double dZ = 0;
-	if (assocHypo != NULL) {
-		 tOrg = assocHypo->getTOrg();
-		 dLat = assocHypo->getLat();
-		 dLon = assocHypo->getLon();
-		 dZ = assocHypo->getZ();
+
+	if (associated) {
+		// Check for null pointer
+		if (assocHypo) {
+			atOrg = assocHypo->getTOrg();
+			adLat = assocHypo->getLat();
+			adLon = assocHypo->getLon();
+			adZ = assocHypo->getZ();
+			adBayesRatio = (assocHypo->getBayes()) / (assocHypo->getThresh());
+		}
 	}
-	// pickMutex.unlock();
+
+	if (adBayesRatio > 2.0) {
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CPick::nucleate: SKIPTRG due to large event association "
+						+ pickSite->getScnl() + "; tPick:" + pt + "; idPick:"
+						+ std::to_string(idPick)
+						+ "associated with an event with stack twice threshold");
+		return (false);
+	}
 
 	for (const auto &trigger : vTrigger) {
 		if (trigger->getWeb() == NULL) {
 			continue;
 		}
 
-		if (tOrg != 0) {
-			double otDiff = tOrg - trigger->getTOrg();
-			if (otDiff < 0.) {
-				otDiff = otDiff * -1.;
+		// check if trigger is near hypo that is associated with picks ski[
+		if (atOrg != 0) {
+			glassutil::CGeo geoHypo;
+			geoHypo.setGeographic(adLat, adLon, 6371.0 - adZ);
+			glassutil::CGeo * geoTrig;
+			geoTrig->setGeographic(trigger->getLat(), trigger->getLon(),
+									6371.0 - trigger->getZ());
+			if ((geoHypo.delta(geoTrig) / DEG2RAD) * 111.12
+					< trigger->getResolution()) {
+				glassutil::CLogit::log(
+						glassutil::log_level::debug,
+						"CPick::nucleate: SKIPTRG with proximal hypo:"
+								+ pickSite->getScnl() + "; tPick:" + pt
+								+ "; idPick:" + std::to_string(idPick)
+								+ " already associated");
+				continue;
 			}
-			if (otDiff < trigger->getResolution() / 4.0) {
-				glassutil::CGeo geoHypo;
-				geoHypo.setGeographic(dLat, dLon, 6371.0 - dZ);
-				glassutil::CGeo * geoTrig;
-				geoTrig->setGeographic(trigger->getLat(), trigger->getLon(),
-										6371.0 - trigger->getZ());
-				if ((geoHypo.delta(geoTrig) / DEG2RAD) * 111.12
-						< trigger->getResolution()) {
-					glassutil::CLogit::log(
-							glassutil::log_level::debug,
-							"CPick::nucleate: SKIPTRG with proximal hypo:"
-									+ pickSite->getScnl() + "; tPick:" + pt
-									+ "; idPick:" + std::to_string(idPick)
-									+ " already associated");
-					continue;
-				}
 
-			}
 		}
-
-		// nucleate at the node to build the
-		// list of picks that support this node
-		// tOrg was set during nucleation pass
-		// NOTE: this did not used to check the nucleate return here
-		// it seems that this should improve computational performance
-		// but MIGHT have unintended consequences.
-		// if (!node->nucleate(node->getTOrg(), true)) {
-		// didn't nucleate anything
-		// continue;
-		// }
 
 		// create the hypo using the node
 		std::shared_ptr<CHypo> hypo = std::make_shared < CHypo

@@ -413,7 +413,22 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		if (q.second == pid) {
 			// erase this hypo
 			vHypo.erase(vHypo.begin() + iq);
+			// Send cancellation message for this hypo if we've sent an event
+				// message
+				if (reportCancel == true) {
+					if (hypo->getEvent()) {
+						// create cancellation message
+						std::shared_ptr<json::Object> cancel = std::make_shared
+								< json::Object > (json::Object());
+						(*cancel)["Cmd"] = "Cancel";
+						(*cancel)["Pid"] = pid;
 
+						// send message
+						if (pGlass) {
+							pGlass->send(cancel);
+						}
+					}
+				}
 			// done
 			break;
 		}
@@ -423,23 +438,6 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	mHypo.erase(pid);
 
 	m_vHypoMutex.unlock();
-
-	// Send cancellation message for this hypo if we've sent an event
-	// message
-	if (reportCancel == true) {
-		if (hypo->getEvent()) {
-			// create cancellation message
-			std::shared_ptr<json::Object> cancel = std::make_shared
-					< json::Object > (json::Object());
-			(*cancel)["Cmd"] = "Cancel";
-			(*cancel)["Pid"] = pid;
-
-			// send message
-			if (pGlass) {
-				pGlass->send(cancel);
-			}
-		}
-	}
 }
 
 // ---------------------------------------------------------findHypo
