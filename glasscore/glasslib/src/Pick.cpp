@@ -382,9 +382,39 @@ bool CPick::nucleate() {
 		return (false);
 	}
 
+	// get hypo that pick associated with
+	std::shared_ptr<CHypo> assocHypo = getHypo();
+
 	for (const auto &trigger : vTrigger) {
 		if (trigger->getWeb() == NULL) {
 			continue;
+		}
+
+		if(assocHypo != NULL) {
+			double otDiff = assocHypo->getTOrg() - trigger->getTOrg();
+			if(otDiff < 0.) {
+				otDiff = otDiff * -1.;
+			}
+			if(otDiff < trigger->getResolution() / 4.0) {
+				glassutil::CGeo geoHypo;
+				geoHypo.setGeographic(assocHypo->getLat(), assocHypo->getLon(),
+								  6371.0 - assocHypo->getZ());
+				glassutil::CGeo * geoTrig;
+				geoTrig->setGeographic(trigger->getLat(), trigger->getLon(),
+								  6371.0 - trigger->getZ());
+				if((geoHypo.delta(geoTrig) / DEG2RAD) * 111.12 <
+						trigger->getResolution()) {
+					glassutil::CLogit::log(
+					glassutil::log_level::debug,
+						"CPick::nucleate: SKIPTRG with proximal hypo:"
+					    + pickSite->getScnl() + "; tPick:" + pt + "; idPick:"
+							+ std::to_string(idPick) + " already associated");
+					continue;
+				}
+
+			}
+
+			glassutil::CGeo hypoGeo;
 		}
 
 		// nucleate at the node to build the
@@ -425,14 +455,14 @@ bool CPick::nucleate() {
 
 		// First localization attempt after nucleation
 		// make 3 passes
-		for (int ipass = 0; ipass < 3; ipass++) {
+		for (int ipass = 0; ipass < 1; ipass++) {
 			// get an initial location via synthetic annealing,
 			// which also prunes out any poorly fitting picks
 			// the search is based on the grid resolution, and the how
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
-			double bayes = hypo->anneal(10000, trigger->getResolution() / 2.,
+			double bayes = hypo->anneal(15000, trigger->getResolution() / 2.,
 										trigger->getResolution() / 10.,
 										trigger->getResolution() / 10.0, .1);
 
