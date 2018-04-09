@@ -384,7 +384,7 @@ bool CPick::nucleate() {
 	}
 
 	// get hypo that pick associated with
-	pickMutex.lock();
+	// pickMutex.lock();
 	std::shared_ptr<CHypo> assocHypo = getHypo();
 	double tOrg = 0;
 	double dLat = 0;
@@ -396,7 +396,7 @@ bool CPick::nucleate() {
 		 dLon = assocHypo->getLon();
 		 dZ = assocHypo->getZ();
 	}
-	pickMutex.unlock();
+	// pickMutex.unlock();
 
 	for (const auto &trigger : vTrigger) {
 		if (trigger->getWeb() == NULL) {
