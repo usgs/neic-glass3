@@ -535,37 +535,25 @@ bool CPick::nucleate(bool associated) {
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit looking at it closer.  Process it using evolve
-		if (pGlass->getHypoList()->evolve(hypo, 1)) {
+		// if (pGlass->getHypoList()->evolve(hypo, 1)) {
 			// the hypo survived evolve,
 			// log the hypo
-			std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
+		std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
 
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
-					"CPick::nucleate: TRG site:" + pickSite->getScnl()
-							+ "; tPick:" + pt + "; idPick:"
-							+ std::to_string(idPick) + "; sPid:" + sPid
-							+ " => web:" + hypo->getWebName() + "; hyp: "
-							+ hypo->getPid() + "; lat:"
-							+ std::to_string(hypo->getLat()) + "; lon:"
-							+ std::to_string(hypo->getLon()) + "; z:"
-							+ std::to_string(hypo->getZ()) + "; tOrg:" + st);
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CPick::nucleate: TRG site:" + pickSite->getScnl()
+						+ "; tPick:" + pt + "; idPick:"
+						+ std::to_string(idPick) + "; sPid:" + sPid
+						+ " => web:" + hypo->getWebName() + "; hyp: "
+						+ hypo->getPid() + "; lat:"
+						+ std::to_string(hypo->getLat()) + "; lon:"
+						+ std::to_string(hypo->getLon()) + "; z:"
+						+ std::to_string(hypo->getZ()) + "; tOrg:" + st);
 
-			// add a link to the hypo for each pick
-			// NOTE: Why is this done? Shouldn't evolve have already
-			// linked the picks?
-			// this hypo isn't added to the list yet, so this
-			/* for (auto q : hypo->vPick) {
-			 // if the pick hasn't been linked
-			 if (q->pHypo == NULL) {
-			 // link it
-			 q->pHypo = hypo;
-			 }
-			 }*/
 
-			// add new hypo to hypo list
-			pGlass->getHypoList()->addHypo(hypo);
-		}
+		pGlass->getHypoList()->addHypo(hypo);
+		// }
 	}
 
 	// done

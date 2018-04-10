@@ -183,6 +183,18 @@ int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 	// get this hypo's id
 	std::string pid = hyp->getPid();
 
+	// don't add a hypo to the queue that isn't in the list
+	m_vHypoMutex.lock();
+	std::shared_ptr<CHypo> existingHypo = mHypo[pid];
+	m_vHypoMutex.unlock();
+
+	if (existingHypo == NULL) {
+		// return the current size of the queue
+		int size = qFifo.size();
+
+		return(size);
+	}
+
 	// is this id already on the queue?
 	if (std::find(qFifo.begin(), qFifo.end(), pid) == qFifo.end()) {
 		// it is not, add it
@@ -1289,11 +1301,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 		return (false);
 	}
 
-	// report if asked
-	// NOTE: why?
-	if (announce == 1) {
-		breport = true;
-	}
 
 	// announce if a correlation has been added to an existing event
 	// NOTE: Is there a better way to do this?
@@ -1306,7 +1313,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp, int announce) {
 	}
 
 	// if we're supposed to report
-	if (breport) {
+	if (breport || hyp->getProcessCount() <= 1) {
 		// if we CAN report
 		if (hyp->reportCheck() == true) {
 			// report

@@ -1661,7 +1661,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 
 		// make sure the pick residual is within the residual limits
 		// NOTE: The residual limit is hard coded
-		if (tResBest > 4.0) {
+		if (tResBest > pGlass->getSdAssociate()) {
 			vkill.push_back(pick);
 		}
 	}
@@ -1674,9 +1674,6 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		// remove the pick from this hypo
 		remPick(pick);
 	}
-
-	// generate weights (for evaluate)
-	weights();
 
 	// return the final bayesian value
 	return (dBayes);
