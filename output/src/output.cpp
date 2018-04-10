@@ -938,7 +938,7 @@ bool output::isDataPublished(std::shared_ptr<json::Object> data,
 		int pubVersion = pubLog[i].ToInt();
 
 		// pub version less than 1 means not published
-		if (pubVersion <= 0) {
+		if (pubVersion < 1) {
 			continue;
 		}
 
