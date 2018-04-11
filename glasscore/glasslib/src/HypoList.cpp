@@ -189,7 +189,7 @@ int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 	std::string pid = hyp->getPid();
 
 	// don't add a hypo to the queue that isn't in the list
-	m_vHypoMutex.lock();
+/*	m_vHypoMutex.lock();
 	std::shared_ptr<CHypo> existingHypo = mHypo[pid];
 	m_vHypoMutex.unlock();
 
@@ -199,7 +199,7 @@ int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 
 		return(size);
 	}
-
+*/
 	// is this id already on the queue?
 	if (std::find(qFifo.begin(), qFifo.end(), pid) == qFifo.end()) {
 		// it is not, add it
