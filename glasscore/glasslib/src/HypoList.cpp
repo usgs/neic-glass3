@@ -853,7 +853,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		return (false);
 	}
 
-	std::string pidmax;
+	std::shared_ptr<CHypo> bestHyp;
 	double sdassoc = pGlass->getSdAssociate();
 
 	// for each hypo in the list within the time range
@@ -867,8 +867,8 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 				// add to the list of hypos this pick can associate with
 				viper.push_back(hyp);
 
-				// remember this id for later
-				pidmax = hyp->getPid();
+				// remember this hypo
+				bestHyp = hyp;
 			}
 		}
 	}
@@ -885,9 +885,6 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 
 	// there was only one hypo that the pick associated with
 	if (viper.size() == 1) {
-		// get the lucky hypo
-		std::shared_ptr<CHypo> hyp = mHypo[pidmax];
-
 		// log
 		/*
 		 char sLog[1024];
@@ -901,21 +898,21 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		 */
 
 		// link the pick to the hypo
-		pk->addHypo(hyp, "", true);
+		pk->addHypo(bestHyp, "", true);
 
 		// link the hypo to the pick
-		hyp->addPick(pk);
+		bestHyp->addPick(pk);
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::associate (pick) sPid:" + hyp->getPid()
+				"CHypoList::associate (pick) sPid:" + bestHyp->getPid()
 						+ " resetting cycle count due to new association");
 
 		// reset the cycle count
-		hyp->setCycle(0);
+		bestHyp->setCycle(0);
 
 		// add to the processing queue
-		pushFifo(hyp);
+		pushFifo(bestHyp);
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
