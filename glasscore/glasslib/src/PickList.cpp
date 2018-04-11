@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <ctime>
+#include <random>
 #include "Date.h"
 #include "Pid.h"
 #include "Site.h"
@@ -32,6 +33,10 @@ bool sortFunc(const std::pair<double, int> &lhs,
 
 // ---------------------------------------------------------CPickList
 CPickList::CPickList(int numThreads, int sleepTime, int checkInterval) {
+	// seed the random number generator
+	std::random_device randomDevice;
+	m_RandomGenerator.seed(randomDevice());
+
 	// setup threads
 	m_bRunProcessLoop = true;
 	m_iNumThreads = numThreads;
@@ -721,7 +726,11 @@ void CPickList::processPick() {
 // ---------------------------------------------------------setStatus
 void CPickList::jobSleep() {
 	if (m_bRunProcessLoop == true) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
+		std::uniform_int_distribution<> distribution(m_iSleepTimeMS / 4,
+														m_iSleepTimeMS);
+		int sleeptime = distribution(m_RandomGenerator);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
 	}
 }
 

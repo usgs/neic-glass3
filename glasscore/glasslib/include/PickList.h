@@ -16,6 +16,7 @@
 #include <mutex>
 #include <thread>
 #include <queue>
+#include <random>
 #include "Glass.h"
 
 namespace glasscore {
@@ -50,11 +51,11 @@ class CPickList {
 	 * \param numThreads - An integer containing the number of
 	 * threads in the pool.  Default 1
 	 * \param sleepTime - An integer containing the amount of
-	 * time to sleep in milliseconds between jobs.  Default 10
+	 * time to sleep in milliseconds between jobs.  Default 50
 	 * \param checkInterval - An integer containing the amount of time in
 	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
-	explicit CPickList(int numThreads = 1, int sleepTime = 10,
+	explicit CPickList(int numThreads = 1, int sleepTime = 50,
 						int checkInterval = 300);
 
 	/**
@@ -393,6 +394,11 @@ class CPickList {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_PickListMutex;
+
+	/**
+	 * \brief A random engine used to generate random numbers
+	 */
+	std::default_random_engine m_RandomGenerator;
 };
 }  // namespace glasscore
 #endif  // PICKLIST_H

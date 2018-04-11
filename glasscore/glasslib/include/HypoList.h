@@ -16,6 +16,7 @@
 #include <string>
 #include <mutex>
 #include <thread>
+#include <random>
 #include "Glass.h"
 
 namespace glasscore {
@@ -53,11 +54,11 @@ class CHypoList {
 	 * \param numThreads - An integer containing the number of
 	 * threads in the pool.  Default 1
 	 * \param sleepTime - An integer containing the amount of
-	 * time to sleep in milliseconds between jobs.  Default 10
+	 * time to sleep in milliseconds between jobs.  Default 50
 	 * \param checkInterval - An integer containing the amount of time in
 	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
-	explicit CHypoList(int numThreads = 1, int sleepTime = 10,
+	explicit CHypoList(int numThreads = 1, int sleepTime = 50,
 						int checkInterval = 300);
 
 	/**
@@ -188,6 +189,18 @@ class CHypoList {
 	 * or NULL if none fit in the time range.
 	 */
 	std::shared_ptr<CHypo> findHypo(double t1, double t2);
+
+	/**
+	 * \brief Get list of CHypos in given time range
+	 *
+	 * Get a list of hypocenters in vHypo with origin time within given range
+	 *
+	 * \param t1 - Starting time of selection range
+	 * \param t2 - Ending time of selection range
+	 * \return A vector of std::weak_ptr to CHypos withing range,
+	 * or empty list if none fit in the time range.
+	 */
+	std::vector<std::weak_ptr<CHypo>> getHypos(double t1, double t2);
 
 	/**
 	 * \brief Try to associate pick to a hypo in the list
@@ -464,6 +477,11 @@ class CHypoList {
 	 * should keep running.
 	 */
 	bool m_bRunProcessLoop;
+
+	/**
+	 * \brief A random engine used to generate random numbers
+	 */
+	std::default_random_engine m_RandomGenerator;
 };
 }  // namespace glasscore
 #endif  // HYPOLIST_H

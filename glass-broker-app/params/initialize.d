@@ -27,7 +27,6 @@
       "ReportThresh": 0.5,
       "ReportCut":5
   },
-  "OutputFormat":"Event",
   "DefaultNucleationPhase": {
       "PhaseName": "P",
       "TravFile": "./P.trv"

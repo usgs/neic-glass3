@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <ctime>
+#include <random>
 #include "Date.h"
 #include "Site.h"
 #include "Pick.h"
@@ -33,6 +34,10 @@ bool sortHypo(const std::pair<double, std::string> &lhs,
 
 // ---------------------------------------------------------CHypoList
 CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval) {
+	// seed the random number generator
+	std::random_device randomDevice;
+	m_RandomGenerator.seed(randomDevice());
+
 	// setup threads
 	m_bRunProcessLoop = true;
 	m_iNumThreads = numThreads;
@@ -488,10 +493,68 @@ std::shared_ptr<CHypo> CHypoList::findHypo(double t1, double t2) {
 	// no valid hypo found
 	return (NULL);
 }
+// ---------------------------------------------------------getHypos
+std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
+	std::vector<std::weak_ptr<CHypo>> hypos;
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
+
+	if (t1 == t2) {
+		return (hypos);
+	}
+
+	// don't bother if the list is empty
+	if (vHypo.size() == 0) {
+		return (hypos);
+	}
+
+	// get the index of the starting time of the selection range
+	int ix1 = indexHypo(t1);
+
+	// check starting index
+	if (ix1 < 0) {
+		// start time is before start of list, set to first index
+		ix1 = 0;
+	}
+
+	if (ix1 >= vHypo.size()) {
+		// starting index is greater than or equal to the size of the list,
+		// no hypos to find
+		return (hypos);
+	}
+
+	// get the index of the ending time of the selection range
+	int ix2 = indexHypo(t2);
+
+	// check ending index
+	if (ix2 <= 0) {
+		// end time is before the start of the list
+		// no hypos to find
+		return (hypos);
+	}
+
+	// for each hypo in the list within the
+	// time range
+	for (int it = ix1; it <= ix2; it++) {
+		// get this hypo id
+		std::string pid = vHypo[it].second;
+
+		std::shared_ptr<CHypo> aHypo = mHypo[pid];
+
+		if (aHypo != NULL) {
+			std::weak_ptr<CHypo> awHypo = mHypo[pid];
+
+			// add to the list of hypos
+			hypos.push_back(awHypo);
+		}
+	}
+
+	// return the list of hypos we found
+	return (hypos);
+}
 
 // ---------------------------------------------------------associate
 bool CHypoList::associate(std::shared_ptr<CPick> pk) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
+	// std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// nullcheck
 	if (pk == NULL) {
@@ -507,57 +570,43 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		return (false);
 	}
 
-	// are there any hypos to associate with?
-	if (vHypo.size() < 1) {
+	std::vector<std::shared_ptr<CHypo>> viper;
+
+	// compute the list of hypos to associate with
+	// (a potential hypo must be before the pick we're associating)
+	// use the pick time minus 2400 seconds to compute the starting index
+	// NOTE: Hard coded time delta
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(pk->getTPick() - 2400,
+															pk->getTPick());
+
+	// make sure we got any hypos
+	if (hypoList.size() == 0) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CHypoList::associate NOASSOC idPick:"
-						+ std::to_string(pk->getIdPick()) + "; No Hypos");
+						+ std::to_string(pk->getIdPick())
+						+ "; No Usable Hypos");
 		// nope
 		return (false);
 	}
 
-	std::string pid;
-	std::vector<std::shared_ptr<CHypo>> viper;
-
-	// compute the index range to search for hypos to associate with
-	// (a potential hypo must be before the pick we're associating)
-	// use the pick time minus 2400 seconds to compute the starting index
-	// NOTE: Hard coded time delta
-	int it1 = indexHypo(pk->getTPick() - 2400.0);
-
-	// check to see the index indicates that the time is before the
-	// start of the hypo list
-	if (it1 < 0) {
-		// set the starting index to the beginning of the hypo list
-		it1 = 0;
-	}
-
-	// get the ending index based on the pick time (a potential hypo can't
-	// be after the pick we're associating)
-	int it2 = indexHypo(pk->getTPick());
-
 	std::string pidmax;
 	double sdassoc = pGlass->getSdAssociate();
 
-	// for each hypo in the list within the
-	// time range
-	for (int it = it1; it <= it2; it++) {
-		// get this hypo id
-		pid = vHypo[it].second;
+	// for each hypo in the list within the time range
+	for (int i = 0; i < hypoList.size(); i++) {
+		// make sure hypo is still valid before associating
+		if (std::shared_ptr<CHypo> hyp = hypoList[i].lock()) {
+			// check to see if the pick will associate with
+			// this hypo
+			// NOTE: The sigma value passed into associate is hard coded
+			if (hyp->associate(pk, 1.0, sdassoc)) {
+				// add to the list of hypos this pick can associate with
+				viper.push_back(hyp);
 
-		// get this hypo based on the id
-		std::shared_ptr<CHypo> hyp = mHypo[pid];
-
-		// check to see if the pick will associate with
-		// this hypo
-		// NOTE: The sigma value passed into associate is hard coded
-		if (hyp->associate(pk, 1.0, sdassoc)) {
-			// add to the list of hypos this pick can associate with
-			viper.push_back(hyp);
-
-			// remember this id for later
-			pidmax = hyp->getPid();
+				// remember this id for later
+				pidmax = hyp->getPid();
+			}
 		}
 	}
 
@@ -1384,7 +1433,11 @@ void CHypoList::processHypos() {
 // ---------------------------------------------------------setStatus
 void CHypoList::jobSleep() {
 	if (m_bRunProcessLoop == true) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
+		std::uniform_int_distribution<> distribution(m_iSleepTimeMS / 4,
+														m_iSleepTimeMS);
+		int sleeptime = distribution(m_RandomGenerator);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
 	}
 }
 

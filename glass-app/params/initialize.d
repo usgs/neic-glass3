@@ -13,7 +13,7 @@
   "Params": {
       "Thresh": 0.5,
       "Nucleate": 10,
-      "sdAssociate": 3.0,
+      "sdAssociate": 5.0,
       "avgDelta": 0.0,
       "avgSigma": 0.75,
       "dCutFactor": 5.0,
@@ -27,7 +27,6 @@
       "ReportThresh": 0.5,
       "ReportCut":5
   },
-  "OutputFormat":"Event",
   "DefaultNucleationPhase": {
       "PhaseName": "P",
       "TravFile": "./P.trv"
