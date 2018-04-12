@@ -24,6 +24,7 @@ class CPick;
 class CNode;
 class CGlass;
 class CTrigger;
+class CHypo;
 
 /**
  * \brief glasscore site (station) class
@@ -208,7 +209,8 @@ class CSite {
 	 * \param tpick - A double value containing the pick time to nucleate with
 	 * in julian seconds
 	 */
-	std::vector<std::shared_ptr<CTrigger>> nucleate(double tpick);
+	std::vector<std::shared_ptr<CTrigger>> nucleate(
+			double tpick, std::weak_ptr<CHypo> wpHypo);
 
 	/**
 	 * \brief Add triggering node to triggered node list if value exceeds
