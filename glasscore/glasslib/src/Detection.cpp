@@ -209,7 +209,7 @@ bool CDetection::process(std::shared_ptr<json::Object> com) {
 			hypo->setCutMin(pGlass->getCutMin());
 
 			// process hypo using evolve
-			if (pGlass->getHypoList()->evolve(hypo, 1)) {
+			if (pGlass->getHypoList()->evolve(hypo)) {
 				// add to hypo list
 				pGlass->getHypoList()->addHypo(hypo);
 			}

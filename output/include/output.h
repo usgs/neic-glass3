@@ -82,7 +82,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 *
 	 * \param message - A json::Object containing the message to send to output.
 	 */
-	void sendToOutput(std::shared_ptr<json::Object> &message) override;
+	void sendToOutput(std::shared_ptr<json::Object> message) override;
 
 	/**
 	 * \brief thread pool check function

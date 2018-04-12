@@ -322,8 +322,6 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 
 // ---------------------------------------------------------associate
 bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
-
 	// nullcheck
 	if (corr == NULL) {
 		glassutil::CLogit::log(
@@ -339,14 +337,6 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 		return (false);
 	}
 
-	// are there any hypos to associate with?
-	if (vHypo.size() < 1) {
-		// nope
-		return (false);
-	}
-
-	std::shared_ptr<CHypo> hyp;
-	std::string pid;
 	bool bass = false;
 	std::vector<std::shared_ptr<CHypo>> viper;
 
@@ -354,47 +344,32 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 	// (a potential hypo must be before the pick we're associating)
 	// use the correlation time minus correlationMatchingTWindow to compute the
 	// starting index
-	// NOTE: There is a potential issue with this. The time sequence order of
-	// vHypo is based on the initial value of tOrg when the hypo is first added
-	// to the list. Various processing steps (relocation, etc) could change
-	// the tOrg, but vHypo is never resorted. Caryl agrees that there
-	// *could* be issues here, but has no idea how significant they are.
-	// Could affect association to splits with similar origin times.
-	int it1 = indexHypo(
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
+			corr->getTCorrelation() - pGlass->getCorrelationMatchingTWindow(),
 			corr->getTCorrelation() - pGlass->getCorrelationMatchingTWindow());
 
-	// check to see the index indicates that the time is before the
-	// start of the hypo list
-	if (it1 < 0) {
-		// set the starting index to the beginning of the hypo list
-		it1 = 0;
+	// make sure we got any hypos
+	if (hypoList.size() == 0) {
+		// nope
+		return (false);
 	}
 
-	// get the ending index based on the correlation time plus
-	// correlationMatchingTWindow
-	int it2 = indexHypo(
-			corr->getTCorrelation() + pGlass->getCorrelationMatchingTWindow());
+	std::shared_ptr<CHypo> bestHyp;
 
-	std::string pidmax;
+	// for each hypo in the list within the time range
+	for (int i = 0; i < hypoList.size(); i++) {
+		// make sure hypo is still valid before associating
+		if (std::shared_ptr<CHypo> hyp = hypoList[i].lock()) {
+			// check to see if the correlation will associate with
+			// this hypo
+			if (hyp->associate(corr, pGlass->getCorrelationMatchingTWindow(),
+								pGlass->getCorrelationMatchingXWindow())) {
+				// add to the list of hypos this correlation can associate with
+				viper.push_back(hyp);
 
-	// for each hypo in the list within the
-	// time range
-	for (int it = it1; it <= it2; it++) {
-		// get this hypo id
-		pid = vHypo[it].second;
-
-		// get this hypo based on the id
-		hyp = mHypo[pid];
-
-		// check to see if the correlation will associate with
-		// this hypo
-		if (hyp->associate(corr, pGlass->getCorrelationMatchingTWindow(),
-							pGlass->getCorrelationMatchingXWindow())) {
-			// add to the list of hypos this correlation can associate with
-			viper.push_back(hyp);
-
-			// remember this id for later
-			pidmax = hyp->getPid();
+				// remember this hypo for later
+				bestHyp = hyp;
+			}
 		}
 	}
 
@@ -405,9 +380,6 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 
 	// there was only one hypo that the correlation associated with
 	if (viper.size() == 1) {
-		// get the lucky hypo
-		hyp = mHypo[pidmax];
-
 		// log
 		/*
 		 char sLog[1024];
@@ -424,21 +396,21 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 		 */
 
 		// link the correlation to the hypo
-		corr->addHypo(hyp, "", true);
+		corr->addHypo(bestHyp, "", true);
 
 		// link the hypo to the correlation
-		hyp->addCorrelation(corr);
+		bestHyp->addCorrelation(corr);
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::associate (correlation) sPid:" + hyp->getPid()
+				"CHypoList::associate (correlation) sPid:" + bestHyp->getPid()
 						+ " resetting cycle count due to new association");
 
 		// reset the cycle count
-		hyp->setCycle(0);
+		bestHyp->setCycle(0);
 
 		// add to the processing queue
-		pushFifo(hyp);
+		pushFifo(bestHyp);
 
 		// the pick was associated
 		return (true);
@@ -768,8 +740,9 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	if (hyp->getProcessCount() < 2) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::evolve: Reporting new hypo sPid:" + pid + " cycle:"
-						+ std::to_string(hyp->getCycle()) + " processCount:"
+				"CHypoList::evolve: Should report new hypo sPid:" + pid
+						+ " cycle:" + std::to_string(hyp->getCycle())
+						+ " processCount:"
 						+ std::to_string(hyp->getProcessCount()));
 
 		// we should always report a new hypo (ensure it reports at least once)
@@ -782,6 +755,18 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 		if (hyp->reportCheck() == true) {
 			// report
 			hyp->event();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CHypoList::evolve: Reported hypo sPid:" + pid + " cycle:"
+							+ std::to_string(hyp->getCycle()) + " processCount:"
+							+ std::to_string(hyp->getProcessCount()));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CHypoList::evolve: hypo sPid:" + pid + " processCount:"
+							+ std::to_string(hyp->getProcessCount())
+							+ " failed reportCheck()");
 		}
 	}
 
@@ -1046,7 +1031,7 @@ void CHypoList::listHypos() {
 
 // --------------------------------------------------mergeCloseEvents
 bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
+	// std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -1054,15 +1039,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
-	// are there any hypos to associate with?
-	if (vHypo.size() < 1) {
-		// nope
-		return (false);
-	}
-
-	// Make sure hypo is in good shape
-	if (hypo->getBayes() < hypo->getThresh()
-			|| hypo->getVPickSize() < hypo->getCut()) {
+	// Make sure our hypo is in good shape
+	if ((hypo->getBayes() < hypo->getThresh())
+			|| (hypo->getVPickSize() < hypo->getCut())) {
 		return (false);
 	}
 
@@ -1079,53 +1058,55 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	glassutil::CGeo geo;
 	geo.setGeographic(hypo->getLat(), hypo->getLon(), 6371.0);
 
-	// this will hold the hypo are comparing to
-	std::shared_ptr<CHypo> hypo2;
+	// compute the list of hypos to try merging with with
+	// (a potential hypo must be within time cut to consider)
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
+			hypo->getTOrg() - timeCut, hypo->getTOrg() + timeCut);
 
-	// get the index of the first hypo in the list
-	int itHypo = indexHypo(hypo->getTOrg());
-
-	// Get the index of the first possible match based on time
-	int it1 = indexHypo(hypo->getTOrg() - timeCut);
-
-	// check to see the index indicates that the time is before the
-	// start of the hypo list
-	if (it1 < 0) {
-		// set the starting index to the beginning of the hypo list
-		it1 = 0;
+	// make sure we got any hypos
+	if (hypoList.size() == 0) {
+		// nope
+		return (false);
 	}
 
-	// get the index of the second possible match
-	int it2 = indexHypo(hypo->getTOrg() + timeCut);
+	// for each hypo in the list within the time range
+	for (int i = 0; i < hypoList.size(); i++) {
+		// make sure hypo is still valid before associating
+		if (std::shared_ptr<CHypo> hypo2 = hypoList[i].lock()) {
+			// make sure we're not looking at ourself
+			if (hypo->getPid() == hypo2->getPid()) {
+				continue;
+			}
 
-	// for each hypo in the list within the
-	// time range
-	for (int it = it1; it <= it2; it++) {
-		// check to make sure the index is not the same as this hypo
-		if (it != itHypo) {
-			// get this hypo id
-			std::string pid = vHypo[it].second;
-			// get this hypo based on the id
-			hypo2 = mHypo[pid];
+			snprintf(sLog, sizeof(sLog),
+						"CHypoList::merge: Testing merger of %s and %s\n",
+						hypo->getPid().c_str(), hypo2->getPid().c_str());
+			glassutil::CLogit::log(sLog);
+
+			// if (hypo2->isLockedForProcessing()) {
+			// continue;
+			// }
+			// hypo2->lockForProcessing();
 
 			// make sure this hypo is resolved and get data
-			// wyeck - Really we should lock this for best practice
-			resolve(hypo2);
+			if (resolve(hypo2)) {
+				// relocate the hypo
+				hypo2->localize();
+			}
+
+			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
-			hypo2->localize();
 
 			// check to make sure that the hypo2 has a stack
-			if (hypo2->getBayes() < hypo2->getThresh()
-					|| hypo2->getVPickSize() < hypo2->getCut()) {
+			if ((hypo2->getBayes() < hypo2->getThresh())
+					|| (hypo2->getVPickSize() < hypo2->getCut())) {
 				continue;
 			}
 
 			// check time difference
-			double diff = hypo->getTOrg() - hypo2->getTOrg();
-			if (diff < 0.) {
-				diff = diff * -1.;
-			}
-			if (diff < timeCut && pid != hypo->getPid()) {
+			double diff = std::fabs(hypo->getTOrg() - hypo2->getTOrg());
+
+			if (diff < timeCut) {
 				glassutil::CGeo geo2;
 				geo2.setGeographic(hypo2->getLat(), hypo2->getLon(), 6371.0);
 
@@ -1134,12 +1115,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 				if (delta < distanceCut) {
 					// Log info on two events
-					snprintf(
-							sLog, sizeof(sLog),
-							"CHypoList::merge: Testing merger of %s and %s\n",
-							hypo->getPid().c_str(), hypo2->getPid().c_str());
-					glassutil::CLogit::log(sLog);
-
 					snprintf(
 							sLog, sizeof(sLog),
 							"CHypoList::merge: %s: %.3f, %.3f, %.3f, %.3f\n",
@@ -1172,7 +1147,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					hypo3->setCutMin(pGlass->getCutMin());
 
 					// add all picks for other two events
-
 					for (auto pick : hVPick) {
 						hypo3->addPick(pick);
 					}

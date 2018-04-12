@@ -213,7 +213,7 @@ void output::clear() {
 	util::BaseClass::clear();
 }
 
-void output::sendToOutput(std::shared_ptr<json::Object> &message) {
+void output::sendToOutput(std::shared_ptr<json::Object> message) {
 	if (message == NULL) {
 		return;
 	}
@@ -523,8 +523,9 @@ bool output::work() {
 						"output::work(): Canceling event " + messageid
 								+ " and removing it from tracking.");
 
-				// check to see if this has been published
-				bool published = isDataPublished(trackingData);
+				// check to see if this has been published, we don't care what
+				// version
+				bool published = isDataPublished(trackingData, true);
 				if (published == true) {
 					// make sure we have a type
 					if (!((*message).HasKey("Type")))
