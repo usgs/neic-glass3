@@ -239,6 +239,12 @@ class CSiteList {
 	std::map<std::string, std::shared_ptr<CSite>> mSite;
 
 	/**
+	 * \brief A std::map containing a std::shared_ptr to each site
+	 * in CSiteList indexed by the std::string scnl id.
+	 */
+	std::map<std::string, int> mLookup;
+
+	/**
 	 * \brief A recursive_mutex to control threading access to CSiteList.
 	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
 	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/

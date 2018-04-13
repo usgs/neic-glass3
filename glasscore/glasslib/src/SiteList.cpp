@@ -43,6 +43,7 @@ void CSiteList::clearSites() {
 	// clear the vector and map
 	vSite.clear();
 	mSite.clear();
+	mLookup.clear();
 }
 
 // ---------------------------------------------------------dispatch
@@ -342,8 +343,17 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 	}
 
 	// send request for information about this station
-	if (lookup) {
-		if (pGlass) {
+	if ((lookup == true) && (pGlass != NULL)) {
+		// get whether this station has been looked up before
+		int lookupcount = 0;
+		auto itsite = mLookup.find(scnl);
+		if (itsite != mLookup.end()) {
+			lookupcount = mLookup[scnl];
+		}
+
+		// only ask for a station up to 3 times
+		// NOTE: Hardcoded.
+		if (lookupcount < 3) {
 			// construct request json message
 			std::shared_ptr<json::Object> request = std::make_shared<
 					json::Object>(json::Object());
@@ -356,14 +366,19 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 			// send request
 			pGlass->send(request);
 
+			// log
 			char sLog[1024];
 			snprintf(sLog, sizeof(sLog),
 						"CSiteList::getSite: SCNL:%s not on station list, "
 						"requesting information.",
 						scnl.c_str());
 			glassutil::CLogit::log(sLog);
+
+			// remember we tried
+			mLookup[scnl] = lookupcount + 1;
 		}
 	}
+
 	// site not found
 	return (NULL);
 }
