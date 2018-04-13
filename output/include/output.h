@@ -84,6 +84,11 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 */
 	void sendToOutput(std::shared_ptr<json::Object> message) override;
 
+
+	bool start() override;
+	bool stop() override;
+	bool isRunning() override;
+
 	/**
 	 * \brief thread pool check function
 	 *
@@ -214,6 +219,8 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 */
 	bool work() override;
 
+	void checkEventsLoop();
+
 	/**
 	 * \brief output file writing function
 	 *
@@ -274,7 +281,6 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 */
 	util::Queue* m_LookupQueue;
 
-
 	std::vector<int> m_PublicationTimes;
 
 	/**
@@ -320,7 +326,37 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * \brief pointer to the util::threadpool used to queue and
 	 * perform output.
 	 */
-	util::ThreadPool * m_ThreadPool;
+	util::ThreadPool *m_ThreadPool;
+
+	/**
+	 * \brief the std::thread pointer to the event thread
+	 */
+	std::thread *m_EventThread;
+
+	/**
+	 * \brief boolean flag indicating whether the event thread should run
+	 */
+	bool m_bRunEventThread;
+
+	/**
+	 * \brief boolean flag indicating whether the event thread has been started
+	 */
+	bool m_bEventStarted;
+
+	/**
+	 * \brief boolean flag used to check thread status
+	 */
+	bool m_bCheckEventThread;
+
+	/**
+	 * \brief the time_t holding the last time the thread status was checked
+	 */
+	time_t tLastEventCheck;
+
+	/**
+	 * \brief the std::mutex for m_bCheckEventThread
+	 */
+	std::mutex m_CheckEventMutex;
 };
 }  // namespace glass
 #endif  // OUTPUT_H

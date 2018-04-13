@@ -48,6 +48,12 @@ output::output()
 	// setup thread pool for output
 	m_ThreadPool = new util::ThreadPool("outputpool");
 
+	m_bRunEventThread = false;
+	m_bCheckEventThread = true;
+	m_bEventStarted = false;
+	m_EventThread = NULL;
+	std::time(&tLastEventCheck);
+
 	// init config to defaults and allocate
 	clear();
 }
@@ -257,12 +263,106 @@ void output::sendToOutput(std::shared_ptr<json::Object> message) {
 	}
 }
 
+bool output::start() {
+	// are we already running
+	if (m_bRunEventThread == true) {
+		logger::log("warning",
+					"output::start(): Event Thread is already running.");
+		return (false);
+	}
+
+	// nullcheck
+	if (m_EventThread != NULL) {
+		logger::log("warning",
+					"output::start(): Event Thread is already allocated.");
+		return (false);
+	}
+
+	m_bEventStarted = true;
+
+	// start the thread
+	m_EventThread = new std::thread(&output::checkEventsLoop, this);
+
+	// let threadbaseclass handle background worker thread
+	return (ThreadBaseClass::start());
+}
+
+bool output::stop() {
+	// check if we're running
+	if (m_bRunEventThread == false) {
+		logger::log("warning", "output::stop(): Event Thread is not running. ");
+		return (false);
+	}
+
+	// nullcheck
+	if (m_EventThread == NULL) {
+		logger::log("warning",
+					"output::stop(): Event Thread is not allocated. ");
+		return (false);
+	}
+
+	m_bEventStarted = false;
+
+	// tell the thread to stop
+	m_bRunEventThread = false;
+
+	// wait for the thread to finish
+	m_EventThread->join();
+
+	// delete it
+	delete (m_EventThread);
+	m_EventThread = NULL;
+
+	// we're no longer running
+	m_bCheckEventThread = false;
+
+	// let threadbaseclass handle background worker thread
+	return (ThreadBaseClass::stop());
+}
+
+bool output::isRunning() {
+	// let threadbaseclass handle background worker thread
+	return (ThreadBaseClass::isRunning() && m_bRunEventThread);
+}
+
 bool output::check() {
 	// don't check threadpool if it is not created yet
 	if (m_ThreadPool != NULL) {
 		// check threadpool
 		if (m_ThreadPool->check() == false) {
 			return (false);
+		}
+	}
+
+	if ((m_bEventStarted == true) && (m_iCheckInterval > 0)) {
+		// see if it's time to check
+		time_t tNow;
+		std::time(&tNow);
+		if ((tNow - tLastEventCheck) >= m_iCheckInterval) {
+			// lock the mutex to make sure we
+			// don't run into a threading issue
+			// this *may* be excessive
+			m_CheckEventMutex.lock();
+
+			// if the check is false, the thread is dead
+			if (m_bCheckEventThread == false) {
+				m_CheckEventMutex.unlock();
+				logger::log(
+						"error",
+						"output::check(): m_bCheckEventThread is false. "
+								" after an interval of "
+								+ std::to_string(m_iCheckInterval)
+								+ " seconds.");
+				return (false);
+			}
+
+			// mark check as false until next time
+			// if the thread is alive, it'll mark it
+			// as true.
+			m_bCheckEventThread = false;
+			m_CheckEventMutex.unlock();
+
+			tLastEventCheck = tNow;
 		}
 	}
 
@@ -450,6 +550,85 @@ void output::clearTrackingData() {
 	m_TrackingCache->clearCache();
 }
 
+void output::checkEventsLoop() {
+	// we're running
+	m_bRunEventThread = true;
+
+	// run until told to stop
+	while (m_bRunEventThread) {
+		// signal that we're still running
+		m_CheckEventMutex.lock();
+		m_bCheckEventThread = true;
+		m_CheckEventMutex.unlock();
+
+		// see if there's anything in the tracking cache
+		std::shared_ptr<json::Object> data = getNextTrackingData();
+
+		// got something
+		if (data != NULL) {
+			// get the id
+			std::string id;
+			if ((*data).HasKey("ID")) {
+				id = (*data)["ID"].ToString();
+			} else if ((*data).HasKey("Pid")) {
+				id = (*data)["Pid"].ToString();
+			} else {
+				logger::log("warning",
+							"output::work(): Bad data object received from "
+							"getdatafromcache(), no ID, skipping data.");
+
+				// remove the message we found from the cache, since it is bad
+				removeTrackingData(data);
+
+				// keep working
+				continue;
+			}
+
+			// get the command
+			std::string command;
+			if ((*data).HasKey("Cmd")) {
+				command = (*data)["Cmd"].ToString();
+			} else {
+				logger::log("warning",
+							"output::work(): Bad data object received from "
+							"getdatafromcache(), no Cmd, skipping data.");
+
+				// remove the value we found from the cache, since it is bad
+				removeTrackingData(data);
+
+				// keep working
+				continue;
+			}
+
+			// process the data based on the tracking message
+			if (command == "Event") {
+				// Request the hypo from associator
+				if (Associator != NULL) {
+					// build the request
+					std::shared_ptr<json::Object> datarequest =
+							std::make_shared<json::Object>(json::Object());
+					(*datarequest)["Cmd"] = "ReqHypo";
+					(*datarequest)["Pid"] = id;
+
+					// send the request
+					Associator->sendToAssociator(datarequest);
+				}
+			}
+		}
+
+		// give up some time at the end of the loop
+		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
+	}
+
+	logger::log("info", "output::checkEventsLoop(): Stopped thread.");
+
+	// we're no longer running
+	m_bRunEventThread = false;
+
+	// done with thread
+	return;
+}
+
 bool output::work() {
 	// pull data from our config at the start of each loop
 	// so that we can have config that changes
@@ -459,7 +638,7 @@ bool output::work() {
 	m_ConfigMutex.unlock();
 
 	// null check
-	if (m_OutputQueue == NULL) {
+	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
 		// no message queue means we've got big problems
 		return (false);
 	}
@@ -672,61 +851,6 @@ bool output::work() {
 			m_iExpireCounter = 0;
 			m_iLookupCounter = 0;
 			m_iSiteListCounter = 0;
-		}
-	}
-
-	// see if there's anything in the tracking cache
-	std::shared_ptr<json::Object> data = getNextTrackingData();
-
-	// got something
-	if (data != NULL) {
-		// get the id
-		std::string id;
-		if ((*data).HasKey("ID")) {
-			id = (*data)["ID"].ToString();
-		} else if ((*data).HasKey("Pid")) {
-			id = (*data)["Pid"].ToString();
-		} else {
-			logger::log("warning",
-						"output::work(): Bad data object received from "
-						"getdatafromcache(), no ID, skipping data.");
-
-			// remove the message we found from the cache, since it is bad
-			removeTrackingData(data);
-
-			// keep working
-			return (true);
-		}
-
-		// get the command
-		std::string command;
-		if ((*data).HasKey("Cmd")) {
-			command = (*data)["Cmd"].ToString();
-		} else {
-			logger::log("warning",
-						"output::work(): Bad data object received from "
-						"getdatafromcache(), no Cmd, skipping data.");
-
-			// remove the value we found from the cache, since it is bad
-			removeTrackingData(data);
-
-			// keep working
-			return (true);
-		}
-
-		// process the data based on the tracking message
-		if (command == "Event") {
-			// Request the hypo from associator
-			if (Associator != NULL) {
-				// build the request
-				std::shared_ptr<json::Object> datarequest = std::make_shared<
-						json::Object>(json::Object());
-				(*datarequest)["Cmd"] = "ReqHypo";
-				(*datarequest)["Pid"] = id;
-
-				// send the request
-				Associator->sendToAssociator(datarequest);
-			}
 		}
 	}
 
