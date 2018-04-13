@@ -807,6 +807,11 @@ bool output::work() {
 						(*hypo)["IsUpdate"] = false;
 					}
 
+					logger::log(
+							"debug",
+							"output::work(): Writing final hypo for expiring event "
+									+ messageid);
+
 					// write out the hypo to a disk file,
 					// using the threadpool
 					m_ThreadPool->addJob(
