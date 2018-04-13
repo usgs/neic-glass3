@@ -295,11 +295,6 @@ bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 
 	// send to output
 	if (Output != NULL) {
-		logger::log(
-				"debug",
-				"associator::dispatch(): Sent message:"
-						+ json::Serialize(*communication) + " to output.");
-
 		Output->sendToOutput(communication);
 	} else {
 		logger::log("error",
