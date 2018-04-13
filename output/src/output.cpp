@@ -788,8 +788,9 @@ bool output::work() {
 								+ " and removing it from tracking.");
 
 				// check to see if this event was finished publishing
-				bool finished = isDataFinished(trackingData);
-				if (finished == false) {
+				// and if there is a final hypo to publish
+				if ((isDataFinished(trackingData) == false)
+						&& (message->HasKey("Hypo"))) {
 					// get the hypo from the event
 					json::Object jsonHypo = (*message)["Hypo"];
 

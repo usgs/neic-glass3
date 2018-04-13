@@ -1163,9 +1163,11 @@ std::shared_ptr<json::Object> CHypo::expire(bool send) {
 	(*expire)["Pid"] = sPid;
 
 	// add a copy of the expiring hypo to the message
-	std::shared_ptr<json::Object> expireHypo = hypo(false);
-	(*expire)["Hypo"] = (*expireHypo);
-
+	// if we CAN report
+	if (reportCheck() == true) {
+		std::shared_ptr<json::Object> expireHypo = hypo(false);
+		(*expire)["Hypo"] = (*expireHypo);
+	}
 	// log it
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
