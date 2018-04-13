@@ -1117,6 +1117,11 @@ void CHypo::event() {
 	(*event)["Ndata"] = static_cast<int>(vPick.size())
 			+ static_cast<int>(vCorr.size());
 
+	// log it
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::event: Created event message:" + json::Serialize(*event));
+
 	// send it
 	if (pGlass) {
 		pGlass->send(event);

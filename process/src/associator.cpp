@@ -242,14 +242,14 @@ bool Associator::work() {
 					"info",
 					"Associator::work(): Sent " + std::to_string(m_iWorkCounter)
 							+ " data to glass (" + std::to_string(pendingdata)
-							+ " in queue, " + std::to_string(m_iTotalWorkCounter)
+							+ " in queue, "
+							+ std::to_string(m_iTotalWorkCounter)
 							+ " total) in "
 							+ std::to_string(
 									static_cast<int>(tNow - tLastWorkReport))
 							+ " seconds. (" + std::to_string(dataAverage)
 							+ " dps) (" + std::to_string(m_dRunningAverage)
-							+ " avg dps) ("
-							+ std::to_string(averageglasstime)
+							+ " avg dps) (" + std::to_string(averageglasstime)
 							+ " avg glass time) (" + "vPickSize: "
 							+ std::to_string(pickListSize) + " vHypoSize: "
 							+ std::to_string(hypoListSize) + ").");
@@ -295,8 +295,11 @@ bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 
 	// send to output
 	if (Output != NULL) {
-		// Allocate a new json object to avoid
-		// multi-thread pointer issues.
+		logger::log(
+				"debug",
+				"associator::dispatch(): Sent message:"
+						+ json::Serialize(*communication) + " to output.");
+
 		Output->sendToOutput(communication);
 	} else {
 		logger::log("error",
