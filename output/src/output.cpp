@@ -340,7 +340,7 @@ bool output::removeTrackingData(std::string ID) {
 }
 
 std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
-	std::shared_ptr<json::Object>  nullObj;
+	std::shared_ptr<json::Object> nullObj;
 	if (id == "") {
 		logger::log("error",
 					"output::removetrackingdata(): Empty ID passed in.");
@@ -355,7 +355,7 @@ std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
 	if (m_TrackingCache->isInCache(id) == true) {
 		return (m_TrackingCache->getFromCache(id));
 	} else {
-		return(nullObj);
+		return (nullObj);
 	}
 }
 
@@ -433,9 +433,18 @@ bool output::work() {
 	// first see what we're supposed to do with a new message
 	// see if there's anything in the message queue
 	std::shared_ptr<json::Object> message = m_MessageQueue->getDataFromQueue();
+	int queueSize = m_MessageQueue->size();
 
 	// if we got something
 	if (message != NULL) {
+
+		logger::log(
+				"debug",
+				"associator::dispatch(): got message:"
+						+ json::Serialize(*message)
+						+ " from associator. (queueSize:"
+						+ std::to_string(queueSize) + ")");
+
 		// what time is it
 		time_t tNow;
 		std::time(&tNow);
