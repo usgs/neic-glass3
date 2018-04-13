@@ -125,6 +125,9 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 		pdx = vHypo[0];
 		std::shared_ptr<CHypo> firstHypo = mHypo[pdx.second];
 
+		// send expiration message
+		firstHypo->expire();
+
 		// remove it
 		remHypo(firstHypo, false);
 
@@ -134,9 +137,6 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 						+ std::to_string(static_cast<int>(vHypo.size()))
 						+ " Max: " + std::to_string(nHypoMax)
 						+ " Removing Hypo: " + pdx.second);
-
-		// send expiration message
-		firstHypo->expire();
 	}
 
 	// Insert new hypo in proper time sequence into hypo vector
