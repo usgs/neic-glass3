@@ -709,10 +709,10 @@ void CPickList::processPick() {
 		// Attempt both association and nucleation of the new pick.
 		// If both succeed, the mess is sorted out in darwin/evolve
 		// associate
-		bool associated = pGlass->getHypoList()->associate(pck);
+		pGlass->getHypoList()->associate(pck);
 
 		// nucleate
-		pck->nucleate(associated);
+		pck->nucleate();
 
 		// give up some time at the end of the loop
 		jobSleep();

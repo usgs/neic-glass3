@@ -551,9 +551,10 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(
 			continue;
 		}
 
-		// check to see if the pick is associated to a hypo already
+		// check to see if the pick is currently associated to a hypo
 		if (wpHypo.expired() == false) {
-			// get the hypo and compute distance
+			// get the hypo and compute distance between it and the
+			// current node
 			std::shared_ptr<CHypo> pHypo = wpHypo.lock();
 			glassutil::CGeo geoHypo;
 			geoHypo.setGeographic(pHypo->getLat(), pHypo->getLon(),
@@ -563,7 +564,7 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(
 									6371.0 - node->getZ());
 			double dist = (geoHypo.delta(&nodeHypo) / DEG2RAD) * 111.12;
 
-			// is the linked hypo close enough to this node to skip
+			// is the associated hypo close enough to this node to skip
 			// close enough means within the resolution of the node
 			if (dist < node->getResolution()) {
 				glassutil::CLogit::log(

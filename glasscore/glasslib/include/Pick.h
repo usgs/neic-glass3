@@ -150,7 +150,7 @@ class CPick {
 	 * agoric surpassed the threhold, try to generate a new hypocenter. If that
 	 * hypocenter survives, add it to the list.
 	 */
-	bool nucleate(bool assocaited = false);
+	bool nucleate();
 
 	/**
 	 * \brief Back azimuth getter

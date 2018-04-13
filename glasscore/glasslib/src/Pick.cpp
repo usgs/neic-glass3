@@ -348,7 +348,7 @@ void CPick::setAss(std::string ass) {
 }
 
 // ---------------------------------------------------------Nucleate
-bool CPick::nucleate(bool associated) {
+bool CPick::nucleate() {
 	// get the site shared_ptr
 	std::shared_ptr<CSite> pickSite = wpSite.lock();
 	/*
@@ -371,6 +371,27 @@ bool CPick::nucleate(bool associated) {
 	std::string pt = glassutil::CDate::encodeDateTime(tPick);
 	char sLog[1024];
 
+	// check to see if the pick is currently associated to a hypo
+	if (wpHypo.expired() == false) {
+		// get the hypo and compute ratio
+		std::shared_ptr<CHypo> pHypo = wpHypo.lock();
+		double adBayesRatio = (pHypo->getBayes()) / (pHypo->getThresh());
+
+		// check to see if the ratio is high enough to not
+		// bother
+		// NOTE: Hardcoded
+		if (adBayesRatio > 2.0) {
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CPick::nucleate: SKIPTRG due to large event association "
+							+ pickSite->getScnl() + "; tPick:" + pt
+							+ "; idPick:" + std::to_string(idPick)
+							+ " associated with an event with stack twice threshold ("
+							+ std::to_string(pHypo->getBayes()) + ")");
+			return (false);
+		}
+	}
+
 	// Use site nucleate to scan all nodes
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
@@ -387,24 +408,6 @@ bool CPick::nucleate(bool associated) {
 						+ "; sPid:" + sPid);
 
 		return (false);
-	}
-
-	// check to see if the pick is associated to a hypo already
-	if (wpHypo.expired() == false) {
-		// get the hypo and compute ratio
-		std::shared_ptr<CHypo> pHypo = wpHypo.lock();
-		double adBayesRatio = (pHypo->getBayes()) / (pHypo->getThresh());
-
-		if (adBayesRatio > 2.0) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
-					"CPick::nucleate: SKIPTRG due to large event association "
-							+ pickSite->getScnl() + "; tPick:" + pt
-							+ "; idPick:" + std::to_string(idPick)
-							+ " associated with an event with stack twice threshold ("
-							+ std::to_string(pHypo->getBayes()) + ")");
-			return (false);
-		}
 	}
 
 	for (const auto &trigger : vTrigger) {
