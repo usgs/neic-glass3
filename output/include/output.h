@@ -264,9 +264,16 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 
 	/**
 	 * \brief pointer to the util::queue class used to manage
-	 * incoming messages
+	 * incoming output messages
 	 */
-	util::Queue* m_MessageQueue;
+	util::Queue* m_OutputQueue;
+
+	/**
+	 * \brief pointer to the util::queue class used to manage
+	 * incoming lookup messages
+	 */
+	util::Queue* m_LookupQueue;
+
 
 	std::vector<int> m_PublicationTimes;
 

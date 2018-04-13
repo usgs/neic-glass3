@@ -42,7 +42,8 @@ output::output()
 
 	// init to null, allocated in clear
 	m_TrackingCache = NULL;
-	m_MessageQueue = NULL;
+	m_OutputQueue = NULL;
+	m_LookupQueue = NULL;
 
 	// setup thread pool for output
 	m_ThreadPool = new util::ThreadPool("outputpool");
@@ -64,9 +65,15 @@ output::~output() {
 	}
 
 	// cppcheck-suppress nullPointerRedundantCheck
-	if (m_MessageQueue != NULL) {
-		m_MessageQueue->clearQueue();
-		delete (m_MessageQueue);
+	if (m_OutputQueue != NULL) {
+		m_OutputQueue->clearQueue();
+		delete (m_OutputQueue);
+	}
+
+	// cppcheck-suppress nullPointerRedundantCheck
+	if (m_LookupQueue != NULL) {
+		m_LookupQueue->clearQueue();
+		delete (m_LookupQueue);
 	}
 }
 
@@ -180,10 +187,16 @@ bool output::setup(json::Object *config) {
 	m_TrackingCache = new util::Cache();
 
 	// cppcheck-suppress nullPointerRedundantCheck
-	if (m_MessageQueue != NULL) {
-		delete (m_MessageQueue);
+	if (m_OutputQueue != NULL) {
+		delete (m_OutputQueue);
 	}
-	m_MessageQueue = new util::Queue();
+	m_OutputQueue = new util::Queue();
+
+	// cppcheck-suppress nullPointerRedundantCheck
+	if (m_LookupQueue != NULL) {
+		delete (m_LookupQueue);
+	}
+	m_LookupQueue = new util::Queue();
 
 	logger::log("debug", "output::setup(): Done Setting Up.");
 
@@ -218,8 +231,29 @@ void output::sendToOutput(std::shared_ptr<json::Object> message) {
 		return;
 	}
 
-	if (m_MessageQueue != NULL) {
-		m_MessageQueue->addDataToQueue(message);
+	// get the message type
+	std::string messagetype;
+	if (message->HasKey("Cmd")) {
+		messagetype = (*message)["Cmd"].ToString();
+	} else if (message->HasKey("Type")) {
+		messagetype = (*message)["Type"].ToString();
+	} else {
+		logger::log(
+				"critical",
+				"output::sendToOutput(): BAD message passed in, no Cmd/Type found.");
+		return;
+	}
+
+	// send site messages to their own queue, because they can be
+	// very chatty and we don't want anything to slowdown output messages
+	if ((messagetype == "SiteList") || (messagetype == "SiteLookup")) {
+		if (m_LookupQueue != NULL) {
+			m_LookupQueue->addDataToQueue(message);
+		}
+	} else {
+		if (m_OutputQueue != NULL) {
+			m_OutputQueue->addDataToQueue(message);
+		}
 	}
 }
 
@@ -425,25 +459,31 @@ bool output::work() {
 	m_ConfigMutex.unlock();
 
 	// null check
-	if (m_MessageQueue == NULL) {
+	if (m_OutputQueue == NULL) {
 		// no message queue means we've got big problems
 		return (false);
 	}
 
 	// first see what we're supposed to do with a new message
-	// see if there's anything in the message queue
-	std::shared_ptr<json::Object> message = m_MessageQueue->getDataFromQueue();
-	int queueSize = m_MessageQueue->size();
+	// see if there's an output in the message queue
+	std::shared_ptr<json::Object> message = m_OutputQueue->getDataFromQueue();
+	int outputQueueSize = m_OutputQueue->size();
+	int lookupQueueSize = m_LookupQueue->size();
+
+	// if there's no output, check for a lookup
+	if (message == NULL) {
+		message = m_LookupQueue->getDataFromQueue();
+	}
 
 	// if we got something
 	if (message != NULL) {
-
 		logger::log(
 				"debug",
 				"associator::dispatch(): got message:"
 						+ json::Serialize(*message)
-						+ " from associator. (queueSize:"
-						+ std::to_string(queueSize) + ")");
+						+ " from associator. (outputQueueSize:"
+						+ std::to_string(outputQueueSize) + ", lookupQueueSize:"
+						+ std::to_string(lookupQueueSize) + ")");
 
 		// what time is it
 		time_t tNow;
