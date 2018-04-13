@@ -135,16 +135,8 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 						+ " Max: " + std::to_string(nHypoMax)
 						+ " Removing Hypo: " + pdx.second);
 
-		// create expiration message
-		std::shared_ptr<json::Object> expire = std::make_shared<json::Object>(
-				json::Object());
-		(*expire)["Cmd"] = "Expire";
-		(*expire)["Pid"] = pdx.second;
-
-		// send message
-		if (pGlass) {
-			pGlass->send(expire);
-		}
+		// send expiration message
+		firstHypo->expire();
 	}
 
 	// Insert new hypo in proper time sequence into hypo vector
@@ -496,7 +488,7 @@ void CHypoList::darwin() {
 						+ " Fifo Size:" + std::to_string(getFifoSize()));
 
 		// check to see if this hypo is viable.
-		if (hyp->cancel()) {
+		if (hyp->cancelCheck()) {
 			hyp->unlockAfterProcessing();
 
 			// this hypo is no longer viable
@@ -678,7 +670,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tPruneEndTime - tResolveEndTime).count();
 
 	// check to see if this hypo is viable.
-	if (hyp->cancel()) {
+	if (hyp->cancelCheck()) {
 		std::chrono::high_resolution_clock::time_point tCancelEndTime =
 				std::chrono::high_resolution_clock::now();
 		double cancelTime = std::chrono::duration_cast<
@@ -1379,20 +1371,13 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		if (q.second == pid) {
 			// erase this hypo
 			vHypo.erase(vHypo.begin() + iq);
-			// Send cancellation message for this hypo if we've sent an event
-			// message
+
+			// Send cancellation message for this hypo
 			if (reportCancel == true) {
+				// only if we've sent an event message
 				if (hypo->getEvent()) {
 					// create cancellation message
-					std::shared_ptr<json::Object> cancel = std::make_shared<
-							json::Object>(json::Object());
-					(*cancel)["Cmd"] = "Cancel";
-					(*cancel)["Pid"] = pid;
-
-					// send message
-					if (pGlass) {
-						pGlass->send(cancel);
-					}
+					hypo->cancel();
 				}
 			}
 			// done

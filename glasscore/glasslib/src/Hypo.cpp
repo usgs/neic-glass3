@@ -876,7 +876,32 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 }
 
 // ---------------------------------------------------------cancel
-bool CHypo::cancel() {
+std::shared_ptr<json::Object> CHypo::cancel(bool send) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	std::shared_ptr<json::Object> cancel = std::make_shared<json::Object>(
+			json::Object());
+
+	// fill in cancel command from current hypocenter
+	(*cancel)["Cmd"] = "Cancel";
+	(*cancel)["Pid"] = sPid;
+
+	// log it
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::event: Created cancel message:" + json::Serialize(*cancel));
+
+	// send it
+	if ((send == true) && (pGlass != NULL)) {
+		pGlass->send(cancel);
+	}
+
+	return (cancel);
+}
+
+// ---------------------------------------------------------cancel
+bool CHypo::cancelCheck() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
@@ -1090,8 +1115,8 @@ void CHypo::clearPicks() {
 	vPick.clear();
 }
 
-// ---------------------------------------------------------Event
-void CHypo::event() {
+// ---------------------------------------------------------event
+std::shared_ptr<json::Object> CHypo::event(bool send) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
@@ -1123,9 +1148,35 @@ void CHypo::event() {
 			"CHypo::event: Created event message:" + json::Serialize(*event));
 
 	// send it
-	if (pGlass) {
+	if ((send == true) && (pGlass != NULL)) {
 		pGlass->send(event);
 	}
+
+	return (event);
+}
+
+// ---------------------------------------------------------expire
+std::shared_ptr<json::Object> CHypo::expire(bool send) {
+	std::shared_ptr<json::Object> expire = std::make_shared<json::Object>(
+			json::Object());
+	(*expire)["Cmd"] = "Expire";
+	(*expire)["Pid"] = sPid;
+
+	// add a copy of the expiring hypo to the message
+	std::shared_ptr<json::Object> expireHypo = hypo(false);
+	(*expire)["Hypo"] = (*expireHypo);
+
+	// log it
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::event: Created expire message:" + json::Serialize(*expire));
+
+	// send message
+	if ((send == true) && (pGlass != NULL)) {
+		pGlass->send(expire);
+	}
+
+	return (expire);
 }
 
 // ---------------------------------------------------------Gaussian
@@ -1635,7 +1686,7 @@ bool CHypo::hasPick(std::shared_ptr<CPick> pck) {
 }
 
 // ---------------------------------------------------------Hypo
-std::shared_ptr<json::Object> CHypo::hypo() {
+std::shared_ptr<json::Object> CHypo::hypo(bool send) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
@@ -1803,7 +1854,7 @@ std::shared_ptr<json::Object> CHypo::hypo() {
 	// add data array to object
 	(*hypo)["Data"] = data;
 
-	if (pGlass) {
+	if ((send == true) && (pGlass != NULL)) {
 		pGlass->send(hypo);
 	}
 

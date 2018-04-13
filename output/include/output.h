@@ -208,6 +208,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	bool isDataChanged(std::shared_ptr<json::Object> data);
 	bool isDataPublished(std::shared_ptr<json::Object> data,
 							bool ignoreVersion = true);
+	bool isDataFinished(std::shared_ptr<json::Object> data);
 
  protected:
 	/**

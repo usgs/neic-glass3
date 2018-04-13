@@ -573,9 +573,10 @@ void output::checkEventsLoop() {
 			} else if ((*data).HasKey("Pid")) {
 				id = (*data)["Pid"].ToString();
 			} else {
-				logger::log("warning",
-							"output::work(): Bad data object received from "
-							"getdatafromcache(), no ID, skipping data.");
+				logger::log(
+						"warning",
+						"output::checkEventsLoop(): Bad data object received from "
+						"getNextTrackingData(), no ID, skipping data.");
 
 				// remove the message we found from the cache, since it is bad
 				removeTrackingData(data);
@@ -589,9 +590,10 @@ void output::checkEventsLoop() {
 			if ((*data).HasKey("Cmd")) {
 				command = (*data)["Cmd"].ToString();
 			} else {
-				logger::log("warning",
-							"output::work(): Bad data object received from "
-							"getdatafromcache(), no Cmd, skipping data.");
+				logger::log(
+						"warning",
+						"output::checkEventsLoop(): Bad data object received from "
+						"getNextTrackingData(), no Cmd, skipping data.");
 
 				// remove the value we found from the cache, since it is bad
 				removeTrackingData(data);
@@ -779,11 +781,36 @@ bool output::work() {
 			// see if we've tracked this event
 			if (trackingData != NULL) {
 				// we have
-				// glass has canceled an event we have tracked
+				// glass has expired an event we have tracked
 				logger::log(
 						"debug",
 						"output::work(): Expiring event " + messageid
 								+ " and removing it from tracking.");
+
+				// check to see if this event was finished publishing
+				bool finished = isDataFinished(trackingData);
+				if (finished == false) {
+					// get the hypo from the event
+					json::Object jsonHypo = (*message)["Hypo"];
+
+					// make it shared
+					std::shared_ptr<json::Object> hypo = std::make_shared<
+							json::Object>(jsonHypo);
+
+					// check to see if we've published this event before
+					// for this check, we want to know if the current version
+					// has been marked as pub
+					if (isDataPublished(trackingData, false) == true) {
+						(*hypo)["IsUpdate"] = true;
+					} else {
+						(*hypo)["IsUpdate"] = false;
+					}
+
+					// write out the hypo to a disk file,
+					// using the threadpool
+					m_ThreadPool->addJob(
+							std::bind(&output::writeOutput, this, hypo));
+				}
 
 				// first try to remove any pending events
 				// from the tracking cache
@@ -823,7 +850,7 @@ bool output::work() {
 								+ std::to_string(m_iMessageCounter)
 								+ " messages (event messages: "
 								+ std::to_string(m_iEventCounter)
-								+ "; update messages: "
+								+ "; cancel messages: "
 								+ std::to_string(m_iCancelCounter)
 								+ "; expire messages: "
 								+ std::to_string(m_iExpireCounter)
@@ -1133,4 +1160,44 @@ bool output::isDataPublished(std::shared_ptr<json::Object> data,
 	// not published
 	return (false);
 }
+
+bool output::isDataFinished(std::shared_ptr<json::Object> data) {
+	if (data == NULL) {
+		logger::log(
+				"error",
+				"output::isDataFinished(): Null json data object passed in.");
+		return (false);
+	}
+
+	if ((!(data->HasKey("Cmd"))) || (!(data->HasKey("PubLog")))
+			|| (!(data->HasKey("Version")))) {
+		logger::log(
+				"error",
+				"output::isDataFinished(): Bad json hypo object passed in "
+						" missing Cmd, PubLog or Version "
+						+ json::Serialize(*data));
+		return (false);
+	}
+
+	// get the pub log
+	json::Array pubLog = (*data)["PubLog"].ToArray();
+	int currentVersion = (*data)["Version"].ToInt();
+
+	// for each entry in the pub log
+	for (int i = 0; i < pubLog.size(); i++) {
+		// get whether this one was published
+		int pubVersion = pubLog[i].ToInt();
+
+		// pub version less than 1 means not published
+		// which means not finished
+		if (pubVersion < 1) {
+			return (false);
+		}
+	}
+
+	// all pub log entries were greater than 0,
+	// so event was finished
+	return (true);
+}
+
 }  // namespace glass

@@ -250,7 +250,7 @@ class CHypo {
 	 *
 	 * \return Returns the generated json object.
 	 */
-	std::shared_ptr<json::Object> hypo();
+	std::shared_ptr<json::Object> hypo(bool send = true);
 
 	/**
 	 * \brief Generate Event message
@@ -259,7 +259,11 @@ class CHypo {
 	 * "Event" format and send a pointer to this object to CGlass
 	 * (and out of glasscore) using the send function (pGlass->send)
 	 */
-	void event();
+	std::shared_ptr<json::Object> event(bool send = true);
+
+	std::shared_ptr<json::Object> cancel(bool send = true);
+
+	std::shared_ptr<json::Object> expire(bool send = true);
 
 	/**
 	 * \brief Print basic hypocenter values to screen
@@ -363,7 +367,7 @@ class CHypo {
 	 *
 	 * \return Returns true if the hypocenter is not viable, false otherwise
 	 */
-	bool cancel();
+	bool cancelCheck();
 
 	/**
 	 * \brief Evaluate hypocenter report suitability
