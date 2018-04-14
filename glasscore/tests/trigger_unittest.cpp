@@ -29,6 +29,7 @@
 #define NUMCOLS 4
 #define NUMZ 1
 #define UPDATE true
+#define SITECHECK 1
 
 // tests to see if the node can be constructed
 TEST(TriggerTest, Construction) {
@@ -43,7 +44,7 @@ TEST(TriggerTest, Construction) {
 													RESOLUTION,
 													NUMROWS,
 													NUMCOLS, NUMZ,
-													UPDATE,
+													UPDATE, SITECHECK,
 													nullTrav, nullTrav);
 
 	// create  shared pointer to the site

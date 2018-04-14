@@ -12,7 +12,7 @@
 	"Detect": 16,
 	"Nucleate": 7,
 	"Thresh": 5.5,
-	"Update":true,
+	"Update":false,
 	"SaveGrid":false,
 	"NucleationPhases":{
 	    "Phase1": {

@@ -192,6 +192,8 @@ class CSiteList {
 									std::string net, std::string loc,
 									bool lookup = true);
 
+	std::vector<std::shared_ptr<CSite>> getSiteList();
+
 	/**
 	 * \brief CSiteList get site list function
 	 * \return Returns true if successful, false otherwise

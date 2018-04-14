@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <mutex>
+#include <vector>
 #include "Glass.h"
 #include "Site.h"
 #include "WebList.h"
@@ -343,17 +344,24 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 	}
 
 	// send request for information about this station
+	// NOTE: If we moved this section above the getSite() call
+	// we could be constantly requesting new station information,
+	// which might be useful.
 	if ((lookup == true) && (pGlass != NULL)) {
-		// get whether this station has been looked up before
-		int lookupcount = 0;
+		// what time is it
+		time_t tNow;
+		std::time(&tNow);
+
+		// get what time this station has been looked up before
+		int tLookup = 0;
 		auto itsite = mLookup.find(scnl);
 		if (itsite != mLookup.end()) {
-			lookupcount = mLookup[scnl];
+			tLookup = mLookup[scnl];
 		}
 
-		// only ask for a station up to 3 times
-		// NOTE: Hardcoded.
-		if (lookupcount < 3) {
+		// only ask for a station occasionally
+		// NOTE: Hardcoded to 6 hours.
+		if ((tNow - tLookup) > (60 * 60 * 6)) {
 			// construct request json message
 			std::shared_ptr<json::Object> request = std::make_shared<
 					json::Object>(json::Object());
@@ -374,13 +382,27 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 						scnl.c_str());
 			glassutil::CLogit::log(sLog);
 
-			// remember we tried
-			mLookup[scnl] = lookupcount + 1;
+			// remember when we tried
+			mLookup[scnl] = tNow;
 		}
 	}
 
 	// site not found
 	return (NULL);
+}
+
+std::vector<std::shared_ptr<CSite>> CSiteList::getSiteList() {
+	std::lock_guard<std::mutex> guard(vSiteMutex);
+
+	std::vector<std::shared_ptr<CSite>> siteList;
+
+	// move through whole vector
+	for (const auto &site : vSite) {
+		siteList.push_back(site);
+	}
+
+	// return what we got
+	return (siteList);
 }
 
 // ---------------------------------------------------------getSiteList
@@ -396,7 +418,7 @@ bool CSiteList::reqSiteList() {
 	std::lock_guard<std::mutex> guard(vSiteMutex);
 
 	// move through whole vector
-	for (auto site : vSite) {
+	for (const auto &site : vSite) {
 		json::Object stationObj;
 		double lat;
 		double lon;

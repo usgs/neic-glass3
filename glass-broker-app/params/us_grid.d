@@ -13,6 +13,7 @@
 	"Nucleate": 7,
 	"Thresh": 0.5,
 	"Update":true,
+	"SiteCheckInterval": 6,
 	"SaveGrid":false,
 	"NucleationPhases":{
 	    "Phase1": {

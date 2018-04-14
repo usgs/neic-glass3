@@ -20,6 +20,7 @@
       750.0
   ],
   "SaveGrid":false,
+  "SiteCheckInterval": 6,
 	"Update":true,
   "NucleationPhases":{
 	    "Phase1": {

@@ -20,6 +20,7 @@
   ],
   "SaveGrid":false,
 	"Update":true,
+  "SiteCheckInterval": 6,
   "NucleationPhases":{
 	    "Phase1": {
       		"PhaseName": "P",

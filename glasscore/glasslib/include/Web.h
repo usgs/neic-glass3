@@ -88,7 +88,7 @@ class CWeb {
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
-			std::shared_ptr<traveltime::CTravelTime> firstTrav,
+			int siteCheck, std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			bool createBackgroundThread = true, int sleepTime = 100,
 			int checkInterval = 60);
@@ -154,7 +154,7 @@ class CWeb {
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
 					int numNucleate, int resolution, int numRows, int numCols,
-					int numZ, bool update,
+					int numZ, bool update, int siteCheck,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav);
 
@@ -296,6 +296,8 @@ class CWeb {
 	 */
 	void remSite(std::shared_ptr<CSite> site);
 
+	void checkSites();
+
 	/**
 	 * \brief Check if this web has a site
 	 * This function checks to see if the given site is used for this web
@@ -375,6 +377,7 @@ class CWeb {
 	int getVSitesFilterSize() const;
 	bool getUseOnlyTeleseismicStations() const;
 	int getVNodeSize() const;
+	int getHoursSinceSiteCheck() const;
 
  private:
 	/**
@@ -585,6 +588,10 @@ class CWeb {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_WebMutex;
+
+	time_t m_tLastChecked;
+
+	int iHoursSinceSiteCheck;
 };
 }  // namespace glasscore
 #endif  // WEB_H

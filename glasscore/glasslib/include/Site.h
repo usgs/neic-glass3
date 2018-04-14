@@ -315,6 +315,8 @@ class CSite {
 	 */
 	const std::vector<std::shared_ptr<CPick>> getVPick() const;
 
+	time_t getTLastPickAdded() const;
+
  private:
 	/**
 	 * \brief A mutex to control threading access to vPick.
@@ -412,6 +414,8 @@ class CSite {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex siteMutex;
+
+	time_t tLastPickAdded;
 };
 }  // namespace glasscore
 #endif  // SITE_H

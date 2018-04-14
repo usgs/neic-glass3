@@ -65,7 +65,7 @@ CWeb::CWeb(bool createBackgroundThread, int sleepTime, int checkInterval) {
 // ---------------------------------------------------------CWeb
 CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
-			std::shared_ptr<traveltime::CTravelTime> firstTrav,
+			int siteCheck, std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			bool createBackgroundThread, int sleepTime, int checkInterval) {
 	// setup threads
@@ -77,7 +77,7 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 	clear();
 
 	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
-				numCols, numZ, update, firstTrav, secondTrav);
+				numCols, numZ, update, siteCheck, firstTrav, secondTrav);
 
 	// start the thread
 	if (m_bUseBackgroundThread == true) {
@@ -160,12 +160,15 @@ void CWeb::clear() {
 
 	pTrv1 = NULL;
 	pTrv2 = NULL;
+
+	std::time(&m_tLastChecked);
+	iHoursSinceSiteCheck = -1;
 }
 
 // ---------------------------------------------------------Initialize
 bool CWeb::initialize(std::string name, double thresh, int numDetect,
 						int numNucleate, int resolution, int numRows,
-						int numCols, int numZ, bool update,
+						int numCols, int numZ, bool update, int siteCheck,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav) {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
@@ -179,6 +182,7 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	nCol = numCols;
 	nZ = numZ;
 	bUpdate = update;
+	iHoursSinceSiteCheck = siteCheck;
 	pTrv1 = firstTrav;
 	pTrv2 = secondTrav;
 
@@ -253,6 +257,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 	int zs = 0;
 	bool saveGrid = false;
 	bool update = false;
+	int siteCheck = -1;
 
 	// get grid configuration from json
 	// name
@@ -348,9 +353,28 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 						+ std::to_string(update));
 	}
 
+	if (update == true) {
+		// set whether to update weblists
+		if ((com->HasKey("SiteCheckInterval"))
+				&& ((*com)["SiteCheckInterval"].GetType()
+						== json::ValueType::IntVal)) {
+			siteCheck = (*com)["SiteCheckInterval"].ToInt();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::global: Using SiteCheckInterval: "
+							+ std::to_string(siteCheck));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::global: Using default SiteCheckInterval: "
+							+ std::to_string(siteCheck));
+		}
+	}
+
 	// init, note global doesn't use nRow or nCol
-	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update, pTrv1,
-				pTrv2);
+	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update,
+				siteCheck, pTrv1, pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -502,6 +526,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 	int zs = 0;
 	bool saveGrid = false;
 	bool update = false;
+	int siteCheck = -1;
 
 	// get grid configuration from json
 	// name
@@ -636,9 +661,28 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 						+ std::to_string(update));
 	}
 
+	if (update == true) {
+		// set whether to update weblists
+		if ((com->HasKey("SiteCheckInterval"))
+				&& ((*com)["SiteCheckInterval"].GetType()
+						== json::ValueType::IntVal)) {
+			siteCheck = (*com)["SiteCheckInterval"].ToInt();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::grid: Using SiteCheckInterval: "
+							+ std::to_string(siteCheck));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::grid: Using default SiteCheckInterval: "
+							+ std::to_string(siteCheck));
+		}
+	}
+
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, rows, cols, zs, update,
-				pTrv1, pTrv2);
+				siteCheck, pTrv1, pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -800,6 +844,7 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 	int nN = 0;
 	bool saveGrid = false;
 	bool update = false;
+	int siteCheck = -1;
 	std::vector<std::vector<double>> nodes;
 	double resol = 0;
 
@@ -925,9 +970,28 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 						+ std::to_string(update));
 	}
 
+	if (update == true) {
+		// set whether to update weblists
+		if ((com->HasKey("SiteCheckInterval"))
+				&& ((*com)["SiteCheckInterval"].GetType()
+						== json::ValueType::IntVal)) {
+			siteCheck = (*com)["SiteCheckInterval"].ToInt();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::grid: Using SiteCheckInterval: "
+							+ std::to_string(siteCheck));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::grid: Using default SiteCheckInterval: "
+							+ std::to_string(siteCheck));
+		}
+	}
+
 	// initialize
-	initialize(name, thresh, detect, nucleate, resol, 0., 0., 0., update, pTrv1,
-				pTrv2);
+	initialize(name, thresh, detect, nucleate, resol, 0., 0., 0., update,
+				siteCheck, pTrv1, pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -1496,6 +1560,11 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
+	// don't bother if we're not allowed to update
+	if (bUpdate == false) {
+		return;
+	}
+
 	// if this is a remove, send to remSite
 	if (site->getUse() == false) {
 		remSite(site);
@@ -1640,6 +1709,11 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
+	// don't bother if we're not allowed to update
+	if (bUpdate == false) {
+		return;
+	}
+
 	// don't bother if this site isn't allowed
 	if (isSiteAllowed(site) == false) {
 		glassutil::CLogit::log(
@@ -1754,6 +1828,71 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 	}
 }
 
+void CWeb::checkSites() {
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CWeb::checkSites: checking for sites not picking");
+	// check pSiteList
+	if (pSiteList == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CWeb::checkSites: NULL pSiteList pointer.");
+		return;
+	}
+
+	// don't bother if we're not allowed to update
+	if (bUpdate == false) {
+		return;
+	}
+
+	// don't bother if we're not checking sites
+	if (iHoursSinceSiteCheck < 0) {
+		return;
+	}
+
+	// what time is it
+	time_t tNow;
+	std::time(&tNow);
+
+	// has it been long enough since our last check
+	// NOTE: Hardcoded to 6 hours
+	if ((tNow - m_tLastChecked) < (60 * 60 * iHoursSinceSiteCheck)) {
+		// no
+		return;
+	}
+
+	// remember when we last checked
+	m_tLastChecked = tNow;
+
+	// get the current list of sites
+	std::vector<std::shared_ptr<CSite>> siteList = pSiteList->getSiteList();
+
+	// for each site in the site list
+	for (auto aSite : siteList) {
+		// skip sites that are not used
+		if (aSite->getUse() == false) {
+			continue;
+		}
+		// skip sites not used for this web
+		if (isSiteAllowed(aSite) == false) {
+			continue;
+		}
+
+		// when was the last pick added to this site
+		time_t tLastPickAdded = aSite->getTLastPickAdded();
+
+		// have we not seen data?
+		// NOTE: hardcoded to 24 hours
+		if ((tNow - tLastPickAdded) > (60 * 60 * iHoursSinceSiteCheck)) {
+			// only remove a site if we have it
+			if (hasSite(aSite)) {
+				remSite(aSite);
+			}
+
+			// update thread status
+			setStatus(true);
+		}
+	}
+}
+
 // ---------------------------------------------------------addJob
 void CWeb::addJob(std::function<void()> newjob) {
 	if (m_bUseBackgroundThread == false) {
@@ -1795,6 +1934,9 @@ void CWeb::workLoop() {
 		if (m_JobQueue.empty() == true) {
 			// unlock and skip until next time
 			m_QueueMutex.unlock();
+
+			// check the sites
+			checkSites();
 
 			// give up some time at the end of the loop
 			jobSleep();
@@ -2004,6 +2146,10 @@ int CWeb::getVSitesFilterSize() const {
 int CWeb::getVNodeSize() const {
 	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
 	return (vNode.size());
+}
+
+int CWeb::getHoursSinceSiteCheck() const {
+	return(iHoursSinceSiteCheck);
 }
 
 }  // namespace glasscore

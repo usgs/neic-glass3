@@ -39,6 +39,8 @@
 #define NUMZ 1
 #define UPDATE true
 #define NOUPDATE false
+#define SITECHECK 1
+#define DEFSITECHECK -1
 
 #define GLOBALNAME "TestGlobal"
 #define GLOBALTHRESH 2.5
@@ -89,7 +91,8 @@ TEST(WebTest, Construction) {
 													NUMROWS,
 													NUMCOLS, NUMZ,
 													UPDATE,
-													nullTrav, nullTrav);
+													SITECHECK, nullTrav,
+													nullTrav);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testWeb->getName().c_str())<<
@@ -119,6 +122,10 @@ TEST(WebTest, Construction) {
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testWeb->getUpdate())<< "Web getUpdate() Check";
 
+	// getHoursSinceSiteCheck()
+	ASSERT_EQ(SITECHECK, testWeb->getHoursSinceSiteCheck())<<
+			"Web getHoursSinceSiteCheck() Check";
+
 	// lists
 	int expectedSize = 0;
 	ASSERT_EQ(expectedSize, (int)testWeb->getVNodeSize())<< "node list empty";
@@ -127,7 +134,7 @@ TEST(WebTest, Construction) {
 	ASSERT_EQ(expectedSize, (int)testWeb->getVNetFilterSize())<<
 	"net filter list empty";
 	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
-		"site filter list empty";
+	"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testWeb->getGlass())<< "getGlass() null";
@@ -141,7 +148,8 @@ TEST(WebTest, Construction) {
 														NUMROWS,
 														NUMCOLS, NUMZ,
 														NOUPDATE,
-														nullTrav, nullTrav);
+														DEFSITECHECK, nullTrav,
+														nullTrav);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testWeb2->getName().c_str())<<
@@ -171,14 +179,18 @@ TEST(WebTest, Construction) {
 	// getUpdate()
 	ASSERT_EQ(NOUPDATE, testWeb2->getUpdate())<< "Web getUpdate() Check";
 
+	// getHoursSinceSiteCheck()
+	ASSERT_EQ(DEFSITECHECK, testWeb2->getHoursSinceSiteCheck())<<
+	"Web getHoursSinceSiteCheck() Check";
+
 	// lists
 	ASSERT_EQ(expectedSize, (int)testWeb2->getVNodeSize())<< "node list empty";
 	ASSERT_EQ(false, testWeb->getUseOnlyTeleseismicStations())<<
-		"bUseOnlyTeleseismicStations false";
+	"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(expectedSize, (int)testWeb2->getVNetFilterSize())<<
 	"net filter list empty";
 	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
-		"site filter list empty";
+	"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testWeb2->getGlass())<< "getGlass() null";
@@ -203,7 +215,7 @@ TEST(WebTest, Initialize) {
 						NUMCOLS,
 						NUMZ,
 						UPDATE,
-						nullTrav, nullTrav);
+						SITECHECK, nullTrav, nullTrav);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testWeb.getName().c_str())<<
@@ -233,15 +245,19 @@ TEST(WebTest, Initialize) {
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testWeb.getUpdate())<< "Web getUpdate() Check";
 
+	// getHoursSinceSiteCheck()
+	ASSERT_EQ(SITECHECK, testWeb.getHoursSinceSiteCheck())<<
+	"Web getHoursSinceSiteCheck() Check";
+
 	// lists
 	int expectedSize = 0;
 	ASSERT_EQ(expectedSize, (int)testWeb.getVNodeSize())<< "node list empty";
 	ASSERT_EQ(false, testWeb.getUseOnlyTeleseismicStations())<<
-		"bUseOnlyTeleseismicStations false";
+	"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(expectedSize, (int)testWeb.getVNetFilterSize())<<
 	"net filter list empty";
 	ASSERT_EQ(expectedSize, (int)testWeb.getVSitesFilterSize())<<
-		"site filter list empty";
+	"site filter list empty";
 
 	ASSERT_TRUE(testWeb.statusCheck())<< "status check";
 }
@@ -319,14 +335,18 @@ TEST(WebTest, GlobalTest) {
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testGlobalWeb.getUpdate())<< "Web getUpdate() Check";
 
+	// getHoursSinceSiteCheck()
+	ASSERT_EQ(SITECHECK, testGlobalWeb.getHoursSinceSiteCheck())<<
+	"Web getHoursSinceSiteCheck() Check";
+
 	// lists
 	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.getVNodeSize())<< "node list";
 	ASSERT_EQ(false, testGlobalWeb.getUseOnlyTeleseismicStations())<<
-		"bUseOnlyTeleseismicStations false";
+	"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(GLOBALNUMNETEXLUDE, (int)testGlobalWeb.getVNetFilterSize())<<
 	"net filter list empty";
 	ASSERT_EQ(0, (int)testGlobalWeb.getVSitesFilterSize())<<
-		"site filter list empty";
+	"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGlobalWeb.getGlass())<< "getGlass() null";
@@ -371,9 +391,9 @@ TEST(WebTest, GridTest) {
 	gridFile.close();
 
 	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
-				json::Deserialize(stationLine));
+			json::Deserialize(stationLine));
 	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
-					json::Deserialize(gridLine));
+			json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
@@ -414,14 +434,18 @@ TEST(WebTest, GridTest) {
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
 
+	// getHoursSinceSiteCheck()
+	ASSERT_EQ(SITECHECK, testGridWeb.getHoursSinceSiteCheck())<<
+			"Web getHoursSinceSiteCheck() Check";
+
 	// lists
 	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
 	ASSERT_EQ(false, testGridWeb.getUseOnlyTeleseismicStations())<<
-		"bUseOnlyTeleseismicStations false";
+	"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(0, (int)testGridWeb.getVNetFilterSize())<<
 	"net filter list empty";
 	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
-		"site filter list empty";
+	"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
@@ -465,9 +489,9 @@ TEST(WebTest, GridExplicitTest) {
 	gridFile.close();
 
 	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
-				json::Deserialize(stationLine));
+			json::Deserialize(stationLine));
 	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
-					json::Deserialize(gridLine));
+			json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
@@ -510,14 +534,18 @@ TEST(WebTest, GridExplicitTest) {
 	// getUpdate()
 	ASSERT_EQ(NOUPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
 
+	// getHoursSinceSiteCheck()
+	ASSERT_EQ(DEFSITECHECK, testGridWeb.getHoursSinceSiteCheck())<<
+			"Web getHoursSinceSiteCheck() Check";
+
 	// lists
 	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
 	ASSERT_EQ(false, testGridWeb.getUseOnlyTeleseismicStations())<<
-		"bUseOnlyTeleseismicStations false";
+	"bUseOnlyTeleseismicStations false";
 	ASSERT_EQ(0, (int)testGridWeb.getVNetFilterSize())<<
 	"net filter list empty";
 	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
-		"site filter list empty";
+	"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
@@ -555,9 +583,9 @@ TEST(WebTest, AddTest) {
 	gridFile.close();
 
 	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
-				json::Deserialize(stationLine));
+			json::Deserialize(stationLine));
 	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
-					json::Deserialize(gridLine));
+			json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
@@ -570,7 +598,7 @@ TEST(WebTest, AddTest) {
 
 	// create site to add
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(ADDSITE))));
+			json::Object(json::Deserialize(std::string(ADDSITE))));
 	glasscore::CSite * addSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
 
@@ -614,9 +642,9 @@ TEST(WebTest, RemoveTest) {
 	gridFile.close();
 
 	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
-				json::Deserialize(stationLine));
+			json::Deserialize(stationLine));
 	std::shared_ptr<json::Object> gridConfig = std::make_shared<json::Object>(
-				json::Deserialize(gridLine));
+			json::Deserialize(gridLine));
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
@@ -629,7 +657,7 @@ TEST(WebTest, RemoveTest) {
 
 	// create site to remove
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(REMOVESITE))));
+			json::Object(json::Deserialize(std::string(REMOVESITE))));
 	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
 
@@ -662,7 +690,7 @@ TEST(WebTest, FailTests) {
 							NUMROWS,
 							NUMCOLS, NUMZ,
 							NOUPDATE,
-							nullTrav, nullTrav, false, 10, 10);
+							SITECHECK, nullTrav, nullTrav, false, 10, 10);
 
 	// Nulls
 	ASSERT_FALSE(aWeb.dispatch(NULL))<< "Null dispatch false";
@@ -683,8 +711,8 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	std::shared_ptr<json::Object> badGridConfig = std::make_shared<json::Object>(
-					json::Deserialize(badGridLine));
+	std::shared_ptr<json::Object> badGridConfig =
+			std::make_shared<json::Object>(json::Deserialize(badGridLine));
 	ASSERT_FALSE(aWeb.global(badGridConfig))<< "bad global1 false";
 
 	// no resolution
@@ -695,8 +723,8 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	std::shared_ptr<json::Object> badGridConfig2 = std::make_shared<json::Object>(
-					json::Deserialize(badGridLine));
+	std::shared_ptr<json::Object> badGridConfig2 =
+			std::make_shared<json::Object>(json::Deserialize(badGridLine));
 	ASSERT_FALSE(aWeb.global(badGridConfig2))<< "bad global2 false";
 
 	// no depths
@@ -707,8 +735,8 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	std::shared_ptr<json::Object> badGridConfig3 = std::make_shared<json::Object>(
-					json::Deserialize(badGridLine));
+	std::shared_ptr<json::Object> badGridConfig3 =
+			std::make_shared<json::Object>(json::Deserialize(badGridLine));
 	ASSERT_FALSE(aWeb.global(badGridConfig3))<< "bad global4 false";
 
 	// grid
@@ -719,8 +747,8 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	std::shared_ptr<json::Object> badGridConfig4 = std::make_shared<json::Object>(
-					json::Deserialize(badGridLine));
+	std::shared_ptr<json::Object> badGridConfig4 =
+			std::make_shared<json::Object>(json::Deserialize(badGridLine));
 	ASSERT_FALSE(aWeb.global(badGridConfig4))<< "bad grid1 false";
 
 	// no resolution
@@ -730,8 +758,8 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	std::shared_ptr<json::Object> badGridConfig5 = std::make_shared<json::Object>(
-					json::Deserialize(badGridLine));
+	std::shared_ptr<json::Object> badGridConfig5 =
+			std::make_shared<json::Object>(json::Deserialize(badGridLine));
 	ASSERT_FALSE(aWeb.global(badGridConfig5))<< "bad grid2 false";
 
 	// no depths
@@ -741,8 +769,8 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	std::shared_ptr<json::Object> badGridConfig6 = std::make_shared<json::Object>(
-					json::Deserialize(badGridLine));
+	std::shared_ptr<json::Object> badGridConfig6 =
+			std::make_shared<json::Object>(json::Deserialize(badGridLine));
 	ASSERT_FALSE(aWeb.global(badGridConfig6))<< "bad grid3 false";
 
 	// explicit
@@ -754,8 +782,8 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	std::shared_ptr<json::Object> badGridConfig7 = std::make_shared<json::Object>(
-					json::Deserialize(badGridLine));
+	std::shared_ptr<json::Object> badGridConfig7 =
+			std::make_shared<json::Object>(json::Deserialize(badGridLine));
 	ASSERT_FALSE(aWeb.global(badGridConfig7))<< "bad grid1 false";
 
 	// no resolution
@@ -766,7 +794,7 @@ TEST(WebTest, FailTests) {
 	std::getline(badGridFile, badGridLine);
 	badGridFile.close();
 
-	std::shared_ptr<json::Object> badGridConfig8 = std::make_shared<json::Object>(
-					json::Deserialize(badGridLine));
+	std::shared_ptr<json::Object> badGridConfig8 =
+			std::make_shared<json::Object>(json::Deserialize(badGridLine));
 	ASSERT_FALSE(aWeb.global(badGridConfig8))<< "bad grid2 false";
 }

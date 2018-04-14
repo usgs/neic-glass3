@@ -325,6 +325,9 @@ void CSite::clear() {
 
 	// reset max picks
 	nSitePickMax = 200;
+
+	// reset last pick added time
+	std::time(&tLastPickAdded);
 }
 
 void CSite::clearVPick() {
@@ -432,6 +435,9 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 	// add pick to site pick vector
 	// NOTE: Need to add duplicate pick protection
 	vPick.push_back(pck);
+
+	// remember the time the last pick was added
+	std::time(&tLastPickAdded);
 }
 
 // ---------------------------------------------------------remPick
@@ -731,4 +737,10 @@ const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
 	std::lock_guard<std::mutex> guard(vPickMutex);
 	return (vPick);
 }
+
+time_t CSite::getTLastPickAdded() const {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (tLastPickAdded);
+}
+
 }  // namespace glasscore

@@ -19,7 +19,7 @@
       750.0
   ],
   "SaveGrid":false,
-	"Update":true,
+	"Update":false,
   "NucleationPhases":{
 	    "Phase1": {
       		"PhaseName": "P",
