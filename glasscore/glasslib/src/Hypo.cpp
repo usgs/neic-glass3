@@ -1076,17 +1076,16 @@ void CHypo::clearCorrelations() {
 	// lock the hypo since we're iterating through it's lists
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 
-	// go through all the picks linked to this hypo
+	// go through all the corrs linked to this hypo
 	for (auto corr : vCorr) {
 		if (corr == NULL) {
 			continue;
 		}
 
-		// if the current pick is linked to this hypo
-		if (sPid == corr->getHypoPid()) {
-			// remove hypo link from this correlation
-			corr->clearHypo();
-		}
+		// remove the hypo from the corr
+		// note only removes hypo if corr
+		// is linked
+		corr->remHypo(sPid);
 	}
 
 	// remove all correlation links to this hypo
@@ -1104,11 +1103,10 @@ void CHypo::clearPicks() {
 			continue;
 		}
 
-		// if the current pick is linked to this hypo
-		if (sPid == pck->getHypoPid()) {
-			// remove hypo link from this pick
-			pck->clearHypo();
-		}
+		// remove the hypo from the pick
+		// note only removes hypo if pick
+		// is linked
+		pck->remHypo(sPid);
 	}
 
 	// remove all pick links to this hypo

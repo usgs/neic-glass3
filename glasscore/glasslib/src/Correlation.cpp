@@ -411,8 +411,6 @@ void CCorrelation::addHypo(std::shared_ptr<CHypo> hyp, std::string ass,
 
 // ---------------------------------------------------------remHypo
 void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -420,10 +418,16 @@ void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
+	remHypo(hyp->getPid());
+}
+
+void CCorrelation::remHypo(std::string pid) {
+	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+
 	// is the pointer still valid
 	if (auto pHypo = wpHypo.lock()) {
 		// Remove hypo reference from this pick
-		if (pHypo->getPid() == hyp->getPid()) {
+		if (pHypo->getPid() == pid) {
 			clearHypo();
 		}
 	} else {

@@ -156,6 +156,7 @@ class CCorrelation {
 	 * to unlink.
 	 */
 	void remHypo(std::shared_ptr<CHypo> hyp);
+	void remHypo(std::string pid);
 
 	void clearHypo();
 
