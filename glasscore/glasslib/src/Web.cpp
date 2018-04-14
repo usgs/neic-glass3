@@ -1829,8 +1829,6 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 }
 
 void CWeb::checkSites() {
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CWeb::checkSites: checking for sites not picking");
 	// check pSiteList
 	if (pSiteList == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -1861,6 +1859,9 @@ void CWeb::checkSites() {
 
 	// remember when we last checked
 	m_tLastChecked = tNow;
+
+	glassutil::CLogit::log(glassutil::log_level::debug,
+								"CWeb::checkSites: checking for sites not picking");
 
 	// get the current list of sites
 	std::vector<std::shared_ptr<CSite>> siteList = pSiteList->getSiteList();
