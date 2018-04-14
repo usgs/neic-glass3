@@ -466,6 +466,25 @@ const std::shared_ptr<CHypo> CCorrelation::getHypo() const {
 	return (wpHypo.lock());
 }
 
+const std::string CCorrelation::getHypoPid() const {
+	std::lock_guard<std::recursive_mutex> pickGuard(correlationMutex);
+	std::string hypoPid = "";
+
+	// make sure we have a hypo
+	if (wpHypo.expired() == true) {
+		return (hypoPid);
+	}
+
+	// get the hypo
+	std::shared_ptr<CHypo> pHypo = getHypo();
+	if (pHypo != NULL) {
+		// get the hypo pid
+		hypoPid = pHypo->getPid();
+	}
+
+	return (hypoPid);
+}
+
 const std::shared_ptr<CSite>& CCorrelation::getSite() const {
 	return (pSite);
 }

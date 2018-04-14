@@ -546,6 +546,25 @@ const std::shared_ptr<CHypo> CPick::getHypo() const {
 	return (wpHypo.lock());
 }
 
+const std::string CPick::getHypoPid() const {
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
+	std::string hypoPid = "";
+
+	// make sure we have a hypo
+	if (wpHypo.expired() == true) {
+		return (hypoPid);
+	}
+
+	// get the hypo
+	std::shared_ptr<CHypo> pHypo = getHypo();
+	if (pHypo != NULL) {
+		// get the hypo pid
+		hypoPid = pHypo->getPid();
+	}
+
+	return (hypoPid);
+}
+
 const std::shared_ptr<CSite> CPick::getSite() const {
 	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (wpSite.lock());

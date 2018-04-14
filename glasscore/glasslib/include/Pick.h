@@ -183,6 +183,12 @@ class CPick {
 	const std::shared_ptr<CHypo> getHypo() const;
 
 	/**
+	 * \brief Pid getter
+	 * \return the pid
+	 */
+	const std::string getHypoPid() const;
+
+	/**
 	 * \brief Site getter
 	 * \return the site
 	 */

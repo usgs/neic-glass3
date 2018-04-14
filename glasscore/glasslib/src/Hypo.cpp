@@ -1083,8 +1083,8 @@ void CHypo::clearCorrelations() {
 		}
 
 		// if the current pick is linked to this hypo
-		if ((corr->getHypo() != NULL) && (sPid == corr->getHypo()->getPid())) {
-			// remove hypo link from this pick
+		if (sPid == corr->getHypoPid()) {
+			// remove hypo link from this correlation
 			corr->clearHypo();
 		}
 	}
@@ -1105,7 +1105,7 @@ void CHypo::clearPicks() {
 		}
 
 		// if the current pick is linked to this hypo
-		if ((pck->getHypo() != NULL) && (sPid == pck->getHypo()->getPid())) {
+		if (sPid == pck->getHypoPid()) {
 			// remove hypo link from this pick
 			pck->clearHypo();
 		}
