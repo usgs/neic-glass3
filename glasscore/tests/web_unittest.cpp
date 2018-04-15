@@ -124,7 +124,7 @@ TEST(WebTest, Construction) {
 
 	// getHoursSinceSiteCheck()
 	ASSERT_EQ(SITECHECK, testWeb->getHoursSinceSiteCheck())<<
-			"Web getHoursSinceSiteCheck() Check";
+	"Web getHoursSinceSiteCheck() Check";
 
 	// lists
 	int expectedSize = 0;
@@ -436,7 +436,7 @@ TEST(WebTest, GridTest) {
 
 	// getHoursSinceSiteCheck()
 	ASSERT_EQ(SITECHECK, testGridWeb.getHoursSinceSiteCheck())<<
-			"Web getHoursSinceSiteCheck() Check";
+	"Web getHoursSinceSiteCheck() Check";
 
 	// lists
 	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
@@ -536,7 +536,7 @@ TEST(WebTest, GridExplicitTest) {
 
 	// getHoursSinceSiteCheck()
 	ASSERT_EQ(DEFSITECHECK, testGridWeb.getHoursSinceSiteCheck())<<
-			"Web getHoursSinceSiteCheck() Check";
+	"Web getHoursSinceSiteCheck() Check";
 
 	// lists
 	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";

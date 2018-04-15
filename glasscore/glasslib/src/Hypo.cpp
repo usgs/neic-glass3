@@ -1388,6 +1388,13 @@ double CHypo::getGap() const {
 	return (dGap);
 }
 
+glassutil::CGeo CHypo::getGeo() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	glassutil::CGeo geoHypo;
+	geoHypo.setGeographic(dLat, dLon, 6371.0 - dZ);
+	return(geoHypo);
+}
+
 const CGlass* CHypo::getGlass() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	return (pGlass);

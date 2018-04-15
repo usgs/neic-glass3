@@ -562,23 +562,24 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(
 			// get the hypo and compute distance between it and the
 			// current node
 			std::shared_ptr<CHypo> pHypo = wpHypo.lock();
-			glassutil::CGeo geoHypo;
-			geoHypo.setGeographic(pHypo->getLat(), pHypo->getLon(),
-									6371.0 - pHypo->getZ());
-			glassutil::CGeo nodeHypo;
-			nodeHypo.setGeographic(node->getLat(), node->getLon(),
-									6371.0 - node->getZ());
-			double dist = (geoHypo.delta(&nodeHypo) / DEG2RAD) * 111.12;
+			if (pHypo != NULL) {
+				glassutil::CGeo geoHypo = pHypo->getGeo();
 
-			// is the associated hypo close enough to this node to skip
-			// close enough means within the resolution of the node
-			if (dist < node->getResolution()) {
-				glassutil::CLogit::log(
-						glassutil::log_level::debug,
-						"CSite::nucleate: SKIPNODE because pick proximal hypo ("
-								+ std::to_string(dist) + " < "
-								+ std::to_string(node->getResolution()) + ")");
-				continue;
+				glassutil::CGeo nodeHypo = node->getGeo();
+
+				double dist = (geoHypo.delta(&nodeHypo) / DEG2RAD) * 111.12;
+
+				// is the associated hypo close enough to this node to skip
+				// close enough means within the resolution of the node
+				if (dist < node->getResolution()) {
+					glassutil::CLogit::log(
+							glassutil::log_level::debug,
+							"CSite::nucleate: SKIPNODE because pick proximal hypo ("
+									+ std::to_string(dist) + " < "
+									+ std::to_string(node->getResolution())
+									+ ")");
+					continue;
+				}
 			}
 		}
 

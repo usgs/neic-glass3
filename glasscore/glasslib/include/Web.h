@@ -545,6 +545,7 @@ class CWeb {
 	 * \brief the std::thread pointer to the background thread
 	 */
 	std::thread * m_BackgroundThread;
+	std::thread * m_BackgroundThread2;
 
 	/**
 	 * \brief boolean flag used to check thread status

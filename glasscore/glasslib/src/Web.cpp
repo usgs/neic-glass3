@@ -54,10 +54,12 @@ CWeb::CWeb(bool createBackgroundThread, int sleepTime, int checkInterval) {
 	if (m_bUseBackgroundThread == true) {
 		m_bRunJobLoop = true;
 		m_BackgroundThread = new std::thread(&CWeb::workLoop, this);
+		m_BackgroundThread2 = new std::thread(&CWeb::workLoop, this);
 		m_bThreadStatus = true;
 	} else {
 		m_bRunJobLoop = false;
 		m_BackgroundThread = NULL;
+		m_BackgroundThread2 = NULL;
 		m_bThreadStatus = false;
 	}
 }
@@ -83,10 +85,12 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 	if (m_bUseBackgroundThread == true) {
 		m_bRunJobLoop = true;
 		m_BackgroundThread = new std::thread(&CWeb::workLoop, this);
+		m_BackgroundThread2 = new std::thread(&CWeb::workLoop, this);
 		m_bThreadStatus = true;
 	} else {
 		m_bRunJobLoop = false;
 		m_BackgroundThread = NULL;
+		m_BackgroundThread2 = NULL;
 		m_bThreadStatus = false;
 	}
 }
@@ -104,10 +108,13 @@ CWeb::~CWeb() {
 
 		// wait for the thread to finish
 		m_BackgroundThread->join();
+		m_BackgroundThread2->join();
 
 		// delete it
 		delete (m_BackgroundThread);
+		delete (m_BackgroundThread2);
 		m_BackgroundThread = NULL;
+		m_BackgroundThread2 = NULL;
 	}
 }
 
@@ -1851,7 +1858,6 @@ void CWeb::checkSites() {
 	std::time(&tNow);
 
 	// has it been long enough since our last check
-	// NOTE: Hardcoded to 6 hours
 	if ((tNow - m_tLastChecked) < (60 * 60 * iHoursSinceSiteCheck)) {
 		// no
 		return;
@@ -1861,7 +1867,7 @@ void CWeb::checkSites() {
 	m_tLastChecked = tNow;
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
-								"CWeb::checkSites: checking for sites not picking");
+							"CWeb::checkSites: checking for sites not picking");
 
 	// get the current list of sites
 	std::vector<std::shared_ptr<CSite>> siteList = pSiteList->getSiteList();
@@ -1881,10 +1887,16 @@ void CWeb::checkSites() {
 		time_t tLastPickAdded = aSite->getTLastPickAdded();
 
 		// have we not seen data?
-		// NOTE: hardcoded to 24 hours
 		if ((tNow - tLastPickAdded) > (60 * 60 * iHoursSinceSiteCheck)) {
 			// only remove a site if we have it
 			if (hasSite(aSite)) {
+				glassutil::CLogit::log(
+						glassutil::log_level::info,
+						"CWeb::checkSites: Removing site " + aSite->getScnl()
+								+ " for not picking after "
+								+ std::to_string(iHoursSinceSiteCheck)
+								+ " hours.");
+				// addJob(std::bind(&CWeb::remSite, this, aSite));
 				remSite(aSite);
 			}
 
@@ -2150,7 +2162,7 @@ int CWeb::getVNodeSize() const {
 }
 
 int CWeb::getHoursSinceSiteCheck() const {
-	return(iHoursSinceSiteCheck);
+	return (iHoursSinceSiteCheck);
 }
 
 }  // namespace glasscore

@@ -553,6 +553,8 @@ class CHypo {
 	 */
 	double getZ() const;
 
+	glassutil::CGeo getGeo() const;
+
 	/**
 	 * \brief Origin time getter
 	 * \return the origin time

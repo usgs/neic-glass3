@@ -224,6 +224,8 @@ class CNode {
 	 */
 	double getZ() const;
 
+	glassutil::CGeo getGeo() const;
+
 	/**
 	 * \brief Resolution getter
 	 * \return the Resolution

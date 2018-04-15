@@ -551,6 +551,12 @@ double CNode::getZ() const {
 	return (dZ);
 }
 
+glassutil::CGeo CNode::getGeo() const {
+	glassutil::CGeo geoNode;
+	geoNode.setGeographic(dLat, dLon, 6371.0 - dZ);
+	return(geoNode);
+}
+
 CWeb* CNode::getWeb() const {
 	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	return (pWeb);
