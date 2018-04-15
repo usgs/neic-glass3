@@ -658,14 +658,14 @@ bool output::work() {
 
 	// if we got something
 	if (message != NULL) {
-		logger::log(
-				"debug",
-				"associator::dispatch(): got message:"
-						+ json::Serialize(*message)
-						+ " from associator. (outputQueueSize:"
-						+ std::to_string(outputQueueSize) + ", lookupQueueSize:"
-						+ std::to_string(lookupQueueSize) + ")");
-
+		/* logger::log(
+		 "debug",
+		 "associator::dispatch(): got message:"
+		 + json::Serialize(*message)
+		 + " from associator. (outputQueueSize:"
+		 + std::to_string(outputQueueSize) + ", lookupQueueSize:"
+		 + std::to_string(lookupQueueSize) + ")");
+		 */
 		// what time is it
 		time_t tNow;
 		std::time(&tNow);

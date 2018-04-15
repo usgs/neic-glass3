@@ -209,8 +209,7 @@ class CSite {
 	 * \param tpick - A double value containing the pick time to nucleate with
 	 * in julian seconds
 	 */
-	std::vector<std::shared_ptr<CTrigger>> nucleate(
-			double tpick, std::weak_ptr<CHypo> wpHypo);
+	std::vector<std::shared_ptr<CTrigger>> nucleate(double tpick);
 
 	/**
 	 * \brief Add triggering node to triggered node list if value exceeds
@@ -265,7 +264,7 @@ class CSite {
 	 * \brief CGeo getter
 	 * \return the CGeo
 	 */
-	glassutil::CGeo& getGeo();
+	glassutil::CGeo &getGeo();
 
 	/**
 	 * \brief Max picks for site getter

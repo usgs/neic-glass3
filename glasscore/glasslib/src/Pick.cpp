@@ -379,20 +379,22 @@ bool CPick::nucleate() {
 	if (wpHypo.expired() == false) {
 		// get the hypo and compute ratio
 		std::shared_ptr<CHypo> pHypo = wpHypo.lock();
-		double adBayesRatio = (pHypo->getBayes()) / (pHypo->getThresh());
+		if (pHypo != NULL) {
+			double adBayesRatio = (pHypo->getBayes()) / (pHypo->getThresh());
 
-		// check to see if the ratio is high enough to not
-		// bother
-		// NOTE: Hardcoded
-		if (adBayesRatio > 2.0) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
-					"CPick::nucleate: SKIPTRG due to large event association "
-							+ pickSite->getScnl() + "; tPick:" + pt
-							+ "; idPick:" + std::to_string(idPick)
-							+ " associated with an event with stack twice threshold ("
-							+ std::to_string(pHypo->getBayes()) + ")");
-			return (false);
+			// check to see if the ratio is high enough to not
+			// bother
+			// NOTE: Hardcoded
+			if (adBayesRatio > 2.0) {
+				glassutil::CLogit::log(
+						glassutil::log_level::debug,
+						"CPick::nucleate: SKIPTRG due to large event association "
+								+ pickSite->getScnl() + "; tPick:" + pt
+								+ "; idPick:" + std::to_string(idPick)
+								+ " associated with an event with stack twice threshold ("
+								+ std::to_string(pHypo->getBayes()) + ")");
+				return (false);
+			}
 		}
 	}
 
@@ -400,8 +402,7 @@ bool CPick::nucleate() {
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
-	std::vector<std::shared_ptr<CTrigger>> vTrigger = pickSite->nucleate(
-			tPick, wpHypo);
+	std::vector<std::shared_ptr<CTrigger>> vTrigger = pickSite->nucleate(tPick);
 
 	// if there were no triggers, we're done
 	if (vTrigger.size() == 0) {
@@ -417,6 +418,32 @@ bool CPick::nucleate() {
 	for (const auto &trigger : vTrigger) {
 		if (trigger->getWeb() == NULL) {
 			continue;
+		}
+
+		// check to see if the pick is currently associated to a hypo
+		if (wpHypo.expired() == false) {
+			// get the hypo and compute distance between it and the
+			// current trigger
+			std::shared_ptr<CHypo> pHypo = wpHypo.lock();
+			if (pHypo != NULL) {
+				glassutil::CGeo geoHypo = pHypo->getGeo();
+
+				glassutil::CGeo trigHypo = trigger->getGeo();
+
+				double dist = (geoHypo.delta(&trigHypo) / DEG2RAD) * 111.12;
+
+				// is the associated hypo close enough to this trigger to skip
+				// close enough means within the resolution of the trigger
+				if (dist < trigger->getResolution()) {
+					glassutil::CLogit::log(
+							glassutil::log_level::debug,
+							"CPick::nucleate: SKIPTRG because pick proximal hypo ("
+									+ std::to_string(dist) + " < "
+									+ std::to_string(trigger->getResolution())
+									+ ")");
+					continue;
+				}
+			}
 		}
 
 		// create the hypo using the node

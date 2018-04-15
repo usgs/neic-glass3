@@ -530,12 +530,19 @@ void CSite::remNode(std::string nodeID) {
 }
 
 // ---------------------------------------------------------Nucleate
-std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(
-		double tPick, std::weak_ptr<CHypo> wpHypo) {
+std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 	std::lock_guard<std::mutex> guard(vNodeMutex);
 
 	// create trigger vector
 	std::vector<std::shared_ptr<CTrigger>> vTrigger;
+
+	// are we enabled?
+	siteMutex.lock();
+	if (bUse == false) {
+		siteMutex.unlock();
+		return (vTrigger);
+	}
+	siteMutex.unlock();
 
 	// for each node linked to this site
 	for (const auto &link : vNode) {
@@ -555,32 +562,6 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(
 
 		if (node->getEnabled() == false) {
 			continue;
-		}
-
-		// check to see if the pick is currently associated to a hypo
-		if (wpHypo.expired() == false) {
-			// get the hypo and compute distance between it and the
-			// current node
-			std::shared_ptr<CHypo> pHypo = wpHypo.lock();
-			if (pHypo != NULL) {
-				glassutil::CGeo geoHypo = pHypo->getGeo();
-
-				glassutil::CGeo nodeHypo = node->getGeo();
-
-				double dist = (geoHypo.delta(&nodeHypo) / DEG2RAD) * 111.12;
-
-				// is the associated hypo close enough to this node to skip
-				// close enough means within the resolution of the node
-				if (dist < node->getResolution()) {
-					glassutil::CLogit::log(
-							glassutil::log_level::debug,
-							"CSite::nucleate: SKIPNODE because pick proximal hypo ("
-									+ std::to_string(dist) + " < "
-									+ std::to_string(node->getResolution())
-									+ ")");
-					continue;
-				}
-			}
 		}
 
 		// compute first origin time
@@ -702,7 +683,7 @@ void CSite::setQual(double qual) {
 	dQual = qual;
 }
 
-glassutil::CGeo& CSite::getGeo() {
+glassutil::CGeo &CSite::getGeo() {
 	return (geo);
 }
 
