@@ -863,8 +863,8 @@ bool output::work() {
 			if (m_iMessageCounter == 0)
 				logger::log(
 						"warning",
-						"output::work(): Recieved NO messages from associator "
-								"thread in the last "
+						"output::work(): Received NO messages from associator "
+								"thread in "
 								+ std::to_string(
 										static_cast<int>(tNow)
 												- tLastWorkReport)
@@ -874,19 +874,19 @@ bool output::work() {
 						"info",
 						"output::work(): Received "
 								+ std::to_string(m_iMessageCounter)
-								+ " messages (event messages: "
+								+ " messages from associator thread (events: "
 								+ std::to_string(m_iEventCounter)
-								+ "; cancel messages: "
+								+ "; cancels: "
 								+ std::to_string(m_iCancelCounter)
-								+ "; expire messages: "
+								+ "; expires: "
 								+ std::to_string(m_iExpireCounter)
-								+ "; hypo messages:"
+								+ "; hypos:"
 								+ std::to_string(m_iHypoCounter)
-								+ "; lookup messages:"
+								+ "; lookups:"
 								+ std::to_string(m_iLookupCounter)
-								+ "; sitelist messages:"
+								+ "; sitelists:"
 								+ std::to_string(m_iSiteListCounter) + ")"
-								+ " data from associator thread in the last "
+								+ " in "
 								+ std::to_string(
 										static_cast<int>(tNow - tLastWorkReport))
 								+ " seconds. ("
@@ -894,7 +894,7 @@ bool output::work() {
 										static_cast<double>(m_iMessageCounter)
 												/ (static_cast<double>(tNow)
 														- tLastWorkReport))
-								+ " data per second)");
+								+ " dps)");
 
 			tLastWorkReport = tNow;
 			m_iMessageCounter = 0;
