@@ -12,7 +12,9 @@ An example `glass_init.d` configuration file:
   "PickDuplicateWindow": 2.5,
   "NumNucleationThreads": 5,
   "NumHypoThreads": 5,
-  "WebBackgroundUpdate": true,
+  "NumWebThreads": 3,
+  "SiteHoursWithoutPicking": 36,
+  "SiteLookupInterval": 24,
   "Params": {
       "Thresh": 0.5,
       "Nucleate": 10,
@@ -96,11 +98,18 @@ in glass. This value should always be at least one. The upper limit depends
 on local machine capabilities. This value is used for computational performance
 tuning.
 * **NumHypoThreads** - The number of hypocenter location threads to run in
-glass.  In general this value should be equal to **NumNucleationThreads** to
+glass. In general this value should be equal to **NumNucleationThreads** to
 avoid race conditions. This value is used for computational performance tuning.
-* **WebBackgroundUpdate** - A flag indicating whether to process station updates
-to grids on a background thread. If station updates are not processed on a
-background thread, glass will halt while the updates are processed.
+* **NumWebThreads** - The number of update threads to run per detection web in
+glass. If the number of threads is zero, glass will halt while the updates are
+processed.
+* **SiteHoursWithoutPicking** - The amount of time, in hours, before a site will
+be removed from the detection webs if a pick has not been made on that site. If
+set to -1, sites will not be removed for not picking
+* **SiteLookupInterval** - The amount of time, in hours, before a site will
+request information via a SiteLookup message. A new site (previously unknown to
+glass) will always request information once before this interval applies. If set
+to -1, sites will not request information, even new ones.
 
 ## Nucleation Configuration
 These configuration parameters define and control glasscore nucleation and
@@ -139,7 +148,7 @@ hypocenter to cancel.
 * **ReportThresh** The viability threshold needed to exceed to report a
 hypocenter. Defaults to **Thresh**.
 * **ReportCut** The default number of data that need to be associated to report
-a hypocenter. Defaluts to **Nucleate**.
+a hypocenter. Defaults to **Nucleate**.
 
 ### DefaultNucleationPhase
 This parameter defines the default nucleation phase for glass. This value can be
@@ -196,6 +205,8 @@ only in global grids.
 * **Resolution** - The desired inter-node resolution (or spacing) for a grid.
 * **SaveGrid** - A flag indicating whether to save the grid node locations to a
 file for evaluation.
+* **Update** - A flag indicating whether a grid is allowed to add or remove sites
+from nodes .
 
 ## Regional / Local Grid
 This is a detection grid designed to cover some regional or local area of
