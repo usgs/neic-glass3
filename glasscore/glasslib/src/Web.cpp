@@ -12,6 +12,7 @@
 #include <ctime>
 #include <limits>
 #include <map>
+#include <sstream>
 #include "Web.h"
 #include "IGlassSend.h"
 #include "Glass.h"
@@ -44,13 +45,23 @@ bool sortSite(const std::pair<double, std::shared_ptr<CSite>> &lhs,
 // ---------------------------------------------------------CWeb
 CWeb::CWeb(int numThreads, int sleepTime, int checkInterval) {
 	// setup threads
-	m_bRunProcessLoop = true;
+	if (numThreads > 0) {
+		m_bRunProcessLoop = true;
+	} else {
+		m_bRunProcessLoop = false;
+	}
 	m_iNumThreads = numThreads;
 	m_iSleepTimeMS = sleepTime;
 	m_iStatusCheckInterval = checkInterval;
 	std::time(&tLastStatusCheck);
 
 	clear();
+
+	m_StatusMutex.lock();
+	m_ThreadStatusMap.clear();
+	m_StatusMutex.unlock();
+
+	vProcessThreads.clear();
 
 	// create threads
 	for (int i = 0; i < m_iNumThreads; i++) {
@@ -73,7 +84,12 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
 			int sleepTime, int checkInterval) {
 	// setup threads
-	m_bRunProcessLoop = true;
+	if (numThreads > 0) {
+		m_bRunProcessLoop = true;
+	} else {
+		m_bRunProcessLoop = false;
+	}
+
 	m_iNumThreads = numThreads;
 	m_iSleepTimeMS = sleepTime;
 	m_iStatusCheckInterval = checkInterval;
@@ -83,6 +99,12 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 
 	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
 				numCols, numZ, update, firstTrav, secondTrav);
+
+	m_StatusMutex.lock();
+	m_ThreadStatusMap.clear();
+	m_StatusMutex.unlock();
+
+	vProcessThreads.clear();
 
 	// create threads
 	for (int i = 0; i < m_iNumThreads; i++) {
@@ -1530,8 +1552,6 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
-	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
-
 	int nodeModCount = 0;
 	int nodeCount = 0;
 	int totalNodes = vNode.size();
@@ -1539,6 +1559,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 	// for each node in web
 	for (auto &node : vNode) {
 		nodeCount++;
+		// update thread status
+		CWeb::setStatus(true);
 
 		node->setEnabled(false);
 
@@ -1626,9 +1648,6 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		nodeModCount++;
 
 		node->setEnabled(true);
-
-		// update thread status
-		setStatus(true);
 	}
 
 	// log info if we've added a site
@@ -1676,12 +1695,16 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 	// init flag to check to see if we've generated a site list for this web
 	// yet
 	bool bSiteList = false;
+	int nodeModCount = 0;
 	int nodeCount = 0;
-
-	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
+	int totalNodes = vNode.size();
 
 	// for each node in web
 	for (auto &node : vNode) {
+		nodeCount++;
+		// update thread status
+		CWeb::setStatus(true);
+
 		// search through each site linked to this node, see if we have it
 		std::shared_ptr<CSite> foundSite = node->getSite(site->getScnl());
 
@@ -1691,6 +1714,18 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		}
 
 		node->setEnabled(false);
+
+		if (nodeCount % 1000 == 0) {
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CWeb::remSite: Station " + site->getScnl() + " processed "
+							+ std::to_string(nodeCount) + " out of "
+							+ std::to_string(totalNodes) + " nodes in web: "
+							+ sName + ". Modified "
+							+ std::to_string(nodeModCount) + " nodes.");
+		}
+
+		// lock the site list while we're using it
 		std::lock_guard<std::mutex> guard(vSiteMutex);
 
 		// generate the site list for this web if this is the first
@@ -1743,7 +1778,7 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 			node->sortSiteLinks();
 
 			// we've removed a site
-			nodeCount++;
+			nodeModCount++;
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
@@ -1752,18 +1787,15 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		}
 
 		node->setEnabled(true);
-
-		// update thread status
-		setStatus(true);
 	}
 
 	// log info if we've removed a site
 	char sLog[1024];
-	if (nodeCount > 0) {
+	if (nodeModCount > 0) {
 		snprintf(
 				sLog, sizeof(sLog),
 				"CWeb::remSite: Removed site: %s from %d node(s) in web: %s",
-				site->getScnl().c_str(), nodeCount, sName.c_str());
+				site->getScnl().c_str(), nodeModCount, sName.c_str());
 		glassutil::CLogit::log(glassutil::log_level::info, sLog);
 	} else {
 		glassutil::CLogit::log(
@@ -1805,7 +1837,7 @@ void CWeb::workLoop() {
 			break;
 
 		// update thread status
-		setStatus(true);
+		CWeb::setStatus(true);
 
 		// lock for queue access
 		m_QueueMutex.lock();
@@ -1859,7 +1891,7 @@ bool CWeb::statusCheck() {
 
 	// if we have no threads to check, don't bother
 	if (m_iNumThreads == 0) {
-		return(true);
+		return (true);
 	}
 
 	// thread is dead if we're not running
@@ -1870,11 +1902,14 @@ bool CWeb::statusCheck() {
 		return (false);
 	}
 
+	int tcount = 0;
 	// see if it's time to check
 	time_t tNow;
 	std::time(&tNow);
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
 		// get the thread status
+		// glassutil::CLogit::log(glassutil::log_level::debug,
+		// "CWeb::statusCheck(): Checking " + sName);
 		m_StatusMutex.lock();
 		std::map<std::thread::id, bool>::iterator StatusItr;
 		for (StatusItr = m_ThreadStatusMap.begin();
@@ -1888,8 +1923,8 @@ bool CWeb::statusCheck() {
 
 				glassutil::CLogit::log(
 						glassutil::log_level::error,
-						"CWeb::statusCheck(): At least one thread"
-								" did not respond in the last"
+						"CWeb::statusCheck(): At least one thread in " + sName
+								+ " did not respond in the last"
 								+ std::to_string(m_iStatusCheckInterval)
 								+ "seconds.");
 
@@ -1913,11 +1948,12 @@ bool CWeb::statusCheck() {
 
 // ---------------------------------------------------------setStatus
 void CWeb::setStatus(bool status) {
+	std::thread::id tid = std::this_thread::get_id();
+
 	// update thread status
 	m_StatusMutex.lock();
-	if (m_ThreadStatusMap.find(std::this_thread::get_id())
-			!= m_ThreadStatusMap.end()) {
-		m_ThreadStatusMap[std::this_thread::get_id()] = status;
+	if (m_ThreadStatusMap.find(tid) != m_ThreadStatusMap.end()) {
+		m_ThreadStatusMap[tid] = status;
 	}
 	m_StatusMutex.unlock();
 }

@@ -4,6 +4,10 @@
 	# this config is for glass
 	"Cmd":"GlassOutput",
 
+	# whether to publish a final update when glass
+	# is done with the event
+	"PublishOnExpiration":true,
+
 	# the times in seconds to publish events
 	"PublicationTimes":[20,180],
 

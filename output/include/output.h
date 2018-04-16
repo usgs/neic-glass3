@@ -84,7 +84,6 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 */
 	void sendToOutput(std::shared_ptr<json::Object> message) override;
 
-
 	bool start() override;
 	bool stop() override;
 	bool isRunning() override;
@@ -284,6 +283,8 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 
 	std::vector<int> m_PublicationTimes;
 
+	bool m_bPubOnExpiration;
+
 	/**
 	 * \brief the total messages performance counter
 	 */
@@ -309,8 +310,14 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 */
 	int m_iHypoCounter;
 
+	/**
+	 * \brief the lookup messages performance counter
+	 */
 	int m_iLookupCounter;
 
+	/**
+	 * \brief the sitelist messages performance counter
+	 */
 	int m_iSiteListCounter;
 
 	/**

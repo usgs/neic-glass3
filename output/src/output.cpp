@@ -110,6 +110,23 @@ bool output::setup(json::Object *config) {
 	// this mutex may be pointless
 	m_ConfigMutex.lock();
 
+	// publish on expiration
+	if (!(config->HasKey("PublishOnExpiration"))) {
+		// publish on expiration is optional, default to false
+		m_bPubOnExpiration = false;
+		logger::log(
+				"info",
+				"output::setup(): PublishOnExpiration not specified, using default "
+				"of false.");
+	} else {
+		m_bPubOnExpiration = (*config)["PublishOnExpiration"].ToBool();
+
+		logger::log(
+				"info",
+				"output::setup(): Using PublishOnExpiration: "
+						+ std::to_string(m_bPubOnExpiration) + " .");
+	}
+
 	// publicationTimes
 	if (!(config->HasKey("PublicationTimes"))) {
 		// pubdelay is optional, default to 0
@@ -787,37 +804,40 @@ bool output::work() {
 						"output::work(): Expiring event " + messageid
 								+ " and removing it from tracking.");
 
-				// check to see if this event was finished publishing
-				// and if there is a final hypo to publish
-				if ((isDataFinished(trackingData) == false)
-						&& (message->HasKey("Hypo"))) {
-					// get the hypo from the event
-					json::Object jsonHypo = (*message)["Hypo"];
+				// check to see if there was a hypo with this expire message
+				if ((message->HasKey("Hypo")) == true) {
+					// check to see if this event was not finished publishing
+					// or if we're configured to always send expiration
+					// hypos
+					if ((isDataFinished(trackingData) == false)
+							|| (m_bPubOnExpiration == true)) {
+						// get the hypo from the event
+						json::Object jsonHypo = (*message)["Hypo"];
 
-					// make it shared
-					std::shared_ptr<json::Object> hypo = std::make_shared<
-							json::Object>(jsonHypo);
+						// make it shared
+						std::shared_ptr<json::Object> hypo = std::make_shared<
+								json::Object>(jsonHypo);
 
-					// check to see if we've published this event before
-					// for this check, we want to know if the current version
-					// has been marked as pub
-					if (isDataPublished(trackingData, false) == true) {
-						(*hypo)["IsUpdate"] = true;
-					} else {
-						(*hypo)["IsUpdate"] = false;
+						// check to see if we've published this event before
+						// for this check, we want to know if the current version
+						// has been marked as pub
+						if (isDataPublished(trackingData, false) == true) {
+							(*hypo)["IsUpdate"] = true;
+						} else {
+							(*hypo)["IsUpdate"] = false;
+						}
+
+						logger::log(
+								"debug",
+								"output::work(): Writing final hypo for expiring event "
+										+ messageid);
+
+						// write out the hypo to a disk file,
+						// using the threadpool
+						m_ThreadPool->addJob(
+								std::bind(&output::writeOutput, this, hypo));
 					}
-
-					logger::log(
-							"debug",
-							"output::work(): Writing final hypo for expiring event "
-									+ messageid);
-
-					// write out the hypo to a disk file,
-					// using the threadpool
-					m_ThreadPool->addJob(
-							std::bind(&output::writeOutput, this, hypo));
 				}
-
 				// first try to remove any pending events
 				// from the tracking cache
 				removeTrackingData(message);

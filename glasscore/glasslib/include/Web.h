@@ -42,13 +42,13 @@ class CWeb {
 	 * \brief CWeb constructor
 	 *
 	 * The constructor for the CWeb class.
-	 * \param createBackgroundThread - A boolean flag indicating whether
-	 * to create a background thread for web updates. If set to false, glass will
-	 * halt until the web update is completed. Default true.
+	 * \param numThreads - An integer containing the desired number of background
+	 * threads to process web updates, if set to 0, glass will
+	 * halt until the web update is completed. Default 0.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
-	 * seconds between status checks. -1 to disable status checks.  Default 60.
+	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
 	CWeb(int numThreads = 0, int sleepTime = 100,
 			int checkInterval = 60);
@@ -79,19 +79,19 @@ class CWeb {
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
 	 * use for travel time lookups.
-	 * \param createBackgroundThread - A boolean flag indicating whether
-	 * to create a background thread for web updates. If set to false, glass will
-	 * halt until the web update is completed. Default true.
+	 * \param numThreads - An integer containing the desired number of background
+	 * threads to process web updates, if set to 0, glass will
+	 * halt until the web update is completed. Default 0.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
-	 * seconds between status checks. -1 to disable status checks.  Default 60.
+	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
-			int numThreads = 1, int sleepTime = 100,
+			int numThreads = 0, int sleepTime = 100,
 			int checkInterval = 60);
 
 	/**
