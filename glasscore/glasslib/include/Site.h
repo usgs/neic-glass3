@@ -316,6 +316,8 @@ class CSite {
 
 	time_t getTLastPickAdded() const;
 
+	double * getVec(double * vec);
+
  private:
 	/**
 	 * \brief A mutex to control threading access to vPick.

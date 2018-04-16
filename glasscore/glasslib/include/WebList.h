@@ -35,7 +35,7 @@ class CWebList {
 	/**
 	 * \brief CWebList constructor
 	 */
-	explicit CWebList(bool useBackgroundThreads = true);
+	explicit CWebList(int numThreads = 0);
 
 	/**
 	 * \brief CWebList destructor
@@ -179,10 +179,9 @@ class CWebList {
 	std::vector<std::shared_ptr<CWeb>> vWeb;
 
 	/**
-	 * \brief A boolean flag indicating whether to perform web updates on
-	 * a background thread.
+	 * \brief An integer indicating how many threads each web should have
 	 */
-	bool m_bUseBackgroundThreads;
+	int m_iNumThreads;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CCorrelationList.

@@ -13,6 +13,7 @@
 #include <memory>
 #include <map>
 #include <mutex>
+#include <thread>
 
 namespace glasscore {
 
@@ -42,7 +43,7 @@ class CSiteList {
 	 * The constructor for the CSiteList class.
 	 * Initializes members to default values.
 	 */
-	CSiteList();
+	explicit CSiteList(int sleepTime = 100, int checkInterval = 60);
 
 	/**
 	 * \brief CSiteList destructor
@@ -183,14 +184,11 @@ class CSiteList {
 	 * \param comp - A std::string containing the component
 	 * \param net - A std::string containing the network
 	 * \param loc - A std::string containing the location
-	 * \param lookup - A boolean value indicating whether to send a lookup
-	 * message if the site is not found.
 	 * \return Returns a shared_ptr to the CSite object containing the desired
 	 * site.
 	 */
 	std::shared_ptr<CSite> getSite(std::string site, std::string comp,
-									std::string net, std::string loc,
-									bool lookup = true);
+									std::string net, std::string loc);
 
 	std::vector<std::shared_ptr<CSite>> getSiteList();
 
@@ -217,7 +215,35 @@ class CSiteList {
 	 */
 	int getVSiteSize() const;
 
+	/**
+	 * \brief check to see if the thread is still functional
+	 *
+	 * Checks the thread to see if it is still responsive.
+	 */
+	bool statusCheck();
+
+	void setHoursWithoutPicking(int hoursWithoutPicking);
+	int getHoursWithoutPicking() const;
+
+	void setHoursBeforeLookingUp(int hoursBeforeLookingUp);
+	int getHoursBeforeLookingUp() const;
+
  private:
+	void checkSites();
+
+	/**
+	 * \brief Background thread work loop for this web
+	 */
+	void backgroundLoop();
+
+	/**
+	 * \brief thread status update function
+	 *
+	 * Updates the status for the thread
+	 * \param status - A boolean flag containing the status to set
+	 */
+	void setStatus(bool status);
+
 	/**
 	 * \brief A pointer to the main CGlass class, used to pass this information
 	 * to sites added to CSiteList
@@ -254,6 +280,51 @@ class CSiteList {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_SiteListMutex;
+
+	/**
+	 * \brief the boolean flags indicating that the jobloop threads
+	 * should keep running.
+	 */
+	bool m_bRunBackgroundLoop;
+
+	/**
+	 * \brief the std::thread pointer to the background thread
+	 */
+	std::thread * m_BackgroundThread;
+
+	/**
+	 * \brief boolean flag used to check thread status
+	 */
+	bool m_bThreadStatus;
+
+	/**
+	 * \brief An integer containing the amount of
+	 * time to sleep in milliseconds between picks.
+	 */
+	int m_iSleepTimeMS;
+
+	/**
+	 * \brief the integer interval in seconds after which the work thread
+	 * will be considered dead. A negative check interval disables thread
+	 * status checks
+	 */
+	int m_iStatusCheckInterval;
+
+	/**
+	 * \brief the time_t holding the last time the thread status was checked
+	 */
+	time_t tLastStatusCheck;
+
+	/**
+	 * \brief the std::mutex for thread status
+	 */
+	std::mutex m_StatusMutex;
+
+	time_t m_tLastChecked;
+
+	int iHoursWithoutPicking;
+
+	int iHoursBeforeLookingUp;
 };
 }  // namespace glasscore
 #endif  // SITELIST_H

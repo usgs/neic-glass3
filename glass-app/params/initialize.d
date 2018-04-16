@@ -9,7 +9,9 @@
   "PickDuplicateWindow": 2.5,
   "NumNucleationThreads": 5,
   "NumHypoThreads": 5,
-  "WebBackgroundUpdate": true,
+  "NumWebThreads": 0,
+  "SiteHoursWithoutPicking": -1,
+  "SiteLookupInterval":-1,
   "Params": {
       "Thresh": 0.5,
       "Nucleate": 10,

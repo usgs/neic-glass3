@@ -16,6 +16,7 @@
 #include <mutex>
 #include <thread>
 #include <queue>
+#include <map>
 #include "TravelTime.h"
 
 namespace glasscore {
@@ -49,7 +50,7 @@ class CWeb {
 	 * \param checkInterval - An integer containing the amount of time in
 	 * seconds between status checks. -1 to disable status checks.  Default 60.
 	 */
-	CWeb(bool createBackgroundThread = true, int sleepTime = 100,
+	CWeb(int numThreads = 0, int sleepTime = 100,
 			int checkInterval = 60);
 
 	/**
@@ -88,9 +89,9 @@ class CWeb {
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
-			int siteCheck, std::shared_ptr<traveltime::CTravelTime> firstTrav,
+			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
-			bool createBackgroundThread = true, int sleepTime = 100,
+			int numThreads = 1, int sleepTime = 100,
 			int checkInterval = 60);
 
 	/**
@@ -154,7 +155,7 @@ class CWeb {
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
 					int numNucleate, int resolution, int numRows, int numCols,
-					int numZ, bool update, int siteCheck,
+					int numZ, bool update,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav);
 
@@ -296,8 +297,6 @@ class CWeb {
 	 */
 	void remSite(std::shared_ptr<CSite> site);
 
-	void checkSites();
-
 	/**
 	 * \brief Check if this web has a site
 	 * This function checks to see if the given site is used for this web
@@ -377,7 +376,6 @@ class CWeb {
 	int getVSitesFilterSize() const;
 	bool getUseOnlyTeleseismicStations() const;
 	int getVNodeSize() const;
-	int getHoursSinceSiteCheck() const;
 
  private:
 	/**
@@ -536,21 +534,20 @@ class CWeb {
 	std::mutex m_QueueMutex;
 
 	/**
-	 * \brief the boolean flags indicating that the jobloop threads
-	 * should keep running.
+	 * \brief the std::vector of std::threads
 	 */
-	bool m_bRunJobLoop;
+	std::vector<std::thread> vProcessThreads;
 
 	/**
-	 * \brief the std::thread pointer to the background thread
+	 * \brief An integer containing the number of
+	 * threads in the pool.
 	 */
-	std::thread * m_BackgroundThread;
-	std::thread * m_BackgroundThread2;
+	int m_iNumThreads;
 
 	/**
-	 * \brief boolean flag used to check thread status
+	 * \brief A std::map containing the status of each thread
 	 */
-	bool m_bThreadStatus;
+	std::map<std::thread::id, bool> m_ThreadStatusMap;
 
 	/**
 	 * \brief An integer containing the amount of
@@ -559,7 +556,7 @@ class CWeb {
 	int m_iSleepTimeMS;
 
 	/**
-	 * \brief the std::mutex for thread status
+	 * \brief the std::mutex for m_ThreadStatusMap
 	 */
 	std::mutex m_StatusMutex;
 
@@ -576,10 +573,10 @@ class CWeb {
 	time_t tLastStatusCheck;
 
 	/**
-	 * \brief boolean flag used to indicate whether to use a background thread
-	 * for updates
+	 * \brief the boolean flags indicating that the process threads
+	 * should keep running.
 	 */
-	bool m_bUseBackgroundThread;
+	bool m_bRunProcessLoop;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CWeb.
@@ -589,10 +586,6 @@ class CWeb {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_WebMutex;
-
-	time_t m_tLastChecked;
-
-	int iHoursSinceSiteCheck;
 };
 }  // namespace glasscore
 #endif  // WEB_H

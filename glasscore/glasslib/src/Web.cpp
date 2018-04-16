@@ -11,6 +11,7 @@
 #include <mutex>
 #include <ctime>
 #include <limits>
+#include <map>
 #include "Web.h"
 #include "IGlassSend.h"
 #include "Glass.h"
@@ -41,37 +42,39 @@ bool sortSite(const std::pair<double, std::shared_ptr<CSite>> &lhs,
 }
 
 // ---------------------------------------------------------CWeb
-CWeb::CWeb(bool createBackgroundThread, int sleepTime, int checkInterval) {
-	// setup threadsto
-	m_bUseBackgroundThread = createBackgroundThread;
+CWeb::CWeb(int numThreads, int sleepTime, int checkInterval) {
+	// setup threads
+	m_bRunProcessLoop = true;
+	m_iNumThreads = numThreads;
 	m_iSleepTimeMS = sleepTime;
 	m_iStatusCheckInterval = checkInterval;
 	std::time(&tLastStatusCheck);
 
 	clear();
 
-	// start the thread
-	if (m_bUseBackgroundThread == true) {
-		m_bRunJobLoop = true;
-		m_BackgroundThread = new std::thread(&CWeb::workLoop, this);
-		m_BackgroundThread2 = new std::thread(&CWeb::workLoop, this);
-		m_bThreadStatus = true;
-	} else {
-		m_bRunJobLoop = false;
-		m_BackgroundThread = NULL;
-		m_BackgroundThread2 = NULL;
-		m_bThreadStatus = false;
+	// create threads
+	for (int i = 0; i < m_iNumThreads; i++) {
+		// create thread
+		vProcessThreads.push_back(std::thread(&CWeb::workLoop, this));
+
+		// add to status map if we're tracking status
+		if (m_iStatusCheckInterval > 0) {
+			m_StatusMutex.lock();
+			m_ThreadStatusMap[vProcessThreads[i].get_id()] = true;
+			m_StatusMutex.unlock();
+		}
 	}
 }
 
 // ---------------------------------------------------------CWeb
 CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
-			int siteCheck, std::shared_ptr<traveltime::CTravelTime> firstTrav,
-			std::shared_ptr<traveltime::CTravelTime> secondTrav,
-			bool createBackgroundThread, int sleepTime, int checkInterval) {
+			std::shared_ptr<traveltime::CTravelTime> firstTrav,
+			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
+			int sleepTime, int checkInterval) {
 	// setup threads
-	m_bUseBackgroundThread = createBackgroundThread;
+	m_bRunProcessLoop = true;
+	m_iNumThreads = numThreads;
 	m_iSleepTimeMS = sleepTime;
 	m_iStatusCheckInterval = checkInterval;
 	std::time(&tLastStatusCheck);
@@ -79,19 +82,19 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 	clear();
 
 	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
-				numCols, numZ, update, siteCheck, firstTrav, secondTrav);
+				numCols, numZ, update, firstTrav, secondTrav);
 
-	// start the thread
-	if (m_bUseBackgroundThread == true) {
-		m_bRunJobLoop = true;
-		m_BackgroundThread = new std::thread(&CWeb::workLoop, this);
-		m_BackgroundThread2 = new std::thread(&CWeb::workLoop, this);
-		m_bThreadStatus = true;
-	} else {
-		m_bRunJobLoop = false;
-		m_BackgroundThread = NULL;
-		m_BackgroundThread2 = NULL;
-		m_bThreadStatus = false;
+	// create threads
+	for (int i = 0; i < m_iNumThreads; i++) {
+		// create thread
+		vProcessThreads.push_back(std::thread(&CWeb::workLoop, this));
+
+		// add to status map if we're tracking status
+		if (m_iStatusCheckInterval > 0) {
+			m_StatusMutex.lock();
+			m_ThreadStatusMap[vProcessThreads[i].get_id()] = true;
+			m_StatusMutex.unlock();
+		}
 	}
 }
 
@@ -100,22 +103,20 @@ CWeb::~CWeb() {
 	glassutil::CLogit::log("CWeb::~CWeb");
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 
-	clear();
+	// disable status checking
+	m_StatusMutex.lock();
+	m_ThreadStatusMap.clear();
+	m_StatusMutex.unlock();
 
-	if (m_bUseBackgroundThread == true) {
-		// stop the thread
-		m_bRunJobLoop = false;
+	// signal threads to finish
+	m_bRunProcessLoop = false;
 
-		// wait for the thread to finish
-		m_BackgroundThread->join();
-		m_BackgroundThread2->join();
-
-		// delete it
-		delete (m_BackgroundThread);
-		delete (m_BackgroundThread2);
-		m_BackgroundThread = NULL;
-		m_BackgroundThread2 = NULL;
+	// wait for threads to finish
+	for (int i = 0; i < vProcessThreads.size(); i++) {
+		vProcessThreads[i].join();
 	}
+
+	clear();
 }
 
 // ---------------------------------------------------------clear
@@ -167,15 +168,12 @@ void CWeb::clear() {
 
 	pTrv1 = NULL;
 	pTrv2 = NULL;
-
-	std::time(&m_tLastChecked);
-	iHoursSinceSiteCheck = -1;
 }
 
 // ---------------------------------------------------------Initialize
 bool CWeb::initialize(std::string name, double thresh, int numDetect,
 						int numNucleate, int resolution, int numRows,
-						int numCols, int numZ, bool update, int siteCheck,
+						int numCols, int numZ, bool update,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav) {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
@@ -189,7 +187,6 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	nCol = numCols;
 	nZ = numZ;
 	bUpdate = update;
-	iHoursSinceSiteCheck = siteCheck;
 	pTrv1 = firstTrav;
 	pTrv2 = secondTrav;
 
@@ -264,7 +261,6 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 	int zs = 0;
 	bool saveGrid = false;
 	bool update = false;
-	int siteCheck = -1;
 
 	// get grid configuration from json
 	// name
@@ -360,28 +356,9 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 						+ std::to_string(update));
 	}
 
-	if (update == true) {
-		// set whether to update weblists
-		if ((com->HasKey("SiteCheckInterval"))
-				&& ((*com)["SiteCheckInterval"].GetType()
-						== json::ValueType::IntVal)) {
-			siteCheck = (*com)["SiteCheckInterval"].ToInt();
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::global: Using SiteCheckInterval: "
-							+ std::to_string(siteCheck));
-		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::global: Using default SiteCheckInterval: "
-							+ std::to_string(siteCheck));
-		}
-	}
-
 	// init, note global doesn't use nRow or nCol
-	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update,
-				siteCheck, pTrv1, pTrv2);
+	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update, pTrv1,
+				pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -533,7 +510,6 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 	int zs = 0;
 	bool saveGrid = false;
 	bool update = false;
-	int siteCheck = -1;
 
 	// get grid configuration from json
 	// name
@@ -668,28 +644,9 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 						+ std::to_string(update));
 	}
 
-	if (update == true) {
-		// set whether to update weblists
-		if ((com->HasKey("SiteCheckInterval"))
-				&& ((*com)["SiteCheckInterval"].GetType()
-						== json::ValueType::IntVal)) {
-			siteCheck = (*com)["SiteCheckInterval"].ToInt();
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::grid: Using SiteCheckInterval: "
-							+ std::to_string(siteCheck));
-		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::grid: Using default SiteCheckInterval: "
-							+ std::to_string(siteCheck));
-		}
-	}
-
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, rows, cols, zs, update,
-				siteCheck, pTrv1, pTrv2);
+				pTrv1, pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -851,7 +808,7 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 	int nN = 0;
 	bool saveGrid = false;
 	bool update = false;
-	int siteCheck = -1;
+
 	std::vector<std::vector<double>> nodes;
 	double resol = 0;
 
@@ -977,28 +934,9 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 						+ std::to_string(update));
 	}
 
-	if (update == true) {
-		// set whether to update weblists
-		if ((com->HasKey("SiteCheckInterval"))
-				&& ((*com)["SiteCheckInterval"].GetType()
-						== json::ValueType::IntVal)) {
-			siteCheck = (*com)["SiteCheckInterval"].ToInt();
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::grid: Using SiteCheckInterval: "
-							+ std::to_string(siteCheck));
-		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::grid: Using default SiteCheckInterval: "
-							+ std::to_string(siteCheck));
-		}
-	}
-
 	// initialize
-	initialize(name, thresh, detect, nucleate, resol, 0., 0., 0., update,
-				siteCheck, pTrv1, pTrv2);
+	initialize(name, thresh, detect, nucleate, resol, 0., 0., 0., update, pTrv1,
+				pTrv2);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -1835,80 +1773,9 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 	}
 }
 
-void CWeb::checkSites() {
-	// check pSiteList
-	if (pSiteList == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::checkSites: NULL pSiteList pointer.");
-		return;
-	}
-
-	// don't bother if we're not allowed to update
-	if (bUpdate == false) {
-		return;
-	}
-
-	// don't bother if we're not checking sites
-	if (iHoursSinceSiteCheck < 0) {
-		return;
-	}
-
-	// what time is it
-	time_t tNow;
-	std::time(&tNow);
-
-	// has it been long enough since our last check
-	if ((tNow - m_tLastChecked) < (60 * 60 * iHoursSinceSiteCheck)) {
-		// no
-		return;
-	}
-
-	// remember when we last checked
-	m_tLastChecked = tNow;
-
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CWeb::checkSites: checking for sites not picking");
-
-	// get the current list of sites
-	std::vector<std::shared_ptr<CSite>> siteList = pSiteList->getSiteList();
-
-	// for each site in the site list
-	for (auto aSite : siteList) {
-		// skip sites that are not used
-		if (aSite->getUse() == false) {
-			continue;
-		}
-		// skip sites not used for this web
-		if (isSiteAllowed(aSite) == false) {
-			continue;
-		}
-
-		// when was the last pick added to this site
-		time_t tLastPickAdded = aSite->getTLastPickAdded();
-
-		// have we not seen data?
-		if ((tNow - tLastPickAdded) > (60 * 60 * iHoursSinceSiteCheck)) {
-			// only remove a site if we have it
-			if (hasSite(aSite)) {
-				glassutil::CLogit::log(
-						glassutil::log_level::info,
-						"CWeb::checkSites: Removing site " + aSite->getScnl()
-								+ " for not picking after "
-								+ std::to_string(iHoursSinceSiteCheck)
-								+ " hours.");
-				// addJob(std::bind(&CWeb::remSite, this, aSite));
-				remSite(aSite);
-			}
-
-			// update thread status
-			setStatus(true);
-		}
-	}
-}
-
 // ---------------------------------------------------------addJob
 void CWeb::addJob(std::function<void()> newjob) {
-	if (m_bUseBackgroundThread == false) {
+	if (m_iNumThreads == 0) {
 		// no background thread, just run the job
 		try {
 			newjob();
@@ -1932,9 +1799,9 @@ void CWeb::workLoop() {
 	glassutil::CLogit::log(glassutil::log_level::debug,
 							"CWeb::jobLoop: startup");
 
-	while (m_bRunJobLoop == true) {
+	while (m_bRunProcessLoop == true) {
 		// make sure we're still running
-		if (m_bRunJobLoop == false)
+		if (m_bRunProcessLoop == false)
 			break;
 
 		// update thread status
@@ -1947,9 +1814,6 @@ void CWeb::workLoop() {
 		if (m_JobQueue.empty() == true) {
 			// unlock and skip until next time
 			m_QueueMutex.unlock();
-
-			// check the sites
-			checkSites();
 
 			// give up some time at the end of the loop
 			jobSleep();
@@ -1971,7 +1835,7 @@ void CWeb::workLoop() {
 		} catch (const std::exception &e) {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
-					"CWeb::jobLoop: Exception during job(): "
+					"CWeb::workLoop: Exception during job(): "
 							+ std::string(e.what()));
 			break;
 		}
@@ -1982,7 +1846,7 @@ void CWeb::workLoop() {
 
 	setStatus(false);
 	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CWeb::jobLoop: thread exit");
+							"CWeb::workLoop: thread exit");
 }
 
 // ---------------------------------------------------------statusCheck
@@ -1992,12 +1856,14 @@ bool CWeb::statusCheck() {
 	if (m_iStatusCheckInterval < 0) {
 		return (true);
 	}
-	if (m_bUseBackgroundThread == false) {
-		return (true);
+
+	// if we have no threads to check, don't bother
+	if (m_iNumThreads == 0) {
+		return(true);
 	}
 
 	// thread is dead if we're not running
-	if (m_bRunJobLoop == false) {
+	if (m_bRunProcessLoop == false) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
 				"CWeb::statusCheck(): m_bRunProcessLoop is false.");
@@ -2010,26 +1876,31 @@ bool CWeb::statusCheck() {
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
 		// get the thread status
 		m_StatusMutex.lock();
+		std::map<std::thread::id, bool>::iterator StatusItr;
+		for (StatusItr = m_ThreadStatusMap.begin();
+				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
+			// get the thread status
+			bool status = static_cast<bool>(StatusItr->second);
 
-		// The thread is dead
-		if (m_bThreadStatus != true) {
-			m_StatusMutex.unlock();
+			// at least one thread did not respond
+			if (status != true) {
+				m_StatusMutex.unlock();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CWeb::statusCheck(): Thread"
-							" did not respond in the last"
-							+ std::to_string(m_iStatusCheckInterval)
-							+ "seconds.");
+				glassutil::CLogit::log(
+						glassutil::log_level::error,
+						"CWeb::statusCheck(): At least one thread"
+								" did not respond in the last"
+								+ std::to_string(m_iStatusCheckInterval)
+								+ "seconds.");
 
-			return (false);
+				return (false);
+			}
+
+			// mark check as false until next time
+			// if the thread is alive, it'll mark it
+			// as true again.
+			StatusItr->second = false;
 		}
-
-		// mark check as false until next time
-		// if the thread is alive, it'll mark it
-		// as true again.
-		m_bThreadStatus = false;
-
 		m_StatusMutex.unlock();
 
 		// remember the last time we checked
@@ -2044,13 +1915,16 @@ bool CWeb::statusCheck() {
 void CWeb::setStatus(bool status) {
 	// update thread status
 	m_StatusMutex.lock();
-	m_bThreadStatus = status;
+	if (m_ThreadStatusMap.find(std::this_thread::get_id())
+			!= m_ThreadStatusMap.end()) {
+		m_ThreadStatusMap[std::this_thread::get_id()] = status;
+	}
 	m_StatusMutex.unlock();
 }
 
 // ---------------------------------------------------------jobSleep
 void CWeb::jobSleep() {
-	if (m_bRunJobLoop == true) {
+	if (m_bRunProcessLoop == true) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
 	}
 }
@@ -2160,10 +2034,5 @@ int CWeb::getVNodeSize() const {
 	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
 	return (vNode.size());
 }
-
-int CWeb::getHoursSinceSiteCheck() const {
-	return (iHoursSinceSiteCheck);
-}
-
 }  // namespace glasscore
 

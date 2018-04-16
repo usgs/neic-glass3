@@ -336,25 +336,43 @@ void CSite::clearVPick() {
 	vPickMutex.unlock();
 }
 
-void CSite::update(CSite *site) {
+void CSite::update(CSite *aSite) {
 	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	// scnl check
-	if (sScnl != site->sScnl) {
+	if (sScnl != aSite->getScnl()) {
 		return;
 	}
 
 	// update station quality metrics
-	bUse = site->bUse;
-	bUseForTele = site->bUseForTele;
-	dQual = site->dQual;
+	bUse = aSite->getUse();
+	bUseForTele = aSite->getUseForTele();
+	dQual = aSite->getQual();
 
 	// update location
-	geo = glassutil::CGeo(site->geo);
-	dVec[0] = site->dVec[0];
-	dVec[1] = site->dVec[1];
-	dVec[2] = site->dVec[2];
+	geo = glassutil::CGeo(aSite->getGeo());
+	double vec[3];
+	aSite->getVec(vec);
+
+	dVec[0] = vec[0];
+	dVec[1] = vec[1];
+	dVec[2] = vec[2];
+
+	// copy statistics
+	tLastPickAdded = aSite->getTLastPickAdded();
 
 	// leave lists, and pointers alone
+}
+
+double * CSite::getVec(double * vec) {
+	if (vec == NULL) {
+		return(NULL);
+	}
+
+	vec[0] = dVec[0];
+	vec[1] = dVec[1];
+	vec[2] = dVec[2];
+
+	return(vec);
 }
 
 // ---------------------------------------------------------setLocation

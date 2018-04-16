@@ -39,8 +39,6 @@
 #define NUMZ 1
 #define UPDATE true
 #define NOUPDATE false
-#define SITECHECK 1
-#define DEFSITECHECK -1
 
 #define GLOBALNAME "TestGlobal"
 #define GLOBALTHRESH 2.5
@@ -91,7 +89,7 @@ TEST(WebTest, Construction) {
 													NUMROWS,
 													NUMCOLS, NUMZ,
 													UPDATE,
-													SITECHECK, nullTrav,
+													nullTrav,
 													nullTrav);
 
 	// name
@@ -122,10 +120,6 @@ TEST(WebTest, Construction) {
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testWeb->getUpdate())<< "Web getUpdate() Check";
 
-	// getHoursSinceSiteCheck()
-	ASSERT_EQ(SITECHECK, testWeb->getHoursSinceSiteCheck())<<
-	"Web getHoursSinceSiteCheck() Check";
-
 	// lists
 	int expectedSize = 0;
 	ASSERT_EQ(expectedSize, (int)testWeb->getVNodeSize())<< "node list empty";
@@ -148,7 +142,7 @@ TEST(WebTest, Construction) {
 														NUMROWS,
 														NUMCOLS, NUMZ,
 														NOUPDATE,
-														DEFSITECHECK, nullTrav,
+														nullTrav,
 														nullTrav);
 
 	// name
@@ -178,10 +172,6 @@ TEST(WebTest, Construction) {
 
 	// getUpdate()
 	ASSERT_EQ(NOUPDATE, testWeb2->getUpdate())<< "Web getUpdate() Check";
-
-	// getHoursSinceSiteCheck()
-	ASSERT_EQ(DEFSITECHECK, testWeb2->getHoursSinceSiteCheck())<<
-	"Web getHoursSinceSiteCheck() Check";
 
 	// lists
 	ASSERT_EQ(expectedSize, (int)testWeb2->getVNodeSize())<< "node list empty";
@@ -215,7 +205,7 @@ TEST(WebTest, Initialize) {
 						NUMCOLS,
 						NUMZ,
 						UPDATE,
-						SITECHECK, nullTrav, nullTrav);
+						nullTrav, nullTrav);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testWeb.getName().c_str())<<
@@ -244,10 +234,6 @@ TEST(WebTest, Initialize) {
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testWeb.getUpdate())<< "Web getUpdate() Check";
-
-	// getHoursSinceSiteCheck()
-	ASSERT_EQ(SITECHECK, testWeb.getHoursSinceSiteCheck())<<
-	"Web getHoursSinceSiteCheck() Check";
 
 	// lists
 	int expectedSize = 0;
@@ -334,10 +320,6 @@ TEST(WebTest, GlobalTest) {
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testGlobalWeb.getUpdate())<< "Web getUpdate() Check";
-
-	// getHoursSinceSiteCheck()
-	ASSERT_EQ(SITECHECK, testGlobalWeb.getHoursSinceSiteCheck())<<
-	"Web getHoursSinceSiteCheck() Check";
 
 	// lists
 	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.getVNodeSize())<< "node list";
@@ -434,10 +416,6 @@ TEST(WebTest, GridTest) {
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
 
-	// getHoursSinceSiteCheck()
-	ASSERT_EQ(SITECHECK, testGridWeb.getHoursSinceSiteCheck())<<
-	"Web getHoursSinceSiteCheck() Check";
-
 	// lists
 	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
 	ASSERT_EQ(false, testGridWeb.getUseOnlyTeleseismicStations())<<
@@ -533,10 +511,6 @@ TEST(WebTest, GridExplicitTest) {
 
 	// getUpdate()
 	ASSERT_EQ(NOUPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
-
-	// getHoursSinceSiteCheck()
-	ASSERT_EQ(DEFSITECHECK, testGridWeb.getHoursSinceSiteCheck())<<
-	"Web getHoursSinceSiteCheck() Check";
 
 	// lists
 	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
@@ -690,7 +664,7 @@ TEST(WebTest, FailTests) {
 							NUMROWS,
 							NUMCOLS, NUMZ,
 							NOUPDATE,
-							SITECHECK, nullTrav, nullTrav, false, 10, 10);
+							nullTrav, nullTrav, false, 10, 10);
 
 	// Nulls
 	ASSERT_FALSE(aWeb.dispatch(NULL))<< "Null dispatch false";

@@ -13,8 +13,8 @@
 namespace glasscore {
 
 // ---------------------------------------------------------CWebList
-CWebList::CWebList(bool useBackgroundThreads) {
-	m_bUseBackgroundThreads = useBackgroundThreads;
+CWebList::CWebList(int numThreads) {
+	m_iNumThreads = numThreads;
 	clear();
 }
 
@@ -99,7 +99,7 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 	}
 
 	// Create a new web object
-	std::shared_ptr<CWeb> web(new CWeb(m_bUseBackgroundThreads));
+	std::shared_ptr<CWeb> web(new CWeb(m_iNumThreads));
 	if (pGlass != NULL) {
 		web->setGlass(pGlass);
 	}
@@ -192,7 +192,7 @@ void CWebList::remSite(std::shared_ptr<CSite> site) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CWebList::addSite: Removing station " + site->getScnl() + ".");
+			"CWebList::remSite: Removing station " + site->getScnl() + ".");
 
 	// Remove site from all web nodes that link to it and restructure
 	// node site lists
@@ -236,7 +236,7 @@ bool CWebList::statusCheck() {
 	}
 
 	// if we're updating in background
-	if (m_bUseBackgroundThreads == true) {
+	if (m_iNumThreads > 0) {
 		// for each web
 		for (auto web : vWeb) {
 			// check if it's alive
