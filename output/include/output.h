@@ -268,6 +268,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * store output tracking information
 	 */
 	util::Cache * m_TrackingCache;
+	std::mutex m_TrackingCacheMutex;
 
 	/**
 	 * \brief pointer to the util::queue class used to manage

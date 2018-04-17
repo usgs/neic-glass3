@@ -389,6 +389,7 @@ bool output::check() {
 
 // add data to output cache
 bool output::addTrackingData(std::shared_ptr<json::Object> data) {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (data == NULL) {
 		logger::log("error",
 					"output::addtrackingdata(): Bad json object passed in.");
@@ -477,6 +478,7 @@ bool output::removeTrackingData(std::shared_ptr<json::Object> data) {
 
 // remove data from output cache
 bool output::removeTrackingData(std::string ID) {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
 		logger::log("error",
 					"output::removetrackingdata(): Empty ID passed in.");
@@ -491,6 +493,7 @@ bool output::removeTrackingData(std::string ID) {
 }
 
 std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	std::shared_ptr<json::Object> nullObj;
 	if (id == "") {
 		logger::log("error",
@@ -511,6 +514,7 @@ std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
 }
 
 std::shared_ptr<json::Object> output::getNextTrackingData() {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	// get the data
 	std::shared_ptr<json::Object> data = m_TrackingCache->getNextFromCache(
 			true);
@@ -555,6 +559,7 @@ bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 }
 
 bool output::haveTrackingData(std::string ID) {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
 		logger::log("error", "output::haveTrackingData(): Empty ID passed in.");
 		return (false);
@@ -564,6 +569,7 @@ bool output::haveTrackingData(std::string ID) {
 }
 
 void output::clearTrackingData() {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	m_TrackingCache->clearCache();
 }
 
@@ -665,8 +671,8 @@ bool output::work() {
 	// first see what we're supposed to do with a new message
 	// see if there's an output in the message queue
 	std::shared_ptr<json::Object> message = m_OutputQueue->getDataFromQueue();
-	int outputQueueSize = m_OutputQueue->size();
-	int lookupQueueSize = m_LookupQueue->size();
+	// int outputQueueSize = m_OutputQueue->size();
+	// int lookupQueueSize = m_LookupQueue->size();
 
 	// if there's no output, check for a lookup
 	if (message == NULL) {

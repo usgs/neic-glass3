@@ -1902,7 +1902,6 @@ bool CWeb::statusCheck() {
 		return (false);
 	}
 
-	int tcount = 0;
 	// see if it's time to check
 	time_t tNow;
 	std::time(&tNow);
