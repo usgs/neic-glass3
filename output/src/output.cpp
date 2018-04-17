@@ -1213,7 +1213,6 @@ bool output::isDataFinished(std::shared_ptr<json::Object> data) {
 
 	// get the pub log
 	json::Array pubLog = (*data)["PubLog"].ToArray();
-	int currentVersion = (*data)["Version"].ToInt();
 
 	// for each entry in the pub log
 	for (int i = 0; i < pubLog.size(); i++) {
