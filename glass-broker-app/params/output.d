@@ -5,6 +5,10 @@
 	"Configuration":"glass-broker-app-output",
   "Cmd":"GlassOutput",
 
+	# whether to publish a final update when glass
+	# is done with the event
+	"PublishOnExpiration":false,
+
 	# the times in seconds to publish events
 	"PublicationTimes":[60,300],
 

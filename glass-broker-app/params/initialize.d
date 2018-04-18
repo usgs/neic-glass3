@@ -9,7 +9,9 @@
   "PickDuplicateWindow": 2.5,
   "NumNucleationThreads": 5,
   "NumHypoThreads": 3,
-  "WebBackgroundUpdate": true,
+  "NumWebThreads": 3,
+  "SiteHoursWithoutPicking": 6,
+  "SiteLookupInterval": 6,
   "Params": {
       "Thresh": 0.5,
       "Nucleate": 10,
@@ -27,7 +29,6 @@
       "ReportThresh": 0.5,
       "ReportCut":5
   },
-  "OutputFormat":"Event",
   "DefaultNucleationPhase": {
       "PhaseName": "P",
       "TravFile": "./P.trv"

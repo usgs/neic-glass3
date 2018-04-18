@@ -7,6 +7,7 @@
 #include <map>
 #include <vector>
 #include <ctime>
+#include <random>
 #include "Date.h"
 #include "Pid.h"
 #include "Site.h"
@@ -32,6 +33,10 @@ bool sortFunc(const std::pair<double, int> &lhs,
 
 // ---------------------------------------------------------CPickList
 CPickList::CPickList(int numThreads, int sleepTime, int checkInterval) {
+	// seed the random number generator
+	std::random_device randomDevice;
+	m_RandomGenerator.seed(randomDevice());
+
 	// setup threads
 	m_bRunProcessLoop = true;
 	m_iNumThreads = numThreads;
@@ -421,8 +426,6 @@ void CPickList::listPicks() {
 
 // -----------------------------------------------------checkDuplicate
 bool CPickList::checkDuplicate(CPick *newPick, double window) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
-
 	// null checks
 	if (newPick == NULL) {
 		return (false);
@@ -433,6 +436,8 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 
 	// set default return to no match
 	bool matched = false;
+
+	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
 
 	// get the index of the earliest possible match
 	int it1 = indexPick(newPick->getTPick() - window);
@@ -482,8 +487,6 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 
 // ---------------------------------------------------------scavenge
 bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
-
 	// Scan all picks within specified time range, adding any
 	// that meet association criteria to hypo object provided.
 	// Returns true if any associated.
@@ -509,6 +512,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	// Calculate range for possible associations
 	double sdassoc = pGlass->getSdAssociate();
+
+	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
 
 	// get the index of the pick to start with
 	// based on the hypo origin time
@@ -588,8 +593,6 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 std::vector<std::shared_ptr<CPick>> CPickList::rogues(std::string pidHyp,
 														double tOrg,
 														double tDuration) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
-
 	// Generate rogue list (all picks that are not associated
 	// with given event, but could be)
 	std::vector<std::shared_ptr<CPick>> vRogue;
@@ -611,6 +614,8 @@ std::vector<std::shared_ptr<CPick>> CPickList::rogues(std::string pidHyp,
 				"CPickList::rogues: Invalid tDuration provided.");
 		return (vRogue);
 	}
+
+	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
 
 	// get the index of the pick to start with
 	// based on the provided origin time
@@ -648,24 +653,24 @@ std::vector<std::shared_ptr<CPick>> CPickList::rogues(std::string pidHyp,
 
 void CPickList::processPick() {
 	while (m_bRunProcessLoop == true) {
-		// make sure we're still running
-		if (m_bRunProcessLoop == false)
-			break;
-
 		// update thread status
 		setStatus(true);
 
 		// make sure we have a pGlass and pGlass->pHypoList
 		if (pGlass == NULL) {
 			// give up some time at the end of the loop
-			jobSleep();
+			if (m_bRunProcessLoop == true) {
+				jobSleep();
+			}
 
 			// on to the next loop
 			continue;
 		}
 		if (pGlass->getHypoList() == NULL) {
 			// give up some time at the end of the loop
-			jobSleep();
+			if (m_bRunProcessLoop == true) {
+				jobSleep();
+			}
 
 			// on to the next loop
 			continue;
@@ -680,7 +685,9 @@ void CPickList::processPick() {
 			m_qProcessMutex.unlock();
 
 			// give up some time at the end of the loop
-			jobSleep();
+			if (m_bRunProcessLoop == true) {
+				jobSleep();
+			}
 
 			// on to the next loop
 			continue;
@@ -695,7 +702,9 @@ void CPickList::processPick() {
 
 		if (pck == NULL) {
 			// give up some time at the end of the loop
-			jobSleep();
+			if (m_bRunProcessLoop == true) {
+				jobSleep();
+			}
 
 			// on to the next loop
 			continue;
@@ -710,7 +719,9 @@ void CPickList::processPick() {
 		pck->nucleate();
 
 		// give up some time at the end of the loop
-		jobSleep();
+		if (m_bRunProcessLoop == true) {
+			jobSleep();
+		}
 	}
 
 	setStatus(false);
@@ -720,20 +731,26 @@ void CPickList::processPick() {
 
 // ---------------------------------------------------------setStatus
 void CPickList::jobSleep() {
+	// if we're processing jobs
 	if (m_bRunProcessLoop == true) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
+		// sleep for a random amount of time, to better distribute
+		// the load across all job threads.
+		std::uniform_int_distribution<> distribution(m_iSleepTimeMS / 4,
+														m_iSleepTimeMS);
+		int sleeptime = distribution(m_RandomGenerator);
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
 	}
 }
 
 // ---------------------------------------------------------setStatus
 void CPickList::setStatus(bool status) {
+	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
+
 	// update thread status
-	m_StatusMutex.lock();
 	if (m_ThreadStatusMap.find(std::this_thread::get_id())
 			!= m_ThreadStatusMap.end()) {
 		m_ThreadStatusMap[std::this_thread::get_id()] = status;
 	}
-	m_StatusMutex.unlock();
 }
 
 // ---------------------------------------------------------statusCheck
@@ -756,7 +773,9 @@ bool CPickList::statusCheck() {
 	std::time(&tNow);
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
 		// get the thread status
-		m_StatusMutex.lock();
+		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
+
+		// check all the threads
 		std::map<std::thread::id, bool>::iterator StatusItr;
 		for (StatusItr = m_ThreadStatusMap.begin();
 				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
@@ -765,8 +784,6 @@ bool CPickList::statusCheck() {
 
 			// at least one thread did not respond
 			if (status != true) {
-				m_StatusMutex.unlock();
-
 				glassutil::CLogit::log(
 						glassutil::log_level::error,
 						"CPickList::statusCheck(): At least one thread"
@@ -782,7 +799,6 @@ bool CPickList::statusCheck() {
 			// as true again.
 			StatusItr->second = false;
 		}
-		m_StatusMutex.unlock();
 
 		// remember the last time we checked
 		tLastStatusCheck = tNow;

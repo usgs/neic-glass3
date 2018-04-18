@@ -95,6 +95,12 @@ double CTrigger::getTOrg() const {
 	return (tOrg);
 }
 
+glassutil::CGeo CTrigger::getGeo() const {
+	glassutil::CGeo geoTrigger;
+	geoTrigger.setGeographic(dLat, dLon, 6371.0 - dZ);
+	return(geoTrigger);
+}
+
 double CTrigger::getResolution() const {
 	return (dResolution);
 }

@@ -156,6 +156,7 @@ class CCorrelation {
 	 * to unlink.
 	 */
 	void remHypo(std::shared_ptr<CHypo> hyp);
+	void remHypo(std::string pid);
 
 	void clearHypo();
 
@@ -206,6 +207,12 @@ class CCorrelation {
 	 * \return the hypo
 	 */
 	const std::shared_ptr<CHypo> getHypo() const;
+
+	/**
+	 * \brief Pid getter
+	 * \return the pid
+	 */
+	const std::string getHypoPid() const;
 
 	/**
 	 * \brief Site getter

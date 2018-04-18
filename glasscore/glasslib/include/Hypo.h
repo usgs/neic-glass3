@@ -250,7 +250,7 @@ class CHypo {
 	 *
 	 * \return Returns the generated json object.
 	 */
-	std::shared_ptr<json::Object> hypo();
+	std::shared_ptr<json::Object> hypo(bool send = true);
 
 	/**
 	 * \brief Generate Event message
@@ -259,7 +259,11 @@ class CHypo {
 	 * "Event" format and send a pointer to this object to CGlass
 	 * (and out of glasscore) using the send function (pGlass->send)
 	 */
-	void event();
+	std::shared_ptr<json::Object> event(bool send = true);
+
+	std::shared_ptr<json::Object> cancel(bool send = true);
+
+	std::shared_ptr<json::Object> expire(bool send = true);
 
 	/**
 	 * \brief Print basic hypocenter values to screen
@@ -294,6 +298,13 @@ class CHypo {
 	 * \return Returns true if the pick can be associated, false otherwise
 	 */
 	bool associate(std::shared_ptr<CPick> pick, double sigma, double sdassoc);
+
+	/**
+	 * returns the residual of a pick to the hypocenter
+	 *
+	 * \param pick - The pick to calculate a residual for
+	 */
+	double getResidual(std::shared_ptr<CPick> pick);
 
 	/**
 	 * \brief Check to see if correlation could be associated
@@ -356,7 +367,7 @@ class CHypo {
 	 *
 	 * \return Returns true if the hypocenter is not viable, false otherwise
 	 */
-	bool cancel();
+	bool cancelCheck();
 
 	/**
 	 * \brief Evaluate hypocenter report suitability
@@ -439,8 +450,10 @@ class CHypo {
 	 * \param nIter - An integer value containing the number of iterations
 	 * \param dStart - A double value containing the distance starting value
 	 * \param dStop - A double value containing the distance stopping value
-	 * \param tStart - A double value containing the time starting value
-	 * \param tStop - A double value containing the time stopping value
+	 * \param tStart - A double value containing the time starting value in
+	 * gregorian seconds
+	 * \param tStop - A double value containing the time stopping value in
+	 * gregorian seconds
 	 * \param nucleate - An int value sets if this is a nucleation which limits
 	 * the phase used.
 	 */
@@ -454,8 +467,10 @@ class CHypo {
 	 * \param nIter - An integer value containing the number of iterations
 	 * \param dStart - A double value containing the distance starting value
 	 * \param dStop - A double value containing the distance stopping value
-	 * \param tStart - A double value containing the time starting value
-	 * \param tStop - A double value containing the time stopping value
+	 * \param tStart - A double value containing the time starting value in
+	 * gregorian seconds
+	 * \param tStop - A double value containing the time stopping value in
+	 * gregorian seconds
 	 * \param nucleate - An int value sets if this is a nucleation which limits
 	 * the phase used.
 	 */
@@ -476,7 +491,14 @@ class CHypo {
 	double getBayes(double xlat, double xlon, double xZ, double oT,
 					int nucleate);
 
-	double getResidual(std::string sPhase, double tObs, double tCal);
+	/**
+	 * gets a weight residual (with S down weighted) for locator
+	 *
+	 * \param sPhase - A string with the phase type
+	 * \param tObs - The observed travel time in gregorian seconds
+	 * \param tCal - The calculated travel time in gregorian seconds
+	 */
+	double getWeightedResidual(std::string sPhase, double tObs, double tCal);
 
 	/**
 	 * Get the sum of the absolute residuals at a location
@@ -484,7 +506,7 @@ class CHypo {
 	 * \param xlat - A double of the latitude to evaluate
 	 * \param xlon - A double of the longitude
 	 * \param dZ - A double of the depth bsl
-	 * \param oT - A double of the oT
+	 * \param oT - A double of the oT in gregorian seconds
 	 * \param nucleate - An int value sets if this is a nucleation which limits
 	 * the phase used.
 	 */
@@ -507,6 +529,16 @@ class CHypo {
 	 */
 	bool weights();
 
+	/**
+	 * \brief Ensure all picks in the hypo belong to hypo
+	 *
+	 * Search through all picks in the given hypocenter's pick list, using the
+	 * hypo's affinity function to determine whether the pick belongs to the
+	 * given hypocenter or not.
+	 *
+	 * \return Returns true if the hypocenter's pick list was changed,
+	 * false otherwise.
+	 */
 	bool resolve(std::shared_ptr<CHypo> hyp);
 
 	/**
@@ -534,6 +566,12 @@ class CHypo {
 	 * \return the depth
 	 */
 	double getZ() const;
+
+	/**
+	 * \brief CGeo getter
+	 * \return the hypo location as a glassutil::CGeo object.
+	 */
+	glassutil::CGeo getGeo() const;
 
 	/**
 	 * \brief Origin time getter
@@ -734,6 +772,12 @@ class CHypo {
 	int getVPickSize() const;
 
 	/**
+	 * \brief Pick vector getter
+	 * \return the pick vector
+	 */
+	std::vector<std::shared_ptr<CPick>> getVPick() const;
+
+	/**
 	 * \brief Correlation vector size getter
 	 * \return the correlation vector size
 	 */
@@ -744,6 +788,24 @@ class CHypo {
 	 * \return the creation time
 	 */
 	double getTCreate() const;
+
+	/**
+	 * \brief get pTrv1
+	 * \return pTrv1
+	 */
+	std::shared_ptr<traveltime::CTravelTime> getTrv1() const;
+
+	/**
+	 * \brief get pTrv2
+	 * \return pTrv2
+	 */
+	std::shared_ptr<traveltime::CTravelTime> getTrv2() const;
+
+	/**
+	 * \brief get TTT
+	 * \return pTTT
+	 */
+	std::shared_ptr<traveltime::CTTT> getTTT() const;
 
 	/**
 	 * \brief Report count getter

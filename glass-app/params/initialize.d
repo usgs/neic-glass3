@@ -9,11 +9,13 @@
   "PickDuplicateWindow": 2.5,
   "NumNucleationThreads": 5,
   "NumHypoThreads": 5,
-  "WebBackgroundUpdate": true,
+  "NumWebThreads": 0,  # 0 because glass-app does not do site lookups.
+  "SiteHoursWithoutPicking": -1,  # Disabled because glass-app does not do site lookups.
+  "SiteLookupInterval":-1,  # Disabled because glass-app does not do site lookups.
   "Params": {
       "Thresh": 0.5,
       "Nucleate": 10,
-      "sdAssociate": 3.0,
+      "sdAssociate": 5.0,
       "avgDelta": 0.0,
       "avgSigma": 0.75,
       "dCutFactor": 5.0,
@@ -27,7 +29,6 @@
       "ReportThresh": 0.5,
       "ReportCut":5
   },
-  "OutputFormat":"Event",
   "DefaultNucleationPhase": {
       "PhaseName": "P",
       "TravFile": "./P.trv"

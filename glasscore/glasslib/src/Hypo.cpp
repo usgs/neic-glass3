@@ -21,8 +21,11 @@
 #include "Logit.h"
 #include "Taper.h"
 #include <fstream>
+#include <limits>
 
 namespace glasscore {
+
+#define MAXLOCDEPTH 800.0  // The maximum allowed locator depth
 
 /**
  * \brief Pick sorting function used by CHypo, sorts by pick time
@@ -128,227 +131,17 @@ CHypo::~CHypo() {
 	clear();
 }
 
-// ---------------------------------------------------------clear
-void CHypo::clear() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	dLat = 0.0;
-	dLon = 0.0;
-	dZ = 0.0;
-	tOrg = 0.0;
-	sPid = "";
-	nCut = 0;
-	dThresh = 0.0;
-	dBayes = 0.0;
-	dBayesInitial = 0.0;
-	iCycle = 0;
-	nWts = 0;
-	sWebName = "";
-	dMed = 0;
-	dMin = 0;
-	dGap = 0;
-	dSig = 0;
-	dKrt = 0;
-	dRes = 0;
-
-	dCutFactor = 4.0;
-	dCutPercentage = 0.4;
-	dCutMin = 30.0;
-
-	bFixed = false;
-	bEvent = false;
-
-	pGlass = NULL;
-
-	pTTT.reset();
-	pTrv1.reset();
-	pTrv2.reset();
-
-	bCorrAdded = false;
-
-	clearPicks();
-	clearCorrelations();
-	vWts.clear();
-
-	processCount = 0;
-	reportCount = 0;
-}
-
-// ---------------------------------------------------------initialize
-bool CHypo::initialize(double lat, double lon, double z, double time,
-						std::string pid, std::string web, double bayes,
-						double thresh, int cut,
-						std::shared_ptr<traveltime::CTravelTime> firstTrav,
-						std::shared_ptr<traveltime::CTravelTime> secondTrav,
-						std::shared_ptr<traveltime::CTTT> ttt,
-						double resolution) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	clear();
-
-	dLat = lat;
-	dLon = lon;
-	dZ = z;
-	tOrg = time;
-	sPid = pid;
-	sWebName = web;
-	dBayes = bayes;
-	dBayesInitial = bayes;
-
-	dThresh = thresh;
-	nCut = cut;
-	dRes = resolution;
-	if (dRes == 0.) {
-		dRes = 100.;
-	}
-
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CHypo::initialize: lat:" + std::to_string(dLat) + "; lon:"
-					+ std::to_string(dLon) + "; z:" + std::to_string(dZ)
-					+ "; t:" + std::to_string(tOrg) + "; sPid:" + sPid
-					+ "; web:" + sWebName + "; bayes:" + std::to_string(dBayes)
-					+ "; thresh:" + std::to_string(dThresh) + "; cut:"
-					+ std::to_string(nCut) + "; resolution:"
-					+ std::to_string(dRes));
-
-	// make local copies of the travel times so that we don't
-	// have cross-thread contention for them between hypos
-	if (firstTrav != NULL) {
-		pTrv1 = std::make_shared<traveltime::CTravelTime>(
-				traveltime::CTravelTime(*firstTrav));
-	}
-
-	if (secondTrav != NULL) {
-		pTrv2 = std::make_shared<traveltime::CTravelTime>(
-				traveltime::CTravelTime(*secondTrav));
-	}
-
-	if (ttt != NULL) {
-		pTTT = std::make_shared<traveltime::CTTT>(traveltime::CTTT(*ttt));
-	}
-	tCreate = glassutil::CDate::now();
-
-	return (true);
-}
-
-// ---------------------------------------------------------addPick
-void CHypo::addPick(std::shared_ptr<CPick> pck) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// null check
-	if (pck == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::addPick: NULL pck.");
-		return;
-	}
-
-	// for each pick in the vector
-	for (auto q : vPick) {
-		// see if we have this same pick
-		// NOTE: this only checks by ID, need to improve this to
-		// an ID/Source check
-		if (q->getPid() == pck->getPid()) {
-			char sLog[1024];
-			snprintf(sLog, sizeof(sLog), "CHypo::addPick: ** Duplicate pick %s",
-						pck->getSite()->getScnl().c_str());
-			glassutil::CLogit::log(sLog);
-
-			// NOTE: shouldn't we not add this duplicate pick?
-		}
-	}
-
-	// add the pick to the vector.
-	vPick.push_back(pck);
-}
-
-// ---------------------------------------------------------remPick
-void CHypo::remPick(std::shared_ptr<CPick> pck) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// null check
-	if (pck == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::remPick: NULL pck.");
-		return;
-	}
-
-	// get the pick id
-	std::string pid = pck->getPid();
-
-	// for each pick in the vector
-	for (int i = 0; i < vPick.size(); i++) {
-		// get the current pick
-		auto pick = vPick[i];
-
-		// is this pick a match?
-		if (pick->getPid() == pid) {
-			// remove pick from vector
-			vPick.erase(vPick.cbegin() + i);
-
-			return;
-		}
-	}
-}
-
-bool CHypo::hasPick(std::shared_ptr<CPick> pck) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// null check
-	if (pck == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::hasPick: NULL pck.");
-		return (false);
-	}
-
-	// for each pick in the vector
-	for (const auto &q : vPick) {
-		// is this pick a match?
-		if (q->getPid() == pck->getPid()) {
-			return (true);
-		}
-	}
-
-	return (false);
-}
-
-void CHypo::clearPicks() {
-	// lock the hypo since we're iterating through it's lists
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-
-	// go through all the picks linked to this hypo
-	for (auto pck : vPick) {
-		if (pck == NULL) {
-			continue;
-		}
-
-		// if the current pick is linked to this hypo
-		if ((pck->getHypo() != NULL) && (sPid == pck->getHypo()->getPid())) {
-			// remove hypo link from this pick
-			pck->clearHypo();
-		}
-	}
-
-	// remove all pick links to this hypo
-	vPick.clear();
-}
-
-// ---------------------------------------------------------addPick
+// ---------------------------------------------------------addCorrelation
 void CHypo::addCorrelation(std::shared_ptr<CCorrelation> corr) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
 	// null check
 	if (corr == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CHypo::addCorrelation: NULL correlation.");
 		return;
 	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
 	// for each correlation in the vector
 	for (auto q : vCorr) {
@@ -371,317 +164,512 @@ void CHypo::addCorrelation(std::shared_ptr<CCorrelation> corr) {
 	bCorrAdded = true;
 }
 
-// ---------------------------------------------------------remPick
-void CHypo::remCorrelation(std::shared_ptr<CCorrelation> corr) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
+// ---------------------------------------------------------addPick
+void CHypo::addPick(std::shared_ptr<CPick> pck) {
 	// null check
-	if (corr == NULL) {
+	if (pck == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::remCorrelation: NULL correlation.");
+								"CHypo::addPick: NULL pck.");
 		return;
 	}
 
-	// get the correlation id
-	std::string pid = corr->getPid();
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
-	// for each correlation in the vector
-	for (int i = 0; i < vCorr.size(); i++) {
-		// get the current correlation
-		auto correlation = vCorr[i];
-
-		// is this correlation a match?
-		if (correlation->getPid() == pid) {
-			// remove correlation from vector
-			vCorr.erase(vCorr.cbegin() + i);
+	// for each pick in the vector
+	for (auto q : vPick) {
+		// see if we have this same pick
+		if (q->getPid() == pck->getPid()) {
+			// Don't add this duplicate pick
 			return;
 		}
 	}
+
+	// add the pick to the vector.
+	vPick.push_back(pck);
 }
 
-bool CHypo::hasCorrelation(std::shared_ptr<CCorrelation> corr) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// null check
-	if (corr == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::hasCorrelation: NULL correlation.");
-		return (false);
+// ---------------------------------------------------------affinity
+double CHypo::affinity(std::shared_ptr<CPick> pck) {
+	// null checks
+	if (pck == NULL) {
+		return (0.0);
 	}
-
-	// for each corr in the vector
-	for (const auto &q : vCorr) {
-		// is this corr a match?
-		if (q->getPid() == corr->getPid()) {
-			return (true);
-		}
-	}
-
-	return (false);
-}
-
-void CHypo::clearCorrelations() {
-	// lock the hypo since we're iterating through it's lists
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-
-	// go through all the picks linked to this hypo
-	for (auto corr : vCorr) {
-		if (corr == NULL) {
-			continue;
-		}
-
-		// if the current pick is linked to this hypo
-		if ((corr->getHypo() != NULL) && (sPid == corr->getHypo()->getPid())) {
-			// remove hypo link from this pick
-			corr->clearHypo();
-		}
-	}
-
-	// remove all correlation links to this hypo
-	vCorr.clear();
-}
-
-// ---------------------------------------------------------Gaussian
-double CHypo::gauss(double avg, double std) {
-	// generate Gaussian pseudo-random number using the
-	// polar form of the Box-Muller method
-	// NOTE: Move to some glass math utility library?
-	double rsq = 0;
-	double v1 = 0;
-
-	do {
-		v1 = Rand(-1.0, 1.0);
-		double v2 = Rand(-1.0, 1.0);
-		rsq = v1 * v1 + v2 * v2;
-	} while (rsq >= 1.0);
-
-	double fac = sqrt(-2.0 * log(rsq) / rsq);
-	double x = std * fac * v1 + avg;
-
-	// return random normal deviate
-	return (x);
-}
-
-// ---------------------------------------------------------Rand
-double CHypo::Rand(double x, double y) {
-	// double randNum = ((x) + ((y) - (x)) * rand() / (float) RAND_MAX);
-	// return randNum;
-	// NOTE: Move to some glass math utility library?
-	std::uniform_real_distribution<double> distribution(x, y);
-	double number = distribution(m_RandomGenerator);
-	return (number);
-}
-
-// ---------------------------------------------------------Hypo
-std::shared_ptr<json::Object> CHypo::hypo() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	std::shared_ptr<json::Object> hypo = std::make_shared<json::Object>(
-			json::Object());
-
-	// null check
 	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::Hypo: NULL pGlass.");
-		return (hypo);
+		return (0.0);
 	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// get the site from the pick
+	std::shared_ptr<CSite> site = pck->getSite();
+
+	// get various global parameters from the glass pointer
+	// get the standard deviation allowed for association
+	double sdassoc = pGlass->getSdAssociate();
+
+	// get the affinity factor
+	double expaff = pGlass->getExpAffinity();
+
+	// check to see if this pick can  associate with this hypo using
+	// the given association standard deviation
+	if (!associate(pck, 1.0, sdassoc)) {
+		// the pick did not associate
+		return (0.0);
+	}
+
+	// get pick residual
+	double tRes = getResidual(pck);
+
+	// get absolute residual
+	if (tRes < 0.0) {
+		tRes = -tRes;
+	}
+
+	// WLY - I removed this because it was leading to small
+	// events trading picks and canceling....
+	// stack accounts for residual anyways
+	// compute a weight factor based on residual
+	// weight goes from 0.25 at a residual of sdassoc to 1.
+	// glassutil::CTaper resWeight;
+	// resWeight = glassutil::CTaper(-1., -1., sdassoc/2., sdassoc);
+	// double resWeightFactor = (resWeight.Val(tRes) * 0.75) + 0.25;
+
+	// now compute the gap factor using a taper
+	glassutil::CTaper gap;
+	gap = glassutil::CTaper(0.0, 0.0, 270.0, 360.0);
+	double gapfac = gap.Val(dGap);
+
+	// compute the affinity of this pick to this hypo by multiplying
+	// the gap factor to the hypocenter's current baysian statistic to
+	// the affinity power factor
+	double aff = gapfac * pow(dBayes, expaff);
+
+	// return the affinity
+	return (aff);
+}
+
+// ---------------------------------------------------------affinity
+double CHypo::affinity(std::shared_ptr<CCorrelation> corr) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// NOTE: I'm just combining time/distance into a made up affinity
+	// wiser heads than mine may come up with a more robust approach JMP
+	// null checks
+	if (corr == NULL) {
+		return (0.0);
+	}
+	if (pGlass == NULL) {
+		return (0.0);
+	}
+
+	// get various global parameters from the glass pointer
+	double tWindow = pGlass->getCorrelationMatchingTWindow();
+	double xWindow = pGlass->getCorrelationMatchingXWindow();
+
+	// check to see if this correlation can associate with this hypo
+	if (!associate(corr, tWindow, xWindow)) {
+		// the correlation did not associate
+		return (0.0);
+	}
+
+	// compute time factor, multiply by 10 to make time factor
+	// have equal weight to the distance factor
+	double tFactor = std::abs(tOrg - corr->getTCorrelation()) * 10;
+
+	// hypo is in geographic coordinates
+	glassutil::CGeo geo1;
+	geo1.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
+
+	// correlation is in geographic coordinates
+	glassutil::CGeo geo2;
+	geo2.setGeographic(corr->getLat(), corr->getLon(),
+						EARTHRADIUSKM - corr->getZ());
+
+	// compute distance factor
+	double xFactor = RAD2DEG * geo1.delta(&geo2);
+
+	// compute the affinity of this correlation to this hypo by taking the
+	// inverse of multiplying the time factor to the distance filter
+	// note the idea is a higher number the closer the correlation is
+	// to the hypo
+	double aff = 1 / (tFactor * xFactor);
+
+	// return the affinity
+	return (aff);
+}
+
+// ---------------------------------------------------------anneal
+double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
+						double tStop) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// This is essentially a faster algorithmic implementation of iterate
+	// nullcheck
+	if (pGlass == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::anneal: NULL pGlass.");
+		return (0);
+	}
+
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CHypo::anneal. " + sPid);
+
+	// locate using new function
+	if (pGlass->getMinimizeTtLocator() == false) {
+		annealingLocate(nIter, dStart, dStop, tStart, tStop, 1);
+	} else {
+		annealingLocateResidual(nIter, dStart, dStop, tStart, tStop, 1);
+	}
+	// grid_search();
+	// *** Second, based on the new location/depth/time, remove ill fitting
+	// picks ***
+
+	// compute current stats
+	stats();
+
+	// create pick delete vector
+	std::vector<std::shared_ptr<CPick>> vkill;
+
+	// set the traveltime for the current hypo
+	if (pTrv1 != NULL) {
+		pTrv1->setOrigin(dLat, dLon, dZ);
+	}
+	if (pTrv2 != NULL) {
+		pTrv2->setOrigin(dLat, dLon, dZ);
+	}
+
+	// get number of picks
+	int npick = vPick.size();
+
+	// for each pick in the pick vector
+	for (int ipick = 0; ipick < npick; ipick++) {
+		// get the pick
+		auto pick = vPick[ipick];
+
+		// calculate the travel times
+		double tCal1 = -1;
+		if (pTrv1 != NULL) {
+			tCal1 = pTrv1->T(&pick->getSite()->getGeo());
+		}
+		double tCal2 = -1;
+		if (pTrv2 != NULL) {
+			tCal2 = pTrv2->T(&pick->getSite()->getGeo());
+		}
+
+		// calculate absolute residuals
+		double tRes1 = 0;
+		if (tCal1 > 0) {
+			tRes1 = std::abs(pick->getTPick() - tCal1 - tOrg);
+		}
+		double tRes2 = 0;
+		if (tCal2 > 0) {
+			tRes2 = std::abs(pick->getTPick() - tCal2 - tOrg);
+		}
+
+		// get best (smallest) residual
+		double tResBest = 0;
+		if ((tRes1 != 0) && (tRes1 < tRes2)) {
+			tResBest = tRes1;
+		}
+		if ((tRes2 != 0) && (tRes1 > tRes2)) {
+			tResBest = tRes2;
+		} else {
+			tResBest = tRes1;
+		}
+
+		// make sure the pick residual is within the residual limits
+		// NOTE: The residual limit is hard coded
+		if (tResBest > pGlass->getSdAssociate()) {
+			vkill.push_back(pick);
+		}
+	}
+
+	// for each pick to remove
+	for (auto pick : vkill) {
+		// remove the pick hypo link
+		pick->clearHypo();
+
+		// remove the pick from this hypo
+		remPick(pick);
+	}
+
+	// return the final bayesian value
+	return (dBayes);
+}
+
+// ---------------------------------------------------------annealingLocate
+void CHypo::annealingLocate(int nIter, double dStart, double dStop,
+							double tStart, double tStop, int nucleate) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// don't locate if the location is fixed
+	if (bFixed) {
+		return;
+	}
+
+	// these hold the values of the initial, current, and best stack location
+	double valStart = 0;
+	double valBest = 0;
+	// calculate the value of the stack at the current location
+	valStart = getBayes(dLat, dLon, dZ, tOrg, nucleate);
+
+	char sLog[1024];
+
+	// if testing locator, setup output file
+	std::ofstream outfile;
+	if (pGlass->getTestLocator()) {
+		std::string filename = "./locatorTest/" + sPid + ".txt";
+		outfile.open(filename, std::ios::out | std::ios::app);
+		outfile << std::to_string(dLat) << " " << std::to_string(dLon) << " "
+				<< std::to_string(dZ) << " " << std::to_string(tOrg) << " "
+				<< std::to_string(vPick.size()) << " "
+				<< std::to_string(valStart) << " 0 0 0 \n";
+	}
+
+	// set the starting location as the current best stack value
+	valBest = valStart;
+
+	// Save total movement
+	double ddx = 0.0;
+	double ddy = 0.0;
+	double ddz = 0.0;
+	double ddt = 0.0;
+
+	// create taper using the number of iterations to define the
+	// end point. As we iterate through trial locations this makes
+	// the search space decrease.
+	glassutil::CTaper taper;
+	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, nIter + 0.0001);
+
+	// for the number of requested iterations
+	for (int iter = 0; iter < nIter; iter++) {
+		// compute the current step distance from the current iteration and
+		// starting and stopping values, use the taper to make the step distance
+		// slowly decrease
+		double dkm = dStart * taper.Val(static_cast<double>(iter)) + dStop;
+		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
+
+		// init x, y, and z gaussian step distances
+		double dx = gauss(0.0, dkm * 2);
+		double dy = gauss(0.0, dkm * 2);
+		double dz = gauss(0.0, dkm);
+		double dt = gauss(0.0, dOt);
+
+		// compute current location using the hypo location and the x and y
+		// Gaussian step distances
+		double xlon = dLon + cos(DEG2RAD * dLat) * dx / DEG2KM;
+		double xlat = dLat + dy / DEG2KM;
+
+		// compute current depth using the hypo depth and the z Gaussian step
+		// distance
+		double xz = dZ + dz;
+
+		// don't let depth go below 1 km
+		if (xz < 1.0) {
+			xz = 1.0;
+		}
+
+		// don't let depth exceed maximum
+		if (xz > MAXLOCDEPTH) {
+			xz = MAXLOCDEPTH;
+		}
+
+		// compute current origin time
+		double oT = tOrg + dt;
+
+		// get the stack value for this hypocenter
+		double val = getBayes(xlat, xlon, xz, oT, nucleate);
+
+		// if testing locator print iteration
+		if (pGlass->getTestLocator()) {
+			outfile << std::to_string(xlat) << " " << std::to_string(xlon)
+					<< " " << std::to_string(xz) << " " << std::to_string(oT)
+					<< " " << std::to_string(vPick.size()) << " "
+					<< std::to_string(val) << " " << std::to_string(dkm * 2)
+					<< " " << std::to_string(dkm) << " " << std::to_string(dOt)
+					<< "\n";
+		}
+
+		// is this stacked bayesian value (val) better than the previous best
+		// (valBest)
+		if (val > valBest
+				|| (val > dThresh
+						&& (valBest - val)
+								< (pow(gauss(0, .2), 2) / (500. / dkm)))) {
+			// then this is the new best value
+			valBest = val;
+			// set the hypo location/depth/time from the new best
+			// locaton/depth/time
+			dLat = xlat;
+			dLon = xlon;
+			dZ = xz;
+			tOrg = oT;
+			// save this perturbation to the overall change
+			ddx += dx;
+			ddy += dy;
+			ddz += dz;
+			ddt += dt;
+		}
+	}
+
+	// set dBayes to current value
+	dBayes = valBest;
+	if (nucleate == 1) {
+		dBayesInitial = valBest;
+	}
+
+	snprintf(
+			sLog, sizeof(sLog),
+			"CHypo::annealingLocate: total movement (%.4f,%.4f,%.4f,%.4f)"
+			" (%.4f,%.4f,%.4f,%.4f) sPid:%s; new bayes value:%.4f; old bayes"
+			" value:%.4f",
+			dLat, dLon, dZ, tOrg, ddx, ddy, ddz, ddt, sPid.c_str(), valBest,
+			valStart);
+	glassutil::CLogit::log(sLog);
+
+	if (pGlass->getGraphicsOut() == true) {
+		graphicsOutput();
+	}
+
+	// if testing the locator close the file
+	if (pGlass->getTestLocator()) {
+		outfile.close();
+	}
+
+	return;
+}
+
+// ---------------------------------------------------------annealingLocate
+void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
+									double tStart, double tStop, int nucleate) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
 	if (pTTT == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::Hypo: NULL pTTT.");
-		return (hypo);
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::annealingLocateResidual: NULL pTTT.");
+		return;
 	}
 
-	// make sure this event is still reportable
-	if (reportCheck() == false) {
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
-				"CHypo::Hypo: hypo:" + sPid + " is not reportable.");
-		return (hypo);
+	if (bFixed) {
+		return;
 	}
+	char sLog[1024];
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CHypo::Hypo: generating hypo message for sPid:" + sPid
-					+ " sWebName:" + sWebName);
+	double delta;
+	double sigma;
 
-	// NOTE: Need to think about this format, currently it *almost*
-	// creates a detection formats json, but doesn't use the library
-	// maybe this should be it's own "glass" format? or just use
-	// the quake format?
-
-	// basic info
-	(*hypo)["Cmd"] = "Hypo";
-	(*hypo)["Type"] = "Hypo";
-	(*hypo)["ID"] = sPid;
-
-	// source
-	// NOTE: THIS NEEDS TO BE NOT HARDCODED EVENTUALLY
-	// or remove it? why should glasscore care about source?
-	json::Object src;
-	src["AgencyID"] = "US";
-	src["Author"] = "glass";
-	(*hypo)["Source"] = src;
-
-	// time
-	(*hypo)["T"] = glassutil::CDate::encodeDateTime(tOrg);
-	(*hypo)["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
-
-	// location
-	(*hypo)["Latitude"] = dLat;
-	(*hypo)["Longitude"] = dLon;
-	(*hypo)["Depth"] = dZ;
-
-	// supplementary info
-	(*hypo)["MinimumDistance"] = dMin;
-	(*hypo)["Gap"] = dGap;
-	(*hypo)["Bayes"] = dBayes;
-	(*hypo)["InitialBayes"] = dBayesInitial;
-	(*hypo)["Web"] = sWebName;
-
-	// generate data array for this hypo
-	// set up traveltime object
 	pTTT->setOrigin(dLat, dLon, dZ);
 
-	// set up geo for distance calculations
-	glassutil::CGeo geo;
-	geo.setGeographic(dLat, dLon, 6371.0 - dZ);
+	double val = 0;
+	double valStart = 0;
 
-	// array to hold data
-	json::Array data;
+	valStart = getSumAbsResidual(dLat, dLon, dZ, tOrg, nucleate);
+	dBayes = getBayes(dLat, dLon, dZ, tOrg, nucleate);
+	snprintf(sLog, sizeof(sLog), "CHypo::annealingLocate: old bayes value %.4f",
+				dBayes);
+	glassutil::CLogit::log(sLog);
 
-	// for each pick
-	for (auto pick : vPick) {
-		// get basic pick values
-		std::shared_ptr<CSite> site = pick->getSite();
-		double tobs = pick->getTPick() - tOrg;
-		double tcal = pTTT->T(&site->getGeo(), tobs);
-		double tres = tobs - tcal;
-		// should this be changed?
-		double sig = pGlass->sig(tres, 1.0);
+	snprintf(
+			sLog, sizeof(sLog),
+			"CHypo::annealingLocateResidual: old sum abs residual value %.4f",
+			valStart);
+	glassutil::CLogit::log(sLog);
 
-		// if we have it, use the shared pointer
-		json::Object pickObj;
-		std::shared_ptr<json::Object> jPick = pick->getJPick();
-		if (jPick) {
-			// start with a copy of json pick
-			// which has the site, source, time, etc
-			pickObj = json::Object(*jPick.get());
+	double valBest = valStart;
 
-			// add the association info
-			json::Object assocobj;
-			assocobj["Phase"] = pTTT->sPhase;
-			assocobj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
-			assocobj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
-			assocobj["Residual"] = tres;
-			assocobj["Sigma"] = sig;
-			pickObj["AssociationInfo"] = assocobj;
-		} else {
-			// we don't have a jpick, so fill in what we know
-			pickObj["Site"] = site->getScnl();
-			pickObj["Pid"] = pick->getPid();
-			pickObj["T"] = glassutil::CDate::encodeDateTime(pick->getTPick());
-			pickObj["Time"] = glassutil::CDate::encodeISO8601Time(
-					pick->getTPick());
-			pickObj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
-			pickObj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
-			pickObj["Residual"] = tres;
+	// Save total movement
+	double ddx = 0.0;
+	double ddy = 0.0;
+	double ddz = 0.0;
+	double ddt = 0.0;
+
+	// create taper using the number of iterations to define the
+	// end point
+	glassutil::CTaper taper;
+	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, nIter + 0.0001);
+
+	// for the number of requested iterations
+	for (int iter = 0; iter < nIter; iter++) {
+		// compute the current step distance from the current iteration and
+		// starting and stopping values, use the taper to make the step distance
+		// slowly decrease
+		double dkm = dStart * taper.Val(static_cast<double>(iter)) + dStop;
+		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
+
+		// init x, y, and z gaussian step distances
+		double dx = gauss(0.0, dkm * 2);
+		double dy = gauss(0.0, dkm * 2);
+		double dz = gauss(0.0, dkm);
+		double dt = gauss(0.0, dOt);
+
+		// compute current location using the hypo location and the x and y
+		// Gaussian step distances
+		double xlon = dLon + cos(DEG2RAD * dLat) * dx / DEG2KM;
+		double xlat = dLat + dy / DEG2KM;
+
+		// compute current depth using the hypo depth and the z Gaussian step
+		// distance
+		double xz = dZ + dz;
+
+		// don't let depth go below 1 km
+		if (xz < 1.0) {
+			xz = 1.0;
 		}
 
-		// add new pick to list
-		data.push_back(pickObj);
-	}
-
-	// for each correlation
-	for (auto correlation : vCorr) {
-		// get basic pick values
-		std::shared_ptr<CSite> site = correlation->getSite();
-		double tobs = correlation->getTCorrelation() - tOrg;
-		double tcal = pTTT->T(&site->getGeo(), tobs);
-		double tres = tobs - tcal;
-		// should this be changed?
-		double sig = pGlass->sig(tres, 1.0);
-
-		// if we have it, use the shared pointer
-		json::Object correlationObj;
-		std::shared_ptr<json::Object> jCorrelation = correlation
-				->getJCorrelation();
-		if (jCorrelation) {
-			// start with a copy of json pick
-			// which has the site, source, time, etc
-			correlationObj = json::Object(*jCorrelation.get());
-
-			// add the association info
-			json::Object assocobj;
-			assocobj["Phase"] = pTTT->sPhase;
-			assocobj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
-			assocobj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
-			assocobj["Residual"] = tres;
-			assocobj["Sigma"] = sig;
-			correlationObj["AssociationInfo"] = assocobj;
-		} else {
-			// we don't have a jCorrelation, so fill in what we know
-			correlationObj["Site"] = site->getScnl();
-			correlationObj["Pid"] = correlation->getPid();
-			correlationObj["Time"] = glassutil::CDate::encodeISO8601Time(
-					correlation->getTCorrelation());
-			correlationObj["Latitude"] = correlation->getLat();
-			correlationObj["Longitude"] = correlation->getLon();
-			correlationObj["Depth"] = correlation->getZ();
-			correlationObj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
-			correlationObj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
-			correlationObj["Residual"] = tres;
-			correlationObj["Correlation"] = correlation->getCorrelation();
+		// don't let depth exceed maximum
+		if (xz > MAXLOCDEPTH) {
+			xz = MAXLOCDEPTH;
 		}
 
-		// add new pick to list
-		data.push_back(correlationObj);
+		// compute current origin time
+		double oT = tOrg + dt;
+
+		pTTT->setOrigin(xlat, xlon, xz);
+		val = getSumAbsResidual(xlat, xlon, xz, oT, nucleate);
+		// geo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
+
+		// is this stacked bayesian value better than the previous one
+		if (val < valBest) {
+			// this is the new minimized residual
+			valBest = val;
+			// set the hypo location/depth/time from the new best
+			// locaton/depth/time
+			dLat = xlat;
+			dLon = xlon;
+			dZ = xz;
+			tOrg = oT;
+			ddx += dx;
+			ddy += dy;
+			ddz += dz;
+			ddt += dt;
+		}
 	}
 
-	// add data array to object
-	(*hypo)["Data"] = data;
+	dBayes = getBayes(dLat, dLon, dZ, tOrg, nucleate);
+	snprintf(sLog, sizeof(sLog), "CHypo::annealingLocate: old bayes value %.4f",
+				dBayes);
+	glassutil::CLogit::log(sLog);
+	snprintf(sLog, sizeof(sLog),
+				"CHypo::annealingLocate: total movement (%.4f,%.4f,%.4f,%.4f)"
+				" (%.4f,%.4f,%.4f,%.4f)",
+				dLat, dLon, dZ, tOrg, ddx, ddy, ddz, ddt);
+	glassutil::CLogit::log(sLog);
 
-	if (pGlass) {
-		pGlass->send(hypo);
+	snprintf(sLog, sizeof(sLog),
+				"CHypo::annealingLocate: new sum abs residual %.4f", valBest);
+	glassutil::CLogit::log(sLog);
+
+	if (pGlass->getGraphicsOut() == true) {
+		graphicsOutput();
 	}
 
-	// done
-	return (hypo);
-}
-
-// ---------------------------------------------------------Event
-void CHypo::event() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	bEvent = true;
-	reportCount++;
-	std::shared_ptr<json::Object> event = std::make_shared<json::Object>(
-			json::Object());
-
-	// fill in Event command from current hypocenter
-	(*event)["Cmd"] = "Event";
-	(*event)["Pid"] = sPid;
-	(*event)["CreateTime"] = glassutil::CDate::encodeISO8601Time(tCreate);
-	(*event)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
-	(*event)["Version"] = reportCount;
-
-	// basic hypo information
-	(*event)["Latitude"] = dLat;
-	(*event)["Longitude"] = dLon;
-	(*event)["Depth"] = dZ;
-	(*event)["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
-	(*event)["Bayes"] = dBayes;
-	(*event)["Ndata"] = static_cast<int>(vPick.size())
-			+ static_cast<int>(vCorr.size());
-
-	// send it
-	if (pGlass) {
-		pGlass->send(event);
-	}
+	return;
 }
 
 // ---------------------------------------------------------associate
@@ -710,36 +698,12 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	double dAzimuthRange = pGlass->getBeamMatchingAzimuthWindow();
 	// double dDistanceRange = pGlass->getBeamMatchingDistanceWindow();
 
-	// set up a geographic object for this hypo
-	glassutil::CGeo hypoGeo;
-	hypoGeo.setGeographic(dLat, dLon, 6371.0 - dZ);
-
-	// setup traveltime interface for this hypo
-	pTTT->setOrigin(dLat, dLon, dZ);
-
 	// get site
 	std::shared_ptr<CSite> site = pick->getSite();
 
-	// compute distance
-	double siteDistance = hypoGeo.delta(&site->getGeo()) / DEG2RAD;
-
-	// check if distance is beyond cutoff
-	if (siteDistance > dCut) {
-		// it is, don't associated
-		return (false);
-	}
-
-	// compute observed traveltime
-	double tObs = pick->getTPick() - tOrg;
-
-	// get expected travel time
-	double tCal = pTTT->T(&site->getGeo(), tObs);
-
-	// Check if pick has an invalid travel time,
-	if (tCal < 0.0) {
-		// it does, don't associated
-		return (false);
-	}
+	// set up a geographic object for this hypo
+	glassutil::CGeo hypoGeo;
+	hypoGeo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
 
 	// check backazimuth if present
 	if (pick->getBackAzimuth() > 0) {
@@ -773,8 +737,22 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	 }
 	 } */
 
+	// compute distance
+	double siteDistance = hypoGeo.delta(&site->getGeo()) / DEG2RAD;
+
+	// check if distance is beyond cutoff
+	if (siteDistance > dCut) {
+		// it is, don't associated
+		return (false);
+	}
+
+	double tRes = getResidual(pick);
+
+	if (std::isnan(tRes) == true) {
+		return (false);
+	}
+
 	// compute absolute residual
-	double tRes = tObs - tCal;
 	if (tRes < 0.0) {
 		tRes = -tRes;
 	}
@@ -844,10 +822,10 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 	tDist = std::abs(tOrg - corr->getTCorrelation());
 	if (tDist < tWindow) {
 		glassutil::CGeo geo1;
-		geo1.setGeographic(dLat, dLon, 6371.0 - dZ);
+		geo1.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
 		glassutil::CGeo geo2;
 		geo2.setGeographic(corr->getLat(), corr->getLon(),
-							6371.0 - corr->getZ());
+		EARTHRADIUSKM - corr->getZ());
 		xDist = RAD2DEG * geo1.delta(&geo2);
 
 		// check if distance difference is within window
@@ -896,227 +874,33 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 	return (false);
 }
 
-// ---------------------------------------------------------affinity
-double CHypo::affinity(std::shared_ptr<CPick> pck) {
+// ---------------------------------------------------------cancel
+std::shared_ptr<json::Object> CHypo::cancel(bool send) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
-	// null checks
-	if (pck == NULL) {
-		return (0.0);
-	}
-	if (pGlass == NULL) {
-		return (0.0);
-	}
+	std::shared_ptr<json::Object> cancel = std::make_shared<json::Object>(
+			json::Object());
 
-	// get the site from the pick
-	std::shared_ptr<CSite> site = pck->getSite();
+	// fill in cancel command from current hypocenter
+	(*cancel)["Cmd"] = "Cancel";
+	(*cancel)["Pid"] = sPid;
 
-	// get various global parameters from the glass pointer
-	// get the standard deviation allowed for association
-	double sdassoc = pGlass->getSdAssociate();
-
-	// get the affinity factor
-	double expaff = pGlass->getExpAffinity();
-
-	// check to see if this pick can  associate with this hypo using
-	// the given association standard deviation
-	if (!associate(pck, 1.0, sdassoc)) {
-		// the pick did not associate
-		return (0.0);
-	}
-
-	// The pick can associate,
-	// check if the hypo is fixed
-	if (bFixed) {
-		// just return the hypo's bayesian value
-		return (dBayes);
-	}
-
-	// now compute the gap factor using a taper
-	glassutil::CTaper gap;
-	gap = glassutil::CTaper(0.0, 0.0, 270.0, 360.0);
-	double gapfac = gap.Val(dGap);
-
-	// compute the affinity of this pick to this hypo by multiplying
-	// the gap factor to the hypocenter's current baysian statistic to
-	// the affinity power factor
-	double aff = gapfac * pow(dBayes, expaff);
-
-	// return the affinity
-	return (aff);
-}
-
-// ---------------------------------------------------------affinity
-double CHypo::affinity(std::shared_ptr<CCorrelation> corr) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// NOTE: I'm just combining time/distance into a made up affinity
-	// wiser heads than mine may come up with a more robust approach JMP
-	// null checks
-	if (corr == NULL) {
-		return (0.0);
-	}
-	if (pGlass == NULL) {
-		return (0.0);
-	}
-
-	// get various global parameters from the glass pointer
-	double tWindow = pGlass->getCorrelationMatchingTWindow();
-	double xWindow = pGlass->getCorrelationMatchingXWindow();
-
-	// check to see if this correlation can associate with this hypo
-	if (!associate(corr, tWindow, xWindow)) {
-		// the correlation did not associate
-		return (0.0);
-	}
-
-	// compute time factor, multiply by 10 to make time factor
-	// have equal weight to the distance factor
-	double tFactor = std::abs(tOrg - corr->getTCorrelation()) * 10;
-
-	// hypo is in geographic coordinates
-	glassutil::CGeo geo1;
-	geo1.setGeographic(dLat, dLon, 6371.0 - dZ);
-
-	// correlation is in geographic coordinates
-	glassutil::CGeo geo2;
-	geo2.setGeographic(corr->getLat(), corr->getLon(), 6371.0 - corr->getZ());
-
-	// compute distance factor
-	double xFactor = RAD2DEG * geo1.delta(&geo2);
-
-	// compute the affinity of this hypo to this hypo by taking the inverse
-	// of multiplying the time factor to the distance filter
-	// note the idea is a higher number the closer the correlation is
-	// to the hypo
-	double aff = 1 / (tFactor * xFactor);
-
-	// return the affinity
-	return (aff);
-}
-
-// ---------------------------------------------------------prune
-bool CHypo::prune() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// nullcheck
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::prune: NULL pGlass.");
-		return (false);
-	}
-
-	char sLog[1024];
-
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CHypo::prune. " + sPid);
-
-	// set up local vector to track picks to remove
-	std::vector<std::shared_ptr<CPick>> vremove;
-
-	// set up a geographic object for this hypo
-	glassutil::CGeo geo;
-	geo.setGeographic(dLat, dLon, 6371.0);
-
-	// get the standard deviation allowed for pruning
-	double sdprune = pGlass->getSdPrune();
-
-	// for each pick in this hypo
-	for (auto pck : vPick) {
-		// check to see if it can still be associated
-		if (!associate(pck, 1.0, sdprune)) {
-			// pick no longer associates, add to remove list
-			vremove.push_back(pck);
-
-			snprintf(
-					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f)",
-					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->getScnl().c_str(), sdprune);
-			glassutil::CLogit::log(sLog);
-
-			// on to the next pick
-			continue;
-		}
-
-		// Trim whiskers
-		// compute delta between site and hypo
-		double delta = geo.delta(&pck->getSite()->getGeo());
-
-		// check if delta is beyond distance limit
-		if (delta > dCut) {
-			snprintf(
-					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f > %.2f)",
-					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->getScnl().c_str(), delta, dCut);
-			glassutil::CLogit::log(sLog);
-
-			// add pick to remove list
-			vremove.push_back(pck);
-
-			// on to the next pick
-			continue;
-		}
-	}
-
-	int pruneCount = 0;
-	for (auto pck : vremove) {
-		pruneCount++;
-		pck->clearHypo();
-		remPick(pck);
-	}
-
+	// log it
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CHypo::prune pick pruneCount:" + std::to_string(pruneCount));
+			"CHypo::event: Created cancel message:" + json::Serialize(*cancel));
 
-	// set up local vector to track correlations to remove
-	std::vector<std::shared_ptr<CCorrelation>> vcremove;
-
-	// get the correlation windows
-	double tWindow = pGlass->getCorrelationMatchingTWindow();
-	double xWindow = pGlass->getCorrelationMatchingXWindow();
-
-	// for each correlation in this hypo
-	for (auto cor : vCorr) {
-		// check to see if it can still be associated
-		if (!associate(cor, tWindow, xWindow)) {
-			// correlation no longer associates, add to remove list
-			vcremove.push_back(cor);
-
-			snprintf(
-					sLog,
-					sizeof(sLog),
-					"CHypo::prune: C-CUL %s %s",
-					glassutil::CDate::encodeDateTime(cor->getTCorrelation())
-							.c_str(),
-					cor->getSite()->getScnl().c_str());
-			glassutil::CLogit::log(sLog);
-
-			// on to the next correlation
-			continue;
-		}
+	// send it
+	if ((send == true) && (pGlass != NULL)) {
+		pGlass->send(cancel);
 	}
 
-	for (auto cor : vcremove) {
-		cor->clearHypo();
-		remCorrelation(cor);
-	}
-
-	// if we didn't find any data to remove, just
-	// return
-	if ((vremove.size() < 1) && (vcremove.size() < 1)) {
-		return (false);
-	}
-
-	// we've removed at least one data
-	return (true);
+	return (cancel);
 }
 
 // ---------------------------------------------------------cancel
-bool CHypo::cancel() {
+bool CHypo::cancelCheck() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
@@ -1222,36 +1006,1383 @@ bool CHypo::cancel() {
 		return (true);
 	}
 
-	/**
-	 // Whispy check (does the quake have a gap greater than 180 while being
-	 // shallower than 400km
-	 // NOTE: Hardcoded
-	 if ((dZ > 400.0) && (dGap > 180.0)) {
-	 // failure
-	 snprintf(sLog, sizeof(sLog),
-	 "CHypo::cancel: Whispie trap (%.1f>400, %.1f>180) Hypo: %s",
-	 dZ, dGap, sHypo);
-	 glassutil::CLogit::log(sLog);
+	// Whispy (event fragment) check (does the quake have a gap greater than 270
+	// while being shallower than 550)
+	// NOTE: Hardcoded
+	if ((dZ > 550.0) && (dGap > 270.0)) {
+		// failure
+		snprintf(sLog, sizeof(sLog),
+					"CHypo::cancel: Whispie trap (%.1f>550, %.1f>270) Hypo: %s",
+					dZ, dGap, sHypo);
+		glassutil::CLogit::log(sLog);
 
-	 // this hypo can be canceled
-	 return (true);
-	 }
-	 **/
+		// this hypo can be canceled
+		return (true);
+	}
 	// Hypo is still viable
 	return (false);
 }
 
-// ---------------------------------------------------------cancel
-bool CHypo::reportCheck() {
+// ---------------------------------------------------------clear
+void CHypo::clear() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
+	dLat = 0.0;
+	dLon = 0.0;
+	dZ = 0.0;
+	tOrg = 0.0;
+	sPid = "";
+	nCut = 0;
+	dThresh = 0.0;
+	dBayes = 0.0;
+	dBayesInitial = 0.0;
+	iCycle = 0;
+	nWts = 0;
+	sWebName = "";
+	dMed = 0;
+	dMin = 0;
+	dGap = 0;
+	dSig = 0;
+	dKrt = 0;
+	dRes = 0;
+
+	dCutFactor = 4.0;
+	dCutPercentage = 0.4;
+	dCutMin = 30.0;
+
+	bFixed = false;
+	bEvent = false;
+
+	pGlass = NULL;
+
+	pTTT.reset();
+	pTrv1.reset();
+	pTrv2.reset();
+
+	bCorrAdded = false;
+
+	clearPicks();
+	clearCorrelations();
+	vWts.clear();
+
+	processCount = 0;
+	reportCount = 0;
+}
+
+// ---------------------------------------------------------clearCorrelations
+void CHypo::clearCorrelations() {
+	// lock the hypo since we're iterating through it's lists
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+
+	// go through all the corrs linked to this hypo
+	for (auto corr : vCorr) {
+		if (corr == NULL) {
+			continue;
+		}
+
+		// remove the hypo from the corr
+		// note only removes hypo if corr
+		// is linked
+		corr->remHypo(sPid);
+	}
+
+	// remove all correlation links to this hypo
+	vCorr.clear();
+}
+
+// ---------------------------------------------------------clearPicks
+void CHypo::clearPicks() {
+	// lock the hypo since we're iterating through it's lists
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+
+	// go through all the picks linked to this hypo
+	for (auto pck : vPick) {
+		if (pck == NULL) {
+			continue;
+		}
+
+		// remove the hypo from the pick
+		// note only removes hypo if pick
+		// is linked
+		pck->remHypo(sPid);
+	}
+
+	// remove all pick links to this hypo
+	vPick.clear();
+}
+
+// ---------------------------------------------------------event
+std::shared_ptr<json::Object> CHypo::event(bool send) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	bEvent = true;
+	reportCount++;
+	std::shared_ptr<json::Object> event = std::make_shared<json::Object>(
+			json::Object());
+
+	// fill in Event command from current hypocenter
+	(*event)["Cmd"] = "Event";
+	(*event)["Pid"] = sPid;
+	(*event)["CreateTime"] = glassutil::CDate::encodeISO8601Time(tCreate);
+	(*event)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+			glassutil::CDate::now());
+	(*event)["Version"] = reportCount;
+
+	// basic hypo information
+	(*event)["Latitude"] = dLat;
+	(*event)["Longitude"] = dLon;
+	(*event)["Depth"] = dZ;
+	(*event)["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
+	(*event)["Bayes"] = dBayes;
+	(*event)["Ndata"] = static_cast<int>(vPick.size())
+			+ static_cast<int>(vCorr.size());
+
+	// log it
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::event: Created event message:" + json::Serialize(*event));
+
+	// send it
+	if ((send == true) && (pGlass != NULL)) {
+		pGlass->send(event);
+	}
+
+	return (event);
+}
+
+// ---------------------------------------------------------expire
+std::shared_ptr<json::Object> CHypo::expire(bool send) {
+	std::shared_ptr<json::Object> expire = std::make_shared<json::Object>(
+			json::Object());
+	(*expire)["Cmd"] = "Expire";
+	(*expire)["Pid"] = sPid;
+
+	// add a copy of the expiring hypo to the message
+	// if we CAN report
+	if (reportCheck() == true) {
+		std::shared_ptr<json::Object> expireHypo = hypo(false);
+		(*expire)["Hypo"] = (*expireHypo);
+	}
+	// log it
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::event: Created expire message:" + json::Serialize(*expire));
+
+	// send message
+	if ((send == true) && (pGlass != NULL)) {
+		pGlass->send(expire);
+	}
+
+	return (expire);
+}
+
+// ---------------------------------------------------------Gaussian
+double CHypo::gauss(double avg, double std) {
+	// generate Gaussian pseudo-random number using the
+	// polar form of the Box-Muller method
+	// NOTE: Move to some glass math utility library?
+	double rsq = 0;
+	double v1 = 0;
+
+	do {
+		v1 = Rand(-1.0, 1.0);
+		double v2 = Rand(-1.0, 1.0);
+		rsq = v1 * v1 + v2 * v2;
+	} while (rsq >= 1.0);
+
+	double fac = sqrt(-2.0 * log(rsq) / rsq);
+	double x = std * fac * v1 + avg;
+
+	// return random normal deviate
+	return (x);
+}
+
+// --------------------------------------------------------getResidual
+double CHypo::getResidual(std::shared_ptr<CPick> pick) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// setup traveltime interface for this hypo
+	pTTT->setOrigin(dLat, dLon, dZ);
+
+	// get site
+	std::shared_ptr<CSite> site = pick->getSite();
+
+	// compute observed traveltime
+	double tObs = pick->getTPick() - tOrg;
+
+	// get expected travel time
+	double tCal = pTTT->T(&site->getGeo(), tObs);
+
+	// Check if pick has an invalid travel time,
+	if (tCal < 0.0) {
+		// it does, don't associated
+		return (std::numeric_limits<double>::quiet_NaN());
+	}
+
+	double tRes = tObs - tCal;
+	return tRes;
+}
+
+double CHypo::getBayes() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dBayes);
+}
+
+// ---------------------------------------------------getBayesStack
+double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
+						int nucleate) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	if ((!pTrv1) && (!pTrv2)) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::getBayes: NULL pTrv1 and pTrv2.");
+		return (0);
+	}
+
+	if (!pTTT) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::getBayes: NULL pTTT.");
+		return (0);
+	}
+
+	glassutil::CGeo geo;
+	double value = 0.;
+	double tcal;
+	char sLog[1024];
+
+	// define a taper for sigma, makes close in readings have higher weight
+	// ranges from 0.75-3.0 from 0-2 degrees, than 3.0 after that (see loop)
+	glassutil::CTaper tap;
+	tap = glassutil::CTaper(-0.0001, 2.0, 999.0, 999.0);
+
+	// geo is used for calculating distances to stations for determining sigma
+	geo.setGeographic(xlat, xlon, EARTHRADIUSKM - xZ);
+
+	// This sets the travel-time look up location
+	if (pTrv1) {
+		pTrv1->setOrigin(xlat, xlon, xZ);
+	}
+	if (pTrv2) {
+		pTrv2->setOrigin(xlat, xlon, xZ);
+	}
+
+	pTTT->setOrigin(xlat, xlon, xZ);
+
+	// The number of picks associated with the hypocenter
+	int npick = vPick.size();
+
+	// Loop through each pick and find the residual, calculate
+	// the significance, and add to the stacks.
+	// Currently only P, S, and nucleation phases added to stack.
+	for (int ipick = 0; ipick < npick; ipick++) {
+		auto pick = vPick[ipick];
+		double resi = 99999999;
+
+		// calculate residual
+		double tobs = pick->getTPick() - oT;
+		std::shared_ptr<CSite> site = pick->getSite();
+		glassutil::CGeo siteGeo = site->getGeo();
+
+		// only use nucleation phases if on nucleation branch
+		if (nucleate == 1) {
+			if ((pTrv1) && (pTrv2)) {
+				// we have both nucleation phases
+				// first nucleation phase
+				// calculate the residual using the phase name
+				double tcal1 = pTrv1->T(&siteGeo);
+				double resi1 = getWeightedResidual(pTrv1->sPhase, tobs, tcal1);
+
+				// second nucleation phase
+				// calculate the residual using the phase name
+				double tcal2 = pTrv2->T(&siteGeo);
+				double resi2 = getWeightedResidual(pTrv2->sPhase, tobs, tcal2);
+
+				// use the smallest residual
+				if (resi1 < resi2) {
+					tcal = tcal1;
+					resi = resi1;
+				} else {
+					tcal = tcal2;
+					resi = resi2;
+				}
+			} else if ((pTrv1) && (!pTrv2)) {
+				// we have just the first nucleation phase
+				tcal = pTrv1->T(&siteGeo);
+				resi = getWeightedResidual(pTrv1->sPhase, tobs, tcal);
+			} else if ((!pTrv1) && (pTrv2)) {
+				// we have just the second ducleation phase
+				tcal = pTrv2->T(&siteGeo);
+				resi = getWeightedResidual(pTrv2->sPhase, tobs, tcal);
+			}
+		} else {
+			// use all available association phases
+			// take whichever phase has the smallest residual
+			tcal = pTTT->T(&siteGeo, tobs);
+
+			// calculate the residual using the phase name
+			resi = getWeightedResidual(pTTT->sPhase, tobs, tcal);
+		}
+
+		// calculate distance to station to get sigma
+		double delta = RAD2DEG * geo.delta(&site->getGeo());
+		double sigma = (tap.Val(delta) * 2.25) + 0.75;
+
+		// calculate and add to the stack
+		value += pGlass->sig(resi, sigma);
+	}
+	return value;
+}
+
+double CHypo::getBayesInitial() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dBayesInitial);
+}
+
+bool CHypo::getCorrAdded() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (bCorrAdded);
+}
+
+int CHypo::getCut() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (nCut);
+}
+
+double CHypo::getCutFactor() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dCutFactor);
+}
+
+double CHypo::getCutMin() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dCutMin);
+}
+
+double CHypo::getCutPercentage() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dCutPercentage);
+}
+
+int CHypo::getCycle() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (iCycle);
+}
+
+bool CHypo::getEvent() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (bEvent);
+}
+
+bool CHypo::getFixed() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (bFixed);
+}
+
+double CHypo::getGap() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dGap);
+}
+
+glassutil::CGeo CHypo::getGeo() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	glassutil::CGeo geoHypo;
+	geoHypo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
+	return (geoHypo);
+}
+
+const CGlass* CHypo::getGlass() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (pGlass);
+}
+
+double CHypo::getKrt() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dKrt);
+}
+
+double CHypo::getLat() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dLat);
+}
+
+double CHypo::getLon() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dLon);
+}
+
+double CHypo::getMed() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dMed);
+}
+
+double CHypo::getMin() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dMin);
+}
+
+const std::string& CHypo::getPid() const {
+	return (sPid);
+}
+
+int CHypo::getProcessCount() const {
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+	return (processCount);
+}
+
+int CHypo::getReportCount() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (reportCount);
+}
+
+double CHypo::getRes() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dRes);
+}
+
+double CHypo::getSig() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dSig);
+}
+
+double CHypo::getTCreate() const {
+	// no lock guard because tCreate is only upon hypo contruction
+	return (tCreate);
+}
+
+double CHypo::getThresh() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dThresh);
+}
+
+std::shared_ptr<traveltime::CTravelTime> CHypo::getTrv1() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (pTrv1);
+}
+
+std::shared_ptr<traveltime::CTravelTime> CHypo::getTrv2() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (pTrv2);
+}
+
+std::shared_ptr<traveltime::CTTT> CHypo::getTTT() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (pTTT);
+}
+
+int CHypo::getVPickSize() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (vPick.size());
+}
+
+std::vector<std::shared_ptr<CPick>> CHypo::getVPick() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (vPick);
+}
+
+int CHypo::getVCorrSize() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (vCorr.size());
+}
+
+const std::string& CHypo::getWebName() const {
+	return (sWebName);
+}
+
+// ---------------------------------------------------getSumAbsResidual
+double CHypo::getSumAbsResidual(double xlat, double xlon, double xZ, double oT,
+								int nucleate) {
+	if (pTTT == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::getSumAbsResidual: NULL pTTT.");
+		return (0);
+	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	double sigma;
+	double value = 0.;
+	char sLog[1024];
+
+	// This sets the travel-time look up location
+	if (pTrv1 != NULL) {
+		pTrv1->setOrigin(xlat, xlat, xZ);
+	}
+	if (pTrv2 != NULL) {
+		pTrv2->setOrigin(xlat, xlat, xZ);
+	}
+
+	pTTT->setOrigin(xlat, xlon, xZ);
+
+	// The number of picks associated with the hypocenter
+	int npick = vPick.size();
+
+	// Loop through each pick and find the residual, calculate
+	// the resiudal, and sum.
+	// Currently only P, S, and nucleation phases added to stack.
+	// If residual is greater than 10, make it 10.
+	for (int ipick = 0; ipick < npick; ipick++) {
+		auto pick = vPick[ipick];
+		double resi = 99999999;
+
+		// calculate residual
+		double tobs = pick->getTPick() - oT;
+		double tcal;
+		std::shared_ptr<CSite> site = pick->getSite();
+
+		// only use nucleation phase if on nucleation branch
+		if (nucleate == 1 && pTrv2 == NULL) {
+			tcal = pTrv1->T(&site->getGeo());
+			resi = tobs - tcal;
+		} else if (nucleate == 1 && pTrv1 == NULL) {
+			tcal = pTrv2->T(&site->getGeo());
+			resi = tobs - tcal;
+		} else {
+			// take whichever has the smallest residual, P or S
+			tcal = pTTT->T(&site->getGeo(), tobs);
+			if (pTTT->sPhase == "P" || pTTT->sPhase == "S") {
+				resi = tobs - tcal;
+			}
+		}
+		resi = std::abs(resi);
+		if (resi > 10.) {
+			resi = 10.;
+		}
+		value += resi;
+	}
+	return value;
+}
+
+double CHypo::getTOrg() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (tOrg);
+}
+
+// ---------------------------------------------------------getWeightedResidual
+double CHypo::getWeightedResidual(std::string sPhase, double tObs,
+									double tCal) {
+	if (sPhase == "P") {
+		return (tObs - tCal);
+	} else if (sPhase == "S") {
+		// Effectively halving the weight of S
+		// this value was selected by testing specific
+		// events with issues
+		// NOTE: Hard Coded
+		return ((tObs - tCal) * 2.0);
+	} else {
+		// Down weighting all other phases
+		// Value was chosen so that other phases would
+		// still contribute (reducing instabilities)
+		// but remain insignificant
+		// NOTE: Hard Coded
+		return ((tObs - tCal) * 10.0);
+	}
+}
+
+double CHypo::getZ() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (dZ);
+}
+
+// ---------------------------------------------------graphicsOutput
+void CHypo::graphicsOutput() {
+	if (pTTT == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::graphicsOutput: NULL pTTT.");
+		return;
+	}
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// create and open file
+	std::ofstream outfile;
+	std::string filename = pGlass->getGraphicsOutFolder() + sPid + ".txt";
+	outfile.open(filename, std::ios::out);
+
+	// header
+	outfile << "hypocenter: " << std::to_string(dLat) << " "
+			<< std::to_string(dLon) << " " << std::to_string(dZ) << " "
+			<< std::to_string(tOrg) << "\n";
+
+	double stack = 0;
+	double tcal = 0;
+	double delta = 0;
+	double sigma = 0;
+	glassutil::CGeo geo;
+
+	int npick = vPick.size();
+	// for each step in the y axis
+	for (int y = -1 * pGlass->getGraphicsSteps();
+			y <= pGlass->getGraphicsSteps(); y++) {
+		// compute lat
+		double xlat = dLat + (y * pGlass->getGraphicsStepKm()) / DEG2KM;
+
+		// for each step in the x axis
+		for (int x = -1 * pGlass->getGraphicsSteps();
+				x <= pGlass->getGraphicsSteps(); x++) {
+			// compute lon
+			double xlon = dLon
+					+ cos(DEG2RAD * xlat) * (x * pGlass->getGraphicsStepKm())
+							/ DEG2KM;
+
+			// set up traveltimes
+			pTTT->setOrigin(xlat, xlon, dZ);
+			stack = 0;
+
+			// for each pick
+			for (int ipick = 0; ipick < npick; ipick++) {
+				auto pick = vPick[ipick];
+				double tobs = pick->getTPick() - tOrg;
+				std::shared_ptr<CSite> site = pick->getSite();
+				tcal = pTTT->T(&site->getGeo(), tobs);
+				delta = RAD2DEG * geo.delta(&site->getGeo());
+
+				// This should be a function.
+				if (delta < 1.5) {
+					sigma = .75;
+				} else if ((delta >= 1.5) && (delta < 30.0)) {
+					sigma = 1.5;
+				} else {
+					sigma = 3;
+				}
+
+				// compute stack value
+				stack += pGlass->sig_laplace_pdf(tobs - tcal, sigma);
+
+				// write to fiel
+				outfile << std::to_string(xlat) << " " << std::to_string(xlon)
+						<< " " << std::to_string(stack) << "\n";
+			}
+		}
+	}
+
+	outfile.close();
+}
+
+// ---------------------------------------------------------hasCorrelation
+bool CHypo::hasCorrelation(std::shared_ptr<CCorrelation> corr) {
+	// null check
+	if (corr == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::warn,
+								"CHypo::hasCorrelation: NULL correlation.");
+		return (false);
+	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// for each corr in the vector
+	for (const auto &q : vCorr) {
+		// is this corr a match?
+		if (q->getPid() == corr->getPid()) {
+			return (true);
+		}
+	}
+
+	return (false);
+}
+
+// ---------------------------------------------------------hasPick
+bool CHypo::hasPick(std::shared_ptr<CPick> pck) {
+	// null check
+	if (pck == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::warn,
+								"CHypo::hasPick: NULL pck.");
+		return (false);
+	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// for each pick in the vector
+	for (const auto &q : vPick) {
+		// is this pick a match?
+		if (q->getPid() == pck->getPid()) {
+			return (true);
+		}
+	}
+
+	return (false);
+}
+
+// ---------------------------------------------------------Hypo
+std::shared_ptr<json::Object> CHypo::hypo(bool send) {
+	std::shared_ptr<json::Object> hypo = std::make_shared<json::Object>(
+			json::Object());
+
+	// null check
+	if (pGlass == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::warn,
+								"CHypo::Hypo: NULL pGlass.");
+		return (hypo);
+	}
+	if (pTTT == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::warn,
+								"CHypo::Hypo: NULL pTTT.");
+		return (hypo);
+	}
+
+	// make sure this event is still reportable
+	if (reportCheck() == false) {
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CHypo::Hypo: hypo:" + sPid + " is not reportable.");
+		return (hypo);
+	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::Hypo: generating hypo message for sPid:" + sPid
+					+ " sWebName:" + sWebName);
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// NOTE: Need to think about this format, currently it *almost*
+	// creates a detection formats json, but doesn't use the library
+	// maybe this should be it's own "glass" format? or just use
+	// the quake format?
+
+	// basic info
+	(*hypo)["Cmd"] = "Hypo";
+	(*hypo)["Type"] = "Hypo";
+	(*hypo)["ID"] = sPid;
+
+	// source
+	// NOTE: THIS NEEDS TO BE NOT HARDCODED EVENTUALLY
+	// or remove it? why should glasscore care about source?
+	json::Object src;
+	src["AgencyID"] = "US";
+	src["Author"] = "glass";
+	(*hypo)["Source"] = src;
+
+	// time
+	(*hypo)["T"] = glassutil::CDate::encodeDateTime(tOrg);
+	(*hypo)["Time"] = glassutil::CDate::encodeISO8601Time(tOrg);
+
+	// location
+	(*hypo)["Latitude"] = dLat;
+	(*hypo)["Longitude"] = dLon;
+	(*hypo)["Depth"] = dZ;
+
+	// supplementary info
+	(*hypo)["MinimumDistance"] = dMin;
+	(*hypo)["Gap"] = dGap;
+	(*hypo)["Bayes"] = dBayes;
+	(*hypo)["InitialBayes"] = dBayesInitial;
+	(*hypo)["Web"] = sWebName;
+
+	// generate data array for this hypo
+	// set up traveltime object
+	pTTT->setOrigin(dLat, dLon, dZ);
+
+	// set up geo for distance calculations
+	glassutil::CGeo geo;
+	geo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
+
+	// array to hold data
+	json::Array data;
+
+	// for each pick
+	for (auto pick : vPick) {
+		// get basic pick values
+		std::shared_ptr<CSite> site = pick->getSite();
+		double tobs = pick->getTPick() - tOrg;
+		double tcal = pTTT->T(&site->getGeo(), tobs);
+		double tres = tobs - tcal;
+		// should this be changed?
+		double sig = pGlass->sig(tres, 1.0);
+
+		// if we have it, use the shared pointer
+		json::Object pickObj;
+		std::shared_ptr<json::Object> jPick = pick->getJPick();
+		if (jPick) {
+			// start with a copy of json pick
+			// which has the site, source, time, etc
+			pickObj = json::Object(*jPick.get());
+
+			// add the association info
+			json::Object assocobj;
+			assocobj["Phase"] = pTTT->sPhase;
+			assocobj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
+			assocobj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
+			assocobj["Residual"] = tres;
+			assocobj["Sigma"] = sig;
+			pickObj["AssociationInfo"] = assocobj;
+		} else {
+			// we don't have a jpick, so fill in what we know
+			pickObj["Site"] = site->getScnl();
+			pickObj["Pid"] = pick->getPid();
+			pickObj["T"] = glassutil::CDate::encodeDateTime(pick->getTPick());
+			pickObj["Time"] = glassutil::CDate::encodeISO8601Time(
+					pick->getTPick());
+			pickObj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
+			pickObj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
+			pickObj["Residual"] = tres;
+		}
+
+		// add new pick to list
+		data.push_back(pickObj);
+	}
+
+	// for each correlation
+	for (auto correlation : vCorr) {
+		// get basic pick values
+		std::shared_ptr<CSite> site = correlation->getSite();
+		double tobs = correlation->getTCorrelation() - tOrg;
+		double tcal = pTTT->T(&site->getGeo(), tobs);
+		double tres = tobs - tcal;
+		// should this be changed?
+		double sig = pGlass->sig(tres, 1.0);
+
+		// if we have it, use the shared pointer
+		json::Object correlationObj;
+		std::shared_ptr<json::Object> jCorrelation = correlation
+				->getJCorrelation();
+		if (jCorrelation) {
+			// start with a copy of json pick
+			// which has the site, source, time, etc
+			correlationObj = json::Object(*jCorrelation.get());
+
+			// add the association info
+			json::Object assocobj;
+			assocobj["Phase"] = pTTT->sPhase;
+			assocobj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
+			assocobj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
+			assocobj["Residual"] = tres;
+			assocobj["Sigma"] = sig;
+			correlationObj["AssociationInfo"] = assocobj;
+		} else {
+			// we don't have a jCorrelation, so fill in what we know
+			correlationObj["Site"] = site->getScnl();
+			correlationObj["Pid"] = correlation->getPid();
+			correlationObj["Time"] = glassutil::CDate::encodeISO8601Time(
+					correlation->getTCorrelation());
+			correlationObj["Latitude"] = correlation->getLat();
+			correlationObj["Longitude"] = correlation->getLon();
+			correlationObj["Depth"] = correlation->getZ();
+			correlationObj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
+			correlationObj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
+			correlationObj["Residual"] = tres;
+			correlationObj["Correlation"] = correlation->getCorrelation();
+		}
+
+		// add new pick to list
+		data.push_back(correlationObj);
+	}
+
+	// add data array to object
+	(*hypo)["Data"] = data;
+
+	if ((send == true) && (pGlass != NULL)) {
+		pGlass->send(hypo);
+	}
+
+	// done
+	return (hypo);
+}
+
+int CHypo::incrementProcessCount() {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	processCount++;
+
+	return (processCount);
+}
+
+// ---------------------------------------------------------initialize
+bool CHypo::initialize(double lat, double lon, double z, double time,
+						std::string pid, std::string web, double bayes,
+						double thresh, int cut,
+						std::shared_ptr<traveltime::CTravelTime> firstTrav,
+						std::shared_ptr<traveltime::CTravelTime> secondTrav,
+						std::shared_ptr<traveltime::CTTT> ttt,
+						double resolution) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	clear();
+
+	dLat = lat;
+	dLon = lon;
+	dZ = z;
+	tOrg = time;
+	sPid = pid;
+	sWebName = web;
+	dBayes = bayes;
+	dBayesInitial = bayes;
+
+	dThresh = thresh;
+	nCut = cut;
+	dRes = resolution;
+	if (dRes == 0.) {
+		dRes = 100.;
+	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::initialize: lat:" + std::to_string(dLat) + "; lon:"
+					+ std::to_string(dLon) + "; z:" + std::to_string(dZ)
+					+ "; t:" + std::to_string(tOrg) + "; sPid:" + sPid
+					+ "; web:" + sWebName + "; bayes:" + std::to_string(dBayes)
+					+ "; thresh:" + std::to_string(dThresh) + "; cut:"
+					+ std::to_string(nCut) + "; resolution:"
+					+ std::to_string(dRes));
+
+	// make local copies of the travel times so that we don't
+	// have cross-thread contention for them between hypos
+	if (firstTrav != NULL) {
+		pTrv1 = std::make_shared<traveltime::CTravelTime>(
+				traveltime::CTravelTime(*firstTrav));
+	}
+
+	if (secondTrav != NULL) {
+		pTrv2 = std::make_shared<traveltime::CTravelTime>(
+				traveltime::CTravelTime(*secondTrav));
+	}
+
+	if (ttt != NULL) {
+		pTTT = std::make_shared<traveltime::CTTT>(traveltime::CTTT(*ttt));
+	}
+	tCreate = glassutil::CDate::now();
+
+	return (true);
+}
+
+bool CHypo::isLockedForProcessing() {
+	if (processingMutex.try_lock() == false) {
+		return (true);
+	}
+
+	processingMutex.unlock();
+	return (false);
+}
+
+// ---------------------------------------------------------list
+void CHypo::list(std::string src) {
+	if (pGlass == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::list: NULL pGlass.");
+		return;
+	}
+	if (pTTT == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::list: NULL pTTT.");
+		return;
+	}
+	if (vWts.size() == 0) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::list: empty vWts.");
+		return;
+	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	char sLog[1024];
+
+	// generate time string
+	glassutil::CDate dt = glassutil::CDate(tOrg);
+	std::string sorg = dt.dateTime();
+
+	snprintf(sLog, sizeof(sLog),
+				"CHypo::list: ** %s **\nPid:%s\n%s %.2f %.2f %.2f (%.2f)",
+				sorg.c_str(), sPid.c_str(), sorg.c_str(), dLat, dLon, dZ,
+				dBayes);
+	glassutil::CLogit::log(sLog);
+
+	// compute current stats
+	stats();
+
+	snprintf(
+			sLog, sizeof(sLog),
+			"CHypo::list: ** %s **\\nPid:%s\nGap:%.1f Dmin:%.1f Dmedian:%.1f"
+			"\nSigma:%.2f Kurtosis:%.2f\nWeb:%s",
+			sorg.c_str(), sPid.c_str(), dGap, dMin, dMed, dSig, dKrt,
+			sWebName.c_str());
+	glassutil::CLogit::log(sLog);
+
+	// setup traveltime interface for this hypo
+	pTTT->setOrigin(dLat, dLon, dZ);
+
+	// set up a geographic object for this hypo
+	glassutil::CGeo geo;
+	geo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
+
+	// create local pick vector
+	std::vector<std::shared_ptr<CPick>> vpick;
+
+	// copy picks to the local pick vector
+	for (auto pick : vPick) {
+		vpick.push_back(pick);
+	}
+
+	// generate list of rogue picks
+	std::vector<std::shared_ptr<CPick>> pickRogues = pGlass->getPickList()
+			->rogues(sPid, tOrg);
+
+	// add rogue picks to the local pick vector
+	for (auto pick : pickRogues) {
+		vpick.push_back(pick);
+	}
+
+	// sort local pick vector
+	sort(vpick.begin(), vpick.end(), sortPick);
+
+	// for each pick in the local pick vector
+	for (int ipk = 0; ipk < vPick.size(); ipk++) {
+		// get the pick
+		auto pick = vPick[ipk];
+
+		// get the site
+		std::shared_ptr<CSite> site = pick->getSite();
+
+		// compute observed traveltime
+		double tobs = pick->getTPick() - tOrg;
+
+		// get expected travel time
+		double tcal = pTTT->T(&site->getGeo(), tobs);
+
+		// compute residual
+		double tres = tobs - tcal;
+
+		// make sure the residual is reasonable
+		if (tres > 20 || tres < -20) {
+			// skip if it isn't
+			continue;
+		}
+
+		// compute distance
+		double dis = geo.delta(&site->getGeo()) / DEG2RAD;
+
+		// compute azimuth
+		double azm = geo.azimuth(&site->getGeo()) / DEG2RAD;
+
+		// get the association string
+		std::string sass = pick->getAss();
+
+		// if the hypo link is valid
+		if ((pick->getHypo() != NULL) && (pick->getHypo()->getPid() != sPid)) {
+			// set association string
+			sass = "*";
+		} else {
+			// set association string
+			sass = "-";
+		}
+		// if the hypo is fixed, print without a weight
+		if (bFixed) {
+			snprintf(sLog, sizeof(sLog),
+						"CHypo::list: ** %s **\nPid:%s\n%s  %s %s %.2f Dis:%.1f"
+						" Azm:%.1f Wt:NA",
+						sorg.c_str(), sPid.c_str(), sass.c_str(),
+						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres,
+						dis, azm);
+			glassutil::CLogit::log(sLog);
+
+		} else {
+			snprintf(sLog, sizeof(sLog),
+						"CHypo::list: ** %s **\nPid:%s\n%s  %s %s %.2f Dis:%.1f"
+						" Azm:%.1f Wt:%.2f",
+						sorg.c_str(), sPid.c_str(), sass.c_str(),
+						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres,
+						dis, azm, vWts[ipk]);
+			glassutil::CLogit::log(sLog);
+		}
+	}
+}
+
+// ---------------------------------------------------------localize
+double CHypo::localize() {
+	// Localize this hypo
+	// nullcheck
+	if (pGlass == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::localize: NULL pGlass.");
+		return (0);
+	}
+	char sLog[1024];
+
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CHypo::localize. " + sPid);
+
+	// if hypo is fixed, just return current bayesian value
+	// NOTE: What implication does this have for "seed hypos" like twitter
+	// detections
+	if (bFixed) {
+		return (dBayes);
+	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// get the number of picks
+	int npick = vPick.size();
+
+	// based on the number of picks, call relocate
+	// if there are already a large number of picks, only do it
+	// do often...
+
+	// create taper using the number of picks to define the
+	// search distance in localize. Smaller search with more picks
+	// the search radius starts at 1/4 the node resolution and
+	// shrinks to 1/16 the node radius as picks are added
+	// note that the locator can extend past the input search radius
+	// these values were chosen by testing specific events
+
+	glassutil::CTaper taper;
+	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, 30 + 0.0001);
+	double searchR = (dRes / 4. + taper.Val(vPick.size()) * .75 * dRes) / 4.;
+
+	// This should be the default
+	if (pGlass->getMinimizeTtLocator() == false) {
+		if (npick < 50) {
+			annealingLocate(5000, searchR, 1., searchR / 30.0, .1);
+		} else if (npick < 150 && (npick % 10) == 0) {
+			annealingLocate(1250, searchR, 1., searchR / 30.0, .1);
+		} else if ((npick % 25) == 0) {
+			annealingLocate(500, searchR, 1., searchR / 30.0, .1);
+		} else {
+			snprintf(sLog, sizeof(sLog),
+						"CHypo::localize: Skipping localize with %d picks",
+						npick);
+			glassutil::CLogit::log(sLog);
+		}
+	} else {
+		if (npick < 25) {
+			annealingLocateResidual(10000, searchR, 1., searchR / 10.0, .1);
+		} else if (npick < 50 && (npick % 5) == 0) {
+			annealingLocateResidual(5000, searchR, 1., searchR / 10.0, .1);
+		} else if (npick < 150 && (npick % 10) == 0) {
+			annealingLocateResidual(1000, searchR / 2., 1., searchR / 10.0, .1);
+		} else if ((npick % 25) == 0) {
+			annealingLocateResidual(500, searchR / 2., 1., searchR / 10.0, .1);
+		} else {
+			snprintf(sLog, sizeof(sLog),
+						"CHypo::localize: Skipping localize with %d picks",
+						npick);
+			glassutil::CLogit::log(sLog);
+		}
+	}
+
+	// log
+	glassutil::CDate dt = glassutil::CDate(tOrg);
+	snprintf(sLog, sizeof(sLog),
+				"CHypo::localize: HYP %s %s%9.4f%10.4f%6.1f %d", sPid.c_str(),
+				dt.dateTime().c_str(), dLat, dLon, dZ,
+				static_cast<int>(vPick.size()));
+	glassutil::CLogit::log(sLog);
+
+	// return the final maximum bayesian fit
+	return (dBayes);
+}
+
+void CHypo::lockForProcessing() {
+	processingMutex.lock();
+}
+
+// ---------------------------------------------------------prune
+bool CHypo::prune() {
+	// nullcheck
+	if (pGlass == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::prune: NULL pGlass.");
+		return (false);
+	}
+
+	char sLog[1024];
+
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CHypo::prune. " + sPid);
+
+	// set up local vector to track picks to remove
+	std::vector<std::shared_ptr<CPick>> vremove;
+
+	// set up a geographic object for this hypo
+	glassutil::CGeo geo;
+	geo.setGeographic(dLat, dLon, EARTHRADIUSKM);
+
+	// get the standard deviation allowed for pruning
+	double sdprune = pGlass->getSdPrune();
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// for each pick in this hypo
+	for (auto pck : vPick) {
+		// check to see if it can still be associated
+		if (!associate(pck, 1.0, sdprune)) {
+			// pick no longer associates, add to remove list
+			vremove.push_back(pck);
+
+			snprintf(
+					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f)",
+					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
+					pck->getSite()->getScnl().c_str(), sdprune);
+			glassutil::CLogit::log(sLog);
+
+			// on to the next pick
+			continue;
+		}
+
+		// Trim whiskers
+		// compute delta between site and hypo
+		// THIS NEEDS TO BE CONVERTER DO DEG BUT NEED TO TEST LATER - WY
+		double delta = geo.delta(&pck->getSite()->getGeo());
+		// check if delta is beyond distance limit
+		if (delta > dCut) {
+			snprintf(
+					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f > %.2f)",
+					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
+					pck->getSite()->getScnl().c_str(), delta, dCut);
+			glassutil::CLogit::log(sLog);
+
+			// add pick to remove list
+			vremove.push_back(pck);
+
+			// on to the next pick
+			continue;
+		}
+	}
+
+	int pruneCount = 0;
+	for (auto pck : vremove) {
+		pruneCount++;
+		pck->clearHypo();
+		remPick(pck);
+	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::prune pick pruneCount:" + std::to_string(pruneCount));
+
+	// set up local vector to track correlations to remove
+	std::vector<std::shared_ptr<CCorrelation>> vcremove;
+
+	// get the correlation windows
+	double tWindow = pGlass->getCorrelationMatchingTWindow();
+	double xWindow = pGlass->getCorrelationMatchingXWindow();
+
+	// for each correlation in this hypo
+	for (auto cor : vCorr) {
+		// check to see if it can still be associated
+		if (!associate(cor, tWindow, xWindow)) {
+			// correlation no longer associates, add to remove list
+			vcremove.push_back(cor);
+
+			snprintf(
+					sLog,
+					sizeof(sLog),
+					"CHypo::prune: C-CUL %s %s",
+					glassutil::CDate::encodeDateTime(cor->getTCorrelation())
+							.c_str(),
+					cor->getSite()->getScnl().c_str());
+			glassutil::CLogit::log(sLog);
+
+			// on to the next correlation
+			continue;
+		}
+	}
+
+	for (auto cor : vcremove) {
+		cor->clearHypo();
+		remCorrelation(cor);
+	}
+
+	// if we didn't find any data to remove, just
+	// return
+	if ((vremove.size() < 1) && (vcremove.size() < 1)) {
+		return (false);
+	}
+
+	// we've removed at least one data
+	return (true);
+}
+
+// ---------------------------------------------------------Rand
+double CHypo::Rand(double x, double y) {
+	// double randNum = ((x) + ((y) - (x)) * rand() / (float) RAND_MAX);
+	// return randNum;
+	// NOTE: Move to some glass math utility library?
+	std::uniform_real_distribution<double> distribution(x, y);
+	double number = distribution(m_RandomGenerator);
+	return (number);
+}
+
+// ---------------------------------------------------------remCorrelation
+void CHypo::remCorrelation(std::shared_ptr<CCorrelation> corr) {
+	// null check
+	if (corr == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::warn,
+								"CHypo::remCorrelation: NULL correlation.");
+		return;
+	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// get the correlation id
+	std::string pid = corr->getPid();
+
+	// for each correlation in the vector
+	for (int i = 0; i < vCorr.size(); i++) {
+		// get the current correlation
+		auto correlation = vCorr[i];
+
+		// is this correlation a match?
+		if (correlation->getPid() == pid) {
+			// remove correlation from vector
+			vCorr.erase(vCorr.cbegin() + i);
+			return;
+		}
+	}
+}
+
+// ---------------------------------------------------------remPick
+void CHypo::remPick(std::shared_ptr<CPick> pck) {
+	// null check
+	if (pck == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::warn,
+								"CHypo::remPick: NULL pck.");
+		return;
+	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// get the pick id
+	std::string pid = pck->getPid();
+
+	// for each pick in the vector
+	for (int i = 0; i < vPick.size(); i++) {
+		// get the current pick
+		auto pick = vPick[i];
+
+		// is this pick a match?
+		if (pick->getPid() == pid) {
+			// remove pick from vector
+			vPick.erase(vPick.cbegin() + i);
+
+			return;
+		}
+	}
+}
+
+// ---------------------------------------------------------cancel
+bool CHypo::reportCheck() {
 	// nullcheck
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::cancel: NULL pGlass.");
 		return (false);
 	}
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
 	char sLog[2048];
 	char sHypo[1024];
@@ -1298,6 +2429,185 @@ bool CHypo::reportCheck() {
 	return (true);
 }
 
+bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
+	// nullchecks
+	if (pGlass == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::resolve: NULL pGlass.");
+		return (false);
+	}
+	if (pGlass->getHypoList() == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::resolve: NULL pGlass pHypoList.");
+		return (false);
+	}
+
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CHypo::resolve. " + sPid);
+
+	// lock the hypo since we're iterating through it's lists
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+
+	bool bAss = false;
+	char sLog[1024];
+
+	// handle picks
+	// for each pick in this hypo
+	int nPck = vPick.size();
+
+	int keptCount = 0;
+	int removeCount = 0;
+
+	// NOTE: Why are we moving backwards through the list?
+	for (int iPck = nPck - 1; iPck >= 0; iPck--) {
+		// get the pick
+		std::shared_ptr<CPick> pck = vPick[iPck];
+
+		// get the pick's hypo pointer
+		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
+
+		// if this pick isn't linked to a hypo
+		if (pickHyp == NULL) {
+			// link to this hypo and move on
+			pck->addHypo(hyp);
+
+			continue;
+		}
+
+		std::string sOtherPid = pickHyp->getPid();
+
+		// if this pick is linked to this hypo
+		if (sOtherPid == sPid) {
+			// nothing else to do
+			continue;
+		}
+
+		// get the current pick's affinity to the provided hypo
+		double aff1 = affinity(pck);
+
+		// get the current pick's affinity to the hypo it's linked to
+		double aff2 = pickHyp->affinity(pck);
+
+		snprintf(sLog, sizeof(sLog),
+					"CHypo::resolve: SCV COMPARE %s %s %s %s (%.2f, %.2f)",
+					sPid.c_str(), sOtherPid.c_str(),
+					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
+					pck->getSite()->getScnl().c_str(), aff1, aff2);
+		glassutil::CLogit::log(sLog);
+
+		// check which affinity is better
+		if (aff1 > aff2) {
+			// this pick has a higher affinity with the provided hypo
+			// remove the pick from it's original hypo
+			pickHyp->remPick(pck);
+
+			// link pick to the provided hypo
+			pck->addHypo(hyp, "S", true);
+
+			// add provided hypo to the processing queue
+			// NOTE: this puts provided hypo before original hypo in FIFO,
+			// we want this hypo to keep this pick, rather than the original
+			// just stealing it back, which is why we do it here
+			// NOTE: why add it at all? we're gonna locate before we finish
+			// is it to see if we can get more next time
+			pGlass->getHypoList()->pushFifo(hyp);
+
+			// add the original hypo the pick was linked to the processing queue
+			pGlass->getHypoList()->pushFifo(pickHyp);
+
+			// we've made a change to the hypo (grabbed a pick)
+			bAss = true;
+			keptCount++;
+		} else {
+			// this pick has higher affinity with the original hypo
+			// remove pick from provided hypo
+			remPick(pck);
+
+			// we've made a change to the hypo (got rid of a pick)
+			bAss = true;
+			removeCount++;
+		}
+	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::debug,
+			"CHypo::resolve " + sPid + " kept:" + std::to_string(keptCount)
+					+ " removed:" + std::to_string(removeCount));
+
+	// handle correlations
+	// for each correlation in this hypo
+	int nCorr = vCorr.size();
+
+	// NOTE: Why are we moving backwards through the list?
+	for (int iCorr = nCorr - 1; iCorr >= 0; iCorr--) {
+		// get the correlation
+		auto corr = vCorr[iCorr];
+
+		// get the correlation's hypo pointer
+		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
+
+		// if this correlation isn't linked to a hypo
+		if (corrHyp == NULL) {
+			// link to this hypo and move on
+			corr->addHypo(hyp);
+			continue;
+		}
+
+		std::string sOtherPid = corrHyp->getPid();
+
+		// if this corr is linked to this hypo
+		if (sOtherPid == sPid) {
+			// nothing else to do
+			continue;
+		}
+
+		// get the current correlation's affinity to the provided hypo
+		double aff1 = affinity(corr);
+		double aff2 = corrHyp->affinity(corr);
+
+		snprintf(
+				sLog,
+				sizeof(sLog),
+				"CHypo::resolve: C SCV COMPARE %s %s %s %s (%.2f, %.2f )",
+				sPid.c_str(),
+				sOtherPid.c_str(),
+				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
+				corr->getSite()->getScnl().c_str(), aff1, aff2);
+		glassutil::CLogit::log(sLog);
+
+		// check which affinity is better
+		if (aff1 > aff2) {
+			// this correlation has a higher affinity with the provided hypo
+			// remove the correlation from it's original hypo
+			corrHyp->remCorrelation(corr);
+
+			// link pick to the provided hypo
+			corr->addHypo(hyp, "C-S", true);
+
+			// add provided hypo to the processing queue
+			// NOTE: this puts provided hypo before original hypo in FIFO,
+			// we want this hypo to keep this pick, rather than the original
+			// just stealing it back, which is why we do it here
+			pGlass->getHypoList()->pushFifo(hyp);
+
+			// add the original hypo the pick was linked to the processing queue
+			pGlass->getHypoList()->pushFifo(corrHyp);
+
+			// we've made a change to the hypo (grabbed a pick)
+			bAss = true;
+		} else {
+			// this pick has higher affinity with the original hypo
+			// remove pick from provided hypo
+			remCorrelation(corr);
+
+			// we've made a change to the hypo (got rid of a pick)
+			bAss = true;
+		}
+	}
+
+	return (bAss);
+}
+
 // ---------------------------------------------------------stats
 void CHypo::stats() {
 	// lock mutex for this scope
@@ -1321,7 +2631,7 @@ void CHypo::stats() {
 
 	// set up a geographic object for this hypo
 	glassutil::CGeo geo;
-	geo.setGeographic(dLat, dLon, 6371.0 - dZ);
+	geo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
 
 	// create and populate vectors containing the
 	// pick distances and azimuths
@@ -1419,846 +2729,6 @@ void CHypo::summary() {
 	glassutil::CLogit::log(sLog);
 }
 
-// ---------------------------------------------------------list
-void CHypo::list(std::string src) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::list: NULL pGlass.");
-		return;
-	}
-	if (pTTT == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::list: NULL pTTT.");
-		return;
-	}
-	if (vWts.size() == 0) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::list: empty vWts.");
-		return;
-	}
-
-	char sLog[1024];
-
-	// generate time string
-	glassutil::CDate dt = glassutil::CDate(tOrg);
-	std::string sorg = dt.dateTime();
-
-	snprintf(sLog, sizeof(sLog),
-				"CHypo::list: ** %s **\nPid:%s\n%s %.2f %.2f %.2f (%.2f)",
-				sorg.c_str(), sPid.c_str(), sorg.c_str(), dLat, dLon, dZ,
-				dBayes);
-	glassutil::CLogit::log(sLog);
-
-	// compute current stats
-	stats();
-
-	snprintf(
-			sLog, sizeof(sLog),
-			"CHypo::list: ** %s **\\nPid:%s\nGap:%.1f Dmin:%.1f Dmedian:%.1f"
-			"\nSigma:%.2f Kurtosis:%.2f\nWeb:%s",
-			sorg.c_str(), sPid.c_str(), dGap, dMin, dMed, dSig, dKrt,
-			sWebName.c_str());
-	glassutil::CLogit::log(sLog);
-
-	// setup traveltime interface for this hypo
-	pTTT->setOrigin(dLat, dLon, dZ);
-
-	// set up a geographic object for this hypo
-	glassutil::CGeo geo;
-	geo.setGeographic(dLat, dLon, 6371.0 - dZ);
-
-	// create local pick vector
-	std::vector<std::shared_ptr<CPick>> vpick;
-
-	// copy picks to the local pick vector
-	for (auto pick : vPick) {
-		vpick.push_back(pick);
-	}
-
-	// generate list of rogue picks
-	std::vector<std::shared_ptr<CPick>> pickRogues = pGlass->getPickList()
-			->rogues(sPid, tOrg);
-
-	// add rogue picks to the local pick vector
-	for (auto pick : pickRogues) {
-		vpick.push_back(pick);
-	}
-
-	// sort local pick vector
-	sort(vpick.begin(), vpick.end(), sortPick);
-
-	// for each pick in the local pick vector
-	for (int ipk = 0; ipk < vPick.size(); ipk++) {
-		// get the pick
-		auto pick = vPick[ipk];
-
-		// get the site
-		std::shared_ptr<CSite> site = pick->getSite();
-
-		// compute observed traveltime
-		double tobs = pick->getTPick() - tOrg;
-
-		// get expected travel time
-		double tcal = pTTT->T(&site->getGeo(), tobs);
-
-		// compute residual
-		double tres = tobs - tcal;
-
-		// make sure the residual is reasonable
-		if (tres > 20 || tres < -20) {
-			// skip if it isn't
-			continue;
-		}
-
-		// compute distance
-		double dis = geo.delta(&site->getGeo()) / DEG2RAD;
-
-		// compute azimuth
-		double azm = geo.azimuth(&site->getGeo()) / DEG2RAD;
-
-		// get the association string
-		std::string sass = pick->getAss();
-
-		// if the hypo link is valid
-		if ((pick->getHypo() != NULL) && (pick->getHypo()->getPid() != sPid)) {
-			// set association string
-			sass = "*";
-		} else {
-			// set association string
-			sass = "-";
-		}
-		// if the hypo is fixed, print without a weight
-		if (bFixed) {
-			snprintf(sLog, sizeof(sLog),
-						"CHypo::list: ** %s **\nPid:%s\n%s  %s %s %.2f Dis:%.1f"
-						" Azm:%.1f Wt:NA",
-						sorg.c_str(), sPid.c_str(), sass.c_str(),
-						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres,
-						dis, azm);
-			glassutil::CLogit::log(sLog);
-
-		} else {
-			snprintf(sLog, sizeof(sLog),
-						"CHypo::list: ** %s **\nPid:%s\n%s  %s %s %.2f Dis:%.1f"
-						" Azm:%.1f Wt:%.2f",
-						sorg.c_str(), sPid.c_str(), sass.c_str(),
-						site->getScnl().c_str(), pTTT->sPhase.c_str(), tres,
-						dis, azm, vWts[ipk]);
-			glassutil::CLogit::log(sLog);
-		}
-	}
-}
-
-// ---------------------------------------------------------anneal
-double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
-						double tStop) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// This is essentially a faster algorithmic implementation of iterate
-	// nullcheck
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::anneal: NULL pGlass.");
-		return (0);
-	}
-
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CHypo::anneal. " + sPid);
-
-	// locate using new function
-	if (pGlass->getMinimizeTtLocator() == false) {
-		annealingLocate(nIter, dStart, dStop, tStart, tStop, 1);
-	} else {
-		annealingLocateResidual(nIter, dStart, dStop, tStart, tStop, 1);
-	}
-	// grid_search();
-	// *** Second, based on the new location/depth/time, remove ill fitting
-	// picks ***
-
-	// compute current stats
-	stats();
-
-	// create pick delete vector
-	std::vector<std::shared_ptr<CPick>> vkill;
-
-	// set the traveltime for the current hypo
-	if (pTrv1 != NULL) {
-		pTrv1->setOrigin(dLat, dLon, dZ);
-	}
-	if (pTrv2 != NULL) {
-		pTrv2->setOrigin(dLat, dLon, dZ);
-	}
-
-	// get number of picks
-	int npick = vPick.size();
-
-	// for each pick in the pick vector
-	for (int ipick = 0; ipick < npick; ipick++) {
-		// get the pick
-		auto pick = vPick[ipick];
-
-		// calculate the travel times
-		double tCal1 = -1;
-		if (pTrv1 != NULL) {
-			tCal1 = pTrv1->T(&pick->getSite()->getGeo());
-		}
-		double tCal2 = -1;
-		if (pTrv2 != NULL) {
-			tCal2 = pTrv2->T(&pick->getSite()->getGeo());
-		}
-
-		// calculate absolute residuals
-		double tRes1 = 0;
-		if (tCal1 > 0) {
-			tRes1 = std::abs(pick->getTPick() - tCal1 - tOrg);
-		}
-		double tRes2 = 0;
-		if (tCal2 > 0) {
-			tRes2 = std::abs(pick->getTPick() - tCal2 - tOrg);
-		}
-
-		// get best (smallest) residual
-		double tResBest = 0;
-		if ((tRes1 != 0) && (tRes1 < tRes2)) {
-			tResBest = tRes1;
-		}
-		if ((tRes2 != 0) && (tRes1 > tRes2)) {
-			tResBest = tRes2;
-		} else {
-			tResBest = tRes1;
-		}
-
-		// make sure the pick residual is within the residual limits
-		// NOTE: The residual limit is hard coded
-		if (tResBest > 4.0) {
-			vkill.push_back(pick);
-		}
-	}
-
-	// for each pick to remove
-	for (auto pick : vkill) {
-		// remove the pick hypo link
-		pick->clearHypo();
-
-		// remove the pick from this hypo
-		remPick(pick);
-	}
-
-	// generate weights (for evaluate)
-	weights();
-
-	// return the final bayesian value
-	return (dBayes);
-}
-
-// ---------------------------------------------------------localize
-double CHypo::localize() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// Localize this hypo
-	// nullcheck
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::localize: NULL pGlass.");
-		return (0);
-	}
-	char sLog[1024];
-
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CHypo::localize. " + sPid);
-
-	// if hypo is fixed, just return current bayesian value
-	// NOTE: What implication does this have for "seed hypos" like twitter
-	// detections
-	if (bFixed) {
-		return dBayes;
-	}
-
-	// get the number of picks
-	int npick = vPick.size();
-
-	// based on the number of picks, call relocate
-	// if there are already a large number of picks, only do it
-	// do often...
-
-	// create taper using the number of picks to define the
-	// search distance in localize. Smaller search with more picks
-	// the search radius starts at 1/4 the node resolution and
-	// shrinks to 1/16 the node radius as picks are added
-	// note that the locator can extend past the input search radius
-	// these values were chosen by testing specific events
-
-	glassutil::CTaper taper;
-	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, 30 + 0.0001);
-	double searchR = (dRes / 4. + taper.Val(vPick.size()) * .75 * dRes) / 4.;
-
-	// This should be the default
-	if (pGlass->getMinimizeTtLocator() == false) {
-		if (npick < 50) {
-			annealingLocate(5000, searchR, 1., searchR / 30.0, .1);
-		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocate(1250, searchR, 1., searchR / 30.0, .1);
-		} else if ((npick % 25) == 0) {
-			annealingLocate(500, searchR, 1., searchR / 30.0, .1);
-		} else {
-			snprintf(sLog, sizeof(sLog),
-						"CHypo::localize: Skipping localize with %d picks",
-						npick);
-			glassutil::CLogit::log(sLog);
-		}
-	} else {
-		if (npick < 25) {
-			annealingLocateResidual(10000, searchR, 1., searchR / 10.0, .1);
-		} else if (npick < 50 && (npick % 5) == 0) {
-			annealingLocateResidual(5000, searchR, 1., searchR / 10.0, .1);
-		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocateResidual(1000, searchR / 2., 1., searchR / 10.0, .1);
-		} else if ((npick % 25) == 0) {
-			annealingLocateResidual(500, searchR / 2., 1., searchR / 10.0, .1);
-		} else {
-			snprintf(sLog, sizeof(sLog),
-						"CHypo::localize: Skipping localize with %d picks",
-						npick);
-			glassutil::CLogit::log(sLog);
-		}
-	}
-
-	// log
-	glassutil::CDate dt = glassutil::CDate(tOrg);
-	snprintf(sLog, sizeof(sLog),
-				"CHypo::localize: HYP %s %s%9.4f%10.4f%6.1f %d", sPid.c_str(),
-				dt.dateTime().c_str(), dLat, dLon, dZ,
-				static_cast<int>(vPick.size()));
-	glassutil::CLogit::log(sLog);
-
-	// return the final maximum bayesian fit
-	return (dBayes);
-}
-
-// ---------------------------------------------------------annealingLocate
-void CHypo::annealingLocate(int nIter, double dStart, double dStop,
-							double tStart, double tStop, int nucleate) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	// don't locate if the location is fixed
-	if (bFixed) {
-		return;
-	}
-
-	// these hold the values of the initial, current, and best stack location
-	double valStart = 0;
-	double valBest = 0;
-	// calculate the value of the stack at the current location
-	valStart = getBayes(dLat, dLon, dZ, tOrg, nucleate);
-
-	char sLog[1024];
-
-	// if testing locator, setup output file
-	std::ofstream outfile;
-	if (pGlass->getTestLocator()) {
-		std::string filename = "./locatorTest/" + sPid + ".txt";
-		outfile.open(filename, std::ios::out | std::ios::app);
-		outfile << std::to_string(dLat) << " " << std::to_string(dLon) << " "
-				<< std::to_string(dZ) << " " << std::to_string(tOrg) << " "
-				<< std::to_string(vPick.size()) << " "
-				<< std::to_string(valStart) << " 0 0 0 \n";
-	}
-
-	// set the starting location as the current best stack value
-	valBest = valStart;
-
-	// Save total movement
-	double ddx = 0.0;
-	double ddy = 0.0;
-	double ddz = 0.0;
-	double ddt = 0.0;
-
-	// create taper using the number of iterations to define the
-	// end point. As we iterate through trial locations this makes
-	// the search space decrease.
-	glassutil::CTaper taper;
-	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, nIter + 0.0001);
-
-	// for the number of requested iterations
-	for (int iter = 0; iter < nIter; iter++) {
-		// compute the current step distance from the current iteration and
-		// starting and stopping values, use the taper to make the step distance
-		// slowly decrease
-		double dkm = dStart * taper.Val(static_cast<double>(iter)) + dStop;
-		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
-
-		// init x, y, and z gaussian step distances
-		double dx = gauss(0.0, dkm * 2);
-		double dy = gauss(0.0, dkm * 2);
-		double dz = gauss(0.0, dkm);
-		double dt = gauss(0.0, dOt);
-
-		// compute current location using the hypo location and the x and y
-		// Gaussian step distances
-		double xlon = dLon + cos(DEG2RAD * dLat) * dx / 111.1;
-		double xlat = dLat + dy / 111.1;
-
-		// compute current depth using the hypo depth and the z Gaussian step
-		// distance
-		double xz = dZ + dz;
-
-		// don't let depth go below 1 km
-		if (xz < 1.0) {
-			xz = 1.0;
-		}
-
-		// don't let depth exceed 800 km
-		if (xz > 800.0) {
-			xz = 800.0;
-		}
-
-		// compute current origin time
-		double oT = tOrg + dt;
-
-		// get the stack value for this hypocenter
-		double val = getBayes(xlat, xlon, xz, oT, nucleate);
-
-		// if testing locator print iteration
-		if (pGlass->getTestLocator()) {
-			outfile << std::to_string(xlat) << " " << std::to_string(xlon)
-					<< " " << std::to_string(xz) << " " << std::to_string(oT)
-					<< " " << std::to_string(vPick.size()) << " "
-					<< std::to_string(val) << " " << std::to_string(dkm * 2)
-					<< " " << std::to_string(dkm) << " " << std::to_string(dOt)
-					<< "\n";
-		}
-
-		// is this stacked bayesian value better than the previous one?
-		if (val > valBest
-				|| (val > dThresh
-						&& (valBest - val)
-								< (pow(gauss(0, .2), 2) / (500. / dkm)))) {
-			// then this is the new best value
-			valBest = val;
-			// set the hypo location/depth/time from the new best
-			// locaton/depth/time
-			dLat = xlat;
-			dLon = xlon;
-			dZ = xz;
-			tOrg = oT;
-			// save this perturbation to the overall change
-			ddx += dx;
-			ddy += dy;
-			ddz += dz;
-			ddt += dt;
-		}
-	}
-
-	// set dBayes to current value
-	dBayes = valBest;
-	if (nucleate == 1) {
-		dBayesInitial = valBest;
-	}
-
-	snprintf(
-			sLog, sizeof(sLog),
-			"CHypo::annealingLocate: total movement (%.4f,%.4f,%.4f,%.4f)"
-			" (%.4f,%.4f,%.4f,%.4f) sPid:%s; new bayes value:%.4f; old bayes"
-			" value:%.4f",
-			dLat, dLon, dZ, tOrg, ddx, ddy, ddz, ddt, sPid.c_str(), valBest,
-			valStart);
-	glassutil::CLogit::log(sLog);
-
-	if (pGlass->getGraphicsOut() == true) {
-		graphicsOutput();
-	}
-
-	// if testing the locator close the file
-	if (pGlass->getTestLocator()) {
-		outfile.close();
-	}
-
-	return;
-}
-
-// ---------------------------------------------------getBayesStack
-double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
-						int nucleate) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	if ((!pTrv1) && (!pTrv2)) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::getBayes: NULL pTrv1 and pTrv2.");
-		return (0);
-	}
-
-	if (!pTTT) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::getBayes: NULL pTTT.");
-		return (0);
-	}
-
-	glassutil::CGeo geo;
-	double value = 0.;
-	double tcal;
-	char sLog[1024];
-
-	// define a taper for sigma, makes close in readings have higher weight
-	// ranges from 0.75-3.0 from 0-2 degrees, than 3.0 after that (see loop)
-	glassutil::CTaper tap;
-	tap = glassutil::CTaper(-0.0001, 2.0, 999.0, 999.0);
-
-	// geo is used for calculating distances to stations for determining sigma
-	geo.setGeographic(xlat, xlon, 6371.0 - xZ);
-
-	// This sets the travel-time look up location
-	if (pTrv1) {
-		pTrv1->setOrigin(xlat, xlon, xZ);
-	}
-	if (pTrv2) {
-		pTrv2->setOrigin(xlat, xlon, xZ);
-	}
-
-	pTTT->setOrigin(xlat, xlon, xZ);
-
-	// The number of picks associated with the hypocenter
-	int npick = vPick.size();
-
-	// Loop through each pick and find the residual, calculate
-	// the significance, and add to the stacks.
-	// Currently only P, S, and nucleation phases added to stack.
-	for (int ipick = 0; ipick < npick; ipick++) {
-		auto pick = vPick[ipick];
-		double resi = 99999999;
-
-		// calculate residual
-		double tobs = pick->getTPick() - oT;
-		std::shared_ptr<CSite> site = pick->getSite();
-		glassutil::CGeo siteGeo = site->getGeo();
-
-		// only use nucleation phases if on nucleation branch
-		if (nucleate == 1) {
-			if ((pTrv1) && (pTrv2)) {
-				// we have both nucleation phases
-				// first nucleation phase
-				// calculate the residual using the phase name
-				double tcal1 = pTrv1->T(&siteGeo);
-				double resi1 = getResidual(pTrv1->sPhase, tobs, tcal1);
-
-				// second nucleation phase
-				// calculate the residual using the phase name
-				double tcal2 = pTrv2->T(&siteGeo);
-				double resi2 = getResidual(pTrv2->sPhase, tobs, tcal2);
-
-				// use the smallest residual
-				if (resi1 < resi2) {
-					tcal = tcal1;
-					resi = resi1;
-				} else {
-					tcal = tcal2;
-					resi = resi2;
-				}
-			} else if ((pTrv1) && (!pTrv2)) {
-				// we have just the first nucleation phase
-				tcal = pTrv1->T(&siteGeo);
-				resi = getResidual(pTrv1->sPhase, tobs, tcal);
-			} else if ((!pTrv1) && (pTrv2)) {
-				// we have just the second ducleation phase
-				tcal = pTrv2->T(&siteGeo);
-				resi = getResidual(pTrv2->sPhase, tobs, tcal);
-			}
-		} else {
-			// use all available association phases
-			// take whichever phase has the smallest residual
-			tcal = pTTT->T(&siteGeo, tobs);
-
-			// calculate the residual using the phase name
-			resi = getResidual(pTTT->sPhase, tobs, tcal);
-		}
-
-		// calculate distance to station to get sigma
-		double delta = RAD2DEG * geo.delta(&site->getGeo());
-		double sigma = (tap.Val(delta) * 2.25) + 0.75;
-
-		// calculate and add to the stack
-		value += pGlass->sig(resi, sigma);
-	}
-	return value;
-}
-
-// ---------------------------------------------------------getResidual
-double CHypo::getResidual(std::string sPhase, double tObs, double tCal) {
-	if (sPhase == "P") {
-		return (tObs - tCal);
-	} else if (sPhase == "S") {
-		// Effectively halving the weight of S
-		// this value was selected by testing specific
-		// events with issues
-		// NOTE: Hard Coded
-		return ((tObs - tCal) * 2.0);
-	} else {
-		// Down weighting all other phases
-		// Value was chosen so that other phases would
-		// still contribute (reducing instabilities)
-		// but remain insignificant
-		// NOTE: Hard Coded
-		return ((tObs - tCal) * 10.0);
-	}
-}
-
-// ---------------------------------------------------------annealingLocate
-void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
-									double tStart, double tStop, int nucleate) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	if (pTTT == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::annealingLocateResidual: NULL pTTT.");
-		return;
-	}
-
-	if (bFixed) {
-		return;
-	}
-	char sLog[1024];
-
-	double delta;
-	double sigma;
-
-	pTTT->setOrigin(dLat, dLon, dZ);
-
-	double val = 0;
-	double valStart = 0;
-
-	valStart = getSumAbsResidual(dLat, dLon, dZ, tOrg, nucleate);
-	dBayes = getBayes(dLat, dLon, dZ, tOrg, nucleate);
-	snprintf(sLog, sizeof(sLog), "CHypo::annealingLocate: old bayes value %.4f",
-				dBayes);
-	glassutil::CLogit::log(sLog);
-
-	snprintf(
-			sLog, sizeof(sLog),
-			"CHypo::annealingLocateResidual: old sum abs residual value %.4f",
-			valStart);
-	glassutil::CLogit::log(sLog);
-
-	double valBest = valStart;
-
-	// Save total movement
-	double ddx = 0.0;
-	double ddy = 0.0;
-	double ddz = 0.0;
-	double ddt = 0.0;
-
-	// create taper using the number of iterations to define the
-	// end point
-	glassutil::CTaper taper;
-	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, nIter + 0.0001);
-
-	// for the number of requested iterations
-	for (int iter = 0; iter < nIter; iter++) {
-		// compute the current step distance from the current iteration and
-		// starting and stopping values, use the taper to make the step distance
-		// slowly decrease
-		double dkm = dStart * taper.Val(static_cast<double>(iter)) + dStop;
-		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
-
-		// init x, y, and z gaussian step distances
-		double dx = gauss(0.0, dkm * 2);
-		double dy = gauss(0.0, dkm * 2);
-		double dz = gauss(0.0, dkm);
-		double dt = gauss(0.0, dOt);
-
-		// compute current location using the hypo location and the x and y
-		// Gaussian step distances
-		double xlon = dLon + cos(DEG2RAD * dLat) * dx / 111.1;
-		double xlat = dLat + dy / 111.1;
-
-		// compute current depth using the hypo depth and the z Gaussian step
-		// distance
-		double xz = dZ + dz;
-
-		// don't let depth go below 1 km
-		if (xz < 1.0) {
-			xz = 1.0;
-		}
-
-		// don't let depth exceed 800 km
-		if (xz > 800.0) {
-			xz = 800.0;
-		}
-
-		// compute current origin time
-		double oT = tOrg + dt;
-
-		pTTT->setOrigin(xlat, xlon, xz);
-		val = getSumAbsResidual(xlat, xlon, xz, oT, nucleate);
-		// geo.setGeographic(dLat, dLon, 6371.0 - dZ);
-
-		// is this stacked bayesian value better than the previous one
-		if (val < valBest) {
-			// this is the new minimized residual
-			valBest = val;
-			// set the hypo location/depth/time from the new best
-			// locaton/depth/time
-			dLat = xlat;
-			dLon = xlon;
-			dZ = xz;
-			tOrg = oT;
-			ddx += dx;
-			ddy += dy;
-			ddz += dz;
-			ddt += dt;
-		}
-	}
-
-	dBayes = getBayes(dLat, dLon, dZ, tOrg, nucleate);
-	snprintf(sLog, sizeof(sLog), "CHypo::annealingLocate: old bayes value %.4f",
-				dBayes);
-	glassutil::CLogit::log(sLog);
-	snprintf(sLog, sizeof(sLog),
-				"CHypo::annealingLocate: total movement (%.4f,%.4f,%.4f,%.4f)"
-				" (%.4f,%.4f,%.4f,%.4f)",
-				dLat, dLon, dZ, tOrg, ddx, ddy, ddz, ddt);
-	glassutil::CLogit::log(sLog);
-
-	snprintf(sLog, sizeof(sLog),
-				"CHypo::annealingLocate: new sum abs residual %.4f", valBest);
-	glassutil::CLogit::log(sLog);
-
-	if (pGlass->getGraphicsOut() == true) {
-		graphicsOutput();
-	}
-
-	return;
-}
-
-// ---------------------------------------------------getSumAbsResidual
-double CHypo::getSumAbsResidual(double xlat, double xlon, double xZ, double oT,
-								int nucleate) {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	if (pTTT == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::getSumAbsResidual: NULL pTTT.");
-		return (0);
-	}
-
-	double sigma;
-	double value = 0.;
-	char sLog[1024];
-
-	// This sets the travel-time look up location
-	if (pTrv1 != NULL) {
-		pTrv1->setOrigin(xlat, xlat, xZ);
-	}
-	if (pTrv2 != NULL) {
-		pTrv2->setOrigin(xlat, xlat, xZ);
-	}
-
-	pTTT->setOrigin(xlat, xlon, xZ);
-
-	// The number of picks associated with the hypocenter
-	int npick = vPick.size();
-
-	// Loop through each pick and find the residual, calculate
-	// the resiudal, and sum.
-	// Currently only P, S, and nucleation phases added to stack.
-	// If residual is greater than 10, make it 10.
-	for (int ipick = 0; ipick < npick; ipick++) {
-		auto pick = vPick[ipick];
-		double resi = 99999999;
-
-		// calculate residual
-		double tobs = pick->getTPick() - oT;
-		double tcal;
-		std::shared_ptr<CSite> site = pick->getSite();
-
-		// only use nucleation phase if on nucleation branch
-		if (nucleate == 1 && pTrv2 == NULL) {
-			tcal = pTrv1->T(&site->getGeo());
-			resi = tobs - tcal;
-		} else if (nucleate == 1 && pTrv1 == NULL) {
-			tcal = pTrv2->T(&site->getGeo());
-			resi = tobs - tcal;
-		} else {
-			// take whichever has the smallest residual, P or S
-			tcal = pTTT->T(&site->getGeo(), tobs);
-			if (pTTT->sPhase == "P" || pTTT->sPhase == "S") {
-				resi = tobs - tcal;
-			}
-		}
-		resi = std::abs(resi);
-		if (resi > 10.) {
-			resi = 10.;
-		}
-		value += resi;
-	}
-	return value;
-}
-
-// ---------------------------------------------------graphicsOutput
-void CHypo::graphicsOutput() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	if (pTTT == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::graphicsOutput: NULL pTTT.");
-		return;
-	}
-
-	std::ofstream outfile;
-	std::string filename = pGlass->getGraphicsOutFolder() + sPid + ".txt";
-	outfile.open(filename, std::ios::out);
-	outfile << "hypocenter: " << std::to_string(dLat) << " "
-			<< std::to_string(dLon) << " " << std::to_string(dZ) << " "
-			<< std::to_string(tOrg) << "\n";
-	double stack = 0;
-	double tcal = 0;
-	double delta = 0;
-	double sigma = 0;
-	glassutil::CGeo geo;
-	int npick = vPick.size();
-	for (int y = -1 * pGlass->getGraphicsSteps();
-			y <= pGlass->getGraphicsSteps(); y++) {
-		double xlat = dLat + (y * pGlass->getGraphicsStepKm()) / 111.1;
-		for (int x = -1 * pGlass->getGraphicsSteps();
-				x <= pGlass->getGraphicsSteps(); x++) {
-			double xlon = dLon
-					+ cos(DEG2RAD * xlat) * (x * pGlass->getGraphicsStepKm())
-							/ 111.1;
-			pTTT->setOrigin(xlat, xlon, dZ);
-			stack = 0;
-			for (int ipick = 0; ipick < npick; ipick++) {
-				auto pick = vPick[ipick];
-				double tobs = pick->getTPick() - tOrg;
-				std::shared_ptr<CSite> site = pick->getSite();
-				tcal = pTTT->T(&site->getGeo(), tobs);
-				delta = RAD2DEG * geo.delta(&site->getGeo());
-
-				// This should be a function.
-				if (delta < 1.5) {
-					sigma = .75;
-				} else if ((delta >= 1.5) && (delta < 30.0)) {
-					sigma = 1.5;
-				} else {
-					sigma = 3;
-				}
-				stack += pGlass->sig_laplace_pdf(tobs - tcal, sigma);
-				outfile << std::to_string(xlat) << " " << std::to_string(xlon)
-						<< " " << std::to_string(stack) << "\n";
-			}
-		}
-	}
-
-	outfile.close();
-}
-
 // ---------------------------------------------------------trap
 void CHypo::trap() {
 	// lock mutex for this scope
@@ -2300,9 +2770,6 @@ void CHypo::trap() {
 
 // ---------------------------------------------------------weights
 bool CHypo::weights() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
 	// Calculate station weight from distance and nearby stations
 	// to reduce biases induced by network density
 	// nullchecks
@@ -2319,6 +2786,9 @@ bool CHypo::weights() {
 	// create taper
 	glassutil::CTaper tap;
 	tap = glassutil::CTaper(0.0, avgDelta, 180.0, 360.0);
+
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
 	// get number of picks
 	int npick = vPick.size();
@@ -2342,7 +2812,7 @@ bool CHypo::weights() {
 
 		// set up a geo object for this hypo
 		glassutil::CGeo geo;
-		geo.setGeographic(dLat, dLon, 6371.0 - dZ);
+		geo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
 
 		// get distance between this pick and the hypo
 		double del = RAD2DEG * geo.delta(&site->getGeo());
@@ -2381,315 +2851,6 @@ bool CHypo::weights() {
 	return (true);
 }
 
-bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
-	// lock the hypo since we're iterating through it's lists
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-
-	// nullchecks
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::resolve: NULL pGlass.");
-		return (false);
-	}
-	if (pGlass->getHypoList() == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::resolve: NULL pGlass pHypoList.");
-		return (false);
-	}
-
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CHypo::resolve. " + sPid);
-
-	bool bAss = false;
-	char sLog[1024];
-
-	// handle picks
-	// for each pick in this hypo
-	int nPck = vPick.size();
-
-	int addCount = 0;
-	int removeCount = 0;
-
-	// NOTE: Why are we moving backwards through the list?
-	for (int iPck = nPck - 1; iPck >= 0; iPck--) {
-		// get the pick
-		std::shared_ptr<CPick> pck = vPick[iPck];
-
-		// get the pick's hypo pointer
-		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
-
-		// if this pick isn't linked to a hypo
-		if (pickHyp == NULL) {
-			// link to this hypo and move on
-			pck->addHypo(hyp);
-
-			continue;
-		}
-
-		std::string sOtherPid = pickHyp->getPid();
-
-		// if this pick is linked to this hypo
-		if (sOtherPid == sPid) {
-			// nothing else to do
-			continue;
-		}
-
-		// get the current pick's affinity to the provided hypo
-		double aff1 = affinity(pck);
-
-		// get the current pick's affinity to the hypo it's linked to
-		double aff2 = pickHyp->affinity(pck);
-
-		snprintf(sLog, sizeof(sLog),
-					"CHypo::resolve: SCV COMPARE %s %s %s %s (%.2f, %.2f)",
-					sPid.c_str(), sOtherPid.c_str(),
-					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->getScnl().c_str(), aff1, aff2);
-		glassutil::CLogit::log(sLog);
-
-		// check which affinity is better
-		if (aff1 > aff2) {
-			// this pick has a higher affinity with the provided hypo
-			// remove the pick from it's original hypo
-			pickHyp->remPick(pck);
-
-			// link pick to the provided hypo
-			pck->addHypo(hyp, "S", true);
-
-			// add provided hypo to the processing queue
-			// NOTE: this puts provided hypo before original hypo in FIFO,
-			// we want this hypo to keep this pick, rather than the original
-			// just stealing it back, which is why we do it here
-			// NOTE: why add it at all? we're gonna locate before we finish
-			// is it to see if we can get more next time
-			pGlass->getHypoList()->pushFifo(hyp);
-
-			// add the original hypo the pick was linked to the processing queue
-			pGlass->getHypoList()->pushFifo(pickHyp);
-
-			// we've made a change to the hypo (grabbed a pick)
-			bAss = true;
-			addCount++;
-		} else {
-			// this pick has higher affinity with the original hypo
-			// remove pick from provided hypo
-			remPick(pck);
-
-			// we've made a change to the hypo (got rid of a pick)
-			bAss = true;
-			removeCount++;
-		}
-	}
-
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CHypo::resolve " + sPid + " added:" + std::to_string(addCount)
-					+ " removed:" + std::to_string(removeCount));
-
-	// handle correlations
-	// for each correlation in this hypo
-	int nCorr = vCorr.size();
-
-	// NOTE: Why are we moving backwards through the list?
-	for (int iCorr = nCorr - 1; iCorr >= 0; iCorr--) {
-		// get the correlation
-		auto corr = vCorr[iCorr];
-
-		// get the correlation's hypo pointer
-		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
-
-		// if this correlation isn't linked to a hypo
-		if (corrHyp == NULL) {
-			// link to this hypo and move on
-			corr->addHypo(hyp);
-			continue;
-		}
-
-		std::string sOtherPid = corrHyp->getPid();
-
-		// if this corr is linked to this hypo
-		if (sOtherPid == sPid) {
-			// nothing else to do
-			continue;
-		}
-
-		// get the current correlation's affinity to the provided hypo
-		double aff1 = affinity(corr);
-		double aff2 = corrHyp->affinity(corr);
-
-		snprintf(
-				sLog,
-				sizeof(sLog),
-				"CHypo::resolve: C SCV COMPARE %s %s %s %s (%.2f, %.2f )",
-				sPid.c_str(),
-				sOtherPid.c_str(),
-				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->getScnl().c_str(), aff1, aff2);
-		glassutil::CLogit::log(sLog);
-
-		// check which affinity is better
-		if (aff1 > aff2) {
-			// this correlation has a higher affinity with the provided hypo
-			// remove the correlation from it's original hypo
-			corrHyp->remCorrelation(corr);
-
-			// link pick to the provided hypo
-			corr->addHypo(hyp, "C-S", true);
-
-			// add provided hypo to the processing queue
-			// NOTE: this puts provided hypo before original hypo in FIFO,
-			// we want this hypo to keep this pick, rather than the original
-			// just stealing it back, which is why we do it here
-			pGlass->getHypoList()->pushFifo(hyp);
-
-			// add the original hypo the pick was linked to the processing queue
-			pGlass->getHypoList()->pushFifo(corrHyp);
-
-			// we've made a change to the hypo (grabbed a pick)
-			bAss = true;
-		} else {
-			// this pick has higher affinity with the original hypo
-			// remove pick from provided hypo
-			remCorrelation(corr);
-
-			// we've made a change to the hypo (got rid of a pick)
-			bAss = true;
-		}
-	}
-
-	return (bAss);
-}
-
-double CHypo::getLat() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dLat);
-}
-
-double CHypo::getLon() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dLon);
-}
-
-double CHypo::getZ() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dZ);
-}
-
-double CHypo::getTOrg() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (tOrg);
-}
-
-double CHypo::getBayes() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dBayes);
-}
-
-bool CHypo::getCorrAdded() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (bCorrAdded);
-}
-
-void CHypo::setCorrAdded(bool corrAdded) {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	bCorrAdded = corrAdded;
-}
-
-bool CHypo::getEvent() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (bEvent);
-}
-
-bool CHypo::getFixed() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (bFixed);
-}
-
-void CHypo::setFixed(bool fixed) {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	bFixed = fixed;
-}
-
-double CHypo::getBayesInitial() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dBayesInitial);
-}
-
-double CHypo::getCutFactor() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dCutFactor);
-}
-
-void CHypo::setCutFactor(double cutFactor) {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	dCutFactor = cutFactor;
-}
-
-double CHypo::getCutMin() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dCutMin);
-}
-
-void CHypo::setCutMin(double cutMin) {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	dCutMin = cutMin;
-}
-
-double CHypo::getCutPercentage() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dCutPercentage);
-}
-
-void CHypo::setCutPercentage(double cutPercentage) {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	dCutPercentage = cutPercentage;
-}
-
-double CHypo::getGap() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dGap);
-}
-
-double CHypo::getKrt() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dKrt);
-}
-
-double CHypo::getMed() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dMed);
-}
-
-double CHypo::getMin() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dMin);
-}
-
-double CHypo::getRes() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dRes);
-}
-
-double CHypo::getSig() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dSig);
-}
-
-double CHypo::getThresh() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (dThresh);
-}
-
-void CHypo::setThresh(double thresh) {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	dThresh = thresh;
-}
-
-int CHypo::getCycle() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (iCycle);
-}
-
 int CHypo::setCycle(int newCycle) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
@@ -2699,19 +2860,34 @@ int CHypo::setCycle(int newCycle) {
 	return (iCycle);
 }
 
-int CHypo::getCut() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (nCut);
-}
-
 void CHypo::setCut(double cut) {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	nCut = cut;
 }
 
-const CGlass* CHypo::getGlass() const {
+void CHypo::setCutFactor(double cutFactor) {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (pGlass);
+	dCutFactor = cutFactor;
+}
+
+void CHypo::setCutMin(double cutMin) {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	dCutMin = cutMin;
+}
+
+void CHypo::setCutPercentage(double cutPercentage) {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	dCutPercentage = cutPercentage;
+}
+
+void CHypo::setCorrAdded(bool corrAdded) {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	bCorrAdded = corrAdded;
+}
+
+void CHypo::setFixed(bool fixed) {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	bFixed = fixed;
 }
 
 void CHypo::setGlass(CGlass* glass) {
@@ -2719,57 +2895,9 @@ void CHypo::setGlass(CGlass* glass) {
 	pGlass = glass;
 }
 
-int CHypo::getProcessCount() const {
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-	return (processCount);
-}
-
-int CHypo::incrementProcessCount() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
-
-	processCount++;
-
-	return (processCount);
-}
-
-const std::string& CHypo::getPid() const {
-	return (sPid);
-}
-
-const std::string& CHypo::getWebName() const {
-	return (sWebName);
-}
-
-int CHypo::getVPickSize() const {
+void CHypo::setThresh(double thresh) {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (vPick.size());
-}
-int CHypo::getVCorrSize() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (vCorr.size());
-}
-
-double CHypo::getTCreate() const {
-	return (tCreate);
-}
-
-int CHypo::getReportCount() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
-	return (reportCount);
-}
-
-bool CHypo::isLockedForProcessing() {
-	if (processingMutex.try_lock() == false) {
-		return (true);
-	}
-
-	processingMutex.unlock();
-	return (false);
-}
-
-void CHypo::lockForProcessing() {
-	processingMutex.lock();
+	dThresh = thresh;
 }
 
 void CHypo::unlockAfterProcessing() {

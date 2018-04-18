@@ -16,6 +16,7 @@
 #include <mutex>
 #include <thread>
 #include <queue>
+#include <map>
 #include "TravelTime.h"
 
 namespace glasscore {
@@ -41,15 +42,15 @@ class CWeb {
 	 * \brief CWeb constructor
 	 *
 	 * The constructor for the CWeb class.
-	 * \param createBackgroundThread - A boolean flag indicating whether
-	 * to create a background thread for web updates. If set to false, glass will
-	 * halt until the web update is completed. Default true.
+	 * \param numThreads - An integer containing the desired number of background
+	 * threads to process web updates, if set to 0, glass will
+	 * halt until the web update is completed. Default 0.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
-	 * seconds between status checks. -1 to disable status checks.  Default 60.
+	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
-	CWeb(bool createBackgroundThread = true, int sleepTime = 100,
+	CWeb(int numThreads = 0, int sleepTime = 100,
 			int checkInterval = 60);
 
 	/**
@@ -78,19 +79,19 @@ class CWeb {
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
 	 * use for travel time lookups.
-	 * \param createBackgroundThread - A boolean flag indicating whether
-	 * to create a background thread for web updates. If set to false, glass will
-	 * halt until the web update is completed. Default true.
+	 * \param numThreads - An integer containing the desired number of background
+	 * threads to process web updates, if set to 0, glass will
+	 * halt until the web update is completed. Default 0.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
-	 * seconds between status checks. -1 to disable status checks.  Default 60.
+	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
-			bool createBackgroundThread = true, int sleepTime = 100,
+			int numThreads = 0, int sleepTime = 100,
 			int checkInterval = 60);
 
 	/**
@@ -533,20 +534,20 @@ class CWeb {
 	std::mutex m_QueueMutex;
 
 	/**
-	 * \brief the boolean flags indicating that the jobloop threads
-	 * should keep running.
+	 * \brief the std::vector of std::threads
 	 */
-	bool m_bRunJobLoop;
+	std::vector<std::thread> vProcessThreads;
 
 	/**
-	 * \brief the std::thread pointer to the background thread
+	 * \brief An integer containing the number of
+	 * threads in the pool.
 	 */
-	std::thread * m_BackgroundThread;
+	int m_iNumThreads;
 
 	/**
-	 * \brief boolean flag used to check thread status
+	 * \brief A std::map containing the status of each thread
 	 */
-	bool m_bThreadStatus;
+	std::map<std::thread::id, bool> m_ThreadStatusMap;
 
 	/**
 	 * \brief An integer containing the amount of
@@ -555,7 +556,7 @@ class CWeb {
 	int m_iSleepTimeMS;
 
 	/**
-	 * \brief the std::mutex for thread status
+	 * \brief the std::mutex for m_ThreadStatusMap
 	 */
 	std::mutex m_StatusMutex;
 
@@ -572,10 +573,10 @@ class CWeb {
 	time_t tLastStatusCheck;
 
 	/**
-	 * \brief boolean flag used to indicate whether to use a background thread
-	 * for updates
+	 * \brief the boolean flags indicating that the process threads
+	 * should keep running.
 	 */
-	bool m_bUseBackgroundThread;
+	bool m_bRunProcessLoop;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CWeb.

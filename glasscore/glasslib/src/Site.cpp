@@ -14,6 +14,7 @@
 #include "Logit.h"
 #include "Node.h"
 #include "Trigger.h"
+#include "Hypo.h"
 #include "Web.h"
 
 namespace glasscore {
@@ -324,6 +325,9 @@ void CSite::clear() {
 
 	// reset max picks
 	nSitePickMax = 200;
+
+	// reset last pick added time
+	std::time(&tLastPickAdded);
 }
 
 void CSite::clearVPick() {
@@ -332,25 +336,43 @@ void CSite::clearVPick() {
 	vPickMutex.unlock();
 }
 
-void CSite::update(CSite *site) {
+void CSite::update(CSite *aSite) {
 	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	// scnl check
-	if (sScnl != site->sScnl) {
+	if (sScnl != aSite->getScnl()) {
 		return;
 	}
 
 	// update station quality metrics
-	bUse = site->bUse;
-	bUseForTele = site->bUseForTele;
-	dQual = site->dQual;
+	bUse = aSite->getUse();
+	bUseForTele = aSite->getUseForTele();
+	dQual = aSite->getQual();
 
 	// update location
-	geo = glassutil::CGeo(site->geo);
-	dVec[0] = site->dVec[0];
-	dVec[1] = site->dVec[1];
-	dVec[2] = site->dVec[2];
+	geo = glassutil::CGeo(aSite->getGeo());
+	double vec[3];
+	aSite->getVec(vec);
+
+	dVec[0] = vec[0];
+	dVec[1] = vec[1];
+	dVec[2] = vec[2];
+
+	// copy statistics
+	tLastPickAdded = aSite->getTLastPickAdded();
 
 	// leave lists, and pointers alone
+}
+
+double * CSite::getVec(double * vec) {
+	if (vec == NULL) {
+		return(NULL);
+	}
+
+	vec[0] = dVec[0];
+	vec[1] = dVec[1];
+	vec[2] = dVec[2];
+
+	return(vec);
 }
 
 // ---------------------------------------------------------setLocation
@@ -431,6 +453,9 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 	// add pick to site pick vector
 	// NOTE: Need to add duplicate pick protection
 	vPick.push_back(pck);
+
+	// remember the time the last pick was added
+	std::time(&tLastPickAdded);
 }
 
 // ---------------------------------------------------------remPick
@@ -528,6 +553,14 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 
 	// create trigger vector
 	std::vector<std::shared_ptr<CTrigger>> vTrigger;
+
+	// are we enabled?
+	siteMutex.lock();
+	if (bUse == false) {
+		siteMutex.unlock();
+		return (vTrigger);
+	}
+	siteMutex.unlock();
 
 	// for each node linked to this site
 	for (const auto &link : vNode) {
@@ -668,7 +701,7 @@ void CSite::setQual(double qual) {
 	dQual = qual;
 }
 
-glassutil::CGeo& CSite::getGeo() {
+glassutil::CGeo &CSite::getGeo() {
 	return (geo);
 }
 
@@ -704,4 +737,10 @@ const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
 	std::lock_guard<std::mutex> guard(vPickMutex);
 	return (vPick);
 }
+
+time_t CSite::getTLastPickAdded() const {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (tLastPickAdded);
+}
+
 }  // namespace glasscore

@@ -315,8 +315,6 @@ void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
 
 // ---------------------------------------------------------remHypo
 void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
-	std::lock_guard<std::recursive_mutex> guard(pickMutex);
-
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -324,10 +322,16 @@ void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
+	remHypo(hyp->getPid());
+}
+
+void CPick::remHypo(std::string pid) {
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
+
 	// is the pointer still valid
 	if (auto pHypo = wpHypo.lock()) {
 		// Remove hypo reference from this pick
-		if (pHypo->getPid() == hyp->getPid()) {
+		if (pHypo->getPid() == pid) {
 			clearHypo();
 		}
 	} else {
@@ -365,6 +369,29 @@ bool CPick::nucleate() {
 	std::string pt = glassutil::CDate::encodeDateTime(tPick);
 	char sLog[1024];
 
+	// check to see if the pick is currently associated to a hypo
+	if (wpHypo.expired() == false) {
+		// get the hypo and compute ratio
+		std::shared_ptr<CHypo> pHypo = wpHypo.lock();
+		if (pHypo != NULL) {
+			double adBayesRatio = (pHypo->getBayes()) / (pHypo->getThresh());
+
+			// check to see if the ratio is high enough to not
+			// bother
+			// NOTE: Hardcoded
+			if (adBayesRatio > 2.0) {
+				glassutil::CLogit::log(
+						glassutil::log_level::debug,
+						"CPick::nucleate: SKIPTRG due to large event association "
+								+ pickSite->getScnl() + "; tPick:" + pt
+								+ "; idPick:" + std::to_string(idPick)
+								+ " associated with an event with stack twice threshold ("
+								+ std::to_string(pHypo->getBayes()) + ")");
+				return (false);
+			}
+		}
+	}
+
 	// Use site nucleate to scan all nodes
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
@@ -375,9 +402,9 @@ bool CPick::nucleate() {
 	if (vTrigger.size() == 0) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CPick::nucleate: NOTRG site:" + pickSite->getScnl() + "; tPick:"
-						+ pt + "; idPick:" + std::to_string(idPick) + "; sPid:"
-						+ sPid);
+				"CPick::nucleate: NOTRG site:" + pickSite->getScnl()
+						+ "; tPick:" + pt + "; idPick:" + std::to_string(idPick)
+						+ "; sPid:" + sPid);
 
 		return (false);
 	}
@@ -387,16 +414,31 @@ bool CPick::nucleate() {
 			continue;
 		}
 
-		// nucleate at the node to build the
-		// list of picks that support this node
-		// tOrg was set during nucleation pass
-		// NOTE: this did not used to check the nucleate return here
-		// it seems that this should improve computational performance
-		// but MIGHT have unintended consequences.
-		// if (!node->nucleate(node->getTOrg(), true)) {
-		// didn't nucleate anything
-		// continue;
-		// }
+		// check to see if the pick is currently associated to a hypo
+		if (wpHypo.expired() == false) {
+			// get the hypo and compute distance between it and the
+			// current trigger
+			std::shared_ptr<CHypo> pHypo = wpHypo.lock();
+			if (pHypo != NULL) {
+				glassutil::CGeo geoHypo = pHypo->getGeo();
+
+				glassutil::CGeo trigHypo = trigger->getGeo();
+
+				double dist = (geoHypo.delta(&trigHypo) / DEG2RAD) * 111.12;
+
+				// is the associated hypo close enough to this trigger to skip
+				// close enough means within the resolution of the trigger
+				if (dist < trigger->getResolution()) {
+					glassutil::CLogit::log(
+							glassutil::log_level::debug,
+							"CPick::nucleate: SKIPTRG because pick proximal hypo ("
+									+ std::to_string(dist) + " < "
+									+ std::to_string(trigger->getResolution())
+									+ ")");
+					continue;
+				}
+			}
+		}
 
 		// create the hypo using the node
 		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
@@ -487,38 +529,21 @@ bool CPick::nucleate() {
 			continue;
 		}
 
+		// log the hypo
+		std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CPick::nucleate: TRG site:" + pickSite->getScnl() + "; tPick:"
+						+ pt + "; idPick:" + std::to_string(idPick) + "; sPid:"
+						+ sPid + " => web:" + hypo->getWebName() + "; hyp: "
+						+ hypo->getPid() + "; lat:"
+						+ std::to_string(hypo->getLat()) + "; lon:"
+						+ std::to_string(hypo->getLon()) + "; z:"
+						+ std::to_string(hypo->getZ()) + "; tOrg:" + st);
+
 		// if we got this far, the hypo has enough supporting data to
-		// merit looking at it closer.  Process it using evolve
-		if (pGlass->getHypoList()->evolve(hypo, 1)) {
-			// the hypo survived evolve,
-			// log the hypo
-			std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
-
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
-					"CPick::nucleate: TRG site:" + pickSite->getScnl() + "; tPick:"
-							+ pt + "; idPick:" + std::to_string(idPick)
-							+ "; sPid:" + sPid + " => web:" + hypo->getWebName()
-							+ "; hyp: " + hypo->getPid() + "; lat:"
-							+ std::to_string(hypo->getLat()) + "; lon:"
-							+ std::to_string(hypo->getLon()) + "; z:"
-							+ std::to_string(hypo->getZ()) + "; tOrg:" + st);
-
-			// add a link to the hypo for each pick
-			// NOTE: Why is this done? Shouldn't evolve have already
-			// linked the picks?
-			// this hypo isn't added to the list yet, so this
-			/* for (auto q : hypo->vPick) {
-			 // if the pick hasn't been linked
-			 if (q->pHypo == NULL) {
-			 // link it
-			 q->pHypo = hypo;
-			 }
-			 }*/
-
-			// add new hypo to hypo list
-			pGlass->getHypoList()->addHypo(hypo);
-		}
+		// merit adding it to the hypo list
+		pGlass->getHypoList()->addHypo(hypo);
 	}
 
 	// done
@@ -544,6 +569,25 @@ const std::shared_ptr<json::Object>& CPick::getJPick() const {
 const std::shared_ptr<CHypo> CPick::getHypo() const {
 	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (wpHypo.lock());
+}
+
+const std::string CPick::getHypoPid() const {
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
+	std::string hypoPid = "";
+
+	// make sure we have a hypo,
+	if (wpHypo.expired() == true) {
+		return (hypoPid);
+	}
+
+	// get the hypo
+	std::shared_ptr<CHypo> pHypo = getHypo();
+	if (pHypo != NULL) {
+		// get the hypo pid
+		hypoPid = pHypo->getPid();
+	}
+
+	return (hypoPid);
 }
 
 const std::shared_ptr<CSite> CPick::getSite() const {

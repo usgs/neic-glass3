@@ -24,6 +24,7 @@ class CPick;
 class CNode;
 class CGlass;
 class CTrigger;
+class CHypo;
 
 /**
  * \brief glasscore site (station) class
@@ -263,7 +264,7 @@ class CSite {
 	 * \brief CGeo getter
 	 * \return the CGeo
 	 */
-	glassutil::CGeo& getGeo();
+	glassutil::CGeo &getGeo();
 
 	/**
 	 * \brief Max picks for site getter
@@ -312,6 +313,10 @@ class CSite {
 	 * \return the vPick
 	 */
 	const std::vector<std::shared_ptr<CPick>> getVPick() const;
+
+	time_t getTLastPickAdded() const;
+
+	double * getVec(double * vec);
 
  private:
 	/**
@@ -410,6 +415,8 @@ class CSite {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex siteMutex;
+
+	time_t tLastPickAdded;
 };
 }  // namespace glasscore
 #endif  // SITE_H

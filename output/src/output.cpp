@@ -42,10 +42,17 @@ output::output()
 
 	// init to null, allocated in clear
 	m_TrackingCache = NULL;
-	m_MessageQueue = NULL;
+	m_OutputQueue = NULL;
+	m_LookupQueue = NULL;
 
 	// setup thread pool for output
 	m_ThreadPool = new util::ThreadPool("outputpool");
+
+	m_bRunEventThread = false;
+	m_bCheckEventThread = true;
+	m_bEventStarted = false;
+	m_EventThread = NULL;
+	std::time(&tLastEventCheck);
 
 	// init config to defaults and allocate
 	clear();
@@ -64,9 +71,15 @@ output::~output() {
 	}
 
 	// cppcheck-suppress nullPointerRedundantCheck
-	if (m_MessageQueue != NULL) {
-		m_MessageQueue->clearQueue();
-		delete (m_MessageQueue);
+	if (m_OutputQueue != NULL) {
+		m_OutputQueue->clearQueue();
+		delete (m_OutputQueue);
+	}
+
+	// cppcheck-suppress nullPointerRedundantCheck
+	if (m_LookupQueue != NULL) {
+		m_LookupQueue->clearQueue();
+		delete (m_LookupQueue);
 	}
 }
 
@@ -96,6 +109,23 @@ bool output::setup(json::Object *config) {
 	// lock our configuration while we're updating it
 	// this mutex may be pointless
 	m_ConfigMutex.lock();
+
+	// publish on expiration
+	if (!(config->HasKey("PublishOnExpiration"))) {
+		// publish on expiration is optional, default to false
+		m_bPubOnExpiration = false;
+		logger::log(
+				"info",
+				"output::setup(): PublishOnExpiration not specified, using default "
+				"of false.");
+	} else {
+		m_bPubOnExpiration = (*config)["PublishOnExpiration"].ToBool();
+
+		logger::log(
+				"info",
+				"output::setup(): Using PublishOnExpiration: "
+						+ std::to_string(m_bPubOnExpiration) + " .");
+	}
 
 	// publicationTimes
 	if (!(config->HasKey("PublicationTimes"))) {
@@ -180,10 +210,16 @@ bool output::setup(json::Object *config) {
 	m_TrackingCache = new util::Cache();
 
 	// cppcheck-suppress nullPointerRedundantCheck
-	if (m_MessageQueue != NULL) {
-		delete (m_MessageQueue);
+	if (m_OutputQueue != NULL) {
+		delete (m_OutputQueue);
 	}
-	m_MessageQueue = new util::Queue();
+	m_OutputQueue = new util::Queue();
+
+	// cppcheck-suppress nullPointerRedundantCheck
+	if (m_LookupQueue != NULL) {
+		delete (m_LookupQueue);
+	}
+	m_LookupQueue = new util::Queue();
 
 	logger::log("debug", "output::setup(): Done Setting Up.");
 
@@ -213,14 +249,97 @@ void output::clear() {
 	util::BaseClass::clear();
 }
 
-void output::sendToOutput(std::shared_ptr<json::Object> &message) {
+void output::sendToOutput(std::shared_ptr<json::Object> message) {
 	if (message == NULL) {
 		return;
 	}
 
-	if (m_MessageQueue != NULL) {
-		m_MessageQueue->addDataToQueue(message);
+	// get the message type
+	std::string messagetype;
+	if (message->HasKey("Cmd")) {
+		messagetype = (*message)["Cmd"].ToString();
+	} else if (message->HasKey("Type")) {
+		messagetype = (*message)["Type"].ToString();
+	} else {
+		logger::log(
+				"critical",
+				"output::sendToOutput(): BAD message passed in, no Cmd/Type found.");
+		return;
 	}
+
+	// send site messages to their own queue, because they can be
+	// very chatty and we don't want anything to slowdown output messages
+	if ((messagetype == "SiteList") || (messagetype == "SiteLookup")) {
+		if (m_LookupQueue != NULL) {
+			m_LookupQueue->addDataToQueue(message);
+		}
+	} else {
+		if (m_OutputQueue != NULL) {
+			m_OutputQueue->addDataToQueue(message);
+		}
+	}
+}
+
+bool output::start() {
+	// are we already running
+	if (m_bRunEventThread == true) {
+		logger::log("warning",
+					"output::start(): Event Thread is already running.");
+		return (false);
+	}
+
+	// nullcheck
+	if (m_EventThread != NULL) {
+		logger::log("warning",
+					"output::start(): Event Thread is already allocated.");
+		return (false);
+	}
+
+	m_bEventStarted = true;
+
+	// start the thread
+	m_EventThread = new std::thread(&output::checkEventsLoop, this);
+
+	// let threadbaseclass handle background worker thread
+	return (ThreadBaseClass::start());
+}
+
+bool output::stop() {
+	// check if we're running
+	if (m_bRunEventThread == false) {
+		logger::log("warning", "output::stop(): Event Thread is not running. ");
+		return (false);
+	}
+
+	// nullcheck
+	if (m_EventThread == NULL) {
+		logger::log("warning",
+					"output::stop(): Event Thread is not allocated. ");
+		return (false);
+	}
+
+	m_bEventStarted = false;
+
+	// tell the thread to stop
+	m_bRunEventThread = false;
+
+	// wait for the thread to finish
+	m_EventThread->join();
+
+	// delete it
+	delete (m_EventThread);
+	m_EventThread = NULL;
+
+	// we're no longer running
+	m_bCheckEventThread = false;
+
+	// let threadbaseclass handle background worker thread
+	return (ThreadBaseClass::stop());
+}
+
+bool output::isRunning() {
+	// let threadbaseclass handle background worker thread
+	return (ThreadBaseClass::isRunning() && m_bRunEventThread);
 }
 
 bool output::check() {
@@ -232,12 +351,45 @@ bool output::check() {
 		}
 	}
 
+	if ((m_bEventStarted == true) && (m_iCheckInterval > 0)) {
+		// see if it's time to check
+		time_t tNow;
+		std::time(&tNow);
+		if ((tNow - tLastEventCheck) >= m_iCheckInterval) {
+			// lock the mutex to make sure we
+			// don't run into a threading issue
+			// this *may* be excessive
+			m_CheckEventMutex.lock();
+
+			// if the check is false, the thread is dead
+			if (m_bCheckEventThread == false) {
+				m_CheckEventMutex.unlock();
+				logger::log(
+						"error",
+						"output::check(): m_bCheckEventThread is false. "
+								" after an interval of "
+								+ std::to_string(m_iCheckInterval)
+								+ " seconds.");
+				return (false);
+			}
+
+			// mark check as false until next time
+			// if the thread is alive, it'll mark it
+			// as true.
+			m_bCheckEventThread = false;
+			m_CheckEventMutex.unlock();
+
+			tLastEventCheck = tNow;
+		}
+	}
+
 	// let threadbaseclass handle background worker thread
 	return (ThreadBaseClass::check());
 }
 
 // add data to output cache
 bool output::addTrackingData(std::shared_ptr<json::Object> data) {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (data == NULL) {
 		logger::log("error",
 					"output::addtrackingdata(): Bad json object passed in.");
@@ -326,6 +478,7 @@ bool output::removeTrackingData(std::shared_ptr<json::Object> data) {
 
 // remove data from output cache
 bool output::removeTrackingData(std::string ID) {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
 		logger::log("error",
 					"output::removetrackingdata(): Empty ID passed in.");
@@ -340,7 +493,8 @@ bool output::removeTrackingData(std::string ID) {
 }
 
 std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
-	std::shared_ptr<json::Object>  nullObj;
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
+	std::shared_ptr<json::Object> nullObj;
 	if (id == "") {
 		logger::log("error",
 					"output::removetrackingdata(): Empty ID passed in.");
@@ -355,11 +509,12 @@ std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
 	if (m_TrackingCache->isInCache(id) == true) {
 		return (m_TrackingCache->getFromCache(id));
 	} else {
-		return(nullObj);
+		return (nullObj);
 	}
 }
 
 std::shared_ptr<json::Object> output::getNextTrackingData() {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	// get the data
 	std::shared_ptr<json::Object> data = m_TrackingCache->getNextFromCache(
 			true);
@@ -404,6 +559,7 @@ bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 }
 
 bool output::haveTrackingData(std::string ID) {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
 		logger::log("error", "output::haveTrackingData(): Empty ID passed in.");
 		return (false);
@@ -413,7 +569,86 @@ bool output::haveTrackingData(std::string ID) {
 }
 
 void output::clearTrackingData() {
+	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	m_TrackingCache->clearCache();
+}
+
+void output::checkEventsLoop() {
+	// we're running
+	m_bRunEventThread = true;
+
+	// run until told to stop
+	while (m_bRunEventThread) {
+		// signal that we're still running
+		m_CheckEventMutex.lock();
+		m_bCheckEventThread = true;
+		m_CheckEventMutex.unlock();
+
+		// see if there's anything in the tracking cache
+		std::shared_ptr<json::Object> data = getNextTrackingData();
+
+		// got something
+		if (data != NULL) {
+			// get the id
+			std::string id;
+			if ((*data).HasKey("ID")) {
+				id = (*data)["ID"].ToString();
+			} else if ((*data).HasKey("Pid")) {
+				id = (*data)["Pid"].ToString();
+			} else {
+				logger::log(
+						"warning",
+						"output::checkEventsLoop(): Bad data object received from "
+						"getNextTrackingData(), no ID, skipping data.");
+
+				// remove the message we found from the cache, since it is bad
+				removeTrackingData(data);
+
+				// keep working
+				continue;
+			}
+
+			// get the command
+			std::string command;
+			if ((*data).HasKey("Cmd")) {
+				command = (*data)["Cmd"].ToString();
+			} else {
+				logger::log(
+						"warning",
+						"output::checkEventsLoop(): Bad data object received from "
+						"getNextTrackingData(), no Cmd, skipping data.");
+
+				// remove the value we found from the cache, since it is bad
+				removeTrackingData(data);
+
+				// keep working
+				continue;
+			}
+
+			// process the data based on the tracking message
+			if (command == "Event") {
+				// Request the hypo from associator
+				if (Associator != NULL) {
+					// build the request
+					std::shared_ptr<json::Object> datarequest =
+							std::make_shared<json::Object>(json::Object());
+					(*datarequest)["Cmd"] = "ReqHypo";
+					(*datarequest)["Pid"] = id;
+
+					// send the request
+					Associator->sendToAssociator(datarequest);
+				}
+			}
+		}
+
+		// give up some time at the end of the loop
+		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
+	}
+
+	logger::log("info", "output::checkEventsLoop(): Stopped thread.");
+
+	// done with thread
+	return;
 }
 
 bool output::work() {
@@ -425,17 +660,35 @@ bool output::work() {
 	m_ConfigMutex.unlock();
 
 	// null check
-	if (m_MessageQueue == NULL) {
-		// no message queue means we've got big problems
+	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
+		// no message queues means we've got big problems
+		logger::log(
+				"critical",
+				"output::work(): No m_OutputQueue and/or m_LookupQueue.");
 		return (false);
 	}
 
 	// first see what we're supposed to do with a new message
-	// see if there's anything in the message queue
-	std::shared_ptr<json::Object> message = m_MessageQueue->getDataFromQueue();
+	// see if there's an output in the message queue
+	std::shared_ptr<json::Object> message = m_OutputQueue->getDataFromQueue();
+	// int outputQueueSize = m_OutputQueue->size();
+	// int lookupQueueSize = m_LookupQueue->size();
+
+	// if there's no output, check for a lookup
+	if (message == NULL) {
+		message = m_LookupQueue->getDataFromQueue();
+	}
 
 	// if we got something
 	if (message != NULL) {
+		/* logger::log(
+		 "debug",
+		 "associator::dispatch(): got message:"
+		 + json::Serialize(*message)
+		 + " from associator. (outputQueueSize:"
+		 + std::to_string(outputQueueSize) + ", lookupQueueSize:"
+		 + std::to_string(lookupQueueSize) + ")");
+		 */
 		// what time is it
 		time_t tNow;
 		std::time(&tNow);
@@ -523,8 +776,9 @@ bool output::work() {
 						"output::work(): Canceling event " + messageid
 								+ " and removing it from tracking.");
 
-				// check to see if this has been published
-				bool published = isDataPublished(trackingData);
+				// check to see if this has been published, we don't care what
+				// version
+				bool published = isDataPublished(trackingData, true);
 				if (published == true) {
 					// make sure we have a type
 					if (!((*message).HasKey("Type")))
@@ -550,12 +804,46 @@ bool output::work() {
 			// see if we've tracked this event
 			if (trackingData != NULL) {
 				// we have
-				// glass has canceled an event we have tracked
+				// glass has expired an event we have tracked
 				logger::log(
 						"debug",
 						"output::work(): Expiring event " + messageid
 								+ " and removing it from tracking.");
 
+				// check to see if there was a hypo with this expire message
+				if ((message->HasKey("Hypo")) == true) {
+					// check to see if this event was not finished publishing
+					// or if we're configured to always send expiration
+					// hypos
+					if ((isDataFinished(trackingData) == false)
+							|| (m_bPubOnExpiration == true)) {
+						// get the hypo from the event
+						json::Object jsonHypo = (*message)["Hypo"];
+
+						// make it shared
+						std::shared_ptr<json::Object> hypo = std::make_shared<
+								json::Object>(jsonHypo);
+
+						// check to see if we've published this event before
+						// for this check, we want to know if the current version
+						// has been marked as pub
+						if (isDataPublished(trackingData, false) == true) {
+							(*hypo)["IsUpdate"] = true;
+						} else {
+							(*hypo)["IsUpdate"] = false;
+						}
+
+						logger::log(
+								"debug",
+								"output::work(): Writing final hypo for expiring event "
+										+ messageid);
+
+						// write out the hypo to a disk file,
+						// using the threadpool
+						m_ThreadPool->addJob(
+								std::bind(&output::writeOutput, this, hypo));
+					}
+				}
 				// first try to remove any pending events
 				// from the tracking cache
 				removeTrackingData(message);
@@ -581,8 +869,8 @@ bool output::work() {
 			if (m_iMessageCounter == 0)
 				logger::log(
 						"warning",
-						"output::work(): Recieved NO messages from associator "
-								"thread in the last "
+						"output::work(): Received NO messages from associator "
+								"thread in "
 								+ std::to_string(
 										static_cast<int>(tNow)
 												- tLastWorkReport)
@@ -592,19 +880,17 @@ bool output::work() {
 						"info",
 						"output::work(): Received "
 								+ std::to_string(m_iMessageCounter)
-								+ " messages (event messages: "
+								+ " messages from associator thread (events: "
 								+ std::to_string(m_iEventCounter)
-								+ "; update messages: "
+								+ "; cancels: "
 								+ std::to_string(m_iCancelCounter)
-								+ "; expire messages: "
-								+ std::to_string(m_iExpireCounter)
-								+ "; hypo messages:"
-								+ std::to_string(m_iHypoCounter)
-								+ "; lookup messages:"
+								+ "; expires: "
+								+ std::to_string(m_iExpireCounter) + "; hypos:"
+								+ std::to_string(m_iHypoCounter) + "; lookups:"
 								+ std::to_string(m_iLookupCounter)
-								+ "; sitelist messages:"
+								+ "; sitelists:"
 								+ std::to_string(m_iSiteListCounter) + ")"
-								+ " data from associator thread in the last "
+								+ " in "
 								+ std::to_string(
 										static_cast<int>(tNow - tLastWorkReport))
 								+ " seconds. ("
@@ -612,7 +898,7 @@ bool output::work() {
 										static_cast<double>(m_iMessageCounter)
 												/ (static_cast<double>(tNow)
 														- tLastWorkReport))
-								+ " data per second)");
+								+ " dps)");
 
 			tLastWorkReport = tNow;
 			m_iMessageCounter = 0;
@@ -622,61 +908,6 @@ bool output::work() {
 			m_iExpireCounter = 0;
 			m_iLookupCounter = 0;
 			m_iSiteListCounter = 0;
-		}
-	}
-
-	// see if there's anything in the tracking cache
-	std::shared_ptr<json::Object> data = getNextTrackingData();
-
-	// got something
-	if (data != NULL) {
-		// get the id
-		std::string id;
-		if ((*data).HasKey("ID")) {
-			id = (*data)["ID"].ToString();
-		} else if ((*data).HasKey("Pid")) {
-			id = (*data)["Pid"].ToString();
-		} else {
-			logger::log("warning",
-						"output::work(): Bad data object received from "
-						"getdatafromcache(), no ID, skipping data.");
-
-			// remove the message we found from the cache, since it is bad
-			removeTrackingData(data);
-
-			// keep working
-			return (true);
-		}
-
-		// get the command
-		std::string command;
-		if ((*data).HasKey("Cmd")) {
-			command = (*data)["Cmd"].ToString();
-		} else {
-			logger::log("warning",
-						"output::work(): Bad data object received from "
-						"getdatafromcache(), no Cmd, skipping data.");
-
-			// remove the value we found from the cache, since it is bad
-			removeTrackingData(data);
-
-			// keep working
-			return (true);
-		}
-
-		// process the data based on the tracking message
-		if (command == "Event") {
-			// Request the hypo from associator
-			if (Associator != NULL) {
-				// build the request
-				std::shared_ptr<json::Object> datarequest = std::make_shared<
-						json::Object>(json::Object());
-				(*datarequest)["Cmd"] = "ReqHypo";
-				(*datarequest)["Pid"] = id;
-
-				// send the request
-				Associator->sendToAssociator(datarequest);
-			}
 		}
 	}
 
@@ -938,7 +1169,7 @@ bool output::isDataPublished(std::shared_ptr<json::Object> data,
 		int pubVersion = pubLog[i].ToInt();
 
 		// pub version less than 1 means not published
-		if (pubVersion <= 0) {
+		if (pubVersion < 1) {
 			continue;
 		}
 
@@ -959,4 +1190,43 @@ bool output::isDataPublished(std::shared_ptr<json::Object> data,
 	// not published
 	return (false);
 }
+
+bool output::isDataFinished(std::shared_ptr<json::Object> data) {
+	if (data == NULL) {
+		logger::log(
+				"error",
+				"output::isDataFinished(): Null json data object passed in.");
+		return (false);
+	}
+
+	if ((!(data->HasKey("Cmd"))) || (!(data->HasKey("PubLog")))
+			|| (!(data->HasKey("Version")))) {
+		logger::log(
+				"error",
+				"output::isDataFinished(): Bad json hypo object passed in "
+						" missing Cmd, PubLog or Version "
+						+ json::Serialize(*data));
+		return (false);
+	}
+
+	// get the pub log
+	json::Array pubLog = (*data)["PubLog"].ToArray();
+
+	// for each entry in the pub log
+	for (int i = 0; i < pubLog.size(); i++) {
+		// get whether this one was published
+		int pubVersion = pubLog[i].ToInt();
+
+		// pub version less than 1 means not published
+		// which means not finished
+		if (pubVersion < 1) {
+			return (false);
+		}
+	}
+
+	// all pub log entries were greater than 0,
+	// so event was finished
+	return (true);
+}
+
 }  // namespace glass

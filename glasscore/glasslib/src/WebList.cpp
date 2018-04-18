@@ -13,8 +13,8 @@
 namespace glasscore {
 
 // ---------------------------------------------------------CWebList
-CWebList::CWebList(bool useBackgroundThreads) {
-	m_bUseBackgroundThreads = useBackgroundThreads;
+CWebList::CWebList(int numThreads) {
+	m_iNumThreads = numThreads;
 	clear();
 }
 
@@ -84,6 +84,8 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+
 	// check to see if we have a web with this name already
 	for (int i = 0; i < vWeb.size(); i++) {
 		std::shared_ptr<CWeb> web = vWeb[i];
@@ -99,7 +101,7 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 	}
 
 	// Create a new web object
-	std::shared_ptr<CWeb> web(new CWeb(m_bUseBackgroundThreads));
+	std::shared_ptr<CWeb> web(new CWeb(m_iNumThreads));
 	if (pGlass != NULL) {
 		web->setGlass(pGlass);
 	}
@@ -145,6 +147,8 @@ bool CWebList::removeWeb(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+
 	// look for a web with that name
 	for (int i = 0; i < vWeb.size(); i++) {
 		std::shared_ptr<CWeb> web = vWeb[i];
@@ -163,6 +167,8 @@ bool CWebList::removeWeb(std::shared_ptr<json::Object> com) {
 
 // ---------------------------------------------------------addSite
 void CWebList::addSite(std::shared_ptr<CSite> site) {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+
 	// Don't process adds before web definitions
 	if (vWeb.size() < 1) {
 		return;
@@ -185,6 +191,8 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 
 // ---------------------------------------------------------remSite
 void CWebList::remSite(std::shared_ptr<CSite> site) {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+
 	// Don't process removes before web definitions
 	if (vWeb.size() < 1) {
 		return;
@@ -192,7 +200,7 @@ void CWebList::remSite(std::shared_ptr<CSite> site) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CWebList::addSite: Removing station " + site->getScnl() + ".");
+			"CWebList::remSite: Removing station " + site->getScnl() + ".");
 
 	// Remove site from all web nodes that link to it and restructure
 	// node site lists
@@ -212,6 +220,8 @@ bool CWebList::hasSite(std::shared_ptr<CSite> site) {
 		return (false);
 	}
 
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+
 	if (vWeb.size() < 1) {
 		return(false);
 	}
@@ -230,13 +240,15 @@ bool CWebList::hasSite(std::shared_ptr<CSite> site) {
 
 // ---------------------------------------------------------statusCheck
 bool CWebList::statusCheck() {
+	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
+
 	// Don't bother if there is no webs
 	if (vWeb.size() < 1) {
 		return (true);
 	}
 
 	// if we're updating in background
-	if (m_bUseBackgroundThreads == true) {
+	if (m_iNumThreads > 0) {
 		// for each web
 		for (auto web : vWeb) {
 			// check if it's alive

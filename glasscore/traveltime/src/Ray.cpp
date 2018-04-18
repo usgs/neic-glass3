@@ -253,7 +253,7 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 					time
 							+ RAD2DEG * (delta - d)
 									* pTerra->dLayerRadii[pTerra
-											->iOuterDiscontinuity + 1] * 111.111
+											->iOuterDiscontinuity + 1] * DEG2KM
 									/ earthRadius
 									/ pTerra->dLayerPVel[pTerra
 											->iOuterDiscontinuity + 1];
@@ -281,7 +281,7 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 					time
 							+ RAD2DEG * (delta - d)
 									* pTerra->dLayerRadii[pTerra
-											->iOuterDiscontinuity + 1] * 111.111
+											->iOuterDiscontinuity + 1] * DEG2KM
 									/ earthRadius
 									/ pTerra->dLayerSVel[pTerra
 											->iOuterDiscontinuity + 1];

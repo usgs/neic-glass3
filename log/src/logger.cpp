@@ -35,7 +35,7 @@ void log_init(const std::string &programname,
 		spdlog::register_logger(logger);
 
 		// set logger format
-		spdlog::set_pattern("%Y%m%d_%H:%M:%S.%e [%l] %v");
+		spdlog::set_pattern("%Y%m%d_%H:%M:%S.%e <%t> [%l] %v");
 
 		// set logging level
 		spdlog::set_level(loglevel);

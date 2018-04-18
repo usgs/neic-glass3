@@ -376,10 +376,10 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	}
 
 	// Depth Down-weighting
-	if (dZ > 75.) {
-		dSum = dSum / (dZ / 75.);  // 75 was empirically when testing
-								   // events in Soda Springs
-	}
+	// if (dZ > 75.) {
+	// dSum = dSum / (dZ / 75.);  // 75 was empirically when testing
+	//							   // events in Soda Springs
+	// }
 
 	// make sure the number of significant picks
 	// exceeds the nucleation threshold
@@ -413,36 +413,37 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 
 	// use observed travel time, travel times to site, and a dT/dKm of
 	// 0.1 s/km to calculate distance residuals
-	double dRes1 = -1;
+	double tRes1 = -1;
 	if (travelTime1 > 0) {
 		// calculate time residual
-		double tRes1 = tObservedTT - travelTime1;
+		tRes1 = tObservedTT - travelTime1;
 
 		// calculate distance residual
 		// NOTE:  dT/dKm is hard coded
-		dRes1 = tRes1 / 0.1;
+		// dRes1 = tRes1 / 0.1;
 	}
-	double dRes2 = -1;
+	double tRes2 = -1;
 	if (travelTime2 > 0) {
 		// calculate time residual
-		double tRes2 = tObservedTT - travelTime2;
+		tRes2 = tObservedTT - travelTime2;
 
 		// calculate distance residual
 		// NOTE:  dT/dKm is hard coded
-		dRes2 = tRes2 / 0.1;
+		// dRes2 = tRes2 / 0.1;
 	}
-
-	// compute significances using distance residuals
-	// and detection grid resolution
+	// compute significances using residuals
+	// pick sigma is defined as resolution / 5.0 * 2.0
+	// should trigger be a loser cutoff than location cutoff
 	double dSig1 = 0;
-	if (dRes1 > 0) {
-		dSig1 = pWeb->getGlass()->sig(dRes1, dResolution);
+	if (tRes1 > 0) {
+		dSig1 = pWeb->getGlass()->sig(tRes1, dResolution);
 	}
 	double dSig2 = 0;
-	if (dRes2 > 0) {
-		dSig2 = pWeb->getGlass()->sig(dRes2, dResolution);
+	if (tRes2 > 0) {
+		dSig2 = pWeb->getGlass()->sig(tRes2, dResolution);
 	}
-
+	// printf("getBestSig %.2f, %.2f, %.2f, %.2f, %.2f\n", tRes1, dSig1, tRes2,
+	//	   dSig2, dResolution);
 	// return the higher of the two significances
 	if (dSig1 > dSig2) {
 		return (dSig1);
@@ -548,6 +549,12 @@ double CNode::getResolution() const {
 
 double CNode::getZ() const {
 	return (dZ);
+}
+
+glassutil::CGeo CNode::getGeo() const {
+	glassutil::CGeo geoNode;
+	geoNode.setGeographic(dLat, dLon, 6371.0 - dZ);
+	return(geoNode);
 }
 
 CWeb* CNode::getWeb() const {

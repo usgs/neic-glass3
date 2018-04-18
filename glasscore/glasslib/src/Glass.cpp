@@ -962,22 +962,56 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						+ std::to_string(numHypoThreads));
 	}
 
-	// Control whether to use background threads
-	bool webBackgroundUpdate = true;
-	if ((com->HasKey("WebBackgroundUpdate"))
-			&& ((*com)["WebBackgroundUpdate"].GetType()
-					== json::ValueType::BoolVal)) {
-		webBackgroundUpdate = (*com)["WebBackgroundUpdate"].ToBool();
+	// set the number of web threads
+	int numWebThreads = 0;
+	if ((com->HasKey("NumWebThreads"))
+			&& ((*com)["NumWebThreads"].GetType()
+					== json::ValueType::IntVal)) {
+		numWebThreads = (*com)["NumWebThreads"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using WebBackgroundUpdate: "
-						+ std::to_string(webBackgroundUpdate));
+				"CGlass::initialize: Using NumWebThreads: "
+						+ std::to_string(numWebThreads));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default WebBackgroundUpdate: "
-						+ std::to_string(webBackgroundUpdate));
+				"CGlass::initialize: Using default NumWebThreads: "
+						+ std::to_string(numWebThreads));
+	}
+
+	int iHoursWithoutPicking = -1;
+	if ((com->HasKey("SiteHoursWithoutPicking"))
+			&& ((*com)["SiteHoursWithoutPicking"].GetType()
+					== json::ValueType::IntVal)) {
+		iHoursWithoutPicking = (*com)["SiteHoursWithoutPicking"].ToInt();
+
+		glassutil::CLogit::log(
+				glassutil::log_level::info,
+				"CGlass::initialize: Using SiteHoursWithoutPicking: "
+						+ std::to_string(iHoursWithoutPicking));
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::info,
+				"CGlass::initialize: Using default SiteHoursWithoutPicking: "
+						+ std::to_string(iHoursWithoutPicking));
+	}
+
+	int iHoursBeforeLookingUp = -1;
+	if ((com->HasKey("SiteLookupInterval"))
+			&& ((*com)["SiteLookupInterval"].GetType()
+					== json::ValueType::IntVal)) {
+		iHoursBeforeLookingUp = (*com)["SiteLookupInterval"].ToInt();
+
+		glassutil::CLogit::log(
+				glassutil::log_level::info,
+				"CGlass::initialize: Using SiteLookupInterval: "
+						+ std::to_string(iHoursBeforeLookingUp));
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::info,
+				"CGlass::initialize: Using default SiteLookupInterval: "
+						+ std::to_string(iHoursBeforeLookingUp));
 	}
 
 	// test sig and gaus
@@ -994,6 +1028,8 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	// create site list
 	pSiteList = new CSiteList();
 	pSiteList->setGlass(this);
+	pSiteList->setHoursWithoutPicking(iHoursWithoutPicking);
+	pSiteList->setHoursBeforeLookingUp(iHoursBeforeLookingUp);
 
 	// clean out old web list if any
 	if (pWebList) {
@@ -1001,7 +1037,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	// create detection web list
-	pWebList = new CWebList(webBackgroundUpdate);
+	pWebList = new CWebList(numWebThreads);
 	pWebList->setGlass(this);
 	pWebList->setSiteList(pSiteList);
 
@@ -1164,6 +1200,11 @@ bool CGlass::statusCheck() {
 
 	// hypo list
 	if (pHypoList->statusCheck() == false) {
+		return (false);
+	}
+
+	// site list
+	if (pSiteList->statusCheck() == false) {
 		return (false);
 	}
 
@@ -1333,5 +1374,4 @@ bool CGlass::getTestLocator() const {
 bool CGlass::getTestTimes() const {
 	return (testTimes);
 }
-
 }  // namespace glasscore

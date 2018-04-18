@@ -135,6 +135,7 @@ class CPick {
 	 * to unlink.
 	 */
 	void remHypo(std::shared_ptr<CHypo> hyp);
+	void remHypo(std::string pid);
 
 	/**
 	 * \brief Clear any hypo reference to this pick
@@ -181,6 +182,12 @@ class CPick {
 	 * \return the hypo
 	 */
 	const std::shared_ptr<CHypo> getHypo() const;
+
+	/**
+	 * \brief Pid getter
+	 * \return the pid
+	 */
+	const std::string getHypoPid() const;
 
 	/**
 	 * \brief Site getter

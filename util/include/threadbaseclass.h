@@ -58,7 +58,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * Allocates and starts the work thread.
 	 * \return returns true if successful.
 	 */
-	bool start();
+	virtual bool start();
 
 	/**
 	 * \brief thread stop function
@@ -66,7 +66,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * Stops, waits for, and deallocates the work thread.
 	 * \return returns true if successful.
 	 */
-	bool stop();
+	virtual bool stop();
 
 	/**
 	 * \brief thread check function
@@ -107,7 +107,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * Checks to see if the work thread is running
 	 * \return Returns true if m_bRunWorkThread is true, false otherwise
 	 */
-	bool isRunning();
+	virtual bool isRunning();
 
 	/**
 	 * \brief threadbaseclass is set work check

@@ -82,7 +82,11 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 *
 	 * \param message - A json::Object containing the message to send to output.
 	 */
-	void sendToOutput(std::shared_ptr<json::Object> &message) override;
+	void sendToOutput(std::shared_ptr<json::Object> message) override;
+
+	bool start() override;
+	bool stop() override;
+	bool isRunning() override;
 
 	/**
 	 * \brief thread pool check function
@@ -203,6 +207,7 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	bool isDataChanged(std::shared_ptr<json::Object> data);
 	bool isDataPublished(std::shared_ptr<json::Object> data,
 							bool ignoreVersion = true);
+	bool isDataFinished(std::shared_ptr<json::Object> data);
 
  protected:
 	/**
@@ -213,6 +218,8 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * \return returns true if work was successful, false otherwise.
 	 */
 	bool work() override;
+
+	void checkEventsLoop();
 
 	/**
 	 * \brief output file writing function
@@ -261,14 +268,23 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * store output tracking information
 	 */
 	util::Cache * m_TrackingCache;
+	std::mutex m_TrackingCacheMutex;
 
 	/**
 	 * \brief pointer to the util::queue class used to manage
-	 * incoming messages
+	 * incoming output messages
 	 */
-	util::Queue* m_MessageQueue;
+	util::Queue* m_OutputQueue;
+
+	/**
+	 * \brief pointer to the util::queue class used to manage
+	 * incoming lookup messages
+	 */
+	util::Queue* m_LookupQueue;
 
 	std::vector<int> m_PublicationTimes;
+
+	bool m_bPubOnExpiration;
 
 	/**
 	 * \brief the total messages performance counter
@@ -295,8 +311,14 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 */
 	int m_iHypoCounter;
 
+	/**
+	 * \brief the lookup messages performance counter
+	 */
 	int m_iLookupCounter;
 
+	/**
+	 * \brief the sitelist messages performance counter
+	 */
 	int m_iSiteListCounter;
 
 	/**
@@ -313,7 +335,37 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	 * \brief pointer to the util::threadpool used to queue and
 	 * perform output.
 	 */
-	util::ThreadPool * m_ThreadPool;
+	util::ThreadPool *m_ThreadPool;
+
+	/**
+	 * \brief the std::thread pointer to the event thread
+	 */
+	std::thread *m_EventThread;
+
+	/**
+	 * \brief boolean flag indicating whether the event thread should run
+	 */
+	bool m_bRunEventThread;
+
+	/**
+	 * \brief boolean flag indicating whether the event thread has been started
+	 */
+	bool m_bEventStarted;
+
+	/**
+	 * \brief boolean flag used to check thread status
+	 */
+	bool m_bCheckEventThread;
+
+	/**
+	 * \brief the time_t holding the last time the thread status was checked
+	 */
+	time_t tLastEventCheck;
+
+	/**
+	 * \brief the std::mutex for m_bCheckEventThread
+	 */
+	std::mutex m_CheckEventMutex;
 };
 }  // namespace glass
 #endif  // OUTPUT_H
