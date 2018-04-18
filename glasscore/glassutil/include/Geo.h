@@ -22,6 +22,10 @@ namespace glassutil {
 #define TWOPI 6.283185307179586
 #define PI 3.14159265359
 
+// geographic defines
+#define EARTHRADIUSKM 6371.0  // average
+#define DEG2KM 111.319  // at equator
+
 /**
  * \brief glassutil geographic coordinate conversion class
  *

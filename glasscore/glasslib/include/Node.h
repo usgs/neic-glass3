@@ -107,7 +107,7 @@ class CNode {
 	/**
 	 * \brief CNode node-site and site-node linker
 	 *
-	 * Construct add a link to/from this node to the provided site
+	 * Add a link to/from this node to the provided site
 	 * using the provided travel time
 	 *
 	 * \param travelTime1 - A double value containing the first travel time to
@@ -121,8 +121,23 @@ class CNode {
 	bool linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 					double travelTime1, double travelTime2 = -1);
 
+	/**
+	 * \brief CNode node-site and site-node unlinker
+	 *
+	 * Remove the given site to/from this node
+	 *
+	 * \param site - A std::shared_ptr<CSite> to the site to remove
+	 * \return - Returns true if successful, false otherwise
+	 */
 	bool unlinkSite(std::shared_ptr<CSite> site);
 
+	/**
+	 * \brief CNode unlink last site from node
+	 *
+	 * Remove the last site to/from this node
+	 *
+	 * \return - Returns true if successful, false otherwise
+	 */
 	bool unlinkLastSite();
 
 	/**
@@ -224,6 +239,10 @@ class CNode {
 	 */
 	double getZ() const;
 
+	/**
+	 * \brief CGeo getter
+	 * \return the node location as a glassutil::CGeo object.
+	 */
 	glassutil::CGeo getGeo() const;
 
 	/**

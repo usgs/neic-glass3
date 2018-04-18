@@ -450,8 +450,10 @@ class CHypo {
 	 * \param nIter - An integer value containing the number of iterations
 	 * \param dStart - A double value containing the distance starting value
 	 * \param dStop - A double value containing the distance stopping value
-	 * \param tStart - A double value containing the time starting value
-	 * \param tStop - A double value containing the time stopping value
+	 * \param tStart - A double value containing the time starting value in
+	 * gregorian seconds
+	 * \param tStop - A double value containing the time stopping value in
+	 * gregorian seconds
 	 * \param nucleate - An int value sets if this is a nucleation which limits
 	 * the phase used.
 	 */
@@ -465,8 +467,10 @@ class CHypo {
 	 * \param nIter - An integer value containing the number of iterations
 	 * \param dStart - A double value containing the distance starting value
 	 * \param dStop - A double value containing the distance stopping value
-	 * \param tStart - A double value containing the time starting value
-	 * \param tStop - A double value containing the time stopping value
+	 * \param tStart - A double value containing the time starting value in
+	 * gregorian seconds
+	 * \param tStop - A double value containing the time stopping value in
+	 * gregorian seconds
 	 * \param nucleate - An int value sets if this is a nucleation which limits
 	 * the phase used.
 	 */
@@ -491,8 +495,8 @@ class CHypo {
 	 * gets a weight residual (with S down weighted) for locator
 	 *
 	 * \param sPhase - A string with the phase type
-	 * \param tObs - The observed travel time
-	 * \param tCal - The calculated travel time
+	 * \param tObs - The observed travel time in gregorian seconds
+	 * \param tCal - The calculated travel time in gregorian seconds
 	 */
 	double getWeightedResidual(std::string sPhase, double tObs, double tCal);
 
@@ -502,7 +506,7 @@ class CHypo {
 	 * \param xlat - A double of the latitude to evaluate
 	 * \param xlon - A double of the longitude
 	 * \param dZ - A double of the depth bsl
-	 * \param oT - A double of the oT
+	 * \param oT - A double of the oT in gregorian seconds
 	 * \param nucleate - An int value sets if this is a nucleation which limits
 	 * the phase used.
 	 */
@@ -525,6 +529,16 @@ class CHypo {
 	 */
 	bool weights();
 
+	/**
+	 * \brief Ensure all picks in the hypo belong to hypo
+	 *
+	 * Search through all picks in the given hypocenter's pick list, using the
+	 * hypo's affinity function to determine whether the pick belongs to the
+	 * given hypocenter or not.
+	 *
+	 * \return Returns true if the hypocenter's pick list was changed,
+	 * false otherwise.
+	 */
 	bool resolve(std::shared_ptr<CHypo> hyp);
 
 	/**
@@ -553,6 +567,10 @@ class CHypo {
 	 */
 	double getZ() const;
 
+	/**
+	 * \brief CGeo getter
+	 * \return the hypo location as a glassutil::CGeo object.
+	 */
 	glassutil::CGeo getGeo() const;
 
 	/**

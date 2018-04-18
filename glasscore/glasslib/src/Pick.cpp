@@ -355,13 +355,7 @@ void CPick::setAss(std::string ass) {
 bool CPick::nucleate() {
 	// get the site shared_ptr
 	std::shared_ptr<CSite> pickSite = wpSite.lock();
-	/*
-	 if(associated) {
-	 glassutil::CLogit::log(glassutil::log_level::error,
-	 "CPick::nucleate: Already Associated.");
-	 return (false);
-	 }
-	 */
+
 	// get CGlass pointer from site
 	CGlass *pGlass = pickSite->getGlass();
 

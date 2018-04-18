@@ -102,7 +102,7 @@ glass. In general this value should be equal to **NumNucleationThreads** to
 avoid race conditions. This value is used for computational performance tuning.
 * **NumWebThreads** - The number of update threads to run per detection web in
 glass. If the number of threads is zero, glass will halt while the updates are
-processed.
+processed. This value is used for computational performance tuning.
 * **SiteHoursWithoutPicking** - The amount of time, in hours, before a site will
 be removed from the detection webs if a pick has not been made on that site. If
 set to -1, sites will not be removed for not picking
@@ -206,7 +206,8 @@ only in global grids.
 * **SaveGrid** - A flag indicating whether to save the grid node locations to a
 file for evaluation.
 * **Update** - A flag indicating whether a grid is allowed to add or remove sites
-from nodes .
+from nodes. Note that if Update is false, features like **SiteHoursWithoutPicking**
+and **SiteLookupInterval** will be ineffective for this grid.
 
 ## Regional / Local Grid
 This is a detection grid designed to cover some regional or local area of

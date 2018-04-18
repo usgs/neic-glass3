@@ -183,8 +183,8 @@ class CHypoList {
 	 * Use a binary search to find a hypocenter in
 	 * vHypo with origin time within given range
 	 *
-	 * \param t1 - Starting time of selection range
-	 * \param t2 - Ending time of selection range
+	 * \param t1 - Starting time of selection range in gregorian seconds
+	 * \param t2 - Ending time of selection range in gregorian seconds
 	 * \return First CHypo in vHypo withing range,
 	 * or NULL if none fit in the time range.
 	 */

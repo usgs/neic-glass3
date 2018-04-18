@@ -9,9 +9,9 @@
   "PickDuplicateWindow": 2.5,
   "NumNucleationThreads": 5,
   "NumHypoThreads": 5,
-  "NumWebThreads": 0,
-  "SiteHoursWithoutPicking": -1,
-  "SiteLookupInterval":-1,
+  "NumWebThreads": 0,  # 0 because glass-app does not do site lookups.
+  "SiteHoursWithoutPicking": -1,  # Disabled because glass-app does not do site lookups.
+  "SiteLookupInterval":-1,  # Disabled because glass-app does not do site lookups.
   "Params": {
       "Thresh": 0.5,
       "Nucleate": 10,

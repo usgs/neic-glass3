@@ -531,10 +531,9 @@ void CSiteList::backgroundLoop() {
 }
 
 void CSiteList::setStatus(bool status) {
+	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
 	// update thread status
-	m_StatusMutex.lock();
 	m_bThreadStatus = status;
-	m_StatusMutex.unlock();
 }
 
 bool CSiteList::statusCheck() {
@@ -557,12 +556,10 @@ bool CSiteList::statusCheck() {
 	std::time(&tNow);
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
 		// get the thread status
-		m_StatusMutex.lock();
+		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
 
 		// The thread is dead
 		if (m_bThreadStatus != true) {
-			m_StatusMutex.unlock();
-
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
 					"CSiteList::statusCheck(): Thread"
@@ -577,8 +574,6 @@ bool CSiteList::statusCheck() {
 		// if the thread is alive, it'll mark it
 		// as true again.
 		m_bThreadStatus = false;
-
-		m_StatusMutex.unlock();
 
 		// remember the last time we checked
 		tLastStatusCheck = tNow;
@@ -599,7 +594,8 @@ void CSiteList::checkSites() {
 	std::time(&tNow);
 
 	// check every hour
-	// NOTE: hardcoded
+	// NOTE: hardcoded to one hour, any more often seemed excessive
+	// didn't seem like a parameter that would be changed
 	if ((tNow - m_tLastChecked) < (60 * 60)) {
 		// no
 		return;

@@ -12,7 +12,7 @@
 	"Detect": 12,
 	"Nucleate": 7,
 	"Thresh": 0.5,
-	"Update":false,
+	"Update":false, # False because glass-app does not do site lookups.
 	"SaveGrid":false,
 	"NucleationPhases":{
 	    "Phase1": {

@@ -82,8 +82,6 @@ CHypoList::~CHypoList() {
 
 // ---------------------------------------------------------addHypo
 bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
-
 	// nullcheck
 	if (hypo == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -99,6 +97,9 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 		hypo->setCutPercentage(pGlass->getCutPercentage());
 		hypo->setCutMin(pGlass->getCutMin());
 	}
+
+	// lock for this scope
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// Add hypo to cache (mHypo) and time sorted
 	// index (vHypo). If vHypo has reached its
@@ -181,8 +182,6 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 
 // ---------------------------------------------------------associate
 bool CHypoList::associate(std::shared_ptr<CPick> pk) {
-	// std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
-
 	// nullcheck
 	if (pk == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -718,6 +717,12 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 		return (false);
 	}
 
+	std::chrono::high_resolution_clock::time_point tMergeEndTime =
+			std::chrono::high_resolution_clock::now();
+	double mergeTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tMergeEndTime - tCancelEndTime).count();
+
 	// announce if a correlation has been added to an existing event
 	// NOTE: Is there a better way to do this?
 	if ((hyp->getCorrAdded() == true)
@@ -766,7 +771,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 			std::chrono::high_resolution_clock::now();
 	double reportTime =
 			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tReportEndTime - tCancelEndTime).count();
+					tReportEndTime - tMergeEndTime).count();
 
 	// check for and log any miss-linked picks
 	hyp->trap();
@@ -790,7 +795,8 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					+ std::to_string(scavengeTime) + " resolveTime:"
 					+ std::to_string(resolveTime) + " pruneTime:"
 					+ std::to_string(pruneTime) + " cancelTime:"
-					+ std::to_string(cancelTime) + " reportTime:"
+					+ std::to_string(cancelTime) + " mergeTime:"
+					+ std::to_string(mergeTime) + " reportTime:"
 					+ std::to_string(reportTime) + " trapTime:"
 					+ std::to_string(trapTime) + " evolveTime:"
 					+ std::to_string(evolveTime));
@@ -863,11 +869,12 @@ const CGlass* CHypoList::getGlass() const {
 // ---------------------------------------------------------getHypos
 std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 	std::vector<std::weak_ptr<CHypo>> hypos;
-	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	if (t1 == t2) {
 		return (hypos);
 	}
+
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// don't bother if the list is empty
 	if (vHypo.size() == 0) {
@@ -996,11 +1003,13 @@ int CHypoList::indexHypo(double tOrg) {
 
 // ---------------------------------------------------------jobSleep
 void CHypoList::jobSleep() {
+	// if we're processing jobs
 	if (m_bRunProcessLoop == true) {
+		// sleep for a random amount of time, to better distribute
+		// the load across all job threads.
 		std::uniform_int_distribution<> distribution(m_iSleepTimeMS / 4,
 														m_iSleepTimeMS);
 		int sleeptime = distribution(m_RandomGenerator);
-
 		std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
 	}
 }
@@ -1023,8 +1032,6 @@ void CHypoList::listHypos() {
 
 // --------------------------------------------------mergeCloseEvents
 bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
-	// std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
-
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypoList::merge: NULL pGlass.");
@@ -1048,7 +1055,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 	// set up a geo object for this hypo
 	glassutil::CGeo geo;
-	geo.setGeographic(hypo->getLat(), hypo->getLon(), 6371.0);
+	geo.setGeographic(hypo->getLat(), hypo->getLon(), EARTHRADIUSKM);
 
 	// compute the list of hypos to try merging with with
 	// (a potential hypo must be within time cut to consider)
@@ -1075,11 +1082,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						hypo->getPid().c_str(), hypo2->getPid().c_str());
 			glassutil::CLogit::log(sLog);
 
-			// if (hypo2->isLockedForProcessing()) {
-			// continue;
-			// }
-			// hypo2->lockForProcessing();
-
 			// make sure this hypo is resolved and get data
 			if (resolve(hypo2)) {
 				// relocate the hypo
@@ -1100,7 +1102,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 			if (diff < timeCut) {
 				glassutil::CGeo geo2;
-				geo2.setGeographic(hypo2->getLat(), hypo2->getLon(), 6371.0);
+				geo2.setGeographic(hypo2->getLat(), hypo2->getLon(),
+									EARTHRADIUSKM);
 
 				// check distance between events
 				delta = geo.delta(&geo2) / DEG2RAD;
@@ -1130,7 +1133,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 							glassutil::CPid::pid(), "Merged Hypo", 0.0,
 							hypo->getThresh(), hypo->getCut(), hypo->getTrv1(),
 							hypo->getTrv2(), pGlass->getTTT(),
-							distanceCut * 111.12);
+							distanceCut * DEG2KM);
 
 					// set hypo glass pointer and such
 					hypo3->setGlass(pGlass);
@@ -1149,16 +1152,16 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					// First localization attempt after nucleation
 					// make 3 passes
-					hypo3->anneal(10000, (distanceCut / 2.) * 111.1,
-									(distanceCut / 10.) * 111.1, (timeCut / 2.),
-									.1);
+					hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
+									(distanceCut / 10.) * DEG2KM,
+									(timeCut / 2.), .1);
 
-					hypo3->anneal(10000, (distanceCut / 2.) * 111.1,
-									(distanceCut / 10.) * 111.1, (timeCut / 2.),
-									.1);
+					hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
+									(distanceCut / 10.) * DEG2KM,
+									(timeCut / 2.), .1);
 
-					hypo3->anneal(10000, (distanceCut / 2.) * 111.1,
-									(distanceCut / 100.) * 111.1,
+					hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
+									(distanceCut / 100.) * DEG2KM,
 									(timeCut / 2.), .1);
 
 					// try to grab more picks
@@ -1220,7 +1223,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 						return (true);
 					} else {
-						// else delete potential new events
+						// otherwise do nothing (don't add the new event to the
+						// hypo list, don't delete the unmerged hypos)
 						snprintf(
 								sLog,
 								sizeof(sLog),
@@ -1277,7 +1281,8 @@ int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 
 // ---------------------------------------------------------popFifo
 std::shared_ptr<CHypo> CHypoList::popFifo() {
-	// std::lock_guard<std::mutex> queueGuard(m_QueueMutex);
+	// don't use a lock guard for queue mutex and hypomutex,
+	// to avoid a deadlock when both mutexes are locked
 	m_QueueMutex.lock();
 
 	// Pop first hypocenter off processing fifo
@@ -1292,6 +1297,8 @@ std::shared_ptr<CHypo> CHypoList::popFifo() {
 	std::string pid = qFifo.front();
 
 	// remove the first id from the queue now that we have it
+	// Does not throw unless an exception is thrown by the assignment operator
+	// of T.
 	qFifo.erase(qFifo.begin());
 
 	m_QueueMutex.unlock();
@@ -1313,10 +1320,6 @@ void CHypoList::processHypos() {
 							"CHypoList::processHypos: startup");
 
 	while (m_bRunProcessLoop == true) {
-		// make sure we're still running
-		if (m_bRunProcessLoop == false)
-			break;
-
 		// update thread status
 		setStatus(true);
 
@@ -1332,7 +1335,9 @@ void CHypoList::processHypos() {
 		}
 
 		// give up some time at the end of the loop
-		jobSleep();
+		if (m_bRunProcessLoop == true) {
+			jobSleep();
+		}
 	}
 
 	setStatus(false);
@@ -1343,8 +1348,6 @@ void CHypoList::processHypos() {
 // ---------------------------------------------------------remHypo
 // Remove and unmap Hypocenter from vector, map, and pick
 void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
-	m_vHypoMutex.lock();
-
 	// nullcheck
 	if (hypo == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -1352,6 +1355,8 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 
 		return;
 	}
+
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// get the id
 	std::string pid = hypo->getPid();
@@ -1387,14 +1392,10 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 
 	// erase this hypo from the map
 	mHypo.erase(pid);
-
-	m_vHypoMutex.unlock();
 }
 
 // ---------------------------------------------------------ReqHypo
 bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
-
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -1441,11 +1442,19 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
+
 	// get the hypo
 	std::shared_ptr<CHypo> hyp = mHypo[sPid];
 
 	// check the hypo
 	if (!hyp) {
+		glassutil::CLogit::log(
+				glassutil::log_level::warn,
+				"HypoList::reqHypo: Could not find hypo for pid " + sPid);
+
+		// return true even if we didn't find anything, since
+		// we've handled the message
 		return (true);
 	}
 
@@ -1458,8 +1467,6 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 
 // ---------------------------------------------------------resolve
 bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
-
 	// null checks
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -1473,6 +1480,10 @@ bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
 								"CHypoList::resolve: NULL pGlass.");
 		return (false);
 	}
+
+	// this lock guard exists to avoid a deadlock that occurs
+	// when it isn't present
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// return whether we've changed the pick set
 	return (hyp->resolve(hyp));
@@ -1492,13 +1503,12 @@ void CHypoList::setNHypoMax(int hypoMax) {
 
 // ---------------------------------------------------------setStatus
 void CHypoList::setStatus(bool status) {
+	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
 	// update thread status
-	m_StatusMutex.lock();
 	if (m_ThreadStatusMap.find(std::this_thread::get_id())
 			!= m_ThreadStatusMap.end()) {
 		m_ThreadStatusMap[std::this_thread::get_id()] = status;
 	}
-	m_StatusMutex.unlock();
 }
 
 // ---------------------------------------------------------sort
@@ -1528,7 +1538,9 @@ bool CHypoList::statusCheck() {
 	std::time(&tNow);
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
 		// get the thread status
-		m_StatusMutex.lock();
+		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
+
+		// check all the threads
 		std::map<std::thread::id, bool>::iterator StatusItr;
 		for (StatusItr = m_ThreadStatusMap.begin();
 				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
@@ -1537,8 +1549,6 @@ bool CHypoList::statusCheck() {
 
 			// at least one thread did not respond
 			if (status != true) {
-				m_StatusMutex.unlock();
-
 				glassutil::CLogit::log(
 						glassutil::log_level::error,
 						"CHypoList::statusCheck(): At least one thread"
@@ -1554,7 +1564,6 @@ bool CHypoList::statusCheck() {
 			// as true again.
 			StatusItr->second = false;
 		}
-		m_StatusMutex.unlock();
 
 		// remember the last time we checked
 		tLastStatusCheck = tNow;
@@ -1563,5 +1572,4 @@ bool CHypoList::statusCheck() {
 	// everything is awesome
 	return (true);
 }
-
 }  // namespace glasscore

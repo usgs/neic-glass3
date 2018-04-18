@@ -680,7 +680,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 	// compute latitude distance in geographic degrees by converting
 	// the provided resolution in kilometers to degrees
 	// NOTE: Hard coded conversion factor
-	double latDistance = resol / 111.11;
+	double latDistance = resol / DEG2KM;
 
 	// compute the longitude distance in geographic degrees by
 	// dividing the latitude distance by the cosine of the center latitude
@@ -1907,9 +1907,9 @@ bool CWeb::statusCheck() {
 	std::time(&tNow);
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
 		// get the thread status
-		// glassutil::CLogit::log(glassutil::log_level::debug,
-		// "CWeb::statusCheck(): Checking " + sName);
-		m_StatusMutex.lock();
+		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
+
+		// check all the threads
 		std::map<std::thread::id, bool>::iterator StatusItr;
 		for (StatusItr = m_ThreadStatusMap.begin();
 				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
@@ -1918,8 +1918,6 @@ bool CWeb::statusCheck() {
 
 			// at least one thread did not respond
 			if (status != true) {
-				m_StatusMutex.unlock();
-
 				glassutil::CLogit::log(
 						glassutil::log_level::error,
 						"CWeb::statusCheck(): At least one thread in " + sName
@@ -1935,7 +1933,6 @@ bool CWeb::statusCheck() {
 			// as true again.
 			StatusItr->second = false;
 		}
-		m_StatusMutex.unlock();
 
 		// remember the last time we checked
 		tLastStatusCheck = tNow;
@@ -1947,14 +1944,12 @@ bool CWeb::statusCheck() {
 
 // ---------------------------------------------------------setStatus
 void CWeb::setStatus(bool status) {
-	std::thread::id tid = std::this_thread::get_id();
-
+	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
 	// update thread status
-	m_StatusMutex.lock();
-	if (m_ThreadStatusMap.find(tid) != m_ThreadStatusMap.end()) {
-		m_ThreadStatusMap[tid] = status;
+	if (m_ThreadStatusMap.find(std::this_thread::get_id())
+			!= m_ThreadStatusMap.end()) {
+		m_ThreadStatusMap[std::this_thread::get_id()] = status;
 	}
-	m_StatusMutex.unlock();
 }
 
 // ---------------------------------------------------------jobSleep

@@ -20,7 +20,7 @@
       750.0
   ],
   "SaveGrid":false,
-	"Update":false,
+	"Update":false, # False because glass-app does not do site lookups.
   "NucleationPhases":{
 	    "Phase1": {
       		"PhaseName": "P",

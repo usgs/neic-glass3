@@ -647,9 +647,6 @@ void output::checkEventsLoop() {
 
 	logger::log("info", "output::checkEventsLoop(): Stopped thread.");
 
-	// we're no longer running
-	m_bRunEventThread = false;
-
 	// done with thread
 	return;
 }
@@ -664,7 +661,10 @@ bool output::work() {
 
 	// null check
 	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
-		// no message queue means we've got big problems
+		// no message queues means we've got big problems
+		logger::log(
+				"critical",
+				"output::work(): No m_OutputQueue and/or m_LookupQueue.");
 		return (false);
 	}
 
@@ -885,10 +885,8 @@ bool output::work() {
 								+ "; cancels: "
 								+ std::to_string(m_iCancelCounter)
 								+ "; expires: "
-								+ std::to_string(m_iExpireCounter)
-								+ "; hypos:"
-								+ std::to_string(m_iHypoCounter)
-								+ "; lookups:"
+								+ std::to_string(m_iExpireCounter) + "; hypos:"
+								+ std::to_string(m_iHypoCounter) + "; lookups:"
 								+ std::to_string(m_iLookupCounter)
 								+ "; sitelists:"
 								+ std::to_string(m_iSiteListCounter) + ")"
