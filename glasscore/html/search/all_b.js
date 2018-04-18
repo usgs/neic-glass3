@@ -13,6 +13,8 @@ var searchData=
   ['max_5fpoints',['MAX_POINTS',['../Trav_8h.html#a3b8cb7c2cda80c18f333c00601c6905b',1,'Trav.h']]],
   ['max_5ftrav',['MAX_TRAV',['../TTT_8h.html#a18ce0f90f496d09e6f9e1a506d6b5e02',1,'TTT.h']]],
   ['maxlayers',['MAXLAYERS',['../Terra_8h.html#aa6c8a1191b429febe1ed25c661e7f140',1,'Terra.h']]],
+  ['maxlocdepth',['MAXLOCDEPTH',['../Hypo_8cpp.html#a5d001884f1ace2caf13091821ee9c55e',1,'Hypo.cpp']]],
+  ['mergecloseevents',['mergeCloseEvents',['../classglasscore_1_1CHypoList.html#ae3cc211c8a75316e284f278866fad0f7',1,'glasscore::CHypoList']]],
   ['message',['message',['../structglassutil_1_1logMessageStruct.html#a00bece0e9b82680d19b2f1ff03b563fb',1,'glassutil::logMessageStruct']]],
   ['minimize',['Minimize',['../namespaceglasscore.html#a141ebccf1544e274435953443ea26328',1,'glasscore']]],
   ['minute',['minute',['../classglassutil_1_1CDate.html#ac7d4aa7abf70fad0ae8b78ed230f290e',1,'glassutil::CDate']]],

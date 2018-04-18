@@ -126,137 +126,166 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a9b6e31f0e2c6cb30024f1ecac986d7a1">clear</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a2a82afd3ab15d5c20c61929dfbdfc721">sendToOutput</a>(std::shared_ptr&lt;json::Object&gt; &amp;message) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#afd2c7aef2d2f132a23a61c21f5a4946d">sendToOutput</a>(std::shared_ptr&lt;json::Object&gt; message) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a21fc540187a7c91c7ad9584d7f5b450c">check</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a7e263129ed7ef4d0537626b9023d7ae7">   96</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="classglass_1_1output.html#a7e263129ed7ef4d0537626b9023d7ae7">getSOutputAgencyId</a>() {</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        m_ConfigMutex.lock();</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        std::string outputagency = m_sOutputAgencyID;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        m_ConfigMutex.unlock();</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keywordflow">return</span> outputagency;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    }</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a663fbc64e414831a1c7fe50218bd020f">  103</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="classglass_1_1output.html#a663fbc64e414831a1c7fe50218bd020f">getSOutputAuthor</a>() {</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        m_ConfigMutex.lock();</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        std::string outputauthor = m_sOutputAuthor;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        m_ConfigMutex.unlock();</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keywordflow">return</span> outputauthor;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a786ab89489446f2528941b2cba272856">  110</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglass_1_1output.html#a786ab89489446f2528941b2cba272856">getISiteListDelay</a>() {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        m_ConfigMutex.lock();</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="keywordtype">int</span> sitelistdelay = m_iSiteListDelay;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        m_ConfigMutex.unlock();</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <span class="keywordflow">return</span> sitelistdelay;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    }</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a28da7c8f5b4696a5594babc64268985a">  117</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="classglass_1_1output.html#a28da7c8f5b4696a5594babc64268985a">getSStationFile</a>() {</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        m_ConfigMutex.lock();</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        std::string stationfile = m_sStationFile;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        m_ConfigMutex.unlock();</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordflow">return</span> stationfile;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    }</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#aaf39cc7c403d22f46defcd8e4dec822a">  130</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglass_1_1output.html#aaf39cc7c403d22f46defcd8e4dec822a">ReportInterval</a>;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
-<div class="line"><a name="l00138"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a80559b80cefd86f92ade369a047011bf">  138</a></span>&#160;    util::iAssociator* <a class="code" href="classglass_1_1output.html#a80559b80cefd86f92ade369a047011bf">Associator</a>;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#acc1b9b6dfbae12b4a05d024dba26dbfa">addTrackingData</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass_1_1output.html#a14d58919ac1c7b425c1fd4ce281eb123">getTrackingData</a>(std::string <span class="keywordtype">id</span>);</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass_1_1output.html#ac1cf52d65a8517456f760d3ba69f8aca">getNextTrackingData</a>();</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#afb65619379e3c75bec803fb02b15f89b">haveTrackingData</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#afb65619379e3c75bec803fb02b15f89b">haveTrackingData</a>(std::string ID);</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a98a0be1b8be0dd9e1d6683fd3ba5ea51">removeTrackingData</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a98a0be1b8be0dd9e1d6683fd3ba5ea51">removeTrackingData</a>(std::string ID);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a8c659f75dc2641f549cdfef55304485f">clearTrackingData</a>();</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a2736fbcfdfac0e46fd7f4e882225f25e">isDataReady</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#ac81a7002988b37f724840cc8bb9ef11f">isDataChanged</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a83fbc27392a75ae5ead27ebc8c1bd1a8">isDataPublished</a>(std::shared_ptr&lt;json::Object&gt; data,</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                            <span class="keywordtype">bool</span> ignoreVersion = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160; <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#af52a6084453433ade3f0a1aa26fbd899">work</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a715a617c2cd2a2b8bf196c48cff2e647">writeOutput</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a2c30ba1db06da8505f70116bed71bea3">sendOutput</a>(<span class="keyword">const</span> std::string &amp;type, <span class="keyword">const</span> std::string &amp;<span class="keywordtype">id</span>,</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;                            <span class="keyword">const</span> std::string &amp;message) = 0;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    std::string m_sOutputAgencyID;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#aae207c0d594603d6f52a9b4da8f071e7">start</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a8b12417bb48fa5544a2e6d3e815bbfcb">stop</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#ac8ec603c1239527806e221a0fefd85a8">isRunning</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a21fc540187a7c91c7ad9584d7f5b450c">check</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a7e263129ed7ef4d0537626b9023d7ae7">  100</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="classglass_1_1output.html#a7e263129ed7ef4d0537626b9023d7ae7">getSOutputAgencyId</a>() {</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        m_ConfigMutex.lock();</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        std::string outputagency = m_sOutputAgencyID;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        m_ConfigMutex.unlock();</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="keywordflow">return</span> outputagency;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    }</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a663fbc64e414831a1c7fe50218bd020f">  107</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="classglass_1_1output.html#a663fbc64e414831a1c7fe50218bd020f">getSOutputAuthor</a>() {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        m_ConfigMutex.lock();</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        std::string outputauthor = m_sOutputAuthor;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        m_ConfigMutex.unlock();</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordflow">return</span> outputauthor;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a786ab89489446f2528941b2cba272856">  114</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglass_1_1output.html#a786ab89489446f2528941b2cba272856">getISiteListDelay</a>() {</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        m_ConfigMutex.lock();</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordtype">int</span> sitelistdelay = m_iSiteListDelay;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        m_ConfigMutex.unlock();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keywordflow">return</span> sitelistdelay;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a28da7c8f5b4696a5594babc64268985a">  121</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="classglass_1_1output.html#a28da7c8f5b4696a5594babc64268985a">getSStationFile</a>() {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        m_ConfigMutex.lock();</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        std::string stationfile = m_sStationFile;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        m_ConfigMutex.unlock();</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">return</span> stationfile;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#aaf39cc7c403d22f46defcd8e4dec822a">  134</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglass_1_1output.html#aaf39cc7c403d22f46defcd8e4dec822a">ReportInterval</a>;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
+<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="classglass_1_1output.html#a80559b80cefd86f92ade369a047011bf">  142</a></span>&#160;    util::iAssociator* <a class="code" href="classglass_1_1output.html#a80559b80cefd86f92ade369a047011bf">Associator</a>;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#acc1b9b6dfbae12b4a05d024dba26dbfa">addTrackingData</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass_1_1output.html#a14d58919ac1c7b425c1fd4ce281eb123">getTrackingData</a>(std::string <span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass_1_1output.html#ac1cf52d65a8517456f760d3ba69f8aca">getNextTrackingData</a>();</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#afb65619379e3c75bec803fb02b15f89b">haveTrackingData</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#afb65619379e3c75bec803fb02b15f89b">haveTrackingData</a>(std::string ID);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a98a0be1b8be0dd9e1d6683fd3ba5ea51">removeTrackingData</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a98a0be1b8be0dd9e1d6683fd3ba5ea51">removeTrackingData</a>(std::string ID);</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a8c659f75dc2641f549cdfef55304485f">clearTrackingData</a>();</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a2736fbcfdfac0e46fd7f4e882225f25e">isDataReady</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#ac81a7002988b37f724840cc8bb9ef11f">isDataChanged</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a83fbc27392a75ae5ead27ebc8c1bd1a8">isDataPublished</a>(std::shared_ptr&lt;json::Object&gt; data,</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                            <span class="keywordtype">bool</span> ignoreVersion = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#a4d0cd75cc9f7b782913ef39cdbd1bb36">isDataFinished</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1output.html#af52a6084453433ade3f0a1aa26fbd899">work</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a752d9cb0992c7086eb729b46eab35a1f">checkEventsLoop</a>();</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a715a617c2cd2a2b8bf196c48cff2e647">writeOutput</a>(std::shared_ptr&lt;json::Object&gt; data);</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classglass_1_1output.html#a2c30ba1db06da8505f70116bed71bea3">sendOutput</a>(<span class="keyword">const</span> std::string &amp;type, <span class="keyword">const</span> std::string &amp;<span class="keywordtype">id</span>,</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;                            <span class="keyword">const</span> std::string &amp;message) = 0;</div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    std::string m_sOutputAuthor;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    <span class="keywordtype">int</span> m_iSiteListDelay;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    std::string m_sStationFile;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    std::mutex m_ConfigMutex;</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    util::Cache * m_TrackingCache;</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    util::Queue* m_MessageQueue;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    std::vector&lt;int&gt; m_PublicationTimes;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    std::string m_sOutputAgencyID;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    std::string m_sOutputAuthor;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">int</span> m_iSiteListDelay;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    std::string m_sStationFile;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    std::mutex m_ConfigMutex;</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    util::Cache * m_TrackingCache;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    std::mutex m_TrackingCacheMutex;</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordtype">int</span> m_iMessageCounter;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordtype">int</span> m_iEventCounter;</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordtype">int</span> m_iCancelCounter;</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="keywordtype">int</span> m_iExpireCounter;</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordtype">int</span> m_iHypoCounter;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="keywordtype">int</span> m_iLookupCounter;</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="keywordtype">int</span> m_iSiteListCounter;</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    time_t tLastWorkReport;</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    time_t m_tLastSiteRequest;</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    util::ThreadPool * m_ThreadPool;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;};</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;}  <span class="comment">// namespace glass</span></div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="preprocessor">#endif  // OUTPUT_H</span></div>
-<div class="ttc" id="classglass_1_1output_html_a2a82afd3ab15d5c20c61929dfbdfc721"><div class="ttname"><a href="classglass_1_1output.html#a2a82afd3ab15d5c20c61929dfbdfc721">glass::output::sendToOutput</a></div><div class="ttdeci">void sendToOutput(std::shared_ptr&lt; json::Object &gt; &amp;message) override</div><div class="ttdoc">output message sending function </div><div class="ttdef"><b>Definition:</b> output.cpp:216</div></div>
-<div class="ttc" id="classglass_1_1output_html_a80559b80cefd86f92ade369a047011bf"><div class="ttname"><a href="classglass_1_1output.html#a80559b80cefd86f92ade369a047011bf">glass::output::Associator</a></div><div class="ttdeci">util::iAssociator * Associator</div><div class="ttdoc">Pointer to Association class. </div><div class="ttdef"><b>Definition:</b> output.h:138</div></div>
-<div class="ttc" id="classglass_1_1output_html_afb65619379e3c75bec803fb02b15f89b"><div class="ttname"><a href="classglass_1_1output.html#afb65619379e3c75bec803fb02b15f89b">glass::output::haveTrackingData</a></div><div class="ttdeci">bool haveTrackingData(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">check if data is in output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:384</div></div>
-<div class="ttc" id="classglass_1_1output_html_a14d58919ac1c7b425c1fd4ce281eb123"><div class="ttname"><a href="classglass_1_1output.html#a14d58919ac1c7b425c1fd4ce281eb123">glass::output::getTrackingData</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; getTrackingData(std::string id)</div><div class="ttdef"><b>Definition:</b> output.cpp:342</div></div>
-<div class="ttc" id="classglass_1_1output_html_a715a617c2cd2a2b8bf196c48cff2e647"><div class="ttname"><a href="classglass_1_1output.html#a715a617c2cd2a2b8bf196c48cff2e647">glass::output::writeOutput</a></div><div class="ttdeci">void writeOutput(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">output file writing function </div><div class="ttdef"><b>Definition:</b> output.cpp:712</div></div>
-<div class="ttc" id="classglass_1_1output_html_a83fbc27392a75ae5ead27ebc8c1bd1a8"><div class="ttname"><a href="classglass_1_1output.html#a83fbc27392a75ae5ead27ebc8c1bd1a8">glass::output::isDataPublished</a></div><div class="ttdeci">bool isDataPublished(std::shared_ptr&lt; json::Object &gt; data, bool ignoreVersion=true)</div><div class="ttdef"><b>Definition:</b> output.cpp:912</div></div>
-<div class="ttc" id="classglass_1_1output_html_acc1b9b6dfbae12b4a05d024dba26dbfa"><div class="ttname"><a href="classglass_1_1output.html#acc1b9b6dfbae12b4a05d024dba26dbfa">glass::output::addTrackingData</a></div><div class="ttdeci">bool addTrackingData(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">add data to the output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:240</div></div>
-<div class="ttc" id="classglass_1_1output_html_a21fc540187a7c91c7ad9584d7f5b450c"><div class="ttname"><a href="classglass_1_1output.html#a21fc540187a7c91c7ad9584d7f5b450c">glass::output::check</a></div><div class="ttdeci">bool check() override</div><div class="ttdoc">thread pool check function </div><div class="ttdef"><b>Definition:</b> output.cpp:226</div></div>
-<div class="ttc" id="classglass_1_1output_html_a28da7c8f5b4696a5594babc64268985a"><div class="ttname"><a href="classglass_1_1output.html#a28da7c8f5b4696a5594babc64268985a">glass::output::getSStationFile</a></div><div class="ttdeci">const std::string getSStationFile()</div><div class="ttdef"><b>Definition:</b> output.h:117</div></div>
-<div class="ttc" id="classglass_1_1output_html_a638e56211113aa7f01cfb8e13a94d345"><div class="ttname"><a href="classglass_1_1output.html#a638e56211113aa7f01cfb8e13a94d345">glass::output::~output</a></div><div class="ttdeci">~output()</div><div class="ttdoc">output destructor </div><div class="ttdef"><b>Definition:</b> output.cpp:54</div></div>
-<div class="ttc" id="classglass_1_1output_html_a7e263129ed7ef4d0537626b9023d7ae7"><div class="ttname"><a href="classglass_1_1output.html#a7e263129ed7ef4d0537626b9023d7ae7">glass::output::getSOutputAgencyId</a></div><div class="ttdeci">const std::string getSOutputAgencyId()</div><div class="ttdef"><b>Definition:</b> output.h:96</div></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    util::Queue* m_OutputQueue;</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    util::Queue* m_LookupQueue;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    std::vector&lt;int&gt; m_PublicationTimes;</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    <span class="keywordtype">bool</span> m_bPubOnExpiration;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="keywordtype">int</span> m_iMessageCounter;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordtype">int</span> m_iEventCounter;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordtype">int</span> m_iCancelCounter;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keywordtype">int</span> m_iExpireCounter;</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="keywordtype">int</span> m_iHypoCounter;</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keywordtype">int</span> m_iLookupCounter;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keywordtype">int</span> m_iSiteListCounter;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    time_t tLastWorkReport;</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    time_t m_tLastSiteRequest;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    util::ThreadPool *m_ThreadPool;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    std::thread *m_EventThread;</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keywordtype">bool</span> m_bRunEventThread;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordtype">bool</span> m_bEventStarted;</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordtype">bool</span> m_bCheckEventThread;</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    time_t tLastEventCheck;</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    std::mutex m_CheckEventMutex;</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;};</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;}  <span class="comment">// namespace glass</span></div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="preprocessor">#endif  // OUTPUT_H</span></div>
+<div class="ttc" id="classglass_1_1output_html_a80559b80cefd86f92ade369a047011bf"><div class="ttname"><a href="classglass_1_1output.html#a80559b80cefd86f92ade369a047011bf">glass::output::Associator</a></div><div class="ttdeci">util::iAssociator * Associator</div><div class="ttdoc">Pointer to Association class. </div><div class="ttdef"><b>Definition:</b> output.h:142</div></div>
+<div class="ttc" id="classglass_1_1output_html_afd2c7aef2d2f132a23a61c21f5a4946d"><div class="ttname"><a href="classglass_1_1output.html#afd2c7aef2d2f132a23a61c21f5a4946d">glass::output::sendToOutput</a></div><div class="ttdeci">void sendToOutput(std::shared_ptr&lt; json::Object &gt; message) override</div><div class="ttdoc">output message sending function </div><div class="ttdef"><b>Definition:</b> output.cpp:252</div></div>
+<div class="ttc" id="classglass_1_1output_html_afb65619379e3c75bec803fb02b15f89b"><div class="ttname"><a href="classglass_1_1output.html#afb65619379e3c75bec803fb02b15f89b">glass::output::haveTrackingData</a></div><div class="ttdeci">bool haveTrackingData(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">check if data is in output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:539</div></div>
+<div class="ttc" id="classglass_1_1output_html_a14d58919ac1c7b425c1fd4ce281eb123"><div class="ttname"><a href="classglass_1_1output.html#a14d58919ac1c7b425c1fd4ce281eb123">glass::output::getTrackingData</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; getTrackingData(std::string id)</div><div class="ttdef"><b>Definition:</b> output.cpp:495</div></div>
+<div class="ttc" id="classglass_1_1output_html_a715a617c2cd2a2b8bf196c48cff2e647"><div class="ttname"><a href="classglass_1_1output.html#a715a617c2cd2a2b8bf196c48cff2e647">glass::output::writeOutput</a></div><div class="ttdeci">void writeOutput(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">output file writing function </div><div class="ttdef"><b>Definition:</b> output.cpp:943</div></div>
+<div class="ttc" id="classglass_1_1output_html_a83fbc27392a75ae5ead27ebc8c1bd1a8"><div class="ttname"><a href="classglass_1_1output.html#a83fbc27392a75ae5ead27ebc8c1bd1a8">glass::output::isDataPublished</a></div><div class="ttdeci">bool isDataPublished(std::shared_ptr&lt; json::Object &gt; data, bool ignoreVersion=true)</div><div class="ttdef"><b>Definition:</b> output.cpp:1143</div></div>
+<div class="ttc" id="classglass_1_1output_html_acc1b9b6dfbae12b4a05d024dba26dbfa"><div class="ttname"><a href="classglass_1_1output.html#acc1b9b6dfbae12b4a05d024dba26dbfa">glass::output::addTrackingData</a></div><div class="ttdeci">bool addTrackingData(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">add data to the output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:391</div></div>
+<div class="ttc" id="classglass_1_1output_html_a21fc540187a7c91c7ad9584d7f5b450c"><div class="ttname"><a href="classglass_1_1output.html#a21fc540187a7c91c7ad9584d7f5b450c">glass::output::check</a></div><div class="ttdeci">bool check() override</div><div class="ttdoc">thread pool check function </div><div class="ttdef"><b>Definition:</b> output.cpp:345</div></div>
+<div class="ttc" id="classglass_1_1output_html_a752d9cb0992c7086eb729b46eab35a1f"><div class="ttname"><a href="classglass_1_1output.html#a752d9cb0992c7086eb729b46eab35a1f">glass::output::checkEventsLoop</a></div><div class="ttdeci">void checkEventsLoop()</div><div class="ttdef"><b>Definition:</b> output.cpp:576</div></div>
+<div class="ttc" id="classglass_1_1output_html_a8b12417bb48fa5544a2e6d3e815bbfcb"><div class="ttname"><a href="classglass_1_1output.html#a8b12417bb48fa5544a2e6d3e815bbfcb">glass::output::stop</a></div><div class="ttdeci">bool stop() override</div><div class="ttdef"><b>Definition:</b> output.cpp:307</div></div>
+<div class="ttc" id="classglass_1_1output_html_a28da7c8f5b4696a5594babc64268985a"><div class="ttname"><a href="classglass_1_1output.html#a28da7c8f5b4696a5594babc64268985a">glass::output::getSStationFile</a></div><div class="ttdeci">const std::string getSStationFile()</div><div class="ttdef"><b>Definition:</b> output.h:121</div></div>
+<div class="ttc" id="classglass_1_1output_html_a638e56211113aa7f01cfb8e13a94d345"><div class="ttname"><a href="classglass_1_1output.html#a638e56211113aa7f01cfb8e13a94d345">glass::output::~output</a></div><div class="ttdeci">~output()</div><div class="ttdoc">output destructor </div><div class="ttdef"><b>Definition:</b> output.cpp:61</div></div>
+<div class="ttc" id="classglass_1_1output_html_a7e263129ed7ef4d0537626b9023d7ae7"><div class="ttname"><a href="classglass_1_1output.html#a7e263129ed7ef4d0537626b9023d7ae7">glass::output::getSOutputAgencyId</a></div><div class="ttdeci">const std::string getSOutputAgencyId()</div><div class="ttdef"><b>Definition:</b> output.h:100</div></div>
 <div class="ttc" id="classglass_1_1output_html"><div class="ttname"><a href="classglass_1_1output.html">glass::output</a></div><div class="ttdoc">glass output class </div><div class="ttdef"><b>Definition:</b> output.h:39</div></div>
-<div class="ttc" id="classglass_1_1output_html_a8c659f75dc2641f549cdfef55304485f"><div class="ttname"><a href="classglass_1_1output.html#a8c659f75dc2641f549cdfef55304485f">glass::output::clearTrackingData</a></div><div class="ttdeci">void clearTrackingData()</div><div class="ttdoc">clear output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:415</div></div>
-<div class="ttc" id="classglass_1_1output_html_ac1cf52d65a8517456f760d3ba69f8aca"><div class="ttname"><a href="classglass_1_1output.html#ac1cf52d65a8517456f760d3ba69f8aca">glass::output::getNextTrackingData</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; getNextTrackingData()</div><div class="ttdoc">get data from the output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:362</div></div>
-<div class="ttc" id="classglass_1_1output_html_a786ab89489446f2528941b2cba272856"><div class="ttname"><a href="classglass_1_1output.html#a786ab89489446f2528941b2cba272856">glass::output::getISiteListDelay</a></div><div class="ttdeci">int getISiteListDelay()</div><div class="ttdef"><b>Definition:</b> output.h:110</div></div>
-<div class="ttc" id="classglass_1_1output_html_ac81a7002988b37f724840cc8bb9ef11f"><div class="ttname"><a href="classglass_1_1output.html#ac81a7002988b37f724840cc8bb9ef11f">glass::output::isDataChanged</a></div><div class="ttdeci">bool isDataChanged(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdef"><b>Definition:</b> output.cpp:870</div></div>
+<div class="ttc" id="classglass_1_1output_html_a8c659f75dc2641f549cdfef55304485f"><div class="ttname"><a href="classglass_1_1output.html#a8c659f75dc2641f549cdfef55304485f">glass::output::clearTrackingData</a></div><div class="ttdeci">void clearTrackingData()</div><div class="ttdoc">clear output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:571</div></div>
+<div class="ttc" id="classglass_1_1output_html_ac1cf52d65a8517456f760d3ba69f8aca"><div class="ttname"><a href="classglass_1_1output.html#ac1cf52d65a8517456f760d3ba69f8aca">glass::output::getNextTrackingData</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; getNextTrackingData()</div><div class="ttdoc">get data from the output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:516</div></div>
+<div class="ttc" id="classglass_1_1output_html_a786ab89489446f2528941b2cba272856"><div class="ttname"><a href="classglass_1_1output.html#a786ab89489446f2528941b2cba272856">glass::output::getISiteListDelay</a></div><div class="ttdeci">int getISiteListDelay()</div><div class="ttdef"><b>Definition:</b> output.h:114</div></div>
+<div class="ttc" id="classglass_1_1output_html_ac81a7002988b37f724840cc8bb9ef11f"><div class="ttname"><a href="classglass_1_1output.html#ac81a7002988b37f724840cc8bb9ef11f">glass::output::isDataChanged</a></div><div class="ttdeci">bool isDataChanged(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdef"><b>Definition:</b> output.cpp:1101</div></div>
+<div class="ttc" id="classglass_1_1output_html_ac8ec603c1239527806e221a0fefd85a8"><div class="ttname"><a href="classglass_1_1output.html#ac8ec603c1239527806e221a0fefd85a8">glass::output::isRunning</a></div><div class="ttdeci">bool isRunning() override</div><div class="ttdef"><b>Definition:</b> output.cpp:340</div></div>
 <div class="ttc" id="classglass_1_1output_html_a8265cbc43b810830c27a842360246998"><div class="ttname"><a href="classglass_1_1output.html#a8265cbc43b810830c27a842360246998">glass::output::output</a></div><div class="ttdeci">output()</div><div class="ttdoc">output constructor </div><div class="ttdef"><b>Definition:</b> output.cpp:20</div></div>
-<div class="ttc" id="classglass_1_1output_html_a663fbc64e414831a1c7fe50218bd020f"><div class="ttname"><a href="classglass_1_1output.html#a663fbc64e414831a1c7fe50218bd020f">glass::output::getSOutputAuthor</a></div><div class="ttdeci">const std::string getSOutputAuthor()</div><div class="ttdef"><b>Definition:</b> output.h:103</div></div>
-<div class="ttc" id="classglass_1_1output_html_a98a0be1b8be0dd9e1d6683fd3ba5ea51"><div class="ttname"><a href="classglass_1_1output.html#a98a0be1b8be0dd9e1d6683fd3ba5ea51">glass::output::removeTrackingData</a></div><div class="ttdeci">bool removeTrackingData(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">remove data from the output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:304</div></div>
-<div class="ttc" id="classglass_1_1output_html_aaf39cc7c403d22f46defcd8e4dec822a"><div class="ttname"><a href="classglass_1_1output.html#aaf39cc7c403d22f46defcd8e4dec822a">glass::output::ReportInterval</a></div><div class="ttdeci">int ReportInterval</div><div class="ttdoc">Information Report interval. </div><div class="ttdef"><b>Definition:</b> output.h:130</div></div>
-<div class="ttc" id="classglass_1_1output_html_af52a6084453433ade3f0a1aa26fbd899"><div class="ttname"><a href="classglass_1_1output.html#af52a6084453433ade3f0a1aa26fbd899">glass::output::work</a></div><div class="ttdeci">bool work() override</div><div class="ttdoc">output work function </div><div class="ttdef"><b>Definition:</b> output.cpp:419</div></div>
+<div class="ttc" id="classglass_1_1output_html_aae207c0d594603d6f52a9b4da8f071e7"><div class="ttname"><a href="classglass_1_1output.html#aae207c0d594603d6f52a9b4da8f071e7">glass::output::start</a></div><div class="ttdeci">bool start() override</div><div class="ttdef"><b>Definition:</b> output.cpp:283</div></div>
+<div class="ttc" id="classglass_1_1output_html_a663fbc64e414831a1c7fe50218bd020f"><div class="ttname"><a href="classglass_1_1output.html#a663fbc64e414831a1c7fe50218bd020f">glass::output::getSOutputAuthor</a></div><div class="ttdeci">const std::string getSOutputAuthor()</div><div class="ttdef"><b>Definition:</b> output.h:107</div></div>
+<div class="ttc" id="classglass_1_1output_html_a98a0be1b8be0dd9e1d6683fd3ba5ea51"><div class="ttname"><a href="classglass_1_1output.html#a98a0be1b8be0dd9e1d6683fd3ba5ea51">glass::output::removeTrackingData</a></div><div class="ttdeci">bool removeTrackingData(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">remove data from the output tracking cache </div><div class="ttdef"><b>Definition:</b> output.cpp:456</div></div>
+<div class="ttc" id="classglass_1_1output_html_aaf39cc7c403d22f46defcd8e4dec822a"><div class="ttname"><a href="classglass_1_1output.html#aaf39cc7c403d22f46defcd8e4dec822a">glass::output::ReportInterval</a></div><div class="ttdeci">int ReportInterval</div><div class="ttdoc">Information Report interval. </div><div class="ttdef"><b>Definition:</b> output.h:134</div></div>
+<div class="ttc" id="classglass_1_1output_html_af52a6084453433ade3f0a1aa26fbd899"><div class="ttname"><a href="classglass_1_1output.html#af52a6084453433ade3f0a1aa26fbd899">glass::output::work</a></div><div class="ttdeci">bool work() override</div><div class="ttdoc">output work function </div><div class="ttdef"><b>Definition:</b> output.cpp:654</div></div>
 <div class="ttc" id="classglass_1_1output_html_a2c30ba1db06da8505f70116bed71bea3"><div class="ttname"><a href="classglass_1_1output.html#a2c30ba1db06da8505f70116bed71bea3">glass::output::sendOutput</a></div><div class="ttdeci">virtual void sendOutput(const std::string &amp;type, const std::string &amp;id, const std::string &amp;message)=0</div></div>
-<div class="ttc" id="classglass_1_1output_html_a9b6e31f0e2c6cb30024f1ecac986d7a1"><div class="ttname"><a href="classglass_1_1output.html#a9b6e31f0e2c6cb30024f1ecac986d7a1">glass::output::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">output clear function </div><div class="ttdef"><b>Definition:</b> output.cpp:198</div></div>
-<div class="ttc" id="classglass_1_1output_html_ae9a435c7ed737e0bd5d26b2ff4768224"><div class="ttname"><a href="classglass_1_1output.html#ae9a435c7ed737e0bd5d26b2ff4768224">glass::output::setup</a></div><div class="ttdeci">bool setup(json::Object *config) override</div><div class="ttdoc">output configuration function </div><div class="ttdef"><b>Definition:</b> output.cpp:74</div></div>
-<div class="ttc" id="classglass_1_1output_html_a2736fbcfdfac0e46fd7f4e882225f25e"><div class="ttname"><a href="classglass_1_1output.html#a2736fbcfdfac0e46fd7f4e882225f25e">glass::output::isDataReady</a></div><div class="ttdeci">bool isDataReady(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">check to see if detection data is ready for output </div><div class="ttdef"><b>Definition:</b> output.cpp:767</div></div>
+<div class="ttc" id="classglass_1_1output_html_a9b6e31f0e2c6cb30024f1ecac986d7a1"><div class="ttname"><a href="classglass_1_1output.html#a9b6e31f0e2c6cb30024f1ecac986d7a1">glass::output::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">output clear function </div><div class="ttdef"><b>Definition:</b> output.cpp:234</div></div>
+<div class="ttc" id="classglass_1_1output_html_ae9a435c7ed737e0bd5d26b2ff4768224"><div class="ttname"><a href="classglass_1_1output.html#ae9a435c7ed737e0bd5d26b2ff4768224">glass::output::setup</a></div><div class="ttdeci">bool setup(json::Object *config) override</div><div class="ttdoc">output configuration function </div><div class="ttdef"><b>Definition:</b> output.cpp:87</div></div>
+<div class="ttc" id="classglass_1_1output_html_a4d0cd75cc9f7b782913ef39cdbd1bb36"><div class="ttname"><a href="classglass_1_1output.html#a4d0cd75cc9f7b782913ef39cdbd1bb36">glass::output::isDataFinished</a></div><div class="ttdeci">bool isDataFinished(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdef"><b>Definition:</b> output.cpp:1194</div></div>
+<div class="ttc" id="classglass_1_1output_html_a2736fbcfdfac0e46fd7f4e882225f25e"><div class="ttname"><a href="classglass_1_1output.html#a2736fbcfdfac0e46fd7f4e882225f25e">glass::output::isDataReady</a></div><div class="ttdeci">bool isDataReady(std::shared_ptr&lt; json::Object &gt; data)</div><div class="ttdoc">check to see if detection data is ready for output </div><div class="ttdef"><b>Definition:</b> output.cpp:998</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Mar 26 2018 17:00:59 for output by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 18 2018 21:22:07 for output by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

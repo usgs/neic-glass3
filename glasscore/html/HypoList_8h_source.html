@@ -107,155 +107,163 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;mutex&gt;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Glass_8h.html">Glass.h</a>&quot;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span>glasscore {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">// forward declarations</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">class </span>CGlass;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">class </span>CSite;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">class </span>CHypo;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">class </span>CPick;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">class </span>CCorrelation;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classglasscore_1_1CHypoList.html">   47</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglasscore_1_1CHypoList.html">CHypoList</a> {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglasscore_1_1CHypoList.html#a6fe46df8f7f38e58d67389da4f80805d">CHypoList</a>(<span class="keywordtype">int</span> numThreads = 1, <span class="keywordtype">int</span> sleepTime = 10,</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                        <span class="keywordtype">int</span> checkInterval = 300);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="classglasscore_1_1CHypoList.html#acc4ad380256c4d9e4b4f1cf7e2628192">~CHypoList</a>();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a9c2b91917d8a234221a11f30e0669050">clear</a>();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0cd9e343baccfee7e44626af604de66d">clearHypos</a>();</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#ab4a88788099fb10fbf84c1b9da42d503">dispatch</a>(std::shared_ptr&lt;json::Object&gt; com);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#af057ac332aeeec03a442ea161eafd33f">indexHypo</a>(<span class="keywordtype">double</span> tOrg);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a870a09a60057cb9c61adbd2b5120d8e5">listHypos</a>();</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a25ff4065ac5aea83e9ab7f8f888a680b">pushFifo</a>(std::shared_ptr&lt;CHypo&gt; hyp);</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    std::shared_ptr&lt;CHypo&gt; <a class="code" href="classglasscore_1_1CHypoList.html#a23225cd3de2b3f270a6e9eae36c9cdb8">popFifo</a>();</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a067390d5dabdec48efdb458397818071">getFifoSize</a>();</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a635e2aff0dd313390840d6d64fdba0f0">addHypo</a>(std::shared_ptr&lt;CHypo&gt; hypo, <span class="keywordtype">bool</span> scheduleProcessing = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#aec506e1d5c1744e3a961ea7355858d5f">remHypo</a>(std::shared_ptr&lt;CHypo&gt; hypo, <span class="keywordtype">bool</span> reportCancel = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    std::shared_ptr&lt;CHypo&gt; <a class="code" href="classglasscore_1_1CHypoList.html#a8af13b34599f83bde8a2cdc9e4803ded">findHypo</a>(<span class="keywordtype">double</span> t1, <span class="keywordtype">double</span> t2);</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0ee3cc563e0d6ccd1d2c3492d7966a92">associate</a>(std::shared_ptr&lt;CPick&gt; pk);</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0ee3cc563e0d6ccd1d2c3492d7966a92">associate</a>(std::shared_ptr&lt;CCorrelation&gt; corr);</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a92965d05eec5d90b8fd642fa9376bb5a">resolve</a>(std::shared_ptr&lt;CHypo&gt; hyp);</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#aabc4ae218e0e41cec24ff9cdf44479b0">darwin</a>();</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a27e347659c72d699921b63d89a48d908">evolve</a>(std::shared_ptr&lt;CHypo&gt; hyp, <span class="keywordtype">int</span> announce = 0);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0017940461040b4b43e1f65086188c85">reqHypo</a>(std::shared_ptr&lt;json::Object&gt; com);</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="comment">// bool merge(std::shared_ptr&lt;CHypo&gt; hyp);</span></div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="comment"></span>    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a95d646ad7a94b9547d312a0faeb79825">statusCheck</a>();</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="keyword">const</span> <a class="code" href="classglasscore_1_1CGlass.html">CGlass</a>* <a class="code" href="classglasscore_1_1CHypoList.html#ad858a531208f6983ccd7ab92a0c316d5">getGlass</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a01040d51855e895ac1da102a10e1c03b">setGlass</a>(<a class="code" href="classglasscore_1_1CGlass.html">CGlass</a>* glass);</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a4a4422c10f3e1458f6c35a8c84b710f3">getNHypo</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;random&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Glass_8h.html">Glass.h</a>&quot;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">namespace </span>glasscore {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">// forward declarations</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">class </span>CGlass;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">class </span>CSite;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">class </span>CHypo;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">class </span>CPick;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">class </span>CCorrelation;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classglasscore_1_1CHypoList.html">   48</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglasscore_1_1CHypoList.html">CHypoList</a> {</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglasscore_1_1CHypoList.html#ad06bfc449378568291d12e94fe5fc16f">CHypoList</a>(<span class="keywordtype">int</span> numThreads = 1, <span class="keywordtype">int</span> sleepTime = 50,</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                        <span class="keywordtype">int</span> checkInterval = 300);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="classglasscore_1_1CHypoList.html#acc4ad380256c4d9e4b4f1cf7e2628192">~CHypoList</a>();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a635e2aff0dd313390840d6d64fdba0f0">addHypo</a>(std::shared_ptr&lt;CHypo&gt; hypo, <span class="keywordtype">bool</span> scheduleProcessing = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0ee3cc563e0d6ccd1d2c3492d7966a92">associate</a>(std::shared_ptr&lt;CPick&gt; pk);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0ee3cc563e0d6ccd1d2c3492d7966a92">associate</a>(std::shared_ptr&lt;CCorrelation&gt; corr);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a9c2b91917d8a234221a11f30e0669050">clear</a>();</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0cd9e343baccfee7e44626af604de66d">clearHypos</a>();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#aabc4ae218e0e41cec24ff9cdf44479b0">darwin</a>();</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#ab4a88788099fb10fbf84c1b9da42d503">dispatch</a>(std::shared_ptr&lt;json::Object&gt; com);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0d572b9387dcfb3c354cecf0ccf6fa09">evolve</a>(std::shared_ptr&lt;CHypo&gt; hyp);</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    std::shared_ptr&lt;CHypo&gt; <a class="code" href="classglasscore_1_1CHypoList.html#a8af13b34599f83bde8a2cdc9e4803ded">findHypo</a>(<span class="keywordtype">double</span> t1, <span class="keywordtype">double</span> t2);</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a067390d5dabdec48efdb458397818071">getFifoSize</a>();</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keyword">const</span> <a class="code" href="classglasscore_1_1CGlass.html">CGlass</a>* <a class="code" href="classglasscore_1_1CHypoList.html#ad858a531208f6983ccd7ab92a0c316d5">getGlass</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    std::vector&lt;std::weak_ptr&lt;CHypo&gt;&gt; <a class="code" href="classglasscore_1_1CHypoList.html#a3eca5009050baeaf7f645b8c995b19c9">getHypos</a>(<span class="keywordtype">double</span> t1, <span class="keywordtype">double</span> t2);</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a4a4422c10f3e1458f6c35a8c84b710f3">getNHypo</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a24b1346164a9a798e3165db67ecaa92f">getNHypoMax</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a6b6d2e6b0f661f0031ca08448c05dd2c">getNHypoTotal</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a98f126bca5440900ab2b1dc4aed62e88">getVHypoSize</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#af057ac332aeeec03a442ea161eafd33f">indexHypo</a>(<span class="keywordtype">double</span> tOrg);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a870a09a60057cb9c61adbd2b5120d8e5">listHypos</a>();</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#ae3cc211c8a75316e284f278866fad0f7">mergeCloseEvents</a>(std::shared_ptr&lt;CHypo&gt; hyp);</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a25ff4065ac5aea83e9ab7f8f888a680b">pushFifo</a>(std::shared_ptr&lt;CHypo&gt; hyp);</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    std::shared_ptr&lt;CHypo&gt; <a class="code" href="classglasscore_1_1CHypoList.html#a23225cd3de2b3f270a6e9eae36c9cdb8">popFifo</a>();</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#aec506e1d5c1744e3a961ea7355858d5f">remHypo</a>(std::shared_ptr&lt;CHypo&gt; hypo, <span class="keywordtype">bool</span> reportCancel = <span class="keyword">true</span>);</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a24b1346164a9a798e3165db67ecaa92f">getNHypoMax</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a3eb688ff9869f4b4da058d651f503a1b">setNHypoMax</a>(<span class="keywordtype">int</span> hypoMax);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a0017940461040b4b43e1f65086188c85">reqHypo</a>(std::shared_ptr&lt;json::Object&gt; com);</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a6b6d2e6b0f661f0031ca08448c05dd2c">getNHypoTotal</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CHypoList.html#a98f126bca5440900ab2b1dc4aed62e88">getVHypoSize</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    <span class="keywordtype">void</span> sort();</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keywordtype">void</span> processHypos();</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a92965d05eec5d90b8fd642fa9376bb5a">resolve</a>(std::shared_ptr&lt;CHypo&gt; hyp);</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a01040d51855e895ac1da102a10e1c03b">setGlass</a>(<a class="code" href="classglasscore_1_1CGlass.html">CGlass</a>* glass);</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CHypoList.html#a3eb688ff9869f4b4da058d651f503a1b">setNHypoMax</a>(<span class="keywordtype">int</span> hypoMax);</div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="keywordtype">void</span> jobSleep();</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CHypoList.html#a95d646ad7a94b9547d312a0faeb79825">statusCheck</a>();</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordtype">void</span> setStatus(<span class="keywordtype">bool</span> status);</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordtype">void</span> jobSleep();</div>
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    <a class="code" href="classglasscore_1_1CGlass.html">CGlass</a> *pGlass;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="keywordtype">int</span> nHypoTotal;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    <span class="keywordtype">int</span> nHypoMax;</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    <span class="keywordtype">int</span> nHypo;</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    std::vector&lt;std::string&gt; qFifo;</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    std::mutex m_QueueMutex;</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    std::vector&lt;std::pair&lt;double, std::string&gt;&gt; vHypo;</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="keywordtype">void</span> processHypos();</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    <span class="keywordtype">void</span> setStatus(<span class="keywordtype">bool</span> status);</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="keywordtype">void</span> sort();</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <a class="code" href="classglasscore_1_1CGlass.html">CGlass</a> *pGlass;</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keywordtype">int</span> nHypoTotal;</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keywordtype">int</span> nHypoMax;</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    <span class="keywordtype">int</span> nHypo;</div>
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    std::map&lt;std::string, std::shared_ptr&lt;CHypo&gt;&gt; mHypo;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    std::vector&lt;std::string&gt; qFifo;</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex m_vHypoMutex;</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex m_HypoListMutex;</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    std::vector&lt;std::thread&gt; vProcessThreads;</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    <span class="keywordtype">int</span> m_iNumThreads;</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    std::mutex m_QueueMutex;</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    std::vector&lt;std::pair&lt;double, std::string&gt;&gt; vHypo;</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    std::map&lt;std::string, std::shared_ptr&lt;CHypo&gt;&gt; mHypo;</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex m_vHypoMutex;</div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;    std::map&lt;std::thread::id, bool&gt; m_ThreadStatusMap;</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    <span class="keywordtype">int</span> m_iSleepTimeMS;</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    std::mutex m_StatusMutex;</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    <span class="keywordtype">int</span> m_iStatusCheckInterval;</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    time_t tLastStatusCheck;</div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;    <span class="keywordtype">bool</span> m_bRunProcessLoop;</div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;};</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;<span class="preprocessor">#endif  // HYPOLIST_H</span></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a635e2aff0dd313390840d6d64fdba0f0"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a635e2aff0dd313390840d6d64fdba0f0">glasscore::CHypoList::addHypo</a></div><div class="ttdeci">bool addHypo(std::shared_ptr&lt; CHypo &gt; hypo, bool scheduleProcessing=true)</div><div class="ttdoc">Add hypo to list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:279</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a92965d05eec5d90b8fd642fa9376bb5a"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a92965d05eec5d90b8fd642fa9376bb5a">glasscore::CHypoList::resolve</a></div><div class="ttdeci">bool resolve(std::shared_ptr&lt; CHypo &gt; hyp)</div><div class="ttdoc">Ensure all picks in the hypo belong to hypo. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:786</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_af057ac332aeeec03a442ea161eafd33f"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#af057ac332aeeec03a442ea161eafd33f">glasscore::CHypoList::indexHypo</a></div><div class="ttdeci">int indexHypo(double tOrg)</div><div class="ttdoc">Get insertion index for hypo. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:138</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a067390d5dabdec48efdb458397818071"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a067390d5dabdec48efdb458397818071">glasscore::CHypoList::getFifoSize</a></div><div class="ttdeci">int getFifoSize()</div><div class="ttdoc">Get the current size of the hypocenter processing queue. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:270</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a98f126bca5440900ab2b1dc4aed62e88"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a98f126bca5440900ab2b1dc4aed62e88">glasscore::CHypoList::getVHypoSize</a></div><div class="ttdeci">int getVHypoSize() const </div><div class="ttdoc">Get the current size of the hypocenter list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1488</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a8af13b34599f83bde8a2cdc9e4803ded"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a8af13b34599f83bde8a2cdc9e4803ded">glasscore::CHypoList::findHypo</a></div><div class="ttdeci">std::shared_ptr&lt; CHypo &gt; findHypo(double t1, double t2)</div><div class="ttdoc">Find CHypo in given time range. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:446</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a95d646ad7a94b9547d312a0faeb79825"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a95d646ad7a94b9547d312a0faeb79825">glasscore::CHypoList::statusCheck</a></div><div class="ttdeci">bool statusCheck()</div><div class="ttdoc">Merge event. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1403</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a01040d51855e895ac1da102a10e1c03b"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a01040d51855e895ac1da102a10e1c03b">glasscore::CHypoList::setGlass</a></div><div class="ttdeci">void setGlass(CGlass *glass)</div><div class="ttdoc">CGlass setter. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1463</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a9c2b91917d8a234221a11f30e0669050"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a9c2b91917d8a234221a11f30e0669050">glasscore::CHypoList::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">CHypoList clear function. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:79</div></div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex m_HypoListMutex;</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    std::vector&lt;std::thread&gt; vProcessThreads;</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    <span class="keywordtype">int</span> m_iNumThreads;</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    std::map&lt;std::thread::id, bool&gt; m_ThreadStatusMap;</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    <span class="keywordtype">int</span> m_iSleepTimeMS;</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    std::mutex m_StatusMutex;</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;    <span class="keywordtype">int</span> m_iStatusCheckInterval;</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    time_t tLastStatusCheck;</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    <span class="keywordtype">bool</span> m_bRunProcessLoop;</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    std::default_random_engine m_RandomGenerator;</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;};</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;<span class="preprocessor">#endif  // HYPOLIST_H</span></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a635e2aff0dd313390840d6d64fdba0f0"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a635e2aff0dd313390840d6d64fdba0f0">glasscore::CHypoList::addHypo</a></div><div class="ttdeci">bool addHypo(std::shared_ptr&lt; CHypo &gt; hypo, bool scheduleProcessing=true)</div><div class="ttdoc">Add hypo to list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:84</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a92965d05eec5d90b8fd642fa9376bb5a"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a92965d05eec5d90b8fd642fa9376bb5a">glasscore::CHypoList::resolve</a></div><div class="ttdeci">bool resolve(std::shared_ptr&lt; CHypo &gt; hyp)</div><div class="ttdoc">Ensure all picks in the hypo belong to hypo. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1469</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_af057ac332aeeec03a442ea161eafd33f"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#af057ac332aeeec03a442ea161eafd33f">glasscore::CHypoList::indexHypo</a></div><div class="ttdeci">int indexHypo(double tOrg)</div><div class="ttdoc">Get insertion index for hypo. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:954</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a067390d5dabdec48efdb458397818071"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a067390d5dabdec48efdb458397818071">glasscore::CHypoList::getFifoSize</a></div><div class="ttdeci">int getFifoSize()</div><div class="ttdoc">Get the current size of the hypocenter processing queue. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:856</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a3eca5009050baeaf7f645b8c995b19c9"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a3eca5009050baeaf7f645b8c995b19c9">glasscore::CHypoList::getHypos</a></div><div class="ttdeci">std::vector&lt; std::weak_ptr&lt; CHypo &gt; &gt; getHypos(double t1, double t2)</div><div class="ttdoc">Get list of CHypos in given time range. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:870</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a98f126bca5440900ab2b1dc4aed62e88"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a98f126bca5440900ab2b1dc4aed62e88">glasscore::CHypoList::getVHypoSize</a></div><div class="ttdeci">int getVHypoSize() const </div><div class="ttdoc">Get the current size of the hypocenter list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:948</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a0d572b9387dcfb3c354cecf0ccf6fa09"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a0d572b9387dcfb3c354cecf0ccf6fa09">glasscore::CHypoList::evolve</a></div><div class="ttdeci">bool evolve(std::shared_ptr&lt; CHypo &gt; hyp)</div><div class="ttdoc">Evolve provided hypocenter. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:581</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_ad06bfc449378568291d12e94fe5fc16f"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#ad06bfc449378568291d12e94fe5fc16f">glasscore::CHypoList::CHypoList</a></div><div class="ttdeci">CHypoList(int numThreads=1, int sleepTime=50, int checkInterval=300)</div><div class="ttdoc">CHypoList constructor. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:36</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a8af13b34599f83bde8a2cdc9e4803ded"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a8af13b34599f83bde8a2cdc9e4803ded">glasscore::CHypoList::findHypo</a></div><div class="ttdeci">std::shared_ptr&lt; CHypo &gt; findHypo(double t1, double t2)</div><div class="ttdoc">Find CHypo in given time range. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:809</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a95d646ad7a94b9547d312a0faeb79825"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a95d646ad7a94b9547d312a0faeb79825">glasscore::CHypoList::statusCheck</a></div><div class="ttdeci">bool statusCheck()</div><div class="ttdoc">check to see if each thread is still functional </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1522</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a01040d51855e895ac1da102a10e1c03b"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a01040d51855e895ac1da102a10e1c03b">glasscore::CHypoList::setGlass</a></div><div class="ttdeci">void setGlass(CGlass *glass)</div><div class="ttdoc">CGlass setter. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1493</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a9c2b91917d8a234221a11f30e0669050"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a9c2b91917d8a234221a11f30e0669050">glasscore::CHypoList::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">CHypoList clear function. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:430</div></div>
 <div class="ttc" id="classglasscore_1_1CGlass_html"><div class="ttname"><a href="classglasscore_1_1CGlass.html">glasscore::CGlass</a></div><div class="ttdoc">glasscore interface class </div><div class="ttdef"><b>Definition:</b> Glass.h:49</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a3eb688ff9869f4b4da058d651f503a1b"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a3eb688ff9869f4b4da058d651f503a1b">glasscore::CHypoList::setNHypoMax</a></div><div class="ttdeci">void setNHypoMax(int hypoMax)</div><div class="ttdoc">nHypoMax Setter </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1478</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_aabc4ae218e0e41cec24ff9cdf44479b0"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#aabc4ae218e0e41cec24ff9cdf44479b0">glasscore::CHypoList::darwin</a></div><div class="ttdeci">void darwin()</div><div class="ttdoc">Process all hypocenters in the queue. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:808</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a24b1346164a9a798e3165db67ecaa92f"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a24b1346164a9a798e3165db67ecaa92f">glasscore::CHypoList::getNHypoMax</a></div><div class="ttdeci">int getNHypoMax() const </div><div class="ttdoc">nHypoMax getter </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1473</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_aec506e1d5c1744e3a961ea7355858d5f"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#aec506e1d5c1744e3a961ea7355858d5f">glasscore::CHypoList::remHypo</a></div><div class="ttdeci">void remHypo(std::shared_ptr&lt; CHypo &gt; hypo, bool reportCancel=true)</div><div class="ttdoc">Remove hypo from list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:387</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a6fe46df8f7f38e58d67389da4f80805d"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a6fe46df8f7f38e58d67389da4f80805d">glasscore::CHypoList::CHypoList</a></div><div class="ttdeci">CHypoList(int numThreads=1, int sleepTime=10, int checkInterval=300)</div><div class="ttdoc">CHypoList constructor. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:35</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a0017940461040b4b43e1f65086188c85"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a0017940461040b4b43e1f65086188c85">glasscore::CHypoList::reqHypo</a></div><div class="ttdeci">bool reqHypo(std::shared_ptr&lt; json::Object &gt; com)</div><div class="ttdoc">Cause CHypoList to generate a Hypo message for a hypocenter. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1280</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a0cd9e343baccfee7e44626af604de66d"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a0cd9e343baccfee7e44626af604de66d">glasscore::CHypoList::clearHypos</a></div><div class="ttdeci">void clearHypos()</div><div class="ttdoc">Remove all hypos from hypo list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:87</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a4a4422c10f3e1458f6c35a8c84b710f3"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a4a4422c10f3e1458f6c35a8c84b710f3">glasscore::CHypoList::getNHypo</a></div><div class="ttdeci">int getNHypo() const </div><div class="ttdoc">nHypo getter </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1468</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a870a09a60057cb9c61adbd2b5120d8e5"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a870a09a60057cb9c61adbd2b5120d8e5">glasscore::CHypoList::listHypos</a></div><div class="ttdeci">void listHypos()</div><div class="ttdoc">Print basic values to screen for hypocenter list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:189</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html"><div class="ttname"><a href="classglasscore_1_1CHypoList.html">glasscore::CHypoList</a></div><div class="ttdoc">glasscore hypocenter list class </div><div class="ttdef"><b>Definition:</b> HypoList.h:47</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_acc4ad380256c4d9e4b4f1cf7e2628192"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#acc4ad380256c4d9e4b4f1cf7e2628192">glasscore::CHypoList::~CHypoList</a></div><div class="ttdeci">~CHypoList()</div><div class="ttdoc">CHypoList destructor. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:60</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a6b6d2e6b0f661f0031ca08448c05dd2c"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a6b6d2e6b0f661f0031ca08448c05dd2c">glasscore::CHypoList::getNHypoTotal</a></div><div class="ttdeci">int getNHypoTotal() const </div><div class="ttdoc">nHypoTotal getter </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1483</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a23225cd3de2b3f270a6e9eae36c9cdb8"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a23225cd3de2b3f270a6e9eae36c9cdb8">glasscore::CHypoList::popFifo</a></div><div class="ttdeci">std::shared_ptr&lt; CHypo &gt; popFifo()</div><div class="ttdoc">Get hypo from processing queue. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:239</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a25ff4065ac5aea83e9ab7f8f888a680b"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a25ff4065ac5aea83e9ab7f8f888a680b">glasscore::CHypoList::pushFifo</a></div><div class="ttdeci">int pushFifo(std::shared_ptr&lt; CHypo &gt; hyp)</div><div class="ttdoc">Add hypo to processing queue. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:205</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_ad858a531208f6983ccd7ab92a0c316d5"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#ad858a531208f6983ccd7ab92a0c316d5">glasscore::CHypoList::getGlass</a></div><div class="ttdeci">const CGlass * getGlass() const </div><div class="ttdoc">CGlass getter. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1458</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a27e347659c72d699921b63d89a48d908"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a27e347659c72d699921b63d89a48d908">glasscore::CHypoList::evolve</a></div><div class="ttdeci">bool evolve(std::shared_ptr&lt; CHypo &gt; hyp, int announce=0)</div><div class="ttdoc">Evolve provided hypocenter. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:900</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a3eb688ff9869f4b4da058d651f503a1b"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a3eb688ff9869f4b4da058d651f503a1b">glasscore::CHypoList::setNHypoMax</a></div><div class="ttdeci">void setNHypoMax(int hypoMax)</div><div class="ttdoc">nHypoMax Setter </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1499</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_aabc4ae218e0e41cec24ff9cdf44479b0"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#aabc4ae218e0e41cec24ff9cdf44479b0">glasscore::CHypoList::darwin</a></div><div class="ttdeci">void darwin()</div><div class="ttdoc">Process all hypocenters in the queue. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:453</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a24b1346164a9a798e3165db67ecaa92f"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a24b1346164a9a798e3165db67ecaa92f">glasscore::CHypoList::getNHypoMax</a></div><div class="ttdeci">int getNHypoMax() const </div><div class="ttdoc">nHypoMax getter </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:936</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_aec506e1d5c1744e3a961ea7355858d5f"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#aec506e1d5c1744e3a961ea7355858d5f">glasscore::CHypoList::remHypo</a></div><div class="ttdeci">void remHypo(std::shared_ptr&lt; CHypo &gt; hypo, bool reportCancel=true)</div><div class="ttdoc">Remove hypo from list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1350</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a0017940461040b4b43e1f65086188c85"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a0017940461040b4b43e1f65086188c85">glasscore::CHypoList::reqHypo</a></div><div class="ttdeci">bool reqHypo(std::shared_ptr&lt; json::Object &gt; com)</div><div class="ttdoc">Cause CHypoList to generate a Hypo message for a hypocenter. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1398</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_ae3cc211c8a75316e284f278866fad0f7"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#ae3cc211c8a75316e284f278866fad0f7">glasscore::CHypoList::mergeCloseEvents</a></div><div class="ttdeci">bool mergeCloseEvents(std::shared_ptr&lt; CHypo &gt; hyp)</div><div class="ttdoc">Try to merge events close in space time. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1034</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a0cd9e343baccfee7e44626af604de66d"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a0cd9e343baccfee7e44626af604de66d">glasscore::CHypoList::clearHypos</a></div><div class="ttdeci">void clearHypos()</div><div class="ttdoc">Remove all hypos from hypo list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:438</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a4a4422c10f3e1458f6c35a8c84b710f3"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a4a4422c10f3e1458f6c35a8c84b710f3">glasscore::CHypoList::getNHypo</a></div><div class="ttdeci">int getNHypo() const </div><div class="ttdoc">nHypo getter </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:930</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a870a09a60057cb9c61adbd2b5120d8e5"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a870a09a60057cb9c61adbd2b5120d8e5">glasscore::CHypoList::listHypos</a></div><div class="ttdeci">void listHypos()</div><div class="ttdoc">Print basic values to screen for hypocenter list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1018</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html"><div class="ttname"><a href="classglasscore_1_1CHypoList.html">glasscore::CHypoList</a></div><div class="ttdoc">glasscore hypocenter list class </div><div class="ttdef"><b>Definition:</b> HypoList.h:48</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_acc4ad380256c4d9e4b4f1cf7e2628192"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#acc4ad380256c4d9e4b4f1cf7e2628192">glasscore::CHypoList::~CHypoList</a></div><div class="ttdeci">~CHypoList()</div><div class="ttdoc">CHypoList destructor. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:65</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a6b6d2e6b0f661f0031ca08448c05dd2c"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a6b6d2e6b0f661f0031ca08448c05dd2c">glasscore::CHypoList::getNHypoTotal</a></div><div class="ttdeci">int getNHypoTotal() const </div><div class="ttdoc">nHypoTotal getter </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:942</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a23225cd3de2b3f270a6e9eae36c9cdb8"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a23225cd3de2b3f270a6e9eae36c9cdb8">glasscore::CHypoList::popFifo</a></div><div class="ttdeci">std::shared_ptr&lt; CHypo &gt; popFifo()</div><div class="ttdoc">Get hypo from processing queue. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1283</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a25ff4065ac5aea83e9ab7f8f888a680b"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a25ff4065ac5aea83e9ab7f8f888a680b">glasscore::CHypoList::pushFifo</a></div><div class="ttdeci">int pushFifo(std::shared_ptr&lt; CHypo &gt; hyp)</div><div class="ttdoc">Add hypo to processing queue. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:1249</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_ad858a531208f6983ccd7ab92a0c316d5"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#ad858a531208f6983ccd7ab92a0c316d5">glasscore::CHypoList::getGlass</a></div><div class="ttdeci">const CGlass * getGlass() const </div><div class="ttdoc">CGlass getter. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:864</div></div>
 <div class="ttc" id="Glass_8h_html"><div class="ttname"><a href="Glass_8h.html">Glass.h</a></div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_ab4a88788099fb10fbf84c1b9da42d503"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#ab4a88788099fb10fbf84c1b9da42d503">glasscore::CHypoList::dispatch</a></div><div class="ttdeci">bool dispatch(std::shared_ptr&lt; json::Object &gt; com)</div><div class="ttdoc">CHypoList communication receiving function. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:102</div></div>
-<div class="ttc" id="classglasscore_1_1CHypoList_html_a0ee3cc563e0d6ccd1d2c3492d7966a92"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a0ee3cc563e0d6ccd1d2c3492d7966a92">glasscore::CHypoList::associate</a></div><div class="ttdeci">bool associate(std::shared_ptr&lt; CPick &gt; pk)</div><div class="ttdoc">Try to associate pick to a hypo in the list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:493</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_ab4a88788099fb10fbf84c1b9da42d503"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#ab4a88788099fb10fbf84c1b9da42d503">glasscore::CHypoList::dispatch</a></div><div class="ttdeci">bool dispatch(std::shared_ptr&lt; json::Object &gt; com)</div><div class="ttdoc">CHypoList communication receiving function. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:545</div></div>
+<div class="ttc" id="classglasscore_1_1CHypoList_html_a0ee3cc563e0d6ccd1d2c3492d7966a92"><div class="ttname"><a href="classglasscore_1_1CHypoList.html#a0ee3cc563e0d6ccd1d2c3492d7966a92">glasscore::CHypoList::associate</a></div><div class="ttdeci">bool associate(std::shared_ptr&lt; CPick &gt; pk)</div><div class="ttdoc">Try to associate pick to a hypo in the list. </div><div class="ttdef"><b>Definition:</b> HypoList.cpp:184</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Mar 26 2018 16:58:54 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 18 2018 21:20:04 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

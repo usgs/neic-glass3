@@ -21,6 +21,7 @@ var searchData=
   ['debug',['debug',['../namespaceglassutil.html#a80431c154d44008402b8fba98b907fa6af064587901484c5037a34da175617acf',1,'glassutil']]],
   ['decodedatetime',['decodeDateTime',['../classglassutil_1_1CDate.html#a5db3805d4024de1737c739d0d61d810d',1,'glassutil::CDate']]],
   ['decodeiso8601time',['decodeISO8601Time',['../classglassutil_1_1CDate.html#a71ae1c8cae9690ef3176594beab435ca',1,'glassutil::CDate']]],
+  ['deg2km',['DEG2KM',['../Geo_8h.html#a03c23556f6f61060e674956c74774851',1,'Geo.h']]],
   ['deg2rad',['DEG2RAD',['../Geo_8h.html#af7e8592d0a634bd3642e9fd508ea8022',1,'Geo.h']]],
   ['delta',['delta',['../classtraveltime_1_1CRay.html#a147358a070840ae9cb08c993e2a5355c',1,'traveltime::CRay::delta()'],['../classglassutil_1_1CGeo.html#a83f06d39a89dc0655face60b7675be54',1,'glassutil::CGeo::delta()']]],
   ['detection_2ecpp',['Detection.cpp',['../Detection_8cpp.html',1,'']]],

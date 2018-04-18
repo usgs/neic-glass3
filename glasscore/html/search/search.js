@@ -16,7 +16,7 @@ var indexSectionsWithContent =
   6: "bns",
   7: "lp",
   8: "deirw",
-  9: "_cdfgilmprstz"
+  9: "_cdefgilmprstz"
 };
 
 var indexSectionNames =

@@ -127,10 +127,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a801a528adf20fa664c484773f1141608"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#a801a528adf20fa664c484773f1141608">~ThreadBaseClass</a> ()</td></tr>
 <tr class="memdesc:a801a528adf20fa664c484773f1141608"><td class="mdescLeft">&#160;</td><td class="mdescRight">threadbaseclass destructor  <a href="#a801a528adf20fa664c484773f1141608">More...</a><br/></td></tr>
 <tr class="separator:a801a528adf20fa664c484773f1141608"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a493ef879e0651844260715ec9606f133"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#a493ef879e0651844260715ec9606f133">start</a> ()</td></tr>
+<tr class="memitem:a493ef879e0651844260715ec9606f133"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#a493ef879e0651844260715ec9606f133">start</a> ()</td></tr>
 <tr class="memdesc:a493ef879e0651844260715ec9606f133"><td class="mdescLeft">&#160;</td><td class="mdescRight">thread start function  <a href="#a493ef879e0651844260715ec9606f133">More...</a><br/></td></tr>
 <tr class="separator:a493ef879e0651844260715ec9606f133"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af709764d605ec147f5a2b09dfabedc90"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#af709764d605ec147f5a2b09dfabedc90">stop</a> ()</td></tr>
+<tr class="memitem:af709764d605ec147f5a2b09dfabedc90"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#af709764d605ec147f5a2b09dfabedc90">stop</a> ()</td></tr>
 <tr class="memdesc:af709764d605ec147f5a2b09dfabedc90"><td class="mdescLeft">&#160;</td><td class="mdescRight">thread stop function  <a href="#af709764d605ec147f5a2b09dfabedc90">More...</a><br/></td></tr>
 <tr class="separator:af709764d605ec147f5a2b09dfabedc90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2036431c5a7c5063d578227d7b0e2fb4"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#a2036431c5a7c5063d578227d7b0e2fb4">check</a> ()</td></tr>
@@ -145,7 +145,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3180d84723b4b135398b694b8e29eb49"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#a3180d84723b4b135398b694b8e29eb49">work</a> ()=0</td></tr>
 <tr class="memdesc:a3180d84723b4b135398b694b8e29eb49"><td class="mdescLeft">&#160;</td><td class="mdescRight">threadbaseclass work function  <a href="#a3180d84723b4b135398b694b8e29eb49">More...</a><br/></td></tr>
 <tr class="separator:a3180d84723b4b135398b694b8e29eb49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa48125c2c6604e8cc911e97349045baa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#aa48125c2c6604e8cc911e97349045baa">isRunning</a> ()</td></tr>
+<tr class="memitem:aa48125c2c6604e8cc911e97349045baa"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#aa48125c2c6604e8cc911e97349045baa">isRunning</a> ()</td></tr>
 <tr class="memdesc:aa48125c2c6604e8cc911e97349045baa"><td class="mdescLeft">&#160;</td><td class="mdescRight">threadbaseclass is running  <a href="#aa48125c2c6604e8cc911e97349045baa">More...</a><br/></td></tr>
 <tr class="separator:aa48125c2c6604e8cc911e97349045baa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33e1b95f871901c43202ea0b729e40b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1ThreadBaseClass.html#a33e1b95f871901c43202ea0b729e40b0">setWorkCheck</a> ()</td></tr>
@@ -457,6 +457,9 @@ Additional Inherited Members</h2></td></tr>
 <a class="anchor" id="aa48125c2c6604e8cc911e97349045baa"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool util::ThreadBaseClass::isRunning </td>
@@ -465,6 +468,11 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>threadbaseclass is running </p>
@@ -513,6 +521,9 @@ Additional Inherited Members</h2></td></tr>
 <a class="anchor" id="a493ef879e0651844260715ec9606f133"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool util::ThreadBaseClass::start </td>
@@ -521,6 +532,11 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>thread start function </p>
@@ -532,6 +548,9 @@ Additional Inherited Members</h2></td></tr>
 <a class="anchor" id="af709764d605ec147f5a2b09dfabedc90"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool util::ThreadBaseClass::stop </td>
@@ -540,6 +559,11 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>thread stop function </p>
@@ -653,7 +677,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Mar 26 2018 16:56:01 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 18 2018 21:16:39 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

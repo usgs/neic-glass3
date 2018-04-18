@@ -106,9 +106,9 @@ Collaboration diagram for glasscore::CSiteList:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae647f55c69e45d18b91b82253bd4c3c8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#ae647f55c69e45d18b91b82253bd4c3c8">CSiteList</a> ()</td></tr>
-<tr class="memdesc:ae647f55c69e45d18b91b82253bd4c3c8"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> constructor.  <a href="#ae647f55c69e45d18b91b82253bd4c3c8">More...</a><br/></td></tr>
-<tr class="separator:ae647f55c69e45d18b91b82253bd4c3c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0172c119e8e6c6aa809be86b34873d23"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a0172c119e8e6c6aa809be86b34873d23">CSiteList</a> (int sleepTime=100, int checkInterval=60)</td></tr>
+<tr class="memdesc:a0172c119e8e6c6aa809be86b34873d23"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> constructor.  <a href="#a0172c119e8e6c6aa809be86b34873d23">More...</a><br/></td></tr>
+<tr class="separator:a0172c119e8e6c6aa809be86b34873d23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeda9567fcb3e90a154923a94a77451c5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#aeda9567fcb3e90a154923a94a77451c5">~CSiteList</a> ()</td></tr>
 <tr class="memdesc:aeda9567fcb3e90a154923a94a77451c5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> destructor.  <a href="#aeda9567fcb3e90a154923a94a77451c5">More...</a><br/></td></tr>
 <tr class="separator:aeda9567fcb3e90a154923a94a77451c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,9 +139,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aca5527a9ec7815e987213616806d38af"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#aca5527a9ec7815e987213616806d38af">getSite</a> (std::string scnl)</td></tr>
 <tr class="memdesc:aca5527a9ec7815e987213616806d38af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get site by scnl Gets a specific site using the given scnl id.  <a href="#aca5527a9ec7815e987213616806d38af">More...</a><br/></td></tr>
 <tr class="separator:aca5527a9ec7815e987213616806d38af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a259d9726a13760f2362c1b923f3c26de"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a259d9726a13760f2362c1b923f3c26de">getSite</a> (std::string site, std::string comp, std::string net, std::string loc, bool lookup=true)</td></tr>
-<tr class="memdesc:a259d9726a13760f2362c1b923f3c26de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get site by scnl Gets a specific site using the given station, component, network, and location.  <a href="#a259d9726a13760f2362c1b923f3c26de">More...</a><br/></td></tr>
-<tr class="separator:a259d9726a13760f2362c1b923f3c26de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5efd6a02cf7c202e4df851aca96276ef"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a5efd6a02cf7c202e4df851aca96276ef">getSite</a> (std::string site, std::string comp, std::string net, std::string loc)</td></tr>
+<tr class="memdesc:a5efd6a02cf7c202e4df851aca96276ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get site by scnl Gets a specific site using the given station, component, network, and location.  <a href="#a5efd6a02cf7c202e4df851aca96276ef">More...</a><br/></td></tr>
+<tr class="separator:a5efd6a02cf7c202e4df851aca96276ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefa72fd09d6025a961313fa2f6b67aeb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#aefa72fd09d6025a961313fa2f6b67aeb">getSiteList</a> ()</td></tr>
+<tr class="separator:aefa72fd09d6025a961313fa2f6b67aeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36a310eac2bac55efd53ce364c745f2f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a36a310eac2bac55efd53ce364c745f2f">reqSiteList</a> ()</td></tr>
 <tr class="memdesc:a36a310eac2bac55efd53ce364c745f2f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> get site list function.  <a href="#a36a310eac2bac55efd53ce364c745f2f">More...</a><br/></td></tr>
 <tr class="separator:a36a310eac2bac55efd53ce364c745f2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,6 +157,17 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0c62d2e2d4af448fca3c8af598a4baee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a0c62d2e2d4af448fca3c8af598a4baee">getVSiteSize</a> () const </td></tr>
 <tr class="memdesc:a0c62d2e2d4af448fca3c8af598a4baee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current size of the site list.  <a href="#a0c62d2e2d4af448fca3c8af598a4baee">More...</a><br/></td></tr>
 <tr class="separator:a0c62d2e2d4af448fca3c8af598a4baee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4cfb5b8d501491773c80ef4caaae8a2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#ac4cfb5b8d501491773c80ef4caaae8a2">statusCheck</a> ()</td></tr>
+<tr class="memdesc:ac4cfb5b8d501491773c80ef4caaae8a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if the thread is still functional  <a href="#ac4cfb5b8d501491773c80ef4caaae8a2">More...</a><br/></td></tr>
+<tr class="separator:ac4cfb5b8d501491773c80ef4caaae8a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a4e9d80e0b8ea8172e0233344c4313e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a5a4e9d80e0b8ea8172e0233344c4313e">setHoursWithoutPicking</a> (int hoursWithoutPicking)</td></tr>
+<tr class="separator:a5a4e9d80e0b8ea8172e0233344c4313e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fd3e7be94df5c9ca644e23804b1fde4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a2fd3e7be94df5c9ca644e23804b1fde4">getHoursWithoutPicking</a> () const </td></tr>
+<tr class="separator:a2fd3e7be94df5c9ca644e23804b1fde4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a980a3a7bced03d7022bc7c04e302b8be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a980a3a7bced03d7022bc7c04e302b8be">setHoursBeforeLookingUp</a> (int hoursBeforeLookingUp)</td></tr>
+<tr class="separator:a980a3a7bced03d7022bc7c04e302b8be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7da96d6eba976304a77d9017fae56506"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSiteList.html#a7da96d6eba976304a77d9017fae56506">getHoursBeforeLookingUp</a> () const </td></tr>
+<tr class="separator:a7da96d6eba976304a77d9017fae56506"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore site list class </p>
@@ -162,17 +176,36 @@ Public Member Functions</h2></td></tr>
 <p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> contains functions to support new data input and clearing the list</p>
 <p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> uses smart pointers (std::shared_ptr). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ae647f55c69e45d18b91b82253bd4c3c8"></a>
+<a class="anchor" id="a0172c119e8e6c6aa809be86b34873d23"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">glasscore::CSiteList::CSiteList </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sleepTime</em> = <code>100</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>checkInterval</em> = <code>60</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> constructor. </p>
@@ -356,6 +389,36 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a7da96d6eba976304a77d9017fae56506"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CSiteList::getHoursBeforeLookingUp </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a2fd3e7be94df5c9ca644e23804b1fde4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CSiteList::getHoursWithoutPicking </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="af0c5bd39d2d454a1ad12400761437991"></a>
 <div class="memitem">
 <div class="memproto">
@@ -406,7 +469,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a259d9726a13760f2362c1b923f3c26de"></a>
+<a class="anchor" id="a5efd6a02cf7c202e4df851aca96276ef"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -432,13 +495,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>loc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>lookup</em> = <code>true</code>&#160;</td>
+          <td class="paramname"><em>loc</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -455,7 +512,6 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">comp</td><td>- A std::string containing the component </td></tr>
     <tr><td class="paramname">net</td><td>- A std::string containing the network </td></tr>
     <tr><td class="paramname">loc</td><td>- A std::string containing the location </td></tr>
-    <tr><td class="paramname">lookup</td><td>- A boolean value indicating whether to send a lookup message if the site is not found. </td></tr>
   </table>
   </dd>
 </dl>
@@ -503,6 +559,21 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if the site was complete and added by <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a>, false otherwise <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> Site count function </dd>
 <dd>
 Returns an integer variable containing the number of sites in <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aefa72fd09d6025a961313fa2f6b67aeb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; &gt; glasscore::CSiteList::getSiteList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -565,6 +636,56 @@ Returns an integer variable containing the number of sites in <a class="el" href
 
 </div>
 </div>
+<a class="anchor" id="a980a3a7bced03d7022bc7c04e302b8be"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CSiteList::setHoursBeforeLookingUp </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>hoursBeforeLookingUp</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a5a4e9d80e0b8ea8172e0233344c4313e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CSiteList::setHoursWithoutPicking </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>hoursWithoutPicking</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ac4cfb5b8d501491773c80ef4caaae8a2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CSiteList::statusCheck </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>check to see if the thread is still functional </p>
+<p>Checks the thread to see if it is still responsive. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>glasslib/include/<a class="el" href="SiteList_8h_source.html">SiteList.h</a></li>
 <li>glasslib/src/<a class="el" href="SiteList_8cpp.html">SiteList.cpp</a></li>
@@ -572,7 +693,7 @@ Returns an integer variable containing the number of sites in <a class="el" href
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Mar 26 2018 16:58:55 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 18 2018 21:20:04 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

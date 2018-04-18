@@ -130,6 +130,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ac1c6e8fb9e9e801e317eaa7c3281b448">remHypo</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp)</td></tr>
 <tr class="memdesc:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this correlation.  <a href="#ac1c6e8fb9e9e801e317eaa7c3281b448">More...</a><br/></td></tr>
 <tr class="separator:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7b3a304d6548aa93de0e469b4f6f7f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ac7b3a304d6548aa93de0e469b4f6f7f0">remHypo</a> (std::string pid)</td></tr>
+<tr class="separator:ac7b3a304d6548aa93de0e469b4f6f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1c39351ec54067f117532360bb54479"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#af1c39351ec54067f117532360bb54479">clearHypo</a> ()</td></tr>
 <tr class="separator:af1c39351ec54067f117532360bb54479"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba02351776ae911a822b35d2ec6945f0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#aba02351776ae911a822b35d2ec6945f0">getCorrelation</a> () const </td></tr>
@@ -157,6 +159,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa4cb783fe0529cc7927c1ccf876ced4d"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#aa4cb783fe0529cc7927c1ccf876ced4d">getHypo</a> () const </td></tr>
 <tr class="memdesc:aa4cb783fe0529cc7927c1ccf876ced4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hypo getter.  <a href="#aa4cb783fe0529cc7927c1ccf876ced4d">More...</a><br/></td></tr>
 <tr class="separator:aa4cb783fe0529cc7927c1ccf876ced4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58909341487d49eb88de4ac578f6dda0"><td class="memItemLeft" align="right" valign="top">const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#a58909341487d49eb88de4ac578f6dda0">getHypoPid</a> () const </td></tr>
+<tr class="memdesc:a58909341487d49eb88de4ac578f6dda0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pid getter.  <a href="#a58909341487d49eb88de4ac578f6dda0">More...</a><br/></td></tr>
+<tr class="separator:a58909341487d49eb88de4ac578f6dda0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae45c54ff2ffe61ea9f11db08a1a49c46"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ae45c54ff2ffe61ea9f11db08a1a49c46">getSite</a> () const </td></tr>
 <tr class="memdesc:ae45c54ff2ffe61ea9f11db08a1a49c46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Site getter.  <a href="#ae45c54ff2ffe61ea9f11db08a1a49c46">More...</a><br/></td></tr>
 <tr class="separator:ae45c54ff2ffe61ea9f11db08a1a49c46"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -485,6 +490,24 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a58909341487d49eb88de4ac578f6dda0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string glasscore::CCorrelation::getHypoPid </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pid getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the pid </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a5a72f2f9b6720d4711849b35748a4894"></a>
 <div class="memitem">
 <div class="memproto">
@@ -802,6 +825,22 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ac7b3a304d6548aa93de0e469b4f6f7f0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CCorrelation::remHypo </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>pid</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a92270ef3745aa7d34f06da2dee9fca37"></a>
 <div class="memitem">
 <div class="memproto">
@@ -833,7 +872,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Mar 26 2018 16:58:55 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Apr 18 2018 21:20:04 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
