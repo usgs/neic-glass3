@@ -4,6 +4,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include <ctime>
 #include "Glass.h"
 #include "Site.h"
 #include "WebList.h"
