@@ -820,7 +820,7 @@ class CHypo {
 	void setLat(double lat);
 	void setLon(double lon);
 	void setZ(double z);
-	void setTOrg(double tOrg);
+	void setTOrg(double newTOrg);
 
  private:
 	/**
