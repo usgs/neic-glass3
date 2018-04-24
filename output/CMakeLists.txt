@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.4)
 
 # ----- PROJECT VERSION NUMBER ----- #
 set (output_VERSION_MAJOR 0)
-set (output_VERSION_MINOR 1)
+set (output_VERSION_MINOR 3)
 set (output_VERSION_PATCH 0)
 
 # ----- PROJECT ----- #
