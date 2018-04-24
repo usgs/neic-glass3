@@ -817,6 +817,11 @@ class CHypo {
 	void lockForProcessing();
 	void unlockAfterProcessing();
 
+	void setLat(double lat);
+	void setLon(double lon);
+	void setZ(double z);
+	void setTOrg(double tOrg);
+
  private:
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,

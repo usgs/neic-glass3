@@ -62,7 +62,18 @@ void CGeo::initialize(double lat, double lon, double rad, double cartX,
 void CGeo::setGeographic(double lat, double lon, double r) {
 	// convert latitude
 	dLat = RAD2DEG * atan(0.993277 * tan(DEG2RAD * lat));
-	dLon = lon;
+
+	// longitude wrap check
+	if (lon > 180.0) {
+		// dLon is greater than 180
+		dLon = lon - 360.0;
+	} else if (lon < -180.0) {
+		// dLon is less than -180
+		dLon = lon + 360.0;
+	} else {
+		dLon = lon;
+	}
+
 	dRad = r;
 
 	// compute Cartesian coordinates
@@ -81,7 +92,18 @@ void CGeo::setGeographic(double lat, double lon, double r) {
 // Initialize geocentric coordinates
 void CGeo::setGeocentric(double lat, double lon, double r) {
 	dLat = lat;
-	dLon = lon;
+
+	// longitude wrap check
+	if (lon > 180.0) {
+		// dLon is greater than 180
+		dLon = lon - 360.0;
+	} else if (lon < -180.0) {
+		// dLon is less than -180
+		dLon = lon + 360.0;
+	} else {
+		dLon = lon;
+	}
+
 	dRad = r;
 
 	// compute Cartesian coordinates
@@ -136,7 +158,18 @@ void CGeo::getGeographic(double *lat, double *lon, double *r) {
 
 void CGeo::getGeocentric(double *lat, double *lon, double *r) {
 	*lat = dLat;
-	*lon = dLon;
+
+	// longitude wrap check
+	if (dLon > 180.0) {
+		// dLon is greater than 180
+		*lon = dLon - 360.0;
+	} else if (dLon < -180.0) {
+		// dLon is less than -180
+		*lon = dLon + 360.0;
+	} else {
+		*lon = dLon;
+	}
+
 	*r = dRad;
 }
 
