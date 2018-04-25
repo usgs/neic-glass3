@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.4)
 # ----- PROJECT VERSION NUMBER ----- #
 set (glass-app_VERSION_MAJOR 0)
 set (glass-app_VERSION_MINOR 5)
-set (glass-app_VERSION_PATCH 0)
+set (glass-app_VERSION_PATCH 1)
 
 # ----- PROJECT ----- #
 project (glass-app VERSION ${glass-app_VERSION_MAJOR}.${glass-app_VERSION_MINOR}.${glass-app_VERSION_PATCH})

@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.4)
 # ----- PROJECT VERSION NUMBER ----- #
 set (glass-broker-app_VERSION_MAJOR 0)
 set (glass-broker-app_VERSION_MINOR 5)
-set (glass-broker-app_VERSION_PATCH 0)
+set (glass-broker-app_VERSION_PATCH 1)
 
 # ----- PROJECT ----- #
 project (glass-broker-app VERSION ${glass-broker-app_VERSION_MAJOR}.${glass-broker-app_VERSION_MINOR}.${glass-broker-app_VERSION_PATCH})

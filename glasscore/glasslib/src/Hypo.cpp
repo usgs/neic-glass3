@@ -505,10 +505,11 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 			valBest = val;
 			// set the hypo location/depth/time from the new best
 			// locaton/depth/time
-			dLat = xlat;
-			dLon = xlon;
-			dZ = xz;
-			tOrg = oT;
+			setLat(xlat);
+			setLon(xlon);
+			setZ(xz);
+			setTOrg(oT);
+
 			// save this perturbation to the overall change
 			ddx += dx;
 			ddy += dy;
@@ -640,10 +641,10 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 			valBest = val;
 			// set the hypo location/depth/time from the new best
 			// locaton/depth/time
-			dLat = xlat;
-			dLon = xlon;
-			dZ = xz;
-			tOrg = oT;
+			setLat(xlat);
+			setLon(xlon);
+			setZ(xz);
+			setTOrg(oT);
 			ddx += dx;
 			ddy += dy;
 			ddz += dz;
@@ -1028,10 +1029,10 @@ void CHypo::clear() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
-	dLat = 0.0;
-	dLon = 0.0;
-	dZ = 0.0;
-	tOrg = 0.0;
+	setLat(0.0);
+	setLon(0.0);
+	setZ(0.0);
+	setTOrg(0.0);
 	sPid = "";
 	nCut = 0;
 	dThresh = 0.0;
@@ -1908,10 +1909,10 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 
 	clear();
 
-	dLat = lat;
-	dLon = lon;
-	dZ = z;
-	tOrg = time;
+	setLat(lat);
+	setLon(lon);
+	setZ(z);
+	setTOrg(time);
 	sPid = pid;
 	sWebName = web;
 	dBayes = bayes;
@@ -2893,6 +2894,35 @@ void CHypo::setFixed(bool fixed) {
 void CHypo::setGlass(CGlass* glass) {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
 	pGlass = glass;
+}
+
+void CHypo::setLat(double lat) {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	dLat = lat;
+}
+
+void CHypo::setLon(double lon) {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	// longitude wrap check
+	if (lon > 180.0) {
+		// lon is greater than 180
+		dLon = lon - 360.0;
+	} else if (lon < -180.0) {
+		// lon is less than -180
+		dLon = lon + 360.0;
+	} else {
+		dLon = lon;
+	}
+}
+
+void CHypo::setZ(double z) {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	dZ = z;
+}
+
+void CHypo::setTOrg(double newTOrg) {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	tOrg = newTOrg;
 }
 
 void CHypo::setThresh(double thresh) {
