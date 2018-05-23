@@ -81,7 +81,8 @@ class CHypo {
 			std::string web, double bayes, double thresh, int cut,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
-			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100);
+			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100,
+			double aziTaper = 360.);
 
 	/**
 	 * \brief CHypo alternate constructor
@@ -148,7 +149,7 @@ class CHypo {
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
 					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
-							100);
+					100, double aziTap = 360.);
 
 	/**
 	 * \brief Add pick reference to this hypo
@@ -479,6 +480,15 @@ class CHypo {
 											0);
 
 	/**
+	 * Calculates azimuthal gap for a proposed location
+	 *
+	 * \param lat - latitude of test location
+	 * \param lon - longitude of test location
+	 * \param z - depth of test location
+	 */
+	double gap(double lat, double lon, double z);
+
+	/**
 	 * Gets the stack of associated arrivals at location
 	 *
 	 * \param xlat - A double of the latitude to evaluate
@@ -548,6 +558,12 @@ class CHypo {
 	 * linked or do not belong to this CHypo.
 	 */
 	void trap();
+
+	/**
+	 * \brief aziTaper
+	 * \return the aziTaper
+	 */
+	double getAziTaper() const;
 
 	/**
 	 * \brief Latitude getter
@@ -852,6 +868,11 @@ class CHypo {
 	 * \brief Holds the shifts for the grid search
 	 */
 	double searchVals[5];
+
+	/**
+	 * \brief where to taper bayesVal from azi gap
+	 */
+	double aziTaper;
 
 	/**
 	 * \brief An integer value containing this hypo's processing cycle count

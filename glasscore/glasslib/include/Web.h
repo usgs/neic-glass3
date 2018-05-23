@@ -92,7 +92,7 @@ class CWeb {
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			int numThreads = 0, int sleepTime = 100,
-			int checkInterval = 60);
+			int checkInterval = 60, double aziTaper = 360.);
 
 	/**
 	 * \brief CWeb destructor
@@ -157,7 +157,8 @@ class CWeb {
 					int numNucleate, int resolution, int numRows, int numCols,
 					int numZ, bool update,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
-					std::shared_ptr<traveltime::CTravelTime> secondTrav);
+					std::shared_ptr<traveltime::CTravelTime> secondTrav,
+					double aziTap);
 
 	/**
 	 * \brief Generate a local detection grid
@@ -339,6 +340,13 @@ class CWeb {
 	void addJob(std::function<void()> newjob);
 
 	/**
+	 * \brief aziTapre Getter
+	 * \return double with the azi taper start
+	 */
+	double getAziTaper() const;
+
+
+	/**
 	 * \brief CGlass getter
 	 * \return the CGlass pointer
 	 */
@@ -494,6 +502,12 @@ class CWeb {
 	 * detection array
 	 */
 	double dResolution;
+
+	/**
+	 * \brief A double which describes where the locator should start
+	 * down weighting for azimuthal gap
+	**/
+	double aziTaper = 360.;
 
 	/**
 	 * \brief A boolean flag that stores whether to update this web when a

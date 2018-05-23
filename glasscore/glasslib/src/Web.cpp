@@ -82,7 +82,7 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
-			int sleepTime, int checkInterval) {
+			int sleepTime, int checkInterval, double aziTaper) {
 	// setup threads
 	if (numThreads > 0) {
 		m_bRunProcessLoop = true;
@@ -98,7 +98,7 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 	clear();
 
 	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
-				numCols, numZ, update, firstTrav, secondTrav);
+				numCols, numZ, update, firstTrav, secondTrav, aziTaper);
 
 	m_StatusMutex.lock();
 	m_ThreadStatusMap.clear();
@@ -197,7 +197,8 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 						int numNucleate, int resolution, int numRows,
 						int numCols, int numZ, bool update,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
-						std::shared_ptr<traveltime::CTravelTime> secondTrav) {
+						std::shared_ptr<traveltime::CTravelTime> secondTrav,
+						double aziTap) {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 
 	sName = name;
@@ -211,7 +212,7 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	bUpdate = update;
 	pTrv1 = firstTrav;
 	pTrv2 = secondTrav;
-
+	aziTaper = aziTap;
 	// done
 	return (true);
 }
@@ -283,6 +284,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 	int zs = 0;
 	bool saveGrid = false;
 	bool update = false;
+	double aziTaper = 360.;
 
 	// get grid configuration from json
 	// name
@@ -328,6 +330,13 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 	if (((*com).HasKey("Thresh"))
 			&& ((*com)["Thresh"].GetType() == json::ValueType::DoubleVal)) {
 		thresh = (*com)["Thresh"].ToDouble();
+	}
+
+	// sets the aziTaper value
+	if ((*com).HasKey("AzimuthGapTaper")
+			&& ((*com)["AzimuthGapTaper"].GetType()
+					== json::ValueType::DoubleVal)) {
+		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
 	}
 
 	// Node resolution for this Global grid
@@ -380,7 +389,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 
 	// init, note global doesn't use nRow or nCol
 	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update, pTrv1,
-				pTrv2);
+				pTrv2, aziTaper);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -528,6 +537,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 	double lon = 0;
 	int rows = 0;
 	int cols = 0;
+	double aziTaper = 360.;
 	std::vector<double> zzz;
 	int zs = 0;
 	bool saveGrid = false;
@@ -645,6 +655,13 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
+	// sets the aziTaper value
+	if ((*com).HasKey("AzimuthGapTaper")
+			&& ((*com)["AzimuthGapTaper"].GetType()
+					== json::ValueType::DoubleVal)) {
+		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
+	}
+
 	// whether to create a file detailing the node configuration for
 	// this grid
 	if ((*com).HasKey("SaveGrid")) {
@@ -668,7 +685,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, rows, cols, zs, update,
-				pTrv1, pTrv2);
+				pTrv1, pTrv2, aziTaper);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -830,6 +847,7 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 	int nN = 0;
 	bool saveGrid = false;
 	bool update = false;
+	double aziTaper = 360.;
 
 	std::vector<std::vector<double>> nodes;
 	double resol = 0;
@@ -878,6 +896,13 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 	if (((*com).HasKey("Thresh"))
 			&& ((*com)["Thresh"].GetType() == json::ValueType::DoubleVal)) {
 		thresh = (*com)["Thresh"].ToDouble();
+	}
+
+	// sets the aziTaper value
+	if ((*com).HasKey("AzimuthGapTaper")
+			&& ((*com)["AzimuthGapTaper"].GetType()
+					== json::ValueType::DoubleVal)) {
+		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
 	}
 
 	// Node resolution for this grid
@@ -958,7 +983,7 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, 0., 0., 0., update, pTrv1,
-				pTrv2);
+				pTrv2, aziTaper);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -1977,6 +2002,10 @@ bool CWeb::hasSite(std::shared_ptr<CSite> site) {
 
 	// site not found
 	return (false);
+}
+
+double CWeb::getAziTaper() const  {
+	return (aziTaper);
 }
 
 const CSiteList* CWeb::getSiteList() const {
