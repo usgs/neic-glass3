@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['gap',['gap',['../classglasscore_1_1CHypo.html#a19ed2103399a76a05b22bfd021f4284c',1,'glasscore::CHypo']]],
   ['gauss',['gauss',['../classglasscore_1_1CHypo.html#a12667998a9dc4fca2e1db15bcfb67c0e',1,'glasscore::CHypo']]],
   ['genbranch',['genBranch',['../classtraveltime_1_1CTrav.html#a68da80dcee0278ad15337a7b3e169aa5',1,'traveltime::CTrav']]],
   ['generate',['generate',['../classtraveltime_1_1CGenTrv.html#a69abe51e7bc0493cf2b8b82fe0ae63e8',1,'traveltime::CGenTrv']]],
@@ -10,6 +11,7 @@ var searchData=
   ['getass',['getAss',['../classglasscore_1_1CCorrelation.html#ad3a087efbb52a6465977df3bb915fa90',1,'glasscore::CCorrelation::getAss()'],['../classglasscore_1_1CPick.html#a6ee6466e6d23ad085b27912c65b8b67c',1,'glasscore::CPick::getAss()']]],
   ['getavgdelta',['getAvgDelta',['../classglasscore_1_1CGlass.html#a82e558ce6517496c54f55c52256b168e',1,'glasscore::CGlass']]],
   ['getavgsigma',['getAvgSigma',['../classglasscore_1_1CGlass.html#a63d6697b57dce41f5ba3bdb08ea22f15',1,'glasscore::CGlass']]],
+  ['getazitaper',['getAziTaper',['../classglasscore_1_1CHypo.html#af4bbafc090d8123c34777630808c2f86',1,'glasscore::CHypo::getAziTaper()'],['../classglasscore_1_1CWeb.html#a761fb6b444c116ad4599d9e6e74e2baf',1,'glasscore::CWeb::getAziTaper()']]],
   ['getbackazimuth',['getBackAzimuth',['../classglasscore_1_1CPick.html#a29fadd7b6ab0570c6e85189b5098bfb5',1,'glasscore::CPick']]],
   ['getbayes',['getBayes',['../classglasscore_1_1CHypo.html#a300d429bb1784a98b2c05bde7358d7be',1,'glasscore::CHypo::getBayes(double xlat, double xlon, double xZ, double oT, int nucleate)'],['../classglasscore_1_1CHypo.html#abd075f20698512e3dcd96bb779b29777',1,'glasscore::CHypo::getBayes() const ']]],
   ['getbayesinitial',['getBayesInitial',['../classglasscore_1_1CHypo.html#a1ed9b32d2566fb441ee1692be0fc6840',1,'glasscore::CHypo']]],
