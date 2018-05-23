@@ -34,6 +34,7 @@
 #define NUMDETECT 5
 #define NUMNUCLEATE 4
 #define RESOLUTION 100.0
+#define AZIGAP 360.
 #define NUMROWS 3
 #define NUMCOLS 4
 #define NUMZ 1
@@ -205,7 +206,7 @@ TEST(WebTest, Initialize) {
 						NUMCOLS,
 						NUMZ,
 						UPDATE,
-						nullTrav, nullTrav);
+						nullTrav, nullTrav, AZIGAP);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testWeb.getName().c_str())<<

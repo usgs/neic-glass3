@@ -52,13 +52,15 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 				std::string web, double bayes, double thresh, int cut,
 				std::shared_ptr<traveltime::CTravelTime> firstTrav,
 				std::shared_ptr<traveltime::CTravelTime> secondTrav,
-				std::shared_ptr<traveltime::CTTT> ttt, double resolution) {
+				std::shared_ptr<traveltime::CTTT> ttt, double resolution,
+				double aziTaper) {
+
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
 
 	if (!initialize(lat, lon, z, time, pid, web, bayes, thresh, cut, firstTrav,
-					secondTrav, ttt, resolution)) {
+					secondTrav, ttt, resolution, aziTaper)) {
 		clear();
 	}
 }
@@ -93,7 +95,8 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 					trigger->getWeb()->getThresh(),
 					trigger->getWeb()->getNucleate(),
 					trigger->getWeb()->getTrv1(), trigger->getWeb()->getTrv2(),
-					ttt, trigger->getResolution())) {
+					ttt, trigger->getResolution(),
+					trigger->getWeb()->getAziTaper())) {
 		clear();
 	}
 }
@@ -412,11 +415,16 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		return;
 	}
 
+	// taper to lower val if large azimuthal gap
+	glassutil::CTaper taperGap;
+	taperGap = glassutil::CTaper(0., 0., aziTaper, 360.);
+
 	// these hold the values of the initial, current, and best stack location
 	double valStart = 0;
 	double valBest = 0;
 	// calculate the value of the stack at the current location
-	valStart = getBayes(dLat, dLon, dZ, tOrg, nucleate);
+	valStart = getBayes(dLat, dLon, dZ, tOrg, nucleate)
+		* taperGap.Val(gap(dLat,dLon,dZ));
 
 	char sLog[1024];
 
@@ -483,7 +491,8 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		double oT = tOrg + dt;
 
 		// get the stack value for this hypocenter
-		double val = getBayes(xlat, xlon, xz, oT, nucleate);
+		double val = getBayes(xlat, xlon, xz, oT, nucleate)
+				* taperGap.Val(gap(xlat,xlon,xz));
 
 		// if testing locator print iteration
 		if (pGlass->getTestLocator()) {
@@ -497,6 +506,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 
 		// is this stacked bayesian value (val) better than the previous best
 		// (valBest)
+
 		if (val > valBest
 				|| (val > dThresh
 						&& (valBest - val)
@@ -1179,6 +1189,55 @@ std::shared_ptr<json::Object> CHypo::expire(bool send) {
 	return (expire);
 }
 
+// ---------------------------------------------------------Gap
+double CHypo::gap(double lat, double lon, double z) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
+
+	// set up a geographic object for this hypo
+	glassutil::CGeo geo;
+	geo.setGeographic(lat, lon, EARTHRADIUSKM - z);
+
+	// create and populate vectors containing the
+	// pick distances and azimuths
+	std::vector<double> azm;
+
+	for (auto pick : vPick) {
+		// get the site
+		std::shared_ptr<CSite> site = pick->getSite();
+
+		// compute the azimuth
+		double azimuth = geo.azimuth(&site->getGeo()) / DEG2RAD;
+
+		// add to azimuth vector
+		azm.push_back(azimuth);
+	}
+
+	int nazm = azm.size();
+
+	if(nazm <= 1)
+	{
+		return 360.;
+	}
+	// sort the azimuths
+	sort(azm.begin(), azm.end());
+
+	// add the first (smallest) azimuth to the end by adding 360
+	azm.push_back(azm.front() + 360.0);
+
+	// compute gap
+	double tempGap = 0.0;
+
+	for (int i = 0; i < nazm; i++) {
+		double gap = azm[i + 1] - azm[i];
+		if (gap > tempGap) {
+			tempGap = gap;
+		}
+	}
+
+	return tempGap;
+}
+
 // ---------------------------------------------------------Gaussian
 double CHypo::gauss(double avg, double std) {
 	// generate Gaussian pseudo-random number using the
@@ -1226,6 +1285,12 @@ double CHypo::getResidual(std::shared_ptr<CPick> pick) {
 	double tRes = tObs - tCal;
 	return tRes;
 }
+
+double CHypo::getAziTaper() const {
+	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
+	return (aziTaper);
+}
+
 
 double CHypo::getBayes() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(hypoMutex);
@@ -1903,7 +1968,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav,
 						std::shared_ptr<traveltime::CTTT> ttt,
-						double resolution) {
+						double resolution, double aziTap) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(hypoMutex);
 
@@ -1917,7 +1982,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	sWebName = web;
 	dBayes = bayes;
 	dBayesInitial = bayes;
-
+	aziTaper = aziTap;
 	dThresh = thresh;
 	nCut = cut;
 	dRes = resolution;

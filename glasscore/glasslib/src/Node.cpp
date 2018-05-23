@@ -509,11 +509,14 @@ std::string CNode::getSitesString() {
 	for (const auto &link : vSite) {
 		// get the site
 		std::shared_ptr<CSite> currentSite = std::get< LINK_PTR>(link);
+		double lat, lon, r;
+
+		currentSite->getGeo().getGeographic(&lat, &lon, &r);
 
 		siteString += sPid + "," + currentSite->getScnl() + ","
-				+ std::to_string(currentSite->getGeo().dLat) + ";"
-				+ std::to_string(currentSite->getGeo().dLon) + ";"
-				+ std::to_string(currentSite->getGeo().dRad) + "\n";
+				+ std::to_string(lat) + ";"
+				+ std::to_string(lon) + ";"
+				+ std::to_string(r) + "\n";
 	}
 
 	return (siteString);
