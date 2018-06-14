@@ -58,7 +58,10 @@ class CSite {
 	/**
 	 * \brief CSite alternate constructor
 	 *
-	 * \param scnl - A string containing the scnl for this site.
+	 * \param sta - A string containing the station name for this site.
+	 * \param comp - A string containing the component code for this site.
+	 * \param net - A string containing the network code for this site.
+	 * \param loc - A string containing the location code for this site.
 	 * \param lat - A double value containing the geographic latitude of this
 	 * site in degrees
 	 * \param lon - A double value containing the geographic longitude of this
@@ -79,7 +82,7 @@ class CSite {
 	/**
 	 * \brief CSite alternate constructor
 	 *
-	 * \param com - A pointer to a json::Object to construct the site from
+	 * \param site - A pointer to a json::Object to construct the site from
 	 * \param glassPtr - A pointer to the CGlass class
 	 */
 	CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr);
@@ -154,7 +157,7 @@ class CSite {
 	/**
 	 * \brief Get the distance between this site and another in km
 	 *
-	 * \param geo - A pointer to another site
+	 * \param site - A pointer to another site
 	 * \return Returns a double value containing the distance in km
 	 */
 	double getDistance(std::shared_ptr<CSite> site);
@@ -182,7 +185,7 @@ class CSite {
 	 * This function adds the given pick to the list of nodes serviced by this
 	 * site
 	 *
-	 * \param pck - A shared_ptr to a CNode object containing the node to add
+	 * \param node - A shared_ptr to a CNode object containing the node to add
 	 * \param travelTime1 - A double value containing the first travel time
 	 * to use
 	 * \param travelTime2 - A double value containing the optional second travel

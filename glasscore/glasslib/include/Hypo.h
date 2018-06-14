@@ -75,6 +75,14 @@ class CHypo {
 	 * \param thresh - A double containing the threshold value for this hypo
 	 * \param cut - An integer containing the Bayesian stack threshold for this
 	 * hypo
+	 * \param firstTrav - A traveltime::CTravelTime containing the first travel
+	 * time used in creating this hypo
+	 * \param secondTrav - A traveltime::CTravelTime containing the second travel
+	 * time used in creating this hypo
+	 * \param ttt - A traveltime::CTTT to be used for association for this hypo
+	 * \param resolution - A double value containing the web resolution used
+	 * \param aziTaper = A double value containing the azimuth taper to be used,
+	 * defaults to 360
 	 * \return Returns true if successful, false otherwise.
 	 */
 	CHypo(double lat, double lon, double z, double time, std::string pid,
@@ -90,8 +98,9 @@ class CHypo {
 	 * Alternate constructor for the CHypo class that uses a CNode to create
 	 * a CHypo
 	 *
-	 * \param node - A shared pointer to a CNode object containing the node to
+	 * \param trigger - A CTrigger object containing the nucleation trigger to
 	 * construct this hypo from.
+	 * \param ttt - A traveltime::CTTT to be used for association for this hypo
 	 */
 	explicit CHypo(std::shared_ptr<CTrigger> trigger,
 					std::shared_ptr<traveltime::CTTT> ttt);
@@ -104,6 +113,11 @@ class CHypo {
 	 *
 	 * \param corr - A shared pointer to a CNode object containing the
 	 * correlation to construct this hypo from.
+	 * \param firstTrav - A traveltime::CTravelTime containing the first travel
+	 * time used in creating this hypo
+	 * \param secondTrav - A traveltime::CTravelTime containing the second travel
+	 * time used in creating this hypo
+	 * \param ttt - A traveltime::CTTT to be used for association for this hypo
 	 */
 	explicit CHypo(std::shared_ptr<CCorrelation> corr,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
@@ -141,6 +155,14 @@ class CHypo {
 	 * \param thresh - A double containing the threshold value for this hypo
 	 * \param cut - An integer containing the Bayesian stack threshold for this
 	 * hypo
+	 * \param firstTrav - A traveltime::CTravelTime containing the first travel
+	 * time used in creating this hypo
+	 * \param secondTrav - A traveltime::CTravelTime containing the second travel
+	 * time used in creating this hypo
+	 * \param ttt - A traveltime::CTTT to be used for association for this hypo
+	 * \param resolution - A double value containing the web resolution used
+	 * \param aziTaper = A double value containing the azimuth taper to be used,
+	 * defaults to 360
 	 * \return Returns true if successful, false otherwise.
 	 */
 	bool initialize(double lat, double lon, double z, double time,
@@ -149,7 +171,8 @@ class CHypo {
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
 					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
-					100, double aziTap = 360.);
+							100,
+					double aziTaper = 360.);
 
 	/**
 	 * \brief Add pick reference to this hypo
@@ -173,16 +196,33 @@ class CHypo {
 	 * breaking the graph database link between this hypocenter and the pick.
 	 * The breaking of this link also represents a phase disassociation.
 	 *
-	 * Note that this pick may or may not be still linked
-	 * to other hypocenters
+	 * Note that this pick may or may not be still linked to other hypocenters
 	 *
-	 * \param pck - A std::shared_ptr to the CPick object to
-	 * remove.
+	 * \param pck - A std::shared_ptr to the CPick object to remove.
 	 */
 	void remPick(std::shared_ptr<CPick> pck);
 
+	/**
+	 * \brief Check if hypo has pick reference
+	 *
+	 * Check to see if a shared_ptr reference from the given pick to this hypo
+	 * exists
+	 *
+	 * Note that this pick may or may not be still linked to other hypocenters
+	 *
+	 * \param pck - A std::shared_ptr to the CPick object to check.
+	 * \return returns true if a reference exists to the given pick, false
+	 * otherwise
+	 */
 	bool hasPick(std::shared_ptr<CPick> pck);
 
+	/**
+	 * \brief Clear all pick reference for this hypo
+	 *
+	 * Clear all shared_ptr references from picks to this hypo
+	 *
+	 * Note picks may or may not be still linked to other hypocenters
+	 */
 	void clearPicks();
 
 	/**
@@ -207,16 +247,35 @@ class CHypo {
 	 * breaking the graph database link between this hypocenter and the correlation.
 	 * The breaking of this link also represents a correlation disassociation.
 	 *
-	 * Note that this correlation may or may not be still linked
-	 * to other hypocenters
+	 * Note that this correlation may or may not be still linked to other
+	 * hypocenters
 	 *
-	 * \param corr - A std::shared_ptr to the CCorrelation object to
-	 * remove.
+	 * \param corr - A std::shared_ptr to the CCorrelation object to remove.
 	 */
 	void remCorrelation(std::shared_ptr<CCorrelation> corr);
 
+	/**
+	 * \brief Check if hypo has correlation reference
+	 *
+	 * Check to see if a shared_ptr reference from the given correlation to this
+	 * hypo exists
+	 *
+	 * Note that this correlation may or may not be still linked to other
+	 * hypocenters
+	 *
+	 * \param corr - A std::shared_ptr to the CCorrelation object to check.
+	 * \return returns true if a reference exists to the given correlation,
+	 * false otherwise
+	 */
 	bool hasCorrelation(std::shared_ptr<CCorrelation> corr);
 
+	/**
+	 * \brief Clear all correlation reference for this hypo
+	 *
+	 * Clear all shared_ptr references from correlation to this hypo
+	 *
+	 * Note that correlations may or may not be still linked to other hypocenters
+	 */
 	void clearCorrelations();
 
 	/**
@@ -262,8 +321,22 @@ class CHypo {
 	 */
 	std::shared_ptr<json::Object> event(bool send = true);
 
+	/**
+	 * \brief Generate cancel message
+	 *
+	 * Generate a json object representing the cancellation of this hypocenter
+	 * and send a pointer to this object to CGlass (and out of glasscore) using
+	 * the send function (pGlass->send)
+	 */
 	std::shared_ptr<json::Object> cancel(bool send = true);
 
+	/**
+	 * \brief Generate expire message
+	 *
+	 * Generate a json object representing the expiration of this hypocenter
+	 * and send a pointer to this object to CGlass (and out of glasscore) using
+	 * the send function (pGlass->send)
+	 */
 	std::shared_ptr<json::Object> expire(bool send = true);
 
 	/**
@@ -294,7 +367,7 @@ class CHypo {
 	 * \param pick - A std::shared_ptr to the CPick object to
 	 * check.
 	 * \param sigma - A double value containing the sigma to use
-	 * \paran sdassoc - A double value containing the standard
+	 * \param sdassoc - A double value containing the standard
 	 * deviation assocaiation limit to use
 	 * \return Returns true if the pick can be associated, false otherwise
 	 */
@@ -316,7 +389,7 @@ class CHypo {
 	 * \param corr - A std::shared_ptr to the CCorrelation object to
 	 * check.
 	 * \param tWindow - A double value containing the time window to use
-	 * \paran xWindow - A double value containing the distance window
+	 * \param xWindow - A double value containing the distance window
 	 * \return Returns true if the correlation can be associated, false otherwise
 	 */
 	bool associate(std::shared_ptr<CCorrelation> corr, double tWindow,
@@ -400,10 +473,14 @@ class CHypo {
 	 *
 	 * \param nIter - An integer containing the number of iterations to perform,
 	 * defaults to 250
-	 * \param dStart - A double value containing the starting iteration step size
-	 * in kilometers, default 100 km
-	 * \param dStop - A double value containing the ending iteration step size
-	 * in kilometers, default 1 km
+	 * \param dStart - A double value containing the starting distance iteration
+	 * step size in kilometers, default 100 km
+	 * \param dStop - A double value containing the ending distance iteration
+	 * step sizein kilometers, default 1 km
+	 * \param tStart - A double value containing the starting time iteration
+	 * step size in seconds, default 5 seconds
+	 * \param tStop - A double value containing the ending time iteration
+	 * step size in seconds, default 0.5 seconds
 	 * \return Returns a double value containing the final baysian fit.
 	 */
 	double anneal(int nIter = 250, double dStart = 100.0, double dStop = 1.0,
@@ -492,9 +569,9 @@ class CHypo {
 	 * Gets the stack of associated arrivals at location
 	 *
 	 * \param xlat - A double of the latitude to evaluate
-	 * \param xlon - A double of the longitude
-	 * \param dZ - A double of the depth bsl
-	 * \param oT - A double of the oT
+	 * \param xlon - A double of the longitude to evaluate
+	 * \param xZ - A double of the depth to evaluate
+	 * \param oT - A double of the oT to evaluate
 	 * \param nucleate - An int value sets if this is a nucleation which limits
 	 * the phase used.
 	 */
@@ -514,8 +591,8 @@ class CHypo {
 	 * Get the sum of the absolute residuals at a location
 	 *
 	 * \param xlat - A double of the latitude to evaluate
-	 * \param xlon - A double of the longitude
-	 * \param dZ - A double of the depth bsl
+	 * \param xlon - A double of the longitude to evaluate
+	 * \param xZ - A double of the depth to evaluate
 	 * \param oT - A double of the oT in gregorian seconds
 	 * \param nucleate - An int value sets if this is a nucleation which limits
 	 * the phase used.

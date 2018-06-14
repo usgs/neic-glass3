@@ -54,9 +54,6 @@ class Queue {
 	 * Get the next data from the queue
 	 * \param lock - A boolean value indicating whether to lock the mutex.
 	 * Defaults to true
-	 * \param copy - A boolean value indicating whether to return a pointer to
-	 * a copy of the
-	 * data. Defaults to false
 	 * \return returns a pointer to the json::Object containing the data, NULL
 	 * there was no
 	 * data in the queue

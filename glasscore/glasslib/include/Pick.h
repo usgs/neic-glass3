@@ -118,6 +118,9 @@ class CPick {
 	 *
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to link.
+	 * \param ass - A std::string containing a note about the association reason
+	 * \param force - A boolean flag indicating whether to force the association,
+	 * defaults to false.
 	 */
 	void addHypo(std::shared_ptr<CHypo> hyp, std::string ass = "", bool force =
 							false);
@@ -135,10 +138,25 @@ class CPick {
 	 * to unlink.
 	 */
 	void remHypo(std::shared_ptr<CHypo> hyp);
+
+	/**
+	 * \brief Remove hypo specific reference to this pick
+	 *
+	 * Remove a shared_ptr reference from the given hypo id to this pick,
+	 * breaking the graph database link between this pick and the
+	 * hypocenter.
+	 *
+	 * Note that this pick may or may not be still linked to other hypocenters
+	 *
+	 * \param pid - A std::string identifying the the hypocenter to unlink.
+	 */
 	void remHypo(std::string pid);
 
 	/**
-	 * \brief Clear any hypo reference to this pick
+	 * \brief Remove hypo reference to this pick
+	 *
+	 * Remove any shared_ptr reference from this pick, breaking the graph
+	 * database link between this pick and any hypocenter.
 	 */
 	void clearHypo();
 

@@ -150,8 +150,6 @@ class CNode {
 	 *
 	 * \param tOrigin - A double value containing the proposed origin time
 	 * to use in julian seconds
-	 * \param list - A boolean flag indicating whether to keep a list of
-	 * picks used in calculation
 	 * \return Returns true if the node nucleated an event, false otherwise
 	 */
 	std::shared_ptr<CTrigger> nucleate(double tOrigin);
@@ -217,7 +215,7 @@ class CNode {
 
 	/**
 	 * \brief Enabled flag setter
-	 * \param enable - the enabled flag
+	 * \param enabled - the enabled flag
 	 */
 	void setEnabled(bool enabled);
 

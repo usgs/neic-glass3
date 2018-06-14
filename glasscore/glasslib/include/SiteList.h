@@ -119,36 +119,6 @@ class CSiteList {
 	bool addSite(std::shared_ptr<CSite> site);
 
 	/**
-	 * \brief CSiteList remove site function
-	 *
-	 * The function used by CSiteList to remove a from the vector and map.
-	 *
-	 * \param site - A pointer to a json::object containing the site to remove.
-	 * \return Returns true if the site was removed, false otherwise
-	 */
-	// bool remSite(json::Object *com);
-	/**
-	 * \brief CSiteList remove site function
-	 *
-	 * The function used by CSiteList to remove a from the vector and map.
-	 *
-	 * \param site - A shared pointer pointer to the site to remove.
-	 * \return Returns true if the site was removed, false otherwise
-	 */
-	// bool remSite(shared_ptr<CSite> site);
-	/**
-	 * \brief CSiteList enable/disable site function
-	 *
-	 * The function is used by CSiteList to change the state of the usage
-	 * flag for a given site
-	 *
-	 * \param com - A pointer to a json::object containing the
-	 * siteuse message.
-	 * \return Returns true if the site was complete and added by CSiteList,
-	 * false otherwise
-	 */
-	// bool useSite(json::Object *com);
-	/**
 	 * \brief CSiteList Site count function
 	 * \return Returns an integer variable containing the number of sites in
 	 * CSiteList

@@ -64,10 +64,16 @@ class CTravelTime {
 	 * Attempts to load branch data (using Load()) for a phase using a given
 	 * CRay and phase std::string.
 	 *
-	 * \param phase - A std::std::string representing the phase to use
+	 * \param phase - A std::std::string representing the phase to use, default
+	 * is "P"
+	 * \param file - A std::std::string representing the file to load, default
+	 * is ""
 	 */
 	bool setup(std::string phase = "P", std::string file = "");
 
+	/**
+	 * \brief CTravelTime clear function
+	 */
 	void clear();
 
 	/**

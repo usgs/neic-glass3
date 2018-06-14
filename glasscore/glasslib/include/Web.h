@@ -50,8 +50,8 @@ class CWeb {
 	 * \param checkInterval - An integer containing the amount of time in
 	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
-	CWeb(int numThreads = 0, int sleepTime = 100,
-			int checkInterval = 60);
+	explicit CWeb(int numThreads = 0, int sleepTime = 100, int checkInterval =
+							60);
 
 	/**
 	 * \brief CWeb advanced constructor
@@ -85,14 +85,16 @@ class CWeb {
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
-	 * seconds between status checks. -1 to disable status checks.  Default 300.
+	 * seconds between status checks. -1 to disable status checks.  Default 60.
+	 * \param aziTaper = A double value containing the azimuth taper to be used,
+	 * defaults to 360
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
-			int numThreads = 0, int sleepTime = 100,
-			int checkInterval = 60, double aziTaper = 360.);
+			int numThreads = 0, int sleepTime = 100, int checkInterval = 60,
+			double aziTaper = 360.);
 
 	/**
 	 * \brief CWeb destructor
@@ -151,6 +153,8 @@ class CWeb {
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
 	 * use for travel time lookups.
+	 * \param aziTaper = A double value containing the azimuth taper to be used,
+	 * defaults to 360
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
@@ -158,7 +162,7 @@ class CWeb {
 					int numZ, bool update,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
-					double aziTap);
+					double aziTaper = 360.);
 
 	/**
 	 * \brief Generate a local detection grid
@@ -222,8 +226,6 @@ class CWeb {
 	 * This function generates a list of eligible sites (stations) to be used
 	 * while generating nodes.  This list is stored in vSite.
 	 *
-	 * \param com - A pointer to a json::object containing desired station
-	 * criteria
 	 * \return Always returns true
 	 */
 	bool genSiteList();
@@ -274,7 +276,6 @@ class CWeb {
 	 * defined by nDetect.
 	 *
 	 * \param node - A std::shared_ptr to the node to link sites to
-	 * \param trav - A pointer to a CTravelTime to use while linking sites
 	 * \return Returns a std::shared_ptr to the updated node.
 	 */
 	std::shared_ptr<CNode> genNodeSites(std::shared_ptr<CNode> node);
@@ -345,7 +346,6 @@ class CWeb {
 	 */
 	double getAziTaper() const;
 
-
 	/**
 	 * \brief CGlass getter
 	 * \return the CGlass pointer
@@ -369,20 +369,95 @@ class CWeb {
 	 * \param siteList - the CSiteList pointer
 	 */
 	void setSiteList(CSiteList* siteList);
+
+	/**
+	 * \brief Update getter
+	 * \return a flag indicating whether this web supports updates
+	 */
 	bool getUpdate() const;
+
+	/**
+	 * \brief Resolution getter
+	 * \return the web resolution
+	 */
 	double getResolution() const;
+
+	/**
+	 * \brief Nucleation threshold getter
+	 * \return the nucleation viability threshold
+	 */
 	double getThresh() const;
+
+	/**
+	 * \brief Col getter
+	 * \return the number of columns
+	 */
 	int getCol() const;
+
+	/**
+	 * \brief Default number of detection stations getter
+	 * \return the default number of detections used in a node
+	 */
 	int getDetect() const;
+
+	/**
+	 * \brief Default number of picks for nucleation getter
+	 * \return the default number of nucleations used in for a detection
+	 */
 	int getNucleate() const;
+
+	/**
+	 * \brief Row getter
+	 * \return the number of rows
+	 */
 	int getRow() const;
+
+	/**
+	 * \brief Z getter
+	 * \return the number of depths
+	 */
 	int getZ() const;
+
+	/**
+	 * \brief Name getter
+	 * \return the name of this web
+	 */
 	const std::string& getName() const;
+
+	/**
+	 * \brief Primary nucleation travel time  etter
+	 * \return the primary nucleation travel time
+	 */
 	const std::shared_ptr<traveltime::CTravelTime>& getTrv1() const;
+
+	/**
+	 * \brief Secondary nucleation travel time  etter
+	 * \return the secondary nucleation travel time
+	 */
 	const std::shared_ptr<traveltime::CTravelTime>& getTrv2() const;
+
+	/**
+	 * \brief Net Filter Size getter
+	 * \return the number network filters
+	 */
 	int getVNetFilterSize() const;
+
+	/**
+	 * \brief Site Filter Size getter
+	 * \return the number site filters
+	 */
 	int getVSitesFilterSize() const;
+
+	/**
+	 * \brief Use only teleseismic stations flag getter
+	 * \return the use only teleseismic stations flag
+	 */
 	bool getUseOnlyTeleseismicStations() const;
+
+	/**
+	 * \brief Node size getter
+	 * \return the number of nodes
+	 */
 	int getVNodeSize() const;
 
  private:
@@ -506,7 +581,7 @@ class CWeb {
 	/**
 	 * \brief A double which describes where the locator should start
 	 * down weighting for azimuthal gap
-	**/
+	 **/
 	double aziTaper = 360.;
 
 	/**

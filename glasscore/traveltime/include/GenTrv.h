@@ -32,6 +32,16 @@ class CGenTrv {
 	 */
 	CGenTrv();
 
+	/**
+	 * \brief CGenTrv constructor
+	 *
+	 * The constructor for the CGenTrv class.
+	 * Initializes members to provided values.
+	 *
+	 * \param modelFile - A std::string containing the model file name
+	 * \param outputPath - A std::string containing the output path
+	 * \param fileExtension - A std::string containing the output file extension
+	 */
 	CGenTrv(std::string modelFile, std::string outputPath,
 			std::string fileExtension);
 
@@ -40,8 +50,22 @@ class CGenTrv {
 	 */
 	~CGenTrv();
 
+	/**
+	 * \brief CGenTrv clear function
+	 */
 	void clear();
 
+	/**
+	 * \brief CGenTrv setup function
+	 *
+	 * The setup function for the CGenTrv class.
+	 * Initializes members to provided values.
+	 *
+	 * \param modelFile - A std::string containing the model file name
+	 * \param outputPath - A std::string containing the output path
+	 * \param fileExtension - A std::string containing the output file extension
+	 * \return returns true if successful, false otherwise
+	 */
 	bool setup(std::string modelFile, std::string outputPath,
 				std::string fileExtension);
 
@@ -91,9 +115,21 @@ class CGenTrv {
 	 */
 	bool T(std::string phase, double delta, double depth);
 
+	/**
+	 * \brief A string containing the output path
+	 */
 	std::string m_OutputPath;
+
+	/**
+	 * \brief A string containing the output file extension
+	 */
 	std::string m_FileExtension;
+
+	/**
+	 * \brief A boolean flag indicating whether CGenTrav has been set up
+	 */
 	bool bSetup = false;
+
 	/**
 	 * \brief An integer variable containing the number of rays to generate
 	 */

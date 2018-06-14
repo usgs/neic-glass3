@@ -138,12 +138,15 @@ class CCorrelation {
 	 *
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to link.
+	 * \param ass - A std::string containing a note about the association reason
+	 * \param force - A boolean flag indicating whether to force the association,
+	 * defaults to false.
 	 */
 	void addHypo(std::shared_ptr<CHypo> hyp, std::string ass = "", bool force =
 							false);
 
 	/**
-	 * \brief Remove hypo reference to this correlation
+	 * \brief Remove hypo specific reference to this correlation
 	 *
 	 * Remove a shared_ptr reference from the given hypo to this correlation,
 	 * breaking the graph database link between this correlation and the
@@ -156,8 +159,27 @@ class CCorrelation {
 	 * to unlink.
 	 */
 	void remHypo(std::shared_ptr<CHypo> hyp);
+
+	/**
+	 * \brief Remove hypo specific reference to this correlation
+	 *
+	 * Remove a shared_ptr reference from the given hypo id to this correlation,
+	 * breaking the graph database link between this correlation and the
+	 * hypocenter.
+	 *
+	 * Note that this correlation may or may not be still linked
+	 * to other hypocenters
+	 *
+	 * \param pid - A std::string identifying the the hypocenter to unlink.
+	 */
 	void remHypo(std::string pid);
 
+	/**
+	 * \brief Remove hypo reference to this correlation
+	 *
+	 * Remove any shared_ptr reference from this correlation, breaking the graph
+	 * database link between this correlation and any hypocenter.
+	 */
 	void clearHypo();
 
 	/**

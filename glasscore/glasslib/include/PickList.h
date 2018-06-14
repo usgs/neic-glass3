@@ -238,7 +238,7 @@ class CPickList {
 
 	/**
 	 * \brief nPickMax Setter
-	 * \param correlationMax - the nPickMax
+	 * \param picknMax - the nPickMax
 	 */
 	void setNPickMax(int picknMax);
 

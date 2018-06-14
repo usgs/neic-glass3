@@ -58,9 +58,9 @@ class CDetection {
 	/**
 	 * \brief CDetection communication receiving function
 	 *
-	 * The function used by CDetection to receive communication
-	 * (such as configuration or input data), from outside the
-	 * glasscore library, or it's parent CGlass.
+	 * The function used by CDetection to receive communication (such as
+	 * configuration or input data), from outside the glasscore library, or it's
+	 * parent CGlass.
 	 *
 	 * Supports processing Detection messages
 	 *
@@ -74,17 +74,12 @@ class CDetection {
 	/**
 	 * \brief Process detection message
 	 *
-	 * Receives an incomding 'Detection' type message and
-	 * does on of two things. First it checks to see if there
-	 * is another hypocenter that is near enough in space and
-	 * time to be considered to be the same event. If so, it
-	 * adds the correlation information to the hypocenters
-	 * vCorr vector and sets the bFixed to true. If the hypocenter
-	 * clready has a non-zero length vCorr, then the new
-	 * correlation data is added and a median location is
-	 * calculated. If no existing quake fits the information in
-	 * the correlation message, a new hypocenter is created with
-	 * a fixed location.
+	 * Receives an incomding 'Detection' type message and does on of two things.
+	 * First it checks to see if there is another hypocenter that is near enough
+	 * in space and time to be considered to be the same event. If so, it
+	 * schedules the existing hypocenter for processing. If no existing
+	 * hypocenter fits the information in the detection message, a new
+	 * hypocenter is created and scheduled for processing.
 	 *
 	 * \param com -  A pointer to a json::object containing the incoming
 	 * 'Detection' message

@@ -30,6 +30,8 @@ class ThreadPool {
 	 * \brief threadpool constructor
 	 *
 	 * The constructor for the threadpool class.
+	 *
+	 * \param poolname - A std::string containing the name of the thread pool
 	 * \param num_threads - An integer containing the number of
 	 * threads in the pool.  Default 5
 	 * \param sleeptime - An integer containing the amount of

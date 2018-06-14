@@ -296,7 +296,9 @@ class CHypoList {
 	 * Remove given hypocenter to the vector and map. Also, unlink
 	 * any associated picks.
 	 *
-	 * \param hypo - A std::shared_ptr to the hypocenter to add
+	 * \param hypo - A std::shared_ptr to the hypocenter to remove
+	 * \param reportCancel A boolean flag indicating whether to report a
+	 * cancel message when the hypo is removed
 	 * \return void.
 	 */
 	void remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel = true);
