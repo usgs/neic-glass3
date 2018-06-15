@@ -318,7 +318,10 @@ Public Member Functions</h2></td></tr>
 <p><a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> alternate constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">scnl</td><td>- A string containing the scnl for this site. </td></tr>
+    <tr><td class="paramname">sta</td><td>- A string containing the station name for this site. </td></tr>
+    <tr><td class="paramname">comp</td><td>- A string containing the component code for this site. </td></tr>
+    <tr><td class="paramname">net</td><td>- A string containing the network code for this site. </td></tr>
+    <tr><td class="paramname">loc</td><td>- A string containing the location code for this site. </td></tr>
     <tr><td class="paramname">lat</td><td>- A double value containing the geographic latitude of this site in degrees </td></tr>
     <tr><td class="paramname">lon</td><td>- A double value containing the geographic longitude of this site in degrees </td></tr>
     <tr><td class="paramname">elv</td><td>- A double value containing the geographic elevation of this site in meters </td></tr>
@@ -359,7 +362,7 @@ Public Member Functions</h2></td></tr>
 <p><a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> alternate constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">com</td><td>- A pointer to a json::Object to construct the site from </td></tr>
+    <tr><td class="paramname">site</td><td>- A pointer to a json::Object to construct the site from </td></tr>
     <tr><td class="paramname">glassPtr</td><td>- A pointer to the <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> class </td></tr>
   </table>
   </dd>
@@ -418,7 +421,7 @@ Public Member Functions</h2></td></tr>
 <p>Add node to this site This function adds the given pick to the list of nodes serviced by this site. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pck</td><td>- A shared_ptr to a <a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> object containing the node to add </td></tr>
+    <tr><td class="paramname">node</td><td>- A shared_ptr to a <a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> object containing the node to add </td></tr>
     <tr><td class="paramname">travelTime1</td><td>- A double value containing the first travel time to use </td></tr>
     <tr><td class="paramname">travelTime2</td><td>- A double value containing the optional second travel time to use for the link, defaults to -1 (no travel time) </td></tr>
   </table>
@@ -571,7 +574,7 @@ Public Member Functions</h2></td></tr>
 <p>Get the distance between this site and another in km. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">geo</td><td>- A pointer to another site </td></tr>
+    <tr><td class="paramname">site</td><td>- A pointer to another site </td></tr>
   </table>
   </dd>
 </dl>
@@ -1143,7 +1146,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 23 2018 18:34:34 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 15 2018 21:57:53 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -114,20 +114,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1Queue.html#adac796fa6a802b006487a9ef97a3facf">addDataToQueue</a>(std::shared_ptr&lt;json::Object&gt; data, <span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classutil_1_1Queue.html#aa998516bc3c705c680f40560eaa8ebbb">getDataFromQueue</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classutil_1_1Queue.html#a10d6dd308323652999e80dd66a1ff8b7">clearQueue</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classutil_1_1Queue.html#a41f2c8d48272b2acda86e0ffe4124b61">size</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    std::queue&lt;std::shared_ptr&lt;json::Object&gt;&gt; m_DataQueue;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    std::mutex m_QueueMutex;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;};</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">#endif  // QUEUE_H</span></div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classutil_1_1Queue.html#aa998516bc3c705c680f40560eaa8ebbb">getDataFromQueue</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classutil_1_1Queue.html#a10d6dd308323652999e80dd66a1ff8b7">clearQueue</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classutil_1_1Queue.html#a41f2c8d48272b2acda86e0ffe4124b61">size</a>(<span class="keywordtype">bool</span> lock = <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    std::queue&lt;std::shared_ptr&lt;json::Object&gt;&gt; m_DataQueue;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    std::mutex m_QueueMutex;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;};</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#endif  // QUEUE_H</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor"></span></div>
 <div class="ttc" id="classutil_1_1Queue_html_a41f2c8d48272b2acda86e0ffe4124b61"><div class="ttname"><a href="classutil_1_1Queue.html#a41f2c8d48272b2acda86e0ffe4124b61">util::Queue::size</a></div><div class="ttdeci">int size(bool lock=true)</div><div class="ttdoc">get the size of the queue </div><div class="ttdef"><b>Definition:</b> queue.cpp:85</div></div>
 <div class="ttc" id="classutil_1_1Queue_html_adac796fa6a802b006487a9ef97a3facf"><div class="ttname"><a href="classutil_1_1Queue.html#adac796fa6a802b006487a9ef97a3facf">util::Queue::addDataToQueue</a></div><div class="ttdeci">bool addDataToQueue(std::shared_ptr&lt; json::Object &gt; data, bool lock=true)</div><div class="ttdoc">add data to queue </div><div class="ttdef"><b>Definition:</b> queue.cpp:25</div></div>
 <div class="ttc" id="classutil_1_1Queue_html_aa998516bc3c705c680f40560eaa8ebbb"><div class="ttname"><a href="classutil_1_1Queue.html#aa998516bc3c705c680f40560eaa8ebbb">util::Queue::getDataFromQueue</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; getDataFromQueue(bool lock=true)</div><div class="ttdoc">get data from queue </div><div class="ttdef"><b>Definition:</b> queue.cpp:40</div></div>
@@ -138,7 +138,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 23 2018 18:31:42 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 15 2018 21:55:04 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

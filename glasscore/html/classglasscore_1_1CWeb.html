@@ -121,9 +121,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a05429c1946fd281dee8b4e17a789e3e3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a05429c1946fd281dee8b4e17a789e3e3">dispatch</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
 <tr class="memdesc:a05429c1946fd281dee8b4e17a789e3e3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a> communication recieveing function.  <a href="#a05429c1946fd281dee8b4e17a789e3e3">More...</a><br/></td></tr>
 <tr class="separator:a05429c1946fd281dee8b4e17a789e3e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a490172bd2a79c92e58b6e100a0fdb454"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a490172bd2a79c92e58b6e100a0fdb454">initialize</a> (std::string name, double thresh, int numDetect, int numNucleate, int resolution, int numRows, int numCols, int numZ, bool update, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; firstTrav, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; secondTrav, double aziTap)</td></tr>
-<tr class="memdesc:a490172bd2a79c92e58b6e100a0fdb454"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a> initialization function.  <a href="#a490172bd2a79c92e58b6e100a0fdb454">More...</a><br/></td></tr>
-<tr class="separator:a490172bd2a79c92e58b6e100a0fdb454"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a890ab83c30f8237700b42f45f8ec9620"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a890ab83c30f8237700b42f45f8ec9620">initialize</a> (std::string name, double thresh, int numDetect, int numNucleate, int resolution, int numRows, int numCols, int numZ, bool update, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; firstTrav, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; secondTrav, double aziTaper=360.)</td></tr>
+<tr class="memdesc:a890ab83c30f8237700b42f45f8ec9620"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a> initialization function.  <a href="#a890ab83c30f8237700b42f45f8ec9620">More...</a><br/></td></tr>
+<tr class="separator:a890ab83c30f8237700b42f45f8ec9620"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada2d68c003c09e10dc5039890eb597dc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#ada2d68c003c09e10dc5039890eb597dc">grid</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
 <tr class="memdesc:ada2d68c003c09e10dc5039890eb597dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a local detection grid.  <a href="#ada2d68c003c09e10dc5039890eb597dc">More...</a><br/></td></tr>
 <tr class="separator:ada2d68c003c09e10dc5039890eb597dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -191,36 +191,51 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a15f1e5f1901ca8e9a6bc73dc8cfd216f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> setter.  <a href="#a15f1e5f1901ca8e9a6bc73dc8cfd216f">More...</a><br/></td></tr>
 <tr class="separator:a15f1e5f1901ca8e9a6bc73dc8cfd216f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25ea996e97c7ce00f902fb984cd29ca9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a25ea996e97c7ce00f902fb984cd29ca9">getUpdate</a> () const </td></tr>
+<tr class="memdesc:a25ea996e97c7ce00f902fb984cd29ca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update getter.  <a href="#a25ea996e97c7ce00f902fb984cd29ca9">More...</a><br/></td></tr>
 <tr class="separator:a25ea996e97c7ce00f902fb984cd29ca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c1103f8fe0defc56921a00b22e6de77"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a5c1103f8fe0defc56921a00b22e6de77">getResolution</a> () const </td></tr>
+<tr class="memdesc:a5c1103f8fe0defc56921a00b22e6de77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolution getter.  <a href="#a5c1103f8fe0defc56921a00b22e6de77">More...</a><br/></td></tr>
 <tr class="separator:a5c1103f8fe0defc56921a00b22e6de77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c831428c247bb95887df7370412fce8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a2c831428c247bb95887df7370412fce8">getThresh</a> () const </td></tr>
+<tr class="memdesc:a2c831428c247bb95887df7370412fce8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nucleation threshold getter.  <a href="#a2c831428c247bb95887df7370412fce8">More...</a><br/></td></tr>
 <tr class="separator:a2c831428c247bb95887df7370412fce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b1a9aacec0aafb1a915a90df4c4a191"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a5b1a9aacec0aafb1a915a90df4c4a191">getCol</a> () const </td></tr>
+<tr class="memdesc:a5b1a9aacec0aafb1a915a90df4c4a191"><td class="mdescLeft">&#160;</td><td class="mdescRight">Col getter.  <a href="#a5b1a9aacec0aafb1a915a90df4c4a191">More...</a><br/></td></tr>
 <tr class="separator:a5b1a9aacec0aafb1a915a90df4c4a191"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a2c1d468626b1f3e417333dd49acc34"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a5a2c1d468626b1f3e417333dd49acc34">getDetect</a> () const </td></tr>
+<tr class="memdesc:a5a2c1d468626b1f3e417333dd49acc34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of detection stations getter.  <a href="#a5a2c1d468626b1f3e417333dd49acc34">More...</a><br/></td></tr>
 <tr class="separator:a5a2c1d468626b1f3e417333dd49acc34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ad22dd5e7763182127bee37b4bc5675"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a5ad22dd5e7763182127bee37b4bc5675">getNucleate</a> () const </td></tr>
+<tr class="memdesc:a5ad22dd5e7763182127bee37b4bc5675"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of picks for nucleation getter.  <a href="#a5ad22dd5e7763182127bee37b4bc5675">More...</a><br/></td></tr>
 <tr class="separator:a5ad22dd5e7763182127bee37b4bc5675"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59eb41cc748e126170e993ca2556441e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a59eb41cc748e126170e993ca2556441e">getRow</a> () const </td></tr>
+<tr class="memdesc:a59eb41cc748e126170e993ca2556441e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Row getter.  <a href="#a59eb41cc748e126170e993ca2556441e">More...</a><br/></td></tr>
 <tr class="separator:a59eb41cc748e126170e993ca2556441e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a967b16fff36b54950cbde141ec82e4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a2a967b16fff36b54950cbde141ec82e4">getZ</a> () const </td></tr>
+<tr class="memdesc:a2a967b16fff36b54950cbde141ec82e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Z getter.  <a href="#a2a967b16fff36b54950cbde141ec82e4">More...</a><br/></td></tr>
 <tr class="separator:a2a967b16fff36b54950cbde141ec82e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79fb88c2108bba76004aa2d9163f79c0"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a79fb88c2108bba76004aa2d9163f79c0">getName</a> () const </td></tr>
+<tr class="memdesc:a79fb88c2108bba76004aa2d9163f79c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name getter.  <a href="#a79fb88c2108bba76004aa2d9163f79c0">More...</a><br/></td></tr>
 <tr class="separator:a79fb88c2108bba76004aa2d9163f79c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a639a2b3f8526aa2b7876a34a3c8cebcd"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a639a2b3f8526aa2b7876a34a3c8cebcd">getTrv1</a> () const </td></tr>
+<tr class="memdesc:a639a2b3f8526aa2b7876a34a3c8cebcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Primary nucleation travel time etter.  <a href="#a639a2b3f8526aa2b7876a34a3c8cebcd">More...</a><br/></td></tr>
 <tr class="separator:a639a2b3f8526aa2b7876a34a3c8cebcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a1fa5e9bb51be32d9445edb703863f7"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr<br class="typebreak"/>
 &lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a7a1fa5e9bb51be32d9445edb703863f7">getTrv2</a> () const </td></tr>
+<tr class="memdesc:a7a1fa5e9bb51be32d9445edb703863f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Secondary nucleation travel time etter.  <a href="#a7a1fa5e9bb51be32d9445edb703863f7">More...</a><br/></td></tr>
 <tr class="separator:a7a1fa5e9bb51be32d9445edb703863f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a692227a79b4407d2527a50d4e67f1e4e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a692227a79b4407d2527a50d4e67f1e4e">getVNetFilterSize</a> () const </td></tr>
+<tr class="memdesc:a692227a79b4407d2527a50d4e67f1e4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Net Filter Size getter.  <a href="#a692227a79b4407d2527a50d4e67f1e4e">More...</a><br/></td></tr>
 <tr class="separator:a692227a79b4407d2527a50d4e67f1e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b7bfd9d08c900a0f17125793ea93d8d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a4b7bfd9d08c900a0f17125793ea93d8d">getVSitesFilterSize</a> () const </td></tr>
+<tr class="memdesc:a4b7bfd9d08c900a0f17125793ea93d8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Site Filter Size getter.  <a href="#a4b7bfd9d08c900a0f17125793ea93d8d">More...</a><br/></td></tr>
 <tr class="separator:a4b7bfd9d08c900a0f17125793ea93d8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ebcc8d7dcdcdb87284c05e67ddc210b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#a0ebcc8d7dcdcdb87284c05e67ddc210b">getUseOnlyTeleseismicStations</a> () const </td></tr>
+<tr class="memdesc:a0ebcc8d7dcdcdb87284c05e67ddc210b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use only teleseismic stations flag getter.  <a href="#a0ebcc8d7dcdcdb87284c05e67ddc210b">More...</a><br/></td></tr>
 <tr class="separator:a0ebcc8d7dcdcdb87284c05e67ddc210b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7d73683466c347521f3c0152bb81390"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWeb.html#aa7d73683466c347521f3c0152bb81390">getVNodeSize</a> () const </td></tr>
+<tr class="memdesc:aa7d73683466c347521f3c0152bb81390"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node size getter.  <a href="#aa7d73683466c347521f3c0152bb81390">More...</a><br/></td></tr>
 <tr class="separator:aa7d73683466c347521f3c0152bb81390"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -231,6 +246,9 @@ Public Member Functions</h2></td></tr>
 <a class="anchor" id="a673677dbdfb5860044e509aba352d97d"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">glasscore::CWeb::CWeb </td>
@@ -256,6 +274,11 @@ Public Member Functions</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p><a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a> constructor. </p>
@@ -390,7 +413,8 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">secondTrav</td><td>- A shared pointer to the second CTravelTime object to use for travel time lookups. </td></tr>
     <tr><td class="paramname">numThreads</td><td>- An integer containing the desired number of background threads to process web updates, if set to 0, glass will halt until the web update is completed. Default 0. </td></tr>
     <tr><td class="paramname">sleepTime</td><td>- An integer containing the amount of time to sleep in milliseconds between jobs. Default 10 </td></tr>
-    <tr><td class="paramname">checkInterval</td><td>- An integer containing the amount of time in seconds between status checks. -1 to disable status checks. Default 300. </td></tr>
+    <tr><td class="paramname">checkInterval</td><td>- An integer containing the amount of time in seconds between status checks. -1 to disable status checks. Default 60. </td></tr>
+    <tr><td class="paramname">aziTaper</td><td>= A double value containing the azimuth taper to be used, defaults to 360 </td></tr>
   </table>
   </dd>
 </dl>
@@ -606,7 +630,6 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">node</td><td>- A std::shared_ptr to the node to link sites to </td></tr>
-    <tr><td class="paramname">trav</td><td>- A pointer to a CTravelTime to use while linking sites </td></tr>
   </table>
   </dd>
 </dl>
@@ -655,12 +678,6 @@ Public Member Functions</h2></td></tr>
 
 <p>Generate node site list. </p>
 <p>This function generates a list of eligible sites (stations) to be used while generating nodes. This list is stored in vSite.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">com</td><td>- A pointer to a json::object containing desired station criteria </td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="section return"><dt>Returns</dt><dd>Always returns true </dd></dl>
 
 </div>
@@ -696,6 +713,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Col getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of columns </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="a5a2c1d468626b1f3e417333dd49acc34"></a>
@@ -710,6 +730,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Default number of detection stations getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the default number of detections used in a node </dd></dl>
 
 </div>
 </div>
@@ -744,6 +767,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Name getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the name of this web </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="a5ad22dd5e7763182127bee37b4bc5675"></a>
@@ -758,6 +784,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Default number of picks for nucleation getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the default number of nucleations used in for a detection </dd></dl>
 
 </div>
 </div>
@@ -774,6 +803,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Resolution getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the web resolution </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="a59eb41cc748e126170e993ca2556441e"></a>
@@ -788,6 +820,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Row getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of rows </dd></dl>
 
 </div>
 </div>
@@ -822,6 +857,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Nucleation threshold getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the nucleation viability threshold </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="a639a2b3f8526aa2b7876a34a3c8cebcd"></a>
@@ -836,6 +874,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Primary nucleation travel time etter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the primary nucleation travel time </dd></dl>
 
 </div>
 </div>
@@ -852,6 +893,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Secondary nucleation travel time etter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the secondary nucleation travel time </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="a25ea996e97c7ce00f902fb984cd29ca9"></a>
@@ -866,6 +910,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Update getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>a flag indicating whether this web supports updates </dd></dl>
 
 </div>
 </div>
@@ -882,6 +929,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Use only teleseismic stations flag getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the use only teleseismic stations flag </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="a692227a79b4407d2527a50d4e67f1e4e"></a>
@@ -896,6 +946,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Net Filter Size getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number network filters </dd></dl>
 
 </div>
 </div>
@@ -912,6 +965,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Node size getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of nodes </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="a4b7bfd9d08c900a0f17125793ea93d8d"></a>
@@ -927,6 +983,9 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Site Filter Size getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number site filters </dd></dl>
+
 </div>
 </div>
 <a class="anchor" id="a2a967b16fff36b54950cbde141ec82e4"></a>
@@ -941,6 +1000,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Z getter. </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of depths </dd></dl>
 
 </div>
 </div>
@@ -1046,7 +1108,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a490172bd2a79c92e58b6e100a0fdb454"></a>
+<a class="anchor" id="a890ab83c30f8237700b42f45f8ec9620"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1120,7 +1182,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>aziTap</em>&#160;</td>
+          <td class="paramname"><em>aziTaper</em> = <code>360.</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1144,6 +1206,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">update</td><td>- A boolean flag indicating whether this web is allowed to update </td></tr>
     <tr><td class="paramname">firstTrav</td><td>- A shared pointer to the first CTravelTime object to use for travel time lookups. </td></tr>
     <tr><td class="paramname">secondTrav</td><td>- A shared pointer to the second CTravelTime object to use for travel time lookups. </td></tr>
+    <tr><td class="paramname">aziTaper</td><td>= A double value containing the azimuth taper to be used, defaults to 360 </td></tr>
   </table>
   </dd>
 </dl>
@@ -1352,7 +1415,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 23 2018 18:34:34 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 15 2018 21:57:53 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

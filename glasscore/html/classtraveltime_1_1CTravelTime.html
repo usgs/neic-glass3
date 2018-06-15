@@ -122,6 +122,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a95009a3163b886db913f6a9f8160eb8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load or generate branch data.  <a href="#a95009a3163b886db913f6a9f8160eb8f">More...</a><br/></td></tr>
 <tr class="separator:a95009a3163b886db913f6a9f8160eb8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c809c2df7ec8e12e4594fe53f3dc4fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a8c809c2df7ec8e12e4594fe53f3dc4fe">clear</a> ()</td></tr>
+<tr class="memdesc:a8c809c2df7ec8e12e4594fe53f3dc4fe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> clear function.  <a href="#a8c809c2df7ec8e12e4594fe53f3dc4fe">More...</a><br/></td></tr>
 <tr class="separator:a8c809c2df7ec8e12e4594fe53f3dc4fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13e13ee7c37bc0f027d2a7f6401c16f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a13e13ee7c37bc0f027d2a7f6401c16f2">setOrigin</a> (double lat, double lon, double depth)</td></tr>
 <tr class="memdesc:a13e13ee7c37bc0f027d2a7f6401c16f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set current geographic location.  <a href="#a13e13ee7c37bc0f027d2a7f6401c16f2">More...</a><br/></td></tr>
@@ -285,6 +286,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> clear function. </p>
+
 </div>
 </div>
 <a class="anchor" id="a13e13ee7c37bc0f027d2a7f6401c16f2"></a>
@@ -358,7 +361,8 @@ Public Attributes</h2></td></tr>
 <p>Attempts to load branch data (using Load()) for a phase using a given <a class="el" href="classtraveltime_1_1CRay.html" title="traveltime ray path class ">CRay</a> and phase std::string.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">phase</td><td>- A std::std::string representing the phase to use </td></tr>
+    <tr><td class="paramname">phase</td><td>- A std::std::string representing the phase to use, default is "P" </td></tr>
+    <tr><td class="paramname">file</td><td>- A std::std::string representing the file to load, default is "" </td></tr>
   </table>
   </dd>
 </dl>
@@ -616,7 +620,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 23 2018 18:34:34 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 15 2018 21:57:53 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

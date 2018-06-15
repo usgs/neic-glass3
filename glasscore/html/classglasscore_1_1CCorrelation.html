@@ -128,11 +128,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ad17a71146c931dab4f67ce50c4acb28f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add hypo reference to this correlation.  <a href="#ad17a71146c931dab4f67ce50c4acb28f">More...</a><br/></td></tr>
 <tr class="separator:ad17a71146c931dab4f67ce50c4acb28f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ac1c6e8fb9e9e801e317eaa7c3281b448">remHypo</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp)</td></tr>
-<tr class="memdesc:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this correlation.  <a href="#ac1c6e8fb9e9e801e317eaa7c3281b448">More...</a><br/></td></tr>
+<tr class="memdesc:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo specific reference to this correlation.  <a href="#ac1c6e8fb9e9e801e317eaa7c3281b448">More...</a><br/></td></tr>
 <tr class="separator:ac1c6e8fb9e9e801e317eaa7c3281b448"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7b3a304d6548aa93de0e469b4f6f7f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#ac7b3a304d6548aa93de0e469b4f6f7f0">remHypo</a> (std::string pid)</td></tr>
+<tr class="memdesc:ac7b3a304d6548aa93de0e469b4f6f7f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo specific reference to this correlation.  <a href="#ac7b3a304d6548aa93de0e469b4f6f7f0">More...</a><br/></td></tr>
 <tr class="separator:ac7b3a304d6548aa93de0e469b4f6f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1c39351ec54067f117532360bb54479"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#af1c39351ec54067f117532360bb54479">clearHypo</a> ()</td></tr>
+<tr class="memdesc:af1c39351ec54067f117532360bb54479"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this correlation.  <a href="#af1c39351ec54067f117532360bb54479">More...</a><br/></td></tr>
 <tr class="separator:af1c39351ec54067f117532360bb54479"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba02351776ae911a822b35d2ec6945f0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CCorrelation.html#aba02351776ae911a822b35d2ec6945f0">getCorrelation</a> () const </td></tr>
 <tr class="memdesc:aba02351776ae911a822b35d2ec6945f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correlation value getter.  <a href="#aba02351776ae911a822b35d2ec6945f0">More...</a><br/></td></tr>
@@ -398,6 +400,8 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hyp</td><td>- A std::shared_ptr to an object containing the hypocenter to link. </td></tr>
+    <tr><td class="paramname">ass</td><td>- A std::string containing a note about the association reason </td></tr>
+    <tr><td class="paramname">force</td><td>- A boolean flag indicating whether to force the association, defaults to false. </td></tr>
   </table>
   </dd>
 </dl>
@@ -433,6 +437,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Remove hypo reference to this correlation. </p>
+<p>Remove any shared_ptr reference from this correlation, breaking the graph database link between this correlation and any hypocenter. </p>
 
 </div>
 </div>
@@ -813,7 +820,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Remove hypo reference to this correlation. </p>
+<p>Remove hypo specific reference to this correlation. </p>
 <p>Remove a shared_ptr reference from the given hypo to this correlation, breaking the graph database link between this correlation and the hypocenter.</p>
 <p>Note that this correlation may or may not be still linked to other hypocenters</p>
 <dl class="params"><dt>Parameters</dt><dd>
@@ -838,6 +845,16 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Remove hypo specific reference to this correlation. </p>
+<p>Remove a shared_ptr reference from the given hypo id to this correlation, breaking the graph database link between this correlation and the hypocenter.</p>
+<p>Note that this correlation may or may not be still linked to other hypocenters</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pid</td><td>- A std::string identifying the the hypocenter to unlink. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -872,7 +889,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 23 2018 18:34:33 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 15 2018 21:57:53 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

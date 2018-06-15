@@ -131,9 +131,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a7506f509f5b3377d62b5c4f9c3f381d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this pick.  <a href="#a7506f509f5b3377d62b5c4f9c3f381d5">More...</a><br/></td></tr>
 <tr class="separator:a7506f509f5b3377d62b5c4f9c3f381d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee8c3319e85c1e65d01222a62e3d69d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#aee8c3319e85c1e65d01222a62e3d69d6">remHypo</a> (std::string pid)</td></tr>
+<tr class="memdesc:aee8c3319e85c1e65d01222a62e3d69d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo specific reference to this pick.  <a href="#aee8c3319e85c1e65d01222a62e3d69d6">More...</a><br/></td></tr>
 <tr class="separator:aee8c3319e85c1e65d01222a62e3d69d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74461201f2cd255097468fde4e6db7f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a74461201f2cd255097468fde4e6db7f4">clearHypo</a> ()</td></tr>
-<tr class="memdesc:a74461201f2cd255097468fde4e6db7f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear any hypo reference to this pick.  <a href="#a74461201f2cd255097468fde4e6db7f4">More...</a><br/></td></tr>
+<tr class="memdesc:a74461201f2cd255097468fde4e6db7f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this pick.  <a href="#a74461201f2cd255097468fde4e6db7f4">More...</a><br/></td></tr>
 <tr class="separator:a74461201f2cd255097468fde4e6db7f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bc9730805c61733f67e4bba810c1099"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a7bc9730805c61733f67e4bba810c1099">nucleate</a> ()</td></tr>
 <tr class="memdesc:a7bc9730805c61733f67e4bba810c1099"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nucleate new event based on the addition of this pick.  <a href="#a7bc9730805c61733f67e4bba810c1099">More...</a><br/></td></tr>
@@ -363,6 +364,8 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hyp</td><td>- A std::shared_ptr to an object containing the hypocenter to link. </td></tr>
+    <tr><td class="paramname">ass</td><td>- A std::string containing a note about the association reason </td></tr>
+    <tr><td class="paramname">force</td><td>- A boolean flag indicating whether to force the association, defaults to false. </td></tr>
   </table>
   </dd>
 </dl>
@@ -399,7 +402,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Clear any hypo reference to this pick. </p>
+<p>Remove hypo reference to this pick. </p>
+<p>Remove any shared_ptr reference from this pick, breaking the graph database link between this pick and any hypocenter. </p>
 
 </div>
 </div>
@@ -724,6 +728,16 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Remove hypo specific reference to this pick. </p>
+<p>Remove a shared_ptr reference from the given hypo id to this pick, breaking the graph database link between this pick and the hypocenter.</p>
+<p>Note that this pick may or may not be still linked to other hypocenters</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pid</td><td>- A std::string identifying the the hypocenter to unlink. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a class="anchor" id="ad327d20728f4c09c1074701a926d7126"></a>
@@ -757,7 +771,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 23 2018 18:34:34 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jun 15 2018 21:57:53 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
