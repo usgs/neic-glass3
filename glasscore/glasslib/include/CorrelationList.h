@@ -87,21 +87,22 @@ class CCorrelationList {
 	 * \brief CCorrelationList add correlation function
 	 *
 	 * The function used by CCorrelationList to add a correlation to the vector
-	 * and map, if the new correlation causes the number of correlations in the vector/map
-	 * to exceed the configured maximum, remove the oldest correlation
-	 * from the list/map, as well as the list of correlations in CSite.
+	 * and map, if the new correlation causes the number of correlations in the
+	 * vector/map to exceed the configured maximum, remove the oldest
+	 * correlation from the list/map, as well as the list of correlations in
+	 * CSite.
 	 *
 	 * This function will generate a json formatted request for site
 	 * (station) information if the correlation is from an unknown site.
 	 *
 	 * This function will first attempt to associate the correlation with
 	 * an existing hypocenter via calling the CHypoList::associate()
-	 * function.  If association is unsuccessful, the correlation creates a new hypocenter
+	 * function.  If association is unsuccessful, the correlation creates a new
+	 * hypocenter
 	 *
-	 * \param correlation - A pointer to a json::object containing the
-	 * correlation.
-	 * \return Returns true if the correlation was usable and added by CCorrelationList,
-	 * false otherwise
+	 * \param com - A pointer to a json::object containing the correlation.
+	 * \return Returns true if the correlation was usable and added by
+	 * CCorrelationList, false otherwise
 	 */
 	bool addCorrelation(std::shared_ptr<json::Object> com);
 
@@ -110,9 +111,10 @@ class CCorrelationList {
 	 *
 	 * Given the integer id of a correlation get a shared_ptr to that correlation.
 	 *
-	 * \param idCorrelation - An integer value containing the id of the correlation to get
-	 * \return Returns a shared_ptr to the found CCorrelation, or null if no correlation
-	 * found.
+	 * \param idCorrelation - An integer value containing the id of the
+	 * correlation to get
+	 * \return Returns a shared_ptr to the found CCorrelation, or null if no
+	 * correlation found.
 	 */
 	std::shared_ptr<CCorrelation> getCorrelation(int idCorrelation);
 
@@ -256,27 +258,28 @@ class CCorrelationList {
 	int nCorrelationMax;
 
 	/**
-	 * \brief An integer containing the current number of correlations in CCorrelationList.
-	 * Used to generate the correlation id.
+	 * \brief An integer containing the current number of correlations in
+	 * CCorrelationList. Used to generate the correlation id.
 	 */
 	int nCorrelation;
 
 	/**
-	 * \brief An integer containing the total number of correlations ever added to
-	 * CCorrelationList
+	 * \brief An integer containing the total number of correlations ever added
+	 * to CCorrelationList
 	 */
 	int nCorrelationTotal;
 
 	/**
-	 * \brief A std::vector mapping the arrival time of each correlation in CCorrelationList
-	 * to it's integer correlation id. The elements in this vector object are inserted
-	 * in a manner to keep it in sequential time order from oldest to youngest.
+	 * \brief A std::vector mapping the arrival time of each correlation in
+	 * CCorrelationListto it's integer correlation id. The elements in this
+	 * vector object are inserted in a manner to keep it in sequential time
+	 * order from oldest to youngest.
 	 */
 	std::vector<std::pair<double, int>> vCorrelation;
 
 	/**
-	 * \brief A std::map containing a std::shared_ptr to each correlation in CCorrelationList
-	 * indexed by the integer correlation id.
+	 * \brief A std::map containing a std::shared_ptr to each correlation in
+	 * CCorrelationList indexed by the integer correlation id.
 	 */
 	std::map<int, std::shared_ptr<CCorrelation>> mCorrelation;
 

@@ -266,7 +266,10 @@ class CRay {
 	 * Calculates theta function after Buland and Chapman(1983)
 	 * I think....
 	 *
-	 * \param rayParam - The input, in radians
+	 * \param rayParam - The ray parameter
+	 * \param dFunFac - The function factor
+	 * \param dDelta - The distance
+	 * \param dRcvr - The receiver function
 	 * \return Returns the theta function
 	 */
 	double calculateThetaFunction(double rayParam, double dFunFac,
@@ -278,6 +281,9 @@ class CRay {
 	 * Calculate the bracket minima from a provided 1-dimensional function
 	 *
 	 * \param x - A pointer to an array of 6 doubles defining the function
+	 * \param dFunFac - The function factor
+	 * \param dDelta - The distance
+	 * \param dRcvr - The receiver function
 	 */
 	void calculateBracketMinima(double *x, double dFunFac, double dDelta,
 								double dRcvr);
@@ -290,6 +296,9 @@ class CRay {
 	 * \param xx - A pointer to an array of 3 doubles defining the function
 	 * \param tol - A double value containing the tolerance
 	 * \param xmin - A pointer to a double value to hold the minimum function x
+	 * \param dFunFac - The function factor
+	 * \param dDelta - The distance
+	 * \param dRcvr - The receiver function
 	 * \return returns the minimum
 	 */
 	double brentMinimization(double *xx, double tol, double *xmin,

@@ -41,7 +41,7 @@ bool moveFileTo(std::string filename, const std::string &dirname);
  * Copy a given file to a given directory
  * \param from - A std::string containing the path and name of the file to
  * copy
- * \param dirname - A std::string containing the path and name of the
+ * \param to - A std::string containing the path and name of the
  * destination file
  * \return returns true if successful.
  */

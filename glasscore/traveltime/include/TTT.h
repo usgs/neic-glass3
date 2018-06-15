@@ -49,6 +49,9 @@ class CTTT {
 	 */
 	~CTTT();
 
+	/**
+	 * \brief CTTT clear function
+	 */
 	void clear();
 
 	/**
@@ -63,6 +66,8 @@ class CTTT {
 	 * taper weighting, mutually exclusive with assocRange
 	 * \param assocRange - An array of 2 double values containing the
 	 * association range, mutually exclusive with weightRange
+	 * \param file - A std::std::string representing the file to load, default
+	 * is ""
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool addPhase(std::string phase, double *weightRange = NULL,

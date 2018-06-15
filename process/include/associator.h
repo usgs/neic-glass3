@@ -61,8 +61,6 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	 *
 	 * \param inputint - A util::iinput pointer to the input class.
 	 * \param outputint - A util::ioutput pointer to the output class.
-	 * \param stationint -  A util::istationlookup pointer to the stationlist
-	 * class.
 	 */
 	Associator(util::iInput* inputint, util::iOutput* outputint);
 

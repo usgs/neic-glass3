@@ -56,8 +56,9 @@ class CGeo {
 	 * \param cartX - The Cartesian x coordinate.
 	 * \param cartY - The Cartesian y coordinate.
 	 * \param cartZ - The Cartesian z coordinate.
-	 * \param cartZ - The associated time to the Cartesian point (if CGeo
+	 * \param cartT - The associated time to the Cartesian point (if CGeo
 	 * represents a space-time point) in decimal seconds.
+	 * \param tag - an Optional user information tag
 	 * \param unitX - The x unit vector
 	 * \param unitY - The y unit vector
 	 * \param unitZ - The z unit vector
@@ -93,8 +94,9 @@ class CGeo {
 	 * \param cartX - The Cartesian x coordinate.
 	 * \param cartY - The Cartesian y coordinate.
 	 * \param cartZ - The Cartesian z coordinate.
-	 * \param cartZ - The associated time to the Cartesian point (if CGeo
+	 * \param cartT - The associated time to the Cartesian point (if CGeo
 	 * represents a space-time point) in decimal seconds.
+	 * \param tag - an Optional user information tag
 	 * \param unitX - The x unit vector
 	 * \param unitY - The y unit vector
 	 * \param unitZ - The z unit vector

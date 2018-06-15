@@ -47,7 +47,7 @@ class CTerra {
 	 *
 	 * The alternate constructor for the CTerra class.
 	 * Loads the earth structure model from a file.
-	 * \param file - A string containing the path and file name of the earth
+	 * \param filename - A string containing the path and file name of the earth
 	 * model file on disk.
 	 */
 	explicit CTerra(std::string filename);
@@ -68,7 +68,7 @@ class CTerra {
 	 * \brief Load earth model from file
 	 *
 	 * Loads the earth structure model from a file.
-	 * \param file - A string containing the path and file name of the earth
+	 * \param filename - A string containing the path and file name of the earth
 	 * model file on disk.
 	 * \return Returns true if successful.
 	 */

@@ -121,42 +121,10 @@ class CGlass {
 	void clear();
 
 	/**
-	 * \brief CGlass earth model test function
-	 *
-	 * This function is used by CGlass to test the loading and
-	 * functionality of the earth model file and classes
-	 *
-	 * \param com - A pointer to a json::object containing the
-	 * the earth model configuration.
-	 * \return Returns true if the tests are successful, false
-	 * otherwise.
-	 */
-	// bool test(json::Object *com);
-	/**
-	 * \brief CGlass earth model travel time generator
-	 *
-	 * This function is used to generate .trv files that
-	 * are used by CTrv to calculate travel times during
-	 * the real-time event processing
-	 *
-	 * \param com - A pointer to a json::object containing the
-	 * the descriptor for a branch of the travel time curves.
-	 * \return Returns true if the tests are successful, false
-	 * otherwise.
-	 */
-	// bool genTrv(json::Object *com);
-	/**
-	 * \brief CGlass travel time testing function
-	 *
-	 * This function is used by CGlass to test various travel
-	 * time phases and branches at specified distances
-	 */
-	// void testTTT(json::Object *com);
-	/**
 	 * \brief CGlass significance function
 	 *
 	 * This function calculates the significance function for glasscore,
-	 * which is the bell shaped curve with Sig(0, x) pinned to 0.
+	 * which is the bell shaped curve with sig(0, x) pinned to 0.
 	 *
 	 * \param tdif - A double containing x value.
 	 * \param sig - A double value containing the sigma,
@@ -188,46 +156,239 @@ class CGlass {
 	 * Checks each thread to see if it is still responsive.
 	 */
 	bool statusCheck();
+
+	/**
+	 * \brief Average delta getter
+	 * \return the average delta
+	 */
 	double getAvgDelta() const;
+
+	/**
+	 * \brief Average sigma getter
+	 * \return the average sigma
+	 */
 	double getAvgSigma() const;
+
+	/**
+	 * \brief Beam matching azimuth window getter
+	 * \return the beam matching azimuth window in degrees
+	 */
 	double getBeamMatchingAzimuthWindow() const;
+
+	/**
+	 * \brief Beam matching distance window getter
+	 * \return the beam matching distance window in degrees
+	 */
 	double getBeamMatchingDistanceWindow() const;
+
+	/**
+	 * \brief Correlation cancel age getter
+	 * \return the correlation cancel age in seconds
+	 */
 	int getCorrelationCancelAge() const;
+
+	/**
+	 * \brief Correlation matching time window getter
+	 * \return the correlation matching time window in seconds
+	 */
 	double getCorrelationMatchingTWindow() const;
+
+	/**
+	 * \brief Correlation matching distance window getter
+	 * \return the correlation matching distance window in degrees
+	 */
 	double getCorrelationMatchingXWindow() const;
+
+	/**
+	 * \brief Distance cutoff factor getter
+	 * \return the distance cutoff factor
+	 */
 	double getCutFactor() const;
+
+	/**
+	 * \brief Average distance cutoff minimum getter
+	 * \return the minimum distance cutoff in degrees
+	 */
 	double getCutMin() const;
+
+	/**
+	 * \brief Distance cutoff percentage getter
+	 * \return the distance cutoff percentage
+	 */
 	double getCutPercentage() const;
+
+	/**
+	 * \brief Report threshold getter
+	 * \return the reporting viability threshold
+	 */
 	double getReportThresh() const;
+
+	/**
+	 * \brief Nucleation threshold getter
+	 * \return the nucleation viability threshold
+	 */
 	double getThresh() const;
+
+	/**
+	 * \brief Exponential Affinity getter
+	 * \return the exponential factor used for pick affinity
+	 */
 	double getExpAffinity() const;
+
+	/**
+	 * \brief Graphics output flag getter
+	 * \return a flag indicating whether to output graphics files
+	 */
 	bool getGraphicsOut() const;
+
+	/**
+	 * \brief Graphics output folder getter
+	 * \return the folder to output graphics files to
+	 */
 	const std::string& getGraphicsOutFolder() const;
+
+	/**
+	 * \brief Graphics step getter
+	 * \return the graphics step size in km
+	 */
 	double getGraphicsStepKm() const;
+
+	/**
+	 * \brief Graphics steps getter
+	 * \return the number of graphic steps
+	 */
 	int getGraphicsSteps() const;
+
+	/**
+	 * \brief Cycle limit getter
+	 * \return the limit of processing cycles
+	 */
 	int getCycleLimit() const;
+
+	/**
+	 * \brief Graphics minimize TT locator getter
+	 * \return the flag indicating whether to use the minimizing tt locator
+	 */
 	bool getMinimizeTtLocator() const;
+
+	/**
+	 * \brief Maximum number of correlations getter
+	 * \return the maximum number of correlations
+	 */
 	int getCorrelationMax() const;
-	int getCount() const;
+
+	/**
+	 * \brief Default number of detection stations getter
+	 * \return the default number of detections used in a node
+	 */
 	int getDetect() const;
+
+	/**
+	 * \brief Maximum number of hypocenters getter
+	 * \return the maximum number of hypocenters
+	 */
 	int getHypoMax() const;
+
+	/**
+	 * \brief Default number of picks for nucleation getter
+	 * \return the default number of nucleations used in for a detection
+	 */
 	int getNucleate() const;
+
+	/**
+	 * \brief Maximum number of picks getter
+	 * \return the maximum number of picks
+	 */
 	int getPickMax() const;
+
+	/**
+	 * \brief Report cutoff getter
+	 * \return the reporting cutoff
+	 */
 	double getReportCut() const;
+
+	/**
+	 * \brief Maximum number of picks with a site getter
+	 * \return the maximum number of picks stored with a site
+	 */
 	int getSitePickMax() const;
+
+	/**
+	 * \brief Correlation list getter
+	 * \return a pointer to the correlation list
+	 */
 	CCorrelationList*& getCorrelationList();
+
+	/**
+	 * \brief Detection getter
+	 * \return a pointer to the detection processor
+	 */
 	CDetection*& getDetection();
+
+	/**
+	 * \brief Hypocenter list getter
+	 * \return a pointer to the hypocenter list
+	 */
 	CHypoList*& getHypoList();
+
+	/**
+	 * \brief Pick duplicate time window getter
+	 * \return the pick duplication time window in seconds
+	 */
 	double getPickDuplicateWindow() const;
+
+	/**
+	 * \brief Pick list getter
+	 * \return a pointer to the pick list
+	 */
 	CPickList*& getPickList();
+
+	/**
+	 * \brief Site list getter
+	 * \return a pointer to the site list
+	 */
 	CSiteList*& getSiteList();
+
+	/**
+	 * \brief Default travel time  getter
+	 * \return the default nucleation travel time
+	 */
 	std::shared_ptr<traveltime::CTravelTime>& getTrvDefault();
+
+	/**
+	 * \brief Travel time list getter
+	 * \return the list of association travel times
+	 */
 	std::shared_ptr<traveltime::CTTT>& getTTT();
+
+	/**
+	 * \brief Web list getter
+	 * \return a pointer to the web list
+	 */
 	CWebList*& getWebList();
+
+	/**
+	 * \brief SD associate getter
+	 * \return the standard deviation cutoff used for association
+	 */
 	double getSdAssociate() const;
+
+	/**
+	 * \brief SD prune getter
+	 * \return the standard deviation cutoff used for pruning
+	 */
 	double getSdPrune() const;
-	const std::string& getWeb() const;
+
+	/**
+	 * \brief Testing locator flag getter
+	 * \return a flag indicating whether to output locator testing files
+	 */
 	bool getTestLocator() const;
+
+	/**
+	 * \brief Testing travel times flag getter
+	 * \return a flag indicating whether to output travel times testing files
+	 */
 	bool getTestTimes() const;
 
  private:
@@ -300,7 +461,7 @@ class CGlass {
 	double dCutPercentage;
 
 	/**
-	 * \brief A double value containing the minimum distance cutoff
+	 * \brief A double value containing the minimum distance cutoff in degrees
 	 */
 	double dCutMin;
 
@@ -352,7 +513,7 @@ class CGlass {
 	CCorrelationList *pCorrelationList;
 
 	/**
-	 * \brief A pointer to a CDetection object  used to process detections sent
+	 * \brief A pointer to a CDetection object used to process detections sent
 	 * into glasscore
 	 */
 	CDetection *pDetection;
@@ -382,31 +543,33 @@ class CGlass {
 	int nHypoMax;
 
 	/**
-	 * \brief Window to check for 'duplicate' picks at same station. If new pick is
-	 * within window, it isn't added to pick list.
+	 * \brief Window in seconds to check for 'duplicate' picks at same station.
+	 * If new pick is within window, it isn't added to pick list.
 	 */
 	double pickDuplicateWindow;
 
 	/**
-	 * \brief Time Window to check for matching correlations. Used for checking
-	 * for duplicate correlations and associating correlations to hypos
+	 * \brief Time Window to check for matching correlations in seconds. Used
+	 * for checking for duplicate correlations and associating correlations to
+	 * hypos
 	 */
 	double correlationMatchingTWindow;
 
 	/**
-	 * \brief Distance Window to check for matching correlations. Used for
-	 * checking for duplicate correlations and associating correlations to hypos
+	 * \brief Distance Window to check for matching correlations in degrees.
+	 * Used for checking for duplicate correlations and associating correlations
+	 * to hypos
 	 */
 	double correlationMatchingXWindow;
 
 	/**
-	 * \brief Azimuth Window to check for matching beams. Used for
+	 * \brief Azimuth Window to check for matching beams in degrees. Used for
 	 * nucleating beams and associating beams to hypos
 	 */
 	double beamMatchingAzimuthWindow;
 
 	/**
-	 * \brief Distance Window to check for matching beams. Used for
+	 * \brief Distance Window to check for matching beams in degrees. Used for
 	 * nucleating beams and associating beams to hypos
 	 */
 	double beamMatchingDistanceWindow;
@@ -427,7 +590,7 @@ class CGlass {
 	bool testLocator;
 
 	/**
-	 * \brief Output info for graphics.
+	 * \brief Flag indicating whether to output info for graphics.
 	 */
 	bool graphicsOut;
 
