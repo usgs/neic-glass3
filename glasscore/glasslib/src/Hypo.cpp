@@ -1366,7 +1366,7 @@ double CHypo::getBayes(double xlat, double xlon, double xZ, double oT,
 				double resi2 = getWeightedResidual(pTrv2->sPhase, tobs, tcal2);
 
 				// use the smallest residual
-				if (resi1 < resi2) {
+				if (abs(resi1) < abs(resi2)) {
 					tcal = tcal1;
 					resi = resi1;
 				} else {
