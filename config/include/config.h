@@ -20,7 +20,7 @@ namespace util {
  * '#'), newlines, and white space, and provides the configuration as a JSON
  * object.
  *
- * NOTE: This class is NOT thread safe
+ * \warning This class is NOT thread safe
  */
 class Config {
  public:
@@ -42,6 +42,9 @@ class Config {
 	 * \param filepath - A std::string containing the path to the configuration
 	 * file
 	 * \param filename - A std::string containing the configuration file name.
+	 *
+	 * \throws For possible exceptions passed through this constructor see
+	 * Config::parseJSONFromString and Config::openFile
 	 */
 	Config(std::string filepath, std::string filename);
 
@@ -54,6 +57,9 @@ class Config {
 	 *
 	 * \param newconfig - A std::string containing the json formatted
 	 * configuration data to load.
+	 *
+	 * \throws For possible exceptions passed through this constructor see
+	 * Config::parseJSONFromString
 	 */
 	explicit Config(std::string newconfig);
 
@@ -76,6 +82,9 @@ class Config {
 	 * \param filename - A std::string containing the configuration file name.
 	 *
 	 * \return Returns a json::Object containing the loaded configuration
+	 *
+	 * \throws For possible exceptions passed through this function see
+	 * Config::parseJSONFromString and Config::openFile
 	 */
 	json::Object parseJSONFromFile(std::string filepath, std::string filename);
 
