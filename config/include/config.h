@@ -94,14 +94,6 @@ class Config {
 	json::Object getJSON();
 
 	/**
-	 * \brief Get parse status as a string
-	 *
-	 * \returns Return a std::string containing the parse status for error
-	 * reporting purposes
-	 */
-	std::string getParseStatus();
-
-	/**
 	 * \brief Config clear function
 	 *
 	 * Returns class members to default values.

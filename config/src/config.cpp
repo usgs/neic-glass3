@@ -29,6 +29,8 @@ void Config::clear() {
 
 json::Object Config::parseJSONFromFile(std::string filepath,
 										std::string filename) {
+	clear();
+
 	// first open the file
 	std::ifstream inFile = openFile(filepath, filename);
 
@@ -58,6 +60,8 @@ json::Object Config::parseJSONFromFile(std::string filepath,
 }
 
 json::Object Config::parseJSONFromString(std::string newconfig) {
+	clear();
+
 	// nullchecks
 	if (newconfig.length() == 0) {
 		throw std::invalid_argument("Empty JSON string");
@@ -121,7 +125,7 @@ std::ifstream Config::openFile(std::string filepath, std::string filename) {
 
 	if (!inFile) {
 		// yell if we failed to open the file
-		throw std::ios_base::failure("Failed to open file: " + fileToOpen);
+		throw std::ios_base::failure("Failed to open file");
 	}
 
 	return (inFile);
