@@ -88,7 +88,7 @@ protected:
 		InputConfig = new util::Config(configdirectory, configfile);
 
 		// get json formatted configuration
-		input_config_json = new json::Object(InputConfig->getConfigJSON());
+		input_config_json = new json::Object(InputConfig->getJSON());
 
 		// configure input
 		return(InputThread->setup(input_config_json));

@@ -85,9 +85,11 @@ json::Object Config::parseJSONFromString(std::string newconfig) {
 						+ "} from configuration string.");
 	} else {
 		// we're in trouble, clear our stuff
-		m_sConfigString = "";
-		jsonObject.Clear();
+		clear();
 
+		logger::log(
+				"error",
+				"config::parseJSONFromString: Invalid configuration string");
 		throw std::invalid_argument("Invalid configuration string");
 	}
 
@@ -107,6 +109,7 @@ json::Object Config::getJSON() {
 std::ifstream Config::openFile(std::string filepath, std::string filename) {
 	// nullchecks
 	if (filename.length() == 0) {
+		logger::log("error", "config::openFile: Empty file name");
 		throw std::invalid_argument("Empty file name");
 	}
 
@@ -114,7 +117,7 @@ std::ifstream Config::openFile(std::string filepath, std::string filename) {
 	std::string fileToOpen = "";
 
 	if (filepath.length() == 0) {
-		fileToOpen = filepath;
+		fileToOpen = filename;
 	} else {
 		fileToOpen = filepath + "/" + filename;
 	}
@@ -125,6 +128,8 @@ std::ifstream Config::openFile(std::string filepath, std::string filename) {
 
 	if (!inFile) {
 		// yell if we failed to open the file
+		logger::log("error",
+					"config::openFile: Failed to open file: " + fileToOpen);
 		throw std::ios_base::failure("Failed to open file");
 	}
 
@@ -151,7 +156,7 @@ std::string Config::parseLineFromFile(std::ifstream &inFile) {
 	line.erase(std::remove(line.begin(), line.end(), '\t'), line.end());
 
 	// now look for # in the line, # signify comments, and skip to the
-	// th next line
+	// the next line
 	size_t position = line.find("#");
 
 	if (position == 0) {

@@ -200,6 +200,7 @@ void logError(const std::string &message) {
 
 		if (logger != nullptr) {
 			logger->error(message);
+			logger->flush();
 		}
 	} catch (spdlog::spdlog_ex&) {
 	}
@@ -216,6 +217,7 @@ void logCriticalError(const std::string &message) {
 
 		if (logger != nullptr) {
 			logger->critical(message);
+			logger->flush();
 		}
 	} catch (spdlog::spdlog_ex&) {
 	}

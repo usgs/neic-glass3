@@ -205,7 +205,7 @@ class OutputTest : public ::testing::Test {
 		OutputConfig = new util::Config(configdirectory, configfile);
 
 		// get json formatted configuration
-		output_config_json = new json::Object(OutputConfig->getConfigJSON());
+		output_config_json = new json::Object(OutputConfig->getJSON());
 
 		AssocThread = new AssociatorStub();
 		AssocThread->Output = OutputThread;
