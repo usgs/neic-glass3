@@ -13,11 +13,14 @@
 
 namespace util {
 /**
- * \brief glass configuration class
+ * \brief neic-glass3 configuration class using JSON formatting
  *
- * The glass config class is a class used to read json formatted configuration
+ * The glass config class is a class used to read JSON formatted configuration
  * files from disk.  The config class filters out comment lines (signified by
- * '#') and white space, and provides the configuration as a json object.
+ * '#'), newlines, and white space, and provides the configuration as a json
+ * object.
+ *
+ * NOTE: This class is NOT thread safe
  */
 class Config {
  public:
@@ -25,15 +28,16 @@ class Config {
 	 * \brief config constructor
 	 *
 	 * The constructor for the config class.
-	 * Initilizes members to default values.
+	 * Initializes members to default values.
 	 */
 	Config();
 
 	/**
-	 * \brief config advanced constructor
+	 * \brief An advanced constructor that loads configuration from a JSON
+	 * formatted file accessed via filepath/filename
 	 *
-	 * The advanced constructor for the config class.
-	 * Loads the provided configuration file containing the configuration.
+	 * Loads the provided configuration file identified by filepath/filename
+	 * which contains the configuration.
 	 *
 	 * \param filepath - A std::string containing the path to the configuration
 	 * file
@@ -42,10 +46,11 @@ class Config {
 	Config(std::string filepath, std::string filename);
 
 	/**
-	 * \brief config advanced constructor
+	 * \brief An advanced constructor that parses configuration from a JSON
+	 * formatted string provided in nuewconfig
 	 *
-	 * The advanced constructor for the config class.
-	 * Loads the provided std::string containing the configuration.
+	 * Parses the provided newconfig std::string which contains the
+	 * configuration.
 	 *
 	 * \param newconfig - A std::string containing the json formatted
 	 * configuration data to load.
@@ -59,112 +64,78 @@ class Config {
 	 */
 	~Config();
 
-	void clear();
-
-	// setup the config class
-	// set up for configuration from a file
 	/**
-	 * \brief config configuration function
+	 * \brief A function that loads configuration from a JSON formatted file
+	 * accessed via filepath/filename
 	 *
-	 * The this function configures the config class.
+	 * Loads the provided configuration file identified by filepath/filename
+	 * which contains the configuration.
+	 *
 	 * \param filepath - A std::string containing the path to the configuration
 	 * file
 	 * \param filename - A std::string containing the configuration file name.
-	 * \return returns true if successful, false otherwise
 	 */
-	bool setup(std::string filepath, std::string filename);
+	json::Object parseJSONFromFile(std::string filepath, std::string filename);
 
 	/**
-	 * \brief Load a configuration file from disk
-	 */
-	void loadConfigfile();
-
-	/**
-	 * \brief Passes a json formatted string into the config class
+	 * \brief A function that parses a configuration from a JSON formatted
+	 * string
 	 *
 	 * \param newconfig - A std::string containing the json formatted
-	 * configuration data to load.
+	 * configuration data to parse.
 	 */
-	void loadConfigstring(std::string newconfig);
+	json::Object parseJSONFromString(std::string newconfig);
 
 	/**
 	 * \brief Get current configuration as json object
 	 *
 	 * \returns Return a json::Object containing the configuration
 	 */
-	json::Object getConfigJSON();
+	json::Object getJSON();
 
 	/**
-	 * \brief Get current configuration as a string
+	 * \brief Get parse status as a string
 	 *
-	 * \returns Return a std::string containing the json formatted
-	 * configuration string.
+	 * \returns Return a std::string containing the parse status for error
+	 * reporting purposes
 	 */
-	std::string getConfig_String();
+	std::string getParseStatus();
 
 	/**
-	 *\brief getter for m_sFileName
+	 * \brief Config clear function
+	 *
+	 * Returns class members to default values.
 	 */
-	const std::string& getFileName() const {
-		return m_sFileName;
-	}
-
-	/**
-	 *\brief getter for m_sFilePath
-	 */
-	const std::string& getFilePath() const {
-		return m_sFilePath;
-	}
+	void clear();
 
  protected:
 	/**
-	 * \brief Configuration parsing function
+	 * \brief Opens the configuration file
 	 *
-	 * Parses the provided string into a json::Object.
-	 * Sets m_ConfigJSON to the parsed json::Object
-	 * Also sets m_sConfigString to the provided string.
-	 * \param newconfig - A std::string containing the json formatted
-	 * configuration data to parse
+	 * \param filepath - A std::string containing the path to the configuration
+	 * file
+	 * \param filename - A std::string containing the configuration file name.
 	 */
-	bool setConfigString(std::string newconfig);
+	std::ifstream openFile(std::string filepath, std::string filename);
 
 	/**
-	 * \brief Opens the configuration file
+	 * \brief Parses the next line from the file, removing tabs, and comment
+	 * lines
 	 */
-	bool openConfigFile();
+	std::string parseLineFromFile(std::ifstream &inFile);
 
 	/**
 	 * \brief Checks that the configuration file
 	 * is still open and is not at the end.
 	 */
-	std::string getNextLineFromConfigFile();
+	bool isFileOpen(std::ifstream &inFile);
 
 	/**
-	 * \brief Opens the configuration file
+	 * \brief Closes the open configuration file.
 	 */
-	bool hasDataConfigFile();
-
-	/**
-	 * \brief Closes teh open configuration file.
-	 */
-	bool closeConfigFile();
+	void closeFile(std::ifstream &inFile);
 
  private:
-	/**
-	 * \brief The path to the configuration file
-	 */
-	std::string m_sFilePath;
-
-	/**
-	 * \brief The name of the configuration file
-	 */
-	std::string m_sFileName;
-
-	/**
-	 * \brief The configuration file stream
-	 */
-	std::ifstream m_InFile;
-
 	/**
 	 * \brief The configuration loaded from the config file as
 	 * a std::string.

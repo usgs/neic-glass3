@@ -11,56 +11,36 @@ Config::Config() {
 }
 
 Config::Config(std::string filepath, std::string filename) {
-	clear();
-
-	setup(filepath, filename);
-
-	loadConfigfile();
+	parseJSONFromFile(filepath, filename);
 }
 
 Config::Config(std::string newconfig) {
-	clear();
-
-	loadConfigstring(newconfig);
+	parseJSONFromString(newconfig);
 }
 
 Config::~Config() {
 	clear();
 }
 
-// set up for configuration from a file
-bool Config::setup(std::string filepath, std::string filename) {
-	m_sFilePath = filepath;
-	m_sFileName = filename;
-
-	m_ConfigJSON.Clear();
-	m_sConfigString = "";
-
-	return (true);
-}
-
 void Config::clear() {
-        m_sFilePath = "";
-        m_sFileName = "";
-
-        m_sConfigString = "";
-        m_ConfigJSON.Clear();
+	m_sConfigString = "";
+	m_ConfigJSON.Clear();
 }
 
-// load the provided config file
-void Config::loadConfigfile() {
+json::Object Config::parseJSONFromFile(std::string filepath,
+										std::string filename) {
 	// first open the file
-	if (openConfigFile() == false) {
-		return;
-	}
+	std::ifstream inFile = openFile(filepath, filename);
 
 	std::string currentline = "";
 	std::string configline = "";
 
 	// read the file
-	while (hasDataConfigFile() == true) {
-		currentline = getNextLineFromConfigFile();
+	while (isFileOpen(inFile) == true) {
+		// get the next line, stripped of whitespace and comments
+		currentline = parseLineFromFile(inFile);
 
+		// skip
 		if (currentline == "") {
 			continue;
 		}
@@ -70,112 +50,93 @@ void Config::loadConfigfile() {
 		configline += currentline;
 	}
 
-	// set the whole config line as our current config
-	if (setConfigString(configline) == true)
-		logger::log(
-				"info",
-				"config::load_configfile: successfully read configuration from "
-				"file.");
-
 	// done with file
-	closeConfigFile();
+	closeFile(inFile);
+
+	// parse the whole string into JSON
+	return (parseJSONFromString(configline));
 }
 
-void Config::loadConfigstring(std::string newconfig) {
-	// set the provided line as our new config
-	if (setConfigString(newconfig) == true)
-		logger::log(
-				"info",
-				"config::load_configstring: successfully read configuration from"
-				" string.");
-}
+json::Object Config::parseJSONFromString(std::string newconfig) {
+	// nullchecks
+	if (newconfig.length() == 0) {
+		throw std::invalid_argument("Empty JSON string");
+	}
 
-// get the configuration as a JSON object
-json::Object Config::getConfigJSON() {
-	return (m_ConfigJSON);
-}
+	json::Value deserializedJSON;
+	json::Object jsonObject;
 
-// get the configuration as a string
-std::string Config::getConfig_String() {
-	return (m_sConfigString);
-}
-
-// set (and parse into JSON) a configuration string
-bool Config::setConfigString(std::string newconfig) {
-	// now that we have the whole config string
-	// deserailize the config string into a json value
-	// I think (hope) this ignores newlines and whitespace
-	json::Value deserializedJSON = json::Deserialize(newconfig);
+	// deserialize the string into JSON
+	deserializedJSON = json::Deserialize(newconfig);
 
 	// make sure we got valid json
 	if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
-		// save our config string
-		m_sConfigString = newconfig;
-
 		// convert our resulting value to a json object
-		m_ConfigJSON = deserializedJSON.ToObject();
+		jsonObject = deserializedJSON.ToObject();
 
 		logger::log(
 				"debug",
 				"config::setconfig_string: json::Deserialize read: {"
 						+ json::Serialize(deserializedJSON)
 						+ "} from configuration string.");
-		return (true);
 	} else {
 		// we're in trouble, clear our stuff
 		m_sConfigString = "";
-		m_ConfigJSON.Clear();
+		jsonObject.Clear();
 
-		// yell
-		logger::log(
-				"error",
-				"config::setconfig_string: json::Deserialize returned null, "
-				"invalid configuration string.");
-		return (false);
+		throw std::invalid_argument("Invalid configuration string");
 	}
+
+	// save our config string and JSON
+	m_sConfigString = newconfig;
+	m_ConfigJSON = jsonObject;
+
+	return (jsonObject);
+}
+
+// get the configuration as a JSON object
+json::Object Config::getJSON() {
+	return (m_ConfigJSON);
 }
 
 // file operations
-bool Config::openConfigFile() {
+std::ifstream Config::openFile(std::string filepath, std::string filename) {
 	// nullchecks
-	if (m_sFileName.length() == 0) {
-		return (false);
-	}
-	if (m_InFile.is_open() == true) {
-		return (false);
+	if (filename.length() == 0) {
+		throw std::invalid_argument("Empty file name");
 	}
 
 	// create the filename
-	std::string filename = "";
+	std::string fileToOpen = "";
 
-	if (m_sFilePath.length() == 0)
-		filename = m_sFileName;
-	else
-		filename = m_sFilePath + "/" + m_sFileName;
-
-	// open the file
-	m_InFile.open(filename, std::ios::in);
-
-	if (!m_InFile) {
-		// yell if we failed to open the file
-		logger::log(
-				"error",
-				"config::open_configfile: failed to open file: " + filename);
-		return (false);
+	if (filepath.length() == 0) {
+		fileToOpen = filepath;
+	} else {
+		fileToOpen = filepath + "/" + filename;
 	}
 
-	return (true);
+	// open the file
+	std::ifstream inFile;
+	inFile.open(fileToOpen, std::ios::in);
+
+	if (!inFile) {
+		// yell if we failed to open the file
+		throw std::ios_base::failure("Failed to open file: " + fileToOpen);
+	}
+
+	return (inFile);
 }
 
-std::string Config::getNextLineFromConfigFile() {
+// parse the next line from the file
+std::string Config::parseLineFromFile(std::ifstream &inFile) {
 	// make sure we've got a file open
-	if (m_InFile.is_open() == false) {
+	if (inFile.is_open() == false) {
 		return ("");
 	}
 
 	// get the next line
 	std::string line;
-	std::getline(m_InFile, line);
+	std::getline(inFile, line);
 
 	// empty line
 	if (line.length() == 0) {
@@ -185,7 +146,8 @@ std::string Config::getNextLineFromConfigFile() {
 	// strip tabs
 	line.erase(std::remove(line.begin(), line.end(), '\t'), line.end());
 
-	// now look for # in the line, # are comments
+	// now look for # in the line, # signify comments, and skip to the
+	// th next line
 	size_t position = line.find("#");
 
 	if (position == 0) {
@@ -211,29 +173,27 @@ std::string Config::getNextLineFromConfigFile() {
 	return ("");
 }
 
-bool Config::hasDataConfigFile() {
+// check to see if the file is open and not at the end
+bool Config::isFileOpen(std::ifstream &inFile) {
 	// make sure file is open
-	if (m_InFile.is_open() == false) {
+	if (inFile.is_open() == false) {
 		return (false);
 	}
 
 	// make sure file is valid (and not at the end)
-	if (m_InFile) {
+	if (inFile) {
 		return (true);
 	} else {
 		return (false);
 	}
 }
 
-bool Config::closeConfigFile() {
+void Config::closeFile(std::ifstream &inFile) {
 	// don't close it if it's not open
-	if (m_InFile.is_open() == false) {
-		return (false);
+	if (inFile.is_open() == false) {
+		return;
 	}
 
-	m_InFile.close();
-
-	// can you fail to close a file?
-	return (true);
+	inFile.close();
 }
 }  // namespace util
