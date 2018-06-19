@@ -15,9 +15,9 @@ namespace util {
 /**
  * \brief neic-glass3 configuration class using JSON formatting
  *
- * The glass config class is a class used to read JSON formatted configuration
- * files from disk.  The config class filters out comment lines (signified by
- * '#'), newlines, and white space, and provides the configuration as a json
+ * The glass Config class is a class used to read JSON formatted configuration
+ * files from disk.  The Config class filters out comment lines (signified by
+ * '#'), newlines, and white space, and provides the configuration as a JSON
  * object.
  *
  * NOTE: This class is NOT thread safe
@@ -25,9 +25,9 @@ namespace util {
 class Config {
  public:
 	/**
-	 * \brief config constructor
+	 * \brief Config constructor
 	 *
-	 * The constructor for the config class.
+	 * The constructor for the Config class.
 	 * Initializes members to default values.
 	 */
 	Config();
@@ -47,7 +47,7 @@ class Config {
 
 	/**
 	 * \brief An advanced constructor that parses configuration from a JSON
-	 * formatted string provided in nuewconfig
+	 * formatted string provided in newconfig
 	 *
 	 * Parses the provided newconfig std::string which contains the
 	 * configuration.
@@ -58,9 +58,9 @@ class Config {
 	explicit Config(std::string newconfig);
 
 	/**
-	 * \brief config destructor
+	 * \brief Config destructor
 	 *
-	 * The destructor for the config class.
+	 * The destructor for the Config class.
 	 */
 	~Config();
 
