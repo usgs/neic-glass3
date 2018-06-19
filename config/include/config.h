@@ -74,6 +74,8 @@ class Config {
 	 * \param filepath - A std::string containing the path to the configuration
 	 * file
 	 * \param filename - A std::string containing the configuration file name.
+	 *
+	 * \return Returns a json::Object containing the loaded configuration
 	 */
 	json::Object parseJSONFromFile(std::string filepath, std::string filename);
 
@@ -81,13 +83,23 @@ class Config {
 	 * \brief A function that parses a configuration from a JSON formatted
 	 * string
 	 *
+	 * Parses the provided JSON formatted configuration string contained in
+	 * newconfig
+	 *
 	 * \param newconfig - A std::string containing the json formatted
 	 * configuration data to parse.
+	 *
+	 * \return Returns a json::Object containing the loaded configuration
+	 * \throw Throws std::invalid_argument if the newconfig string is empty
+	 * \throw Throws std::invalid_argument if the newconfig string failed to
+	 * parse
 	 */
 	json::Object parseJSONFromString(std::string newconfig);
 
 	/**
-	 * \brief Get current configuration as json object
+	 * \brief Get configuration as json object
+	 *
+	 * Get the last loaded/parsed configuration as a json::Object
 	 *
 	 * \returns Return a json::Object containing the configuration
 	 */
@@ -107,36 +119,56 @@ class Config {
 	 * \param filepath - A std::string containing the path to the configuration
 	 * file
 	 * \param filename - A std::string containing the configuration file name.
+	 *
+	 * \return Returns a std::ifstream for accessing the open file
+	 * \throw Throws std::invalid_argument if the filename is empty
+	 * \throw Throws std::ios_base::failure if the file failed to open
 	 */
 	std::ifstream openFile(std::string filepath, std::string filename);
 
 	/**
-	 * \brief Parses the next line from the file, removing tabs, and comment
-	 * lines
+	 * \brief Parses next line from file
+	 *
+	 * Parses the next line from the provided file referenced by inFile,
+	 * removing tabs, and comment lines
+	 *
+	 * \param inFile - A reference to the std::ifstream to get the next line
+	 * from.
+	 *
+	 * \return Returns a std::string containing the next line
 	 */
 	std::string parseLineFromFile(std::ifstream &inFile);
 
 	/**
-	 * \brief Checks that the configuration file
-	 * is still open and is not at the end.
+	 * \brief Checks if provided file is open
+	 *
+	 * Checks that the provided file referenced by inFile is still open and is
+	 * not at the end of the file
+	 *
+	 * \param inFile - A reference to the std::ifstream to check
+	 *
+	 * \return Returns true if the file is open and valid, false otherwise
 	 */
 	bool isFileOpen(std::ifstream &inFile);
 
 	/**
-	 * \brief Closes the open configuration file.
+	 * \brief Closes the open file.
+	 *
+	 * This function closes the provided file referenced by inFile
+	 *
+	 * \param inFile - A reference to the std::ifstream to close
 	 */
 	void closeFile(std::ifstream &inFile);
 
  private:
 	/**
-	 * \brief The configuration loaded from the config file as
-	 * a std::string.
+	 * \brief The "parsed" (whitespace and comments removed) configuration
+	 * string
 	 */
 	std::string m_sConfigString;
 
 	/**
-	 * \brief The configuration loaded from the config file as
-	 * a json::Object
+	 * \brief The parsed configuration as a json::Object
 	 */
 	json::Object m_ConfigJSON;
 };

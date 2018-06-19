@@ -117,8 +117,10 @@ std::ifstream Config::openFile(std::string filepath, std::string filename) {
 	std::string fileToOpen = "";
 
 	if (filepath.length() == 0) {
+		// no path means just the name
 		fileToOpen = filename;
 	} else {
+		// combine path and name
 		fileToOpen = filepath + "/" + filename;
 	}
 
