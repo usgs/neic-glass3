@@ -7,11 +7,11 @@
 
 var indexSectionsWithContent =
 {
-  0: "cghlosu~",
+  0: "cgiopu~",
   1: "c",
   2: "u",
   3: "c",
-  4: "cghlos~"
+  4: "cgiop~"
 };
 
 var indexSectionNames =

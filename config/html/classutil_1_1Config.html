@@ -95,7 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>glass configuration class  
+<p>neic-glass3 configuration class using JSON formatting  
  <a href="classutil_1_1Config.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="config_8h_source.html">config.h</a>&gt;</code></p>
@@ -108,62 +108,49 @@ Collaboration diagram for util::Config:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aee3553c50c54b9d95a7fb8f6db839cf9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#aee3553c50c54b9d95a7fb8f6db839cf9">Config</a> ()</td></tr>
-<tr class="memdesc:aee3553c50c54b9d95a7fb8f6db839cf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">config constructor  <a href="#aee3553c50c54b9d95a7fb8f6db839cf9">More...</a><br/></td></tr>
+<tr class="memdesc:aee3553c50c54b9d95a7fb8f6db839cf9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> constructor.  <a href="#aee3553c50c54b9d95a7fb8f6db839cf9">More...</a><br/></td></tr>
 <tr class="separator:aee3553c50c54b9d95a7fb8f6db839cf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d7ff256ee4733f6049a4b7130a690c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a6d7ff256ee4733f6049a4b7130a690c3">Config</a> (std::string filepath, std::string filename)</td></tr>
-<tr class="memdesc:a6d7ff256ee4733f6049a4b7130a690c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">config advanced constructor  <a href="#a6d7ff256ee4733f6049a4b7130a690c3">More...</a><br/></td></tr>
+<tr class="memdesc:a6d7ff256ee4733f6049a4b7130a690c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">An advanced constructor that loads configuration from a JSON formatted file accessed via filepath/filename.  <a href="#a6d7ff256ee4733f6049a4b7130a690c3">More...</a><br/></td></tr>
 <tr class="separator:a6d7ff256ee4733f6049a4b7130a690c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a3d45b21a5ce5fee8a760bfcb086e3b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a6a3d45b21a5ce5fee8a760bfcb086e3b">Config</a> (std::string newconfig)</td></tr>
-<tr class="memdesc:a6a3d45b21a5ce5fee8a760bfcb086e3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">config advanced constructor  <a href="#a6a3d45b21a5ce5fee8a760bfcb086e3b">More...</a><br/></td></tr>
+<tr class="memdesc:a6a3d45b21a5ce5fee8a760bfcb086e3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">An advanced constructor that parses configuration from a JSON formatted string provided in newconfig.  <a href="#a6a3d45b21a5ce5fee8a760bfcb086e3b">More...</a><br/></td></tr>
 <tr class="separator:a6a3d45b21a5ce5fee8a760bfcb086e3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98aacd99016642a2155c25568307fc64"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a98aacd99016642a2155c25568307fc64">~Config</a> ()</td></tr>
-<tr class="memdesc:a98aacd99016642a2155c25568307fc64"><td class="mdescLeft">&#160;</td><td class="mdescRight">config destructor  <a href="#a98aacd99016642a2155c25568307fc64">More...</a><br/></td></tr>
+<tr class="memdesc:a98aacd99016642a2155c25568307fc64"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> destructor.  <a href="#a98aacd99016642a2155c25568307fc64">More...</a><br/></td></tr>
 <tr class="separator:a98aacd99016642a2155c25568307fc64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a533e44346223a76d66abe497781a11d3"><td class="memItemLeft" align="right" valign="top">json::Object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a533e44346223a76d66abe497781a11d3">parseJSONFromFile</a> (std::string filepath, std::string filename)</td></tr>
+<tr class="memdesc:a533e44346223a76d66abe497781a11d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function that loads configuration from a JSON formatted file accessed via filepath/filename.  <a href="#a533e44346223a76d66abe497781a11d3">More...</a><br/></td></tr>
+<tr class="separator:a533e44346223a76d66abe497781a11d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68f43f4af4f23ca695103b8defcbc8a9"><td class="memItemLeft" align="right" valign="top">json::Object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a68f43f4af4f23ca695103b8defcbc8a9">parseJSONFromString</a> (std::string newconfig)</td></tr>
+<tr class="memdesc:a68f43f4af4f23ca695103b8defcbc8a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function that parses a configuration from a JSON formatted string.  <a href="#a68f43f4af4f23ca695103b8defcbc8a9">More...</a><br/></td></tr>
+<tr class="separator:a68f43f4af4f23ca695103b8defcbc8a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8995eaf255b46e2665cf23638923d314"><td class="memItemLeft" align="right" valign="top">json::Object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a8995eaf255b46e2665cf23638923d314">getJSON</a> ()</td></tr>
+<tr class="memdesc:a8995eaf255b46e2665cf23638923d314"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get configuration as json object.  <a href="#a8995eaf255b46e2665cf23638923d314">More...</a><br/></td></tr>
+<tr class="separator:a8995eaf255b46e2665cf23638923d314"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfdf566e91db58a9b33a75b003126f60"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#adfdf566e91db58a9b33a75b003126f60">clear</a> ()</td></tr>
+<tr class="memdesc:adfdf566e91db58a9b33a75b003126f60"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> clear function.  <a href="#adfdf566e91db58a9b33a75b003126f60">More...</a><br/></td></tr>
 <tr class="separator:adfdf566e91db58a9b33a75b003126f60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae30b52d92bd914f281b456985ff2662a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#ae30b52d92bd914f281b456985ff2662a">setup</a> (std::string filepath, std::string filename)</td></tr>
-<tr class="memdesc:ae30b52d92bd914f281b456985ff2662a"><td class="mdescLeft">&#160;</td><td class="mdescRight">config configuration function  <a href="#ae30b52d92bd914f281b456985ff2662a">More...</a><br/></td></tr>
-<tr class="separator:ae30b52d92bd914f281b456985ff2662a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adfc7ced98fad9737a5bed01d45800cba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#adfc7ced98fad9737a5bed01d45800cba">loadConfigfile</a> ()</td></tr>
-<tr class="memdesc:adfc7ced98fad9737a5bed01d45800cba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a configuration file from disk.  <a href="#adfc7ced98fad9737a5bed01d45800cba">More...</a><br/></td></tr>
-<tr class="separator:adfc7ced98fad9737a5bed01d45800cba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1216c438db542682027d7167c2f4035b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a1216c438db542682027d7167c2f4035b">loadConfigstring</a> (std::string newconfig)</td></tr>
-<tr class="memdesc:a1216c438db542682027d7167c2f4035b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passes a json formatted string into the config class.  <a href="#a1216c438db542682027d7167c2f4035b">More...</a><br/></td></tr>
-<tr class="separator:a1216c438db542682027d7167c2f4035b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab05b1d06d0cedf90e2c942f3dd9ec977"><td class="memItemLeft" align="right" valign="top">json::Object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#ab05b1d06d0cedf90e2c942f3dd9ec977">getConfigJSON</a> ()</td></tr>
-<tr class="memdesc:ab05b1d06d0cedf90e2c942f3dd9ec977"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current configuration as json object.  <a href="#ab05b1d06d0cedf90e2c942f3dd9ec977">More...</a><br/></td></tr>
-<tr class="separator:ab05b1d06d0cedf90e2c942f3dd9ec977"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9641e57db351b876813adab99bcb469"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#ad9641e57db351b876813adab99bcb469">getConfig_String</a> ()</td></tr>
-<tr class="memdesc:ad9641e57db351b876813adab99bcb469"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current configuration as a string.  <a href="#ad9641e57db351b876813adab99bcb469">More...</a><br/></td></tr>
-<tr class="separator:ad9641e57db351b876813adab99bcb469"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7ca9ba09b600d1d3507ecfb644b1e1f"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#ad7ca9ba09b600d1d3507ecfb644b1e1f">getFileName</a> () const </td></tr>
-<tr class="memdesc:ad7ca9ba09b600d1d3507ecfb644b1e1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for m_sFileName  <a href="#ad7ca9ba09b600d1d3507ecfb644b1e1f">More...</a><br/></td></tr>
-<tr class="separator:ad7ca9ba09b600d1d3507ecfb644b1e1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d71dfe72c0490f632b34c426e46883e"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a8d71dfe72c0490f632b34c426e46883e">getFilePath</a> () const </td></tr>
-<tr class="memdesc:a8d71dfe72c0490f632b34c426e46883e"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for m_sFilePath  <a href="#a8d71dfe72c0490f632b34c426e46883e">More...</a><br/></td></tr>
-<tr class="separator:a8d71dfe72c0490f632b34c426e46883e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a7dd84efbdbf06cce76c7a1ff925feb2e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a7dd84efbdbf06cce76c7a1ff925feb2e">setConfigString</a> (std::string newconfig)</td></tr>
-<tr class="memdesc:a7dd84efbdbf06cce76c7a1ff925feb2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration parsing function.  <a href="#a7dd84efbdbf06cce76c7a1ff925feb2e">More...</a><br/></td></tr>
-<tr class="separator:a7dd84efbdbf06cce76c7a1ff925feb2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c2790dd4d87662f9973500defee7795"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a6c2790dd4d87662f9973500defee7795">openConfigFile</a> ()</td></tr>
-<tr class="memdesc:a6c2790dd4d87662f9973500defee7795"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the configuration file.  <a href="#a6c2790dd4d87662f9973500defee7795">More...</a><br/></td></tr>
-<tr class="separator:a6c2790dd4d87662f9973500defee7795"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3bf229b11224b488e121a71e9acbb4bf"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a3bf229b11224b488e121a71e9acbb4bf">getNextLineFromConfigFile</a> ()</td></tr>
-<tr class="memdesc:a3bf229b11224b488e121a71e9acbb4bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks that the configuration file is still open and is not at the end.  <a href="#a3bf229b11224b488e121a71e9acbb4bf">More...</a><br/></td></tr>
-<tr class="separator:a3bf229b11224b488e121a71e9acbb4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa507bddfd45d1bc3fcd8e31984ef18fb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#aa507bddfd45d1bc3fcd8e31984ef18fb">hasDataConfigFile</a> ()</td></tr>
-<tr class="memdesc:aa507bddfd45d1bc3fcd8e31984ef18fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the configuration file.  <a href="#aa507bddfd45d1bc3fcd8e31984ef18fb">More...</a><br/></td></tr>
-<tr class="separator:aa507bddfd45d1bc3fcd8e31984ef18fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d4951829f9b7889d746dbf2bc0a30ce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a2d4951829f9b7889d746dbf2bc0a30ce">closeConfigFile</a> ()</td></tr>
-<tr class="memdesc:a2d4951829f9b7889d746dbf2bc0a30ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closes teh open configuration file.  <a href="#a2d4951829f9b7889d746dbf2bc0a30ce">More...</a><br/></td></tr>
-<tr class="separator:a2d4951829f9b7889d746dbf2bc0a30ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ae6f3ef80177f1cc573be4882afcfb5"><td class="memItemLeft" align="right" valign="top">std::ifstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#a1ae6f3ef80177f1cc573be4882afcfb5">openFile</a> (std::string filepath, std::string filename)</td></tr>
+<tr class="memdesc:a1ae6f3ef80177f1cc573be4882afcfb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the configuration file.  <a href="#a1ae6f3ef80177f1cc573be4882afcfb5">More...</a><br/></td></tr>
+<tr class="separator:a1ae6f3ef80177f1cc573be4882afcfb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae380300bbb96d35237612c9e72709ceb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#ae380300bbb96d35237612c9e72709ceb">parseLineFromFile</a> (std::ifstream &amp;inFile)</td></tr>
+<tr class="memdesc:ae380300bbb96d35237612c9e72709ceb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses next line from file.  <a href="#ae380300bbb96d35237612c9e72709ceb">More...</a><br/></td></tr>
+<tr class="separator:ae380300bbb96d35237612c9e72709ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa717f58bcae2a047a949bf71937bb288"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#aa717f58bcae2a047a949bf71937bb288">isFileOpen</a> (std::ifstream &amp;inFile)</td></tr>
+<tr class="memdesc:aa717f58bcae2a047a949bf71937bb288"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if provided file is open.  <a href="#aa717f58bcae2a047a949bf71937bb288">More...</a><br/></td></tr>
+<tr class="separator:aa717f58bcae2a047a949bf71937bb288"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae974893b190a61fc3dc156bea30039c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classutil_1_1Config.html#ae974893b190a61fc3dc156bea30039c4">closeFile</a> (std::ifstream &amp;inFile)</td></tr>
+<tr class="memdesc:ae974893b190a61fc3dc156bea30039c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Closes the open file.  <a href="#ae974893b190a61fc3dc156bea30039c4">More...</a><br/></td></tr>
+<tr class="separator:ae974893b190a61fc3dc156bea30039c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>glass configuration class </p>
-<p>The glass config class is a class used to read json formatted configuration files from disk. The config class filters out comment lines (signified by '#') and white space, and provides the configuration as a json object. </p>
+<div class="textblock"><p>neic-glass3 configuration class using JSON formatting </p>
+<p>The glass <a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> class is a class used to read JSON formatted configuration files from disk. The <a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> class filters out comment lines (signified by '#'), newlines, and white space, and provides the configuration as a JSON object.</p>
+<dl class="section warning"><dt>Warning</dt><dd>This class is NOT thread safe </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="aee3553c50c54b9d95a7fb8f6db839cf9"></a>
 <div class="memitem">
@@ -178,8 +165,8 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>config constructor </p>
-<p>The constructor for the config class. Initilizes members to default values. </p>
+<p><a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> constructor. </p>
+<p>The constructor for the <a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> class. Initializes members to default values. </p>
 
 </div>
 </div>
@@ -207,12 +194,18 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>config advanced constructor </p>
-<p>The advanced constructor for the config class. Loads the provided configuration file containing the configuration.</p>
+<p>An advanced constructor that loads configuration from a JSON formatted file accessed via filepath/filename. </p>
+<p>Loads the provided configuration file identified by filepath/filename which contains the configuration.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filepath</td><td>- A std::string containing the path to the configuration file </td></tr>
-    <tr><td class="paramname">filename</td><td>- A std::string containing the configuration file name. </td></tr>
+    <tr><td class="paramname">filename</td><td>- A std::string containing the configuration file name.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">For</td><td>possible exceptions passed through this constructor see <a class="el" href="classutil_1_1Config.html#a68f43f4af4f23ca695103b8defcbc8a9" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> and <a class="el" href="classutil_1_1Config.html#a1ae6f3ef80177f1cc573be4882afcfb5" title="Opens the configuration file. ">Config::openFile</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -241,11 +234,17 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>config advanced constructor </p>
-<p>The advanced constructor for the config class. Loads the provided std::string containing the configuration.</p>
+<p>An advanced constructor that parses configuration from a JSON formatted string provided in newconfig. </p>
+<p>Parses the provided newconfig std::string which contains the configuration.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">newconfig</td><td>- A std::string containing the json formatted configuration data to load. </td></tr>
+    <tr><td class="paramname">newconfig</td><td>- A std::string containing the json formatted configuration data to load.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">For</td><td>possible exceptions passed through this constructor see <a class="el" href="classutil_1_1Config.html#a68f43f4af4f23ca695103b8defcbc8a9" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -265,8 +264,8 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>config destructor </p>
-<p>The destructor for the config class. </p>
+<p><a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> destructor. </p>
+<p>The destructor for the <a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> class. </p>
 
 </div>
 </div>
@@ -284,9 +283,12 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><a class="el" href="classutil_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> clear function. </p>
+<p>Returns class members to default values. </p>
+
 </div>
 </div>
-<a class="anchor" id="a2d4951829f9b7889d746dbf2bc0a30ce"></a>
+<a class="anchor" id="ae974893b190a61fc3dc156bea30039c4"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -294,9 +296,10 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool util::Config::closeConfigFile </td>
+          <td class="memname">void util::Config::closeFile </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">std::ifstream &amp;&#160;</td>
+          <td class="paramname"><em>inFile</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -307,16 +310,23 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Closes teh open configuration file. </p>
+<p>Closes the open file. </p>
+<p>This function closes the provided file referenced by inFile</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inFile</td><td>- A reference to the std::ifstream to close </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a class="anchor" id="ad9641e57db351b876813adab99bcb469"></a>
+<a class="anchor" id="a8995eaf255b46e2665cf23638923d314"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string util::Config::getConfig_String </td>
+          <td class="memname">json::Object util::Config::getJSON </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -324,30 +334,13 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get current configuration as a string. </p>
-<dl class="section return"><dt>Returns</dt><dd>Return a std::string containing the json formatted configuration string. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ab05b1d06d0cedf90e2c942f3dd9ec977"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">json::Object util::Config::getConfigJSON </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Get current configuration as json object. </p>
+<p>Get configuration as json object. </p>
+<p>Get the last loaded/parsed configuration as a json::Object</p>
 <dl class="section return"><dt>Returns</dt><dd>Return a json::Object containing the configuration </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ad7ca9ba09b600d1d3507ecfb644b1e1f"></a>
+<a class="anchor" id="aa717f58bcae2a047a949bf71937bb288"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -355,59 +348,10 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::string&amp; util::Config::getFileName </td>
+          <td class="memname">bool util::Config::isFileOpen </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>getter for m_sFileName </p>
-
-</div>
-</div>
-<a class="anchor" id="a8d71dfe72c0490f632b34c426e46883e"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::string&amp; util::Config::getFilePath </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>getter for m_sFilePath </p>
-
-</div>
-</div>
-<a class="anchor" id="a3bf229b11224b488e121a71e9acbb4bf"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string util::Config::getNextLineFromConfigFile </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">std::ifstream &amp;&#160;</td>
+          <td class="paramname"><em>inFile</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -418,11 +362,19 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Checks that the configuration file is still open and is not at the end. </p>
+<p>Checks if provided file is open. </p>
+<p>Checks that the provided file referenced by inFile is still open and is not at the end of the file</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inFile</td><td>- A reference to the std::ifstream to check</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if the file is open and valid, false otherwise </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="aa507bddfd45d1bc3fcd8e31984ef18fb"></a>
+<a class="anchor" id="a1ae6f3ef80177f1cc573be4882afcfb5"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -430,10 +382,21 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool util::Config::hasDataConfigFile </td>
+          <td class="memname">std::ifstream util::Config::openFile </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>filepath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>filename</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -444,114 +407,30 @@ Protected Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Opens the configuration file. </p>
-
-</div>
-</div>
-<a class="anchor" id="adfc7ced98fad9737a5bed01d45800cba"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void util::Config::loadConfigfile </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Load a configuration file from disk. </p>
-
-</div>
-</div>
-<a class="anchor" id="a1216c438db542682027d7167c2f4035b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void util::Config::loadConfigstring </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>newconfig</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Passes a json formatted string into the config class. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">newconfig</td><td>- A std::string containing the json formatted configuration data to load. </td></tr>
+    <tr><td class="paramname">filepath</td><td>- A std::string containing the path to the configuration file </td></tr>
+    <tr><td class="paramname">filename</td><td>- A std::string containing the configuration file name.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a std::ifstream for accessing the open file </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the filename is empty </td></tr>
+    <tr><td class="paramname">Throws</td><td>std::ios_base::failure if the file failed to open </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a6c2790dd4d87662f9973500defee7795"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool util::Config::openConfigFile </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Opens the configuration file. </p>
-
-</div>
-</div>
-<a class="anchor" id="a7dd84efbdbf06cce76c7a1ff925feb2e"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool util::Config::setConfigString </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>newconfig</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Configuration parsing function. </p>
-<p>Parses the provided string into a json::Object. Sets m_ConfigJSON to the parsed json::Object Also sets m_sConfigString to the provided string. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">newconfig</td><td>- A std::string containing the json formatted configuration data to parse </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="ae30b52d92bd914f281b456985ff2662a"></a>
+<a class="anchor" id="a533e44346223a76d66abe497781a11d3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool util::Config::setup </td>
+          <td class="memname">json::Object util::Config::parseJSONFromFile </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>filepath</em>, </td>
@@ -570,16 +449,89 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>config configuration function </p>
-<p>The this function configures the config class. </p>
+<p>A function that loads configuration from a JSON formatted file accessed via filepath/filename. </p>
+<p>Loads the provided configuration file identified by filepath/filename which contains the configuration.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filepath</td><td>- A std::string containing the path to the configuration file </td></tr>
-    <tr><td class="paramname">filename</td><td>- A std::string containing the configuration file name. </td></tr>
+    <tr><td class="paramname">filename</td><td>- A std::string containing the configuration file name.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>returns true if successful, false otherwise </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a json::Object containing the loaded configuration</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">For</td><td>possible exceptions passed through this function see <a class="el" href="classutil_1_1Config.html#a68f43f4af4f23ca695103b8defcbc8a9" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> and <a class="el" href="classutil_1_1Config.html#a1ae6f3ef80177f1cc573be4882afcfb5" title="Opens the configuration file. ">Config::openFile</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a68f43f4af4f23ca695103b8defcbc8a9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">json::Object util::Config::parseJSONFromString </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>newconfig</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A function that parses a configuration from a JSON formatted string. </p>
+<p>Parses the provided JSON formatted configuration string contained in newconfig</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newconfig</td><td>- A std::string containing the json formatted configuration data to parse.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a json::Object containing the loaded configuration </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the newconfig string is empty </td></tr>
+    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the newconfig string failed to parse </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ae380300bbb96d35237612c9e72709ceb"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string util::Config::parseLineFromFile </td>
+          <td>(</td>
+          <td class="paramtype">std::ifstream &amp;&#160;</td>
+          <td class="paramname"><em>inFile</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Parses next line from file. </p>
+<p>Parses the next line from the provided file referenced by inFile, removing tabs, and comment lines</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inFile</td><td>- A reference to the std::ifstream to get the next line from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a std::string containing the next line </dd></dl>
 
 </div>
 </div>
@@ -590,7 +542,7 @@ Protected Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 18 2018 19:58:42 for config by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jun 20 2018 20:22:44 for config by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
