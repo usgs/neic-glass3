@@ -8,8 +8,12 @@
 #define CONFIGFILENAME "configtest.d"
 #define CONFIGFILEPATH "./testdata"
 #define BADFILENAME "bad.d"
+#define BADCONFIGSTRING "bad"
 
 void checkdata(json::Object ConfigObject) {
+	// assert config object
+	ASSERT_FALSE(ConfigObject.size() == 0)<< "populated config object";
+
 	// check to see if expected keys are present
 	ASSERT_TRUE(ConfigObject.HasKey("Cmd"))<< "Cmd Key Present";
 	ASSERT_TRUE(ConfigObject.HasKey("ConfigString"))
@@ -35,9 +39,6 @@ TEST(ConfigTest, TestFileLoading) {
 	// test loading on construction
 	// create a config object
 	util::Config * TestConfig = new util::Config(filepath, filename);
-
-	// assert config object
-	ASSERT_FALSE(TestConfig->getJSON().size() == 0)<< "populated config object";
 
 	// check the config data
 	checkdata(TestConfig->getJSON());
@@ -66,9 +67,6 @@ TEST(ConfigTest, TestStringParsing) {
 	// create a config object
 	util::Config * TestConfig = new util::Config(configstring);
 
-	// assert config object
-	ASSERT_FALSE(TestConfig->getJSON().size() == 0)<< "populated config object";
-
 	// check the config data
 	checkdata(TestConfig->getJSON());
 
@@ -91,6 +89,7 @@ TEST(ConfigTest, TestStringParsing) {
 TEST(ConfigTest, FailTests) {
 	// setup
 	std::string badfilename = std::string(BADFILENAME);
+	std::string badconfigstring = std::string(BADCONFIGSTRING);
 	util::Config * TestConfig = new util::Config();
 
 	// test empty string failure case
@@ -99,6 +98,14 @@ TEST(ConfigTest, FailTests) {
 		FAIL();
 	} catch (std::invalid_argument& e) {
 		ASSERT_STREQ("Empty JSON string", e.what());
+	}
+
+	// test bad (non json) string failure case
+	try {
+		TestConfig->parseJSONFromString(badconfigstring);
+		FAIL();
+	} catch (std::invalid_argument& e) {
+		ASSERT_STREQ("Invalid configuration string", e.what());
 	}
 
 	// test empty file name failure case
