@@ -46,23 +46,40 @@ int main(int argc, char* argv[]) {
 
 	logger::log(
 			"info",
-			"glass-app: Glass Version " + std::to_string(GLASS_VERSION_MAJOR)
-					+ "." + std::to_string(GLASS_VERSION_MINOR) + "."
+			"glass-app: neic-glass3 Version "
+					+ std::to_string(GLASS_VERSION_MAJOR) + "."
+					+ std::to_string(GLASS_VERSION_MINOR) + "."
 					+ std::to_string(GLASS_VERSION_PATCH) + " startup.");
+
+	logger::log(
+			"info",
+			"glass-app: loading configuration file " + std::string(argv[1]));
 
 	// now load our basic config from file
 	// note, main is gonna get cluttered, move this section
 	// to it's own function eventually
-	util::Config * glassConfig = new util::Config("", argv[1]);
+	util::Config * glassConfig = new util::Config();
+
+	try {
+		glassConfig->parseJSONFromFile("", std::string(argv[1]));
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + std::string(argv[1]) + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		return (1);
+	}
 
 	// check to see if our json config is of the right format
-	if (!(glassConfig->getConfigJSON().HasKey("Cmd"))) {
+	if (!(glassConfig->getJSON().HasKey("Cmd"))) {
 		logger::log("critcalerror", "Invalid configuration, exiting.");
 
 		delete (glassConfig);
 		return (1);
 	}
-	if ((glassConfig->getConfigJSON())["Cmd"] != "Glass") {
+	if ((glassConfig->getJSON())["Cmd"] != "Glass") {
 		logger::log("critcalerror", "Wrong configuration, exiting.");
 
 		delete (glassConfig);
@@ -70,25 +87,24 @@ int main(int argc, char* argv[]) {
 	}
 
 	// get the directory where the rest of the glass configs are stored
-	if (!(glassConfig->getConfigJSON().HasKey("ConfigDirectory"))) {
+	if (!(glassConfig->getJSON().HasKey("ConfigDirectory"))) {
 		configdir = "./";
 		logger::log(
 				"warning",
 				"missing <ConfigDirectory>, defaulting to local directory.");
 	} else {
-		configdir =
-				(glassConfig->getConfigJSON())["ConfigDirectory"].ToString();
+		configdir = (glassConfig->getJSON())["ConfigDirectory"].ToString();
 		logger::log("info", "Reading glass configurations from: " + configdir);
 	}
 
 	// set our proper loglevel
-	if (glassConfig->getConfigJSON().HasKey("LogLevel")) {
-		logger::log_update_level((glassConfig->getConfigJSON())["LogLevel"]);
+	if (glassConfig->getJSON().HasKey("LogLevel")) {
+		logger::log_update_level((glassConfig->getJSON())["LogLevel"]);
 	}
 
 	// load our initialize config
 	std::string initconfigfile;
-	if (!(glassConfig->getConfigJSON().HasKey("InitializeFile"))) {
+	if (!(glassConfig->getJSON().HasKey("InitializeFile"))) {
 		logger::log(
 				"critcalerror",
 				"Invalid configuration, missing <InitializeFile>, exiting.");
@@ -96,18 +112,29 @@ int main(int argc, char* argv[]) {
 		delete (glassConfig);
 		return (1);
 	} else {
-		initconfigfile = (glassConfig->getConfigJSON())["InitializeFile"]
-				.ToString();
+		initconfigfile = (glassConfig->getJSON())["InitializeFile"].ToString();
 	}
 
-	util::Config * InitializeConfig = new util::Config(configdir,
-														initconfigfile);
+	util::Config * InitializeConfig;
+	try {
+		InitializeConfig = new util::Config(configdir, initconfigfile);
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + initconfigfile + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		delete (InitializeConfig);
+		return (1);
+	}
+
 	json::Object * InitializeJSON = new json::Object(
-			InitializeConfig->getConfigJSON());
+			InitializeConfig->getJSON());
 
 	// Load our initial stationlist
 	std::string stationlistfile;
-	if (!(glassConfig->getConfigJSON().HasKey("StationList"))) {
+	if (!(glassConfig->getJSON().HasKey("StationList"))) {
 		logger::log("critcalerror",
 					"Invalid configuration, missing <StationList>, exiting.");
 
@@ -116,20 +143,34 @@ int main(int argc, char* argv[]) {
 		delete (InitializeJSON);
 		return (1);
 	} else {
-		stationlistfile =
-				(glassConfig->getConfigJSON())["StationList"].ToString();
+		stationlistfile = (glassConfig->getJSON())["StationList"].ToString();
 	}
+
 	// get our stationlist
-	util::Config * StationList = new util::Config(configdir, stationlistfile);
-	json::Object * StationListJSON = new json::Object(
-			StationList->getConfigJSON());
+	util::Config * StationList;
+	try {
+		StationList = new util::Config(configdir, stationlistfile);
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + stationlistfile + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		delete (InitializeConfig);
+		delete (InitializeJSON);
+		delete (StationList);
+		return (1);
+	}
+
+	json::Object * StationListJSON = new json::Object(StationList->getJSON());
 
 	// get detection grid file list
 	json::Array gridconfigfilelist;
-	if (glassConfig->getConfigJSON().HasKey("GridFiles")
-			&& ((glassConfig->getConfigJSON())["GridFiles"].GetType()
+	if (glassConfig->getJSON().HasKey("GridFiles")
+			&& ((glassConfig->getJSON())["GridFiles"].GetType()
 					== json::ValueType::ArrayVal)) {
-		gridconfigfilelist = (glassConfig->getConfigJSON())["GridFiles"];
+		gridconfigfilelist = (glassConfig->getJSON())["GridFiles"];
 	} else {
 		logger::log("critcal",
 					"Invalid configuration, missing <GridFiles>, exiting.");
@@ -156,7 +197,7 @@ int main(int argc, char* argv[]) {
 
 	// load our input config
 	std::string inputconfigfile;
-	if (!(glassConfig->getConfigJSON().HasKey("InputConfig"))) {
+	if (!(glassConfig->getJSON().HasKey("InputConfig"))) {
 		logger::log("critcalerror",
 					"Invalid configuration, missing <InputConfig>, exiting.");
 
@@ -167,14 +208,30 @@ int main(int argc, char* argv[]) {
 		delete (StationListJSON);
 		return (1);
 	} else {
-		inputconfigfile =
-				(glassConfig->getConfigJSON())["InputConfig"].ToString();
+		inputconfigfile = (glassConfig->getJSON())["InputConfig"].ToString();
 	}
-	util::Config * InputConfig = new util::Config(configdir, inputconfigfile);
+
+	util::Config * InputConfig;
+	try {
+		InputConfig = new util::Config(configdir, inputconfigfile);
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + inputconfigfile + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		delete (InitializeConfig);
+		delete (InitializeJSON);
+		delete (StationList);
+		delete (StationListJSON);
+		delete (InputConfig);
+		return (1);
+	}
 
 	// load our output config
 	std::string outputconfigfile;
-	if (!(glassConfig->getConfigJSON().HasKey("OutputConfig"))) {
+	if (!(glassConfig->getJSON().HasKey("OutputConfig"))) {
 		logger::log("critcalerror",
 					"Invalid configuration, missing <OutputConfig>, exiting.");
 
@@ -186,10 +243,26 @@ int main(int argc, char* argv[]) {
 		delete (InputConfig);
 		return (1);
 	} else {
-		outputconfigfile = (glassConfig->getConfigJSON())["OutputConfig"]
-				.ToString();
+		outputconfigfile = (glassConfig->getJSON())["OutputConfig"].ToString();
 	}
-	util::Config * OutputConfig = new util::Config(configdir, outputconfigfile);
+	util::Config * OutputConfig;
+	try {
+		OutputConfig = new util::Config(configdir, outputconfigfile);
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + outputconfigfile + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		delete (InitializeConfig);
+		delete (InitializeJSON);
+		delete (StationList);
+		delete (StationListJSON);
+		delete (InputConfig);
+		delete (OutputConfig);
+		return (1);
+	}
 
 	// create our objects
 	glass::input * InputThread = new glass::input(5);
@@ -197,8 +270,7 @@ int main(int argc, char* argv[]) {
 	glass::Associator * AssocThread = new glass::Associator();
 
 	// input setup
-	json::Object * input_config_json = new json::Object(
-			InputConfig->getConfigJSON());
+	json::Object * input_config_json = new json::Object(InputConfig->getJSON());
 	if (InputThread->setup(input_config_json) != true) {
 		logger::log("critical", "glass: Failed to setup Input.  Exiting.");
 
@@ -218,7 +290,7 @@ int main(int argc, char* argv[]) {
 
 	// output setup
 	json::Object * output_config_json = new json::Object(
-			OutputConfig->getConfigJSON());
+			OutputConfig->getJSON());
 	if (OutputThread->setup(output_config_json) != true) {
 		logger::log("critical", "glass: Failed to setup Output.  Exiting.");
 
@@ -259,7 +331,7 @@ int main(int argc, char* argv[]) {
 			util::Config * GridConfig = new util::Config(configdir,
 															gridconfigfile);
 			json::Object * GridConfigJSON = new json::Object(
-					GridConfig->getConfigJSON());
+					GridConfig->getJSON());
 
 			// send in grid
 			AssocThread->setup(GridConfigJSON);

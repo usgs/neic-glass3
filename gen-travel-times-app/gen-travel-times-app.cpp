@@ -76,10 +76,10 @@ int main(int argc, char* argv[]) {
 	util::Config * genConfig = new util::Config("", configFile);
 
 	// check to see if our config is of the right format
-	if (genConfig->getConfigJSON().HasKey("Configuration")
-			&& ((genConfig->getConfigJSON())["Configuration"].GetType()
+	if (genConfig->getJSON().HasKey("Configuration")
+			&& ((genConfig->getJSON())["Configuration"].GetType()
 					== json::ValueType::StringVal)) {
-		std::string configType = (genConfig->getConfigJSON())["Configuration"]
+		std::string configType = (genConfig->getJSON())["Configuration"]
 				.ToString();
 
 		if (configType != "gen-travel-times-app") {
@@ -101,10 +101,10 @@ int main(int argc, char* argv[]) {
 
 	// model
 	std::string model = "";
-	if (genConfig->getConfigJSON().HasKey("Model")
-			&& ((genConfig->getConfigJSON())["Model"].GetType()
+	if (genConfig->getJSON().HasKey("Model")
+			&& ((genConfig->getJSON())["Model"].GetType()
 					== json::ValueType::StringVal)) {
-		model = (genConfig->getConfigJSON())["Model"].ToString();
+		model = (genConfig->getJSON())["Model"].ToString();
 		glassutil::CLogit::log(glassutil::log_level::info,
 								"gen-travel-times-app: Using Model: " + model);
 	} else {
@@ -118,10 +118,10 @@ int main(int argc, char* argv[]) {
 
 	// output path
 	std::string path = "./";
-	if (genConfig->getConfigJSON().HasKey("OutputPath")
-			&& ((genConfig->getConfigJSON())["OutputPath"].GetType()
+	if (genConfig->getJSON().HasKey("OutputPath")
+			&& ((genConfig->getJSON())["OutputPath"].GetType()
 					== json::ValueType::StringVal)) {
-		path = (genConfig->getConfigJSON())["OutputPath"].ToString();
+		path = (genConfig->getJSON())["OutputPath"].ToString();
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
 				"gen-travel-times-app: Using OutputPath: " + path);
@@ -129,10 +129,10 @@ int main(int argc, char* argv[]) {
 
 	// file extension
 	std::string extension = ".trv";
-	if (genConfig->getConfigJSON().HasKey("FileExtension")
-			&& ((genConfig->getConfigJSON())["FileExtension"].GetType()
+	if (genConfig->getJSON().HasKey("FileExtension")
+			&& ((genConfig->getJSON())["FileExtension"].GetType()
 					== json::ValueType::StringVal)) {
-		extension = (genConfig->getConfigJSON())["FileExtension"].ToString();
+		extension = (genConfig->getJSON())["FileExtension"].ToString();
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
 				"gen-travel-times-app: Using FileExtension: " + extension);
@@ -151,12 +151,12 @@ int main(int argc, char* argv[]) {
 
 	logger::log("info", "gen-travel-times-app: Startup.");
 
-	if (genConfig->getConfigJSON().HasKey("Branches")
-			&& ((genConfig->getConfigJSON())["Branches"].GetType()
+	if (genConfig->getJSON().HasKey("Branches")
+			&& ((genConfig->getJSON())["Branches"].GetType()
 					== json::ValueType::ArrayVal)) {
 		// get the array of phase entries
 		json::Array branches =
-				(genConfig->getConfigJSON())["Branches"].ToArray();
+				(genConfig->getJSON())["Branches"].ToArray();
 
 		// for each branch in the array
 		for (auto branchVal : branches) {

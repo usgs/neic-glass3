@@ -13,167 +13,171 @@
 
 namespace util {
 /**
- * \brief glass configuration class
+ * \brief neic-glass3 configuration class using JSON formatting
  *
- * The glass config class is a class used to read json formatted configuration
- * files from disk.  The config class filters out comment lines (signified by
- * '#') and white space, and provides the configuration as a json object.
+ * The glass Config class is a class used to read JSON formatted configuration
+ * files from disk.  The Config class filters out comment lines (signified by
+ * '#'), newlines, and white space, and provides the configuration as a JSON
+ * object.
+ *
+ * \warning This class is NOT thread safe
  */
 class Config {
  public:
 	/**
-	 * \brief config constructor
+	 * \brief Config constructor
 	 *
-	 * The constructor for the config class.
-	 * Initilizes members to default values.
+	 * The constructor for the Config class.
+	 * Initializes members to default values.
 	 */
 	Config();
 
 	/**
-	 * \brief config advanced constructor
+	 * \brief An advanced constructor that loads configuration from a JSON
+	 * formatted file accessed via filepath/filename
 	 *
-	 * The advanced constructor for the config class.
-	 * Loads the provided configuration file containing the configuration.
+	 * Loads the provided configuration file identified by filepath/filename
+	 * which contains the configuration.
 	 *
 	 * \param filepath - A std::string containing the path to the configuration
 	 * file
 	 * \param filename - A std::string containing the configuration file name.
+	 *
+	 * \throws For possible exceptions passed through this constructor see
+	 * Config::parseJSONFromString and Config::openFile
 	 */
 	Config(std::string filepath, std::string filename);
 
 	/**
-	 * \brief config advanced constructor
+	 * \brief An advanced constructor that parses configuration from a JSON
+	 * formatted string provided in newconfig
 	 *
-	 * The advanced constructor for the config class.
-	 * Loads the provided std::string containing the configuration.
+	 * Parses the provided newconfig std::string which contains the
+	 * configuration.
 	 *
 	 * \param newconfig - A std::string containing the json formatted
 	 * configuration data to load.
+	 *
+	 * \throws For possible exceptions passed through this constructor see
+	 * Config::parseJSONFromString
 	 */
 	explicit Config(std::string newconfig);
 
 	/**
-	 * \brief config destructor
+	 * \brief Config destructor
 	 *
-	 * The destructor for the config class.
+	 * The destructor for the Config class.
 	 */
 	~Config();
 
-	void clear();
-
-	// setup the config class
-	// set up for configuration from a file
 	/**
-	 * \brief config configuration function
+	 * \brief A function that loads configuration from a JSON formatted file
+	 * accessed via filepath/filename
 	 *
-	 * The this function configures the config class.
+	 * Loads the provided configuration file identified by filepath/filename
+	 * which contains the configuration.
+	 *
 	 * \param filepath - A std::string containing the path to the configuration
 	 * file
 	 * \param filename - A std::string containing the configuration file name.
-	 * \return returns true if successful, false otherwise
+	 *
+	 * \return Returns a json::Object containing the loaded configuration
+	 *
+	 * \throws For possible exceptions passed through this function see
+	 * Config::parseJSONFromString and Config::openFile
 	 */
-	bool setup(std::string filepath, std::string filename);
+	json::Object parseJSONFromFile(std::string filepath, std::string filename);
 
 	/**
-	 * \brief Load a configuration file from disk
-	 */
-	void loadConfigfile();
-
-	/**
-	 * \brief Passes a json formatted string into the config class
+	 * \brief A function that parses a configuration from a JSON formatted
+	 * string
+	 *
+	 * Parses the provided JSON formatted configuration string contained in
+	 * newconfig
 	 *
 	 * \param newconfig - A std::string containing the json formatted
-	 * configuration data to load.
+	 * configuration data to parse.
+	 *
+	 * \return Returns a json::Object containing the loaded configuration
+	 * \throw Throws std::invalid_argument if the newconfig string is empty
+	 * \throw Throws std::invalid_argument if the newconfig string failed to
+	 * parse
 	 */
-	void loadConfigstring(std::string newconfig);
+	json::Object parseJSONFromString(std::string newconfig);
 
 	/**
-	 * \brief Get current configuration as json object
+	 * \brief Get configuration as json object
+	 *
+	 * Get the last loaded/parsed configuration as a json::Object
 	 *
 	 * \returns Return a json::Object containing the configuration
 	 */
-	json::Object getConfigJSON();
+	json::Object getJSON();
 
 	/**
-	 * \brief Get current configuration as a string
+	 * \brief Config clear function
 	 *
-	 * \returns Return a std::string containing the json formatted
-	 * configuration string.
+	 * Returns class members to default values.
 	 */
-	std::string getConfig_String();
-
-	/**
-	 *\brief getter for m_sFileName
-	 */
-	const std::string& getFileName() const {
-		return m_sFileName;
-	}
-
-	/**
-	 *\brief getter for m_sFilePath
-	 */
-	const std::string& getFilePath() const {
-		return m_sFilePath;
-	}
+	void clear();
 
  protected:
 	/**
-	 * \brief Configuration parsing function
+	 * \brief Opens the configuration file
 	 *
-	 * Parses the provided string into a json::Object.
-	 * Sets m_ConfigJSON to the parsed json::Object
-	 * Also sets m_sConfigString to the provided string.
-	 * \param newconfig - A std::string containing the json formatted
-	 * configuration data to parse
+	 * \param filepath - A std::string containing the path to the configuration
+	 * file
+	 * \param filename - A std::string containing the configuration file name.
+	 *
+	 * \return Returns a std::ifstream for accessing the open file
+	 * \throw Throws std::invalid_argument if the filename is empty
+	 * \throw Throws std::ios_base::failure if the file failed to open
 	 */
-	bool setConfigString(std::string newconfig);
+	std::ifstream openFile(std::string filepath, std::string filename);
 
 	/**
-	 * \brief Opens the configuration file
+	 * \brief Parses next line from file
+	 *
+	 * Parses the next line from the provided file referenced by inFile,
+	 * removing tabs, and comment lines
+	 *
+	 * \param inFile - A reference to the std::ifstream to get the next line
+	 * from.
+	 *
+	 * \return Returns a std::string containing the next line
 	 */
-	bool openConfigFile();
+	std::string parseLineFromFile(std::ifstream &inFile);
 
 	/**
-	 * \brief Checks that the configuration file
-	 * is still open and is not at the end.
+	 * \brief Checks if provided file is open
+	 *
+	 * Checks that the provided file referenced by inFile is still open and is
+	 * not at the end of the file
+	 *
+	 * \param inFile - A reference to the std::ifstream to check
+	 *
+	 * \return Returns true if the file is open and valid, false otherwise
 	 */
-	std::string getNextLineFromConfigFile();
+	bool isFileOpen(std::ifstream &inFile);
 
 	/**
-	 * \brief Opens the configuration file
+	 * \brief Closes the open file.
+	 *
+	 * This function closes the provided file referenced by inFile
+	 *
+	 * \param inFile - A reference to the std::ifstream to close
 	 */
-	bool hasDataConfigFile();
-
-	/**
-	 * \brief Closes teh open configuration file.
-	 */
-	bool closeConfigFile();
+	void closeFile(std::ifstream &inFile);
 
  private:
 	/**
-	 * \brief The path to the configuration file
-	 */
-	std::string m_sFilePath;
-
-	/**
-	 * \brief The name of the configuration file
-	 */
-	std::string m_sFileName;
-
-	/**
-	 * \brief The configuration file stream
-	 */
-	std::ifstream m_InFile;
-
-	/**
-	 * \brief The configuration loaded from the config file as
-	 * a std::string.
+	 * \brief The "parsed" (whitespace and comments removed) configuration
+	 * string
 	 */
 	std::string m_sConfigString;
 
 	/**
-	 * \brief The configuration loaded from the config file as
-	 * a json::Object
+	 * \brief The parsed configuration as a json::Object
 	 */
 	json::Object m_ConfigJSON;
 };
