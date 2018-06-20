@@ -121,8 +121,13 @@ TEST(ConfigTest, FailTests) {
 		TestConfig->parseJSONFromFile("", badfilename);
 		FAIL();
 	} catch (std::ios_base::failure& e) {
-		ASSERT_STREQ("Failed to open file: unspecified iostream_category error",
-						e.what());
+		// different platforms have different messages after "Failed to open
+		// file" in a std::ios_base::failure exception, so search for just that
+		// to prevent erroneous test case failures
+		std::string exceptionString = std::string(e.what());
+		ASSERT_TRUE(
+				exceptionString.find("Failed to open file")
+						!= std::string::npos);
 	}
 
 	// cleanup
