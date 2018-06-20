@@ -6,33 +6,33 @@
 
 namespace util {
 
-// default constructor
+// ---------------------------------------------------------Config
 Config::Config() {
 	clear();
 }
 
-// construct from file
+// ---------------------------------------------------------Config
 Config::Config(std::string filepath, std::string filename) {
 	parseJSONFromFile(filepath, filename);
 }
 
-// construct from string
+// ---------------------------------------------------------Config
 Config::Config(std::string newconfig) {
 	parseJSONFromString(newconfig);
 }
 
-// destroy the class
+// ---------------------------------------------------------~Config
 Config::~Config() {
 	clear();
 }
 
-// clear the class
+// ---------------------------------------------------------clear
 void Config::clear() {
 	m_sConfigString = "";
 	m_ConfigJSON.Clear();
 }
 
-// get the json from a file
+// ---------------------------------------------------------parseJSONFromFile
 json::Object Config::parseJSONFromFile(std::string filepath,
 										std::string filename) {
 	clear();
@@ -65,7 +65,7 @@ json::Object Config::parseJSONFromFile(std::string filepath,
 	return (parseJSONFromString(configline));
 }
 
-// get the json from the string
+// ---------------------------------------------------------parseJSONFromString
 json::Object Config::parseJSONFromString(std::string newconfig) {
 	clear();
 
@@ -107,12 +107,12 @@ json::Object Config::parseJSONFromString(std::string newconfig) {
 	return (jsonObject);
 }
 
-// get the configuration as a JSON object
+// ---------------------------------------------------------getJSON
 json::Object Config::getJSON() {
 	return (m_ConfigJSON);
 }
 
-// file operations
+// ---------------------------------------------------------openFile
 std::ifstream Config::openFile(std::string filepath, std::string filename) {
 	// nullchecks
 	if (filename.length() == 0) {
@@ -145,7 +145,7 @@ std::ifstream Config::openFile(std::string filepath, std::string filename) {
 	return (inFile);
 }
 
-// parse the next line from the file
+// ---------------------------------------------------------parseLineFromFile
 std::string Config::parseLineFromFile(std::ifstream &inFile) {
 	// make sure we've got a file open
 	if (inFile.is_open() == false) {
@@ -191,7 +191,7 @@ std::string Config::parseLineFromFile(std::ifstream &inFile) {
 	return ("");
 }
 
-// check to see if the file is open and not at the end
+// ---------------------------------------------------------isFileOpen
 bool Config::isFileOpen(std::ifstream &inFile) {
 	// make sure file is open
 	if (inFile.is_open() == false) {
@@ -206,7 +206,7 @@ bool Config::isFileOpen(std::ifstream &inFile) {
 	}
 }
 
-// close the file
+// ---------------------------------------------------------closeFile
 void Config::closeFile(std::ifstream &inFile) {
 	// don't close it if it's not open
 	if (inFile.is_open() == false) {
