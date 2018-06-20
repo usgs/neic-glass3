@@ -68,8 +68,8 @@ int main(int argc, char* argv[]) {
 				"Failed to load file: " + std::string(argv[1]) + "; "
 						+ std::string(e.what()));
 
-		// delete (glassConfig);
-		// return (1);
+		delete (glassConfig);
+		return (1);
 	}
 
 	// check to see if our json config is of the right format
@@ -115,8 +115,20 @@ int main(int argc, char* argv[]) {
 		initconfigfile = (glassConfig->getJSON())["InitializeFile"].ToString();
 	}
 
-	util::Config * InitializeConfig = new util::Config(configdir,
-														initconfigfile);
+	util::Config * InitializeConfig;
+	try {
+		InitializeConfig = new util::Config(configdir, initconfigfile);
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + initconfigfile + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		delete (InitializeConfig);
+		return (1);
+	}
+
 	json::Object * InitializeJSON = new json::Object(
 			InitializeConfig->getJSON());
 
@@ -133,8 +145,24 @@ int main(int argc, char* argv[]) {
 	} else {
 		stationlistfile = (glassConfig->getJSON())["StationList"].ToString();
 	}
+
 	// get our stationlist
-	util::Config * StationList = new util::Config(configdir, stationlistfile);
+	util::Config * StationList;
+	try {
+		StationList = new util::Config(configdir, stationlistfile);
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + stationlistfile + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		delete (InitializeConfig);
+		delete (InitializeJSON);
+		delete (StationList);
+		return (1);
+	}
+
 	json::Object * StationListJSON = new json::Object(StationList->getJSON());
 
 	// get detection grid file list
@@ -182,7 +210,24 @@ int main(int argc, char* argv[]) {
 	} else {
 		inputconfigfile = (glassConfig->getJSON())["InputConfig"].ToString();
 	}
-	util::Config * InputConfig = new util::Config(configdir, inputconfigfile);
+
+	util::Config * InputConfig;
+	try {
+		InputConfig = new util::Config(configdir, inputconfigfile);
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + inputconfigfile + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		delete (InitializeConfig);
+		delete (InitializeJSON);
+		delete (StationList);
+		delete (StationListJSON);
+		delete (InputConfig);
+		return (1);
+	}
 
 	// load our output config
 	std::string outputconfigfile;
@@ -200,7 +245,24 @@ int main(int argc, char* argv[]) {
 	} else {
 		outputconfigfile = (glassConfig->getJSON())["OutputConfig"].ToString();
 	}
-	util::Config * OutputConfig = new util::Config(configdir, outputconfigfile);
+	util::Config * OutputConfig;
+	try {
+		OutputConfig = new util::Config(configdir, outputconfigfile);
+	} catch (std::exception& e) {
+		logger::log(
+				"critcalerror",
+				"Failed to load file: " + outputconfigfile + "; "
+						+ std::string(e.what()));
+
+		delete (glassConfig);
+		delete (InitializeConfig);
+		delete (InitializeJSON);
+		delete (StationList);
+		delete (StationListJSON);
+		delete (InputConfig);
+		delete (OutputConfig);
+		return (1);
+	}
 
 	// create our objects
 	glass::input * InputThread = new glass::input(5);

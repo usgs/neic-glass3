@@ -6,27 +6,33 @@
 
 namespace util {
 
+// default constructor
 Config::Config() {
 	clear();
 }
 
+// construct from file
 Config::Config(std::string filepath, std::string filename) {
 	parseJSONFromFile(filepath, filename);
 }
 
+// construct from string
 Config::Config(std::string newconfig) {
 	parseJSONFromString(newconfig);
 }
 
+// destroy the class
 Config::~Config() {
 	clear();
 }
 
+// clear the class
 void Config::clear() {
 	m_sConfigString = "";
 	m_ConfigJSON.Clear();
 }
 
+// get the json from a file
 json::Object Config::parseJSONFromFile(std::string filepath,
 										std::string filename) {
 	clear();
@@ -59,6 +65,7 @@ json::Object Config::parseJSONFromFile(std::string filepath,
 	return (parseJSONFromString(configline));
 }
 
+// get the json from the string
 json::Object Config::parseJSONFromString(std::string newconfig) {
 	clear();
 
@@ -192,13 +199,14 @@ bool Config::isFileOpen(std::ifstream &inFile) {
 	}
 
 	// make sure file is valid (and not at the end)
-	if (inFile) {
+	if (inFile.good()) {
 		return (true);
 	} else {
 		return (false);
 	}
 }
 
+// close the file
 void Config::closeFile(std::ifstream &inFile) {
 	// don't close it if it's not open
 	if (inFile.is_open() == false) {
