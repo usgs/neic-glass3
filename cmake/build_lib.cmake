@@ -7,7 +7,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 # ----- GENERATE ----- #
 include(GenerateExportHeader)
-generate_export_header(${PROJECT_NAME} EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h))
+generate_export_header(${PROJECT_NAME} EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_export.h)
 
 # ----- GLOBAL INCLUDES ----- #
 target_include_directories(
