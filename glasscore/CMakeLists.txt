@@ -13,8 +13,6 @@ include(${CMAKE_DIR}/version.cmake)
 # ----- PROJECT ----- #
 project (glasscore VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH} )
 
-# set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/..")
-
 # ----- BASE FUNCTIONS ----- #
 include(${CMAKE_DIR}/base.cmake)
 
@@ -25,7 +23,7 @@ include_directories(${SuperEasyJSON_INCLUDE_DIRS})
 
 # uuid
 if (UNIX AND NOT APPLE)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_DIR}/..")
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_DIR}")
     find_package(Libuuid REQUIRED)
 
     if (NOT LIBUUID_FOUND)

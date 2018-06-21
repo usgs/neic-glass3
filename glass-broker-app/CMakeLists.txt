@@ -92,7 +92,7 @@ include_directories(${LIBRDKAFKA_PATH}/src-cpp)
 
 # uuid
 if (UNIX AND NOT APPLE)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_DIR}/..")
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_DIR}")
     find_package(Libuuid REQUIRED)
 
     if (NOT LIBUUID_FOUND)
