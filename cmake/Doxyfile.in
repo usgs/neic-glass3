@@ -3,17 +3,18 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = "@CMAKE_PROJECT_NAME@"
-PROJECT_NUMBER         = @GEN_TRAVELTIMES_VERSION_MAJOR@.@GEN_TRAVELTIMES_VERSION_MINOR@.@GEN_TRAVELTIMES_VERSION_PATCH@
+PROJECT_NUMBER         = @neic_glass3_VERSION_MAJOR@.@neic_glass3_VERSION_MINOR@.@neic_glass3_VERSION_PATCH@
 STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@ \
                          @PROJECT_BINARY_DIR@
 #---------------------------------------------------------------------------
 # Configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = @PROJECT_SOURCE_DIR@
+INPUT                  = @DOC_DIRS@
 FILE_PATTERNS          = *.h \
                          *.cpp
 RECURSIVE              = YES
-EXCLUDE_PATTERNS       = */spdlog/* */json/*
+EXCLUDE_PATTERNS       = */spdlog/* \
+                         */SuperEasyJSON/*
 #---------------------------------------------------------------------------
 # Class diagram options
 #---------------------------------------------------------------------------

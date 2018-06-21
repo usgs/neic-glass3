@@ -1,4 +1,0 @@
-// CMake configured options and settings
-#define GEN_TRAVELTIMES_VERSION_MAJOR @gen-travel-times-app_VERSION_MAJOR@
-#define GEN_TRAVELTIMES_VERSION_MINOR @gen-travel-times-app_VERSION_MINOR@
-#define GEN_TRAVELTIMES_VERSION_PATCH @gen-travel-times-app_VERSION_PATCH@

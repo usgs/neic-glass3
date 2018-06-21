@@ -1,5 +1,6 @@
 // gen-travel-times-app.cpp : Defines the entry point for the console
 // application.
+#include <project_version.h>
 #include <json.h>
 #include <logger.h>
 #include <config.h>
@@ -9,7 +10,6 @@
 #include <Ray.h>
 #include <TTT.h>
 #include <TravelTime.h>
-#include "gen-travel-times-appCMakeConfig.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -32,8 +32,9 @@ int main(int argc, char* argv[]) {
 	// check our arguments
 	if ((argc < 2) || (argc > 3)) {
 		std::cout << "gen-travel-times-app version "
-				<< std::to_string(GEN_TRAVELTIMES_VERSION_MAJOR) << "."
-				<< std::to_string(GEN_TRAVELTIMES_VERSION_MINOR) << "; Usage: "
+				<< std::to_string(PROJECT_VERSION_MAJOR) << "."
+				<< std::to_string(PROJECT_VERSION_MINOR) << "."
+				<< std::to_string(PROJECT_VERSION_PATCH) << "; Usage: "
 				<< "gen-travel-times-app <configfile> [logname]" << std::endl;
 		return 1;
 	}
@@ -61,9 +62,9 @@ int main(int argc, char* argv[]) {
 	logger::log(
 			"info",
 			"gen-travel-times-app: Version "
-					+ std::to_string(GEN_TRAVELTIMES_VERSION_MAJOR) + "."
-					+ std::to_string(GEN_TRAVELTIMES_VERSION_MINOR) + "."
-					+ std::to_string(GEN_TRAVELTIMES_VERSION_PATCH)
+					+ std::to_string(PROJECT_VERSION_MAJOR) + "."
+					+ std::to_string(PROJECT_VERSION_MINOR) + "."
+					+ std::to_string(PROJECT_VERSION_PATCH)
 					+ " startup.");
 
 	// get our config file location from the arguments

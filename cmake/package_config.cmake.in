@@ -5,3 +5,8 @@ check_required_components("@PROJECT_NAME@")
 
 set("@PROJECT_NAME@_INCLUDE_DIRS" "@CMAKE_INSTALL_PREFIX@/include/@PROJECT_NAME@")
 set("@PROJECT_NAME@_LIBRARIES" "@CMAKE_INSTALL_PREFIX@/lib/@CMAKE_STATIC_LIBRARY_PREFIX@@PROJECT_NAME@@CMAKE_STATIC_LIBRARY_SUFFIX@")
+
+# Note, I don't like having this set for all projects (should only need to set
+# for log) but I haven't come up with a more elegant way that doesn't crash
+# cmake
+set("spdlog_INCLUDE_DIRS" "@CMAKE_INSTALL_PREFIX@/include/spdlog")

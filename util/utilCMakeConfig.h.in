@@ -1,4 +1,0 @@
-// CMake configured options and settings
-#define UTIL_VERSION_MAJOR @util_VERSION_MAJOR@
-#define UTIL_VERSION_MINOR @util_VERSION_MINOR@
-#define UTIL_VERSION_PATCH @util_VERSION_PATCH@
