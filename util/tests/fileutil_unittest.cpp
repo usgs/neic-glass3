@@ -4,6 +4,7 @@
 
 #ifdef _WIN32
 #include <direct.h>
+#include <Windows.h>
 #endif
 
 #include <iostream>
