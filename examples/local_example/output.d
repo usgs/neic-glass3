@@ -1,4 +1,4 @@
-# glassoutput.d
+# output.d
 # Configuration file for the glass output component
 {
 	# this config is for glass
@@ -8,7 +8,7 @@
   "PublicationTimes":[10,30,120],
 
 	# the directory to write output to
-	"OutputDirectory":"./global_example/output",
+	"OutputDirectory":"./local_example/output",
 
 	# the format to write output in
 	# for now, the only format is json
@@ -22,4 +22,4 @@
 	"OutputAgencyID":"US",
 	"OutputAuthor":"HI-Glass3"
 }
-# End of glassoutput.d
+# End of output.d

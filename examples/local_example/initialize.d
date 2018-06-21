@@ -34,19 +34,19 @@
   "OutputFormat":"Event",
   "DefaultNucleationPhase": {
       "PhaseName": "P",
-      "TravFile": "C:\\hydra\\glass-broker-app\\P.trv"
+      "TravFile": "./local_example/P.trv"
   },
   "TestLocator": true,
   "AssociationPhases": [
       {
           "PhaseName": "P",
           "Range": [ 0, 0, 1.3, 1.3 ],
-          "TravFile": "C:\\hydra\\glass-broker-app\\P.trv"
+          "TravFile": "./local_example/P.trv"
       },
       {
           "PhaseName": "S",
           "Range": [ 0, 0, 1.3, 1.3 ],
-          "TravFile": "C:\\hydra\\glass-broker-app\\S.trv"
+          "TravFile": "./local_example/S.trv"
       }
   ]
 }

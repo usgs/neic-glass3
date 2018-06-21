@@ -1,8 +1,8 @@
 # glass.d
 # glass configuration file
 {
-	# this config is for the glass broker app
-	"Configuration":"glass-broker-app",
+	# this config is for glass
+	"Cmd":"Glass",
 
 	# Set this logging level
 	# trace, debug, info, warning, error, criticalerror
@@ -10,7 +10,7 @@
 
 	# Use this directory for the other glass
 	# subcomponent configuration files
-	"ConfigDirectory":"C:\\hydra\\glass-broker-app\\hi_params",
+	"ConfigDirectory":"./local_example",
 
 	# Association thread configuration
 	# The file containing the configuration
@@ -18,7 +18,7 @@
 	"InitializeFile":"initialize.d",
 
 	# The file containing the initial station list.
-	"StationList":"StationInfoList_Culled.json",
+	"StationList":"hi_stationlist.json",
 
 	# List of files containing the configuration
 	# to define 1 or more regional/local grids
