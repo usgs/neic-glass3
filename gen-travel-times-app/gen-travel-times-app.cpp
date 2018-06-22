@@ -1,5 +1,37 @@
-// gen-travel-times-app.cpp : Defines the entry point for the console
-// application.
+/*****************************************
+ * This file is documented for Doxygen.
+ * If you modify this file please update
+ * the comments so that Doxygen will still
+ * be able to work.
+ ****************************************/
+/**
+ * \file
+ * \brief gen-travel-times-app.cpp
+ *
+ * gen-travel-times-app is an application that uses the glasscore traveltime
+ * libraries to generate the traveltime lookup files (.trv) used by neic-glass3
+ * from a model file.
+ *
+ * gen-travel-times-app uses the environment variable GLASS_LOG to define
+ * the location to write log files
+ *
+ * \par Usage
+ * \parblock
+ * <tt>gen-travel-times-app <configfile> [logname]</tt>
+ *
+ * \par Where
+ * \parblock
+ *    \b configfile is the required path to the configuration file for
+ * gen-travel-times-app
+ *
+ *    \b logname is an optional string defining an alternate
+ * name for the gen-travel-times-app log file.
+ * \endparblock
+ * \endparblock
+ *
+ * Please note that this application is currently not optimized, and is
+ * extremely slow
+ */
 #include <project_version.h>
 #include <json.h>
 #include <logger.h>
@@ -16,6 +48,14 @@
 #include <string>
 #include <iostream>
 
+/**
+ * \brief glassutil::CLogit call back function
+ *
+ * A function bound to glassutil::CLogit (via glassutil::CLogit::setLogCallback)
+ * to enable logging messages to be written to gen-travel-times-app's log file
+ *
+ * \param message - a glassutil::logMessageStruct containg the message to log
+ */
 void logTravelTimes(glassutil::logMessageStruct message) {
 	if (message.level == glassutil::log_level::info) {
 		logger::log("info", "traveltime: " + message.message);
@@ -28,6 +68,13 @@ void logTravelTimes(glassutil::logMessageStruct message) {
 	}
 }
 
+/**
+ * \brief gen-travel-times-app main function
+ *
+ * \param  argc An integer argument count of the command line arguments
+ * \param  argv An argument vector of the command line arguments
+ * \return an integer 0 upon exit success, nonzero otherwise
+ */
 int main(int argc, char* argv[]) {
 	// check our arguments
 	if ((argc < 2) || (argc > 3)) {
@@ -45,7 +92,7 @@ int main(int argc, char* argv[]) {
 	if (pLogDir != NULL) {
 		logpath = pLogDir;
 	} else {
-		std::cout << "gen-travel-times-app using default log director of ./"
+		std::cout << "gen-travel-times-app using default log directory of ./"
 					<< std::endl;
 		logpath = "./";
 	}
@@ -64,8 +111,7 @@ int main(int argc, char* argv[]) {
 			"gen-travel-times-app: Version "
 					+ std::to_string(PROJECT_VERSION_MAJOR) + "."
 					+ std::to_string(PROJECT_VERSION_MINOR) + "."
-					+ std::to_string(PROJECT_VERSION_PATCH)
-					+ " startup.");
+					+ std::to_string(PROJECT_VERSION_PATCH) + " startup.");
 
 	// get our config file location from the arguments
 	std::string configFile = argv[1];
@@ -106,11 +152,10 @@ int main(int argc, char* argv[]) {
 			&& ((genConfig->getJSON())["Model"].GetType()
 					== json::ValueType::StringVal)) {
 		model = (genConfig->getJSON())["Model"].ToString();
-		glassutil::CLogit::log(glassutil::log_level::info,
+		logger::log("info",
 								"gen-travel-times-app: Using Model: " + model);
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		logger::log("critical",
 				"gen-travel-times-app: Missing required Model Key.");
 
 		delete (genConfig);
@@ -123,10 +168,8 @@ int main(int argc, char* argv[]) {
 			&& ((genConfig->getJSON())["OutputPath"].GetType()
 					== json::ValueType::StringVal)) {
 		path = (genConfig->getJSON())["OutputPath"].ToString();
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"gen-travel-times-app: Using OutputPath: " + path);
 	}
+	logger::log("info", "gen-travel-times-app: Using OutputPath: " + path);
 
 	// file extension
 	std::string extension = ".trv";
@@ -134,10 +177,9 @@ int main(int argc, char* argv[]) {
 			&& ((genConfig->getJSON())["FileExtension"].GetType()
 					== json::ValueType::StringVal)) {
 		extension = (genConfig->getJSON())["FileExtension"].ToString();
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"gen-travel-times-app: Using FileExtension: " + extension);
 	}
+	logger::log("info",
+				"gen-travel-times-app: Using FileExtension: " + extension);
 
 	logger::log("info", "gen-travel-times-app: Setup.");
 
@@ -156,8 +198,7 @@ int main(int argc, char* argv[]) {
 			&& ((genConfig->getJSON())["Branches"].GetType()
 					== json::ValueType::ArrayVal)) {
 		// get the array of phase entries
-		json::Array branches =
-				(genConfig->getJSON())["Branches"].ToArray();
+		json::Array branches = (genConfig->getJSON())["Branches"].ToArray();
 
 		// for each branch in the array
 		for (auto branchVal : branches) {
@@ -191,4 +232,4 @@ int main(int argc, char* argv[]) {
 
 	// done
 	return (0);
-}
+}  // main()
