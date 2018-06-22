@@ -24,9 +24,7 @@ include_directories(${SuperEasyJSON_INCLUDE_DIRS})
 
 # glasscore
 find_package(glasscore CONFIG REQUIRED)
-include_directories(${glasscore_INCLUDE_DIRS}/glasslib/include)
-include_directories(${glasscore_INCLUDE_DIRS}/glassutil/include)
-include_directories(${glasscore_INCLUDE_DIRS}/traveltime/include)
+include_directories(${glasscore_INCLUDE_DIRS})
 
 # log
 find_package(log CONFIG REQUIRED)

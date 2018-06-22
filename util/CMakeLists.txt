@@ -53,11 +53,11 @@ include(${CMAKE_DIR}/cpplint.cmake)
 # ----- RUN UNIT TESTS ----- #
 file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
 # NOTE: Order libraries are linked matters for G++
+# set(TEST_LIBRARIES ${log_LIBRARIES})
+# set(TEST_LIBRARIES ${SuperEasyJSON_LIBRARIES})
 set(TEST_LIBRARIES ${SuperEasyJSON_LIBRARIES} ${log_LIBRARIES})
+message(STATUS "TEST_LIBRARIES is: " ${TEST_LIBRARIES})
 include(${CMAKE_DIR}/test.cmake)
 
 # ----- INSTALL LIBRARY ----- #
 include(${CMAKE_DIR}/install_lib.cmake)
-
-# ----- TESTS ----- #
-option(RUN_TESTS "Create and run unit tests (requires GTest)" OFF)

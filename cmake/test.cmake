@@ -18,15 +18,24 @@ if (RUN_TESTS)
         # ----- CREATE TEST EXE ----- #
         add_executable(${PROJECT_NAME}-unit-tests ${TESTS})
         set_target_properties(${PROJECT_NAME}-unit-tests PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-unit-tests)
-        target_link_libraries(${PROJECT_NAME}-unit-tests ${LIBUUID_LIBRARY})
-        target_link_libraries(${PROJECT_NAME}-unit-tests ${TEST_LIBRARIES})
-        target_link_libraries(${PROJECT_NAME}-unit-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS} ${GTEST_BOTH_LIBRARIES})
+	
+	# ----- LINK LIBRARIES ----- #
+	# NOTE: Order libraries are linked matters for G++
 
-        # Cannot link tests to exe targets
+	# link the gtest libraries
+	target_link_libraries(${PROJECT_NAME}-unit-tests ${GTEST_BOTH_LIBRARIES} ${LIBUUID_LIBRARY})
+	
+        # Link the target library (if the target is a library)
         get_target_property(target_type ${PROJECT_NAME} TYPE)
         if (NOT "${target_type}" STREQUAL "EXECUTABLE")
             target_link_libraries(${PROJECT_NAME}-unit-tests ${PROJECT_NAME})
         endif ()
+
+	# link various libraries we might be dependent on
+	target_link_libraries(${PROJECT_NAME}-unit-tests ${TEST_LIBRARIES})
+
+	# link various optional libraries and flags
+	target_link_libraries(${PROJECT_NAME}-unit-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS})
 
         # ----- TESTS ----- #
         GTEST_ADD_TESTS(${PROJECT_NAME}-unit-tests "" ${TESTS})

@@ -34,9 +34,7 @@ include_directories(${util_INCLUDE_DIRS})
 
 # glasscore
 find_package(glasscore CONFIG REQUIRED)
-include_directories(${glasscore_INCLUDE_DIRS}/glasslib/include)
-include_directories(${glasscore_INCLUDE_DIRS}/glassutil/include)
-include_directories(${glasscore_INCLUDE_DIRS}/traveltime/include)
+include_directories(${glasscore_INCLUDE_DIRS})
 
 # ----- SET INCLUDE DIRECTORIES ----- #
 include_directories("${PROJECT_BINARY_DIR}")
