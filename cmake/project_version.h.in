@@ -1,3 +1,13 @@
+// project_version.h.in - a C++ header file configured and used by CMake to
+// provide the overall project version to c++ code.
+//
+// PROJECT_VERSION_MAJOR is a CMake environment variable that contains the
+//   project major version as defined in version.cmake
+// PROJECT_VERSION_MINOR is a CMake environment variable that contains the
+//   project minor version as defined in version.cmake
+// PROJECT_VERSION_PATCH is a CMake environment variable that contains the
+//   project patch version as defined in version.cmake
+
 #ifndef PROJECT_VERSION_H
 #define PROJECT_VERSION_H
 

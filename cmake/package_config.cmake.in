@@ -1,3 +1,10 @@
+# package_config.cmake.in - a CMake script configured and used by CMake to
+# define CMake variables for a project so that it can be included by other CMake
+# builds
+#
+# PROJECT_NAME is a CMake environment variable that contains the name of the
+#   project.
+
 @PACKAGE_INIT@
 
 include("${CMAKE_CURRENT_LIST_DIR}/@targets_export_name@.cmake")

@@ -1,14 +1,20 @@
-# ----- INSTALL RULES ----- #
-# Layout. This works for all platforms:
+# install_lib.cmake - a script that installs a library and header file (s) for a
+# project
+#
+# PROJECT_NAME is a CMake environment variable that contains the name of the
+#   project.
+# HDRS is a CMake environment variable list that contains the header files
+#   for the library
+
+# Set install layout. This works for all platforms:
 #   * <prefix>/lib/<PROJECT-NAME>
 #   * <prefix>/lib/
 #   * <prefix>/include/
 set(config_install_dir "lib/${PROJECT_NAME}")
 set(include_install_dir "include")
 
-set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
-
 # ----- Configuration ----- #
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
 set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
 set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
 set(targets_export_name "${PROJECT_NAME}Targets")
@@ -23,7 +29,7 @@ write_basic_package_version_file(
     "${version_config}" COMPATIBILITY SameMajorVersion
 )
 
-# Configure '<PROJECT-NAME>Config.cmake'
+# Configure '<PROJECT-NAME>Config.cmake' package configuration file
 # Use variables:
 #   * targets_export_name
 #   * PROJECT_NAME
@@ -33,7 +39,7 @@ configure_package_config_file(
     INSTALL_DESTINATION "${config_install_dir}"
 )
 
-# Targets:
+# Set install destinations:
 #   * <prefix>/lib/libconfig.a
 #   * header location after install: <prefix>/include/*.h
 install(
@@ -45,14 +51,14 @@ install(
     INCLUDES DESTINATION "${include_install_dir}"
 )
 
-# Headers:
+# Copy header files
 #   * *.h-> <prefix>/include/*.h
 install(
     FILES ${HDRS}
       DESTINATION "${include_install_dir}/${PROJECT_NAME}"
 )
 
-# Export headers:
+# Generate export header
 #   * ${CMAKE_CURRENT_BINARY_DIR}/config_export.h -> <prefix>/include/config_export.h
 install(
 FILES
@@ -60,16 +66,14 @@ FILES
     DESTINATION "${include_install_dir}"
 )
 
-# Config
+# Create library cmake configuration files
 #   * <prefix>/lib/config/configConfig.cmake
 #   * <prefix>/lib/config/configConfigVersion.cmake
+#   * <prefix>/lib/config/configTargets.cmake
 install(
     FILES "${project_config}" "${version_config}"
     DESTINATION "${config_install_dir}"
 )
-
-# Config
-#   * <prefix>/lib/config/configTargets.cmake
 install(
     EXPORT "${targets_export_name}"
     NAMESPACE "${namespace}"

@@ -1,3 +1,23 @@
+# Doxyfile.in - a Doxygen configuration file that documentation.cmake configures
+# and uses during documentation generation
+#
+# CMAKE_PROJECT_NAME is a CMake environment variable that contains the name of
+#   the project.
+# PROJECT_VERSION_MAJOR is a CMake environment variable that contains the
+#   project major version as defined in version.cmake
+# PROJECT_VERSION_MINOR is a CMake environment variable that contains the
+#   project minor version as defined in version.cmake
+# PROJECT_VERSION_PATCH is a CMake environment variable that contains the
+#   project patch version as defined in version.cmake
+# CMAKE_PROJECT_NAME is a CMake environment variable that contains the name of
+#   the project.
+# PROJECT_BINARY_DIR is a CMake environment variable that contains the path to
+#   the project source directory
+# PROJECT_SOURCE_DIR is a CMake environment variable that contains the path to
+#   the project binary directory
+# DOC_DIRS is a CMake environment variable list that contains the files
+#   to process with Doxygen
+
 # CMake configured options and settings
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -13,6 +33,7 @@ INPUT                  = @DOC_DIRS@
 FILE_PATTERNS          = *.h \
                          *.cpp
 RECURSIVE              = YES
+# exclude known external libraries
 EXCLUDE_PATTERNS       = */spdlog/* \
                          */SuperEasyJSON/*
 #---------------------------------------------------------------------------

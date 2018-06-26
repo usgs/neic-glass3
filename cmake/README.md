@@ -21,8 +21,6 @@ linux distributions
 file(s) for a submodule (such as glass-app)
 * **install_lib.cmake** - a script that installs a library and header file (s) for a
 submodule (such as util)
-* **internal_utils.cmake** - a CMake macro that sets certain defaults for MSVC builds,
-used by base.cmake
 * **test.cmake** - a CMake script for running unit tests, generating coverage
 information, and using generate_coverage.sh to create a coverage report
 * **version.cmake** - a CMake script that defines the overall project version.
