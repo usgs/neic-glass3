@@ -3,7 +3,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = "@CMAKE_PROJECT_NAME@"
-PROJECT_NUMBER         = @neic_glass3_VERSION_MAJOR@.@neic_glass3_VERSION_MINOR@.@neic_glass3_VERSION_PATCH@
+PROJECT_NUMBER         = @PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@
 STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@ \
                          @PROJECT_BINARY_DIR@
 #---------------------------------------------------------------------------
