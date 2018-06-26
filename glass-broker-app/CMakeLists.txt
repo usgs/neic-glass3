@@ -89,18 +89,7 @@ endif ()
 include_directories(${LIBRDKAFKA_PATH}/src-cpp)
 
 # uuid
-if (UNIX AND NOT APPLE)
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_DIR}")
-    find_package(Libuuid REQUIRED)
-
-    if (NOT LIBUUID_FOUND)
-        message(FATAL_ERROR
-          "You might need to run 'sudo apt-get install uuid-dev' or similar")
-    endif()
-
-    include_directories(${LIBUUID_INCLUDE_DIR})
-endif (UNIX AND NOT APPLE)
-
+include(${CMAKE_DIR}/uuid.cmake)
 
 # ----- SET INCLUDE DIRECTORIES ----- #
 include_directories ("${PROJECT_BINARY_DIR}")
