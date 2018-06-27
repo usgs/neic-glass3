@@ -33,10 +33,10 @@ if (RUN_TESTS)
         add_executable(${PROJECT_NAME}-unit-tests ${TESTS})
         set_target_properties(${PROJECT_NAME}-unit-tests PROPERTIES OUTPUT_NAME ${PROJECT_NAME}-unit-tests)
 
-	      # ----- LINK LIBRARIES ----- #
-	      # NOTE: Order libraries are linked matters for G++
-	      # link the gtest libraries
-	      target_link_libraries(${PROJECT_NAME}-unit-tests ${GTEST_BOTH_LIBRARIES})
+        # ----- LINK LIBRARIES ----- #
+        # NOTE: Order libraries are linked matters for G++
+        # link the gtest libraries
+        target_link_libraries(${PROJECT_NAME}-unit-tests ${GTEST_BOTH_LIBRARIES})
 
         # link the uuid library (only defined on linux)
         target_link_libraries(${PROJECT_NAME}-unit-tests ${LIBUUID_LIBRARY})
@@ -47,11 +47,11 @@ if (RUN_TESTS)
             target_link_libraries(${PROJECT_NAME}-unit-tests ${PROJECT_NAME})
         endif ()
 
-	      # link various libraries we might be dependent on
-	      target_link_libraries(${PROJECT_NAME}-unit-tests ${TEST_LIBRARIES})
+        # link various libraries we might be dependent on
+        target_link_libraries(${PROJECT_NAME}-unit-tests ${TEST_LIBRARIES})
 
-	      # link various optional libraries and flags
-	      target_link_libraries(${PROJECT_NAME}-unit-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS})
+        # link various optional libraries and flags
+        target_link_libraries(${PROJECT_NAME}-unit-tests ${PTHREADLIB} ${GCC_COVERAGE_LINK_FLAGS})
 
         # ----- ADD TESTS TO TEST ENGINE ----- #
         GTEST_ADD_TESTS(${PROJECT_NAME}-unit-tests "" ${TESTS})
