@@ -32,10 +32,6 @@ include_directories(${log_INCLUDE_DIRS})
 include_directories(${spdlog_INCLUDE_DIRS}/..)
 include_directories(${spdlog_INCLUDE_DIRS})
 
-# config
-find_package(config CONFIG REQUIRED)
-include_directories(${config_INCLUDE_DIRS})
-
 # util
 find_package(util CONFIG REQUIRED)
 include_directories(${util_INCLUDE_DIRS})
@@ -51,7 +47,7 @@ set(SRCS "${PROJECT_SOURCE_DIR}/gen-travel-times-app.cpp")
 
 # ----- BUILD EXECUTABLE ----- #
 # NOTE: Order libraries are linked matters for G++
-set(EXE_LIBRARIES ${SuperEasyJSON_LIBRARIES} ${glasscore_LIBRARIES} ${log_LIBRARIES} ${config_LIBRARIES} ${util_LIBRARIES})
+set(EXE_LIBRARIES ${SuperEasyJSON_LIBRARIES} ${glasscore_LIBRARIES} ${log_LIBRARIES} ${util_LIBRARIES})
 include(${CMAKE_DIR}/build_exe.cmake)
 
 # ----- GENERATE DOCUMENTATION ----- #

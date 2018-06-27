@@ -260,26 +260,6 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
         UPDATE_COMMAND ""
     )
 
-    # config
-    ExternalProject_Add(
-        config
-        SOURCE_DIR ${PROJECT_SOURCE_DIR}/config/
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
-          -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-          -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
-          -DGENERATE_DOCUMENTATION=${GENERATE_DOCUMENTATION}
-          -DRUN_TESTS=${RUN_TESTS}
-          -DRUN_CPPCHECK=${RUN_CPPCHECK}
-          -DRUN_CPPLINT=${RUN_CPPLINT}
-          -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
-          -DRUN_COVERAGE=${RUN_COVERAGE}
-          -DPYTHON_PATH=${PYTHON_PATH}
-          -DCPPLINT_PATH=${CPPLINT_PATH}
-          -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS log util ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
-        UPDATE_COMMAND ""
-    )
-
     # parse
     ExternalProject_Add(
         parse
@@ -334,7 +314,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON config util log DetectionFormats parse ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util log DetectionFormats parse ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -359,7 +339,7 @@ if (BUILD_GLASS-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON config util log DetectionFormats parse glasscore process output ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util log DetectionFormats parse glasscore process output ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -384,7 +364,7 @@ if (BUILD_GLASS-BROKER-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON config util log DetectionFormats parse glasscore process output HazdevBroker ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util log DetectionFormats parse glasscore process output HazdevBroker ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -406,7 +386,7 @@ if (BUILD_GEN-TRAVELTMES-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON config util log glasscore ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util log glasscore ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
