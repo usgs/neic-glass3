@@ -1,4 +1,0 @@
-// CMake configured options and settings
-#define CONFIG_VERSION_MAJOR @config_VERSION_MAJOR@
-#define CONFIG_VERSION_MINOR @config_VERSION_MINOR@
-#define CONFIG_VERSION_PATCH @config_VERSION_PATCH@

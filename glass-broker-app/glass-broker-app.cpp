@@ -1,11 +1,11 @@
 // glass-broker-app.cpp : Defines the entry point for the console application.
 //
+#include <project_version.h>
 #include <json.h>
 #include <logger.h>
 #include <config.h>
 #include <input.h>
 #include <associator.h>
-#include "glass-broker-appCMakeConfig.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -19,8 +19,9 @@ int main(int argc, char* argv[]) {
 	// check our arguments
 	if ((argc < 2) || (argc > 4)) {
 		std::cout << "glass-broker-app version "
-					<< std::to_string(GLASS_VERSION_MAJOR) << "."
-					<< std::to_string(GLASS_VERSION_MINOR) << "; Usage: "
+					<< std::to_string(PROJECT_VERSION_MAJOR) << "."
+					<< std::to_string(PROJECT_VERSION_MINOR) << "."
+					<< std::to_string(PROJECT_VERSION_PATCH) << "; Usage: "
 					<< "glass-broker-app <configfile> [logname] [noconsole]"
 					<< std::endl;
 		return 1;
@@ -65,9 +66,9 @@ int main(int argc, char* argv[]) {
 	logger::log(
 			"info",
 			"glass-broker-app: Glass Version "
-					+ std::to_string(GLASS_VERSION_MAJOR) + "."
-					+ std::to_string(GLASS_VERSION_MINOR) + "."
-					+ std::to_string(GLASS_VERSION_PATCH) + " startup.");
+					+ std::to_string(PROJECT_VERSION_MAJOR) + "."
+					+ std::to_string(PROJECT_VERSION_MINOR) + "."
+					+ std::to_string(PROJECT_VERSION_PATCH) + " startup.");
 
 	// get our config file location from the arguments
 	std::string configFile = argv[1];

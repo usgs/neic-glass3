@@ -1,3 +1,16 @@
+# neic-glass3 overall CMake configuration file.
+#
+# This file contains the overall CMake configuration file that builds
+# neic-glass3. This configuration follows the "CMake Superbuilds and Git
+# Submodules" scheme to organize and orchestrate the build process, as
+# described here: https://blog.kitware.com/cmake-superbuilds-git-submodules/
+#
+# Each local and remote submodule is configured as a separate CMake
+# ExternalProject, either by defining a local directory where the submodule
+# can be found, or a git repository address. Submodule dependencies are managed
+# by ExternalProject's DEPENDS flags plus find_package lookups from within the
+# submodule. Build options are passed down to submodules as appropriate.
+
 cmake_minimum_required (VERSION 3.4)
 
 # ----- PROJECT ----- #
@@ -62,10 +75,19 @@ endif(RUN_TESTS)
 
 # cpplint
 if (RUN_CPPLINT)
-    set(CPPLINT_PATH "${CURRENT_SOURCE_DIR}/lib/cpplint/cpplint.py" CACHE FILEPATH "Path to cpplint")
+    set(PYTHON_PATH "/usr/bin/python" CACHE FILEPATH "Path to python")
+    set(CPPLINT_PATH "${CMAKE_CURRENT_LIST_DIR}/lib/cpplint/cpplint.py" CACHE FILEPATH "Path to cpplint")
 else()
+    set(PYTHON_PATH "")
     set(CPPLINT_PATH "")
 endif(RUN_CPPLINT)
+
+# cppcheck
+if (RUN_CPPCHECK)
+    set(CPPCHECK_PATH "/usr/local/bin/cppcheck" CACHE FILEPATH "Path to cppcheck")
+else()
+    set(CPPCHECK_PATH "")
+endif(RUN_CPPCHECK)
 
 # Doxygen
 if (BUILD_DOCUMENTATION)
@@ -109,7 +131,7 @@ ExternalProject_Add(
 
 if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
     # rapidjson
-    set(RAPIDJSON_PATH "${CURRENT_SOURCE_DIR}/../lib/rapidjson" CACHE PATH "Path to rapidjson")
+    set(RAPIDJSON_PATH "${CMAKE_CURRENT_LIST_DIR}/lib/rapidjson" CACHE PATH "Path to rapidjson")
 
     # DetectionFormats
     if (GIT_CLONE_PUBLIC)
@@ -140,13 +162,13 @@ endif()
 if (BUILD_GLASS-BROKER-APP)
     # rdkafka
     set(LIBRDKAFKA_PATH
-        "${CURRENT_SOURCE_DIR}/../../rdkafka/"
+        "${CMAKE_CURRENT_LIST_DIR}/lib/rdkafka/"
         CACHE PATH "Path to rdkafka")
     set(LIBRDKAFKA_C_LIB
-        "${CURRENT_SOURCE_DIR}/../../rdkafka/src/${CMAKE_SHARED_LIBRARY_PREFIX}rdkafka${CMAKE_SHARED_LIBRARY_SUFFIX}"
+        "${CMAKE_CURRENT_LIST_DIR}/lib/rdkafka/src/${CMAKE_SHARED_LIBRARY_PREFIX}rdkafka${CMAKE_SHARED_LIBRARY_SUFFIX}"
         CACHE FILEPATH "Path to the rdkafka c library")
     set(LIBRDKAFKA_CPP_LIB
-        "${CURRENT_SOURCE_DIR}/../../rdkafka/src_cpp/${CMAKE_SHARED_LIBRARY_PREFIX}rdkafka++${CMAKE_SHARED_LIBRARY_SUFFIX}"
+        "${CMAKE_CURRENT_LIST_DIR}/lib/rdkafka/src_cpp/${CMAKE_SHARED_LIBRARY_PREFIX}rdkafka++${CMAKE_SHARED_LIBRARY_SUFFIX}"
         CACHE FILEPATH "Path to the rdkafka cpp library")
 
     # HazdevBroker
@@ -191,7 +213,9 @@ ExternalProject_Add(
       -DRUN_CPPLINT=${RUN_CPPLINT}
       -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
       -DRUN_COVERAGE=${RUN_COVERAGE}
+      -DPYTHON_PATH=${PYTHON_PATH}
       -DCPPLINT_PATH=${CPPLINT_PATH}
+      -DCPPCHECK_PATH=${CPPCHECK_PATH}
     DEPENDS SuperEasyJSON ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
     UPDATE_COMMAND ""
 )
@@ -209,7 +233,9 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DRUN_CPPCHECK=${RUN_CPPCHECK}
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS ${DOXYGEN_DEPEND}
         UPDATE_COMMAND ""
     )
@@ -227,7 +253,9 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
           -DRUN_COVERAGE=${RUN_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS SuperEasyJSON log ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
@@ -245,7 +273,9 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
           -DRUN_COVERAGE=${RUN_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS log util ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
@@ -263,7 +293,9 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
           -DRUN_COVERAGE=${RUN_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS SuperEasyJSON util log DetectionFormats ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
@@ -279,7 +311,9 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DRUN_CPPCHECK=${RUN_CPPCHECK}
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS SuperEasyJSON glasscore util log ${DOXYGEN_DEPEND}
         UPDATE_COMMAND ""
     )
@@ -297,7 +331,9 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
           -DRUN_COVERAGE=${RUN_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS SuperEasyJSON config util log DetectionFormats parse ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
@@ -320,7 +356,9 @@ if (BUILD_GLASS-APP)
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
           -DRUN_COVERAGE=${RUN_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS SuperEasyJSON config util log DetectionFormats parse glasscore process output ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
@@ -343,7 +381,9 @@ if (BUILD_GLASS-BROKER-APP)
           -DRUN_CPPCHECK=${RUN_CPPCHECK}
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS SuperEasyJSON config util log DetectionFormats parse glasscore process output HazdevBroker ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
@@ -363,7 +403,9 @@ if (BUILD_GEN-TRAVELTMES-APP)
           -DRUN_CPPCHECK=${RUN_CPPCHECK}
           -DRUN_CPPLINT=${RUN_CPPLINT}
           -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
+          -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
+          -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS SuperEasyJSON config util log glasscore ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )

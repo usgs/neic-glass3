@@ -36,17 +36,17 @@ void CLogit::enable() {
 }
 
 // ---------------------------------------------------------Out
-void CLogit::Out(char *s) {
+void CLogit::Out(const char *s) {
 	CLogit::log(s);
 }
 
 // ---------------------------------------------------------log
-void CLogit::log(char * logMessage) {
+void CLogit::log(const char * logMessage) {
 	log(log_level::debug, std::string(logMessage));
 }
 
 // ---------------------------------------------------------log
-void CLogit::log(log_level logLevel, char * logMessage) {
+void CLogit::log(log_level logLevel, const char * logMessage) {
 	log(logLevel, std::string(logMessage));
 }
 

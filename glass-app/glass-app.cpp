@@ -1,11 +1,11 @@
 // glass-app.cpp : Defines the entry point for the console application.
+#include <project_version.h>
 #include <json.h>
 #include <logger.h>
 #include <config.h>
 #include <input.h>
 #include <file_output.h>
 #include <associator.h>
-#include <glass-appCMakeConfig.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -16,8 +16,9 @@ int main(int argc, char* argv[]) {
 
 	// check our arguments
 	if ((argc < 2) || (argc > 3)) {
-		std::cout << "glass-app version " << std::to_string(GLASS_VERSION_MAJOR)
-					<< "." << std::to_string(GLASS_VERSION_MINOR) << "; Usage: "
+		std::cout << "glass-app version " << std::to_string(PROJECT_VERSION_MAJOR)
+					<< "." << std::to_string(PROJECT_VERSION_MINOR) << "."
+					<< std::to_string(PROJECT_VERSION_PATCH) << "; Usage: "
 					<< "glass-app <configfile> [noconsole]" << std::endl;
 		return 1;
 	}
@@ -47,9 +48,9 @@ int main(int argc, char* argv[]) {
 	logger::log(
 			"info",
 			"glass-app: neic-glass3 Version "
-					+ std::to_string(GLASS_VERSION_MAJOR) + "."
-					+ std::to_string(GLASS_VERSION_MINOR) + "."
-					+ std::to_string(GLASS_VERSION_PATCH) + " startup.");
+					+ std::to_string(PROJECT_VERSION_MAJOR) + "."
+					+ std::to_string(PROJECT_VERSION_MINOR) + "."
+					+ std::to_string(PROJECT_VERSION_PATCH) + " startup.");
 
 	logger::log(
 			"info",

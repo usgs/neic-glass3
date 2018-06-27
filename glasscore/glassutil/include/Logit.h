@@ -98,7 +98,7 @@ class CLogit {
 	 * \param s - A pointer to a char array containing the message
 	 * to write.
 	 */
-	static void Out(char *s);
+	static void Out(const char *s);
 
 	/**
 	 * \brief logging function
@@ -108,7 +108,7 @@ class CLogit {
 	 * This function logs all messages at the log_level::debug level.
 	 * \param logMessage - A char * containing the logging message
 	 */
-	static void log(char * logMessage);
+	static void log(const char * logMessage);
 
 	/**
 	 * \brief logging function
@@ -118,7 +118,7 @@ class CLogit {
 	 * \param logLevel - A log_level enum containing the desired logging level.
 	 * \param logMessage - A char * containing the logging message
 	 */
-	static void log(log_level logLevel, char * logMessage);
+	static void log(log_level logLevel, const char * logMessage);
 
 	/**
 	 * \brief logging function

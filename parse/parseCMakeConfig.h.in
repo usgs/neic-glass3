@@ -1,4 +1,0 @@
-// CMake configured options and settings
-#define PARSE_VERSION_MAJOR @parse_VERSION_MAJOR@
-#define PARSE_VERSION_MINOR @parse_VERSION_MINOR@
-#define PARSE_VERSION_PATCH @parse_VERSION_PATCH@

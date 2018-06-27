@@ -1,3 +1,6 @@
+# FindLibuuid.cmake - a CMake script that searches for the libuuid library on
+# linux distributions
+#
 find_package(PkgConfig)
 
 pkg_check_modules(PKG_LIBUUID QUIET uuid)
