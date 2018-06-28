@@ -22,7 +22,8 @@ namespace util {
  * Class encapsulating the setup and configuration logic, which is common to
  * most neic-glass3 classes outside of glasscore.  The baseclass is a
  * simple, almost abstract class that provides setup and clear interfaces and
- * keeps a pointer to the current configuration.
+ * keeps a pointer to the current configuration. The class also provides a
+ * mutex for thread safety
  *
  * This class is intended to be extended by derived classes.
  */

@@ -51,7 +51,7 @@ TEST(QueueTest, CombinedTest) {
 	ASSERT_EQ(TestQueue->size(), 2)<< "2 items in queue";
 
 	// clear queue
-	TestQueue->clearQueue();
+	TestQueue->clear();
 
 	// assert no items in the queue
 	ASSERT_EQ(TestQueue->size(), 0)<< "no items in queue";

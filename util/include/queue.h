@@ -7,6 +7,7 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#include <baseclass.h>
 #include <json.h>
 
 #include <memory>
@@ -18,10 +19,12 @@ namespace util {
 /**
  * \brief util queue class
  *
- * The util cache queue is a class implementing a queue of
- * pointers to json::Objects.  The queue is thread safe.
+ * The util queue is a class implementing a FIFO queue of
+ * shared_ptr's to json::Objects.  The queue is thread safe.
+ *
+ * queue inherits from the baseclass class.
  */
-class Queue {
+class Queue : public util::BaseClass {
  public:
 	/**
 	 * \brief queue constructor
@@ -38,6 +41,14 @@ class Queue {
 	~Queue();
 
 	/**
+	 * \brief queue clear function
+	 *
+	 * The clear function for the queue class.
+	 * Clear all data currently contained in the queue
+	 */
+	void clear() override;
+
+	/**
 	 *\brief add data to queue
 	 *
 	 * Add the provided data the queue
@@ -46,7 +57,7 @@ class Queue {
 	 * Defaults to true
 	 * \return returns true if successful, false otherwise.
 	 */
-	bool addDataToQueue(std::shared_ptr<json::Object> data, bool lock = true);
+	bool addDataToQueue(std::shared_ptr<json::Object> data);
 
 	/**
 	 *\brief get data from queue
@@ -58,16 +69,7 @@ class Queue {
 	 * there was no
 	 * data in the queue
 	 */
-	std::shared_ptr<json::Object> getDataFromQueue(bool lock = true);
-
-	/**
-	 *\brief clear data from queue
-	 *
-	 * Clear all data from the queue
-	 * \param lock - A boolean value indicating whether to lock the mutex.
-	 * Defaults to true
-	 */
-	void clearQueue(bool lock = true);
+	std::shared_ptr<json::Object> getDataFromQueue();
 
 	/**
 	 *\brief get the size of the queue
@@ -78,18 +80,13 @@ class Queue {
 	 * \return returns an integer value containing the current size of the
 	 * queue
 	 */
-	int size(bool lock = true);
+	int size();
 
  private:
 	/**
 	 * \brief the std::queue used to store the queue
 	 */
 	std::queue<std::shared_ptr<json::Object>> m_DataQueue;
-
-	/**
-	 * \brief the mutex for the queue
-	 */
-	std::mutex m_QueueMutex;
 };
 }  // namespace util
 #endif  // QUEUE_H

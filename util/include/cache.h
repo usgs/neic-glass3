@@ -21,7 +21,8 @@ namespace util {
  * \brief util cache class - a thread safe in-memory cache
  *
  * The util cache class is a class implementing an in-memory cache of
- * shared_ptr's to json::Objects.  The cache is thread safe.
+ * shared_ptr's to json::Objects as a std::map.  The cache supports iteration,
+ * and is thread safe.
  *
  * cache inherits from the baseclass class.
  */

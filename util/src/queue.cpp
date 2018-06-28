@@ -11,42 +11,42 @@
 namespace util {
 
 Queue::Queue() {
-	logger::log("debug", "Queue::Queue(): Construction.");
-
-	clearQueue();
+	clear();
 }
 
 Queue::~Queue() {
-	logger::log("debug", "Queue::~Queue(): Destruction.");
-
-	clearQueue();
+	clear();
 }
 
-bool Queue::addDataToQueue(std::shared_ptr<json::Object> data, bool lock) {
-	if (lock) {
-		m_QueueMutex.lock();
+void Queue::clear() {
+	getMutex().lock();
+
+	// while there are elements in the Queue
+	while (!m_DataQueue.empty()) {
+		// remove them
+		m_DataQueue.pop();
 	}
+
+	getMutex().unlock();
+
+	// finally do baseclass clear
+	util::BaseClass::clear();
+}
+
+bool Queue::addDataToQueue(std::shared_ptr<json::Object> data) {
+	std::lock_guard<std::mutex> guard(getMutex());
 
 	// add the new data to the Queue
 	m_DataQueue.push(data);
 
-	if (lock) {
-		m_QueueMutex.unlock();
-	}
-
 	return (true);
 }
 
-std::shared_ptr<json::Object> Queue::getDataFromQueue(bool lock) {
-	if (lock) {
-		m_QueueMutex.lock();
-	}
+std::shared_ptr<json::Object> Queue::getDataFromQueue() {
+	std::lock_guard<std::mutex> guard(getMutex());
 
 	// return null if the Queue is empty
 	if (m_DataQueue.empty() == true) {
-		if (lock)
-			m_QueueMutex.unlock();
-
 		return (NULL);
 	}
 
@@ -57,41 +57,13 @@ std::shared_ptr<json::Object> Queue::getDataFromQueue(bool lock) {
 	// remove that element now that we got it
 	m_DataQueue.pop();
 
-	if (lock) {
-		m_QueueMutex.unlock();
-	}
-
 	return (data);
 }
 
-void Queue::clearQueue(bool lock) {
-	if (lock) {
-		m_QueueMutex.lock();
-	}
-
-	// while there are elements in the Queue
-	while (!m_DataQueue.empty()) {
-		// remove them
-		m_DataQueue.pop();
-	}
-
-	if (lock) {
-		m_QueueMutex.unlock();
-	}
-
-	return;
-}
-
-int Queue::size(bool lock) {
-	if (lock) {
-		m_QueueMutex.lock();
-	}
+int Queue::size() {
+	std::lock_guard<std::mutex> guard(getMutex());
 
 	int queuesize = static_cast<int>(m_DataQueue.size());
-
-	if (lock) {
-		m_QueueMutex.unlock();
-	}
 
 	return (queuesize);
 }
