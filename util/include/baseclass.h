@@ -8,6 +8,7 @@
 #define BASECLASS_H
 
 #include <json.h>
+#include <mutex>
 
 /**
  * @namespace util
@@ -15,11 +16,13 @@
  */
 namespace util {
 /**
- * \brief util baseclass class
+ * \brief util baseclass class - encapsulates the most basic setup and
+ * configuration logic.
  *
- * The util baseclass class is a class encapsulating the setup and configuration
- * logic.  The baseclass class supports setup, clearing, and keeping
- * a pointer to the current configuration
+ * Class encapsulating the setup and configuration logic, which is common to
+ * most neic-glass3 classes outside of glasscore.  The baseclass is a
+ * simple, almost abstract class that provides setup and clear interfaces and
+ * keeps a pointer to the current configuration.
  *
  * This class is intended to be extended by derived classes.
  */
@@ -54,9 +57,29 @@ class BaseClass {
 	 * \brief baseclass clear function
 	 *
 	 * The clear function for the baseclass class.
-	 * Clears all configuration
+	 * Clears all configuration.
+	 * \warning This function does not clean up memory (m_Config), it assumes
+	 * that the original owner of the json::Object * will.
 	 */
 	virtual void clear();
+
+	/* \brief Retrieves a pointer to the class member json::Object that holds
+	 * the configuration
+	 */
+	const json::Object * getConfig();
+
+	/**
+	 * \brief Retrieves the class member boolean flag indicating whether the
+	 * class has been setup, set to true if setup was successful.
+	 */
+	bool getSetup();
+
+ protected:
+	/**
+	 * \brief Retrieves a reference to the class member containing the mutex
+	 * used to control access to class members
+	 */
+	std::mutex & getMutex();
 
 	/**
 	 * \brief A pointer to the json::Object that holds the configuration
@@ -65,9 +88,14 @@ class BaseClass {
 
 	/**
 	 * \brief the boolean flag indicating whether the class has been
-	 * setup.
+	 * setup, set to true if setup was successful.
 	 */
 	bool m_bIsSetup;
+
+	/**
+	 * \brief A mutex to control access to baseclass members
+	 */
+	std::mutex m_Mutex;
 };
 }  // namespace util
 #endif  // BASECLASS_H

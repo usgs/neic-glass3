@@ -18,6 +18,7 @@ encapsulates the most basic setup and configuration logic.
 * **Queue** - a class that implements a queue of json objects (SuperEasyJSON)
 * **ThreadPool** - a class that provides a job queue and manages a pool of threads to
 process those jobs.
+* **Config** - a class that handles configuration file reading.
 
 ## Functions
 * **fileutil** - a set of functions for finding, moving, copying, and deleting files.
