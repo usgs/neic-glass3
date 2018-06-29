@@ -41,7 +41,7 @@ ThreadBaseClass::~ThreadBaseClass() {
 	logger::log(
 			"debug",
 			"ThreadBaseClass::~ThreadBaseClass(): Destruction. ("
-					+ m_sThreadName + ")");
+					+ getThreadName() + ")");
 
 	stop();
 }
@@ -50,15 +50,15 @@ ThreadBaseClass::~ThreadBaseClass() {
 bool ThreadBaseClass::start() {
 	logger::log(
 			"trace",
-			"ThreadBaseClass::start(): Starting Work Thread. (" + m_sThreadName
-					+ ")");
+			"ThreadBaseClass::start(): Starting Work Thread. ("
+					+ getThreadName() + ")");
 
 	// are we already running
 	if (isRunning() == true) {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::start(): Work Thread is already running. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
@@ -67,7 +67,7 @@ bool ThreadBaseClass::start() {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::start(): Work Thread is already allocated. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
@@ -79,7 +79,7 @@ bool ThreadBaseClass::start() {
 
 	logger::log(
 			"debug",
-			"ThreadBaseClass::start(): Started Work Thread. (" + m_sThreadName
+			"ThreadBaseClass::start(): Started Work Thread. (" + getThreadName()
 					+ ")");
 	return (true);
 }
@@ -91,7 +91,7 @@ bool ThreadBaseClass::stop() {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::stop(): Work Thread is not running. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
@@ -100,7 +100,7 @@ bool ThreadBaseClass::stop() {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::stop(): Work Thread is not allocated. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
@@ -123,7 +123,7 @@ bool ThreadBaseClass::stop() {
 	// done
 	logger::log(
 			"debug",
-			"ThreadBaseClass::stop(): Stopped Work Thread. (" + m_sThreadName
+			"ThreadBaseClass::stop(): Stopped Work Thread. (" + getThreadName()
 					+ ")");
 	return (true);
 }
@@ -146,7 +146,7 @@ bool ThreadBaseClass::check() {
 		logger::log(
 				"error",
 				"ThreadBaseClass::check(): m_bRunWorkThread is false. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
@@ -159,7 +159,7 @@ bool ThreadBaseClass::check() {
 			logger::log(
 					"error",
 					"ThreadBaseClass::check(): m_bCheckWorkThread is false. ("
-							+ m_sThreadName + ") after an interval of "
+							+ getThreadName() + ") after an interval of "
 							+ std::to_string(getCheckInterval()) + " seconds.");
 			return (false);
 		}
@@ -176,7 +176,7 @@ bool ThreadBaseClass::check() {
 	logger::log(
 			"trace",
 			"ThreadBaseClass::check(): Work Thread is still running. ("
-					+ m_sThreadName + ") after an interval of "
+					+ getThreadName() + ") after an interval of "
 					+ std::to_string(getCheckInterval()) + " seconds.");
 	return (true);
 }
@@ -197,7 +197,7 @@ void ThreadBaseClass::workLoop() {
 						"error",
 						"ThreadBaseClass::workLoop(): Work returned false, "
 								"something's wrong, stopping thread. ("
-								+ m_sThreadName + ")");
+								+ getThreadName() + ")");
 				break;
 			}
 		} catch (const std::exception &e) {
@@ -211,12 +211,12 @@ void ThreadBaseClass::workLoop() {
 		setCheckWorkThread();
 
 		// give up some time at the end of the loop
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
+		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
 	}
 
 	logger::log(
 			"info",
-			"ThreadBaseClass::workLoop(): Stopped thread. (" + m_sThreadName
+			"ThreadBaseClass::workLoop(): Stopped thread. (" + getThreadName()
 					+ ")");
 
 	// we're no longer running

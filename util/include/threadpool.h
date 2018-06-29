@@ -7,6 +7,7 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 
+#include <baseclass.h>
 #include <thread>
 #include <mutex>
 #include <queue>
@@ -24,8 +25,10 @@ namespace util {
  * pool of worker threads that can run various job functions
  *
  */
-class ThreadPool {
+class ThreadPool : public util::BaseClass {
  public:
+	ThreadPool();
+
 	/**
 	 * \brief threadpool constructor
 	 *
@@ -59,12 +62,7 @@ class ThreadPool {
 	 */
 	void addJob(std::function<void()> newjob);
 
-	/**
-	 * \brief check to see if threadpool is still functional
-	 *
-	 * Checks each thread in the pool to see if it is still responsive.
-	 */
-	bool check();
+	bool start();
 
 	/**
 	 * \brief threadpool stop function
@@ -74,6 +72,13 @@ class ThreadPool {
 	bool stop();
 
 	/**
+	 * \brief check to see if threadpool is still functional
+	 *
+	 * Checks each thread in the pool to see if it is still responsive.
+	 */
+	bool check();
+
+	/**
 	 * \brief threadpool status update function
 	 *
 	 * Updates the status for each thread in the threadpool
@@ -81,43 +86,93 @@ class ThreadPool {
 	 */
 	void setStatus(bool status);
 
+	void setAllStatus(bool status);
+
+	bool getStatus();
+
 	/**
 	 *\brief get the current number of jobs in the queue
 	 */
-	int getJobQueueSize() {
-		m_QueueMutex.lock();
-		int queuesize = static_cast<int>(m_JobQueue.size());
-		m_QueueMutex.unlock();
-		return queuesize;
-	}
-
-	/**
-	 *\brief getter for m_bRunJobLoop
-	 */
-	bool getBRunJobLoop() const {
-		return (m_bRunJobLoop);
-	}
+	int getJobQueueSize();
 
 	/**
 	 *\brief getter for m_iNumThreads
 	 */
-	int getINumThreads() const {
-		return (m_iNumThreads);
-	}
+	int getNumThreads();
+
+	/**
+	 * \brief Sets the time to sleep between work() calls
+	 *
+	 * Sets the amount of time to sleep between work() function calls in the
+	 * workLoop() function, which is run by the thread
+	 *
+	 * \param sleeptimems - An integer value containing the sleep between work()
+	 * calls in integer milliseconds.
+	 */
+	void setSleepTime(int sleeptimems);
 
 	/**
 	 *\brief getter for m_iSleepTimeMS
 	 */
-	int getISleepTimeMs() const {
-		return (m_iSleepTimeMS);
-	}
+	int getSleepTime();
+
+	/**
+	 * \brief Function to set the name of the work thread
+	 *
+	 * This function sets the name of the work thread, this name is used to
+	 * identify the work thread in logging
+	 *
+	 * \param name = A std::string containing the thread name to set
+	 */
+	void setPoolName(std::string name);
 
 	/**
 	 *\brief getter for m_sPoolName
 	 */
-	const std::string& getSPoolName() const {
-		return (m_sPoolName);
-	}
+	const std::string& getPoolName();
+
+	/**
+	 * \brief Function to set thread health check interval
+	 *
+	 * This function sets the time interval after which m_bCheckWorkThread being
+	 * false (not responded) indicates that the thread has died in check()
+	 *
+	 * \param interval = An integer value indicating the thread health check
+	 * interval in seconds
+	 */
+	void setCheckInterval(int interval);
+
+	/**
+	 * \brief Function to retrieve the thread health check interval
+	 *
+	 * This function retreives the time interval after which m_bCheckWorkThread
+	 * being false (not responded) indicates that the thread has died in check()
+	 *
+	 * \return An integer value containing the thread health check interval in
+	 * seconds
+	 */
+	int getCheckInterval();
+
+	/**
+	 * \brief Checks to see if the work thread should still be running
+	 *
+	 * This function checks to see if the work thread should still running by
+	 * returning the value of m_bRunWorkThread.
+	 * \return Returns true if the thread should still running, false if it
+	 * has been stopped
+	 */
+	virtual bool isRunning();
+
+	/**
+	 * \brief Function to retrieve the last time the work thread health status
+	 * was checked
+	 *
+	 * This function retrieves the last time the health status of this thread
+	 * was checked by the check() function
+	 *
+	 * \return A std::string containing the thread name
+	 */
+	std::time_t getLastCheck();
 
  protected:
 	/**
@@ -133,6 +188,30 @@ class ThreadPool {
 	 * The function that performs the sleep between jobs
 	 */
 	void jobSleep();
+
+	/**
+	 * \brief Function to sset the last time the work thread health status
+	 * was checked
+	 *
+	 * This function sets the last time the health status of this thread
+	 * was checked.
+	 *
+	 * \param now - A std::time_t containing the last time the health status
+	 * was checked
+	 */
+	void setLastCheck(std::time_t now);
+
+	/**
+	 * \brief Sets whether the work thread is running
+	 *
+	 * This function sets m_bRunWorkThread. Setting m_bRunWorkThread to true
+	 * indicates that the thread should still run (via workloop()). Setting
+	 * m_bRunWorkThread to false indicates that the thread should stop (and
+	 * workloop() should return)
+	 */
+	void setRunning(bool running);
+
+	void setNumThreads(int num);
 
  private:
 	/**
@@ -154,11 +233,6 @@ class ThreadPool {
 	 * \brief the std::queue of std::function<void() jobs
 	 */
 	std::queue<std::function<void()>> m_JobQueue;
-
-	/**
-	 * \brief the std::mutex for m_QueueMutex
-	 */
-	std::mutex m_QueueMutex;
 
 	/**
 	 * \brief the boolean flags indicating that the jobloop threads
@@ -186,7 +260,7 @@ class ThreadPool {
 	/**
 	 * \brief the time_t holding the last time the thread status was checked
 	 */
-	time_t tLastCheck;
+	time_t m_tLastCheck;
 
 	/**
 	 * \brief the integer interval in seconds after which the work thread

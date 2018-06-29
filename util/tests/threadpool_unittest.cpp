@@ -64,18 +64,18 @@ TEST(ThreadPoolTest, CombinedTest) {
 															CHECKTIME);
 
 	// assert threads running
-	ASSERT_TRUE(ThreadPool->getBRunJobLoop())<< "check threads running";
+	ASSERT_TRUE(ThreadPool->isRunning())<< "check threads running";
 
 	// assert pool name
-	ASSERT_STREQ(ThreadPool->getSPoolName().c_str(), poolname.c_str())<<
-			"empty config string";
+	ASSERT_STREQ(ThreadPool->getPoolName().c_str(), poolname.c_str())<<
+			"pool name";
 
 	// assert number of threads
-	ASSERT_EQ(ThreadPool->getINumThreads(), NUMTHREADS)<<
+	ASSERT_EQ(ThreadPool->getNumThreads(), NUMTHREADS)<<
 			"check number of pool threads";
 
 	// assert thread sleep time
-	ASSERT_EQ(ThreadPool->getISleepTimeMs(), SLEEPTIME)<<
+	ASSERT_EQ(ThreadPool->getSleepTime(), SLEEPTIME)<<
 			"check thread sleep time";
 
 	// add some jobs
