@@ -14,7 +14,7 @@ class threadbasestub : public util::ThreadBaseClass {
 			: util::ThreadBaseClass(TESTTHREADNAME, TESTSLEEPTIME) {
 		runcount = 0;
 		startcount = false;
-		m_iCheckInterval = 1;
+		setCheckInterval(1);
 		kill = false;
 	}
 
@@ -41,11 +41,11 @@ class threadbasestub : public util::ThreadBaseClass {
 			runcount++;
 
 			// work successful
-			setWorkCheck();
+			setCheckWorkThread();
 			return (true);
 		}
 
-		setWorkCheck();
+		setCheckWorkThread();
 		return (true);
 	}
 };
@@ -56,7 +56,7 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	threadbasestub * TestThreadBaseStub = new threadbasestub();
 
 	// assert that class not started
-	ASSERT_FALSE(TestThreadBaseStub->getStarted())<<
+	ASSERT_FALSE(TestThreadBaseStub->isStarted())<<
 			"TestThreadBaseStub not started";
 
 	// assert that class not running
@@ -89,7 +89,7 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 			"second start was not successful";
 
 	// assert that class started
-	ASSERT_TRUE(TestThreadBaseStub->getStarted())<<
+	ASSERT_TRUE(TestThreadBaseStub->isStarted())<<
 			"TestThreadBaseStub started";
 
 	// wait a little while
@@ -119,7 +119,7 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	ASSERT_TRUE(TestThreadBaseStub->stop())<< "stop was successful";
 
 	// assert that class not started
-	ASSERT_FALSE(TestThreadBaseStub->getStarted())<<
+	ASSERT_FALSE(TestThreadBaseStub->isStarted())<<
 			"TestThreadBaseStub not started";
 
 	// assert that class not running
