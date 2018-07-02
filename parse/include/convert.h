@@ -11,6 +11,7 @@
 #include <string>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 
 /**
@@ -80,4 +81,5 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object>,
 											const std::string &outputAuthor);
 
 }  // namespace parse
+}  // namespace glass3
 #endif  // CONVERT_H

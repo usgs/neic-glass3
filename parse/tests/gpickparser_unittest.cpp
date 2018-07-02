@@ -20,7 +20,7 @@ class GPickParser : public ::testing::Test {
 		agencyid = std::string(TESTAGENCYID);
 		author = std::string(TESTAUTHOR);
 
-		Parser = new parse::GPickParser(agencyid, author);
+		Parser = new glass3::parse::GPickParser(agencyid, author);
 	}
 
 	virtual void TearDown() {
@@ -30,7 +30,7 @@ class GPickParser : public ::testing::Test {
 
 	std::string agencyid;
 	std::string author;
-	parse::GPickParser * Parser;
+	glass3::parse::GPickParser * Parser;
 };
 
 // tests to see gpick parser constructs correctly

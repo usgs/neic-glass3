@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 CCParser::CCParser(const std::string &newAgencyID, const std::string &newAuthor)
 		: Parser::Parser(newAgencyID, newAuthor) {
@@ -39,7 +40,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 
 	try {
 		// split the ccpick, the gpick is space delimited
-		std::vector<std::string> splitccpick = util::split(input, ' ');
+		std::vector<std::string> splitccpick = glass3::util::split(input, ' ');
 
 		// make sure we split the response into at
 		// least as many elements as we need (16 since the pick is on the
@@ -53,8 +54,8 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		}
 
 		// parse out the phase date and time first
-		std::string phasedate = util::removeChars(splitccpick[12], "/");
-		std::string phasetime = util::removeChars(splitccpick[13], ":");
+		std::string phasedate = glass3::util::removeChars(splitccpick[12], "/");
+		std::string phasetime = glass3::util::removeChars(splitccpick[13], ":");
 
 		// create the new correlation
 		// build the json correlation object
@@ -64,8 +65,8 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		// I *think* this is unique enough...
 		newcorrelation.id = "CC" + splitccpick[8] + splitccpick[9]
 				+ splitccpick[7] + splitccpick[10]
-				+ util::removeChars(splitccpick[12], "/")
-				+ util::removeChars(util::removeChars(splitccpick[13], ":"),
+				+ glass3::util::removeChars(splitccpick[12], "/")
+				+ glass3::util::removeChars(glass3::util::removeChars(splitccpick[13], ":"),
 									".");
 
 		// build the site object
@@ -84,7 +85,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 
 		// convert the phase time into epoch time
 		// if you remove the spaces, '/', and ':' you get "DateTime"
-		newcorrelation.time = util::convertDateTimeToEpochTime(
+		newcorrelation.time = glass3::util::convertDateTimeToEpochTime(
 				phasedate + phasetime);
 
 		// correlation
@@ -98,9 +99,9 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 
 		// convert the origin time into epoch time
 		// if you remove the spaces, '/', and ':' you get "DateTime"
-		newcorrelation.hypocenter.time = util::convertDateTimeToEpochTime(
-				util::removeChars(splitccpick[0], "/")
-						+ util::removeChars(splitccpick[1], ":"));
+		newcorrelation.hypocenter.time = glass3::util::convertDateTimeToEpochTime(
+				glass3::util::removeChars(splitccpick[0], "/")
+						+ glass3::util::removeChars(splitccpick[1], ":"));
 
 		// depth
 		newcorrelation.hypocenter.depth = std::stod(splitccpick[4]);
@@ -155,3 +156,4 @@ bool CCParser::validate(std::shared_ptr<json::Object> &input) {
 	return (correlationobject.isvalid());
 }
 }  // namespace parse
+}  // namespace glass3

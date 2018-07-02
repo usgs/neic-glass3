@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 /**
  * \brief json parser class
@@ -67,4 +68,5 @@ class JSONParser : public Parser {
 	bool validate(std::shared_ptr<json::Object> &input) override;
 };
 }  // namespace parse
+}  // namespace glass3
 #endif  // JSONPARSER_H

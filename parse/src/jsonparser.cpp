@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 JSONParser::JSONParser(const std::string &newAgencyID,
 						const std::string &newAuthor)
@@ -202,3 +203,4 @@ bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 	return (false);
 }
 }  // namespace parse
+}  // namespace glass3

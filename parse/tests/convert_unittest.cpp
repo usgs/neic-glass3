@@ -33,20 +33,20 @@ TEST(Convert, HypoTest) {
 	std::string author = std::string(TESTAUTHOR);
 
 	// failure cases
-	ASSERT_STREQ(parse::hypoToJSONDetection(NULL, agencyid, author).c_str(),
+	ASSERT_STREQ(glass3::parse::hypoToJSONDetection(NULL, agencyid, author).c_str(),
 					"");
 	ASSERT_STREQ(
-			parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(BADHYPOSTRING1))), agencyid, author).c_str(),  // NOLINT
+			glass3::parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(BADHYPOSTRING1))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(BADHYPOSTRING2))), agencyid, author).c_str(),  // NOLINT
+			glass3::parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(BADHYPOSTRING2))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(CANCELSTRING))), agencyid, author).c_str(),  // NOLINT
+			glass3::parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(CANCELSTRING))), agencyid, author).c_str(),  // NOLINT
 			"");
 
 	// Hypo
-	std::string detectionoutput = parse::hypoToJSONDetection(
+	std::string detectionoutput = glass3::parse::hypoToJSONDetection(
 			std::make_shared<json::Object>(
 					json::Object(json::Deserialize(HYPOSTRING))),
 			agencyid, author);
@@ -121,20 +121,20 @@ TEST(Convert, CancelTest) {
 	std::string author = std::string(TESTAUTHOR);
 
 	// failure cases
-	ASSERT_STREQ(parse::cancelToJSONRetract(NULL, agencyid, author).c_str(),
+	ASSERT_STREQ(glass3::parse::cancelToJSONRetract(NULL, agencyid, author).c_str(),
 					"");
 	ASSERT_STREQ(
-			parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(BADCANCELSTRING1))), agencyid, author).c_str(),  // NOLINT
+			glass3::parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(BADCANCELSTRING1))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(BADCANCELSTRING2))), agencyid, author).c_str(),  // NOLINT
+			glass3::parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(BADCANCELSTRING2))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(HYPOSTRING))), agencyid, author).c_str(),  // NOLINT
+			glass3::parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(HYPOSTRING))), agencyid, author).c_str(),  // NOLINT
 			"");
 
 	// Cancel
-	std::string retractoutput = parse::cancelToJSONRetract(
+	std::string retractoutput = glass3::parse::cancelToJSONRetract(
 			std::make_shared<json::Object>(
 					json::Object(json::Deserialize(CANCELSTRING))),
 			agencyid, author);
@@ -165,12 +165,12 @@ TEST(Convert, SiteListTest) {
 	// logger::log_init("converttest", spdlog::level::debug, ".", true);
 
 	// failure cases
-	ASSERT_STREQ(parse::siteListToStationList(NULL).c_str(), "");
+	ASSERT_STREQ(glass3::parse::siteListToStationList(NULL).c_str(), "");
 	ASSERT_STREQ(
-			parse::siteListToStationList(std::make_shared<json::Object>(json::Object( json::Deserialize(BADSITELISTSTRING1)))).c_str(),  // NOLINT
+			glass3::parse::siteListToStationList(std::make_shared<json::Object>(json::Object( json::Deserialize(BADSITELISTSTRING1)))).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::siteListToStationList(std::make_shared<json::Object>(json::Object( json::Deserialize(BADSITELISTSTRING2)))).c_str(),  // NOLINT
+			glass3::parse::siteListToStationList(std::make_shared<json::Object>(json::Object( json::Deserialize(BADSITELISTSTRING2)))).c_str(),  // NOLINT
 			"");
 
 	std::string sitelistfile = "./" + std::string(TESTPATH) + "/"
@@ -191,7 +191,7 @@ TEST(Convert, SiteListTest) {
 					json::Object(json::Deserialize(sitelist)));
 	int numsites = (*sitelistobject)["SiteList"].ToArray().size();
 
-	std::string stationlist = parse::siteListToStationList(sitelistobject);
+	std::string stationlist = glass3::parse::siteListToStationList(sitelistobject);
 
 	std::shared_ptr<json::Object> stationlistobject = std::make_shared<
 			json::Object>(json::Object(json::Deserialize(stationlist)));
@@ -211,18 +211,18 @@ TEST(Convert, SiteLookupTest) {
 
 	// failure cases
 	ASSERT_STREQ(
-			parse::siteLookupToStationInfoRequest(NULL, agencyid, author).c_str(),
+			glass3::parse::siteLookupToStationInfoRequest(NULL, agencyid, author).c_str(),
 			"");
 	ASSERT_STREQ(
-			parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object(json::Deserialize(BADSITELOOKUPSTRING1))), agencyid, author).c_str(),  // NOLINT
+			glass3::parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object(json::Deserialize(BADSITELOOKUPSTRING1))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
-			parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object( json::Deserialize(CANCELSTRING))), agencyid, author).c_str(),  // NOLINT
+			glass3::parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object( json::Deserialize(CANCELSTRING))), agencyid, author).c_str(),  // NOLINT
 			"");
 
 	// sitelookup
 	std::string stationinforequestoutput =
-			parse::siteLookupToStationInfoRequest(
+			glass3::parse::siteLookupToStationInfoRequest(
 					std::make_shared<json::Object>(
 							json::Object(json::Deserialize(SITELOOKUPSTRING))),
 					agencyid, author);

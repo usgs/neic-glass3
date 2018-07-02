@@ -55,20 +55,20 @@ TEST(Output, TrackingTests) {
 	std::shared_ptr<json::Object> tracking1 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING1)));
 
-	(*tracking1)["CreateTime"] = util::convertEpochTimeToISO8601(tNow);
-	(*tracking1)["ReportTime"] = util::convertEpochTimeToISO8601(tNow);
+	(*tracking1)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
+	(*tracking1)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
 
 	std::shared_ptr<json::Object> tracking2 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING2)));
 
-	(*tracking2)["CreateTime"] = util::convertEpochTimeToISO8601(tNow);
-	(*tracking2)["ReportTime"] = util::convertEpochTimeToISO8601(tNow);
+	(*tracking2)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
+	(*tracking2)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
 
 	std::shared_ptr<json::Object> tracking3 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING3)));
 
-	(*tracking3)["CreateTime"] = util::convertEpochTimeToISO8601(tNow);
-	(*tracking3)["ReportTime"] = util::convertEpochTimeToISO8601(tNow);
+	(*tracking3)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
+	(*tracking3)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
 
 	// add success
 	ASSERT_TRUE(outputThread.addTrackingData(tracking1));

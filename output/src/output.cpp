@@ -18,7 +18,7 @@
 namespace glass {
 
 output::output()
-		: util::ThreadBaseClass("output", 100) {
+		: glass3::util::ThreadBaseClass("output", 100) {
 	logger::log("debug", "output::output(): Construction.");
 
 	std::time(&tLastWorkReport);
@@ -46,7 +46,7 @@ output::output()
 	m_LookupQueue = NULL;
 
 	// setup thread pool for output
-	m_ThreadPool = new util::ThreadPool("outputpool");
+	m_ThreadPool = new glass3::util::ThreadPool("outputpool");
 
 	m_bRunEventThread = false;
 	m_bCheckEventThread = true;
@@ -207,25 +207,25 @@ bool output::setup(json::Object *config) {
 	if (m_TrackingCache != NULL) {
 		delete (m_TrackingCache);
 	}
-	m_TrackingCache = new util::Cache();
+	m_TrackingCache = new glass3::util::Cache();
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_OutputQueue != NULL) {
 		delete (m_OutputQueue);
 	}
-	m_OutputQueue = new util::Queue();
+	m_OutputQueue = new glass3::util::Queue();
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_LookupQueue != NULL) {
 		delete (m_LookupQueue);
 	}
-	m_LookupQueue = new util::Queue();
+	m_LookupQueue = new glass3::util::Queue();
 
 	logger::log("debug", "output::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
-	util::BaseClass::setup(config);
+	glass3::util::BaseClass::setup(config);
 
 	// we're done
 	return (true);
@@ -246,7 +246,7 @@ void output::clear() {
 	m_ConfigMutex.unlock();
 
 	// finally do baseclass clear
-	util::BaseClass::clear();
+	glass3::util::BaseClass::clear();
 }
 
 void output::sendToOutput(std::shared_ptr<json::Object> message) {
@@ -968,25 +968,25 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 
 	if (dataType == "Hypo") {
 		// convert a hypo to a detection
-		std::string detectionString = parse::hypoToJSONDetection(data, agency,
+		std::string detectionString = glass3::parse::hypoToJSONDetection(data, agency,
 																	author);
 
 		sendOutput("Detection", ID, detectionString);
 	} else if (dataType == "Cancel") {
 		// convert a cancel to a retract
-		std::string retractString = parse::cancelToJSONRetract(data, agency,
+		std::string retractString = glass3::parse::cancelToJSONRetract(data, agency,
 																author);
 
 		sendOutput("Retraction", ID, retractString);
 	} else if (dataType == "SiteLookup") {
 		// convert a site lookup to a station info request
 		std::string stationInfoRequestString =
-				parse::siteLookupToStationInfoRequest(data, agency, author);
+				glass3::parse::siteLookupToStationInfoRequest(data, agency, author);
 
 		sendOutput("StationInfoRequest", ID, stationInfoRequestString);
 	} else if (dataType == "SiteList") {
 		// convert a site list to a station list
-		std::string stationListString = parse::siteListToStationList(data);
+		std::string stationListString = glass3::parse::siteListToStationList(data);
 
 		sendOutput("StationList", ID, stationListString);
 	} else {
@@ -1027,7 +1027,7 @@ bool output::isDataReady(std::shared_ptr<json::Object> data) {
 
 	// get the time the hypo was created
 	std::string createTimeString = (*data)["CreateTime"].ToString();
-	int createTime = util::convertISO8601ToEpochTime(createTimeString);
+	int createTime = glass3::util::convertISO8601ToEpochTime(createTimeString);
 
 	// get the pub log
 	json::Array pubLog = (*data)["PubLog"].ToArray();
