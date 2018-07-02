@@ -4,6 +4,26 @@
  * the comments so that Doxygen will still
  * be able to work.
  ****************************************/
+/**
+ * \file
+ * \brief timeutil.h
+ *
+ * timeutil.h is a set of functions that manage time conversions to/from epoch
+ * time (seconds since 1970) and two time string standards, DateTime, and
+ * ISO8601.
+ *
+ * DateTime is a time string used in legacy seismic information formats, and
+ * has the format YYYYMMDDHHMMSS.SSS, where YYYY is the year, MM is the month of
+ * year, DD is the day of month, HH is the hour of day, MM is the minutes of hour,
+ * and SS.SSS is the seconds of minute.
+ *
+ * For more information on epoch time, see
+ * https://en.wikipedia.org/wiki/Unix_time
+ *
+ * For more information on ISO8601, see
+ * https://en.wikipedia.org/wiki/ISO_8601
+ *
+ */
 #ifndef TIMEUTIL_H
 #define TIMEUTIL_H
 
@@ -15,8 +35,7 @@ namespace util {
  * \brief Convert time from epoch time to ISO8601
  *
  * Convert the given epoch time (seconds from 1970) from decimal seconds to an
- * ISO8601 time string in the format YYYY-MM-DDTHH:MM:SS.SSSZ, see
- * https://en.wikipedia.org/wiki/ISO_8601 for a definition of ISO8601
+ * ISO8601 time string in the format YYYY-MM-DDTHH:MM:SS.SSSZ
  *
  * \param epochtime - A double containing the epoch time (seconds from 1970)
  * \return returns a std::string containing the ISO8601 time string in the format
