@@ -96,10 +96,10 @@ class brokerOutput : public output {
 
  private:
 	/**
-	 * \brief pointer to the util::threadpool used to queue and
+	 * \brief pointer to the glass3::util::threadpool used to queue and
 	 * perform output.
 	 */
-	util::ThreadPool * m_ThreadPool;
+	glass3::util::ThreadPool * m_ThreadPool;
 
 	hazdevbroker::Producer * m_OutputProducer;
 	hazdevbroker::Producer * m_StationRequestProducer;

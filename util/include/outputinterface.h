@@ -17,6 +17,7 @@ namespace util {
  * send output data via the sendtooutput() function.
  */
 class iOutput {
+ public:
 	/**
 	 * \brief Send output data
 	 *

@@ -41,8 +41,8 @@ namespace glass {
  *
  * associator implements the IGlassSend and iassociator interfaces.
  */
-class Associator : public glasscore::IGlassSend, public util::iAssociator,
-		public util::ThreadBaseClass {
+class Associator : public glasscore::IGlassSend,
+		public glass3::util::iAssociator, public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief associator constructor
@@ -59,10 +59,11 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	 * Initializes members to default values.
 	 * Sets the interface pointers to other classes
 	 *
-	 * \param inputint - A util::iinput pointer to the input class.
-	 * \param outputint - A util::ioutput pointer to the output class.
+	 * \param inputint - A glass3::util::iinput pointer to the input class.
+	 * \param outputint - A glass3::util::ioutput pointer to the output class.
 	 */
-	Associator(util::iInput* inputint, util::iOutput* outputint);
+	Associator(glass3::util::iInput* inputint,
+				glass3::util::iOutput* outputint);
 
 	/**
 	 * \brief associator destructor
@@ -126,16 +127,16 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	/**
 	 * \brief Pointer to Input class
 	 *
-	 * A util::iinput pointer to the class handles glass input
+	 * A glass3::util::iinput pointer to the class handles glass input
 	 */
-	util::iInput* Input;
+	glass3::util::iInput* Input;
 
 	/**
 	 * \brief Pointer to Output class
 	 *
-	 * A util::ioutput pointer to the class that handles output input for glass
+	 * A glass3::util::ioutput pointer to the class that handles output input for glass
 	 */
-	util::iOutput* Output;
+	glass3::util::iOutput* Output;
 
 	/**
 	 * \brief Information Report interval
@@ -219,7 +220,7 @@ class Associator : public glasscore::IGlassSend, public util::iAssociator,
 	/**
 	 * \brief The queue of pending messages to send to glasscore
 	 */
-	util::Queue* m_MessageQueue;
+	glass3::util::Queue* m_MessageQueue;
 };
 }  // namespace glass
 #endif  // ASSOCIATOR_H

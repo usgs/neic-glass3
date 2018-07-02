@@ -17,7 +17,7 @@
 namespace glass {
 // Construction/Destruction
 input::input()
-		: util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input", 100) {
 	logger::log("debug", "input::input(): Construction.");
 
 	m_iInFileSleep = 10;
@@ -31,7 +31,7 @@ input::input()
 }
 
 input::input(int linesleepms)
-		: util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input", 100) {
 	m_iInFileSleep = linesleepms;
 
 	m_GPickParser = NULL;
@@ -43,7 +43,7 @@ input::input(int linesleepms)
 }
 
 input::input(json::Object *config, int linesleepms)
-		: util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input", 100) {
 	m_iInFileSleep = linesleepms;
 
 	m_GPickParser = NULL;
@@ -252,26 +252,26 @@ bool input::setup(json::Object *config) {
 
 	if (m_GPickParser != NULL)
 		delete (m_GPickParser);
-	m_GPickParser = new parse::GPickParser(m_sDefaultAgencyID,
+	m_GPickParser = new glass3::parse::GPickParser(m_sDefaultAgencyID,
 											m_sDefaultAuthor);
 
 	if (m_JSONParser != NULL)
 		delete (m_JSONParser);
-	m_JSONParser = new parse::JSONParser(m_sDefaultAgencyID, m_sDefaultAuthor);
+	m_JSONParser = new glass3::parse::JSONParser(m_sDefaultAgencyID, m_sDefaultAuthor);
 
 	if (m_CCParser != NULL)
 		delete (m_CCParser);
-	m_CCParser = new parse::CCParser(m_sDefaultAgencyID, m_sDefaultAuthor);
+	m_CCParser = new glass3::parse::CCParser(m_sDefaultAgencyID, m_sDefaultAuthor);
 
 	if (m_DataQueue != NULL)
 		delete (m_DataQueue);
-	m_DataQueue = new util::Queue();
+	m_DataQueue = new glass3::util::Queue();
 
 	logger::log("debug", "input::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
-	util::BaseClass::setup(config);
+	glass3::util::BaseClass::setup(config);
 
 	// we're done
 	return (true);
@@ -303,7 +303,7 @@ void input::clear() {
 		m_DataQueue->clear();
 
 	// finally do baseclass clear
-	util::BaseClass::clear();
+	glass3::util::BaseClass::clear();
 }
 
 // get next data from input
@@ -392,7 +392,7 @@ bool input::readFiles(std::string extension, const std::string &inputdir,
 	std::string filename = "";
 
 	// look for files with json picks
-	if (util::getNextFileName(inputdir, extension, filename) == true) {
+	if (glass3::util::getNextFileName(inputdir, extension, filename) == true) {
 		logger::log("debug",
 					"input::readfiles(): Processing  file: " + filename + " .");
 
@@ -539,10 +539,10 @@ void input::cleanupFile(std::string filename, bool move,
 	// if we are archiving our input
 	if (move == true) {
 		// move the file to the archive dir
-		util::moveFileTo(filename, destinationdir);
+		glass3::util::moveFileTo(filename, destinationdir);
 	} else {
 		// delete the file
-		if (!util::deleteFileFrom(filename)) {
+		if (!glass3::util::deleteFileFrom(filename)) {
 			logger::log(
 					"error",
 					"input::archivefile(): Unable to delete file: " + filename

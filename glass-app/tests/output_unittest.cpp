@@ -72,7 +72,7 @@ std::shared_ptr<json::Object> GetDataFromFile(std::string filename) {
 	return (NULL);
 }
 
-class AssociatorStub : public util::iAssociator {
+class AssociatorStub : public glass3::util::iAssociator {
  public:
 	AssociatorStub() {
 		Output = NULL;
@@ -132,7 +132,7 @@ class AssociatorStub : public util::iAssociator {
 	}
 	bool sentone;
 
-	util::iOutput* Output;
+	glass3::util::iOutput* Output;
 
 	std::string testpath;
 	std::string testdatapath;
@@ -202,7 +202,7 @@ class OutputTest : public ::testing::Test {
 		std::string configfile = std::string(CONFIGFILENAME);
 
 		// load configuration
-		OutputConfig = new util::Config(configdirectory, configfile);
+		OutputConfig = new glass3::util::Config(configdirectory, configfile);
 
 		// get json formatted configuration
 		output_config_json = new json::Object(OutputConfig->getJSON());
@@ -333,7 +333,7 @@ class OutputTest : public ::testing::Test {
 	glass::fileOutput * OutputThread;
 	AssociatorStub * AssocThread;
 
-	util::Config * OutputConfig;
+	glass3::util::Config * OutputConfig;
 	json::Object * output_config_json;
 
 	std::string testpath;

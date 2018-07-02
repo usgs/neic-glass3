@@ -85,7 +85,7 @@ protected:
 		std::string configfile = std::string(CONFIGFILENAME);
 
 		// load configuration
-		InputConfig = new util::Config(configdirectory, configfile);
+		InputConfig = new glass3::util::Config(configdirectory, configfile);
 
 		// get json formatted configuration
 		input_config_json = new json::Object(InputConfig->getJSON());
@@ -98,22 +98,22 @@ protected:
 	virtual void TearDown() {
 		// need to move the files in error and archive back to input
 		if (std::ifstream(ccfile).good()) {
-			util::moveFileTo(ccfile, inputdirectory);
+			glass3::util::moveFileTo(ccfile, inputdirectory);
 		}
 		if (std::ifstream(gpickfile).good()) {
-			util::moveFileTo(gpickfile, inputdirectory);
+			glass3::util::moveFileTo(gpickfile, inputdirectory);
 		}
 		if (std::ifstream(jsonpickfile).good()) {
-			util::moveFileTo(jsonpickfile, inputdirectory);
+			glass3::util::moveFileTo(jsonpickfile, inputdirectory);
 		}
 		if (std::ifstream(jsoncorlfile).good()) {
-			util::moveFileTo(jsoncorlfile, inputdirectory);
+			glass3::util::moveFileTo(jsoncorlfile, inputdirectory);
 		}
 		if (std::ifstream(jsonorigfile).good()) {
-			util::moveFileTo(jsonorigfile, inputdirectory);
+			glass3::util::moveFileTo(jsonorigfile, inputdirectory);
 		}
 		if (std::ifstream(badfile).good()) {
-			util::moveFileTo(badfile, inputdirectory);
+			glass3::util::moveFileTo(badfile, inputdirectory);
 		}
 
 		// need to clean up error and archive directories
@@ -134,7 +134,7 @@ protected:
 	}
 
 	glass::input * InputThread;
-	util::Config * InputConfig;
+	glass3::util::Config * InputConfig;
 	json::Object * input_config_json;
 
 	std::string testpath;

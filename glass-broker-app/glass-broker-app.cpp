@@ -76,7 +76,8 @@ int main(int argc, char* argv[]) {
 	logger::log("info", "glass-broker-app: using config file: " + configFile);
 
 	// load our basic config
-	util::Config * glassConfig = new util::Config("", configFile);
+	glass3::util::Config * glassConfig = new glass3::util::Config("",
+																	configFile);
 
 	// check to see if our config is of the right format
 	if (glassConfig->getJSON().HasKey("Configuration")
@@ -105,8 +106,7 @@ int main(int argc, char* argv[]) {
 	if (glassConfig->getJSON().HasKey("ConfigDirectory")
 			&& ((glassConfig->getJSON())["ConfigDirectory"].GetType()
 					== json::ValueType::StringVal)) {
-		configdir =
-				(glassConfig->getJSON())["ConfigDirectory"].ToString();
+		configdir = (glassConfig->getJSON())["ConfigDirectory"].ToString();
 		logger::log("info", "Reading glass configurations from: " + configdir);
 	} else {
 		configdir = "./";
@@ -127,8 +127,7 @@ int main(int argc, char* argv[]) {
 	if (glassConfig->getJSON().HasKey("InitializeFile")
 			&& ((glassConfig->getJSON())["InitializeFile"].GetType()
 					== json::ValueType::StringVal)) {
-		initconfigfile = (glassConfig->getJSON())["InitializeFile"]
-				.ToString();
+		initconfigfile = (glassConfig->getJSON())["InitializeFile"].ToString();
 	} else {
 		logger::log(
 				"critcal",
@@ -139,8 +138,8 @@ int main(int argc, char* argv[]) {
 	}
 
 	// load our initialize config
-	util::Config * InitializeConfig = new util::Config(configdir,
-														initconfigfile);
+	glass3::util::Config * InitializeConfig = new glass3::util::Config(
+			configdir, initconfigfile);
 	json::Object * InitializeJSON = new json::Object(
 			InitializeConfig->getJSON());
 
@@ -149,8 +148,7 @@ int main(int argc, char* argv[]) {
 	if (glassConfig->getJSON().HasKey("StationList")
 			&& ((glassConfig->getJSON())["StationList"].GetType()
 					== json::ValueType::StringVal)) {
-		stationlistfile =
-				(glassConfig->getJSON())["StationList"].ToString();
+		stationlistfile = (glassConfig->getJSON())["StationList"].ToString();
 	} else {
 		logger::log("critcal",
 					"Invalid configuration, missing <StationList>, exiting.");
@@ -162,9 +160,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Load our initial stationlist
-	util::Config * StationList = new util::Config(configdir, stationlistfile);
-	json::Object * StationListJSON = new json::Object(
-			StationList->getJSON());
+	glass3::util::Config * StationList = new glass3::util::Config(
+			configdir, stationlistfile);
+	json::Object * StationListJSON = new json::Object(StationList->getJSON());
 
 	// get detection grid file list
 	json::Array gridconfigfilelist;
@@ -201,8 +199,7 @@ int main(int argc, char* argv[]) {
 	if (glassConfig->getJSON().HasKey("InputConfig")
 			&& ((glassConfig->getJSON())["InputConfig"].GetType()
 					== json::ValueType::StringVal)) {
-		inputconfigfile =
-				(glassConfig->getJSON())["InputConfig"].ToString();
+		inputconfigfile = (glassConfig->getJSON())["InputConfig"].ToString();
 	} else {
 		logger::log("critcal",
 					"Invalid configuration, missing <InputConfig>, exiting.");
@@ -216,15 +213,15 @@ int main(int argc, char* argv[]) {
 	}
 
 	// load our input config
-	util::Config * InputConfig = new util::Config(configdir, inputconfigfile);
+	glass3::util::Config * InputConfig = new glass3::util::Config(
+			configdir, inputconfigfile);
 
 	// get output config file location
 	std::string outputconfigfile;
 	if (glassConfig->getJSON().HasKey("OutputConfig")
 			&& ((glassConfig->getJSON())["OutputConfig"].GetType()
 					== json::ValueType::StringVal)) {
-		outputconfigfile = (glassConfig->getJSON())["OutputConfig"]
-				.ToString();
+		outputconfigfile = (glassConfig->getJSON())["OutputConfig"].ToString();
 	} else {
 		logger::log("critcal",
 					"Invalid configuration, missing <OutputConfig>, exiting.");
@@ -239,7 +236,8 @@ int main(int argc, char* argv[]) {
 	}
 
 	// load our output config
-	util::Config * OutputConfig = new util::Config(configdir, outputconfigfile);
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			configdir, outputconfigfile);
 
 	// create our objects
 	glass::input * InputThread = new glass::input(5);
@@ -247,8 +245,7 @@ int main(int argc, char* argv[]) {
 	glass::Associator * AssocThread = new glass::Associator();
 
 	// setup input thread
-	json::Object * input_config_json = new json::Object(
-			InputConfig->getJSON());
+	json::Object * input_config_json = new json::Object(InputConfig->getJSON());
 	if (InputThread->setup(input_config_json) != true) {
 		logger::log("critical", "glass: Failed to setup Input.  Exiting.");
 
@@ -303,8 +300,8 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < gridconfigfilelist.size(); i++) {
 		std::string gridconfigfile = gridconfigfilelist[i];
 		if (gridconfigfile != "") {
-			util::Config * GridConfig = new util::Config(configdir,
-															gridconfigfile);
+			glass3::util::Config * GridConfig = new glass3::util::Config(
+					configdir, gridconfigfile);
 			json::Object * GridConfigJSON = new json::Object(
 					GridConfig->getJSON());
 

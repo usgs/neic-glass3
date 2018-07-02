@@ -11,7 +11,7 @@
 namespace glass {
 // Construction/Destruction
 Associator::Associator()
-		: util::ThreadBaseClass("Associator", 5) {
+		: glass3::util::ThreadBaseClass("Associator", 5) {
 	logger::log("debug", "associator::Associator(): Construction.");
 
 	m_iWorkCounter = 0;
@@ -35,8 +35,9 @@ Associator::Associator()
 	clear();
 }
 
-Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
-		: util::ThreadBaseClass("Associator", 5) {
+Associator::Associator(glass3::util::iInput* inputint,
+						glass3::util::iOutput* outputint)
+		: glass3::util::ThreadBaseClass("Associator", 5) {
 	logger::log("debug", "associator::associator(...): Advanced Construction.");
 
 	m_pGlass = NULL;
@@ -127,10 +128,10 @@ void Associator::clear() {
 	if (m_MessageQueue != NULL) {
 		delete (m_MessageQueue);
 	}
-	m_MessageQueue = new util::Queue();
+	m_MessageQueue = new glass3::util::Queue();
 
 	// finally do baseclass clear
-	util::BaseClass::clear();
+	glass3::util::BaseClass::clear();
 }
 
 void Associator::logGlass(glassutil::logMessageStruct message) {
