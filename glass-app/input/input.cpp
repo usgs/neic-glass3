@@ -69,7 +69,7 @@ input::~input() {
 
 	if (m_DataQueue != NULL) {
 		// clear the queue
-		m_DataQueue->clearQueue();
+		m_DataQueue->clear();
 
 		delete (m_DataQueue);
 	}
@@ -300,7 +300,7 @@ void input::clear() {
 	m_ConfigMutex.unlock();
 
 	if (m_DataQueue != NULL)
-		m_DataQueue->clearQueue();
+		m_DataQueue->clear();
 
 	// finally do baseclass clear
 	util::BaseClass::clear();
@@ -370,7 +370,7 @@ bool input::work() {
 
 			for (int i = 0; i < m_iShutdownWait; i++) {
 				// signal that we're still running
-				setWorkCheck();
+				setCheckWorkThread();
 
 				// sleep for one second
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -423,7 +423,7 @@ bool input::readFiles(std::string extension, const std::string &inputdir,
 			}
 
 			// signal that we're still running
-			setWorkCheck();
+			setCheckWorkThread();
 
 			// check to see if we have room
 			if ((m_QueueMaxSize != -1)

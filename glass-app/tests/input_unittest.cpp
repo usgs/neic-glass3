@@ -169,10 +169,10 @@ TEST_F(InputTest, Construction) {
 		<< "check in file sleep time";
 
 	// assert class is not set up
-	ASSERT_FALSE(InputThread->m_bIsSetup) << "input thread is not set up";
+	ASSERT_FALSE(InputThread->getSetup()) << "input thread is not set up";
 
 	// assert class has no config
-	ASSERT_TRUE(InputThread->m_Config == NULL) << "input config is null";
+	ASSERT_TRUE(InputThread->getConfig() == NULL) << "input config is null";
 
 	// assert class is not running
 	ASSERT_FALSE(InputThread->isRunning()) << "input thread is not running";
@@ -186,10 +186,10 @@ TEST_F(InputTest, Configuration) {
 	ASSERT_TRUE(configure()) << "InputThread->setup returned true";
 
 	// assert class is set up
-	ASSERT_TRUE(InputThread->m_bIsSetup) << "input thread is set up";
+	ASSERT_TRUE(InputThread->getSetup()) << "input thread is set up";
 
 	// assert class has config
-	ASSERT_TRUE(InputThread->m_Config != NULL) << "input config is notnull";
+	ASSERT_TRUE(InputThread->getConfig() != NULL) << "input config is notnull";
 
 	// check input directory
 	ASSERT_STREQ(InputThread->getSInputDir().c_str(),

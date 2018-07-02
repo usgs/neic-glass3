@@ -26,7 +26,7 @@ output::output()
 
 	// thread will be declared dead
 	// if it doesn't report within this interval
-	m_iCheckInterval = 120;
+	setCheckInterval(120);
 
 	// interval to report performance statistics
 	ReportInterval = 60;
@@ -66,19 +66,19 @@ output::~output() {
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_TrackingCache != NULL) {
-		m_TrackingCache->clearCache();
+		m_TrackingCache->clear();
 		delete (m_TrackingCache);
 	}
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_OutputQueue != NULL) {
-		m_OutputQueue->clearQueue();
+		m_OutputQueue->clear();
 		delete (m_OutputQueue);
 	}
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_LookupQueue != NULL) {
-		m_LookupQueue->clearQueue();
+		m_LookupQueue->clear();
 		delete (m_LookupQueue);
 	}
 }
@@ -351,11 +351,11 @@ bool output::check() {
 		}
 	}
 
-	if ((m_bEventStarted == true) && (m_iCheckInterval > 0)) {
+	if ((m_bEventStarted == true) && (getCheckInterval() > 0)) {
 		// see if it's time to check
 		time_t tNow;
 		std::time(&tNow);
-		if ((tNow - tLastEventCheck) >= m_iCheckInterval) {
+		if ((tNow - tLastEventCheck) >= getCheckInterval()) {
 			// lock the mutex to make sure we
 			// don't run into a threading issue
 			// this *may* be excessive
@@ -368,7 +368,7 @@ bool output::check() {
 						"error",
 						"output::check(): m_bCheckEventThread is false. "
 								" after an interval of "
-								+ std::to_string(m_iCheckInterval)
+								+ std::to_string(getCheckInterval())
 								+ " seconds.");
 				return (false);
 			}
@@ -570,7 +570,7 @@ bool output::haveTrackingData(std::string ID) {
 
 void output::clearTrackingData() {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
-	m_TrackingCache->clearCache();
+	m_TrackingCache->clear();
 }
 
 void output::checkEventsLoop() {

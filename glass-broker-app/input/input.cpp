@@ -58,7 +58,7 @@ input::~input() {
 
 	if (m_DataQueue != NULL) {
 		// clear the queue
-		m_DataQueue->clearQueue();
+		m_DataQueue->clear();
 
 		delete (m_DataQueue);
 	}
@@ -246,7 +246,7 @@ void input::clear() {
 	m_ConfigMutex.unlock();
 
 	if (m_DataQueue != NULL)
-		m_DataQueue->clearQueue();
+		m_DataQueue->clear();
 
 	// finally do baseclass clear
 	util::BaseClass::clear();

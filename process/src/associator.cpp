@@ -27,7 +27,7 @@ Associator::Associator()
 	m_pGlass = NULL;
 	m_MessageQueue = NULL;
 
-	m_iCheckInterval = 600;
+	setCheckInterval(600);
 
 	tGlassDuration = std::chrono::duration<double>::zero();
 
@@ -56,7 +56,7 @@ Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
 	Input = inputint;
 	Output = outputint;
 
-	m_iCheckInterval = 600;
+	setCheckInterval(600);
 
 	tGlassDuration = std::chrono::duration<double>::zero();
 }
@@ -75,7 +75,7 @@ Associator::~Associator() {
 		delete (m_pGlass);
 
 	// clean up message queue
-	m_MessageQueue->clearQueue();
+	m_MessageQueue->clear();
 	if (m_MessageQueue != NULL) {
 		delete (m_MessageQueue);
 	}
@@ -285,7 +285,7 @@ bool Associator::check() {
 // process any messages glasscore sends us
 bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 	// tell base class we're still alive
-	ThreadBaseClass::setWorkCheck();
+	ThreadBaseClass::setCheckWorkThread();
 
 	if (communication == NULL) {
 		logger::log("critical",
