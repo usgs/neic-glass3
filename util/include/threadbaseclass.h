@@ -40,7 +40,8 @@ class ThreadBaseClass : public util::BaseClass {
 	 * a provided thread name and sleep between work time
 	 *
 	 * The advanced constructor for the threadbaseclass class.
-	 * Initializes members to default values.
+	 * Initializes members to provided values.
+	 *
 	 * \param threadname - A std::string containing the desired
 	 * name of the work thread.
 	 * \param sleeptimems - An integer value containing the amount of
@@ -72,7 +73,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * Stops, waits for, and deletes the thread that runs the workLoop() function,
 	 * setting m_bStarted, m_bRunWorkThread, and m_bCheckWorkThread to false
 	 *
-	 * \return returns true if successful, fals if the thread is not created and
+	 * \return returns true if successful, false if the thread is not created and
 	 * running
 	 */
 	virtual bool stop();
@@ -203,7 +204,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * This function retrieves the last time the health status of this thread
 	 * was checked by the check() function
 	 *
-	 * \return A std::string containing the thread name
+	 * \return A std::time_t containing the last check time
 	 */
 	std::time_t getLastCheck();
 
