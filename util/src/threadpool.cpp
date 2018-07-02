@@ -95,11 +95,21 @@ bool ThreadPool::stop() {
 
 	// signal threads to finish
 	setRunning(false);
-
 	// wait for threads to finish
 	for (int i = 0; i < m_ThreadPool.size(); i++) {
-		m_ThreadPool[i].join();
+		try {
+			m_ThreadPool[i].join();
+		} catch (const std::system_error& e) {
+			logger::log(
+					"warning",
+					"ThreadPool::stop(): Exception " + std::string(e.what())
+							+ " joining thread #" + std::to_string(i) + "("
+							+ getPoolName() + ")");
+		}
 	}
+
+	// we're no longer running
+	setAllStatus(false);
 
 	logger::log("debug",
 				"ThreadPool::ThreadPool(): Stopped. (" + getPoolName() + ")");
@@ -271,6 +281,12 @@ void ThreadPool::setAllStatus(bool status) {
 bool ThreadPool::getStatus() {
 	// check thread status
 	std::lock_guard<std::mutex> guard(m_StatusMutex);
+
+	// empty check
+	if (m_ThreadStatusMap.size() == 0) {
+		return (false);
+	}
+
 	std::map<std::thread::id, bool>::iterator StatusItr;
 	for (StatusItr = m_ThreadStatusMap.begin();
 			StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {

@@ -12,7 +12,6 @@
 #define THREADPOOLNAME "testpool"
 #define NUMTHREADS 5
 #define SLEEPTIME 100
-#define MAXJOBS 3
 #define CHECKTIME 1
 
 #define TESTJOB1RESULT 25
@@ -76,6 +75,14 @@ TEST(ThreadPoolTest, CombinedTest) {
 	ASSERT_EQ(ThreadPool->getSleepTime(), SLEEPTIME)<<
 	"check thread sleep time";
 
+	// assert thread check time
+	ASSERT_EQ(ThreadPool->getCheckInterval(), CHECKTIME)<<
+	"check thread check time";
+
+	// check job queue size
+	ASSERT_EQ(ThreadPool->getJobQueueSize(), 0)<<
+	"check job queue";
+
 	// add some jobs
 	ThreadPool->addJob(std::bind(&testjob1));
 	ThreadPool->addJob(std::bind(&testjob2));
@@ -84,7 +91,7 @@ TEST(ThreadPoolTest, CombinedTest) {
 	ThreadPool->addJob(std::bind(&testjob5));
 
 	// give time for jobs to finish
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+	std::this_thread::sleep_for(std::chrono::seconds(2));
 
 	// check job results
 	ASSERT_EQ(testjob1data, TESTJOB1RESULT)<< "test job 1 is correct";
@@ -95,6 +102,14 @@ TEST(ThreadPoolTest, CombinedTest) {
 
 	// assert that check is true
 	ASSERT_TRUE(ThreadPool->check())<< "ThreadPool check is true";
+
+	// assert that stop is true
+	ASSERT_TRUE(ThreadPool->stop())<< "ThreadPool stop is true";
+
+	ASSERT_FALSE(ThreadPool->getStatus())<< "getStatus is false";
+
+	// assert that check is false
+	ASSERT_FALSE(ThreadPool->check())<< "ThreadPool check is false";
 
 	// shutdown threadpool.
 	delete (ThreadPool);
@@ -144,6 +159,5 @@ TEST(ThreadPoolTest, FailTests) {
 
 	// shutdown threadpool.
 	delete (ThreadPool);
-
 }
 

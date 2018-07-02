@@ -49,9 +49,10 @@ TEST(CacheTest, CombinedTest) {
 	ASSERT_TRUE(TestCache->addToCache(inputdata2, inputid2))<< "add item 2";
 	ASSERT_TRUE(TestCache->addToCache(inputdata3, inputid3))<< "add item 3";
 
-	// assert cache hase data
+	// assert cache has data
 	ASSERT_FALSE(TestCache->isEmpty())<< "cache not empty";
 	ASSERT_EQ(TestCache->size(), 3)<< "cache size check";
+	ASSERT_TRUE(TestCache->getCacheModified())<< "cache is modified";
 
 	// assert the items in the cache
 	ASSERT_FALSE(TestCache->isInCache(""))<< "null id in cache";

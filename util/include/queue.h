@@ -54,8 +54,6 @@ class Queue : public util::BaseClass {
 	 *
 	 * Add the provided data the queue
 	 * \param data - A pointer to a json::Object to add to the queue
-	 * \param lock - A boolean value indicating whether to lock the mutex.
-	 * Defaults to true
 	 * \return returns true if successful, false otherwise.
 	 */
 	bool addDataToQueue(std::shared_ptr<json::Object> data);
@@ -64,8 +62,6 @@ class Queue : public util::BaseClass {
 	 *\brief get data from queue
 	 *
 	 * Get the next data from the queue
-	 * \param lock - A boolean value indicating whether to lock the mutex.
-	 * Defaults to true
 	 * \return returns a pointer to the json::Object containing the data, NULL
 	 * there was no
 	 * data in the queue
@@ -76,8 +72,6 @@ class Queue : public util::BaseClass {
 	 *\brief get the size of the queue
 	 *
 	 * Get the current size of the queue
-	 * \param lock - A boolean value indicating whether to lock the mutex.
-	 * Defaults to true
 	 * \return returns an integer value containing the current size of the
 	 * queue
 	 */

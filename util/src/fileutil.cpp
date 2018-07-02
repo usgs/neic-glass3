@@ -10,11 +10,14 @@
 #include <sys/types.h>
 #endif
 
+#include <errno.h>
+
 #include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cstdio>
 
 #define MOVEERROREXTENSION ".moveerror"
 
@@ -189,7 +192,7 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 				"movefileto(): Moving file " + fromStr + " to " + toStr + ".");
 
 	// move it!
-	if (std::rename(fromStr.c_str(), toStr.c_str())) {
+	if (std::rename(fromStr.c_str(), toStr.c_str()) == 0) {
 		return (true);
 	} else {
 		std::string badfilename;
@@ -204,8 +207,9 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 					"movefileto(): Unable to move " + fromStr + " to " + toStr
 							+ ": File already exists.");
 
-			if (deleteFileFrom(fromStr) != true)
+			if (deleteFileFrom(fromStr) != true) {
 				return (false);
+			}
 
 			return (true);
 		} else if (errno == ENOENT) {
@@ -216,8 +220,6 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 					"movefileto(): Unable to move " + fromStr + " to " + toStr
 							+ ": File Not Found Error.");
 
-			return (true);
-		} else if (errno == 0) {
 			return (true);
 		}
 
@@ -232,7 +234,7 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 		// file.  This is so the inserter doesn't eternally attempt to insert
 		// this one file.
 		badfilename = filename + std::string(MOVEERROREXTENSION);
-		if (!std::rename(filename.c_str(), badfilename.c_str())) {
+		if (std::rename(filename.c_str(), badfilename.c_str()) != 0) {
 			logger::log(
 					"error",
 					"movefileto(): Unable to rename " + fromStr + " to " + toStr
@@ -282,18 +284,29 @@ bool copyFileTo(std::string from, std::string to) {
 bool deleteFileFrom(std::string filename) {
 	logger::log("debug", "deletefilefrom(): Deleting file " + filename + ".");
 
-	// delete it
-	if (!std::remove(filename.c_str())) {
-		// check to see if file is still there
-		if (std::ifstream(filename.c_str())) {
-			logger::log(
-					"error",
-					"deletefilefrom(): Unable to delete file " + filename
-							+ ": Error " + strerror(errno) + ".");
+	// check to see if the file exists
+	if (!std::ifstream(filename.c_str())) {
+		logger::log(
+				"error",
+				"deletefilefrom(): Unable to delete file " + filename
+						+ ": file did not exist.");
 
-			return (false);
-		}
+		return (false);
 	}
+
+	// delete it
+	std::remove(filename.c_str());
+
+	// check to see if file is still there
+	if (std::ifstream(filename.c_str())) {
+		logger::log(
+				"error",
+				"deletefilefrom(): Unable to delete file " + filename
+						+ ": Error " + strerror(errno) + ".");
+
+		return (false);
+	}
+
 	return (true);
 }
 }  // namespace util
