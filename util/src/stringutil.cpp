@@ -7,6 +7,7 @@
 #include <codecvt>
 #include <vector>
 
+namespace glass3 {
 namespace util {
 
 // string functions
@@ -35,3 +36,4 @@ std::string& removeChars(std::string& s, const std::string& chars) {  // NOLINT
 	return (s);
 }
 }  // namespace util
+}  // namespace glass3

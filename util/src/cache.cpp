@@ -11,6 +11,7 @@
 #include <sstream>
 #include <memory>
 
+namespace glass3 {
 namespace util {
 
 // ---------------------------------------------------------Cache
@@ -164,7 +165,6 @@ std::shared_ptr<json::Object> Cache::getFromCache(std::string id) {
 	// get result from cache
 	std::shared_ptr<json::Object> data = m_Cache[id];
 
-
 	logger::log(
 			"trace",
 			"cache::getstationfromcache(): Got ID " + json::Serialize(*data)
@@ -227,3 +227,4 @@ int Cache::size() {
 	return (cachesize);
 }
 }  // namespace util
+}  // namespace glass3

@@ -10,7 +10,7 @@
 // tests to see if the queue is functional
 TEST(QueueTest, CombinedTest) {
 	// create a queue
-	util::Queue * TestQueue = new util::Queue();
+	glass3::util::Queue * TestQueue = new glass3::util::Queue();
 
 	// assert an empty queue was created
 	ASSERT_EQ(TestQueue->size(), 0)<< "empty queue constructed";

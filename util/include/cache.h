@@ -16,6 +16,7 @@
 #include <map>
 #include <memory>
 
+namespace glass3 {
 namespace util {
 /**
  * \brief util cache class - a thread safe in-memory cache
@@ -104,7 +105,8 @@ class Cache : public util::BaseClass {
 	 * NULL if there is no
 	 * more data available.
 	 */
-	virtual std::shared_ptr<json::Object> getNextFromCache(bool restart = false);
+	virtual std::shared_ptr<json::Object> getNextFromCache(
+			bool restart = false);
 
 	/**
 	 *\brief check if cache empty
@@ -144,5 +146,6 @@ class Cache : public util::BaseClass {
 	std::map<std::string, std::shared_ptr<json::Object>>::iterator m_CacheDumpItr;
 };
 }  // namespace util
+}  // namespace glass3
 #endif  // CACHE_H
 

@@ -12,6 +12,7 @@
 #include <ctime>
 #include <string>
 
+namespace glass3 {
 namespace util {
 
 // maximum size of the environment varible TZ
@@ -328,3 +329,4 @@ double convertDateTimeToEpochTime(const std::string &TimeString) {
 	return (-1.0);
 }
 }  // namespace util
+}  // namespace glass3

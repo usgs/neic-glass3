@@ -10,10 +10,7 @@
 #include <json.h>
 #include <mutex>
 
-/**
- * @namespace util
- * The namespace containing a collection of utility classes and functions.
- */
+namespace glass3 {
 namespace util {
 /**
  * \brief util baseclass class - encapsulates the most basic setup and
@@ -99,4 +96,5 @@ class BaseClass {
 	std::mutex m_Mutex;
 };
 }  // namespace util
+}  // namespace glass3
 #endif  // BASECLASS_H

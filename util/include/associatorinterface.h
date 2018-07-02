@@ -11,37 +11,48 @@
 #include <memory>
 
 /**
- * \namespace util
- * \brief glass namespace containing utility classes and functions
+ * \namespace glass3
+ * \brief neic-glass3 namespace containing all the neic-glass3 classes and
+ * functions
  *
- * The glass util namespace contains various base classes, class 
+ * The neic-glass3 glass3 namespace contains classes and functions that make up
+ * neic-glass3
+ */
+namespace glass3 {
+
+/**
+ * \namespace util
+ * \brief neic-glass3 namespace containing utility classes and functions
+ *
+ * The neic-glass3 util namespace contains various base classes, class
  * interfaces, and utility classes and functions used by other 
- * components of glass.
+ * components of neic-glass3.
  */
 namespace util {
 
 /**
- * \interface iassociator
- * \brief associator messaging interface
+ * \interface iAssociator
+ * \brief associator messaging interface, used in sending configuration and
+ * input data to neic-glass3, specifically the glasscore libraries
  *
- * The iassociator interface is implemented by concrete classes that 
- * instantiate and manage the associator library, providing a 
- * standardized interface for other classes in glass to send 
- * information to the associator library via the sendtoassociator() 
- * function.
+ * The iAssociator interface is a class interface implemented by class that
+ * allocate, start, and monitor an instance of the glasscore associator library.
+ * This interface provides a method for sending messages (such as configuration
+ * or input data) to glasscore via the sendtoassociator() function.
  */
 class iAssociator {
  public:
 	/**
 	 * \brief Send data to associator
 	 *
-	 * This pure virtual function is implemented by a concrete class to 
-	 * receive data for the associator library.
+	 * This pure virtual function is implemented by a class to receive messages
+	 * (such as configuration or input data) for the associator library.
 	 *
-	 * \param message - A pointer to a json::object containing the data
+	 * \param message - A std::shared_ptr to a json::object containing the data
 	 * to send to the associator library.
 	 */
-	virtual void sendToAssociator(std::shared_ptr<json::Object> &message) = 0; // NOLINT
+	virtual void sendToAssociator(std::shared_ptr<json::Object> &message) = 0;  // NOLINT
 };
 }  // namespace util
+}  // namespace glass3
 #endif  // ASSOCINTERFACE_H

@@ -4,28 +4,30 @@
 #include <json.h>
 #include <memory>
 
+namespace glass3 {
 namespace util {
 
 /**
- * \interface ioutput
- * \brief output data interface
+ * \interface iOutput
+ * \brief output message interface, used in sending data to output classes in
+ * neic-glass3
  *
- * The ioutput interface is implemented by concrete classes that
- * outputs data from the associator, providing a standardized
- * interface for other classes in glass to request the sending
- * of output data via the sendtooutput() function.
+ * The iOutput interface is implemented by classes that manage outputting
+ * data from neic-glass3, providing a method for other classes in neic-glass3 to
+ * send output data via the sendtooutput() function.
  */
-struct iOutput {
+class iOutput {
 	/**
 	 * \brief Send output data
 	 *
-	 * This pure virtual function is implemented by a concrete class to
-	 * support sending output data.
+	 * This pure virtual function is implemented by a class to support sending
+	 * data to be output.
 	 *
-	 * \param data - A pointer to a json::object containing the output
+	 * \param data - A std::shared_ptr to a json::object containing the output
 	 * data.
 	 */
 	virtual void sendToOutput(std::shared_ptr<json::Object> data) = 0; // NOLINT
 };
 }  // namespace util
+}  // namespace glass3
 #endif  // OUTPUTINTERFACE_H

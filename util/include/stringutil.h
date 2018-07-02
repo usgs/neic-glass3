@@ -4,12 +4,21 @@
  * the comments so that Doxygen will still
  * be able to work.
  ****************************************/
+/**
+ * \file
+ * \brief timeutil.h
+ *
+ * stringutil.h is a set of functions that manage string functions not provided
+ * buy the standard template library, including splitting strings and replacing
+ * characters within strings.
+ */
 #ifndef STRINGUTIL_H
 #define STRINGUTIL_H
 
 #include <string>
 #include <vector>
 
+namespace glass3 {
 namespace util {
 /**
  * \brief split a string into substrings
@@ -34,6 +43,7 @@ std::vector<std::string> split(const std::string &s, char delim);
  * \param chars - A std::string containing the characters to remove.
  * \return returns a std::string containing modified string.
  */
-std::string& removeChars(std::string& s, const std::string& chars); // NOLINT
+std::string& removeChars(std::string& s, const std::string& chars);  // NOLINT
 }  // namespace util
+}  // namespace glass3
 #endif  // STRINGUTIL_H

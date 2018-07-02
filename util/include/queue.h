@@ -15,6 +15,7 @@
 #include <string>
 #include <queue>
 
+namespace glass3 {
 namespace util {
 /**
  * \brief util queue class
@@ -89,5 +90,6 @@ class Queue : public util::BaseClass {
 	std::queue<std::shared_ptr<json::Object>> m_DataQueue;
 };
 }  // namespace util
+}  // namespace glass3
 #endif  // QUEUE_H
 

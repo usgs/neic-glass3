@@ -11,6 +11,7 @@
 #include <string>
 #include <fstream>
 
+namespace glass3 {
 namespace util {
 /**
  * \brief neic-glass3 configuration class using JSON formatting
@@ -182,5 +183,6 @@ class Config {
 	json::Object m_ConfigJSON;
 };
 }  // namespace util
+}  // namespace glass3
 #endif  // CONFIG_H
 

@@ -4,6 +4,7 @@
 #include <stringutil.h>
 #include <string>
 
+namespace glass3 {
 namespace util {
 
 // ---------------------------------------------------------Config
@@ -216,3 +217,4 @@ void Config::closeFile(std::ifstream &inFile) {
 	inFile.close();
 }
 }  // namespace util
+}  // namespace glass3

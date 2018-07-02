@@ -8,6 +8,7 @@
 #include <string>
 #include <queue>
 
+namespace glass3 {
 namespace util {
 
 Queue::Queue() {
@@ -34,7 +35,7 @@ void Queue::clear() {
 }
 
 bool Queue::addDataToQueue(std::shared_ptr<json::Object> data) {
-	std::lock_guard<std::mutex> guard(getMutex());
+	std::lock_guard < std::mutex > guard(getMutex());
 
 	// add the new data to the Queue
 	m_DataQueue.push(data);
@@ -43,7 +44,7 @@ bool Queue::addDataToQueue(std::shared_ptr<json::Object> data) {
 }
 
 std::shared_ptr<json::Object> Queue::getDataFromQueue() {
-	std::lock_guard<std::mutex> guard(getMutex());
+	std::lock_guard < std::mutex > guard(getMutex());
 
 	// return null if the Queue is empty
 	if (m_DataQueue.empty() == true) {
@@ -51,7 +52,7 @@ std::shared_ptr<json::Object> Queue::getDataFromQueue() {
 	}
 
 	// get the next element
-	std::shared_ptr<json::Object> data;
+	std::shared_ptr < json::Object > data;
 	data = m_DataQueue.front();
 
 	// remove that element now that we got it
@@ -61,10 +62,12 @@ std::shared_ptr<json::Object> Queue::getDataFromQueue() {
 }
 
 int Queue::size() {
-	std::lock_guard<std::mutex> guard(getMutex());
+	std::lock_guard < std::mutex > guard(getMutex());
 
 	int queuesize = static_cast<int>(m_DataQueue.size());
 
 	return (queuesize);
 }
 }  // namespace util
+}  // namespace glass3
+

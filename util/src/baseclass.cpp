@@ -3,6 +3,7 @@
 #include <logger.h>
 #include <mutex>
 
+namespace glass3 {
 namespace util {
 
 // ---------------------------------------------------------BaseClass
@@ -25,7 +26,7 @@ bool BaseClass::setup(json::Object *config) {
 		return (false);
 	}
 
-	// to be overrided by child classes
+	// to be overridden by child classes
 	m_Config = config;
 	m_bIsSetup = true;
 
@@ -36,11 +37,10 @@ bool BaseClass::setup(json::Object *config) {
 void BaseClass::clear() {
 	std::lock_guard<std::mutex> guard(getMutex());
 
-	// to be overrided by child classes
+	// to be overridden by child classes
 	m_Config = NULL;
 	m_bIsSetup = false;
 }
-
 
 // ---------------------------------------------------------getConfig
 const json::Object * BaseClass::getConfig() {
@@ -60,4 +60,4 @@ std::mutex & BaseClass::getMutex() {
 }
 
 }  // namespace util
-
+}  // namespace glass3

@@ -38,14 +38,15 @@ TEST(ConfigTest, TestFileLoading) {
 
 	// test loading on construction
 	// create a config object
-	util::Config * TestConfig = new util::Config(filepath, filename);
+	glass3::util::Config * TestConfig = new glass3::util::Config(filepath,
+																	filename);
 
 	// check the config data
 	checkdata(TestConfig->getJSON());
 
 	// test loading after construction
 	// create a config object
-	util::Config * TestConfig2 = new util::Config();
+	glass3::util::Config * TestConfig2 = new glass3::util::Config();
 
 	// assert empty config object
 	ASSERT_TRUE(TestConfig2->getJSON().size() == 0)<< "empty config object";
@@ -65,14 +66,14 @@ TEST(ConfigTest, TestStringParsing) {
 
 	// test parsing on construction
 	// create a config object
-	util::Config * TestConfig = new util::Config(configstring);
+	glass3::util::Config * TestConfig = new glass3::util::Config(configstring);
 
 	// check the config data
 	checkdata(TestConfig->getJSON());
 
 	// test parsing after construction
 	// create a config object
-	util::Config * TestConfig2 = new util::Config();
+	glass3::util::Config * TestConfig2 = new glass3::util::Config();
 
 	// assert empty config object
 	ASSERT_TRUE(TestConfig2->getJSON().size() == 0)<< "empty config object";
@@ -90,7 +91,7 @@ TEST(ConfigTest, FailTests) {
 	// setup
 	std::string badfilename = std::string(BADFILENAME);
 	std::string badconfigstring = std::string(BADCONFIGSTRING);
-	util::Config * TestConfig = new util::Config();
+	glass3::util::Config * TestConfig = new glass3::util::Config();
 
 	// test empty string failure case
 	try {

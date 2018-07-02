@@ -4,6 +4,7 @@
 #include <string>
 #include <ctime>
 
+namespace glass3 {
 namespace util {
 
 // ---------------------------------------------------------ThreadBaseClass
@@ -312,4 +313,4 @@ time_t ThreadBaseClass::getLastCheck() {
 	return (m_tLastCheck);
 }
 }  // namespace util
-
+}  // namespace glass3

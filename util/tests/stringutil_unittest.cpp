@@ -18,7 +18,8 @@ TEST(StringUtil, split) {
 	std::string expectedtwo = std::string(TWO);
 	std::string expectedthree = std::string(THREE);
 
-	std::vector<std::string> splitstring = util::split(stringtosplit, ' ');
+	std::vector<std::string> splitstring = glass3::util::split(stringtosplit,
+																' ');
 	int count = splitstring.size();
 
 	// make sure we split into the right number
@@ -35,7 +36,7 @@ TEST(StringUtil, remove_chars) {
 	std::string stringtoremove = std::string(STRINGTOSPLIT);
 	std::string expectedremovedstring = std::string(REMOVEDSTRING);
 
-	std::string removedstring = util::removeChars(stringtoremove, " ");
+	std::string removedstring = glass3::util::removeChars(stringtoremove, " ");
 
 	// check the string
 	ASSERT_STREQ(removedstring.c_str(), expectedremovedstring.c_str());

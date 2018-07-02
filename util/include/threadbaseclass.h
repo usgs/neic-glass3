@@ -13,6 +13,7 @@
 #include <string>
 #include <ctime>
 
+namespace glass3 {
 namespace util {
 /**
  * \brief util threadbaseclass class
@@ -319,4 +320,5 @@ class ThreadBaseClass : public util::BaseClass {
 	int m_iSleepTimeMS;
 };
 }  // namespace util
+}  // namespace glass3
 #endif  // THREADBASECLASS_H

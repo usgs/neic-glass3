@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 
+namespace glass3 {
 namespace util {
 
 // ---------------------------------------------------------ThreadPool
@@ -101,7 +102,7 @@ bool ThreadPool::stop() {
 	}
 
 	logger::log("debug",
-					"ThreadPool::ThreadPool(): Stopped. (" + getPoolName() + ")");
+				"ThreadPool::ThreadPool(): Stopped. (" + getPoolName() + ")");
 
 	return (true);
 }
@@ -364,3 +365,4 @@ time_t ThreadPool::getLastCheck() {
 }
 
 }  // namespace util
+}  // namespace glass3

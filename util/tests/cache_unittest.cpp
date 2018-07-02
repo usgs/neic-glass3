@@ -14,7 +14,7 @@
 
 // tests to see if the queue is functional
 TEST(CacheTest, Construction) {
-	util::Cache TestCache;
+	glass3::util::Cache TestCache;
 
 	// assert an empty cache was created
 	ASSERT_TRUE(TestCache.isEmpty())<< "empty cache constructed";
@@ -24,7 +24,7 @@ TEST(CacheTest, Construction) {
 // tests to see if the queue is functional
 TEST(CacheTest, CombinedTest) {
 	// create cache
-	util::Cache * TestCache = new util::Cache();
+	glass3::util::Cache * TestCache = new glass3::util::Cache();
 
 	// create input data
 	std::string inputstring1 = std::string(TESTDATA1);

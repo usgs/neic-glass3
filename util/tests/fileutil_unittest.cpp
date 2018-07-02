@@ -148,8 +148,8 @@ class FileUtil : public ::testing::Test {
 TEST_F(FileUtil, CombinedTests) {
 	// getnextfilename
 	std::string foundfilename = "";
-	bool result = util::getNextFileName(firsttestpath, fileextension,
-										foundfilename);
+	bool result = glass3::util::getNextFileName(firsttestpath, fileextension,
+												foundfilename);
 
 	// make sure we found the file
 	ASSERT_TRUE(result)<< "getnextfilename call";
@@ -159,15 +159,15 @@ TEST_F(FileUtil, CombinedTests) {
 	"expected vs, found file names.";
 
 	// movefileto
-	result = util::moveFileTo(testfilename, secondtestpath);
+	result = glass3::util::moveFileTo(testfilename, secondtestpath);
 
 	// make sure we moved the file
 	ASSERT_TRUE(result)<< "movefileto call";
 
 	// look for the moved file
 	foundfilename = "";
-	result = util::getNextFileName(secondtestpath, fileextension,
-									foundfilename);
+	result = glass3::util::getNextFileName(secondtestpath, fileextension,
+											foundfilename);
 
 	// make sure we found the moved file
 	ASSERT_TRUE(result)<< "getnextfilename moved call";
@@ -177,21 +177,22 @@ TEST_F(FileUtil, CombinedTests) {
 	"expected vs, moved file names.";
 
 	// deletefilefrom
-	result = util::deleteFileFrom(movedfilename);
+	result = glass3::util::deleteFileFrom(movedfilename);
 
 	// make sure we found the file
 	ASSERT_TRUE(result)<< "deletefilefrom call";
 
 	// copyfileto
-	result = util::copyFileTo(copysourcefilename, copydestinationfilename);
+	result = glass3::util::copyFileTo(copysourcefilename,
+										copydestinationfilename);
 
 	// make sure we copied the file
 	ASSERT_TRUE(result)<< "copyfileto call";
 
 	// look for the copied file
 	foundfilename = "";
-	result = util::getNextFileName(secondtestpath, copyfileextenstion,
-									foundfilename);
+	result = glass3::util::getNextFileName(secondtestpath, copyfileextenstion,
+											foundfilename);
 
 	// make sure we found the copied file
 	ASSERT_TRUE(result)<< "getnextfilename copy call";

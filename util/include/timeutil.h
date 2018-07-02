@@ -30,6 +30,7 @@
 #include <ctime>
 #include <string>
 
+namespace glass3 {
 namespace util {
 /**
  * \brief Convert time from epoch time to ISO8601
@@ -96,4 +97,5 @@ double convertDateTimeToEpochTime(const std::string &TimeString);
  */
 double convertISO8601ToEpochTime(const std::string &TimeString);
 }  // namespace util
+}  // namespace glass3
 #endif  // TIMEUTIL_H

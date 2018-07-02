@@ -18,6 +18,7 @@
 
 #define MOVEERROREXTENSION ".moveerror"
 
+namespace glass3 {
 namespace util {
 // get the next filename with the provided extension from a directory
 bool getNextFileName(const std::string &path, const std::string &extension,
@@ -47,8 +48,8 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 			logger::log(
 					"error",
 					"getnextfilename(): Error " + std::to_string(error)
-							+ " calling FindFirstFile with filter " + findfilter
-							+ ".");
+					+ " calling FindFirstFile with filter " + findfilter
+					+ ".");
 		}
 
 		// FindClose(findfileshandle);
@@ -68,13 +69,13 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 			error = GetLastError();
 			if (error == ERROR_NO_MORE_FILES) {
 				logger::log("trace", "getnextfilename(): No more files in "
-							"directory.");
+						"directory.");
 			} else {
 				logger::log(
 						"error",
 						"getnextfilename(): Error " + std::to_string(error)
-								+ " calling FindNextFile with filter "
-								+ findfilter + ".");
+						+ " calling FindNextFile with filter "
+						+ findfilter + ".");
 			}
 
 			// no point in staying in the loop
@@ -296,3 +297,4 @@ bool deleteFileFrom(std::string filename) {
 	return (true);
 }
 }  // namespace util
+}  // namespace glass3

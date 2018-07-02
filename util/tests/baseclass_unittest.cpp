@@ -7,7 +7,7 @@
 // tests to see if the queue is functional
 TEST(BaseClassTest, CombinedTest) {
 	// create a queue
-	util::BaseClass * TestBaseClass = new util::BaseClass();
+	glass3::util::BaseClass * TestBaseClass = new glass3::util::BaseClass();
 
 	// assert that class not set up
 	ASSERT_FALSE(TestBaseClass->getSetup())<< "baseclass not set up";
@@ -36,12 +36,10 @@ TEST(BaseClassTest, CombinedTest) {
 	TestBaseClass->clear();
 
 	// assert that class not set up
-	ASSERT_FALSE(TestBaseClass->getSetup())
-		<< "baseclass not set up after clear";
+	ASSERT_FALSE(TestBaseClass->getSetup())<< "baseclass not set up after clear";
 
 	// assert no configuration
-	ASSERT_TRUE(TestBaseClass->getConfig() == NULL)
-		<< "null config data after clear";
+	ASSERT_TRUE(TestBaseClass->getConfig() == NULL)<< "null config data after clear";
 
 	// cleanup
 	delete (TestBaseClass);

@@ -16,6 +16,7 @@
 #include <ctime>
 #include <string>
 
+namespace glass3 {
 namespace util {
 /**
  * \brief util threadpool class
@@ -357,4 +358,5 @@ class ThreadPool : public util::BaseClass {
 	int m_iCheckInterval;
 };
 }  // namespace util
+}  // namespace glass3
 #endif  // THREADPOOL_H
