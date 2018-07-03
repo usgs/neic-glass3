@@ -295,7 +295,7 @@ int main(int argc, char* argv[]) {
 
 	// output needs to know about the associator thread to request
 	// information
-	OutputThread->Associator = AssocThread;
+	OutputThread->setAssociator(AssocThread);
 
 	// assoc thread needs to know about the input and output threads
 	AssocThread->Input = InputThread;

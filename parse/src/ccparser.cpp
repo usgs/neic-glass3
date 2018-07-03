@@ -10,13 +10,16 @@
 
 namespace glass3 {
 namespace parse {
+// ---------------------------------------------------------------------CCParser
 CCParser::CCParser(const std::string &newAgencyID, const std::string &newAuthor)
 		: Parser::Parser(newAgencyID, newAuthor) {
 }
+
+// --------------------------------------------------------------------~CCParser
 CCParser::~CCParser() {
 }
 
-// parse a json object from an input string
+// -----------------------------------------------------------------------parse
 std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0)
@@ -66,8 +69,8 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		newcorrelation.id = "CC" + splitccpick[8] + splitccpick[9]
 				+ splitccpick[7] + splitccpick[10]
 				+ glass3::util::removeChars(splitccpick[12], "/")
-				+ glass3::util::removeChars(glass3::util::removeChars(splitccpick[13], ":"),
-									".");
+				+ glass3::util::removeChars(
+						glass3::util::removeChars(splitccpick[13], ":"), ".");
 
 		// build the site object
 		newcorrelation.site.station = splitccpick[8];
@@ -77,8 +80,8 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 
 		// build the source object
 		// need to think more about this one
-		newcorrelation.source.agencyid = m_AgencyID;
-		newcorrelation.source.author = m_Author;
+		newcorrelation.source.agencyid = getAgencyId();
+		newcorrelation.source.author = getAuthor();
 
 		// phase
 		newcorrelation.phase = splitccpick[11];
@@ -99,9 +102,11 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 
 		// convert the origin time into epoch time
 		// if you remove the spaces, '/', and ':' you get "DateTime"
-		newcorrelation.hypocenter.time = glass3::util::convertDateTimeToEpochTime(
-				glass3::util::removeChars(splitccpick[0], "/")
-						+ glass3::util::removeChars(splitccpick[1], ":"));
+		newcorrelation.hypocenter.time =
+				glass3::util::convertDateTimeToEpochTime(
+						glass3::util::removeChars(splitccpick[0], "/")
+								+ glass3::util::removeChars(splitccpick[1],
+															":"));
 
 		// depth
 		newcorrelation.hypocenter.depth = std::stod(splitccpick[4]);
@@ -122,7 +127,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		// make sure we got valid json
 		if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
 			std::shared_ptr<json::Object> newjsoncorrelation = std::make_shared<
-								json::Object>(json::Object(deserializedJSON.ToObject()));
+					json::Object>(json::Object(deserializedJSON.ToObject()));
 
 			logger::log(
 					"trace",
@@ -138,7 +143,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 	return (NULL);
 }
 
-// validate a json object
+// ---------------------------------------------------------------------validate
 bool CCParser::validate(std::shared_ptr<json::Object> &input) {
 	// nullcheck
 	if (input == NULL) {

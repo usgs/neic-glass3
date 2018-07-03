@@ -209,7 +209,7 @@ class OutputTest : public ::testing::Test {
 
 		AssocThread = new AssociatorStub();
 		AssocThread->Output = OutputThread;
-		OutputThread->Associator = AssocThread;
+		OutputThread->setAssociator(AssocThread);
 
 		// configure input
 		return (OutputThread->setup(output_config_json));
@@ -380,7 +380,7 @@ TEST_F(OutputTest, Construction) {
 			glass3::util::ThreadState::Started) << "output thread is not running";
 
 	// assert no data in class
-	ASSERT_EQ(OutputThread->ReportInterval, REPORTINTERVAL)
+	ASSERT_EQ(OutputThread->getReportInterval(), REPORTINTERVAL)
 	<< "output thread report interval";
 }
 
@@ -411,12 +411,12 @@ TEST_F(OutputTest, Configuration) {
 
 	// check agency id
 	std::string agencyid = std::string(TESTAGENCYID);
-	ASSERT_STREQ(OutputThread->getSOutputAgencyId().c_str(),
+	ASSERT_STREQ(OutputThread->getOutputAgencyId().c_str(),
 			agencyid.c_str()) << "check agency id";
 
 	// check author
 	std::string author = std::string(TESTAUTHOR);
-	ASSERT_STREQ(OutputThread->getSOutputAuthor().c_str(),
+	ASSERT_STREQ(OutputThread->getOutputAuthor().c_str(),
 			author.c_str()) << "check author";
 }
 /*

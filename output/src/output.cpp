@@ -14,8 +14,10 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <vector>
 
-namespace glass {
+namespace glass3 {
+namespace output {
 
 output::output()
 		: glass3::util::ThreadBaseClass("output", 100) {
@@ -29,7 +31,7 @@ output::output()
 	setHealthCheckInterval(120);
 
 	// interval to report performance statistics
-	ReportInterval = 60;
+	setReportInterval(60);
 
 	// init performance counters
 	m_iMessageCounter = 0;
@@ -53,6 +55,8 @@ output::output()
 	m_bEventStarted = false;
 	m_EventThread = NULL;
 	std::time(&tLastEventCheck);
+
+	setAssociator(NULL);
 
 	// init config to defaults and allocate
 	clear();
@@ -106,40 +110,38 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 		}
 	}
 
-	// lock our configuration while we're updating it
-	// this mutex may be pointless
-	m_ConfigMutex.lock();
-
 	// publish on expiration
 	if (!(config->HasKey("PublishOnExpiration"))) {
 		// publish on expiration is optional, default to false
-		m_bPubOnExpiration = false;
+		setPubOnExpiration(false);
 		logger::log(
 				"info",
 				"output::setup(): PublishOnExpiration not specified, using default "
 				"of false.");
 	} else {
-		m_bPubOnExpiration = (*config)["PublishOnExpiration"].ToBool();
+		setPubOnExpiration((*config)["PublishOnExpiration"].ToBool());
 
 		logger::log(
 				"info",
 				"output::setup(): Using PublishOnExpiration: "
-						+ std::to_string(m_bPubOnExpiration) + " .");
+						+ std::to_string(getPubOnExpiration()) + " .");
 	}
 
 	// publicationTimes
 	if (!(config->HasKey("PublicationTimes"))) {
 		// pubdelay is optional, default to 0
-		m_PublicationTimes.push_back(0);
+		clearPubTimes();
+		addPubTime(0);
 		logger::log(
 				"info",
 				"output::setup(): PublicationTimes not specified, using default "
 				"of 0.");
 	} else {
 		json::Array dataarray = (*config)["PublicationTimes"];
+		clearPubTimes();
 		for (int i = 0; i < dataarray.size(); i++) {
 			int pubTime = dataarray[i].ToInt();
-			m_PublicationTimes.push_back(pubTime);
+			addPubTime(pubTime);
 
 			logger::log(
 					"info",
@@ -152,28 +154,28 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	// agencyid
 	if (!(config->HasKey("OutputAgencyID"))) {
 		// agencyid is optional
-		m_sOutputAgencyID = "US";
+		setOutputAgency("US");
 		logger::log("info",
 					"output::setup(): Defaulting to US as OutputAgencyID.");
 	} else {
-		m_sOutputAgencyID = (*config)["OutputAgencyID"].ToString();
+		setOutputAgency((*config)["OutputAgencyID"].ToString());
 		logger::log(
 				"info",
-				"output::setup(): Using AgencyID: " + m_sOutputAgencyID
+				"output::setup(): Using AgencyID: " + getOutputAgencyId()
 						+ " for output.");
 	}
 
 	// author
 	if (!(config->HasKey("OutputAuthor"))) {
 		// agencyid is optional
-		m_sOutputAuthor = "glass";
+		setOutputAuthor("glass3");
 		logger::log("info",
 					"output::setup(): Defaulting to glass as OutputAuthor.");
 	} else {
-		m_sOutputAuthor = (*config)["OutputAuthor"].ToString();
+		setOutputAuthor((*config)["OutputAuthor"].ToString());
 		logger::log(
 				"info",
-				"output::setup(): Using Author: " + m_sOutputAuthor
+				"output::setup(): Using Author: " + getOutputAuthor()
 						+ " for output.");
 	}
 
@@ -181,27 +183,25 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("SiteListDelay"))) {
 		logger::log("info", "output::setup(): SiteListDelay not specified.");
 	} else {
-		m_iSiteListDelay = (*config)["SiteListDelay"].ToInt();
+		setSiteListDelay((*config)["SiteListDelay"].ToInt());
 
 		logger::log(
 				"info",
 				"output::setup(): Using SiteListDelay: "
-						+ std::to_string(m_iSiteListDelay) + ".");
+						+ std::to_string(getSiteListDelay()) + ".");
 	}
 
 	// StationFile
 	if (!(config->HasKey("StationFile"))) {
 		logger::log("info", "output::setup(): StationFile not specified.");
 	} else {
-		m_sStationFile = (*config)["StationFile"].ToString();
+		setStationFile((*config)["StationFile"].ToString());
 
 		logger::log(
 				"info",
-				"output::setup(): Using StationFile: " + m_sStationFile + ".");
+				"output::setup(): Using StationFile: " + getStationFile()
+						+ ".");
 	}
-
-	// unlock our configuration
-	m_ConfigMutex.unlock();
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_TrackingCache != NULL) {
@@ -234,16 +234,14 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 void output::clear() {
 	logger::log("debug", "output::clear(): clearing configuration.");
 
-	// lock our configuration while we're updating it
-	// this mutex may be pointless
-	m_ConfigMutex.lock();
+	setPubOnExpiration(false);
 
-	m_PublicationTimes.clear();
-	m_iSiteListDelay = -1;
-	m_sStationFile = "";
+	clearPubTimes();
+	setSiteListDelay(-1);
+	setStationFile("");
 
-	// unlock our configuration
-	m_ConfigMutex.unlock();
+	setOutputAgency("US");
+	setOutputAuthor("glass3");
 
 	// finally do baseclass clear
 	glass3::util::BaseClass::clear();
@@ -440,7 +438,7 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 		json::Array pubLog;
 
 		// for each pub time
-		for (auto pubTime : m_PublicationTimes) {
+		for (auto pubTime : getPubTimes()) {
 			// generate a pub log entry
 			pubLog.push_back(0);
 		}
@@ -632,7 +630,7 @@ void output::checkEventsLoop() {
 			// process the data based on the tracking message
 			if (command == "Event") {
 				// Request the hypo from associator
-				if (Associator != NULL) {
+				if (getAssociator() != NULL) {
 					// build the request
 					std::shared_ptr<json::Object> datarequest =
 							std::make_shared<json::Object>(json::Object());
@@ -640,7 +638,7 @@ void output::checkEventsLoop() {
 					(*datarequest)["Pid"] = id;
 
 					// send the request
-					Associator->sendToAssociator(datarequest);
+					getAssociator()->sendToAssociator(datarequest);
 				}
 			}
 		}
@@ -658,10 +656,7 @@ void output::checkEventsLoop() {
 bool output::work() {
 	// pull data from our config at the start of each loop
 	// so that we can have config that changes
-	// should I do this?
-	m_ConfigMutex.lock();
-	int siteListDelay = m_iSiteListDelay;
-	m_ConfigMutex.unlock();
+	int siteListDelay = getSiteListDelay();
 
 	// null check
 	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
@@ -819,7 +814,7 @@ bool output::work() {
 					// or if we're configured to always send expiration
 					// hypos
 					if ((isDataFinished(trackingData) == false)
-							|| (m_bPubOnExpiration == true)) {
+							|| (getPubOnExpiration() == true)) {
 						// get the hypo from the event
 						json::Object jsonHypo = (*message)["Hypo"];
 
@@ -868,7 +863,7 @@ bool output::work() {
 		}
 
 		// reporting
-		if ((tNow - tLastWorkReport) >= ReportInterval) {
+		if ((tNow - tLastWorkReport) >= getReportInterval()) {
 			if (m_iMessageCounter == 0)
 				logger::log(
 						"warning",
@@ -923,14 +918,14 @@ bool output::work() {
 		// every interval
 		if ((tNowRequest - m_tLastSiteRequest) >= siteListDelay) {
 			// Request the sitelist from associator
-			if (Associator != NULL) {
+			if (getAssociator() != NULL) {
 				// build the request
 				std::shared_ptr<json::Object> datarequest = std::make_shared<
 						json::Object>(json::Object());
 				(*datarequest)["Cmd"] = "ReqSiteList";
 
 				// send the request
-				Associator->sendToAssociator(datarequest);
+				getAssociator()->sendToAssociator(datarequest);
 			}
 
 			// this is now the last time we wrote
@@ -966,8 +961,8 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 		ID = (*data)["Pid"].ToString();
 	}
 
-	std::string agency = getSOutputAgencyId();
-	std::string author = getSOutputAuthor();
+	std::string agency = getOutputAgencyId();
+	std::string author = getOutputAuthor();
 
 	if (dataType == "Hypo") {
 		// convert a hypo to a detection
@@ -1049,7 +1044,7 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	bool changed = isDataChanged(data);
 
 	// for each publication time
-	for (int i = 0; i < m_PublicationTimes.size(); i++) {
+	for (int i = 0; i < getPubTimes().size(); i++) {
 		// get the published version for this pub time
 		int pubVersion = pubLog[i].ToInt();
 
@@ -1060,7 +1055,7 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 		}
 
 		// has this pub time passed?
-		if (tNow < (createTime + m_PublicationTimes[i])) {
+		if (tNow < (createTime + getPubTimes()[i])) {
 			// no, move on
 			continue;
 		}
@@ -1086,14 +1081,13 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 					"output::isdataready(): Publishing " + id + " version:"
 							+ std::to_string(currentVersion) + " tNow:"
 							+ std::to_string(static_cast<int>(tNow))
-							+ " > (createTime + m_PublicationTimes[i]): "
+							+ " > (createTime + getPubTimes()[i]): "
 							+ std::to_string(
 									static_cast<int>((createTime
-											+ m_PublicationTimes[i])))
+											+ getPubTimes()[i])))
 							+ " (createTime: " + std::to_string(createTime)
-							+ " m_PublicationTimes[i]: "
-							+ std::to_string(
-									static_cast<int>(m_PublicationTimes[i]))
+							+ " getPubTimes()[i]: "
+							+ std::to_string(static_cast<int>(getPubTimes()[i]))
 							+ ")");
 
 			// ready to publish
@@ -1245,4 +1239,95 @@ bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	return (true);
 }
 
-}  // namespace glass
+void output::setOutputAgency(std::string agency) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_sOutputAgencyID = agency;
+}
+
+const std::string output::getOutputAgencyId() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sOutputAgencyID);
+}
+
+void output::setOutputAuthor(std::string author) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_sOutputAuthor = author;
+}
+
+const std::string output::getOutputAuthor() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sOutputAuthor);
+}
+
+void output::setSiteListDelay(int delay) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_iSiteListDelay = delay;
+}
+
+int output::getSiteListDelay() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_iSiteListDelay);
+}
+
+void output::setStationFile(std::string filename) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_sStationFile = filename;
+}
+
+const std::string output::getStationFile() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sStationFile);
+}
+
+void output::setReportInterval(int interval) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_iReportInterval = interval;
+}
+
+int output::getReportInterval() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_iReportInterval);
+}
+
+void output::setAssociator(glass3::util::iAssociator* associator) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_Associator = associator;
+}
+
+glass3::util::iAssociator* output::getAssociator() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_Associator);
+}
+
+void output::setPubOnExpiration(bool pub) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_bPubOnExpiration = pub;
+}
+
+int output::getPubOnExpiration() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_bPubOnExpiration);
+}
+
+std::vector<int> output::getPubTimes() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_PublicationTimes);
+}
+
+void output::setPubTimes(std::vector<int> pubTimes) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_PublicationTimes = pubTimes;
+}
+
+void output::addPubTime(int pubTime) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_PublicationTimes.push_back(pubTime);
+}
+
+void output::clearPubTimes() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_PublicationTimes.clear();
+}
+
+}  // namespace output
+}  // namespace glass3

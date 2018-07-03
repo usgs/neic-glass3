@@ -20,7 +20,7 @@
 #define BADTRACKING1 "{\"Bayes\":16.790485,\"Cmd\":\"Event\",\"Pid\":\"\",\"Version\":1}" // NOLINT
 #define BADTRACKING2 "{\"Bayes\":16.790485,\"Cmd\":\"Event\",\"Version\":1}"
 
-class OutputStub : public glass::output {
+class OutputStub : public glass3::output::output {
  public:
 	OutputStub() {
 	}

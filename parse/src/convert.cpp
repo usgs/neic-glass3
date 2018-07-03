@@ -12,6 +12,7 @@
 namespace glass3 {
 namespace parse {
 
+// ---------------------------------------------------------hypoToJSONDetection
 std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor) {
@@ -390,6 +391,7 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 	return (OutputData);
 }
 
+// ---------------------------------------------------------cancelToJSONRetract
 std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor) {
@@ -455,6 +457,7 @@ std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 	return (OutputData);
 }
 
+// --------------------------------------------------------siteListToStationList
 std::string siteListToStationList(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
 		logger::log(
@@ -543,6 +546,7 @@ std::string siteListToStationList(std::shared_ptr<json::Object> data) {
 	return (OutputData);
 }
 
+// -----------------------------------------------siteLookupToStationInfoRequest
 std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 											const std::string &outputAgencyID,
 											const std::string &outputAuthor) {

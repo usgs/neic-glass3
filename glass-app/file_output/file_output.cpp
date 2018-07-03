@@ -16,7 +16,7 @@
 namespace glass {
 
 fileOutput::fileOutput()
-		: output() {
+		: glass3::output::output() {
 	logger::log("debug", "fileOutput::fileOutput(): Construction.");
 
 	// init config to defaults and allocate
@@ -24,7 +24,7 @@ fileOutput::fileOutput()
 }
 
 fileOutput::fileOutput(std::shared_ptr<json::Object> &config)
-		: output() {
+		: glass3::output::output() {
 	logger::log("debug", "fileOutput::fileOutput(): Advanced Construction.");
 
 	// init config to defaults and allocate
@@ -126,7 +126,7 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	logger::log("debug", "fileOutput::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
-	output::setup(config);
+	glass3::output::output::setup(config);
 
 	// we're done
 	return (true);
@@ -148,7 +148,7 @@ void fileOutput::clear() {
 	m_FileOutputConfigMutex.unlock();
 
 	// finally do baseclass clear
-	output::clear();
+	glass3::output::output::clear();
 }
 
 // send output

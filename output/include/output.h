@@ -25,7 +25,8 @@
 #include <vector>
 #include <memory>
 
-namespace glass {
+namespace glass3 {
+namespace output {
 /**
  * \brief glass output class
  *
@@ -98,49 +99,41 @@ class output : public glass3::util::iOutput,
 	 */
 	bool healthCheck() override;
 
-	const std::string getSOutputAgencyId() {
-		m_ConfigMutex.lock();
-		std::string outputagency = m_sOutputAgencyID;
-		m_ConfigMutex.unlock();
-		return outputagency;
-	}
+	void setOutputAgency(std::string agency);
 
-	const std::string getSOutputAuthor() {
-		m_ConfigMutex.lock();
-		std::string outputauthor = m_sOutputAuthor;
-		m_ConfigMutex.unlock();
-		return outputauthor;
-	}
+	const std::string getOutputAgencyId();
 
-	int getISiteListDelay() {
-		m_ConfigMutex.lock();
-		int sitelistdelay = m_iSiteListDelay;
-		m_ConfigMutex.unlock();
-		return sitelistdelay;
-	}
+	void setOutputAuthor(std::string author);
 
-	const std::string getSStationFile() {
-		m_ConfigMutex.lock();
-		std::string stationfile = m_sStationFile;
-		m_ConfigMutex.unlock();
-		return stationfile;
-	}
+	const std::string getOutputAuthor();
 
-	/**
-	 * \brief Information Report interval
-	 *
-	 * An integer containing the interval (in seconds) between
-	 * logging informational reports.
-	 */
-	int ReportInterval;
+	void setSiteListDelay(int delay);
 
-	/**
-	 * \brief Pointer to Association class
-	 *
-	 * A glass3::util::iassociator pointer to the class that handles association for
-	 * glass
-	 */
-	glass3::util::iAssociator* Associator;
+	int getSiteListDelay();
+
+	void setStationFile(std::string filename);
+
+	const std::string getStationFile();
+
+	void setReportInterval(int interval);
+
+	int getReportInterval();
+
+	void setAssociator(glass3::util::iAssociator* associator);
+
+	glass3::util::iAssociator* getAssociator();
+
+	void setPubOnExpiration(bool pub);
+
+	int getPubOnExpiration();
+
+	std::vector<int> getPubTimes();
+
+	void setPubTimes(std::vector<int> pubTimes);
+
+	void addPubTime(int pubTime);
+
+	void clearPubTimes();
 
 	/**
 	 * \brief add data to the output tracking cache
@@ -236,6 +229,26 @@ class output : public glass3::util::iOutput,
 							const std::string &message) = 0;
 
  private:
+	std::vector<int> m_PublicationTimes;
+
+	bool m_bPubOnExpiration;
+
+	/**
+	 * \brief Information Report interval
+	 *
+	 * An integer containing the interval (in seconds) between
+	 * logging informational reports.
+	 */
+	int m_iReportInterval;
+
+	/**
+	 * \brief Pointer to Association class
+	 *
+	 * A glass3::util::iassociator pointer to the class that handles association for
+	 * glass
+	 */
+	glass3::util::iAssociator* m_Associator;
+
 	/**
 	 * \brief the std::string configuration value defining the
 	 * agency identifier used when generating output files
@@ -260,11 +273,6 @@ class output : public glass3::util::iOutput,
 	std::string m_sStationFile;
 
 	/**
-	 * \brief the mutex for configuration
-	 */
-	std::mutex m_ConfigMutex;
-
-	/**
 	 * \brief pointer to the glass3::util::cache class used to
 	 * store output tracking information
 	 */
@@ -282,10 +290,6 @@ class output : public glass3::util::iOutput,
 	 * incoming lookup messages
 	 */
 	glass3::util::Queue* m_LookupQueue;
-
-	std::vector<int> m_PublicationTimes;
-
-	bool m_bPubOnExpiration;
 
 	/**
 	 * \brief the total messages performance counter
@@ -368,5 +372,6 @@ class output : public glass3::util::iOutput,
 	 */
 	std::mutex m_CheckEventMutex;
 };
-}  // namespace glass
+}  // namespace output
+}  // namespace glass3
 #endif  // OUTPUT_H

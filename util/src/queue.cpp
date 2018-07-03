@@ -11,14 +11,17 @@
 namespace glass3 {
 namespace util {
 
+// ---------------------------------------------------------Queue
 Queue::Queue() {
 	clear();
 }
 
+// ---------------------------------------------------------~Queue
 Queue::~Queue() {
 	clear();
 }
 
+// ---------------------------------------------------------clear
 void Queue::clear() {
 	getMutex().lock();
 
@@ -34,6 +37,7 @@ void Queue::clear() {
 	util::BaseClass::clear();
 }
 
+// ---------------------------------------------------------addDataToQueue
 bool Queue::addDataToQueue(std::shared_ptr<json::Object> data) {
 	std::lock_guard < std::mutex > guard(getMutex());
 
@@ -43,6 +47,7 @@ bool Queue::addDataToQueue(std::shared_ptr<json::Object> data) {
 	return (true);
 }
 
+// ---------------------------------------------------------getDataFromQueue
 std::shared_ptr<json::Object> Queue::getDataFromQueue() {
 	std::lock_guard < std::mutex > guard(getMutex());
 
@@ -61,6 +66,7 @@ std::shared_ptr<json::Object> Queue::getDataFromQueue() {
 	return (data);
 }
 
+// ---------------------------------------------------------size
 int Queue::size() {
 	std::lock_guard < std::mutex > guard(getMutex());
 

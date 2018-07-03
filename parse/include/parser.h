@@ -8,11 +8,21 @@
 #define PARSER_H
 
 #include <json.h>
+#include <baseclass.h>
 #include <string>
 #include <memory>
 
 namespace glass3 {
+
+/**parse
+ * \namespace util
+ * \brief neic-glass3 namespace containing parsing classes and functions
+ *
+ * The neic-glass3 parse namespace contains various classes, and functions used
+ * by other components of neic-glass3 to parse data.
+ */
 namespace parse {
+
 /**
  * \brief glass parser class
  *
@@ -21,8 +31,10 @@ namespace parse {
  *
  * This class is intended to be extended by derived classes.
  */
-class Parser {
+class Parser : public glass3::util::BaseClass {
  public:
+	Parser();
+
 	/**
 	 * \brief parser constructor
 	 *
@@ -46,10 +58,11 @@ class Parser {
 	/**
 	 * \brief parsing function
 	 *
-	 * Virtual parsing function to be overridden by deriving classes
+	 * Virtual parsing function to be overridden by deriving classes, used to
+	 * parse input
 	 *
 	 * \param input - The std::string to parse
-	 * \return Returns a pointer to the json::Object containing
+	 * \return Returns a shared pointer to the json::Object containing
 	 * the data.
 	 */
 	virtual std::shared_ptr<json::Object> parse(const std::string &input) = 0;
@@ -57,38 +70,65 @@ class Parser {
 	/**
 	 * \brief validation function
 	 *
-	 * Virtual validation function to be overridden by deriving classes
+	 * Virtual validation function to be overridden by deriving classes, used
+	 * to validate parsed input
 	 *
-	 * \param input - A pointer to a json::Object containing the data to
+	 * \param input - A shared pointer to a json::Object containing the data to
 	 * validate.
 	 * \return Returns true if valid, false otherwise.
 	 */
-	virtual bool validate(std::shared_ptr<json::Object> &input) = 0; // NOLINT
+	virtual bool validate(std::shared_ptr<json::Object> &input) = 0;  // NOLINT
 
 	/**
-	 * \brief getter for the agencyid configuration variable
+	 * \brief Function to retrieve the name of the default agency id
+	 *
+	 * This function retrieves the name of default agency id, this name is used
+	 * in parsing
+	 *
+	 * \return A std::string containing the  agency id
 	 */
-	const std::string& getAgencyid() const {
-		return (m_AgencyID);
-	}
+	const std::string& getAgencyId();
 
 	/**
-	 * \brief getter for the author configuration variable
+	 * \brief Function to set the name of the default agency id
+	 *
+	 * This function sets the name default agency id, this name is used in
+	 * parsing
+	 *
+	 * \param id = A std::string containing the default agency id to set
 	 */
-	const std::string& getAuthor() const {
-		return (m_Author);
-	}
+	void setAgencyId(std::string id);
 
- protected:
 	/**
-	 * \brief A std::string containing the agency id to
-	 * use if one is not provided.
+	 * \brief Function to retrieve the name of the default author
+	 *
+	 * This function retrieves the name of the default author, this name is used
+	 * in parsing
+	 *
+	 * \return A std::string containing the author
+	 */
+	const std::string& getAuthor();
+
+	/**
+	 * \brief Function to set the name of the default author
+	 *
+	 * This function sets the name of the default author, this name is used in
+	 * parsing
+	 *
+	 * \param author = A std::string containing the default author to set
+	 */
+	void setAuthor(std::string author);
+
+ private:
+	/**
+	 * \brief A std::string containing the default agency id to
+	 * use in parsing if one is not provided.
 	 */
 	std::string m_AgencyID;
 
 	/**
-	 * \brief A std::string containing the author to
-	 * use if one is not provided.
+	 * \brief A std::string containing the default author to
+	 * use in parsing if one is not provided.
 	 */
 	std::string m_Author;
 };

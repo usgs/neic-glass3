@@ -31,7 +31,7 @@ namespace glass {
  * fileOutput inherits from the threadbaseclass class.
  * fileOutput implements the ifileOutput interface.
  */
-class fileOutput : public output {
+class fileOutput : public glass3::output::output {
  public:
 	/**
 	 * \brief fileOutput constructor
