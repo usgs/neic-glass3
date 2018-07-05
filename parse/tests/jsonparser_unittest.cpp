@@ -9,6 +9,7 @@
 #define TESTCORRELATIONSTRING "{\"Type\":\"Correlation\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Phase\":\"P\",\"Time\":\"2015-12-28T21:32:24.017Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2015-12-28T21:30:44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\",\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}}" // NOLINT
 #define TESTPICKSTRING "{\"Type\":\"Pick\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Time\":\"2015-12-28T21:32:24.017Z\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Onset\":\"questionable\",\"Picker\":\"manual\",\"Filter\":[{\"HighPass\":1.05,\"LowPass\":2.65},{\"HighPass\":2.10,\"LowPass\":3.58}],\"Amplitude\":{\"Amplitude\":21.5,\"Period\":2.65,\"SNR\":3.8},\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}}" // NOLINT
 #define TESTSTATIONSTRING "{\"Elevation\":150.000000,\"Enable\":true,\"InformationRequestor\":{\"AgencyID\":\"US\",\"Author\":\"glasstest\"},\"Latitude\":32.888901,\"Longitude\":-117.105103,\"Quality\":1.000000,\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"TA\",\"Station\":\"109C\"},\"Type\":\"StationInfo\",\"UseForTeleseismic\":true}" // NOLINT
+#define TESTOTHERSTATIONSTRING "{\"Elevation\":151.000000,\"Enable\":true,\"InformationRequestor\":{\"AgencyID\":\"NC\",\"Author\":\"NC-Glass\"},\"Latitude\":32.888901,\"Longitude\":-117.105103,\"Quality\":1.000000,\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"N4\",\"Station\":\"109E\"},\"Type\":\"StationInfo\",\"UseForTeleseismic\":true}" // NOLINT
 
 #define TESTFAILDETECTIONSTRING "{\"Type\":\"Detection\",\"ID\":\"12GFH48776857\",\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"DetectionType\":\"New\",\"EventType\":\"earthquake\",\"Bayes\":2.65,\"MinimumDistance\":2.14,\"RMS\":3.8,\"Gap\":33.67,\"Data\":[{\"Type\":\"Pick\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Time\":\"2015-12-28T21:32:24.017Z\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Onset\":\"questionable\",\"Picker\":\"manual\",\"Filter\":[{\"HighPass\":1.05,\"LowPass\":2.65}],\"Amplitude\":{\"Amplitude\":21.5,\"Period\":2.65,\"SNR\":3.8},\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}},{\"Type\":\"Correlation\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Phase\":\"P\",\"Time\":\"2015-12-28T21:32:24.017Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2015-12-28T21:30:44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\",\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}}]}" // NOLINT
 #define TESTFAILCORRELATIONSTRING "{\"Type\":\"Correlation\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Phase\":\"P\",\"Time\":\"2015-12-28T21:32:24.017Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2015-12-28T21:30:44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\",\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}}" // NOLINT
@@ -96,6 +97,7 @@ TEST_F(JSONParser, PickParsing) {
 // test station
 TEST_F(JSONParser, StationParsing) {
 	std::string stationstring = std::string(TESTSTATIONSTRING);
+	std::string otherstationstring = std::string(TESTOTHERSTATIONSTRING);
 
 	std::shared_ptr<json::Object> StationObject = Parser->parse(stationstring);
 
@@ -104,6 +106,15 @@ TEST_F(JSONParser, StationParsing) {
 
 	// validate the pick
 	ASSERT_TRUE(Parser->validate(StationObject))<< "Parsed station is valid";
+
+	std::shared_ptr<json::Object> OtherStationObject = Parser->parse(
+			otherstationstring);
+
+	// parse the pick
+	ASSERT_FALSE(OtherStationObject == NULL)<< "Parsed station not null.";
+
+	// validate the pick
+	ASSERT_FALSE(Parser->validate(OtherStationObject))<< "Parsed station is not valid";
 }
 
 // test failure
@@ -168,5 +179,5 @@ TEST_F(JSONParser, FailTests) {
 
 	// validate the bad data
 	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed empty string is not valid";
+	"Parsed garbage string is not valid";
 }
