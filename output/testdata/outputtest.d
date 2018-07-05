@@ -7,7 +7,7 @@
 	# the delay between when core glass declares a detection
 	# and when the detection is written out to file
 	# (acts as a filter to reduce false detections)
-	"PublicationDelay":3,
+	"PublicationDelay":[3,6],
 
 	# the directory to write output to
 	"OutputDirectory":"./testdata/outputtests/output",

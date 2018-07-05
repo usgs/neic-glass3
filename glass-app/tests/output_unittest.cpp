@@ -151,7 +151,7 @@ class OutputTest : public ::testing::Test {
 		testdatapath = std::string(TESTDATAPATH);
 		std::string output = std::string(OUTPUTDIRECTORY);
 
-		//logger::log_init("outputtest", spdlog::level::debug, testpath, true);
+		logger::log_init("outputtest", spdlog::level::debug, testpath, true);
 
 		// create input test
 		OutputThread = new glass::fileOutput();
@@ -469,7 +469,7 @@ TEST_F(OutputTest, Update) {
 	OutputThread->sendToOutput(outputevent);
 
 	// give time for file to write
-	std::this_thread::sleep_for(std::chrono::seconds(8));
+	std::this_thread::sleep_for(std::chrono::seconds(4));
 
 	// assert that the file is there
 	ASSERT_TRUE(std::ifstream(output2file).good())
@@ -495,7 +495,7 @@ TEST_F(OutputTest, Update) {
 	OutputThread->sendToOutput(updateevent);
 
 	// give time for file to write
-	std::this_thread::sleep_for(std::chrono::seconds(8));
+	std::this_thread::sleep_for(std::chrono::seconds(10));
 
 	// assert that the file is there
 	ASSERT_TRUE(std::ifstream(output2file).good())
