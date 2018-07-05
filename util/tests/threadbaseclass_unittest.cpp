@@ -159,7 +159,7 @@ TEST(ThreadBaseClassTest, KillTest) {
 
 	// create a threadbasestub
 	threadbasestub * TestThreadBaseStub = new threadbasestub(name,
-	TESTSLEEPTIME);
+			TESTSLEEPTIME);
 
 	// start the thread
 	ASSERT_TRUE(TestThreadBaseStub->start())<< "start was successful";
