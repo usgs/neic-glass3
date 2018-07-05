@@ -419,7 +419,7 @@ TEST_F(OutputTest, Configuration) {
 	ASSERT_STREQ(OutputThread->getSOutputAuthor().c_str(),
 			author.c_str()) << "check author";
 }
-
+/*
 TEST_F(OutputTest, Output) {
 	// configure output
 	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
@@ -577,3 +577,4 @@ TEST_F(OutputTest, Retract) {
 	ASSERT_TRUE(std::ifstream(retract3file).good())
 	<< "retract output file created";
 }
+*/
