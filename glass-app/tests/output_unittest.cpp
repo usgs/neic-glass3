@@ -151,7 +151,7 @@ class OutputTest : public ::testing::Test {
 		testdatapath = std::string(TESTDATAPATH);
 		std::string output = std::string(OUTPUTDIRECTORY);
 
-		logger::log_init("outputtest", spdlog::level::debug, testpath, true);
+		//logger::log_init("outputtest", spdlog::level::debug, testpath, true);
 
 		// create input test
 		OutputThread = new glass::fileOutput();
@@ -426,6 +426,7 @@ TEST_F(OutputTest, Output) {
 
 	// start input thread
 	OutputThread->start();
+	OutputThread->clearTrackingData();
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(eventfile);
 	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
@@ -456,6 +457,7 @@ TEST_F(OutputTest, Update) {
 
 	// start input thread
 	OutputThread->start();
+	OutputThread->clearTrackingData();
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event2file);
 	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
@@ -467,7 +469,7 @@ TEST_F(OutputTest, Update) {
 	OutputThread->sendToOutput(outputevent);
 
 	// give time for file to write
-	std::this_thread::sleep_for(std::chrono::seconds(4));
+	std::this_thread::sleep_for(std::chrono::seconds(8));
 
 	// assert that the file is there
 	ASSERT_TRUE(std::ifstream(output2file).good())
@@ -513,6 +515,7 @@ TEST_F(OutputTest, Cancel) {
 
 	// start input thread
 	OutputThread->start();
+	OutputThread->clearTrackingData();
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
 	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
@@ -544,6 +547,7 @@ TEST_F(OutputTest, Retract) {
 
 	// start input thread
 	OutputThread->start();
+	OutputThread->clearTrackingData();
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
 	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
