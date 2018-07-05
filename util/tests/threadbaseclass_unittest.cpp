@@ -18,7 +18,7 @@ class threadbasestub : public glass3::util::ThreadBaseClass {
 		kill = false;
 	}
 
-	threadbasestub(std::string name, int time)
+	threadbasestub(std::string& name, int time)
 			: glass3::util::ThreadBaseClass(name, time) {
 		runcount = 0;
 		startcount = false;
@@ -64,8 +64,10 @@ class threadbasestub : public glass3::util::ThreadBaseClass {
 
 // tests to see if the threadbaseclass is functional
 TEST(ThreadBaseClassTest, CombinedTest) {
+	std::string name = std::string(TESTTHREADNAME);
+
 	// create a threadbasestub
-	threadbasestub * TestThreadBaseStub = new threadbasestub(TESTTHREADNAME,
+	threadbasestub * TestThreadBaseStub = new threadbasestub(name,
 	TESTSLEEPTIME);
 
 	// assert that class not started
@@ -147,8 +149,10 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 
 // tests to see if the queue is functional
 TEST(ThreadBaseClassTest, KillTest) {
+	std::string name = std::string(TESTTHREADNAME);
+
 	// create a threadbasestub
-	threadbasestub * TestThreadBaseStub = new threadbasestub(TESTTHREADNAME,
+	threadbasestub * TestThreadBaseStub = new threadbasestub(name,
 	TESTSLEEPTIME);
 
 	// start the thread
