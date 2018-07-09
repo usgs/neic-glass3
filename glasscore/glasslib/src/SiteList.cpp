@@ -631,7 +631,12 @@ void CSiteList::checkSites() {
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
 					"CSiteList::checkSites: Removing " + aSite->getScnl()
-							+ " for not picking");
+							+ " for not picking in "
+							+ std::to_string(tNow - tLastPickAdded)
+							+ "%d seconds ");
+
+			// disable the site
+			aSite->setUse(false);
 
 			// pass new site to webs
 			if (pGlass) {
