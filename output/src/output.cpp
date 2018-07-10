@@ -50,11 +50,11 @@ output::output()
 	// setup thread pool for output
 	m_ThreadPool = new glass3::util::ThreadPool("outputpool");
 
-	m_bRunEventThread = false;
-	m_bCheckEventThread = true;
-	m_bEventStarted = false;
+	setEventStarted(false);
+	setEventRunning(false);
+	setCheckEventThread(true);
 	m_EventThread = NULL;
-	std::time(&tLastEventCheck);
+	setLastEventCheck(std::time(nullptr));
 
 	setAssociator(NULL);
 
@@ -280,7 +280,7 @@ void output::sendToOutput(std::shared_ptr<json::Object> message) {
 
 bool output::start() {
 	// are we already running
-	if (m_bRunEventThread == true) {
+	if (isEventRunning() == true) {
 		logger::log("warning",
 					"output::start(): Event Thread is already running.");
 		return (false);
@@ -293,7 +293,8 @@ bool output::start() {
 		return (false);
 	}
 
-	m_bEventStarted = true;
+	// we've been started
+	setEventStarted(true);
 
 	// start the thread
 	m_EventThread = new std::thread(&output::checkEventsLoop, this);
@@ -304,7 +305,7 @@ bool output::start() {
 
 bool output::stop() {
 	// check if we're running
-	if (m_bRunEventThread == false) {
+	if (isEventRunning() == false) {
 		logger::log("warning", "output::stop(): Event Thread is not running. ");
 		return (false);
 	}
@@ -316,10 +317,10 @@ bool output::stop() {
 		return (false);
 	}
 
-	m_bEventStarted = false;
+	setEventStarted(false);
 
 	// tell the thread to stop
-	m_bRunEventThread = false;
+	setEventRunning(false);
 
 	// wait for the thread to finish
 	m_EventThread->join();
@@ -329,7 +330,7 @@ bool output::stop() {
 	m_EventThread = NULL;
 
 	// we're no longer running
-	m_bCheckEventThread = false;
+	setCheckEventThread(false);
 
 	// let threadbaseclass handle background worker thread
 	return (ThreadBaseClass::stop());
@@ -361,14 +362,13 @@ bool output::healthCheck() {
 			// lock the mutex to make sure we
 			// don't run into a threading issue
 			// this *may* be excessive
-			m_CheckEventMutex.lock();
+			std::lock_guard<std::mutex> guard(getCheckMutex());
 
 			// if the check is false, the thread is dead
-			if (m_bCheckEventThread == false) {
-				m_CheckEventMutex.unlock();
+			if (getCheckEventThread() == false) {
 				logger::log(
 						"error",
-						"output::check(): m_bCheckEventThread is false. "
+						"output::check(): getCheckEventThread() is false. "
 								" after an interval of "
 								+ std::to_string(getHealthCheckInterval())
 								+ " seconds.");
@@ -378,10 +378,8 @@ bool output::healthCheck() {
 			// mark check as false until next time
 			// if the thread is alive, it'll mark it
 			// as true.
-			m_bCheckEventThread = false;
-			m_CheckEventMutex.unlock();
-
-			tLastEventCheck = tNow;
+			setCheckEventThread(false);
+			setLastEventCheck(tNow);
 		}
 	}
 
@@ -577,14 +575,12 @@ void output::clearTrackingData() {
 
 void output::checkEventsLoop() {
 	// we're running
-	m_bRunEventThread = true;
+	setEventRunning(true);
 
 	// run until told to stop
-	while (m_bRunEventThread) {
+	while (isEventRunning()) {
 		// signal that we're still running
-		m_CheckEventMutex.lock();
-		m_bCheckEventThread = true;
-		m_CheckEventMutex.unlock();
+		setCheckEventThread();
 
 		// see if there's anything in the tracking cache
 		std::shared_ptr<const json::Object> data = getNextTrackingData();
@@ -1327,6 +1323,54 @@ void output::addPubTime(int pubTime) {
 void output::clearPubTimes() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_PublicationTimes.clear();
+}
+
+// ---------------------------------------------------------setLastEventCheck
+void output::setLastEventCheck(time_t now) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	tLastEventCheck = now;
+}
+
+// ---------------------------------------------------------getLastEventCheck
+std::time_t output::getLastEventCheck() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (tLastEventCheck);
+}
+
+// ---------------------------------------------------------setCheckEventThread
+void output::setCheckEventThread(bool check) {
+	// signal that we're still running
+	// mutex here *may* be excessive
+	std::lock_guard<std::mutex> guard(getCheckMutex());
+	m_bCheckEventThread = check;
+}
+
+// ---------------------------------------------------------getCheckEventThread
+bool output::getCheckEventThread() {
+	std::lock_guard<std::mutex> guard(getCheckMutex());
+	return (m_bCheckEventThread);
+}
+
+void output::setEventRunning(bool running) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_bRunEventThread = running;
+}
+
+bool output::isEventRunning() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return(m_bRunEventThread);
+}
+
+// ---------------------------------------------------------setEventStarted
+void output::setEventStarted(bool started) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_bEventStarted = started;
+}
+
+// ---------------------------------------------------------isEventStarted
+bool output::isEventStarted() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_bEventStarted);
 }
 
 }  // namespace output

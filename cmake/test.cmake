@@ -79,6 +79,16 @@ if (RUN_TESTS)
 
             # ----- RUN COVERAGE ----- #
             if(RUN_COVERAGE)
+                  # run coverage cleanup prior to project build
+                  message(STATUS "Cleaning ${CMAKE_BINARY_DIR} of old coverage")
+                  add_custom_command(TARGET ${PROJECT_NAME}
+                    PRE_BUILD
+                    COMMAND /bin/sh
+                    ${CMAKE_CURRENT_LIST_DIR}/clean_coverage.sh
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                    COMMENT "Cleanup old Coverage Info" VERBATIM
+                  )
+
                   # run coverage after the unit test build
                   add_custom_command(TARGET ${PROJECT_NAME}-unit-tests
                   POST_BUILD

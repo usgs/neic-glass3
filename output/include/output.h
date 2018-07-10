@@ -136,6 +136,16 @@ class output : public glass3::util::iOutput,
 	void clearPubTimes();
 
 	/**
+	 * \brief Checks to see if the event thread should still be running
+	 *
+	 * This function checks to see if the event thread should still running by
+	 * returning the value of m_bRunWorkThread.
+	 * \return Returns true if the thread should still running, false if it
+	 * has been stopped
+	 */
+	bool isEventRunning();
+
+	/**
 	 * \brief add data to the output tracking cache
 	 *
 	 * Add the detection data to the cache of data pending for output
@@ -203,6 +213,48 @@ class output : public glass3::util::iOutput,
 							bool ignoreVersion = true);
 	bool isDataFinished(std::shared_ptr<const json::Object> data);
 
+	/**
+	 * \brief Function to retrieve the last time the event thread health status
+	 * was checked
+	 *
+	 * This function retrieves the last time the health status of the event
+	 * thread was checked by the check() function
+	 *
+	 * \return A std::time_t containing the last check time
+	 */
+	std::time_t getLastEventCheck();
+
+	/**
+	 * \brief Function to set thread health
+	 *
+	 * This function signifies the thread health by setting m_bCheckWorkThread
+	 * to the provided value.
+	 *
+	 * \param check = A boolean value indicating thread health, true indicates
+	 * that the the thread is alive, false indicates that the thread is not
+	 */
+	void setCheckEventThread(bool check = true);
+
+	/**
+	 * \brief Function to check thread health
+	 *
+	 * This function checks the thread health by getting the value of
+	 * m_bCheckWorkThread.
+	 *
+	 * \return Returns true if the thread is alive, false if the thread has
+	 * not responded yet
+	 */
+	bool getCheckEventThread();
+
+	/**
+	 *\brief Retrieves whether the event thread has been started
+	 *
+	 * This function retrieves the value of m_bEventStarted, which indicates
+	 * whether the event thread has been created and started
+	 * \returns true if the event thread has been started, false otherwise
+	 */
+	bool isEventStarted();
+
  protected:
 	/**
 	 * \brief output work function
@@ -227,6 +279,38 @@ class output : public glass3::util::iOutput,
 
 	virtual void sendOutput(const std::string &type, const std::string &id,
 							const std::string &message) = 0;
+
+	/**
+	 * \brief Sets whether the event thread is running
+	 *
+	 * This function sets m_bRunEventThread. Setting m_bRunEventThread to true
+	 * indicates that the thread should still run (via checkEventsLoop()). Setting
+	 * m_bRunEventThread to false indicates that the thread should stop (and
+	 * checkEventsLoop() should return)
+	 */
+	void setEventRunning(bool running);
+
+	/**
+	 * \brief Function to sset the last time the event thread health status
+	 * was checked
+	 *
+	 * This function sets the last time the health status of the event thread
+	 * was checked.
+	 *
+	 * \param now - A std::time_t containing the last time the health status
+	 * was checked
+	 */
+	void setLastEventCheck(std::time_t now);
+
+	/**
+	 *\brief Sets whether the event thread has been started
+	 *
+	 * This function sets the value of m_bEventStarted, which indicates whether
+	 * the event thread has been created and started
+	 * \param started - a boolean flag indicating whether the event thread has
+	 * been started
+	 */
+	void setEventStarted(bool started);
 
  private:
 	std::vector<int> m_PublicationTimes;
@@ -366,11 +450,6 @@ class output : public glass3::util::iOutput,
 	 * \brief the std::time_t holding the last time the thread status was checked
 	 */
 	std::time_t tLastEventCheck;
-
-	/**
-	 * \brief the std::mutex for m_bCheckEventThread
-	 */
-	std::mutex m_CheckEventMutex;
 };
 }  // namespace output
 }  // namespace glass3
