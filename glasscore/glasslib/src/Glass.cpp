@@ -764,6 +764,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		}
 
 		/*
+		 * NOTE: Keep for when beams are fully implemented
 		 // beamMatchingDistanceWindow
 		 if ((params.HasKey("dBeamMatchingDistanceWindow"))
 		 && (params["dBeamMatchingDistanceWindow"].GetType()
@@ -1014,6 +1015,23 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						+ std::to_string(iHoursBeforeLookingUp));
 	}
 
+	int iMaxPicksPerHour = -1;
+	if ((com->HasKey("MaxPicksPerHour"))
+			&& ((*com)["MaxPicksPerHour"].GetType()
+					== json::ValueType::IntVal)) {
+		iMaxPicksPerHour = (*com)["MaxPicksPerHour"].ToInt();
+
+		glassutil::CLogit::log(
+				glassutil::log_level::info,
+				"CGlass::initialize: Using MaxPicksPerHour: "
+						+ std::to_string(iMaxPicksPerHour));
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::info,
+				"CGlass::initialize: Using default MaxPicksPerHour: "
+						+ std::to_string(iMaxPicksPerHour));
+	}
+
 	// test sig and gaus
 	// NOTE: Keep for unit test reference
 	// for (double sg = 0.0; sg < 5.0; sg += 0.1) {
@@ -1030,6 +1048,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	pSiteList->setGlass(this);
 	pSiteList->setHoursWithoutPicking(iHoursWithoutPicking);
 	pSiteList->setHoursBeforeLookingUp(iHoursBeforeLookingUp);
+	pSiteList->setMaxPicksPerHour(iMaxPicksPerHour);
 
 	// clean out old web list if any
 	if (pWebList) {

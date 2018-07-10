@@ -1377,7 +1377,11 @@ bool CWeb::genSiteList() {
 		// get site from the overall site list
 		std::shared_ptr<CSite> site = pSiteList->getSite(isite);
 
-		if (site->getUse() == false) {
+		// Ignore if station out of service
+		if (!site->getUse()) {
+			continue;
+		}
+		if (!site->getEnable()) {
 			continue;
 		}
 
@@ -1558,7 +1562,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 	}
 
 	// if this is a remove, send to remSite
-	if (site->getUse() == false) {
+	if (site->getEnable() == false) {
 		remSite(site);
 		return;
 	}

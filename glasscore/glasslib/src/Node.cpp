@@ -278,6 +278,9 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		if (!site->getUse()) {
 			continue;
 		}
+		if (!site->getEnable()) {
+			continue;
+		}
 
 		std::vector<std::shared_ptr<CPick>> vSitePicks = site->getVPick();
 

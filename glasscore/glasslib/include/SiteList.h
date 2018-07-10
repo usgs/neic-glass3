@@ -198,6 +198,9 @@ class CSiteList {
 	void setHoursBeforeLookingUp(int hoursBeforeLookingUp);
 	int getHoursBeforeLookingUp() const;
 
+	void setMaxPicksPerHour(int maxPicksPerHour);
+	int getMaxPicksPerHour() const;
+
  private:
 	void checkSites();
 
@@ -295,6 +298,8 @@ class CSiteList {
 	int iHoursWithoutPicking;
 
 	int iHoursBeforeLookingUp;
+
+	int m_iMaxPicksPerHour;
 };
 }  // namespace glasscore
 #endif  // SITELIST_H

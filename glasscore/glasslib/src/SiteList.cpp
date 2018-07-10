@@ -56,6 +56,7 @@ void CSiteList::clear() {
 	std::time(&m_tLastChecked);
 	iHoursWithoutPicking = -1;
 	iHoursBeforeLookingUp = -1;
+	m_iMaxPicksPerHour = -1;
 }
 
 // ---------------------------------------------------------clearSites
@@ -467,7 +468,7 @@ bool CSiteList::reqSiteList() {
 		stationObj["Lon"] = lon;
 		stationObj["Z"] = elv;
 		stationObj["Qual"] = site->getQual();
-		stationObj["Use"] = site->getUse();
+		stationObj["Use"] = site->getEnable();
 		stationObj["UseForTele"] = site->getUseForTele();
 
 		stationObj["Sta"] = site->getSite();
@@ -585,8 +586,8 @@ bool CSiteList::statusCheck() {
 }
 
 void CSiteList::checkSites() {
-	// don't bother if we're not checking sites
-	if (iHoursWithoutPicking < 0) {
+	// don't bother if we're not configured to check sites
+	if ((iHoursWithoutPicking < 0) && (m_iMaxPicksPerHour < 0)) {
 		return;
 	}
 
@@ -611,43 +612,139 @@ void CSiteList::checkSites() {
 			glassutil::log_level::debug,
 			"CSiteList::checkSites: checking for sites not picking");
 
-	// for each site in the site list
+	// for each used site in the site list
 	for (auto aSite : vSite) {
+		// skip disabled sites
+		if (aSite->getEnable() == false) {
+			continue;
+		}
 		// skip sites that are not used
 		if (aSite->getUse() == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
-					"CSiteList::checkSites: " + aSite->getScnl()
-							+ "Site marked unused");
 			continue;
 		}
 
-		// when was the last pick added to this site
-		time_t tLastPickAdded = aSite->getTLastPickAdded();
+		bool disableSite = false;
 
-		// have we not seen data?
-		if ((tNow - tLastPickAdded) > (60 * 60 * iHoursWithoutPicking)) {
-			// if ((tNow - tLastPickAdded) > (60 * 5)) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
-					"CSiteList::checkSites: Removing " + aSite->getScnl()
-							+ " for not picking in "
-							+ std::to_string(tNow - tLastPickAdded)
-							+ "%d seconds ");
+		// check for sites that are not picking
+		if (iHoursWithoutPicking > 0) {
+			// when was the last pick added to this site
+			time_t tLastPickAdded = aSite->getTLastPickAdded();
 
+			// have we not seen data?
+			if ((tNow - tLastPickAdded) > (60 * 60 * iHoursWithoutPicking)) {
+				glassutil::CLogit::log(
+						glassutil::log_level::debug,
+						"CSiteList::checkSites: Removing " + aSite->getScnl()
+								+ " for not picking in "
+								+ std::to_string(tNow - tLastPickAdded)
+								+ " seconds ");
+				disableSite = true;
+			}
+		}
+
+		// check for sites that are picking too much
+		if (m_iMaxPicksPerHour > 0) {
+			// how many picks since last check
+			int picksSinceCheck = aSite->getPicksSinceCheck();
+
+			// we check every hour, so picks since check is picks per hour
+			if (picksSinceCheck > m_iMaxPicksPerHour) {
+				glassutil::CLogit::log(
+						glassutil::log_level::debug,
+						"CSiteList::checkSites: Removing " + aSite->getScnl()
+								+ " for picking more than "
+								+ std::to_string(m_iMaxPicksPerHour)
+								+ " in the last hour ("
+								+ std::to_string(picksSinceCheck) + ")");
+				disableSite = true;
+			}
+
+			// reset for next check
+			aSite->setPicksSinceCheck(0);
+		}
+
+		if (disableSite == true) {
 			// disable the site
 			aSite->setUse(false);
 
-			// pass new site to webs
+			// remove site from webs
 			if (pGlass) {
 				if (pGlass->getWebList()) {
 					pGlass->getWebList()->remSite(aSite);
 				}
 			}
-
-			// update thread status
-			setStatus(true);
 		}
+
+		// update thread status
+		setStatus(true);
+	}
+
+	// for each unused site in the site list
+	for (auto aSite : vSite) {
+		// skip disabled sites
+		if (aSite->getEnable() == false) {
+			continue;
+		}
+		// skip sites that are used
+		if (aSite->getUse() == true) {
+			continue;
+		}
+
+		bool enableSite = false;
+
+		// check or sites that started picking
+		if (iHoursWithoutPicking > 0) {
+			// when was the last pick added to this site
+			time_t tLastPickAdded = aSite->getTLastPickAdded();
+
+			// have we seen data?
+			if ((tNow - tLastPickAdded) < (60 * 60 * iHoursWithoutPicking)) {
+				glassutil::CLogit::log(
+						glassutil::log_level::debug,
+						"CSiteList::checkSites: Added " + aSite->getScnl()
+								+ " because it has picked within "
+								+ std::to_string(tNow - tLastPickAdded)
+								+ " seconds ");
+
+				enableSite = true;
+			}
+		}
+
+		// check for sites who's rate has fallen
+		if (m_iMaxPicksPerHour > 0) {
+			// how many picks since last check
+			int picksSinceCheck = aSite->getPicksSinceCheck();
+
+			// we check every hour, so picks since check is picks per hour
+			if (picksSinceCheck < m_iMaxPicksPerHour) {
+				glassutil::CLogit::log(
+						glassutil::log_level::debug,
+						"CSiteList::checkSites: Added " + aSite->getScnl()
+								+ " for picking less than "
+								+ std::to_string(m_iMaxPicksPerHour)
+								+ " in the last hour ("
+								+ std::to_string(picksSinceCheck) + ")");
+				enableSite = true;
+			}
+
+			// reset for next check
+			aSite->setPicksSinceCheck(0);
+		}
+
+		if (enableSite == true) {
+			// enable the site
+			aSite->setUse(true);
+
+			// add site to webs
+			if (pGlass) {
+				if (pGlass->getWebList()) {
+					pGlass->getWebList()->addSite(aSite);
+				}
+			}
+		}
+
+		// update thread status
+		setStatus(true);
 	}
 }
 
@@ -669,6 +766,16 @@ void CSiteList::setHoursBeforeLookingUp(int hoursBeforeLookingUp) {
 int CSiteList::getHoursBeforeLookingUp() const {
 	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	return (iHoursBeforeLookingUp);
+}
+
+void CSiteList::setMaxPicksPerHour(int maxPicksPerHour) {
+	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
+	m_iMaxPicksPerHour = maxPicksPerHour;
+}
+
+int CSiteList::getMaxPicksPerHour() const {
+	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
+	return (m_iMaxPicksPerHour);
 }
 
 }  // namespace glasscore
