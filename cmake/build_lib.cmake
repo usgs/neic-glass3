@@ -25,3 +25,16 @@ target_include_directories(
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
 )
+
+# make sure we support coverage
+if(SUPPORT_COVERAGE)
+    # do coverage cleanup of libraries prior to project build
+    message(STATUS "Cleaning ${CMAKE_BINARY_DIR} of old coverage")
+    add_custom_command(TARGET ${PROJECT_NAME}
+      PRE_BUILD
+      COMMAND /bin/sh
+      ${CMAKE_CURRENT_LIST_DIR}/clean_coverage.sh
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMENT "Cleanup old Coverage Info" VERBATIM
+    )
+endif (SUPPORT_COVERAGE)

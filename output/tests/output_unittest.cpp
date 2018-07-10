@@ -480,8 +480,8 @@ TEST(Output, TrackingTests) {
 }
 
 TEST(Output, OutputTest) {
-	logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-						true);
+	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//					true);
 
 	OutputStub* outputObject = new OutputStub();
 
