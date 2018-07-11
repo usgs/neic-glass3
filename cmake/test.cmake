@@ -75,7 +75,6 @@ if (RUN_TESTS)
         # make sure we support coverage
         if(SUPPORT_COVERAGE)
             # do coverage cleanup of test application prior to test build
-            message(STATUS "Cleaning ${CMAKE_BINARY_DIR} of old coverage")
             add_custom_command(TARGET ${PROJECT_NAME}-unit-tests
               PRE_BUILD
               COMMAND /bin/sh
