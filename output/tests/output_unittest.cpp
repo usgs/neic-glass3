@@ -13,7 +13,6 @@
 #define CONFIGFAIL2 "{\"Type\":\"BLEH\"}"
 #define CONFIGFILENAME "outputtest.d"
 #define TESTPATH "./testdata"
-#define OUTPUTDIRECTORY "output"
 
 #define SLEEPTIME 100
 
@@ -394,7 +393,11 @@ TEST(Output, ThreadTests) {
 	// assert event thread is running
 	ASSERT_TRUE(outputObject->isEventRunning())<< "event thread is running";
 
+	// thread status checks
 	ASSERT_TRUE(outputObject->check());
+
+	// second start doesn't
+	ASSERT_FALSE(outputObject->start())<< "second start unsuccessful";
 
 	// stop output thread
 	ASSERT_TRUE(outputObject->stop())<< "stop successful";
@@ -413,6 +416,9 @@ TEST(Output, ThreadTests) {
 
 	// assert event thread is not running
 	ASSERT_FALSE(outputObject->isEventRunning())<< "event thread is not running";
+
+	// stop output thread again
+	ASSERT_FALSE(outputObject->stop())<< "second stop unsuccessful";
 }
 
 // tests to see if tracking functions are functional
@@ -787,6 +793,7 @@ TEST(Output, ExpireTest) {
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
 	outputObject->setAssociator(AssocThread);
+	outputObject->setReportInterval(2);
 
 	// assert config successful
 	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
@@ -915,7 +922,7 @@ TEST(Output, StationListTest) {
 	// set the site list delay short so it happens during the test
 	outputObject->setSiteListDelay(2);
 
-	// start input thread
+	// start output thread
 	outputObject->start();
 
 	// give time sitelist to request and generate
@@ -923,4 +930,51 @@ TEST(Output, StationListTest) {
 
 	// assert that sitelist was created
 	ASSERT_EQ(outputObject->messages.size(), 1)<< "site list created";
+}
+
+TEST(Output, FailTests) {
+	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//					true);
+	OutputStub* outputObject = new OutputStub();
+
+	// create configfilestring
+	std::string configfile = std::string(CONFIGFILENAME);
+	std::string configdirectory = std::string(TESTPATH);
+
+	// load configuration
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			configdirectory, configfile);
+	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+
+	AssociatorStub * AssocThread = new AssociatorStub();
+	AssocThread->Output = outputObject;
+	outputObject->setAssociator(AssocThread);
+
+	// assert config successful
+	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
+
+	// start output thread
+	outputObject->start();
+
+	// null requests
+	outputObject->sendToOutput(NULL);
+	outputObject->writeOutput(NULL);
+	outputObject->isDataReady(NULL);
+	outputObject->isDataChanged(NULL);
+	outputObject->isDataPublished(NULL);
+	outputObject->isDataFinished(NULL);
+
+	// bad requests
+	std::shared_ptr<json::Object> badData = GetDataFromString(
+			std::string(CONFIGFAIL2));
+	outputObject->sendToOutput(badData);
+	outputObject->writeOutput(badData);
+	outputObject->isDataReady(badData);
+	outputObject->isDataChanged(badData);
+	outputObject->isDataPublished(badData);
+	outputObject->isDataFinished(badData);
+
+	std::shared_ptr<json::Object> badData2 = GetDataFromString(
+			std::string(CONFIGFAIL1));
+	outputObject->sendToOutput(badData2);
 }

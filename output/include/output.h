@@ -255,6 +255,16 @@ class output : public glass3::util::iOutput,
 	 */
 	bool isEventStarted();
 
+	/**
+	 * \brief output file writing function
+	 *
+	 * The function used output detection data
+	 *
+	 * \param data - A pointer to a json::Object containing the data to be
+	 * output.
+	 */
+	void writeOutput(std::shared_ptr<json::Object> data);
+
  protected:
 	/**
 	 * \brief output work function
@@ -266,16 +276,6 @@ class output : public glass3::util::iOutput,
 	bool work() override;
 
 	void checkEventsLoop();
-
-	/**
-	 * \brief output file writing function
-	 *
-	 * The function used output detection data
-	 *
-	 * \param data - A pointer to a json::Object containing the data to be
-	 * output.
-	 */
-	void writeOutput(std::shared_ptr<json::Object> data);
 
 	virtual void sendOutput(const std::string &type, const std::string &id,
 							const std::string &message) = 0;
