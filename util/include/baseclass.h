@@ -62,7 +62,12 @@ class BaseClass {
 	virtual void clear();
 
 	/* \brief Retrieves a pointer to the class member json::Object that holds
-	 * the configuration
+	 * the configuration.
+	 *
+	 * \warning Caller is responsible for ensuring that the configuration object
+	 * pointer is not referenced after the original config object is destroyed
+	 *
+	 * \return returns a json::Object pointer to the configuration
 	 */
 	const json::Object * getConfig();
 
