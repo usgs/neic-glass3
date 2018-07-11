@@ -8,7 +8,7 @@
  * \file
  * \brief fileutl.h
  *
- * stringutil.h is a set of functions that manage file functions not provided
+ * fileutl.h is a set of functions that manage file functions not provided
  * buy the standard template library, including directory file searching file
  * copying, file moving, and file deletion.
  */

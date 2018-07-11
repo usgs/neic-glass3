@@ -226,7 +226,8 @@ class ThreadBaseClass : public util::BaseClass {
 	 *
 	 * This function is the thread work loop function. It runs in a loop while
 	 * m_bRunWorkThread is true, calls work() every m_iSleepTimeMS milliseconds,
-	 * and sets m_bCheckWorkThread via setWorkCheck(). Setting m_bRunWorkThread
+	 * to do a unit of work, sets thread health via setCheckWorkThread(), and
+	 * sets m_bCheckWorkThread via setWorkCheck(). Setting m_bRunWorkThread
 	 * to false via setRunning, or a false return from work() will cause
 	 * the loop to exit, and the function to return (ending the thread)
 	 */

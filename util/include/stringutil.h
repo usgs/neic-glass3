@@ -6,10 +6,10 @@
  ****************************************/
 /**
  * \file
- * \brief timeutil.h
+ * \brief stringutil.h
  *
  * stringutil.h is a set of functions that manage string functions not provided
- * buy the standard template library, including splitting strings and replacing
+ * by the standard template library, including splitting strings and replacing
  * characters within strings.
  */
 #ifndef STRINGUTIL_H
@@ -40,7 +40,7 @@ std::vector<std::string> split(const std::string &s, char delim);
  * This is NOT removing a substring from a string.
  *
  * \param s - A std::string containing the string to remove characters from
- * \param chars - A std::string containing the characters to remove.
+ * \param chars - A std::string containing the individual characters to remove.
  * \return returns a std::string containing modified string.
  */
 std::string& removeChars(std::string& s, const std::string& chars);  // NOLINT
