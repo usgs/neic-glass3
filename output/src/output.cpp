@@ -675,14 +675,14 @@ bool output::work() {
 
 	// if we got something
 	if (message != NULL) {
-		/* logger::log(
+		/*logger::log(
 		 "debug",
 		 "associator::dispatch(): got message:"
 		 + json::Serialize(*message)
 		 + " from associator. (outputQueueSize:"
 		 + std::to_string(outputQueueSize) + ", lookupQueueSize:"
-		 + std::to_string(lookupQueueSize) + ")");
-		 */
+		 + std::to_string(lookupQueueSize) + ")");*/
+
 		// what time is it
 		time_t tNow;
 		std::time(&tNow);
@@ -845,7 +845,9 @@ bool output::work() {
 			m_iExpireCounter++;
 		} else if (messagetype == "SiteLookup") {
 			// station info request
-
+			logger::log(
+					"debug",
+					"output::work(): Writing site lookup message");
 			// output immediately
 			writeOutput(message);
 
@@ -1358,7 +1360,7 @@ void output::setEventRunning(bool running) {
 
 bool output::isEventRunning() {
 	std::lock_guard<std::mutex> guard(getMutex());
-	return(m_bRunEventThread);
+	return (m_bRunEventThread);
 }
 
 // ---------------------------------------------------------setEventStarted

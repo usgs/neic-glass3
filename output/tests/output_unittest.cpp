@@ -10,7 +10,7 @@
 
 #define EMPTYCONFIG "{\"Cmd\":\"GlassOutput\"}"
 #define CONFIGFAIL1 "{\"PublicationTimes\":[3, 6]}"
-#define CONFIGFAIL2 "{\"Cmd\":\"BLEH\"}"
+#define CONFIGFAIL2 "{\"Type\":\"BLEH\"}"
 #define CONFIGFILENAME "outputtest.d"
 #define TESTPATH "./testdata"
 #define OUTPUTDIRECTORY "output"
@@ -35,6 +35,8 @@
 #define EVENT2FILE "event2.txt"
 #define HYPO2UPDATEFILE "hypo2update.txt"
 #define EVENT2UPDATEFILE "event2update.txt"
+#define EVENT2UPDATE2FILE "event2update2.txt"
+#define EVENT2EXPIREFILE "event2expire.txt"
 
 #define OUTPUT3ID "0BB39FF59826AA4BA63AAA07FFFE713F"
 #define HYPO3FILE "hypo3.txt"
@@ -50,7 +52,13 @@
 #define BADTRACKING1 "{\"Bayes\":16.790485,\"Cmd\":\"Event\",\"Pid\":\"\",\"Version\":1}" // NOLINT
 #define BADTRACKING2 "{\"Bayes\":16.790485,\"Cmd\":\"Event\",\"Version\":1}"
 
+#define SITEREQUESTFILE "siterequest.txt"
+#define SITELISTFILE "sitelist.txt"
+
 std::shared_ptr<json::Object> GetDataFromString(std::string line) {
+	if (line.length() == 0)
+		return (NULL);
+
 	json::Value deserializedJSON = json::Deserialize(line);
 
 	// make sure we got valid json
@@ -61,6 +69,7 @@ std::shared_ptr<json::Object> GetDataFromString(std::string line) {
 		return (newdata);
 	}
 
+	printf("GetDataFromString: Bad json from line %s\n", line.c_str());
 	return (NULL);
 }
 
@@ -80,19 +89,6 @@ std::shared_ptr<json::Object> GetDataFromFile(std::string filename) {
 
 	// close the file
 	infile.close();
-
-	if (line.length() == 0)
-		return (NULL);
-
-	json::Value deserializedJSON = json::Deserialize(line);
-
-	// make sure we got valid json
-	if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
-		// convert our resulting value to a json object
-		std::shared_ptr<json::Object> newdata = std::make_shared<json::Object>(
-				json::Object(deserializedJSON.ToObject()));
-		return (newdata);
-	}
 
 	return (GetDataFromString(line));
 }
@@ -170,6 +166,8 @@ class AssociatorStub : public glass3::util::iAssociator {
 		hypo2updatefile = inputdirectory + "/" + std::string(HYPO2UPDATEFILE);
 		hypo3file = inputdirectory + "/" + std::string(HYPO3FILE);
 
+		sitelistfile = inputdirectory + "/" + std::string(SITELISTFILE);
+
 		sentone = false;
 	}
 
@@ -189,8 +187,6 @@ class AssociatorStub : public glass3::util::iAssociator {
 			id = (*message)["ID"].ToString();
 		} else if ((*message).HasKey("Pid")) {
 			id = (*message)["Pid"].ToString();
-		} else {
-			return;
 		}
 
 		if (id == OUTPUTID) {
@@ -212,6 +208,20 @@ class AssociatorStub : public glass3::util::iAssociator {
 			std::shared_ptr<json::Object> hypo3 = GetDataFromFile(hypo3file);
 			Output->sendToOutput(hypo3);
 		}
+
+		std::string type = "";
+		if (message->HasKey("Cmd")) {
+			type = (*message)["Cmd"].ToString();
+		} else if (message->HasKey("Type")) {
+			type = (*message)["Type"].ToString();
+		}
+
+		if (type == "ReqSiteList") {
+			std::shared_ptr<json::Object> sitelist = GetDataFromFile(
+					sitelistfile);
+			Output->sendToOutput(sitelist);
+		}
+
 	}
 	bool sentone;
 
@@ -225,6 +235,8 @@ class AssociatorStub : public glass3::util::iAssociator {
 	std::string hypo2file;
 	std::string hypo2updatefile;
 	std::string hypo3file;
+
+	std::string sitelistfile;
 };
 
 class OutputStub : public glass3::output::output {
@@ -382,6 +394,8 @@ TEST(Output, ThreadTests) {
 	// assert event thread is running
 	ASSERT_TRUE(outputObject->isEventRunning())<< "event thread is running";
 
+	ASSERT_TRUE(outputObject->check());
+
 	// stop output thread
 	ASSERT_TRUE(outputObject->stop())<< "stop successful";
 
@@ -532,4 +546,381 @@ TEST(Output, OutputTest) {
 
 	// check the output data against the input
 	CheckData(senthypo, outputdetection);
+}
+
+TEST(Output, UpdateTest) {
+	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//					true);
+
+	OutputStub* outputObject = new OutputStub();
+
+	// create configfilestring
+	std::string configfile = std::string(CONFIGFILENAME);
+	std::string configdirectory = std::string(TESTPATH);
+
+	// load configuration
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			configdirectory, configfile);
+	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+
+	AssociatorStub * AssocThread = new AssociatorStub();
+	AssocThread->Output = outputObject;
+	outputObject->setAssociator(AssocThread);
+
+	// assert config successful
+	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
+
+	// start input thread
+	outputObject->start();
+
+	std::string event2file = std::string(TESTPATH) + "/"
+			+ std::string(EVENT2FILE);
+	std::string hypo2file = std::string(TESTPATH) + "/"
+			+ std::string(HYPO2FILE);
+	time_t tNow;
+	std::time(&tNow);
+
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event2file);
+	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+
+	// add data to output
+	outputObject->sendToOutput(outputevent);
+
+	// give time for file to write
+	std::this_thread::sleep_for(std::chrono::seconds(4));
+
+	// assert that output was created
+	ASSERT_EQ(outputObject->messages.size(), 1)<< "output created";
+
+	// get the data
+	std::shared_ptr<json::Object> senthypo2 = GetDataFromFile(hypo2file);
+	std::shared_ptr<json::Object> output2detection = GetDataFromString(
+			outputObject->messages[0]);
+
+	// check the output data against the update
+	CheckData(senthypo2, output2detection);
+
+	std::string event2updatefile = std::string(TESTPATH) + "/"
+			+ std::string(EVENT2UPDATEFILE);
+	std::string hypo2updatefile = std::string(TESTPATH) + "/"
+			+ std::string(HYPO2UPDATEFILE);
+	std::time(&tNow);
+
+	std::shared_ptr<json::Object> updateevent = GetDataFromFile(
+			event2updatefile);
+	(*updateevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+	(*updateevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+
+	// send update to output
+	outputObject->sendToOutput(updateevent);
+
+	// give time for file to write
+	std::this_thread::sleep_for(std::chrono::seconds(10));
+
+	// assert that update was created
+	ASSERT_EQ(outputObject->messages.size(), 2)<< "update created";
+
+	// get the data
+	std::shared_ptr<json::Object> sentupdatehypo2 = GetDataFromFile(
+			hypo2updatefile);
+	std::shared_ptr<json::Object> outputupdatedetection2 = GetDataFromString(
+			outputObject->messages[1]);
+
+	// check the output data against the update
+	CheckData(sentupdatehypo2, outputupdatedetection2);
+
+	std::string event2update2file = std::string(TESTPATH) + "/"
+			+ std::string(EVENT2UPDATE2FILE);
+
+	std::time(&tNow);
+
+	std::shared_ptr<json::Object> updateevent2 = GetDataFromFile(
+			event2update2file);
+	(*updateevent2)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+	(*updateevent2)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+
+	// send update to output
+	outputObject->sendToOutput(updateevent2);
+
+	// give time for file to write
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+
+	// assert that second update was not created
+	ASSERT_EQ(outputObject->messages.size(), 2)<< "update2 not created";
+
+}
+
+TEST(Output, CancelTest) {
+	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//					true);
+
+	OutputStub* outputObject = new OutputStub();
+
+	// create configfilestring
+	std::string configfile = std::string(CONFIGFILENAME);
+	std::string configdirectory = std::string(TESTPATH);
+
+	// load configuration
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			configdirectory, configfile);
+	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+
+	AssociatorStub * AssocThread = new AssociatorStub();
+	AssocThread->Output = outputObject;
+	outputObject->setAssociator(AssocThread);
+
+	// assert config successful
+	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
+
+	// start input thread
+	outputObject->start();
+
+	std::string event3file = std::string(TESTPATH) + "/"
+			+ std::string(EVENT3FILE);
+	std::string cancel3file = std::string(TESTPATH) + "/"
+			+ std::string(CANCEL3FILE);
+	time_t tNow;
+	std::time(&tNow);
+
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
+	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+
+	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
+
+	// add data to output
+	outputObject->sendToOutput(outputevent);
+
+	// send cancel to output
+	outputObject->sendToOutput(cancelmessage);
+
+	// give time for file to write
+	std::this_thread::sleep_for(std::chrono::seconds(4));
+
+	// assert that the file is not there
+	ASSERT_EQ(outputObject->messages.size(), 0)<< "no output";
+}
+
+TEST(Output, RetractTest) {
+	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//					true);
+
+	OutputStub* outputObject = new OutputStub();
+
+	// create configfilestring
+	std::string configfile = std::string(CONFIGFILENAME);
+	std::string configdirectory = std::string(TESTPATH);
+
+	// load configuration
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			configdirectory, configfile);
+	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+
+	AssociatorStub * AssocThread = new AssociatorStub();
+	AssocThread->Output = outputObject;
+	outputObject->setAssociator(AssocThread);
+
+	// assert config successful
+	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
+
+	// start input thread
+	outputObject->start();
+
+	std::string event3file = std::string(TESTPATH) + "/"
+			+ std::string(EVENT3FILE);
+	std::string cancel3file = std::string(TESTPATH) + "/"
+			+ std::string(CANCEL3FILE);
+	time_t tNow;
+	std::time(&tNow);
+
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
+	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+
+	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
+
+	// add data to output
+	outputObject->sendToOutput(outputevent);
+
+	// give time for output to write
+	std::this_thread::sleep_for(std::chrono::seconds(4));
+
+	// assert that output was created
+	ASSERT_EQ(outputObject->messages.size(), 1)<< "output created";
+
+	// send cancel to output
+	outputObject->sendToOutput(cancelmessage);
+
+	// give time for file to write
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+
+	// assert that output was created
+	ASSERT_EQ(outputObject->messages.size(), 2)<< "retract created";
+}
+
+TEST(Output, ExpireTest) {
+	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//					true);
+
+	OutputStub* outputObject = new OutputStub();
+
+	// create configfilestring
+	std::string configfile = std::string(CONFIGFILENAME);
+	std::string configdirectory = std::string(TESTPATH);
+
+	// load configuration
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			configdirectory, configfile);
+	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+
+	AssociatorStub * AssocThread = new AssociatorStub();
+	AssocThread->Output = outputObject;
+	outputObject->setAssociator(AssocThread);
+
+	// assert config successful
+	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
+
+	// start input thread
+	outputObject->start();
+
+	std::string event2file = std::string(TESTPATH) + "/"
+			+ std::string(EVENT2FILE);
+	std::string hypo2file = std::string(TESTPATH) + "/"
+			+ std::string(HYPO2FILE);
+	time_t tNow;
+	std::time(&tNow);
+
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event2file);
+	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
+			tNow);
+
+	// add data to output
+	outputObject->sendToOutput(outputevent);
+
+	// give time for file to write
+	std::this_thread::sleep_for(std::chrono::seconds(4));
+
+	// assert that output was created
+	ASSERT_EQ(outputObject->messages.size(), 1)<< "output created";
+
+	//remove output for update
+	// std::remove(output2file.c_str());
+
+	std::string event2expirefile = std::string(TESTPATH) + "/"
+			+ std::string(EVENT2EXPIREFILE);
+	std::string hypo2updatefile = std::string(TESTPATH) + "/"
+			+ std::string(HYPO2UPDATEFILE);
+	std::time(&tNow);
+
+	std::shared_ptr<json::Object> expireevent = GetDataFromFile(
+			event2expirefile);
+
+	// send update to output
+	outputObject->sendToOutput(expireevent);
+
+	// give time for file to write
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+
+	// assert that update was created
+	ASSERT_EQ(outputObject->messages.size(), 2)<< "expire created";
+
+	// get the data
+	std::shared_ptr<json::Object> sentexpirehypo2 = GetDataFromFile(
+			hypo2updatefile);
+	std::shared_ptr<json::Object> outputexpiredetection2 = GetDataFromString(
+			outputObject->messages[1]);
+
+	// check the output data against the update
+	CheckData(sentexpirehypo2, outputexpiredetection2);
+}
+
+TEST(Output, StationRequestTest) {
+	// logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//					true);
+
+	OutputStub* outputObject = new OutputStub();
+
+	// create configfilestring
+	std::string configfile = std::string(CONFIGFILENAME);
+	std::string configdirectory = std::string(TESTPATH);
+
+	// load configuration
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			configdirectory, configfile);
+	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+
+	AssociatorStub * AssocThread = new AssociatorStub();
+	AssocThread->Output = outputObject;
+	outputObject->setAssociator(AssocThread);
+
+	// assert config successful
+	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
+
+	// start input thread
+	outputObject->start();
+
+	std::string stationrequestfile = std::string(TESTPATH) + "/"
+			+ std::string(SITEREQUESTFILE);
+//	std::string hypo2file = std::string(TESTPATH) + "/"
+//			+ std::string(HYPO2FILE);
+
+	std::shared_ptr<json::Object> stationrequest = GetDataFromFile(
+			stationrequestfile);
+
+	// send request to output
+	outputObject->sendToOutput(stationrequest);
+
+	// give time for request to convert
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+
+	// assert that request was created
+	ASSERT_EQ(outputObject->messages.size(), 1)<< "request created";
+}
+
+TEST(Output, StationListTest) {
+	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//					true);
+
+	OutputStub* outputObject = new OutputStub();
+
+	// create configfilestring
+	std::string configfile = std::string(CONFIGFILENAME);
+	std::string configdirectory = std::string(TESTPATH);
+
+	// load configuration
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			configdirectory, configfile);
+	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+
+	AssociatorStub * AssocThread = new AssociatorStub();
+	AssocThread->Output = outputObject;
+	outputObject->setAssociator(AssocThread);
+
+	// assert config successful
+	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
+
+	// set the site list delay short so it happens during the test
+	outputObject->setSiteListDelay(2);
+
+	// start input thread
+	outputObject->start();
+
+	// give time sitelist to request and generate
+	std::this_thread::sleep_for(std::chrono::seconds(3));
+
+	// assert that sitelist was created
+	ASSERT_EQ(outputObject->messages.size(), 1)<< "site list created";
 }
