@@ -5,13 +5,15 @@ namespace glass3 {
 namespace parse {
 
 // ---------------------------------------------------------Parser
-Parser::Parser() {
+Parser::Parser()
+		: util::BaseClass() {
 	setAgencyId("");
 	setAuthor("");
 }
 
 // ---------------------------------------------------------Parser
-Parser::Parser(const std::string &newAgencyID, const std::string &newAuthor) {
+Parser::Parser(const std::string &newAgencyID, const std::string &newAuthor)
+		: util::BaseClass() {
 	setAgencyId(newAgencyID);
 	setAuthor(newAuthor);
 }

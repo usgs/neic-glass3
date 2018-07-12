@@ -86,7 +86,31 @@ class output : public glass3::util::iOutput,
 	 */
 	void sendToOutput(std::shared_ptr<json::Object> message) override;
 
+	/**
+	 * \brief work thread start function
+	 *
+	 * Overrides ThreadBaseClass::start(). Creates a thread object to run the
+	 * checkEventsLoop() function, and starts it, setting m_bEventStarted to be
+	 * true, then calls ThreadBaseClass::start() to start the ThreadBaseClass
+	 * work thread
+	 *
+	 * \return returns true if successful, false if the thread creation failed
+	 * or if a thread had already been started
+	 */
 	bool start() override;
+
+	/**
+	 * \brief work thread stop function
+	 *
+	 * Overrides ThreadBaseClass::stop(). Stops, waits for, and deletes the
+	 * thread that runs the checkEventsLoop() function,
+	 * setting m_bEventStarted, m_bRunEventThread, and m_bCheckEventThread to
+	 * false, then calls ThreadBaseClass::stop() to stop the ThreadBaseClass
+	 * work thread
+	 *
+	 * \return returns true if successful, false if the thread is not created and
+	 * running
+	 */
 	bool stop() override;
 	glass3::util::ThreadState getThreadState() override;
 
@@ -178,6 +202,16 @@ class output : public glass3::util::iOutput,
 	 * \return Returns true if the data is in the cache, false otherwise
 	 */
 	bool haveTrackingData(std::shared_ptr<json::Object> data);
+
+	/**
+	 * \brief check if data is in output tracking cache by id
+	 *
+	 * Check to see if given detection data is already in the output tracking
+	 * cache by id.
+	 *
+	 * \param ID - A std::string containing the id of the detection data to check.
+	 * \return Returns true if the data is in the cache, false otherwise
+	 */
 	bool haveTrackingData(std::string ID);
 
 	/**
@@ -189,6 +223,15 @@ class output : public glass3::util::iOutput,
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool removeTrackingData(std::shared_ptr<const json::Object> data);
+
+	/**
+	 * \brief remove data from the output tracking cache by id
+	 *
+	 * Remove the provided detection data from the output tracking cache. by id
+	 *
+	 * \param ID - A std::string containing the id of the detection data to remove.
+	 * \return Returns true if successful, false otherwise
+	 */
 	bool removeTrackingData(std::string ID);
 
 	/**
