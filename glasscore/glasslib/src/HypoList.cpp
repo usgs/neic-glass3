@@ -1039,7 +1039,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	}
 
 	// Make sure our hypo is in good shape
-	if (hypo->cancel() == true) {
+	if (hypo->cancelCheck() == true) {
 		return (false);
 	}
 
@@ -1092,7 +1092,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			auto h2VPick = hypo2->getVPick();
 
 			// check to make sure that the hypo2 has a stack
-			if (hypo2->cancel() == true) {
+			if (hypo2->cancelCheck() == true) {
 				hypo2->unlockAfterProcessing();
 				continue;
 			}
