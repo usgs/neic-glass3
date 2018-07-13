@@ -1092,6 +1092,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 			// check to make sure that the hypo2 has a stack
 			if (hypo2->cancelCheck() == true) {
+
 				hypo2->unlockAfterProcessing();
 				continue;
 			}
@@ -1198,7 +1199,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								"CHypoList::merge:     "
 								"New Bayes %.3f, old bayes %.3f and %.3f",
 								hypo3->getPid().c_str(), npick,
-								(hVPick.size() + h2VPick.size()),
+								(hVPick->size() + h2VPick->size()),
 								hypo3->getBayes(), hypo->getBayes(),
 								hypo2->getBayes());
 						glassutil::CLogit::log(sLog);
@@ -1236,6 +1237,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 										+ static_cast<int>(hypo2->getVPickSize())));
 						glassutil::CLogit::log(sLog);
 
+						hypo2->unlockAfterProcessing();
 					}
 				}
 			}
