@@ -1039,8 +1039,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	}
 
 	// Make sure our hypo is in good shape
-	if ((hypo->getBayes() < hypo->getThresh())
-			|| (hypo->getVPickSize() < hypo->getCut())) {
+	if (hypo->cancel() == true) {
 		return (false);
 	}
 
@@ -1076,24 +1075,25 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			if (hypo->getPid() == hypo2->getPid()) {
 				continue;
 			}
+			// make sure no one else is messing with hypo2
+			if(hypo2->isLockedForProcessing() == true) {
+				continue;
+			} else {
+				hypo2->lockForProcessing();
+			}
+
 
 			snprintf(sLog, sizeof(sLog),
 						"CHypoList::merge: Testing merger of %s and %s\n",
 						hypo->getPid().c_str(), hypo2->getPid().c_str());
 			glassutil::CLogit::log(sLog);
 
-			// make sure this hypo is resolved and get data
-			if (resolve(hypo2)) {
-				// relocate the hypo
-				hypo2->localize();
-			}
-
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
 
 			// check to make sure that the hypo2 has a stack
-			if ((hypo2->getBayes() < hypo2->getThresh())
-					|| (hypo2->getVPickSize() < hypo2->getCut())) {
+			if (hypo2->cancel() == true) {
+				hypo2->unlockAfterProcessing();
 				continue;
 			}
 
@@ -1164,13 +1164,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									(distanceCut / 100.) * DEG2KM,
 									(timeCut / 2.), .1);
 
-					// try to grab more picks
-					if (pGlass->getPickList()->scavenge(hypo3)) {
-						// relocate the hypo
-						hypo3->localize();
-					}
-
-					// Remove picks that no longer fit
+					// Remove picks that do not fit hypo 3
 					if (hypo3->prune()) {
 						// relocate the hypo
 						hypo3->localize();
@@ -1201,7 +1195,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								"CHypoList::merge:     "
 								"New Bayes %.3f, old bayes %.3f and %.3f",
 								hypo3->getPid().c_str(), npick,
-								(hypo->getVPickSize() + hypo2->getVPickSize()),
+								(hVPick->size() + h2VPick->size()),
 								hypo3->getBayes(), hypo->getBayes(),
 								hypo2->getBayes());
 						glassutil::CLogit::log(sLog);
@@ -1217,9 +1211,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									hypo2->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
 						remHypo(hypo2);
+						// done with hypo 2
+						hypo2->unlockAfterProcessing();
 
 						// add merged hypo to hypolist
-						pGlass->getHypoList()->addHypo(hypo3);
+						addHypo(hypo3);
 
 						return (true);
 					} else {
@@ -1236,6 +1232,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								(static_cast<int>(hypo->getVPickSize())
 										+ static_cast<int>(hypo2->getVPickSize())));
 						glassutil::CLogit::log(sLog);
+
+						// done with hypo 2
+						hypo2->unlockAfterProcessing();
 					}
 				}
 			}
