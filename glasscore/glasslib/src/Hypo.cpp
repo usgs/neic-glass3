@@ -483,8 +483,7 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 
 		// don't let depth exceed maximum
 		if (xz > maxDepth) {
-
-			xz = maxDepth;
+			xz = dZ;
 		}
 
 		// compute current origin time
@@ -635,7 +634,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 
 		// don't let depth exceed maximum
 		if (xz > maxDepth) {
-			xz = maxDepth;
+			xz = dZ;
 		}
 
 		// compute current origin time
