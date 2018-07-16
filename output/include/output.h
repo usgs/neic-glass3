@@ -90,13 +90,13 @@ class output : public glass3::util::iOutput,
 	bool isRunning() override;
 
 	/**
-	 * \brief thread pool check function
+	 * \brief output heath check function
 	 *
 	 * Checks to see if the thread pool is still running, calls
-	 * threadbaseclass::check for worker thread monitoring.
+	 * threadbaseclass::healthCheck for worker thread monitoring.
 	 * \return returns true if thread pool is still running.
 	 */
-	bool check() override;
+	bool healthCheck() override;
 
 	const std::string getSOutputAgencyId() {
 		m_ConfigMutex.lock();

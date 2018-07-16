@@ -10,14 +10,14 @@ namespace util {
 // ---------------------------------------------------------ThreadBaseClass
 ThreadBaseClass::ThreadBaseClass()
 		: util::BaseClass() {
-	setThreadName("NYI");
+	setThreadName("unknown");
 	setRunning(false);
-	setCheckWorkThread(true);
+	setThreadHealth(true);
 	setStarted(false);
 	m_WorkThread = NULL;
 
-	setCheckInterval(1);
-	setLastCheck(std::time(nullptr));
+	setHealthCheckInterval(1);
+	setLastHealthCheck(std::time(nullptr));
 
 	setSleepTime(100);
 }
@@ -27,12 +27,12 @@ ThreadBaseClass::ThreadBaseClass(std::string threadname, int sleeptimems)
 		: util::BaseClass() {
 	setThreadName(threadname);
 	setRunning(false);
-	setCheckWorkThread(true);
+	setThreadHealth(true);
 	setStarted(false);
 	m_WorkThread = NULL;
 
-	setCheckInterval(1);
-	setLastCheck(std::time(nullptr));
+	setHealthCheckInterval(1);
+	setLastHealthCheck(std::time(nullptr));
 
 	setSleepTime(sleeptimems);
 }
@@ -119,7 +119,7 @@ bool ThreadBaseClass::stop() {
 	m_WorkThread = NULL;
 
 	// we're no longer running
-	setCheckWorkThread(false);
+	setThreadHealth(false);
 
 	// done
 	logger::log(
@@ -129,8 +129,8 @@ bool ThreadBaseClass::stop() {
 	return (true);
 }
 
-// ---------------------------------------------------------check
-bool ThreadBaseClass::check() {
+// ---------------------------------------------------------healthCheck
+bool ThreadBaseClass::healthCheck() {
 	// don't check if we've not started
 	if (isStarted() == false) {
 		return (true);
@@ -138,7 +138,7 @@ bool ThreadBaseClass::check() {
 
 	// if we have a negative check interval,
 	// we shouldn't worry about thread health checks.
-	if (getCheckInterval() < 0) {
+	if (getHealthCheckInterval() < 0) {
 		return (true);
 	}
 
@@ -146,7 +146,7 @@ bool ThreadBaseClass::check() {
 	if (isRunning() == false) {
 		logger::log(
 				"error",
-				"ThreadBaseClass::check(): m_bRunWorkThread is false. ("
+				"ThreadBaseClass::healthCheck(): m_bRunWorkThread is false. ("
 						+ getThreadName() + ")");
 		return (false);
 	}
@@ -154,31 +154,32 @@ bool ThreadBaseClass::check() {
 	// see if it's time to check
 	time_t tNow;
 	std::time(&tNow);
-	if ((tNow - getLastCheck()) >= getCheckInterval()) {
+	if ((tNow - getLastHealthCheck()) >= getHealthCheckInterval()) {
 		// if the check is false, the thread is dead
-		if (getCheckWorkThread() == false) {
+		if (getThreadHealth() == false) {
 			logger::log(
 					"error",
-					"ThreadBaseClass::check(): m_bCheckWorkThread is false. ("
+					"ThreadBaseClass::healthCheck(): m_bThreadHealth is false. ("
 							+ getThreadName() + ") after an interval of "
-							+ std::to_string(getCheckInterval()) + " seconds.");
+							+ std::to_string(getHealthCheckInterval())
+							+ " seconds.");
 			return (false);
 		}
 
 		// mark check as false until next time
 		// if the thread is alive, it'll mark it
 		// as true.
-		setCheckWorkThread(false);
+		setThreadHealth(false);
 
-		setLastCheck(tNow);
+		setLastHealthCheck(tNow);
 	}
 
 	// we passed this time
 	logger::log(
 			"trace",
-			"ThreadBaseClass::check(): Work Thread is still running. ("
+			"ThreadBaseClass::healthCheck(): Work Thread is still running. ("
 					+ getThreadName() + ") after an interval of "
-					+ std::to_string(getCheckInterval()) + " seconds.");
+					+ std::to_string(getHealthCheckInterval()) + " seconds.");
 	return (true);
 }
 
@@ -209,7 +210,7 @@ void ThreadBaseClass::workLoop() {
 			break;
 		}
 		// signal that we're still running
-		setCheckWorkThread();
+		setThreadHealth();
 
 		// give up some time at the end of the loop
 		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
@@ -229,63 +230,51 @@ void ThreadBaseClass::workLoop() {
 
 // ---------------------------------------------------------setRunning
 void ThreadBaseClass::setRunning(bool running) {
-	std::lock_guard<std::mutex> guard(getMutex());
 	m_bRunWorkThread = running;
 }
 
 // ---------------------------------------------------------isRunning
 bool ThreadBaseClass::isRunning() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_bRunWorkThread);
 }
 
-// ---------------------------------------------------------setCheckWorkThread
-void ThreadBaseClass::setCheckWorkThread(bool check) {
-	// signal that we're still running
-	// mutex here *may* be excessive
-	std::lock_guard<std::mutex> guard(m_CheckMutex);
-	m_bCheckWorkThread = check;
+// ---------------------------------------------------------setThreadHealth
+void ThreadBaseClass::setThreadHealth(bool health) {
+	m_bThreadHealth = health;
 }
 
-// ---------------------------------------------------------getCheckWorkThread
-bool ThreadBaseClass::getCheckWorkThread() {
-	std::lock_guard<std::mutex> guard(m_CheckMutex);
-	return (m_bCheckWorkThread);
+// ---------------------------------------------------------getThreadHealth
+bool ThreadBaseClass::getThreadHealth() {
+	return (m_bThreadHealth);
 }
 
 // ---------------------------------------------------------setSleepTime
 void ThreadBaseClass::setSleepTime(int sleeptimems) {
-	std::lock_guard<std::mutex> guard(getMutex());
 	m_iSleepTimeMS = sleeptimems;
 }
 
 // ---------------------------------------------------------getSleepTime
 int ThreadBaseClass::getSleepTime() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_iSleepTimeMS);
 }
 
-// ---------------------------------------------------------setCheckInterval
-void ThreadBaseClass::setCheckInterval(int interval) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_iCheckInterval = interval;
+// -------------------------------------------------------setHealthCheckInterval
+void ThreadBaseClass::setHealthCheckInterval(int interval) {
+	m_iHealthCheckInterval = interval;
 }
 
-// ---------------------------------------------------------getCheckInterval
-int ThreadBaseClass::getCheckInterval() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_iCheckInterval);
+// -------------------------------------------------------getHealthCheckInterval
+int ThreadBaseClass::getHealthCheckInterval() {
+	return (m_iHealthCheckInterval);
 }
 
 // ---------------------------------------------------------setStarted
 void ThreadBaseClass::setStarted(bool started) {
-	std::lock_guard<std::mutex> guard(getMutex());
 	m_bStarted = started;
 }
 
 // ---------------------------------------------------------isStarted
 bool ThreadBaseClass::isStarted() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_bStarted);
 }
 
@@ -301,16 +290,14 @@ const std::string& ThreadBaseClass::getThreadName() {
 	return (m_sThreadName);
 }
 
-// ---------------------------------------------------------setLastCheck
-void ThreadBaseClass::setLastCheck(time_t now) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_tLastCheck = now;
+// ---------------------------------------------------------setLastHealthCheck
+void ThreadBaseClass::setLastHealthCheck(time_t now) {
+	m_tLastHealthCheck = now;
 }
 
-// ---------------------------------------------------------getLastCheck
-time_t ThreadBaseClass::getLastCheck() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_tLastCheck);
+// ---------------------------------------------------------getLastHealthCheck
+time_t ThreadBaseClass::getLastHealthCheck() {
+	return ((time_t)m_tLastHealthCheck);
 }
 }  // namespace util
 }  // namespace glass3

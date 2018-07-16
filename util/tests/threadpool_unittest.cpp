@@ -55,40 +55,40 @@ TEST(ThreadPoolTest, CombinedTest) {
 	std::string poolname = std::string(THREADPOOLNAME);
 
 	// create a threadpool object
-	glass3::util::ThreadPool * ThreadPool = new glass3::util::ThreadPool(
+	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool(
 			poolname, NUMTHREADS,
 			SLEEPTIME,
 			CHECKTIME);
 
 	// assert threads running
-	ASSERT_TRUE(ThreadPool->isRunning())<< "check threads running";
+	ASSERT_TRUE(aThreadPool->isRunning())<< "check threads running";
 
 	// assert pool name
-	ASSERT_STREQ(ThreadPool->getPoolName().c_str(), poolname.c_str())<<
+	ASSERT_STREQ(aThreadPool->getPoolName().c_str(), poolname.c_str())<<
 	"pool name";
 
 	// assert number of threads
-	ASSERT_EQ(ThreadPool->getNumThreads(), NUMTHREADS)<<
+	ASSERT_EQ(aThreadPool->getNumThreads(), NUMTHREADS)<<
 	"check number of pool threads";
 
 	// assert thread sleep time
-	ASSERT_EQ(ThreadPool->getSleepTime(), SLEEPTIME)<<
+	ASSERT_EQ(aThreadPool->getSleepTime(), SLEEPTIME)<<
 	"check thread sleep time";
 
 	// assert thread check time
-	ASSERT_EQ(ThreadPool->getCheckInterval(), CHECKTIME)<<
+	ASSERT_EQ(aThreadPool->getHealthCheckInterval(), CHECKTIME)<<
 	"check thread check time";
 
 	// check job queue size
-	ASSERT_EQ(ThreadPool->getJobQueueSize(), 0)<<
+	ASSERT_EQ(aThreadPool->getJobQueueSize(), 0)<<
 	"check job queue";
 
 	// add some jobs
-	ThreadPool->addJob(std::bind(&testjob1));
-	ThreadPool->addJob(std::bind(&testjob2));
-	ThreadPool->addJob(std::bind(&testjob3));
-	ThreadPool->addJob(std::bind(&testjob4));
-	ThreadPool->addJob(std::bind(&testjob5));
+	aThreadPool->addJob(std::bind(&testjob1));
+	aThreadPool->addJob(std::bind(&testjob2));
+	aThreadPool->addJob(std::bind(&testjob3));
+	aThreadPool->addJob(std::bind(&testjob4));
+	aThreadPool->addJob(std::bind(&testjob5));
 
 	// give time for jobs to finish
 	std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -101,18 +101,18 @@ TEST(ThreadPoolTest, CombinedTest) {
 	ASSERT_EQ(testjob5data, TESTJOB5RESULT)<< "test job 5 is correct";
 
 	// assert that check is true
-	ASSERT_TRUE(ThreadPool->check())<< "ThreadPool check is true";
+	ASSERT_TRUE(aThreadPool->healthCheck())<< "ThreadPool check is true";
 
 	// assert that stop is true
-	ASSERT_TRUE(ThreadPool->stop())<< "ThreadPool stop is true";
+	ASSERT_TRUE(aThreadPool->stop())<< "ThreadPool stop is true";
 
-	ASSERT_FALSE(ThreadPool->getStatus())<< "getStatus is false";
+	ASSERT_FALSE(aThreadPool->getAllJobsHealth())<< "getAllStatus is false";
 
 	// assert that check is false
-	ASSERT_FALSE(ThreadPool->check())<< "ThreadPool check is false";
+	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
 
 	// shutdown threadpool.
-	delete (ThreadPool);
+	delete (aThreadPool);
 }
 
 // tests to see if thread pool monitoring works
@@ -120,7 +120,7 @@ TEST(ThreadPoolTest, MonitoringTest) {
 	std::string poolname = std::string(THREADPOOLNAME);
 
 	// create a threadpool object
-	glass3::util::ThreadPool * ThreadPool = new glass3::util::ThreadPool(
+	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool(
 			poolname, NUMTHREADS,
 			SLEEPTIME,
 			CHECKTIME);
@@ -129,35 +129,35 @@ TEST(ThreadPoolTest, MonitoringTest) {
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert that check is true
-	ASSERT_TRUE(ThreadPool->check())<< "ThreadPool check is true";
+	ASSERT_TRUE(aThreadPool->healthCheck())<< "ThreadPool healthCheck is true";
 
 	// add a bad job
-	ThreadPool->addJob(std::bind(&badjob));
+	aThreadPool->addJob(std::bind(&badjob));
 
 	// give time for jobs to be monitored
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert that check is true
-	ASSERT_TRUE(ThreadPool->check())<< "ThreadPool check is true";
+	ASSERT_TRUE(aThreadPool->healthCheck())<< "ThreadPool check is true";
 
 	// give time for jobs to be monitored
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert that check is false
-	ASSERT_FALSE(ThreadPool->check())<< "ThreadPool check is false";
+	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
 
 	// shutdown threadpool.
-	delete (ThreadPool);
+	delete (aThreadPool);
 }
 
 // tests various failure conditions
 TEST(ThreadPoolTest, FailTests) {
-	glass3::util::ThreadPool * ThreadPool = new glass3::util::ThreadPool();
+	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool();
 
 	// assert that check is false
-	ASSERT_FALSE(ThreadPool->check())<< "ThreadPool check is false";
+	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
 
 	// shutdown threadpool.
-	delete (ThreadPool);
+	delete (aThreadPool);
 }
 

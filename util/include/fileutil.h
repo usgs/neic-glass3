@@ -42,7 +42,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
  * move
  * \param dirname - A std::string containing the directory to move the file to
  * move
- * \return returns true if successful.
+ * \return returns true if successful or expected error (ENOENT)
  */
 bool moveFileTo(std::string filename, const std::string &dirname);
 

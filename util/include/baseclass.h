@@ -9,6 +9,7 @@
 
 #include <json.h>
 #include <mutex>
+#include <atomic>
 
 namespace glass3 {
 namespace util {
@@ -47,6 +48,9 @@ class BaseClass {
 	 * The this function configures the baseclass class
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use
+	 * \warning Uses the base class mutex available via getMutex(), locking
+	 * getMutex(), or any other method where the class mutex is obtained and
+	 * locked, before calling setup will cause a deadlock.
 	 * \return returns true if successful.
 	 */
 	virtual bool setup(json::Object *config);
@@ -93,7 +97,7 @@ class BaseClass {
 	 * \brief the boolean flag indicating whether the class has been
 	 * setup, set to true if setup was successful.
 	 */
-	bool m_bIsSetup;
+	std::atomic<bool> m_bIsSetup;
 
 	/**
 	 * \brief A mutex to control access to baseclass members

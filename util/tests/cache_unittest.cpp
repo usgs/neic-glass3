@@ -52,7 +52,6 @@ TEST(CacheTest, CombinedTest) {
 	// assert cache has data
 	ASSERT_FALSE(TestCache->isEmpty())<< "cache not empty";
 	ASSERT_EQ(TestCache->size(), 3)<< "cache size check";
-	ASSERT_TRUE(TestCache->getCacheModified())<< "cache is modified";
 
 	// assert the items in the cache
 	ASSERT_FALSE(TestCache->isInCache(""))<< "null id in cache";
@@ -122,9 +121,6 @@ TEST(CacheTest, CombinedTest) {
 
 	// check cache size
 	ASSERT_EQ(TestCache->size(), 2)<< "cache size check";
-
-	// check if cache modified
-	ASSERT_TRUE(TestCache->getCacheModified())<< "cache modified";
 
 	// clear cache
 	TestCache->clear();

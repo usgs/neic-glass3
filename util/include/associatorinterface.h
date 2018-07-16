@@ -12,11 +12,12 @@
 
 /**
  * \namespace glass3
- * \brief neic-glass3 namespace containing all the neic-glass3 classes and
- * functions
- *
- * The neic-glass3 glass3 namespace contains classes and functions that make up
+ * \brief glass3 namespace containing all the classes and functions that make up
  * neic-glass3
+ *
+ * The glass3 namespace contains the classes and functions that make up
+ * neic-glass3, including applications (glass-app, etc.), libraries (output,
+ * parse, etc.), and utilities (cache, configuration, file utils, etc.)
  */
 namespace glass3 {
 

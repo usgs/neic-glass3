@@ -13,8 +13,8 @@ ThreadPool::ThreadPool() {
 	setRunning(false);
 	setNumThreads(0);
 	setSleepTime(100);
-	setCheckInterval(1);
-	setLastCheck(std::time(nullptr));
+	setHealthCheckInterval(1);
+	setLastHealthCheck(std::time(nullptr));
 }
 
 // ---------------------------------------------------------ThreadPool
@@ -25,8 +25,8 @@ ThreadPool::ThreadPool(std::string poolname, int num_threads, int sleeptime,
 	setRunning(false);
 	setNumThreads(num_threads);
 	setSleepTime(sleeptime);
-	setCheckInterval(checkinterval);
-	setLastCheck(std::time(nullptr));
+	setHealthCheckInterval(checkinterval);
+	setLastHealthCheck(std::time(nullptr));
 
 	start();
 }
@@ -68,7 +68,7 @@ bool ThreadPool::start() {
 		m_ThreadPool.push_back(std::thread(&ThreadPool::jobLoop, this));
 
 		// add to status map if we're tracking status
-		if (getCheckInterval() > 0) {
+		if (getHealthCheckInterval() > 0) {
 			m_StatusMutex.lock();
 			m_ThreadStatusMap[m_ThreadPool[i].get_id()] = true;
 			m_StatusMutex.unlock();
@@ -109,7 +109,7 @@ bool ThreadPool::stop() {
 	}
 
 	// we're no longer running
-	setAllStatus(false);
+	setAllJobsHealth(false);
 
 	logger::log("debug",
 				"ThreadPool::ThreadPool(): Stopped. (" + getPoolName() + ")");
@@ -139,7 +139,7 @@ void ThreadPool::jobLoop() {
 			break;
 
 		// update thread status
-		setStatus(true);
+		setJobHealth(true);
 
 		// lock for queue access
 		getMutex().lock();
@@ -186,10 +186,6 @@ void ThreadPool::jobLoop() {
 		jobSleep();
 	}
 
-	// one less thread, don't bother to remove from status checking
-	// we want to know this thread exited
-	setNumThreads(getNumThreads() - 1);
-
 	logger::log("debug",
 				"ThreadPool::jobLoop(): Thread Exit.(" + getPoolName() + ")");
 }
@@ -201,19 +197,19 @@ void ThreadPool::jobSleep() {
 	}
 }
 
-// ---------------------------------------------------------check
-bool ThreadPool::check() {
+// ---------------------------------------------------------healthCheck
+bool ThreadPool::healthCheck() {
 	// if we have a negative check interval,
 	// we shouldn't worry about thread status checks.
-	if (getCheckInterval() < 0)
+	if (getHealthCheckInterval() < 0)
 		return (true);
 
 	// thread is dead if we're not running
 	if (isRunning() == false) {
 		logger::log(
 				"error",
-				"ThreadPool::check(): m_bRunJobLoop is false. (" + getPoolName()
-						+ ")");
+				"ThreadPool::healthCheck(): m_bRunJobLoop is false. ("
+						+ getPoolName() + ")");
 		return (false);
 	}
 
@@ -222,7 +218,7 @@ bool ThreadPool::check() {
 	if (getNumThreads() == 0) {
 		logger::log(
 				"error",
-				"ThreadPool::check(): all threads have exited! ("
+				"ThreadPool::healthCheck(): all threads have exited! ("
 						+ getPoolName() + ")");
 		return (false);
 	}
@@ -230,15 +226,16 @@ bool ThreadPool::check() {
 	// see if it's time to check
 	time_t tNow;
 	std::time(&tNow);
-	if ((tNow - getLastCheck()) >= getCheckInterval()) {
+	if ((tNow - getLastHealthCheck()) >= getHealthCheckInterval()) {
 		// get the thread status
-		if (getStatus() != true) {
+		if (getAllJobsHealth() != true) {
 			logger::log(
 					"error",
-					"ThreadPool::check(): At least one thread"
+					"ThreadPool::healthCheck(): At least one thread"
 							" did not respond (" + getPoolName()
 							+ ") in the last"
-							+ std::to_string(getCheckInterval()) + "seconds.");
+							+ std::to_string(getHealthCheckInterval())
+							+ "seconds.");
 
 			return (false);
 		}
@@ -246,18 +243,18 @@ bool ThreadPool::check() {
 		// mark check as false until next time
 		// if the thread is alive, it'll mark it
 		// as true again.
-		setAllStatus(false);
+		setAllJobsHealth(false);
 
 		// remember the last time we checked
-		setLastCheck(tNow);
+		setLastHealthCheck(tNow);
 	}
 
 	// everything is awesome
 	return (true);
 }
 
-// ---------------------------------------------------------setStatus
-void ThreadPool::setStatus(bool status) {
+// ---------------------------------------------------------setJobHealth
+void ThreadPool::setJobHealth(bool status) {
 	// update thread status
 	std::lock_guard<std::mutex> guard(m_StatusMutex);
 	if (m_ThreadStatusMap.find(std::this_thread::get_id())
@@ -266,8 +263,8 @@ void ThreadPool::setStatus(bool status) {
 	}
 }
 
-// ---------------------------------------------------------setAllStatus
-void ThreadPool::setAllStatus(bool status) {
+// ---------------------------------------------------------setAllJobsHealth
+void ThreadPool::setAllJobsHealth(bool status) {
 	// update thread status
 	std::lock_guard<std::mutex> guard(m_StatusMutex);
 	std::map<std::thread::id, bool>::iterator StatusItr;
@@ -277,8 +274,8 @@ void ThreadPool::setAllStatus(bool status) {
 	}
 }
 
-// ---------------------------------------------------------getStatus
-bool ThreadPool::getStatus() {
+// ---------------------------------------------------------getAllJobsHealth
+bool ThreadPool::getAllJobsHealth() {
 	// check thread status
 	std::lock_guard<std::mutex> guard(m_StatusMutex);
 
@@ -308,51 +305,43 @@ int ThreadPool::getJobQueueSize() {
 	return (queuesize);
 }
 
-// ---------------------------------------------------------setCheckInterval
-void ThreadPool::setCheckInterval(int interval) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_iCheckInterval = interval;
+// -------------------------------------------------------setHealthCheckInterval
+void ThreadPool::setHealthCheckInterval(int interval) {
+	m_iHealthCheckInterval = interval;
 }
 
-// ---------------------------------------------------------getCheckInterval
-int ThreadPool::getCheckInterval() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_iCheckInterval);
+// -------------------------------------------------------getHealthCheckInterval
+int ThreadPool::getHealthCheckInterval() {
+	return (m_iHealthCheckInterval);
 }
 
 // ---------------------------------------------------------setRunning
 void ThreadPool::setRunning(bool running) {
-	std::lock_guard<std::mutex> guard(getMutex());
 	m_bRunJobLoop = running;
 }
 
 // ---------------------------------------------------------setNumThreads
 bool ThreadPool::isRunning() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_bRunJobLoop);
 }
 
 // ---------------------------------------------------------setNumThreads
 void ThreadPool::setNumThreads(int num) {
-	std::lock_guard<std::mutex> guard(getMutex());
 	m_iNumThreads = num;
 }
 
 // ---------------------------------------------------------getNumThreads
 int ThreadPool::getNumThreads() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_iNumThreads);
 }
 
 // ---------------------------------------------------------setSleepTime
 void ThreadPool::setSleepTime(int sleeptimems) {
-	std::lock_guard<std::mutex> guard(getMutex());
 	m_iSleepTimeMS = sleeptimems;
 }
 
 // ---------------------------------------------------------getSleepTime
 int ThreadPool::getSleepTime() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_iSleepTimeMS);
 }
 
@@ -368,16 +357,14 @@ const std::string& ThreadPool::getPoolName() {
 	return (m_sPoolName);
 }
 
-// ---------------------------------------------------------setLastCheck
-void ThreadPool::setLastCheck(time_t now) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_tLastCheck = now;
+// ---------------------------------------------------------setLastHealthCheck
+void ThreadPool::setLastHealthCheck(time_t now) {
+	m_tLastHealthCheck = now;
 }
 
-// ---------------------------------------------------------getLastCheck
-time_t ThreadPool::getLastCheck() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_tLastCheck);
+// ---------------------------------------------------------getLastHealthCheck
+time_t ThreadPool::getLastHealthCheck() {
+	return ((time_t)m_tLastHealthCheck);
 }
 
 }  // namespace util

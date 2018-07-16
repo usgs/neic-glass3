@@ -22,7 +22,7 @@ namespace util {
  * \brief util threadpool class
  *
  * This class supports creating, starting, stopping, and monitoring a pool of
- * works thread, managing a FIFO queue for jobs to be processed, and allowing
+ * work threads, managing a FIFO queue for jobs to be processed, and allowing
  * for specific pool name and sleep between work time.
  *
  */
@@ -52,8 +52,8 @@ class ThreadPool : public util::BaseClass {
 	 * \param checkinterval - An integer containing the amount of time in
 	 * seconds between status checks. -1 to disable status checks.  Default 10.
 	 */
-	ThreadPool(std::string poolname, int num_threads = 5, int sleeptime = 100,
-				int checkinterval = 30);
+	explicit ThreadPool(std::string poolname, int num_threads = 5,
+						int sleeptime = 100, int checkinterval = 30);
 
 	/**
 	 * \brief threadpool destructor
@@ -85,18 +85,18 @@ class ThreadPool : public util::BaseClass {
 	bool stop();
 
 	/**
-	 * \brief pool check function
+	 * \brief pool health check function
 	 *
 	 * Checks to see if each thread that runs the jobLoop() function is still
 	 * operational, by checking the value of m_ThreadStatusMap[id] (==true) every
-	 * m_iCheckInterval seconds, setting m_ThreadStatusMap[id] to false after the
+	 * m_iHealthCheckInterval seconds, setting m_ThreadStatusMap[id] to false after the
 	 * check. It is expected that the jobs processed by the thread pool will
-	 * finish within m_iCheckInterval seconds
+	 * finish within m_iHealthCheckInterval seconds
 	 *
-	 * \return returns true if the pool is still running after m_iCheckInterval
+	 * \return returns true if the pool is still running after m_iHealthCheckInterval
 	 * seconds, false otherwise
 	 */
-	bool check();
+	bool healthCheck();
 
 	/**
 	 * \brief add a new job for for the thread pool to process
@@ -119,7 +119,7 @@ class ThreadPool : public util::BaseClass {
 	 *
 	 * \param status - A boolean flag containing the status to set
 	 */
-	void setStatus(bool status);
+	void setJobHealth(bool status);
 
 	/**
 	 * \brief pool status update function
@@ -129,7 +129,7 @@ class ThreadPool : public util::BaseClass {
 	 *
 	 * \param status - A boolean flag containing the status to set
 	 */
-	void setAllStatus(bool status);
+	void setAllJobsHealth(bool status);
 
 	/**
 	 * \brief pool status check function
@@ -139,12 +139,13 @@ class ThreadPool : public util::BaseClass {
 	 * \return returns true if all thread statuses are true, false if at least
 	 * one of the thread statuses is false.
 	 */
-	bool getStatus();
+	bool getAllJobsHealth();
 
 	/**
 	 *\brief Retrieve the current number of jobs in the queue
 	 *
-	 * Retrieves the number of pending jobs stored in m_JobQueue
+	 * Retrieves the number of pending (queued but not started) jobs stored in
+	 * m_JobQueue
 	 *
 	 *\return an integer containing the current number of jobs in the queue
 	 */
@@ -206,12 +207,12 @@ class ThreadPool : public util::BaseClass {
 	 *
 	 * This function sets the time interval after which an entry in
 	 * m_ThreadStatusMap being false (not responded) indicates that a thread in
-	 * the pool has died in check()
+	 * the pool has died in healthCheck()
 	 *
 	 * \param interval = An integer value indicating the thread pool health check
 	 * interval in seconds
 	 */
-	void setCheckInterval(int interval);
+	void setHealthCheckInterval(int interval);
 
 	/**
 	 * \brief Function to retrieve the thread pool health check interval
@@ -223,7 +224,7 @@ class ThreadPool : public util::BaseClass {
 	 * \return An integer value containing the thread pool health check interval
 	 * in seconds
 	 */
-	int getCheckInterval();
+	int getHealthCheckInterval();
 
 	/**
 	 * \brief Checks to see if the job threads in the pool should still be
@@ -241,11 +242,11 @@ class ThreadPool : public util::BaseClass {
 	 * was checked
 	 *
 	 * This function retrieves the last time the health status of the job threads
-	 * was checked by the check() function
+	 * was checked by the healthCheck() function
 	 *
 	 * \return A std::time_t containing the last check time
 	 */
-	std::time_t getLastCheck();
+	std::time_t getLastHealthCheck();
 
  protected:
 	/**
@@ -276,7 +277,7 @@ class ThreadPool : public util::BaseClass {
 	 * \param now - A std::time_t containing the last time the health status
 	 * was checked
 	 */
-	void setLastCheck(std::time_t now);
+	void setLastHealthCheck(std::time_t now);
 
 	/**
 	 * \brief Sets whether the job threads are running
@@ -291,11 +292,9 @@ class ThreadPool : public util::BaseClass {
 	/**
 	 * \brief Sets the number of job threads
 	 *
-	 * This function sets m_iNumThreads. Prior to calling start() this function
-	 * sets the number of threads that should be in the thread pool, and thus
-	 * will be started in start(). After calling start, this function simply
-	 * updates m_iNumThreads (usually during the return of jobLoop to indicate
-	 * that a thread has stopped running)
+	 * This function sets m_iNumThreads. This function sets the number of
+	 * threads that should be in the thread pool, and thus will be started in
+	 * start().
 	 */
 	void setNumThreads(int num);
 
@@ -326,18 +325,18 @@ class ThreadPool : public util::BaseClass {
 	 * \brief the boolean flags indicating that the jobloop() threads
 	 * should keep running.
 	 */
-	bool m_bRunJobLoop;
+	std::atomic<bool> m_bRunJobLoop;
 
 	/**
 	 * \brief An integer containing the amount of time to sleep in milliseconds
 	 * between jobs.
 	 */
-	int m_iSleepTimeMS;
+	std::atomic<int> m_iSleepTimeMS;
 
 	/**
 	 * \brief An integer containing the number of threads in the pool.
 	 */
-	int m_iNumThreads;
+	std::atomic<int> m_iNumThreads;
 
 	/**
 	 * \brief the std::string containing the name of the thread pool
@@ -348,14 +347,14 @@ class ThreadPool : public util::BaseClass {
 	 * \brief the std::time_t holding the last time the thread status was
 	 * checked
 	 */
-	std::time_t m_tLastCheck;
+	std::atomic<double> m_tLastHealthCheck;
 
 	/**
 	 * \brief the integer interval in seconds after which the a job thread
 	 * in the pool will be considered dead. A negative check interval disables
 	 * thread status checks
 	 */
-	int m_iCheckInterval;
+	std::atomic<int> m_iHealthCheckInterval;
 };
 }  // namespace util
 }  // namespace glass3

@@ -31,7 +31,6 @@ void Cache::clear() {
 
 	// erase the entire cache
 	m_Cache.erase(m_Cache.begin(), m_Cache.end());
-	m_bCacheModified = true;
 
 	// unlock before baseclass clear (uses the same mutex)
 	getMutex().unlock();
@@ -62,9 +61,6 @@ bool Cache::addToCache(std::shared_ptr<json::Object> data, std::string id) {
 		// update the cache
 		m_Cache[id] = data;
 
-		// we've modified the cache
-		m_bCacheModified = true;
-
 		logger::log(
 				"trace",
 				"cache::addtocache(): Updated Data " + json::Serialize(*data)
@@ -74,9 +70,6 @@ bool Cache::addToCache(std::shared_ptr<json::Object> data, std::string id) {
 
 	// we don't, add it
 	m_Cache[id] = data;
-
-	// we've modified the cache
-	m_bCacheModified = true;
 
 	logger::log(
 			"trace",
@@ -113,9 +106,6 @@ bool Cache::removeFromCache(std::string id) {
 	logger::log(
 			"trace",
 			"cache::removefromcache(): Removed data " + id + " from Cache.");
-
-	// we've modified the cache
-	m_bCacheModified = true;
 
 	return (true);
 }
@@ -207,12 +197,6 @@ bool Cache::isEmpty() {
 
 	bool cacheempty = m_Cache.empty();
 	return (cacheempty);
-}
-
-// ---------------------------------------------------------getCacheModified
-bool Cache::getCacheModified() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_bCacheModified);
 }
 
 // ---------------------------------------------------------size

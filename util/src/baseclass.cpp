@@ -50,7 +50,6 @@ const json::Object * BaseClass::getConfig() {
 
 // ---------------------------------------------------------getSetup
 bool BaseClass::getSetup() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_bIsSetup);
 }
 

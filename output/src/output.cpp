@@ -26,7 +26,7 @@ output::output()
 
 	// thread will be declared dead
 	// if it doesn't report within this interval
-	setCheckInterval(120);
+	setHealthCheckInterval(120);
 
 	// interval to report performance statistics
 	ReportInterval = 60;
@@ -342,20 +342,20 @@ bool output::isRunning() {
 	return (ThreadBaseClass::isRunning() && m_bRunEventThread);
 }
 
-bool output::check() {
+bool output::healthCheck() {
 	// don't check threadpool if it is not created yet
 	if (m_ThreadPool != NULL) {
 		// check threadpool
-		if (m_ThreadPool->check() == false) {
+		if (m_ThreadPool->healthCheck() == false) {
 			return (false);
 		}
 	}
 
-	if ((m_bEventStarted == true) && (getCheckInterval() > 0)) {
+	if ((m_bEventStarted == true) && (getHealthCheckInterval() > 0)) {
 		// see if it's time to check
 		time_t tNow;
 		std::time(&tNow);
-		if ((tNow - tLastEventCheck) >= getCheckInterval()) {
+		if ((tNow - tLastEventCheck) >= getHealthCheckInterval()) {
 			// lock the mutex to make sure we
 			// don't run into a threading issue
 			// this *may* be excessive
@@ -368,7 +368,7 @@ bool output::check() {
 						"error",
 						"output::check(): m_bCheckEventThread is false. "
 								" after an interval of "
-								+ std::to_string(getCheckInterval())
+								+ std::to_string(getHealthCheckInterval())
 								+ " seconds.");
 				return (false);
 			}
@@ -384,7 +384,7 @@ bool output::check() {
 	}
 
 	// let threadbaseclass handle background worker thread
-	return (ThreadBaseClass::check());
+	return (ThreadBaseClass::healthCheck());
 }
 
 // add data to output cache

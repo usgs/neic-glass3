@@ -119,10 +119,10 @@ class Associator : public glasscore::IGlassSend,
 	 * \brief thread pool check function
 	 *
 	 * Checks to see if glass is running, calls
-	 * threadbaseclass::check for worker thread monitoring.
+	 * threadbaseclass::healthCheck for worker thread monitoring.
 	 * \return returns true if glass is still running.
 	 */
-	bool check() override;
+	bool healthCheck() override;
 
 	/**
 	 * \brief Pointer to Input class

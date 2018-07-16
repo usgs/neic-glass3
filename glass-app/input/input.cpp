@@ -370,7 +370,7 @@ bool input::work() {
 
 			for (int i = 0; i < m_iShutdownWait; i++) {
 				// signal that we're still running
-				setCheckWorkThread();
+				setThreadHealth();
 
 				// sleep for one second
 				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
@@ -423,7 +423,7 @@ bool input::readFiles(std::string extension, const std::string &inputdir,
 			}
 
 			// signal that we're still running
-			setCheckWorkThread();
+			setThreadHealth();
 
 			// check to see if we have room
 			if ((m_QueueMaxSize != -1)

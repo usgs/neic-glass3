@@ -72,7 +72,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \brief work thread stop function
 	 *
 	 * Stops, waits for, and deletes the thread that runs the workLoop() function,
-	 * setting m_bStarted, m_bRunWorkThread, and m_bCheckWorkThread to false
+	 * setting m_bStarted, m_bRunWorkThread, and m_bThreadHealth to false
 	 *
 	 * \return returns true if successful, false if the thread is not created and
 	 * running
@@ -86,12 +86,12 @@ class ThreadBaseClass : public util::BaseClass {
 	 * operational, by checking the value of m_bRunWorkThread (==true) every
 	 * m_iCheckInterval seconds, setting m_bRunWorkThread to false after the
 	 * check. It is expected that the derived class's overridden work() function
-	 * periodically updates m_bRunWorkThread by calling setCheckWorkThread()
+	 * periodically updates m_bRunWorkThread by calling setThreadHealth()
 	 *
 	 * \return returns true if thread is still running after m_iCheckInterval
 	 * seconds, false otherwise
 	 */
-	virtual bool check();
+	virtual bool healthCheck();
 
 	/**
 	 * \brief Sets the time to sleep between work() calls
@@ -128,46 +128,46 @@ class ThreadBaseClass : public util::BaseClass {
 	/**
 	 * \brief Function to set thread health
 	 *
-	 * This function signifies the thread health by setting m_bCheckWorkThread
+	 * This function signifies the thread health by setting m_bThreadHealth
 	 * to the provided value.
 	 *
-	 * \param check = A boolean value indicating thread health, true indicates
+	 * \param health = A boolean value indicating thread health, true indicates
 	 * that the the thread is alive, false indicates that the thread is not
 	 */
-	void setCheckWorkThread(bool check = true);
+	void setThreadHealth(bool health = true);
 
 	/**
-	 * \brief Function to check thread health
+	 * \brief Function to get thread health
 	 *
-	 * This function checks the thread health by getting the value of
-	 * m_bCheckWorkThread.
+	 * This function gets the thread health by getting the value of
+	 * m_bThreadHealth.
 	 *
 	 * \return Returns true if the thread is alive, false if the thread has
 	 * not responded yet
 	 */
-	bool getCheckWorkThread();
+	bool getThreadHealth();
 
 	/**
 	 * \brief Function to set thread health check interval
 	 *
-	 * This function sets the time interval after which m_bCheckWorkThread being
+	 * This function sets the time interval after which m_bThreadHealth being
 	 * false (not responded) indicates that the thread has died in check()
 	 *
 	 * \param interval = An integer value indicating the thread health check
 	 * interval in seconds
 	 */
-	void setCheckInterval(int interval);
+	void setHealthCheckInterval(int interval);
 
 	/**
 	 * \brief Function to retrieve the thread health check interval
 	 *
-	 * This function retreives the time interval after which m_bCheckWorkThread
+	 * This function retreives the time interval after which m_bThreadHealth
 	 * being false (not responded) indicates that the thread has died in check()
 	 *
 	 * \return An integer value containing the thread health check interval in
 	 * seconds
 	 */
-	int getCheckInterval();
+	int getHealthCheckInterval();
 
 	/**
 	 *\brief Retrieves whether the work thread has been started
@@ -207,7 +207,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 *
 	 * \return A std::time_t containing the last check time
 	 */
-	std::time_t getLastCheck();
+	std::time_t getLastHealthCheck();
 
 	/**
 	 * \brief threadbaseclass work function
@@ -226,10 +226,9 @@ class ThreadBaseClass : public util::BaseClass {
 	 *
 	 * This function is the thread work loop function. It runs in a loop while
 	 * m_bRunWorkThread is true, calls work() every m_iSleepTimeMS milliseconds,
-	 * to do a unit of work, sets thread health via setCheckWorkThread(), and
-	 * sets m_bCheckWorkThread via setWorkCheck(). Setting m_bRunWorkThread
-	 * to false via setRunning, or a false return from work() will cause
-	 * the loop to exit, and the function to return (ending the thread)
+	 * to do a unit of work, sets thread health via setThreadHealth(). Setting
+	 * m_bRunWorkThread to false via setRunning, or a false return from work()
+	 * will cause the loop to exit, and the function to return (ending the thread)
 	 */
 	void workLoop();
 
@@ -243,7 +242,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \param now - A std::time_t containing the last time the health status
 	 * was checked
 	 */
-	void setLastCheck(std::time_t now);
+	void setLastHealthCheck(std::time_t now);
 
 	/**
 	 *\brief Sets whether the work thread has been started
@@ -277,7 +276,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * will be considered dead. A negative check interval disables thread
 	 * status checks
 	 */
-	int m_iCheckInterval;
+	std::atomic<int> m_iHealthCheckInterval;
 
 	/**
 	 * \brief the std::thread pointer to the work thread, allocated by start()
@@ -289,36 +288,36 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \brief boolean flag indicating whether the work thread should run,
 	 * controls the loop in workloop()
 	 */
-	bool m_bRunWorkThread;
+	std::atomic<bool> m_bRunWorkThread;
 
 	/**
 	 * \brief boolean flag indicating whether the work thread has been started,
 	 * set via setRunning() in start()
 	 */
-	bool m_bStarted;
+	std::atomic<bool> m_bStarted;
 
 	/**
 	 * \brief boolean flag used to check thread status, set by
-	 * setCheckWorkThread()
+	 * setThreadHealth()
 	 */
-	bool m_bCheckWorkThread;
+	std::atomic<bool> m_bThreadHealth;
 
 	/**
-	 * \brief the std::mutex used to control access to m_bCheckWorkThread
+	 * \brief the std::mutex used to control access to m_bThreadHealth
 	 */
-	std::mutex m_CheckMutex;
+	std::mutex m_HealthCheckMutex;
 
 	/**
 	 * \brief the time_t holding the last time the thread status was checked,
 	 * set by setLastCheck() in check
 	 */
-	time_t m_tLastCheck;
+	std::atomic<double> m_tLastHealthCheck;
 
 	/**
 	 * \brief integer variable indicating how long to sleep in milliseconds
 	 * between work() calls in workloop()
 	 */
-	int m_iSleepTimeMS;
+	std::atomic<int> m_iSleepTimeMS;
 };
 }  // namespace util
 }  // namespace glass3

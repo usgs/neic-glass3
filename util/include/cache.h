@@ -117,12 +117,6 @@ class Cache : public util::BaseClass {
 	virtual bool isEmpty();
 
 	/**
-	 *\brief Retrieves a boolean flag indicating whether the cache has
-	 * been modified
-	 */
-	bool getCacheModified();
-
-	/**
 	 *\brief Retrieves the current size of the cache
 	 */
 	int size();
@@ -132,12 +126,6 @@ class Cache : public util::BaseClass {
 	 * \brief the std::map used to store the cache
 	 */
 	std::map<std::string, std::shared_ptr<json::Object>> m_Cache;
-
-	/**
-	 * \brief a boolean flag indicating whether the cache has
-	 * been modified
-	 */
-	bool m_bCacheModified;
 
 	/**
 	 * \brief a std::map iterator used to move through the cache via

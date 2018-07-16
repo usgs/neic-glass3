@@ -359,13 +359,13 @@ int main(int argc, char* argv[]) {
 		logger::log("trace", "glass: Checking thread status.");
 
 		// check thread health
-		if (InputThread->check() == false) {
+		if (InputThread->healthCheck() == false) {
 			logger::log("error", "glass: Input thread has exited!!");
 			break;
-		} else if (OutputThread->check() == false) {
+		} else if (OutputThread->healthCheck() == false) {
 			logger::log("error", "glass: Output thread has exited!!");
 			break;
-		} else if (AssocThread->check() == false) {
+		} else if (AssocThread->healthCheck() == false) {
 			logger::log("error", "glass: Association thread has exited!!");
 			break;
 		}

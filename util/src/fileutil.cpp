@@ -23,7 +23,8 @@
 
 namespace glass3 {
 namespace util {
-// get the next filename with the provided extension from a directory
+
+// ---------------------------------------------------------getNextFileName
 bool getNextFileName(const std::string &path, const std::string &extension,
 						std::string &filename) {  // NOLINT
 	logger::log(
@@ -154,7 +155,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 #endif
 }
 
-// move a file from one directory to another
+// ---------------------------------------------------------moveFileTo
 bool moveFileTo(std::string filename, const std::string &dirname) {
 	std::string fromStr;
 	std::string toStr;
@@ -246,11 +247,12 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 		}
 
 		return (false);
-	}
+	}  // else std::rename != 0
+
 	return (true);
 }
 
-// copy a file
+// ---------------------------------------------------------copyFileTo
 bool copyFileTo(std::string from, std::string to) {
 	std::ifstream source(from, std::ios::binary);
 	if (!source) {
@@ -280,7 +282,7 @@ bool copyFileTo(std::string from, std::string to) {
 	return (true);
 }
 
-// delete a file from a directory
+// ---------------------------------------------------------deleteFileFrom
 bool deleteFileFrom(std::string filename) {
 	logger::log("debug", "deletefilefrom(): Deleting file " + filename + ".");
 
