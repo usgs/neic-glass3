@@ -242,7 +242,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \brief Retrieves a reference to the class member containing the mutex
 	 * used to control access to status checks
 	 */
-	std::mutex & getCheckMutex();
+	std::mutex & getHealthCheckMutex();
 
  private:
 	/**

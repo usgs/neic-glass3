@@ -283,10 +283,10 @@ TEST(Output, Construction) {
 	ASSERT_FALSE(outputObject.isRunning())<< "output thread is not running";
 
 	// assert event thread is not started
-	ASSERT_FALSE(outputObject.isEventStarted())<< "event thread is not started";
+	ASSERT_FALSE(outputObject.isEventThreadStarted())<< "event thread is not started";
 
 	// assert event thread is not running
-	ASSERT_FALSE(outputObject.isEventRunning())<< "event thread is not running";
+	ASSERT_FALSE(outputObject.isEventThreadRunning())<< "event thread is not running";
 
 	// assert no associator
 	ASSERT_TRUE(outputObject.getAssociator()== NULL)<< "associator is null";
@@ -388,13 +388,13 @@ TEST(Output, ThreadTests) {
 	ASSERT_TRUE(outputObject->isRunning())<< "output thread is running";
 
 	// assert event thread is started
-	ASSERT_TRUE(outputObject->isEventStarted())<< "event thread is started";
+	ASSERT_TRUE(outputObject->isEventThreadStarted())<< "event thread is started";
 
 	// assert event thread is running
-	ASSERT_TRUE(outputObject->isEventRunning())<< "event thread is running";
+	ASSERT_TRUE(outputObject->isEventThreadRunning())<< "event thread is running";
 
 	// thread status checks
-	ASSERT_TRUE(outputObject->check());
+	ASSERT_TRUE(outputObject->healthCheck());
 
 	// second start doesn't
 	ASSERT_FALSE(outputObject->start())<< "second start unsuccessful";
@@ -412,10 +412,10 @@ TEST(Output, ThreadTests) {
 	ASSERT_FALSE(outputObject->isRunning())<< "output thread is not running";
 
 	// assert event thread is not started
-	ASSERT_FALSE(outputObject->isEventStarted())<< "event thread is not started";
+	ASSERT_FALSE(outputObject->isEventThreadStarted())<< "event thread is not started";
 
 	// assert event thread is not running
-	ASSERT_FALSE(outputObject->isEventRunning())<< "event thread is not running";
+	ASSERT_FALSE(outputObject->isEventThreadRunning())<< "event thread is not running";
 
 	// stop output thread again
 	ASSERT_FALSE(outputObject->stop())<< "second stop unsuccessful";

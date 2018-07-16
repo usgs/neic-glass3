@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-# outputtest.d 
-# Configuration file for the glass output component
-=======
 # outputtest.d
 # Configuration file for the glass output unit tests
->>>>>>> in progress commit of moving output specific tests to output rather than glass-app
 {
 	# this config is for glass 
 	"Cmd":"GlassOutput",

@@ -286,9 +286,9 @@ time_t ThreadBaseClass::getLastHealthy() {
 	return ((time_t) m_tLastHealthy);
 }
 
-// ---------------------------------------------------------getCheckMutex
-std::mutex & ThreadBaseClass::getCheckMutex() {
-	return (m_CheckMutex);
+// ---------------------------------------------------------getHealthCheckMutex
+std::mutex & ThreadBaseClass::getHealthCheckMutex() {
+	return (m_HealthCheckMutex);
 }
 }  // namespace util
 }  // namespace glass3

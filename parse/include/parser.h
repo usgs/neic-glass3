@@ -92,8 +92,8 @@ class Parser : public glass3::util::BaseClass {
 	/**
 	 * \brief Function to set the name of the default agency id
 	 *
-	 * This function sets the name default agency id, this name is used in
-	 * parsing
+	 * This function sets the name of the default agency id, this name is used
+	 * in parsing
 	 *
 	 * \param id = A std::string containing the default agency id to set
 	 */
