@@ -398,7 +398,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 
 	// init, note global doesn't use nRow or nCol
 	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update, pTrv1,
-				pTrv2, aziTaperm, maxDepth);
+				pTrv2, aziTaper, maxDepth);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
