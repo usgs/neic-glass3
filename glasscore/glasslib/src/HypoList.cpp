@@ -1236,8 +1236,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 										+ static_cast<int>(hypo2->getVPickSize())));
 						glassutil::CLogit::log(sLog);
 
-						// done with hypo 2
-						hypo2->unlockAfterProcessing();
 					}
 				}
 			}
