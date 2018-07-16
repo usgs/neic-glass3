@@ -11,7 +11,7 @@
 namespace glass {
 // Construction/Destruction
 Associator::Associator()
-		: util::ThreadBaseClass("Associator", 5) {
+		: glass3::util::ThreadBaseClass("Associator", 5) {
 	logger::log("debug", "associator::Associator(): Construction.");
 
 	m_iWorkCounter = 0;
@@ -27,7 +27,7 @@ Associator::Associator()
 	m_pGlass = NULL;
 	m_MessageQueue = NULL;
 
-	m_iCheckInterval = 600;
+	setHealthCheckInterval(600);
 
 	tGlassDuration = std::chrono::duration<double>::zero();
 
@@ -35,8 +35,9 @@ Associator::Associator()
 	clear();
 }
 
-Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
-		: util::ThreadBaseClass("Associator", 5) {
+Associator::Associator(glass3::util::iInput* inputint,
+						glass3::util::iOutput* outputint)
+		: glass3::util::ThreadBaseClass("Associator", 5) {
 	logger::log("debug", "associator::associator(...): Advanced Construction.");
 
 	m_pGlass = NULL;
@@ -56,7 +57,7 @@ Associator::Associator(util::iInput* inputint, util::iOutput* outputint)
 	Input = inputint;
 	Output = outputint;
 
-	m_iCheckInterval = 600;
+	setHealthCheckInterval(600);
 
 	tGlassDuration = std::chrono::duration<double>::zero();
 }
@@ -75,7 +76,7 @@ Associator::~Associator() {
 		delete (m_pGlass);
 
 	// clean up message queue
-	m_MessageQueue->clearQueue();
+	m_MessageQueue->clear();
 	if (m_MessageQueue != NULL) {
 		delete (m_MessageQueue);
 	}
@@ -127,10 +128,10 @@ void Associator::clear() {
 	if (m_MessageQueue != NULL) {
 		delete (m_MessageQueue);
 	}
-	m_MessageQueue = new util::Queue();
+	m_MessageQueue = new glass3::util::Queue();
 
 	// finally do baseclass clear
-	util::BaseClass::clear();
+	glass3::util::BaseClass::clear();
 }
 
 void Associator::logGlass(glassutil::logMessageStruct message) {
@@ -265,7 +266,7 @@ bool Associator::work() {
 	return (true);
 }
 
-bool Associator::check() {
+bool Associator::healthCheck() {
 	// don't check m_pGlass if it is not created yet
 	if (m_pGlass != NULL) {
 		// check glass
@@ -273,19 +274,19 @@ bool Associator::check() {
 		if (m_pGlass->statusCheck() == false) {
 			logger::log(
 					"error",
-					"Associator::check(): GlassLib statusCheck() returned false!.");
+					"Associator::statusCheck(): GlassLib statusCheck() returned false!.");
 			return (false);
 		}
 	}
 
 	// let threadbaseclass handle background worker thread
-	return (ThreadBaseClass::check());
+	return (ThreadBaseClass::healthCheck());
 }
 
 // process any messages glasscore sends us
 bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 	// tell base class we're still alive
-	ThreadBaseClass::setWorkCheck();
+	ThreadBaseClass::setThreadHealth();
 
 	if (communication == NULL) {
 		logger::log("critical",

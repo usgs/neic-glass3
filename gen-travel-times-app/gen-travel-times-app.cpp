@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
 				"gen-travel-times-app: using config file: " + configFile);
 
 	// load our basic config
-	util::Config * genConfig = new util::Config("", configFile);
+	glass3::util::Config * genConfig = new glass3::util::Config("", configFile);
 
 	// check to see if our config is of the right format
 	if (genConfig->getJSON().HasKey("Configuration")

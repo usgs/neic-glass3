@@ -7,10 +7,10 @@
 #define TESTAGENCYID "US"
 #define TESTAUTHOR "glasstest"
 
-class parserstub : public parse::Parser {
+class parserstub : public glass3::parse::Parser {
  public:
 	parserstub(const std::string &newagencyid, const std::string &newauthor)
-			: parse::Parser(newagencyid, newauthor) {
+			: glass3::parse::Parser(newagencyid, newauthor) {
 	}
 
 	~parserstub() {

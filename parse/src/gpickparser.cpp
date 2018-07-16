@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 GPickParser::GPickParser(const std::string &newAgencyID,
 							const std::string &newAuthor)
@@ -47,7 +48,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 
 	try {
 		// split the gpick, the gpick is space delimited
-		std::vector<std::string> splitgpick = util::split(input, ' ');
+		std::vector<std::string> splitgpick = glass3::util::split(input, ' ');
 
 		// make sure we split the response into at
 		// least as many elements as we need
@@ -73,7 +74,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 		newpick.site.location = splitgpick[6];
 
 		// convert the global pick "DateTime" into epoch time
-		newpick.time = util::convertDateTimeToEpochTime(splitgpick[7]);
+		newpick.time = glass3::util::convertDateTimeToEpochTime(splitgpick[7]);
 
 		// build the source object
 		// need to think more about this one
@@ -212,3 +213,4 @@ bool GPickParser::validate(std::shared_ptr<json::Object> &input) {
 	return (pickobject.isvalid());
 }
 }  // namespace parse
+}  // namespace glass3

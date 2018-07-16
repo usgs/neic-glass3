@@ -10,53 +10,21 @@
 #define TESTDATA2ID "test2"
 #define TESTDATA3 "{\"HighPass\":3.000000,\"LowPass\":3.000000,\"cacheid\":\"test3\"}" // NOLINT
 #define TESTDATA3ID "test3"
-#define CACHECONFIG "{\"Cmd\":\"Cache\",\"DiskFile\":\"./testdata/cachetest.txt\"}" // NOLINT
 #define CACHEFILE "./testdata/cachetest.txt"
 
 // tests to see if the queue is functional
 TEST(CacheTest, Construction) {
-	util::Cache TestCache;
+	glass3::util::Cache TestCache;
 
 	// assert an empty cache was created
 	ASSERT_TRUE(TestCache.isEmpty())<< "empty cache constructed";
 	ASSERT_EQ(TestCache.size(), 0)<< "cache size check";
-
-	// assert that we're not setup
-	ASSERT_FALSE(TestCache.m_bIsSetup)<< "cache not setup";
-
-	util::Cache TestCache2(new json::Object(json::Deserialize(CACHECONFIG)));
-
-	// assert that we're setup
-	ASSERT_TRUE(TestCache2.m_bIsSetup)<< "cache set up";
-
-	// confirm config data successful
-	std::string cachefilename = std::string(CACHEFILE);
-	std::string diskfile = TestCache2.getSDiskCacheFile();
-	ASSERT_STREQ(cachefilename.c_str(), diskfile.c_str())<<
-	"cache diskfile config";
 }
 
 // tests to see if the queue is functional
 TEST(CacheTest, CombinedTest) {
-	// create a queue
-	util::Cache * TestCache = new util::Cache();
-
-	// configure cache
-	// generate configuration
-	json::Object configuration = json::Deserialize(CACHECONFIG);
-	std::string cachefilename = std::string(CACHEFILE);
-
-	// setup null
-	bool returnflag = TestCache->setup(NULL);
-
-	// assert config  not successful
-	ASSERT_TRUE(returnflag)<< "null cache config successful";
-
-	// setup cache
-	returnflag = TestCache->setup(&configuration);
-
-	// assert config was successful
-	ASSERT_TRUE(returnflag)<< "cache config successful";
+	// create cache
+	glass3::util::Cache * TestCache = new glass3::util::Cache();
 
 	// create input data
 	std::string inputstring1 = std::string(TESTDATA1);
@@ -81,7 +49,7 @@ TEST(CacheTest, CombinedTest) {
 	ASSERT_TRUE(TestCache->addToCache(inputdata2, inputid2))<< "add item 2";
 	ASSERT_TRUE(TestCache->addToCache(inputdata3, inputid3))<< "add item 3";
 
-	// assert cache hase data
+	// assert cache has data
 	ASSERT_FALSE(TestCache->isEmpty())<< "cache not empty";
 	ASSERT_EQ(TestCache->size(), 3)<< "cache size check";
 
@@ -154,17 +122,8 @@ TEST(CacheTest, CombinedTest) {
 	// check cache size
 	ASSERT_EQ(TestCache->size(), 2)<< "cache size check";
 
-	// check if cache modified
-	ASSERT_TRUE(TestCache->getBCacheModified())<< "cache modified";
-
-	// write cache to disk
-	ASSERT_TRUE(TestCache->writeCacheToDisk())<< "write cache to disk";
-
-	// check if cache still modified after write
-	ASSERT_FALSE(TestCache->getBCacheModified())<< "cache is not modified";
-
 	// clear cache
-	TestCache->clearCache();
+	TestCache->clear();
 
 	// assert cleared cache empty
 	ASSERT_TRUE(TestCache->isEmpty())<< "cleared cache is empty";
@@ -174,19 +133,6 @@ TEST(CacheTest, CombinedTest) {
 	ASSERT_FALSE(TestCache->isInCache(inputid1))<< "item 1 is not in cache";
 	ASSERT_FALSE(TestCache->isInCache(inputid3))<< "item 3 is not in cache";
 
-	// load cache from disk
-	ASSERT_TRUE(TestCache->loadCacheFromDisk())<< "load cache from disk";
-
-	// assert loaded cache not empty
-	ASSERT_FALSE(TestCache->isEmpty())<< "loaded cache is notempty";
-
-	// check if present
-	ASSERT_TRUE(TestCache->isInCache(inputid1))<< "item 1 is in cache";
-	ASSERT_TRUE(TestCache->isInCache(inputid3))<< "item 3 is in cache";
-
 	// cleanup
 	delete (TestCache);
-
-	// cleanup cache file
-	std::remove(cachefilename.c_str());
 }

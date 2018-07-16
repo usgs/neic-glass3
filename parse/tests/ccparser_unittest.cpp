@@ -15,7 +15,7 @@ class CCParser : public ::testing::Test {
 		agencyid = std::string(TESTAGENCYID);
 		author = std::string(TESTAUTHOR);
 
-		Parser = new parse::CCParser(agencyid, author);
+		Parser = new glass3::parse::CCParser(agencyid, author);
 	}
 
 	virtual void TearDown() {
@@ -25,7 +25,7 @@ class CCParser : public ::testing::Test {
 
 	std::string agencyid;
 	std::string author;
-	parse::CCParser * Parser;
+	glass3::parse::CCParser * Parser;
 };
 
 // tests to see gpick parser constructs correctly

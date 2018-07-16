@@ -24,7 +24,7 @@ class JSONParser : public ::testing::Test {
 		agencyid = std::string(TESTAGENCYID);
 		author = std::string(TESTAUTHOR);
 
-		Parser = new parse::JSONParser(agencyid, author);
+		Parser = new glass3::parse::JSONParser(agencyid, author);
 
 		// logger::log_init("jsonparsertest", spdlog::level::debug, ".", true);
 	}
@@ -36,7 +36,7 @@ class JSONParser : public ::testing::Test {
 
 	std::string agencyid;
 	std::string author;
-	parse::JSONParser * Parser;
+	glass3::parse::JSONParser * Parser;
 };
 
 // tests to see jsonparser constructs correctly

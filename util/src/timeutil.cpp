@@ -12,6 +12,7 @@
 #include <ctime>
 #include <string>
 
+namespace glass3 {
 namespace util {
 
 // maximum size of the environment varible TZ
@@ -23,6 +24,7 @@ namespace util {
  */
 char envTZ[MAXENV];
 
+// ----------------------------------------------------convertEpochTimeToISO8601
 std::string convertEpochTimeToISO8601(double epochtime) {
 	double integerpart;
 	double fractionpart;
@@ -34,18 +36,19 @@ std::string convertEpochTimeToISO8601(double epochtime) {
 	return (convertEpochTimeToISO8601(time, fractionpart));
 }
 
-std::string convertEpochTimeToISO8601(time_t time, double decimalseconds) {
+// ----------------------------------------------------convertEpochTimeToISO8601
+std::string convertEpochTimeToISO8601(time_t epochtime, double decimalseconds) {
 	// build the time portion, all but the seconds which are
 	// separate since time_t can't do decimal seconds
 	char timebuf[sizeof "2011-10-08T07:07:"];
 
 #ifdef _WIN32
 	struct tm timestruct;
-	gmtime_s(&timestruct, &time);
+	gmtime_s(&timestruct, &epochtime);
 
 #else
 	struct tm timestruct;
-	gmtime_r(&time, &timestruct);
+	gmtime_r(&epochtime, &timestruct);
 #endif
 
 	strftime(timebuf, sizeof timebuf, "%Y-%m-%dT%H:%M:", &timestruct);
@@ -66,12 +69,14 @@ std::string convertEpochTimeToISO8601(time_t time, double decimalseconds) {
 	return (timestring + secondsstring + "Z");
 }
 
+// ----------------------------------------------------convertDateTimeToISO8601
 std::string convertDateTimeToISO8601(const std::string &TimeString) {
 	double epoch_time = convertDateTimeToEpochTime(TimeString);
 
 	return (convertEpochTimeToISO8601(epoch_time));
 }
 
+// ----------------------------------------------------convertISO8601ToEpochTime
 double convertISO8601ToEpochTime(const std::string &TimeString) {
 	// make sure we got something
 	if (TimeString.length() == 0) {
@@ -197,6 +202,7 @@ double convertISO8601ToEpochTime(const std::string &TimeString) {
 	return (-1.0);
 }
 
+// --------------------------------------------------convertDateTimeToEpochTime
 double convertDateTimeToEpochTime(const std::string &TimeString) {
 	// make sure we got something
 	if (TimeString.length() == 0) {
@@ -323,3 +329,4 @@ double convertDateTimeToEpochTime(const std::string &TimeString) {
 	return (-1.0);
 }
 }  // namespace util
+}  // namespace glass3

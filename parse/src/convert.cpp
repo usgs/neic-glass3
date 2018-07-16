@@ -9,6 +9,7 @@
 #include <vector>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 
 std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
@@ -647,3 +648,4 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 	return (OutputString);
 }
 }  // namespace parse
+}  // namespace glass3

@@ -36,7 +36,8 @@ namespace glass {
  * output inherits from the threadbaseclass class.
  * output implements the ioutput interface.
  */
-class output : public util::iOutput, public util::ThreadBaseClass {
+class output : public glass3::util::iOutput,
+		public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief output constructor
@@ -89,13 +90,13 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	bool isRunning() override;
 
 	/**
-	 * \brief thread pool check function
+	 * \brief output heath check function
 	 *
 	 * Checks to see if the thread pool is still running, calls
-	 * threadbaseclass::check for worker thread monitoring.
+	 * threadbaseclass::healthCheck for worker thread monitoring.
 	 * \return returns true if thread pool is still running.
 	 */
-	bool check() override;
+	bool healthCheck() override;
 
 	const std::string getSOutputAgencyId() {
 		m_ConfigMutex.lock();
@@ -136,10 +137,10 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	/**
 	 * \brief Pointer to Association class
 	 *
-	 * A util::iassociator pointer to the class that handles association for
+	 * A glass3::util::iassociator pointer to the class that handles association for
 	 * glass
 	 */
-	util::iAssociator* Associator;
+	glass3::util::iAssociator* Associator;
 
 	/**
 	 * \brief add data to the output tracking cache
@@ -264,23 +265,23 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	std::mutex m_ConfigMutex;
 
 	/**
-	 * \brief pointer to the util::cache class used to
+	 * \brief pointer to the glass3::util::cache class used to
 	 * store output tracking information
 	 */
-	util::Cache * m_TrackingCache;
+	glass3::util::Cache * m_TrackingCache;
 	std::mutex m_TrackingCacheMutex;
 
 	/**
-	 * \brief pointer to the util::queue class used to manage
+	 * \brief pointer to the glass3::util::queue class used to manage
 	 * incoming output messages
 	 */
-	util::Queue* m_OutputQueue;
+	glass3::util::Queue* m_OutputQueue;
 
 	/**
-	 * \brief pointer to the util::queue class used to manage
+	 * \brief pointer to the glass3::util::queue class used to manage
 	 * incoming lookup messages
 	 */
-	util::Queue* m_LookupQueue;
+	glass3::util::Queue* m_LookupQueue;
 
 	std::vector<int> m_PublicationTimes;
 
@@ -324,18 +325,18 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	/**
 	 * \brief the last time a performance report was generated
 	 */
-	time_t tLastWorkReport;
+	std::time_t tLastWorkReport;
 
 	/**
 	 * \brief the last time a site list was requested
 	 */
-	time_t m_tLastSiteRequest;
+	std::time_t m_tLastSiteRequest;
 
 	/**
-	 * \brief pointer to the util::threadpool used to queue and
+	 * \brief pointer to the glass3::util::threadpool used to queue and
 	 * perform output.
 	 */
-	util::ThreadPool *m_ThreadPool;
+	glass3::util::ThreadPool *m_ThreadPool;
 
 	/**
 	 * \brief the std::thread pointer to the event thread
@@ -358,9 +359,9 @@ class output : public util::iOutput, public util::ThreadBaseClass {
 	bool m_bCheckEventThread;
 
 	/**
-	 * \brief the time_t holding the last time the thread status was checked
+	 * \brief the std::time_t holding the last time the thread status was checked
 	 */
-	time_t tLastEventCheck;
+	std::time_t tLastEventCheck;
 
 	/**
 	 * \brief the std::mutex for m_bCheckEventThread

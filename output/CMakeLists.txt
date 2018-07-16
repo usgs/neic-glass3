@@ -27,10 +27,6 @@ include_directories(${log_INCLUDE_DIRS})
 include_directories(${spdlog_INCLUDE_DIRS}/..)
 include_directories(${spdlog_INCLUDE_DIRS})
 
-# config
-find_package(config CONFIG REQUIRED)
-include_directories(${config_INCLUDE_DIRS})
-
 # util
 find_package(util CONFIG REQUIRED)
 include_directories(${util_INCLUDE_DIRS})
@@ -70,7 +66,7 @@ include(${CMAKE_DIR}/cpplint.cmake)
 # ----- RUN UNIT TESTS ----- #
 file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
 # NOTE: Order libraries are linked matters for G++
-set(TEST_LIBRARIES ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${util_LIBRARIES} ${config_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
+set(TEST_LIBRARIES ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
 include(${CMAKE_DIR}/test.cmake)
 
 # ----- INSTALL LIBRARY ----- #

@@ -16,8 +16,9 @@ int main(int argc, char* argv[]) {
 
 	// check our arguments
 	if ((argc < 2) || (argc > 3)) {
-		std::cout << "glass-app version " << std::to_string(PROJECT_VERSION_MAJOR)
-					<< "." << std::to_string(PROJECT_VERSION_MINOR) << "."
+		std::cout << "glass-app version "
+					<< std::to_string(PROJECT_VERSION_MAJOR) << "."
+					<< std::to_string(PROJECT_VERSION_MINOR) << "."
 					<< std::to_string(PROJECT_VERSION_PATCH) << "; Usage: "
 					<< "glass-app <configfile> [noconsole]" << std::endl;
 		return 1;
@@ -59,7 +60,7 @@ int main(int argc, char* argv[]) {
 	// now load our basic config from file
 	// note, main is gonna get cluttered, move this section
 	// to it's own function eventually
-	util::Config * glassConfig = new util::Config();
+	glass3::util::Config * glassConfig = new glass3::util::Config();
 
 	try {
 		glassConfig->parseJSONFromFile("", std::string(argv[1]));
@@ -116,9 +117,9 @@ int main(int argc, char* argv[]) {
 		initconfigfile = (glassConfig->getJSON())["InitializeFile"].ToString();
 	}
 
-	util::Config * InitializeConfig;
+	glass3::util::Config * InitializeConfig;
 	try {
-		InitializeConfig = new util::Config(configdir, initconfigfile);
+		InitializeConfig = new glass3::util::Config(configdir, initconfigfile);
 	} catch (std::exception& e) {
 		logger::log(
 				"critcalerror",
@@ -148,9 +149,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	// get our stationlist
-	util::Config * StationList;
+	glass3::util::Config * StationList;
 	try {
-		StationList = new util::Config(configdir, stationlistfile);
+		StationList = new glass3::util::Config(configdir, stationlistfile);
 	} catch (std::exception& e) {
 		logger::log(
 				"critcalerror",
@@ -212,9 +213,9 @@ int main(int argc, char* argv[]) {
 		inputconfigfile = (glassConfig->getJSON())["InputConfig"].ToString();
 	}
 
-	util::Config * InputConfig;
+	glass3::util::Config * InputConfig;
 	try {
-		InputConfig = new util::Config(configdir, inputconfigfile);
+		InputConfig = new glass3::util::Config(configdir, inputconfigfile);
 	} catch (std::exception& e) {
 		logger::log(
 				"critcalerror",
@@ -246,9 +247,9 @@ int main(int argc, char* argv[]) {
 	} else {
 		outputconfigfile = (glassConfig->getJSON())["OutputConfig"].ToString();
 	}
-	util::Config * OutputConfig;
+	glass3::util::Config * OutputConfig;
 	try {
-		OutputConfig = new util::Config(configdir, outputconfigfile);
+		OutputConfig = new glass3::util::Config(configdir, outputconfigfile);
 	} catch (std::exception& e) {
 		logger::log(
 				"critcalerror",
@@ -329,8 +330,8 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < gridconfigfilelist.size(); i++) {
 		std::string gridconfigfile = gridconfigfilelist[i];
 		if (gridconfigfile != "") {
-			util::Config * GridConfig = new util::Config(configdir,
-															gridconfigfile);
+			glass3::util::Config * GridConfig = new glass3::util::Config(
+					configdir, gridconfigfile);
 			json::Object * GridConfigJSON = new json::Object(
 					GridConfig->getJSON());
 
@@ -358,13 +359,13 @@ int main(int argc, char* argv[]) {
 		logger::log("trace", "glass: Checking thread status.");
 
 		// check thread health
-		if (InputThread->check() == false) {
+		if (InputThread->healthCheck() == false) {
 			logger::log("error", "glass: Input thread has exited!!");
 			break;
-		} else if (OutputThread->check() == false) {
+		} else if (OutputThread->healthCheck() == false) {
 			logger::log("error", "glass: Output thread has exited!!");
 			break;
-		} else if (AssocThread->check() == false) {
+		} else if (AssocThread->healthCheck() == false) {
 			logger::log("error", "glass: Association thread has exited!!");
 			break;
 		}

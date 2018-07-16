@@ -11,6 +11,7 @@
 #include <string>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 /**
  * \brief glass parser class
@@ -92,4 +93,5 @@ class Parser {
 	std::string m_Author;
 };
 }  // namespace parse
+}  // namespace glass3
 #endif  // PARSER_H

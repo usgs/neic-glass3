@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 /**
  * \brief glass cross correlation parser class
@@ -67,4 +68,5 @@ class CCParser : public Parser {
 	bool validate(std::shared_ptr<json::Object> &input) override;
 };
 }  // namespace parse
+}  // namespace glass3
 #endif  // CCPARSER_H

@@ -7,13 +7,13 @@
 // tests to see if the queue is functional
 TEST(BaseClassTest, CombinedTest) {
 	// create a queue
-	util::BaseClass * TestBaseClass = new util::BaseClass();
+	glass3::util::BaseClass * TestBaseClass = new glass3::util::BaseClass();
 
 	// assert that class not set up
-	ASSERT_FALSE(TestBaseClass->m_bIsSetup)<< "baseclass not set up";
+	ASSERT_FALSE(TestBaseClass->getSetup())<< "baseclass not set up";
 
 	// assert no configuration
-	ASSERT_TRUE(TestBaseClass->m_Config == NULL)<< "null config data";
+	ASSERT_TRUE(TestBaseClass->getConfig() == NULL)<< "null config data";
 
 	// generate configuration
 	std::string configstring = std::string(TESTCONFIG);
@@ -23,25 +23,23 @@ TEST(BaseClassTest, CombinedTest) {
 	ASSERT_TRUE(TestBaseClass->setup(&configuration))<< "setup baseclass";
 
 	// assert that class is set up
-	ASSERT_TRUE(TestBaseClass->m_bIsSetup)<< "baseclass is set up";
+	ASSERT_TRUE(TestBaseClass->getSetup())<< "baseclass is set up";
 
 	// assert configuration
-	ASSERT_TRUE(TestBaseClass->m_Config != NULL)<< "non-null config data";
+	ASSERT_TRUE(TestBaseClass->getConfig() != NULL)<< "non-null config data";
 
 	// check configuration
-	std::string baseclassconfig = json::Serialize(*TestBaseClass->m_Config);
+	std::string baseclassconfig = json::Serialize(*TestBaseClass->getConfig());
 	ASSERT_STREQ(configstring.c_str(), baseclassconfig.c_str());
 
 	// clear config
 	TestBaseClass->clear();
 
 	// assert that class not set up
-	ASSERT_FALSE(TestBaseClass->m_bIsSetup)
-		<< "baseclass not set up after clear";
+	ASSERT_FALSE(TestBaseClass->getSetup())<< "baseclass not set up after clear";
 
 	// assert no configuration
-	ASSERT_TRUE(TestBaseClass->m_Config == NULL)
-		<< "null config data after clear";
+	ASSERT_TRUE(TestBaseClass->getConfig() == NULL)<< "null config data after clear";
 
 	// cleanup
 	delete (TestBaseClass);

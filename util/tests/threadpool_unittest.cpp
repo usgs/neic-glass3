@@ -12,7 +12,6 @@
 #define THREADPOOLNAME "testpool"
 #define NUMTHREADS 5
 #define SLEEPTIME 100
-#define MAXJOBS 3
 #define CHECKTIME 1
 
 #define TESTJOB1RESULT 25
@@ -45,48 +44,54 @@ void testjob5() {
 	testjob5data = 45 * 88 * 55;
 }
 
-static bool haltbadjob = false;
 int result = 0;
 void badjob() {
 	result = 0;
-	while (haltbadjob == false) {
-		result = 1 + 1;
-	}
+	throw std::invalid_argument("Bad Job");
 }
 
-// tests to see if the config library file reading is functional
+// tests to see if the threadpool is functional
 TEST(ThreadPoolTest, CombinedTest) {
 	std::string poolname = std::string(THREADPOOLNAME);
 
 	// create a threadpool object
-	util::ThreadPool * ThreadPool = new util::ThreadPool(poolname, NUMTHREADS,
-	SLEEPTIME,
-															CHECKTIME);
+	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool(
+			poolname, NUMTHREADS,
+			SLEEPTIME,
+			CHECKTIME);
 
 	// assert threads running
-	ASSERT_TRUE(ThreadPool->getBRunJobLoop())<< "check threads running";
+	ASSERT_TRUE(aThreadPool->isRunning())<< "check threads running";
 
 	// assert pool name
-	ASSERT_STREQ(ThreadPool->getSPoolName().c_str(), poolname.c_str())<<
-			"empty config string";
+	ASSERT_STREQ(aThreadPool->getPoolName().c_str(), poolname.c_str())<<
+	"pool name";
 
 	// assert number of threads
-	ASSERT_EQ(ThreadPool->getINumThreads(), NUMTHREADS)<<
-			"check number of pool threads";
+	ASSERT_EQ(aThreadPool->getNumThreads(), NUMTHREADS)<<
+	"check number of pool threads";
 
 	// assert thread sleep time
-	ASSERT_EQ(ThreadPool->getISleepTimeMs(), SLEEPTIME)<<
-			"check thread sleep time";
+	ASSERT_EQ(aThreadPool->getSleepTime(), SLEEPTIME)<<
+	"check thread sleep time";
+
+	// assert thread check time
+	ASSERT_EQ(aThreadPool->getHealthCheckInterval(), CHECKTIME)<<
+	"check thread check time";
+
+	// check job queue size
+	ASSERT_EQ(aThreadPool->getJobQueueSize(), 0)<<
+	"check job queue";
 
 	// add some jobs
-	ThreadPool->addJob(std::bind(&testjob1));
-	ThreadPool->addJob(std::bind(&testjob2));
-	ThreadPool->addJob(std::bind(&testjob3));
-	ThreadPool->addJob(std::bind(&testjob4));
-	ThreadPool->addJob(std::bind(&testjob5));
+	aThreadPool->addJob(std::bind(&testjob1));
+	aThreadPool->addJob(std::bind(&testjob2));
+	aThreadPool->addJob(std::bind(&testjob3));
+	aThreadPool->addJob(std::bind(&testjob4));
+	aThreadPool->addJob(std::bind(&testjob5));
 
 	// give time for jobs to finish
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+	std::this_thread::sleep_for(std::chrono::seconds(2));
 
 	// check job results
 	ASSERT_EQ(testjob1data, TESTJOB1RESULT)<< "test job 1 is correct";
@@ -96,46 +101,63 @@ TEST(ThreadPoolTest, CombinedTest) {
 	ASSERT_EQ(testjob5data, TESTJOB5RESULT)<< "test job 5 is correct";
 
 	// assert that check is true
-	ASSERT_TRUE(ThreadPool->check())<< "ThreadPool check is true";
+	ASSERT_TRUE(aThreadPool->healthCheck())<< "ThreadPool check is true";
+
+	// assert that stop is true
+	ASSERT_TRUE(aThreadPool->stop())<< "ThreadPool stop is true";
+
+	ASSERT_FALSE(aThreadPool->getAllJobsHealth())<< "getAllStatus is false";
+
+	// assert that check is false
+	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
 
 	// shutdown threadpool.
-	delete (ThreadPool);
+	delete (aThreadPool);
 }
 
-// tests to see if the config library file reading is functional
+// tests to see if thread pool monitoring works
 TEST(ThreadPoolTest, MonitoringTest) {
 	std::string poolname = std::string(THREADPOOLNAME);
 
 	// create a threadpool object
-	util::ThreadPool * ThreadPool = new util::ThreadPool(poolname, NUMTHREADS,
-	SLEEPTIME, CHECKTIME);
+	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool(
+			poolname, NUMTHREADS,
+			SLEEPTIME,
+			CHECKTIME);
 
 	// give time for jobs to be monitored
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert that check is true
-	ASSERT_TRUE(ThreadPool->check())<< "ThreadPool check is true";
+	ASSERT_TRUE(aThreadPool->healthCheck())<< "ThreadPool healthCheck is true";
 
-	/* Disabled because bad job doesn't seem to want to exit
-	 * need to rethink
 	// add a bad job
-	ThreadPool->addJob(std::bind(&badjob));
+	aThreadPool->addJob(std::bind(&badjob));
 
 	// give time for jobs to be monitored
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert that check is true
-	ASSERT_TRUE(ThreadPool->check())<< "ThreadPool check is true";
+	ASSERT_TRUE(aThreadPool->healthCheck())<< "ThreadPool check is true";
 
 	// give time for jobs to be monitored
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert that check is false
-	ASSERT_FALSE(ThreadPool->check())<< "ThreadPool check is false";
+	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
 
-	// free up the bad job
-	haltbadjob = true;
-*/
 	// shutdown threadpool.
-	delete (ThreadPool);
+	delete (aThreadPool);
 }
+
+// tests various failure conditions
+TEST(ThreadPoolTest, FailTests) {
+	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool();
+
+	// assert that check is false
+	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
+
+	// shutdown threadpool.
+	delete (aThreadPool);
+}
+

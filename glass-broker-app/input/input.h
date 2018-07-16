@@ -31,7 +31,7 @@ namespace glass {
  * input inherits from the threadbaseclass class.
  * input implements the ioutput interface.
  */
-class input : public util::iInput, public util::ThreadBaseClass {
+class input : public glass3::util::iInput, public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief input constructor
@@ -193,12 +193,12 @@ class input : public util::iInput, public util::ThreadBaseClass {
 	/**
 	 * \brief the data queue
 	 */
-	util::Queue* m_DataQueue;
+	glass3::util::Queue* m_DataQueue;
 
 	/**
 	 * \brief the json format parsing object
 	 */
-	parse::JSONParser * m_JSONParser;
+	glass3::parse::JSONParser * m_JSONParser;
 
 	/**
 	 * \brief the consumer object to get messages from

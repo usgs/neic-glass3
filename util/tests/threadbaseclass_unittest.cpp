@@ -8,28 +8,48 @@
 #define TESTSTOPCOUNT 10
 #define WAITTIME 2
 
-class threadbasestub : public util::ThreadBaseClass {
+// stub class based on ThreadBaseClass for unit tests
+class threadbasestub : public glass3::util::ThreadBaseClass {
  public:
+	// basic constructor
 	threadbasestub()
-			: util::ThreadBaseClass(TESTTHREADNAME, TESTSLEEPTIME) {
+			: glass3::util::ThreadBaseClass() {
 		runcount = 0;
 		startcount = false;
-		m_iCheckInterval = 1;
+		setHealthCheckInterval(1);
+		kill = false;
+	}
+
+	// alternate constructor
+	threadbasestub(std::string& name, int time)
+			: glass3::util::ThreadBaseClass(name, time) {
+		runcount = 0;
+		startcount = false;
+		setHealthCheckInterval(1);
 		kill = false;
 	}
 
 	~threadbasestub() {
 	}
 
+	// flag to control when the work threads start counting
 	bool startcount;
 
+	// flag to shut down the work threads
 	bool kill;
 
 	// count the runs
 	int runcount;
 
+	// function to expose protected setRunning() function from ThreadBaseClass
+	void testSetRunning(bool running) {
+		setRunning(running);
+	}
+
  protected:
+	// work function for tests
 	bool work() override {
+		// check for shutdown
 		if (kill) {
 			return (false);
 		}
@@ -41,42 +61,46 @@ class threadbasestub : public util::ThreadBaseClass {
 			runcount++;
 
 			// work successful
-			setWorkCheck();
+			setThreadHealth();
 			return (true);
 		}
 
-		setWorkCheck();
+		// still alive
+		setThreadHealth();
 		return (true);
 	}
 };
 
 // tests to see if the threadbaseclass is functional
 TEST(ThreadBaseClassTest, CombinedTest) {
+	std::string name = std::string(TESTTHREADNAME);
+
 	// create a threadbasestub
-	threadbasestub * TestThreadBaseStub = new threadbasestub();
+	threadbasestub * TestThreadBaseStub = new threadbasestub(name,
+	TESTSLEEPTIME);
 
 	// assert that class not started
-	ASSERT_FALSE(TestThreadBaseStub->getStarted())<<
-			"TestThreadBaseStub not started";
+	ASSERT_FALSE(TestThreadBaseStub->isStarted())<<
+	"TestThreadBaseStub not started";
 
 	// assert that class not running
 	ASSERT_FALSE(TestThreadBaseStub->isRunning())<<
-			"TestThreadBaseStub not running";
+	"TestThreadBaseStub not running";
 
-	// assert that check is true
-	ASSERT_TRUE(TestThreadBaseStub->check())<<
-			"TestThreadBaseStub check is true";
+	// assert that healthCheck is true
+	ASSERT_TRUE(TestThreadBaseStub->healthCheck())<<
+	"TestThreadBaseStub healthCheck is true";
 
 	// check sleep time
 	ASSERT_EQ(TestThreadBaseStub->getSleepTime(), TESTSLEEPTIME)<<
-			"Check sleep time";
+	"Check sleep time";
 
 	// change sleeptime
 	TestThreadBaseStub->setSleepTime(TESTSLEEPTIMECHANGE);
 
 	// check changed sleep time
 	ASSERT_EQ(TestThreadBaseStub->getSleepTime(), TESTSLEEPTIMECHANGE)<<
-			"Check changed sleep time";
+	"Check changed sleep time";
 
 	// check thread name
 	std::string testthreadname = std::string(TESTTHREADNAME);
@@ -85,12 +109,10 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 
 	// start the thread
 	ASSERT_TRUE(TestThreadBaseStub->start())<< "start was successful";
-	ASSERT_FALSE(TestThreadBaseStub->start())<<
-			"second start was not successful";
 
 	// assert that class started
-	ASSERT_TRUE(TestThreadBaseStub->getStarted())<<
-			"TestThreadBaseStub started";
+	ASSERT_TRUE(TestThreadBaseStub->isStarted())<<
+	"TestThreadBaseStub started";
 
 	// wait a little while
 	std::this_thread::sleep_for(std::chrono::seconds(WAITTIME / 2));
@@ -98,9 +120,9 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	// assert that class running
 	ASSERT_TRUE(TestThreadBaseStub->isRunning())<< "TestThreadBaseStub running";
 
-	// assert that check is true
-	ASSERT_TRUE(TestThreadBaseStub->check())<<
-			"TestThreadBaseStub check is true";
+	// assert that healthCheck is true
+	ASSERT_TRUE(TestThreadBaseStub->healthCheck())<<
+	"TestThreadBaseStub healthCheck is true";
 
 	// tell stub to start counting
 	TestThreadBaseStub->startcount = true;
@@ -108,9 +130,9 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	// wait a little while
 	std::this_thread::sleep_for(std::chrono::seconds(WAITTIME));
 
-	// assert that check is true
-	ASSERT_TRUE(TestThreadBaseStub->check())<<
-			"TestThreadBaseStub check is true";
+	// assert that healthCheck is true
+	ASSERT_TRUE(TestThreadBaseStub->healthCheck())<<
+	"TestThreadBaseStub healthCheck is true";
 
 	// check count
 	ASSERT_EQ(TestThreadBaseStub->runcount, TESTSTOPCOUNT)<< "Check count";
@@ -119,16 +141,16 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	ASSERT_TRUE(TestThreadBaseStub->stop())<< "stop was successful";
 
 	// assert that class not started
-	ASSERT_FALSE(TestThreadBaseStub->getStarted())<<
-			"TestThreadBaseStub not started";
+	ASSERT_FALSE(TestThreadBaseStub->isStarted())<<
+	"TestThreadBaseStub not started";
 
 	// assert that class not running
 	ASSERT_FALSE(TestThreadBaseStub->isRunning())<<
-			"TestThreadBaseStub not running";
+	"TestThreadBaseStub not running";
 
-	// assert that check is true
-	ASSERT_TRUE(TestThreadBaseStub->check())<<
-			"TestThreadBaseStub check is true";
+	// assert that healthCheck is true
+	ASSERT_TRUE(TestThreadBaseStub->healthCheck())<<
+	"TestThreadBaseStub healthCheck is true";
 
 	// cleanup
 	delete (TestThreadBaseStub);
@@ -136,8 +158,11 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 
 // tests to see if the queue is functional
 TEST(ThreadBaseClassTest, KillTest) {
+	std::string name = std::string(TESTTHREADNAME);
+
 	// create a threadbasestub
-	threadbasestub * TestThreadBaseStub = new threadbasestub();
+	threadbasestub * TestThreadBaseStub = new threadbasestub(name,
+	TESTSLEEPTIME);
 
 	// start the thread
 	ASSERT_TRUE(TestThreadBaseStub->start())<< "start was successful";
@@ -145,9 +170,9 @@ TEST(ThreadBaseClassTest, KillTest) {
 	// wait a little while
 	std::this_thread::sleep_for(std::chrono::seconds(WAITTIME));
 
-	// assert that check is true
-	ASSERT_TRUE(TestThreadBaseStub->check())<<
-			"TestThreadBaseStub check is true";
+	// assert that healthCheck is true
+	ASSERT_TRUE(TestThreadBaseStub->healthCheck())<<
+	"TestThreadBaseStub healthCheck is true";
 
 	// kill it
 	TestThreadBaseStub->kill = true;
@@ -155,10 +180,43 @@ TEST(ThreadBaseClassTest, KillTest) {
 	// wait a little while
 	std::this_thread::sleep_for(std::chrono::seconds(WAITTIME));
 
-	// assert that check is true
-	ASSERT_FALSE(TestThreadBaseStub->check())<<
-			"TestThreadBaseStub check is false";
+	// assert that healthCheck is false
+	ASSERT_FALSE(TestThreadBaseStub->healthCheck())<<
+	"TestThreadBaseStub healthCheck is false";
 
 	// cleanup
 	delete (TestThreadBaseStub);
+}
+
+// tests various failure conditions
+TEST(ThreadBaseClassTest, FailTests) {
+	// create a threadbasestub
+	threadbasestub * TestThreadBaseStub = new threadbasestub();
+
+	// assert we can't stop what we've not started
+	ASSERT_FALSE(TestThreadBaseStub->stop())<<
+	"TestThreadBaseStub stop is false";
+
+	// start the thread
+	ASSERT_TRUE(TestThreadBaseStub->start())<< "start was successful";
+	ASSERT_FALSE(TestThreadBaseStub->start())<<
+	"second start was not successful";
+
+	// allocation test
+	TestThreadBaseStub->testSetRunning(false);
+	ASSERT_FALSE(TestThreadBaseStub->start())<<
+	"second start was not successful";
+
+	// kill it
+	TestThreadBaseStub->kill = true;
+
+	// wait a little while
+	std::this_thread::sleep_for(std::chrono::seconds(WAITTIME));
+	ASSERT_FALSE(TestThreadBaseStub->stop())<<
+	"stop after fail was not successful";
+
+	TestThreadBaseStub->testSetRunning(true);
+	TestThreadBaseStub->setThreadHealth(false);
+	ASSERT_FALSE(TestThreadBaseStub->healthCheck())<<
+	"TestThreadBaseStub healthCheck is false";
 }

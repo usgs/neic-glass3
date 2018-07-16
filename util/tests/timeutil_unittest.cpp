@@ -15,13 +15,15 @@ TEST(TimeUtil, ConvertEpochTimeToISO8601) {
 
 	// test decimal epoch time to ISO8601 conversion
 	double dEpochTime = EPOCHTIME;
-	std::string ConvertedISO8601 = util::convertEpochTimeToISO8601(dEpochTime);
+	std::string ConvertedISO8601 = glass3::util::convertEpochTimeToISO8601(
+			dEpochTime);
 	ASSERT_STREQ(ConvertedISO8601.c_str(), ExpectedISO8601.c_str());
 
 	// test time_t style epoch time to ISO8601 conversion
 	time_t tEpochTime = TIMET;
 	double dDecimalSec = DECIMALSEC;
-	ConvertedISO8601 = util::convertEpochTimeToISO8601(tEpochTime, dDecimalSec);
+	ConvertedISO8601 = glass3::util::convertEpochTimeToISO8601(tEpochTime,
+																dDecimalSec);
 	ASSERT_STREQ(ConvertedISO8601.c_str(), ExpectedISO8601.c_str());
 }
 
@@ -31,7 +33,8 @@ TEST(TimeUtil, ConvertDateTimeToISO8601) {
 	std::string DateTime = std::string(DATETIME);
 
 	// test decimal epoch time to ISO8601 conversion
-	std::string ConvertedISO8601 = util::convertDateTimeToISO8601(DateTime);
+	std::string ConvertedISO8601 = glass3::util::convertDateTimeToISO8601(
+			DateTime);
 	ASSERT_STREQ(ConvertedISO8601.c_str(), ExpectedISO8601.c_str());
 }
 
@@ -41,7 +44,8 @@ TEST(TimeUtil, ConvertDateTimeToEpochTime) {
 	std::string DateTime = std::string(DATETIME);
 
 	// test DateTime to epoch time conversion
-	double ConvertedEpochTime = util::convertDateTimeToEpochTime(DateTime);
+	double ConvertedEpochTime = glass3::util::convertDateTimeToEpochTime(
+			DateTime);
 	ASSERT_EQ(ConvertedEpochTime, ExpectedEpochTime);
 }
 
@@ -51,18 +55,25 @@ TEST(TimeUtil, ConvertISO8601ToEpochTime) {
 	std::string ISO8601Time = std::string(ISO8601TIME);
 
 	// test ISO8601 to  epoch time conversion
-	double ConvertedEpochTime = util::convertISO8601ToEpochTime(ISO8601Time);
+	double ConvertedEpochTime = glass3::util::convertISO8601ToEpochTime(
+			ISO8601Time);
 	ASSERT_EQ(ConvertedEpochTime, ExpectedEpochTime);
 }
 
 // fail tests
 TEST(TimeUtil, FailTests) {
 	// test various bad strings
-	ASSERT_EQ(util::convertISO8601ToEpochTime(""), -1);
-	ASSERT_EQ(util::convertISO8601ToEpochTime("12345678901234567890"), -1);
-	ASSERT_EQ(util::convertISO8601ToEpochTime("AAAAAAAAAAAAAAAAAAAAAAAA"), -1);
-	ASSERT_EQ(util::convertDateTimeToEpochTime(""), -1);
-	ASSERT_EQ(util::convertDateTimeToEpochTime("1234567890123456"), -1);
-	ASSERT_EQ(util::convertDateTimeToEpochTime("AAAAAAAAAAAAAAAAAAAAAAAA"), -1);
+	ASSERT_EQ(glass3::util::convertISO8601ToEpochTime(""), -1);
+	ASSERT_EQ(glass3::util::convertISO8601ToEpochTime("12345678901234567890"),
+				-1);
+	ASSERT_EQ(
+			glass3::util::convertISO8601ToEpochTime("AAAAAAAAAAAAAAAAAAAAAAAA"),
+			-1);
+	ASSERT_EQ(glass3::util::convertDateTimeToEpochTime(""), -1);
+	ASSERT_EQ(glass3::util::convertDateTimeToEpochTime("1234567890123456"), -1);
+	ASSERT_EQ(
+			glass3::util::convertDateTimeToEpochTime(
+					"AAAAAAAAAAAAAAAAAAAAAAAA"),
+			-1);
 }
 

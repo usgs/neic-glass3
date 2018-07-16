@@ -1,33 +1,62 @@
 #include <baseclass.h>
 #include <json.h>
 #include <logger.h>
+#include <mutex>
 
+namespace glass3 {
 namespace util {
-// construction / destruction
-BaseClass::BaseClass() {
-	logger::log("debug", "BaseClass::BaseClass(): Construction.");
 
+// ---------------------------------------------------------BaseClass
+BaseClass::BaseClass() {
 	m_bIsSetup = false;
 	m_Config = NULL;
 }
 
+// ---------------------------------------------------------~BaseClass
 BaseClass::~BaseClass() {
-	logger::log("debug", "BaseClass::~BaseClass(): Destruction.");
+	clear();
 }
 
-// configuration
+// ---------------------------------------------------------setup
 bool BaseClass::setup(json::Object *config) {
-	// to be overrided by child classes
+	std::lock_guard<std::mutex> guard(getMutex());
+
+	// null check
+	if (config == NULL) {
+		return (false);
+	}
+
+	// to be overridden by child classes
 	m_Config = config;
 	m_bIsSetup = true;
 
 	return (true);
 }
 
+// ---------------------------------------------------------clear
 void BaseClass::clear() {
-	// to be overrided by child classes
+	std::lock_guard<std::mutex> guard(getMutex());
+
+	// to be overridden by child classes
 	m_Config = NULL;
 	m_bIsSetup = false;
 }
-}  // namespace util
 
+// ---------------------------------------------------------getConfig
+const json::Object * BaseClass::getConfig() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_Config);
+}
+
+// ---------------------------------------------------------getSetup
+bool BaseClass::getSetup() {
+	return (m_bIsSetup);
+}
+
+// ---------------------------------------------------------getMutex
+std::mutex & BaseClass::getMutex() {
+	return (m_Mutex);
+}
+
+}  // namespace util
+}  // namespace glass3

@@ -2,60 +2,64 @@
 #include <logger.h>
 #include <thread>
 #include <string>
+#include <ctime>
 
+namespace glass3 {
 namespace util {
-// construction / destruction
+
+// ---------------------------------------------------------ThreadBaseClass
 ThreadBaseClass::ThreadBaseClass()
 		: util::BaseClass() {
-	logger::log("debug", "ThreadBaseClass::ThreadBaseClass(): Construction.");
-
-	m_sThreadName = "NYI";
-	m_iSleepTimeMS = 100;
-	m_bRunWorkThread = false;
-	m_bCheckWorkThread = true;
-	m_bStarted = false;
+	setThreadName("unknown");
+	setRunning(false);
+	setThreadHealth(true);
+	setStarted(false);
 	m_WorkThread = NULL;
 
-	m_iCheckInterval = 1;
-	std::time(&tLastCheck);
+	setHealthCheckInterval(1);
+	setLastHealthCheck(std::time(nullptr));
+
+	setSleepTime(100);
 }
 
+// ---------------------------------------------------------ThreadBaseClass
 ThreadBaseClass::ThreadBaseClass(std::string threadname, int sleeptimems)
 		: util::BaseClass() {
-	m_sThreadName = threadname;
-	m_bRunWorkThread = false;
-	m_bCheckWorkThread = true;
-	m_bStarted = false;
+	setThreadName(threadname);
+	setRunning(false);
+	setThreadHealth(true);
+	setStarted(false);
 	m_WorkThread = NULL;
 
-	m_iCheckInterval = 1;
-	std::time(&tLastCheck);
+	setHealthCheckInterval(1);
+	setLastHealthCheck(std::time(nullptr));
 
 	setSleepTime(sleeptimems);
 }
 
+// ---------------------------------------------------------~ThreadBaseClass
 ThreadBaseClass::~ThreadBaseClass() {
 	logger::log(
 			"debug",
 			"ThreadBaseClass::~ThreadBaseClass(): Destruction. ("
-					+ m_sThreadName + ")");
+					+ getThreadName() + ")");
 
 	stop();
 }
 
-// threading
+// ---------------------------------------------------------start
 bool ThreadBaseClass::start() {
 	logger::log(
 			"trace",
-			"ThreadBaseClass::start(): Starting Work Thread. (" + m_sThreadName
-					+ ")");
+			"ThreadBaseClass::start(): Starting Work Thread. ("
+					+ getThreadName() + ")");
 
 	// are we already running
-	if (m_bRunWorkThread == true) {
+	if (isRunning() == true) {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::start(): Work Thread is already running. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
@@ -64,34 +68,31 @@ bool ThreadBaseClass::start() {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::start(): Work Thread is already allocated. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
-	m_bStarted = true;
+	// we've been started
+	setStarted(true);
 
 	// start the thread
 	m_WorkThread = new std::thread(&ThreadBaseClass::workLoop, this);
 
 	logger::log(
 			"debug",
-			"ThreadBaseClass::start(): Started Work Thread. (" + m_sThreadName
+			"ThreadBaseClass::start(): Started Work Thread. (" + getThreadName()
 					+ ")");
 	return (true);
 }
 
+// ---------------------------------------------------------stop
 bool ThreadBaseClass::stop() {
-	logger::log(
-			"trace",
-			"ThreadBaseClass::stop(): Stopping Work Thread. (" + m_sThreadName
-					+ ")");
-
 	// check if we're running
-	if (m_bRunWorkThread == false) {
+	if (isRunning() == false) {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::stop(): Work Thread is not running. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
@@ -100,14 +101,15 @@ bool ThreadBaseClass::stop() {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::stop(): Work Thread is not allocated. ("
-						+ m_sThreadName + ")");
+						+ getThreadName() + ")");
 		return (false);
 	}
 
-	m_bStarted = false;
+	// we're no longer started
+	setStarted(false);
 
 	// tell the thread to stop
-	m_bRunWorkThread = false;
+	setRunning(false);
 
 	// wait for the thread to finish
 	m_WorkThread->join();
@@ -117,92 +119,77 @@ bool ThreadBaseClass::stop() {
 	m_WorkThread = NULL;
 
 	// we're no longer running
-	m_bCheckWorkThread = false;
+	setThreadHealth(false);
 
 	// done
 	logger::log(
 			"debug",
-			"ThreadBaseClass::stop(): Stopped Work Thread. (" + m_sThreadName
+			"ThreadBaseClass::stop(): Stopped Work Thread. (" + getThreadName()
 					+ ")");
 	return (true);
 }
 
-bool ThreadBaseClass::check() {
-	logger::log(
-			"trace",
-			"ThreadBaseClass::check(): Checking to see if thread is working. ("
-					+ m_sThreadName + ")");
-
+// ---------------------------------------------------------healthCheck
+bool ThreadBaseClass::healthCheck() {
 	// don't check if we've not started
-	if (m_bStarted == false)
+	if (isStarted() == false) {
 		return (true);
+	}
 
 	// if we have a negative check interval,
 	// we shouldn't worry about thread health checks.
-	if (m_iCheckInterval < 0)
+	if (getHealthCheckInterval() < 0) {
 		return (true);
+	}
 
 	// thread is dead if we're not running
-	if (m_bRunWorkThread == false) {
+	if (isRunning() == false) {
 		logger::log(
 				"error",
-				"ThreadBaseClass::check(): m_bRunWorkThread is false. ("
-						+ m_sThreadName + ")");
+				"ThreadBaseClass::healthCheck(): m_bRunWorkThread is false. ("
+						+ getThreadName() + ")");
 		return (false);
 	}
 
 	// see if it's time to check
 	time_t tNow;
 	std::time(&tNow);
-	if ((tNow - tLastCheck) >= m_iCheckInterval) {
-		// lock the mutex to make sure we
-		// don't run into a threading issue
-		// this *may* be excessive
-		m_CheckMutex.lock();
-
+	if ((tNow - getLastHealthCheck()) >= getHealthCheckInterval()) {
 		// if the check is false, the thread is dead
-		if (m_bCheckWorkThread == false) {
-			m_CheckMutex.unlock();
+		if (getThreadHealth() == false) {
 			logger::log(
 					"error",
-					"ThreadBaseClass::check(): m_bCheckWorkThread is false. ("
-							+ m_sThreadName + ") after an interval of "
-							+ std::to_string(m_iCheckInterval) + " seconds.");
+					"ThreadBaseClass::healthCheck(): m_bThreadHealth is false. ("
+							+ getThreadName() + ") after an interval of "
+							+ std::to_string(getHealthCheckInterval())
+							+ " seconds.");
 			return (false);
 		}
 
 		// mark check as false until next time
 		// if the thread is alive, it'll mark it
 		// as true.
-		m_bCheckWorkThread = false;
-		m_CheckMutex.unlock();
+		setThreadHealth(false);
 
-		tLastCheck = tNow;
+		setLastHealthCheck(tNow);
 	}
 
 	// we passed this time
 	logger::log(
 			"trace",
-			"ThreadBaseClass::check(): Work Thread is still running. ("
-					+ m_sThreadName + ") after an interval of "
-					+ std::to_string(m_iCheckInterval) + " seconds.");
+			"ThreadBaseClass::healthCheck(): Work Thread is still running. ("
+					+ getThreadName() + ") after an interval of "
+					+ std::to_string(getHealthCheckInterval()) + " seconds.");
 	return (true);
 }
 
-void ThreadBaseClass::setSleepTime(int sleeptimems) {
-	m_iSleepTimeMS = sleeptimems;
-}
-
-int ThreadBaseClass::getSleepTime() {
-	return (m_iSleepTimeMS);
-}
-
+// ---------------------------------------------------------workLoop
 void ThreadBaseClass::workLoop() {
 	// we're running
-	m_bRunWorkThread = true;
+	setRunning(true);
 
 	// run until told to stop
-	while (m_bRunWorkThread) {
+	while (isRunning()) {
 		try {
 			// do our work
 			if (work() == false) {
@@ -212,7 +199,7 @@ void ThreadBaseClass::workLoop() {
 						"error",
 						"ThreadBaseClass::workLoop(): Work returned false, "
 								"something's wrong, stopping thread. ("
-								+ m_sThreadName + ")");
+								+ getThreadName() + ")");
 				break;
 			}
 		} catch (const std::exception &e) {
@@ -223,34 +210,94 @@ void ThreadBaseClass::workLoop() {
 			break;
 		}
 		// signal that we're still running
-		setWorkCheck();
+		setThreadHealth();
 
 		// give up some time at the end of the loop
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
+		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
 	}
 
 	logger::log(
 			"info",
-			"ThreadBaseClass::workLoop(): Stopped thread. (" + m_sThreadName
+			"ThreadBaseClass::workLoop(): Stopped thread. (" + getThreadName()
 					+ ")");
 
 	// we're no longer running
-	m_bRunWorkThread = false;
+	setRunning(false);
 
 	// done with thread
 	return;
 }
 
+// ---------------------------------------------------------setRunning
+void ThreadBaseClass::setRunning(bool running) {
+	m_bRunWorkThread = running;
+}
+
+// ---------------------------------------------------------isRunning
 bool ThreadBaseClass::isRunning() {
 	return (m_bRunWorkThread);
 }
 
-void ThreadBaseClass::setWorkCheck() {
-	// signal that we're still running
-	// mutex here *may* be excessive
-	m_CheckMutex.lock();
-	m_bCheckWorkThread = true;
-	m_CheckMutex.unlock();
+// ---------------------------------------------------------setThreadHealth
+void ThreadBaseClass::setThreadHealth(bool health) {
+	m_bThreadHealth = health;
+}
+
+// ---------------------------------------------------------getThreadHealth
+bool ThreadBaseClass::getThreadHealth() {
+	return (m_bThreadHealth);
+}
+
+// ---------------------------------------------------------setSleepTime
+void ThreadBaseClass::setSleepTime(int sleeptimems) {
+	m_iSleepTimeMS = sleeptimems;
+}
+
+// ---------------------------------------------------------getSleepTime
+int ThreadBaseClass::getSleepTime() {
+	return (m_iSleepTimeMS);
+}
+
+// -------------------------------------------------------setHealthCheckInterval
+void ThreadBaseClass::setHealthCheckInterval(int interval) {
+	m_iHealthCheckInterval = interval;
+}
+
+// -------------------------------------------------------getHealthCheckInterval
+int ThreadBaseClass::getHealthCheckInterval() {
+	return (m_iHealthCheckInterval);
+}
+
+// ---------------------------------------------------------setStarted
+void ThreadBaseClass::setStarted(bool started) {
+	m_bStarted = started;
+}
+
+// ---------------------------------------------------------isStarted
+bool ThreadBaseClass::isStarted() {
+	return (m_bStarted);
+}
+
+// ---------------------------------------------------------setThreadName
+void ThreadBaseClass::setThreadName(std::string name) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_sThreadName = name;
+}
+
+// ---------------------------------------------------------getThreadName
+const std::string& ThreadBaseClass::getThreadName() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sThreadName);
+}
+
+// ---------------------------------------------------------setLastHealthCheck
+void ThreadBaseClass::setLastHealthCheck(time_t now) {
+	m_tLastHealthCheck = now;
+}
+
+// ---------------------------------------------------------getLastHealthCheck
+time_t ThreadBaseClass::getLastHealthCheck() {
+	return ((time_t)m_tLastHealthCheck);
 }
 }  // namespace util
-
+}  // namespace glass3

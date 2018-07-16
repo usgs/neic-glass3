@@ -85,7 +85,7 @@ protected:
 		std::string configfile = std::string(CONFIGFILENAME);
 
 		// load configuration
-		InputConfig = new util::Config(configdirectory, configfile);
+		InputConfig = new glass3::util::Config(configdirectory, configfile);
 
 		// get json formatted configuration
 		input_config_json = new json::Object(InputConfig->getJSON());
@@ -98,22 +98,22 @@ protected:
 	virtual void TearDown() {
 		// need to move the files in error and archive back to input
 		if (std::ifstream(ccfile).good()) {
-			util::moveFileTo(ccfile, inputdirectory);
+			glass3::util::moveFileTo(ccfile, inputdirectory);
 		}
 		if (std::ifstream(gpickfile).good()) {
-			util::moveFileTo(gpickfile, inputdirectory);
+			glass3::util::moveFileTo(gpickfile, inputdirectory);
 		}
 		if (std::ifstream(jsonpickfile).good()) {
-			util::moveFileTo(jsonpickfile, inputdirectory);
+			glass3::util::moveFileTo(jsonpickfile, inputdirectory);
 		}
 		if (std::ifstream(jsoncorlfile).good()) {
-			util::moveFileTo(jsoncorlfile, inputdirectory);
+			glass3::util::moveFileTo(jsoncorlfile, inputdirectory);
 		}
 		if (std::ifstream(jsonorigfile).good()) {
-			util::moveFileTo(jsonorigfile, inputdirectory);
+			glass3::util::moveFileTo(jsonorigfile, inputdirectory);
 		}
 		if (std::ifstream(badfile).good()) {
-			util::moveFileTo(badfile, inputdirectory);
+			glass3::util::moveFileTo(badfile, inputdirectory);
 		}
 
 		// need to clean up error and archive directories
@@ -134,7 +134,7 @@ protected:
 	}
 
 	glass::input * InputThread;
-	util::Config * InputConfig;
+	glass3::util::Config * InputConfig;
 	json::Object * input_config_json;
 
 	std::string testpath;
@@ -169,10 +169,10 @@ TEST_F(InputTest, Construction) {
 		<< "check in file sleep time";
 
 	// assert class is not set up
-	ASSERT_FALSE(InputThread->m_bIsSetup) << "input thread is not set up";
+	ASSERT_FALSE(InputThread->getSetup()) << "input thread is not set up";
 
 	// assert class has no config
-	ASSERT_TRUE(InputThread->m_Config == NULL) << "input config is null";
+	ASSERT_TRUE(InputThread->getConfig() == NULL) << "input config is null";
 
 	// assert class is not running
 	ASSERT_FALSE(InputThread->isRunning()) << "input thread is not running";
@@ -186,10 +186,10 @@ TEST_F(InputTest, Configuration) {
 	ASSERT_TRUE(configure()) << "InputThread->setup returned true";
 
 	// assert class is set up
-	ASSERT_TRUE(InputThread->m_bIsSetup) << "input thread is set up";
+	ASSERT_TRUE(InputThread->getSetup()) << "input thread is set up";
 
 	// assert class has config
-	ASSERT_TRUE(InputThread->m_Config != NULL) << "input config is notnull";
+	ASSERT_TRUE(InputThread->getConfig() != NULL) << "input config is notnull";
 
 	// check input directory
 	ASSERT_STREQ(InputThread->getSInputDir().c_str(),

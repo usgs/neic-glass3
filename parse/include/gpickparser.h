@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 
+namespace glass3 {
 namespace parse {
 /**
  * \brief glass global pick parser class
@@ -67,4 +68,5 @@ class GPickParser : public Parser {
 	bool validate(std::shared_ptr<json::Object> &input) override;
 };
 }  // namespace parse
+}  // namespace glass3
 #endif  // GPICKPARSER_H

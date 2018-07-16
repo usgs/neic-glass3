@@ -15,7 +15,7 @@
 namespace glass {
 
 input::input()
-		: util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input", 100) {
 	logger::log("debug", "input::input(): Construction.");
 
 	m_DataQueue = NULL;
@@ -26,7 +26,7 @@ input::input()
 }
 
 input::input(int linesleepms)
-		: util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input", 100) {
 	m_DataQueue = NULL;
 	m_Consumer = NULL;
 	m_JSONParser = NULL;
@@ -35,7 +35,7 @@ input::input(int linesleepms)
 }
 
 input::input(json::Object *config, int linesleepms)
-		: util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input", 100) {
 	m_DataQueue = NULL;
 	m_Consumer = NULL;
 	m_JSONParser = NULL;
@@ -58,7 +58,7 @@ input::~input() {
 
 	if (m_DataQueue != NULL) {
 		// clear the queue
-		m_DataQueue->clearQueue();
+		m_DataQueue->clear();
 
 		delete (m_DataQueue);
 	}
@@ -214,17 +214,17 @@ bool input::setup(json::Object *config) {
 
 	if (m_JSONParser != NULL)
 		delete (m_JSONParser);
-	m_JSONParser = new parse::JSONParser(m_sDefaultAgencyID, m_sDefaultAuthor);
+	m_JSONParser = new glass3::parse::JSONParser(m_sDefaultAgencyID, m_sDefaultAuthor);
 
 	if (m_DataQueue != NULL)
 		delete (m_DataQueue);
-	m_DataQueue = new util::Queue();
+	m_DataQueue = new glass3::util::Queue();
 
 	logger::log("debug", "input::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
-	util::BaseClass::setup(config);
+	glass3::util::BaseClass::setup(config);
 
 	// we're done
 	return (true);
@@ -246,10 +246,10 @@ void input::clear() {
 	m_ConfigMutex.unlock();
 
 	if (m_DataQueue != NULL)
-		m_DataQueue->clearQueue();
+		m_DataQueue->clear();
 
 	// finally do baseclass clear
-	util::BaseClass::clear();
+	glass3::util::BaseClass::clear();
 }
 
 // get next data from input

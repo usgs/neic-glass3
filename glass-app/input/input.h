@@ -41,7 +41,7 @@ namespace glass {
  * input inherits from the threadbaseclass class.
  * input implements the ioutput interface.
  */
-class input : public util::iInput, public util::ThreadBaseClass {
+class input : public glass3::util::iInput, public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief input constructor
@@ -364,7 +364,7 @@ class input : public util::iInput, public util::ThreadBaseClass {
 	/**
 	 * \brief the data queue
 	 */
-	util::Queue* m_DataQueue;
+	glass3::util::Queue* m_DataQueue;
 
 	/**
 	 * \brief the time, in milliseconds, to sleep between reading lines from
@@ -375,17 +375,17 @@ class input : public util::iInput, public util::ThreadBaseClass {
 	/**
 	 * \brief the global pick format parsing object
 	 */
-	parse::GPickParser * m_GPickParser;
+	glass3::parse::GPickParser * m_GPickParser;
 
 	/**
 	 * \brief the json format parsing object
 	 */
-	parse::JSONParser * m_JSONParser;
+	glass3::parse::JSONParser * m_JSONParser;
 
 	/**
 	 * \brief the cross correlation format parsing object
 	 */
-	parse::CCParser * m_CCParser;
+	glass3::parse::CCParser * m_CCParser;
 };
 }  // namespace glass
 #endif  // INPUT_H
