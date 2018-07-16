@@ -82,8 +82,8 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
-			int sleepTime, int checkInterval, double aziTap,
-			double maxDep) {
+			int sleepTime, int checkInterval, double aziTaper,
+			double maxDepth) {
 	// setup threads
 	if (numThreads > 0) {
 		m_bRunProcessLoop = true;
@@ -99,8 +99,8 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 	clear();
 
 	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
-				numCols, numZ, update, firstTrav, secondTrav, aziTap,
-				maxDep);
+				numCols, numZ, update, firstTrav, secondTrav, aziTaper,
+				maxDepth);
 
 	m_StatusMutex.lock();
 	m_ThreadStatusMap.clear();
@@ -398,7 +398,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 
 	// init, note global doesn't use nRow or nCol
 	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update, pTrv1,
-				pTrv2, aziTaper, maxDepth);
+				pTrv2, aziTaperm, maxDepth);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -672,7 +672,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
 	}
 
-	// sets the maxDepth value
+	// sets the aziTaper value
 	if ((*com).HasKey("MaximumDepth")
 			&& ((*com)["MaximumDepth"].GetType() == json::ValueType::DoubleVal)) {
 		maxDepth = (*com)["MaximumDepth"].ToDouble();

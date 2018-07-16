@@ -166,7 +166,7 @@ class CWeb {
 					int numZ, bool update,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
-					double aziTap = 360., double maxDep = 800.);
+					double aziTaper = 360., double maxDepth = 800.);
 
 	/**
 	 * \brief Generate a local detection grid
