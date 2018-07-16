@@ -83,6 +83,8 @@ class CHypo {
 	 * \param resolution - A double value containing the web resolution used
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
+	 * \param aziTaper = A double value containing the azimuth taper to be used,
+	 * defaults to 360
 	 * \return Returns true if successful, false otherwise.
 	 */
 	CHypo(double lat, double lon, double z, double time, std::string pid,
@@ -90,7 +92,7 @@ class CHypo {
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100,
-			double aziTaper = 360.);
+			double aziTaper = 360., double maxDepth = 800.);
 
 	/**
 	 * \brief CHypo alternate constructor
@@ -163,6 +165,7 @@ class CHypo {
 	 * \param resolution - A double value containing the web resolution used
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
+	 * \param maxDepth = A double value the maximum event depth for the locator
 	 * \return Returns true if successful, false otherwise.
 	 */
 	bool initialize(double lat, double lon, double z, double time,
@@ -172,7 +175,7 @@ class CHypo {
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
 					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
 							100,
-					double aziTaper = 360.);
+					double aziTaper = 360., double maxDepth = 800.);
 
 	/**
 	 * \brief Add pick reference to this hypo
@@ -643,6 +646,12 @@ class CHypo {
 	double getAziTaper() const;
 
 	/**
+	 * \brief maxDepth
+	 * \return the maximum allowable depth
+	 */
+	double getMaxDepth() const;
+
+	/**
 	 * \brief Latitude getter
 	 * \return the latitude
 	 */
@@ -950,6 +959,11 @@ class CHypo {
 	 * \brief where to taper bayesVal from azi gap
 	 */
 	double aziTaper;
+
+	/**
+	 * \brief maximum allowable event depth
+	 */
+	double maxDepth;
 
 	/**
 	 * \brief An integer value containing this hypo's processing cycle count

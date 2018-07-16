@@ -53,13 +53,13 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 				std::shared_ptr<traveltime::CTravelTime> firstTrav,
 				std::shared_ptr<traveltime::CTravelTime> secondTrav,
 				std::shared_ptr<traveltime::CTTT> ttt, double resolution,
-				double aziTaper) {
+				double aziTaper, double maxDepth) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
 
 	if (!initialize(lat, lon, z, time, pid, web, bayes, thresh, cut, firstTrav,
-					secondTrav, ttt, resolution, aziTaper)) {
+					secondTrav, ttt, resolution, aziTaper, maxDepth)) {
 		clear();
 	}
 }
@@ -95,7 +95,8 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 					trigger->getWeb()->getNucleate(),
 					trigger->getWeb()->getTrv1(), trigger->getWeb()->getTrv2(),
 					ttt, trigger->getResolution(),
-					trigger->getWeb()->getAziTaper())) {
+					trigger->getWeb()->getAziTaper(),
+					trigger->getWeb()->getMaxDepth())) {
 		clear();
 	}
 }
@@ -482,8 +483,8 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		}
 
 		// don't let depth exceed maximum
-		if (xz > MAXLOCDEPTH) {
-			xz = MAXLOCDEPTH;
+		if (xz > maxDepth) {
+			xz = maxDepth;
 		}
 
 		// compute current origin time
@@ -633,8 +634,8 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 		}
 
 		// don't let depth exceed maximum
-		if (xz > MAXLOCDEPTH) {
-			xz = MAXLOCDEPTH;
+		if (xz > maxDepth) {
+			xz = maxDepth;
 		}
 
 		// compute current origin time
@@ -1288,6 +1289,11 @@ double CHypo::getResidual(std::shared_ptr<CPick> pick) {
 double CHypo::getAziTaper() const {
 	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
 	return (aziTaper);
+}
+
+double CHypo::getMaxDepth() const {
+	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
+	return (maxDepth);
 }
 
 double CHypo::getBayes() const {
@@ -1966,7 +1972,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav,
 						std::shared_ptr<traveltime::CTTT> ttt,
-						double resolution, double aziTap) {
+						double resolution, double aziTaper, double maxDepth) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(hypoMutex);
 
@@ -1980,7 +1986,8 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	sWebName = web;
 	dBayes = bayes;
 	dBayesInitial = bayes;
-	aziTaper = aziTap;
+	aziTaper = aziTaper;
+	maxDepth = maxDepth;
 	dThresh = thresh;
 	nCut = cut;
 	dRes = resolution;

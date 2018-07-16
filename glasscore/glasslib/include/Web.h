@@ -88,13 +88,15 @@ class CWeb {
 	 * seconds between status checks. -1 to disable status checks.  Default 60.
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
+	 * \param maxDepth = A double value containing the maximum allowable depth
+	 * defaults to 800 km.
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			int numThreads = 0, int sleepTime = 100, int checkInterval = 60,
-			double aziTaper = 360.);
+			double aziTaper = 360., double maxDepth = 800.);
 
 	/**
 	 * \brief CWeb destructor
@@ -155,6 +157,8 @@ class CWeb {
 	 * use for travel time lookups.
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
+	 * \param maxDepth = A double value containing the maximum allowable depth
+	 * defaults to 800 km.
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
@@ -162,7 +166,7 @@ class CWeb {
 					int numZ, bool update,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
-					double aziTaper = 360.);
+					double aziTaper = 360., double maxDepth = 800.);
 
 	/**
 	 * \brief Generate a local detection grid
@@ -347,6 +351,12 @@ class CWeb {
 	double getAziTaper() const;
 
 	/**
+	 * \brief max depth for locator getter
+	 * \return double with the maximum allowable depth
+	 */
+	double getMaxDepth() const;
+
+	/**
 	 * \brief CGlass getter
 	 * \return the CGlass pointer
 	 */
@@ -515,7 +525,7 @@ class CWeb {
 	 * also fills in the distance), and used by genNode() during a Single(),
 	 * Shell(), Grid(), or Global() call
 	 */
-	std::vector<std::pair<double, std::shared_ptr<CSite>>> vSite;
+	std::vector<std::pair<double, std::shared_ptr<CSite>>>vSite;
 
 	/**
 	 * \brief A std::vector containing a std::shared_ptr to each
@@ -583,6 +593,11 @@ class CWeb {
 	 * down weighting for azimuthal gap
 	 **/
 	double aziTaper = 360.;
+
+	/**
+	 * \brief A double which describes the maximum allowable event depth
+	 **/
+	double maxDepth = 800.;
 
 	/**
 	 * \brief A boolean flag that stores whether to update this web when a
@@ -676,5 +691,6 @@ class CWeb {
 	 */
 	mutable std::recursive_mutex m_WebMutex;
 };
-}  // namespace glasscore
+}
+  // namespace glasscore
 #endif  // WEB_H

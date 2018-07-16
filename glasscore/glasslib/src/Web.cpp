@@ -82,7 +82,8 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
-			int sleepTime, int checkInterval, double aziTaper) {
+			int sleepTime, int checkInterval, double aziTaper,
+			double maxDepth) {
 	// setup threads
 	if (numThreads > 0) {
 		m_bRunProcessLoop = true;
@@ -98,7 +99,8 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 	clear();
 
 	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
-				numCols, numZ, update, firstTrav, secondTrav, aziTaper);
+				numCols, numZ, update, firstTrav, secondTrav, aziTaper,
+				maxDepth);
 
 	m_StatusMutex.lock();
 	m_ThreadStatusMap.clear();
@@ -123,7 +125,7 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 // ---------------------------------------------------------~CWeb
 CWeb::~CWeb() {
 	glassutil::CLogit::log("CWeb::~CWeb");
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 
 	// disable status checking
 	m_StatusMutex.lock();
@@ -143,7 +145,7 @@ CWeb::~CWeb() {
 
 // ---------------------------------------------------------clear
 void CWeb::clear() {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 	nRow = 0;
 	nCol = 0;
 	nZ = 0;
@@ -198,8 +200,8 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 						int numCols, int numZ, bool update,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav,
-						double aziTap) {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+						double aziTap, double maxDep) {
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 
 	sName = name;
 	dThresh = thresh;
@@ -213,6 +215,7 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	pTrv1 = firstTrav;
 	pTrv2 = secondTrav;
 	aziTaper = aziTap;
+	maxDepth = maxDep;
 	// done
 	return (true);
 }
@@ -285,7 +288,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 	bool saveGrid = false;
 	bool update = false;
 	double aziTaper = 360.;
-
+	double maxDepth = 800.;
 	// get grid configuration from json
 	// name
 	if (((*com).HasKey("Name"))
@@ -339,6 +342,12 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
 	}
 
+	// sets the maxDepth value
+	if ((*com).HasKey("MaximumDepth")
+			&& ((*com)["MaximumDepth"].GetType() == json::ValueType::DoubleVal)) {
+		maxDepth = (*com)["MaximumDepth"].ToDouble();
+	}
+
 	// Node resolution for this Global grid
 	if (((*com).HasKey("Resolution"))
 			&& ((*com)["Resolution"].GetType() == json::ValueType::DoubleVal)) {
@@ -389,7 +398,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 
 	// init, note global doesn't use nRow or nCol
 	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update, pTrv1,
-				pTrv2, aziTaper);
+				pTrv2, aziTaperm, maxDepth);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -423,7 +432,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 		filename = sName + "_gridstafile.txt";
 		outstafile.open(filename, std::ios::out);
 		outstafile << "NodeID,[StationSCNL;StationLat;StationLon;StationRad],"
-					<< "\n";
+				<< "\n";
 	}
 
 	// Generate equally spaced grid of nodes over the globe (more or less)
@@ -448,7 +457,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 		}
 
 		// lock the site list while adding a node
-		std::lock_guard<std::mutex> guard(vSiteMutex);
+		std::lock_guard < std::mutex > guard(vSiteMutex);
 
 		// sort site list for this vertex
 		sortSiteList(aLat, aLon);
@@ -538,6 +547,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 	int rows = 0;
 	int cols = 0;
 	double aziTaper = 360.;
+	double maxDepth = 800.;
 	std::vector<double> zzz;
 	int zs = 0;
 	bool saveGrid = false;
@@ -662,6 +672,12 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
 	}
 
+	// sets the aziTaper value
+	if ((*com).HasKey("MaximumDepth")
+			&& ((*com)["MaximumDepth"].GetType() == json::ValueType::DoubleVal)) {
+		maxDepth = (*com)["MaximumDepth"].ToDouble();
+	}
+
 	// whether to create a file detailing the node configuration for
 	// this grid
 	if ((*com).HasKey("SaveGrid")) {
@@ -685,7 +701,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, rows, cols, zs, update,
-				pTrv1, pTrv2, aziTaper);
+				pTrv1, pTrv2, aziTaper, maxDepth);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -728,7 +744,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 		filename = sName + "_gridstafile.txt";
 		outstafile.open(filename, std::ios::out);
 		outstafile << "NodeID,[StationSCNL;StationLat;StationLon;StationRad],"
-					<< "\n";
+				<< "\n";
 	}
 
 	// init node count
@@ -752,7 +768,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 			// minimum longitude
 			double loncol = lon0 + (icol * lonDistance);
 
-			std::lock_guard<std::mutex> guard(vSiteMutex);
+			std::lock_guard < std::mutex > guard(vSiteMutex);
 
 			// sort site list for this grid point
 			sortSiteList(latrow, loncol);
@@ -848,7 +864,7 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 	bool saveGrid = false;
 	bool update = false;
 	double aziTaper = 360.;
-
+	double maxDepth = 800.;
 	std::vector<std::vector<double>> nodes;
 	double resol = 0;
 
@@ -903,6 +919,12 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 			&& ((*com)["AzimuthGapTaper"].GetType()
 					== json::ValueType::DoubleVal)) {
 		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
+	}
+
+	// sets the maxDepth value
+	if ((*com).HasKey("MaximumDepth")
+			&& ((*com)["MaximumDepth"].GetType() == json::ValueType::DoubleVal)) {
+		maxDepth = (*com)["MaximumDepth"].ToDouble();
 	}
 
 	// Node resolution for this grid
@@ -983,7 +1005,7 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, 0., 0., 0., update, pTrv1,
-				pTrv2, aziTaper);
+				pTrv2, aziTaper, maxDepth);
 
 	// generate site and network filter lists
 	genSiteFilters(com);
@@ -1002,7 +1024,7 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 		filename = sName + "_gridstafile.txt";
 		outstafile.open(filename, std::ios::out);
 		outstafile << "NodeID,StationSCNL,StationLat,StationLon,StationRad"
-					<< "\n";
+				<< "\n";
 	}
 
 	// init node count
@@ -1015,7 +1037,7 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 		double lon = nodes[i][1];
 		double Z = nodes[i][2];
 
-		std::lock_guard<std::mutex> guard(vSiteMutex);
+		std::lock_guard < std::mutex > guard(vSiteMutex);
 
 		// sort site list
 		sortSiteList(lat, lon);
@@ -1222,7 +1244,7 @@ bool CWeb::genSiteFilters(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 
 	// Get the network names to be included in this web.
 	if ((*com).HasKey("Nets")
@@ -1461,7 +1483,7 @@ bool CWeb::addNode(std::shared_ptr<CNode> node) {
 	if (node == NULL) {
 		return (false);
 	}
-	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
+	std::lock_guard < std::mutex > vNodeGuard(m_vNodeMutex);
 
 	vNode.push_back(node);
 
@@ -1755,7 +1777,7 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		}
 
 		// lock the site list while we're using it
-		std::lock_guard<std::mutex> guard(vSiteMutex);
+		std::lock_guard < std::mutex > guard(vSiteMutex);
 
 		// generate the site list for this web if this is the first
 		// iteration where a node is modified
@@ -1851,7 +1873,7 @@ void CWeb::addJob(std::function<void()> newjob) {
 	}
 
 	// add the job to the queue
-	std::lock_guard<std::mutex> guard(m_QueueMutex);
+	std::lock_guard < std::mutex > guard(m_QueueMutex);
 	m_JobQueue.push(newjob);
 }
 
@@ -1884,7 +1906,7 @@ void CWeb::workLoop() {
 		}
 
 		// get the next job
-		std::function<void()> newjob = m_JobQueue.front();
+		std::function < void() > newjob = m_JobQueue.front();
 		m_JobQueue.pop();
 
 		// done with queue
@@ -1936,7 +1958,7 @@ bool CWeb::statusCheck() {
 	std::time(&tNow);
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
 		// get the thread status
-		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
+		std::lock_guard < std::mutex > statusGuard(m_StatusMutex);
 
 		// check all the threads
 		std::map<std::thread::id, bool>::iterator StatusItr;
@@ -1973,7 +1995,7 @@ bool CWeb::statusCheck() {
 
 // ---------------------------------------------------------setStatus
 void CWeb::setStatus(bool status) {
-	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
+	std::lock_guard < std::mutex > statusGuard(m_StatusMutex);
 	// update thread status
 	if (m_ThreadStatusMap.find(std::this_thread::get_id())
 			!= m_ThreadStatusMap.end()) {
@@ -1994,7 +2016,7 @@ bool CWeb::hasSite(std::shared_ptr<CSite> site) {
 		return (false);
 	}
 
-	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
+	std::lock_guard < std::mutex > vNodeGuard(m_vNodeMutex);
 
 	// for each node in web
 	for (auto &node : vNode) {
@@ -2008,27 +2030,31 @@ bool CWeb::hasSite(std::shared_ptr<CSite> site) {
 	return (false);
 }
 
-double CWeb::getAziTaper() const  {
+double CWeb::getAziTaper() const {
 	return (aziTaper);
 }
 
+double CWeb::getMaxDepth() const {
+	return (maxDepth);
+}
+
 const CSiteList* CWeb::getSiteList() const {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 	return (pSiteList);
 }
 
 void CWeb::setSiteList(CSiteList* siteList) {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 	pSiteList = siteList;
 }
 
 CGlass* CWeb::getGlass() const {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 	return (pGlass);
 }
 
 void CWeb::setGlass(CGlass* glass) {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 	pGlass = glass;
 }
 
@@ -2069,32 +2095,32 @@ const std::string& CWeb::getName() const {
 }
 
 const std::shared_ptr<traveltime::CTravelTime>& CWeb::getTrv1() const {
-	std::lock_guard<std::mutex> webGuard(m_TrvMutex);
+	std::lock_guard < std::mutex > webGuard(m_TrvMutex);
 	return (pTrv1);
 }
 
 const std::shared_ptr<traveltime::CTravelTime>& CWeb::getTrv2() const {
-	std::lock_guard<std::mutex> webGuard(m_TrvMutex);
+	std::lock_guard < std::mutex > webGuard(m_TrvMutex);
 	return (pTrv2);
 }
 
 int CWeb::getVNetFilterSize() const {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 	return (vNetFilter.size());
 }
 
 bool CWeb::getUseOnlyTeleseismicStations() const {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 	return (bUseOnlyTeleseismicStations);
 }
 
 int CWeb::getVSitesFilterSize() const {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	std::lock_guard < std::recursive_mutex > webGuard(m_WebMutex);
 	return (vSitesFilter.size());
 }
 
 int CWeb::getVNodeSize() const {
-	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
+	std::lock_guard < std::mutex > vNodeGuard(m_vNodeMutex);
 	return (vNode.size());
 }
 }  // namespace glasscore
