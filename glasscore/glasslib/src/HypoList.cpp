@@ -1188,7 +1188,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					if (hypo3->getBayes()
 							> (std::fmax(hypo->getBayes(), hypo2->getBayes())
 									+ 0.5
-											* std::fabs(hypo->getBayes(),
+											* std::fmin(hypo->getBayes(),
 														hypo2->getBayes()))) {
 						snprintf(
 								sLog,
