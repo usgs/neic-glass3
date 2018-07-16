@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['m_5fagencyid',['m_AgencyID',['../classparse_1_1Parser.html#a6703dbc7e5d46a5be1e0f1f788736cd6',1,'parse::Parser']]],
-  ['m_5fauthor',['m_Author',['../classparse_1_1Parser.html#ae204a2d3d1ecc549214a6065e050c1bc',1,'parse::Parser']]]
+  ['m_5fagencyid',['m_AgencyID',['../classglass3_1_1parse_1_1Parser.html#a69587f79500af224ed4c1cb979b55689',1,'glass3::parse::Parser']]],
+  ['m_5fauthor',['m_Author',['../classglass3_1_1parse_1_1Parser.html#ae56bb9ab9c5a1f02479c20190958c0c3',1,'glass3::parse::Parser']]]
 ];

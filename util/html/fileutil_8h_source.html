@@ -95,30 +95,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * the comments so that Doxygen will still</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * be able to work.</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> ****************************************/</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef FILEUTIL_H</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define FILEUTIL_H</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span>util {</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceutil.html#a7b42f611bd38a2acab83a86efe659de5">getNextFileName</a>(<span class="keyword">const</span> std::string &amp;path, <span class="keyword">const</span> std::string &amp;extension,</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                        std::string &amp;filename);  <span class="comment">// NOLINT</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceutil.html#a3ed227d2002e33bc01df056ef638c2e1">moveFileTo</a>(std::string filename, <span class="keyword">const</span> std::string &amp;dirname);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceutil.html#a89598d70d05f268596a5e1adca5e8ab3">copyFileTo</a>(std::string from, std::string to);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceutil.html#a6d740b29b40790928202f8b6fd0c9336">deleteFileFrom</a>(std::string filename);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">#endif  // FILEUTIL_H</span></div>
-<div class="ttc" id="namespaceutil_html_a6d740b29b40790928202f8b6fd0c9336"><div class="ttname"><a href="namespaceutil.html#a6d740b29b40790928202f8b6fd0c9336">util::deleteFileFrom</a></div><div class="ttdeci">bool deleteFileFrom(std::string filename)</div><div class="ttdoc">delete a file </div><div class="ttdef"><b>Definition:</b> fileutil.cpp:281</div></div>
-<div class="ttc" id="namespaceutil_html_a3ed227d2002e33bc01df056ef638c2e1"><div class="ttname"><a href="namespaceutil.html#a3ed227d2002e33bc01df056ef638c2e1">util::moveFileTo</a></div><div class="ttdeci">bool moveFileTo(std::string filename, const std::string &amp;dirname)</div><div class="ttdoc">move a file from one directory to another </div><div class="ttdef"><b>Definition:</b> fileutil.cpp:154</div></div>
-<div class="ttc" id="namespaceutil_html_a7b42f611bd38a2acab83a86efe659de5"><div class="ttname"><a href="namespaceutil.html#a7b42f611bd38a2acab83a86efe659de5">util::getNextFileName</a></div><div class="ttdeci">bool getNextFileName(const std::string &amp;path, const std::string &amp;extension, std::string &amp;filename)</div><div class="ttdoc">get the next file name in a directory </div><div class="ttdef"><b>Definition:</b> fileutil.cpp:23</div></div>
-<div class="ttc" id="namespaceutil_html_a89598d70d05f268596a5e1adca5e8ab3"><div class="ttname"><a href="namespaceutil.html#a89598d70d05f268596a5e1adca5e8ab3">util::copyFileTo</a></div><div class="ttdeci">bool copyFileTo(std::string from, std::string to)</div><div class="ttdoc">copy a file from one directory to another </div><div class="ttdef"><b>Definition:</b> fileutil.cpp:251</div></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#ifndef FILEUTIL_H</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define FILEUTIL_H</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span>glass3 {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span>util {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceglass3_1_1util.html#a13c9cad6adb1a9dcfc7007ad2a7ff44d">getNextFileName</a>(<span class="keyword">const</span> std::string &amp;path, <span class="keyword">const</span> std::string &amp;extension,</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                        std::string &amp;filename);  <span class="comment">// NOLINT</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceglass3_1_1util.html#a6656f908e0a4576adb43731c29a8fb3f">moveFileTo</a>(std::string filename, <span class="keyword">const</span> std::string &amp;dirname);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceglass3_1_1util.html#ab71d80ad46da4def692e8914e6ae59b4">copyFileTo</a>(std::string from, std::string to);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceglass3_1_1util.html#a621d33f654815801f90bf669c61a2e17">deleteFileFrom</a>(std::string filename);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="preprocessor">#endif  // FILEUTIL_H</span></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_a621d33f654815801f90bf669c61a2e17"><div class="ttname"><a href="namespaceglass3_1_1util.html#a621d33f654815801f90bf669c61a2e17">glass3::util::deleteFileFrom</a></div><div class="ttdeci">bool deleteFileFrom(std::string filename)</div><div class="ttdoc">delete a file </div><div class="ttdef"><b>Definition:</b> fileutil.cpp:286</div></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_ab71d80ad46da4def692e8914e6ae59b4"><div class="ttname"><a href="namespaceglass3_1_1util.html#ab71d80ad46da4def692e8914e6ae59b4">glass3::util::copyFileTo</a></div><div class="ttdeci">bool copyFileTo(std::string from, std::string to)</div><div class="ttdoc">copy a file from one directory to another </div><div class="ttdef"><b>Definition:</b> fileutil.cpp:256</div></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_a13c9cad6adb1a9dcfc7007ad2a7ff44d"><div class="ttname"><a href="namespaceglass3_1_1util.html#a13c9cad6adb1a9dcfc7007ad2a7ff44d">glass3::util::getNextFileName</a></div><div class="ttdeci">bool getNextFileName(const std::string &amp;path, const std::string &amp;extension, std::string &amp;filename)</div><div class="ttdoc">get the next file name in a directory </div><div class="ttdef"><b>Definition:</b> fileutil.cpp:28</div></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_a6656f908e0a4576adb43731c29a8fb3f"><div class="ttname"><a href="namespaceglass3_1_1util.html#a6656f908e0a4576adb43731c29a8fb3f">glass3::util::moveFileTo</a></div><div class="ttdeci">bool moveFileTo(std::string filename, const std::string &amp;dirname)</div><div class="ttdoc">move a file from one directory to another </div><div class="ttdef"><b>Definition:</b> fileutil.cpp:159</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 27 2018 15:21:36 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 16 2018 18:29:10 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

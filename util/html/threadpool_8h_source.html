@@ -98,101 +98,126 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef THREADPOOL_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define THREADPOOL_H</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;mutex&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;queue&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>util {</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classutil_1_1ThreadPool.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="classutil_1_1ThreadPool.html">ThreadPool</a> {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="classutil_1_1ThreadPool.html#aae99df252ad289e27aa9f626ae32ebf7">ThreadPool</a>(std::string poolname, <span class="keywordtype">int</span> num_threads = 5, <span class="keywordtype">int</span> sleeptime = 100,</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                <span class="keywordtype">int</span> checkinterval = 30);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="classutil_1_1ThreadPool.html#a2abc137653d150a8943e40f24641dd09">~ThreadPool</a>();</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classutil_1_1ThreadPool.html#a6b62b4f8f6906b494389db5c2afd7180">addJob</a>(std::function&lt;<span class="keywordtype">void</span>()&gt; newjob);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1ThreadPool.html#a5c360cd1e7d444394731ece2e3668880">check</a>();</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1ThreadPool.html#a2f50876858080f50ed36acbd30f458fc">stop</a>();</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="baseclass_8h.html">baseclass.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;mutex&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;queue&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>glass3 {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span>util {</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classglass3_1_1util_1_1ThreadPool.html">   29</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1util_1_1ThreadPool.html">ThreadPool</a> : <span class="keyword">public</span> <a class="code" href="classglass3_1_1util_1_1BaseClass.html">util::BaseClass</a> {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a47d625c0e59af794651a14451b4bbca9">ThreadPool</a>();</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a47d625c0e59af794651a14451b4bbca9">ThreadPool</a>(std::string poolname, <span class="keywordtype">int</span> num_threads = 5,</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                        <span class="keywordtype">int</span> sleeptime = 100, <span class="keywordtype">int</span> checkinterval = 30);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#aacc6c363ba93333a9ad9aa0fba637109">~ThreadPool</a>();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a746699f8489a7e935e4a6a97f86d3eb2">start</a>();</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classutil_1_1ThreadPool.html#ad764233a3083edd1a61885004a795847">setStatus</a>(<span class="keywordtype">bool</span> status);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="classutil_1_1ThreadPool.html#a3df4c17d99934db2063e03cbc4489813">   87</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classutil_1_1ThreadPool.html#a3df4c17d99934db2063e03cbc4489813">getJobQueueSize</a>() {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        m_QueueMutex.lock();</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keywordtype">int</span> queuesize = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(m_JobQueue.size());</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        m_QueueMutex.unlock();</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordflow">return</span> queuesize;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    }</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classutil_1_1ThreadPool.html#ab0a3b350914fd37542c3262895cc3c33">   97</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classutil_1_1ThreadPool.html#ab0a3b350914fd37542c3262895cc3c33">getBRunJobLoop</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">return</span> (m_bRunJobLoop);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a5ad11b59c4e4a6da922b73139d8e2538">stop</a>();</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a4ebaeccf37a42c3fbff93a66ef926489">healthCheck</a>();</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="classutil_1_1ThreadPool.html#a287e8b6a82da4cc3369f58ff980bac08">  104</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classutil_1_1ThreadPool.html#a287e8b6a82da4cc3369f58ff980bac08">getINumThreads</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keywordflow">return</span> (m_iNumThreads);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classutil_1_1ThreadPool.html#a91891b1ccf64ade12c0126ddeb35414c">  111</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classutil_1_1ThreadPool.html#a91891b1ccf64ade12c0126ddeb35414c">getISleepTimeMs</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        <span class="keywordflow">return</span> (m_iSleepTimeMS);</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="classutil_1_1ThreadPool.html#ab437186e83382b14e9e0c3e143143a42">  118</a></span>&#160;    <span class="keyword">const</span> std::string&amp; <a class="code" href="classutil_1_1ThreadPool.html#ab437186e83382b14e9e0c3e143143a42">getSPoolName</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keywordflow">return</span> (m_sPoolName);</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    }</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classutil_1_1ThreadPool.html#a4b305ce3309dd430de9d7eaa3a478c44">jobLoop</a>();</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classutil_1_1ThreadPool.html#a12dec56e859b445c019acf33b65d72c1">jobSleep</a>();</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    std::vector&lt;std::thread&gt; m_ThreadPool;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    std::map&lt;std::thread::id, bool&gt; m_ThreadStatusMap;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    std::mutex m_StatusMutex;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    std::queue&lt;std::function&lt;void()&gt;&gt; m_JobQueue;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    std::mutex m_QueueMutex;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#aa8aa5d07733ad61223018e13cdffa095">addJob</a>(std::function&lt;<span class="keywordtype">void</span>()&gt; newjob);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a39db37090476bdd99f2ccdcebd765577">setJobHealth</a>(<span class="keywordtype">bool</span> status);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a22dd776186501fbbf07e9ceccd71fb83">setAllJobsHealth</a>(<span class="keywordtype">bool</span> status);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a1fdf03cf6fdc40649eb8880cce9c0875">getAllJobsHealth</a>();</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#ac4ea75bc0fafa18d9888f18b8936ee35">getJobQueueSize</a>();</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a7d4c9fdbac535a5720f452f0e1c73328">getNumThreads</a>();</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordtype">bool</span> m_bRunJobLoop;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordtype">int</span> m_iSleepTimeMS;</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keywordtype">int</span> m_iNumThreads;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    std::string m_sPoolName;</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    time_t tLastCheck;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordtype">int</span> m_iCheckInterval;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;};</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="preprocessor">#endif  // THREADPOOL_H</span></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a3df4c17d99934db2063e03cbc4489813"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a3df4c17d99934db2063e03cbc4489813">util::ThreadPool::getJobQueueSize</a></div><div class="ttdeci">int getJobQueueSize()</div><div class="ttdoc">get the current number of jobs in the queue </div><div class="ttdef"><b>Definition:</b> threadpool.h:87</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a2f50876858080f50ed36acbd30f458fc"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a2f50876858080f50ed36acbd30f458fc">util::ThreadPool::stop</a></div><div class="ttdeci">bool stop()</div><div class="ttdoc">threadpool stop function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:48</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a287e8b6a82da4cc3369f58ff980bac08"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a287e8b6a82da4cc3369f58ff980bac08">util::ThreadPool::getINumThreads</a></div><div class="ttdeci">int getINumThreads() const </div><div class="ttdoc">getter for m_iNumThreads </div><div class="ttdef"><b>Definition:</b> threadpool.h:104</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_ab0a3b350914fd37542c3262895cc3c33"><div class="ttname"><a href="classutil_1_1ThreadPool.html#ab0a3b350914fd37542c3262895cc3c33">util::ThreadPool::getBRunJobLoop</a></div><div class="ttdeci">bool getBRunJobLoop() const </div><div class="ttdoc">getter for m_bRunJobLoop </div><div class="ttdef"><b>Definition:</b> threadpool.h:97</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a91891b1ccf64ade12c0126ddeb35414c"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a91891b1ccf64ade12c0126ddeb35414c">util::ThreadPool::getISleepTimeMs</a></div><div class="ttdeci">int getISleepTimeMs() const </div><div class="ttdoc">getter for m_iSleepTimeMS </div><div class="ttdef"><b>Definition:</b> threadpool.h:111</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html"><div class="ttname"><a href="classutil_1_1ThreadPool.html">util::ThreadPool</a></div><div class="ttdoc">util threadpool class </div><div class="ttdef"><b>Definition:</b> threadpool.h:27</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a4b305ce3309dd430de9d7eaa3a478c44"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a4b305ce3309dd430de9d7eaa3a478c44">util::ThreadPool::jobLoop</a></div><div class="ttdeci">void jobLoop()</div><div class="ttdoc">the job work loop </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:89</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_aae99df252ad289e27aa9f626ae32ebf7"><div class="ttname"><a href="classutil_1_1ThreadPool.html#aae99df252ad289e27aa9f626ae32ebf7">util::ThreadPool::ThreadPool</a></div><div class="ttdeci">ThreadPool(std::string poolname, int num_threads=5, int sleeptime=100, int checkinterval=30)</div><div class="ttdoc">threadpool constructor </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:8</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a12dec56e859b445c019acf33b65d72c1"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a12dec56e859b445c019acf33b65d72c1">util::ThreadPool::jobSleep</a></div><div class="ttdeci">void jobSleep()</div><div class="ttdoc">the job work loop </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:153</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_ad764233a3083edd1a61885004a795847"><div class="ttname"><a href="classutil_1_1ThreadPool.html#ad764233a3083edd1a61885004a795847">util::ThreadPool::setStatus</a></div><div class="ttdeci">void setStatus(bool status)</div><div class="ttdoc">threadpool status update function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:69</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a5c360cd1e7d444394731ece2e3668880"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a5c360cd1e7d444394731ece2e3668880">util::ThreadPool::check</a></div><div class="ttdeci">bool check()</div><div class="ttdoc">check to see if threadpool is still functional </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:159</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_ab437186e83382b14e9e0c3e143143a42"><div class="ttname"><a href="classutil_1_1ThreadPool.html#ab437186e83382b14e9e0c3e143143a42">util::ThreadPool::getSPoolName</a></div><div class="ttdeci">const std::string &amp; getSPoolName() const </div><div class="ttdoc">getter for m_sPoolName </div><div class="ttdef"><b>Definition:</b> threadpool.h:118</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a6b62b4f8f6906b494389db5c2afd7180"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a6b62b4f8f6906b494389db5c2afd7180">util::ThreadPool::addJob</a></div><div class="ttdeci">void addJob(std::function&lt; void()&gt; newjob)</div><div class="ttdoc">add a job for for threadpool </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:79</div></div>
-<div class="ttc" id="classutil_1_1ThreadPool_html_a2abc137653d150a8943e40f24641dd09"><div class="ttname"><a href="classutil_1_1ThreadPool.html#a2abc137653d150a8943e40f24641dd09">util::ThreadPool::~ThreadPool</a></div><div class="ttdeci">~ThreadPool()</div><div class="ttdoc">threadpool destructor </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:40</div></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a7aba57cffd8941d16f74c5267ee5fef4">setSleepTime</a>(<span class="keywordtype">int</span> sleeptimems);</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a4c455f110d0d5af5848b9ce0faee88e2">getSleepTime</a>();</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a2b645b4fa139d94942b22aab5f583eb0">setPoolName</a>(std::string name);</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keyword">const</span> std::string&amp; <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a5baaa1223c986ba83d451b89b3a35b43">getPoolName</a>();</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#ae7841e1dacbbae11206b5e9329c01729">setHealthCheckInterval</a>(<span class="keywordtype">int</span> interval);</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a21c88ed51e84d031aa15b671549f5540">getHealthCheckInterval</a>();</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a63d26b7aa8598d4d25f8d81b92c20a0a">isRunning</a>();</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    std::time_t <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#aaaa4c2058d31751a3716c74864ff4f86">getLastHealthCheck</a>();</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160; <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a7a2528d005908c4d722f807e0ce98a5e">jobLoop</a>();</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a9afec7a558d6297d14d6c5daccbee9e6">jobSleep</a>();</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#ac09f715f9ba16f528999c81235973ee2">setLastHealthCheck</a>(std::time_t now);</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#a6186a46a91c6ae65e7a5e8d2b121f64e">setRunning</a>(<span class="keywordtype">bool</span> running);</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1ThreadPool.html#aeee24381420088d18bb095d92f0337a4">setNumThreads</a>(<span class="keywordtype">int</span> num);</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    std::vector&lt;std::thread&gt; m_ThreadPool;</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    std::map&lt;std::thread::id, bool&gt; m_ThreadStatusMap;</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    std::mutex m_StatusMutex;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    std::queue&lt;std::function&lt;void()&gt;&gt; m_JobQueue;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    std::atomic&lt;bool&gt; m_bRunJobLoop;</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    std::atomic&lt;int&gt; m_iSleepTimeMS;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    std::atomic&lt;int&gt; m_iNumThreads;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    std::string m_sPoolName;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    std::atomic&lt;double&gt; m_tLastHealthCheck;</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    std::atomic&lt;int&gt; m_iHealthCheckInterval;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;};</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="preprocessor">#endif  // THREADPOOL_H</span></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a47d625c0e59af794651a14451b4bbca9"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a47d625c0e59af794651a14451b4bbca9">glass3::util::ThreadPool::ThreadPool</a></div><div class="ttdeci">ThreadPool()</div><div class="ttdoc">threadpool constructor </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:10</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html">glass3::util::ThreadPool</a></div><div class="ttdoc">util threadpool class </div><div class="ttdef"><b>Definition:</b> threadpool.h:29</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a7aba57cffd8941d16f74c5267ee5fef4"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a7aba57cffd8941d16f74c5267ee5fef4">glass3::util::ThreadPool::setSleepTime</a></div><div class="ttdeci">void setSleepTime(int sleeptimems)</div><div class="ttdoc">Sets the time to sleep between work() calls. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:339</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a21c88ed51e84d031aa15b671549f5540"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a21c88ed51e84d031aa15b671549f5540">glass3::util::ThreadPool::getHealthCheckInterval</a></div><div class="ttdeci">int getHealthCheckInterval()</div><div class="ttdoc">Function to retrieve the thread pool health check interval. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:314</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_aa8aa5d07733ad61223018e13cdffa095"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#aa8aa5d07733ad61223018e13cdffa095">glass3::util::ThreadPool::addJob</a></div><div class="ttdeci">void addJob(std::function&lt; void()&gt; newjob)</div><div class="ttdoc">add a new job for for the thread pool to process </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:121</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_aeee24381420088d18bb095d92f0337a4"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#aeee24381420088d18bb095d92f0337a4">glass3::util::ThreadPool::setNumThreads</a></div><div class="ttdeci">void setNumThreads(int num)</div><div class="ttdoc">Sets the number of job threads. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:329</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a9afec7a558d6297d14d6c5daccbee9e6"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a9afec7a558d6297d14d6c5daccbee9e6">glass3::util::ThreadPool::jobSleep</a></div><div class="ttdeci">void jobSleep()</div><div class="ttdoc">the job work sleep function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:194</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a7a2528d005908c4d722f807e0ce98a5e"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a7a2528d005908c4d722f807e0ce98a5e">glass3::util::ThreadPool::jobLoop</a></div><div class="ttdeci">void jobLoop()</div><div class="ttdoc">thread pool job work loop function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:132</div></div>
+<div class="ttc" id="baseclass_8h_html"><div class="ttname"><a href="baseclass_8h.html">baseclass.h</a></div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a22dd776186501fbbf07e9ceccd71fb83"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a22dd776186501fbbf07e9ceccd71fb83">glass3::util::ThreadPool::setAllJobsHealth</a></div><div class="ttdeci">void setAllJobsHealth(bool status)</div><div class="ttdoc">pool status update function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:267</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a1fdf03cf6fdc40649eb8880cce9c0875"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a1fdf03cf6fdc40649eb8880cce9c0875">glass3::util::ThreadPool::getAllJobsHealth</a></div><div class="ttdeci">bool getAllJobsHealth()</div><div class="ttdoc">pool status check function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:278</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a39db37090476bdd99f2ccdcebd765577"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a39db37090476bdd99f2ccdcebd765577">glass3::util::ThreadPool::setJobHealth</a></div><div class="ttdeci">void setJobHealth(bool status)</div><div class="ttdoc">pool status update function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:257</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a4c455f110d0d5af5848b9ce0faee88e2"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a4c455f110d0d5af5848b9ce0faee88e2">glass3::util::ThreadPool::getSleepTime</a></div><div class="ttdeci">int getSleepTime()</div><div class="ttdoc">Retrieves the time to sleep between work() calls. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:344</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_ac4ea75bc0fafa18d9888f18b8936ee35"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#ac4ea75bc0fafa18d9888f18b8936ee35">glass3::util::ThreadPool::getJobQueueSize</a></div><div class="ttdeci">int getJobQueueSize()</div><div class="ttdoc">Retrieve the current number of jobs in the queue. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:302</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a746699f8489a7e935e4a6a97f86d3eb2"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a746699f8489a7e935e4a6a97f86d3eb2">glass3::util::ThreadPool::start</a></div><div class="ttdeci">bool start()</div><div class="ttdoc">pool start function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:41</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_aaaa4c2058d31751a3716c74864ff4f86"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#aaaa4c2058d31751a3716c74864ff4f86">glass3::util::ThreadPool::getLastHealthCheck</a></div><div class="ttdeci">std::time_t getLastHealthCheck()</div><div class="ttdoc">Function to retrieve the last time the job threads health status was checked. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:366</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1BaseClass_html"><div class="ttname"><a href="classglass3_1_1util_1_1BaseClass.html">glass3::util::BaseClass</a></div><div class="ttdoc">util baseclass class - encapsulates the most basic setup and configuration logic. ...</div><div class="ttdef"><b>Definition:</b> baseclass.h:28</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a2b645b4fa139d94942b22aab5f583eb0"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a2b645b4fa139d94942b22aab5f583eb0">glass3::util::ThreadPool::setPoolName</a></div><div class="ttdeci">void setPoolName(std::string name)</div><div class="ttdoc">Function to set the name of the thread pool. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:349</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a63d26b7aa8598d4d25f8d81b92c20a0a"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a63d26b7aa8598d4d25f8d81b92c20a0a">glass3::util::ThreadPool::isRunning</a></div><div class="ttdeci">virtual bool isRunning()</div><div class="ttdoc">Checks to see if the job threads in the pool should still be running. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:324</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a4ebaeccf37a42c3fbff93a66ef926489"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a4ebaeccf37a42c3fbff93a66ef926489">glass3::util::ThreadPool::healthCheck</a></div><div class="ttdeci">bool healthCheck()</div><div class="ttdoc">pool health check function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:201</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a5baaa1223c986ba83d451b89b3a35b43"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a5baaa1223c986ba83d451b89b3a35b43">glass3::util::ThreadPool::getPoolName</a></div><div class="ttdeci">const std::string &amp; getPoolName()</div><div class="ttdoc">Function to retrieve the name of the thread pool. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:355</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a7d4c9fdbac535a5720f452f0e1c73328"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a7d4c9fdbac535a5720f452f0e1c73328">glass3::util::ThreadPool::getNumThreads</a></div><div class="ttdeci">int getNumThreads()</div><div class="ttdoc">Retrieves the number of threads in the pool. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:334</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_ac09f715f9ba16f528999c81235973ee2"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#ac09f715f9ba16f528999c81235973ee2">glass3::util::ThreadPool::setLastHealthCheck</a></div><div class="ttdeci">void setLastHealthCheck(std::time_t now)</div><div class="ttdoc">Function to sset the last time the job threads health status was checked. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:361</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_aacc6c363ba93333a9ad9aa0fba637109"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#aacc6c363ba93333a9ad9aa0fba637109">glass3::util::ThreadPool::~ThreadPool</a></div><div class="ttdeci">~ThreadPool()</div><div class="ttdoc">threadpool destructor </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:35</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a6186a46a91c6ae65e7a5e8d2b121f64e"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a6186a46a91c6ae65e7a5e8d2b121f64e">glass3::util::ThreadPool::setRunning</a></div><div class="ttdeci">void setRunning(bool running)</div><div class="ttdoc">Sets whether the job threads are running. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:319</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_a5ad11b59c4e4a6da922b73139d8e2538"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#a5ad11b59c4e4a6da922b73139d8e2538">glass3::util::ThreadPool::stop</a></div><div class="ttdeci">bool stop()</div><div class="ttdoc">pool stop function </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:87</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1ThreadPool_html_ae7841e1dacbbae11206b5e9329c01729"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadPool.html#ae7841e1dacbbae11206b5e9329c01729">glass3::util::ThreadPool::setHealthCheckInterval</a></div><div class="ttdeci">void setHealthCheckInterval(int interval)</div><div class="ttdoc">Function to set thread pool health check interval. </div><div class="ttdef"><b>Definition:</b> threadpool.cpp:309</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 27 2018 15:21:36 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 16 2018 18:29:10 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

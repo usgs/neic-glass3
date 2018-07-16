@@ -95,49 +95,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * the comments so that Doxygen will still</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * be able to work.</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> ****************************************/</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef STRINGUTIL_H</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define STRINGUTIL_H</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span>util {</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;std::vector&lt;std::string&gt; <a class="code" href="namespaceutil.html#aca624854c1a44bdcf34563f0dad21ad7">split</a>(<span class="keyword">const</span> std::string &amp;s, <span class="keywordtype">char</span> delim);</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;std::vector&lt;std::string&gt; &amp;<a class="code" href="namespaceutil.html#aca624854c1a44bdcf34563f0dad21ad7">split</a>(<span class="keyword">const</span> std::string &amp;s, <span class="keywordtype">char</span> delim,</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                                std::vector&lt;std::string&gt; &amp;elems); <span class="comment">// NOLINT</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;std::wstring <a class="code" href="namespaceutil.html#a3638843a2fb77f4198bd7a489a152010">string2WString</a>(<span class="keyword">const</span> std::string&amp; s);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;std::string <a class="code" href="namespaceutil.html#acb6954bc4f4c84ad9a4c8288a1d1307f">wString2String</a>(<span class="keyword">const</span> std::wstring&amp; s);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;std::string&amp; <a class="code" href="namespaceutil.html#ae52d36d8006b1763f91c5841b130de34">removeChars</a>(std::string&amp; s, <span class="keyword">const</span> std::string&amp; chars); <span class="comment">// NOLINT</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;std::string&amp; <a class="code" href="namespaceutil.html#af62d694f1607f8de82211b50b0790afa">replaceChars</a>(std::string&amp; s, <span class="keyword">const</span> std::string&amp; from, <span class="comment">// NOLINT</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                            <span class="keyword">const</span> std::string&amp; to);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceutil.html#a9d4e0d637a577af1b4366bce1979dbb1">isStringNum</a>(<span class="keyword">const</span> std::string &amp;s);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceutil.html#a9a58fec0d3359bc250715dd1898b21bd">isStringAlpha</a>(<span class="keyword">const</span> std::string &amp;s);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceutil.html#aace9f75eac8cac2f16484f60c250b2b6">isStringAlphaNum</a>(<span class="keyword">const</span> std::string &amp;s);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceutil.html#af9f843066d97ea65734b9c03f3b08e64">isStringAlphaNumDashPeriod</a>(<span class="keyword">const</span> std::string &amp;s);</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor">#endif  // STRINGUTIL_H</span></div>
-<div class="ttc" id="namespaceutil_html_ae52d36d8006b1763f91c5841b130de34"><div class="ttname"><a href="namespaceutil.html#ae52d36d8006b1763f91c5841b130de34">util::removeChars</a></div><div class="ttdeci">std::string &amp; removeChars(std::string &amp;s, const std::string &amp;chars)</div><div class="ttdoc">remove all instances of characters from a string </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:51</div></div>
-<div class="ttc" id="namespaceutil_html_aace9f75eac8cac2f16484f60c250b2b6"><div class="ttname"><a href="namespaceutil.html#aace9f75eac8cac2f16484f60c250b2b6">util::isStringAlphaNum</a></div><div class="ttdeci">bool isStringAlphaNum(const std::string &amp;s)</div><div class="ttdoc">is string just characters and numbers </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:86</div></div>
-<div class="ttc" id="namespaceutil_html_acb6954bc4f4c84ad9a4c8288a1d1307f"><div class="ttname"><a href="namespaceutil.html#acb6954bc4f4c84ad9a4c8288a1d1307f">util::wString2String</a></div><div class="ttdeci">std::string wString2String(const std::wstring &amp;s)</div><div class="ttdoc">convert a wide string to a narrow string </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:44</div></div>
-<div class="ttc" id="namespaceutil_html_aca624854c1a44bdcf34563f0dad21ad7"><div class="ttname"><a href="namespaceutil.html#aca624854c1a44bdcf34563f0dad21ad7">util::split</a></div><div class="ttdeci">std::vector&lt; std::string &gt; split(const std::string &amp;s, char delim)</div><div class="ttdoc">split a string into substrings </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:14</div></div>
-<div class="ttc" id="namespaceutil_html_a9d4e0d637a577af1b4366bce1979dbb1"><div class="ttname"><a href="namespaceutil.html#a9d4e0d637a577af1b4366bce1979dbb1">util::isStringNum</a></div><div class="ttdeci">bool isStringNum(const std::string &amp;s)</div><div class="ttdoc">is string a number </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:73</div></div>
-<div class="ttc" id="namespaceutil_html_a3638843a2fb77f4198bd7a489a152010"><div class="ttname"><a href="namespaceutil.html#a3638843a2fb77f4198bd7a489a152010">util::string2WString</a></div><div class="ttdeci">std::wstring string2WString(const std::string &amp;s)</div><div class="ttdoc">convert a narrow string to a wide string </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:37</div></div>
-<div class="ttc" id="namespaceutil_html_af9f843066d97ea65734b9c03f3b08e64"><div class="ttname"><a href="namespaceutil.html#af9f843066d97ea65734b9c03f3b08e64">util::isStringAlphaNumDashPeriod</a></div><div class="ttdeci">bool isStringAlphaNumDashPeriod(const std::string &amp;s)</div><div class="ttdoc">is string just characters, numbers, &#39;-&#39; and &#39;.&#39; </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:92</div></div>
-<div class="ttc" id="namespaceutil_html_af62d694f1607f8de82211b50b0790afa"><div class="ttname"><a href="namespaceutil.html#af62d694f1607f8de82211b50b0790afa">util::replaceChars</a></div><div class="ttdeci">std::string &amp; replaceChars(std::string &amp;s, const std::string &amp;from, const std::string &amp;to)</div><div class="ttdoc">replace all instances of a substring in a string with a new string </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:60</div></div>
-<div class="ttc" id="namespaceutil_html_a9a58fec0d3359bc250715dd1898b21bd"><div class="ttname"><a href="namespaceutil.html#a9a58fec0d3359bc250715dd1898b21bd">util::isStringAlpha</a></div><div class="ttdeci">bool isStringAlpha(const std::string &amp;s)</div><div class="ttdoc">is string just characters </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:80</div></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#ifndef STRINGUTIL_H</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define STRINGUTIL_H</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span>glass3 {</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">namespace </span>util {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;std::vector&lt;std::string&gt; <a class="code" href="namespaceglass3_1_1util.html#a9c96aeae2347986e5276099c127e5b52">split</a>(<span class="keyword">const</span> std::string &amp;s, <span class="keywordtype">char</span> delim);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;std::string&amp; <a class="code" href="namespaceglass3_1_1util.html#a7c3016088a3a014e9a446c7e2a78a0d3">removeChars</a>(std::string&amp; s, <span class="keyword">const</span> std::string&amp; chars);  <span class="comment">// NOLINT</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#endif  // STRINGUTIL_H</span></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_a9c96aeae2347986e5276099c127e5b52"><div class="ttname"><a href="namespaceglass3_1_1util.html#a9c96aeae2347986e5276099c127e5b52">glass3::util::split</a></div><div class="ttdeci">std::vector&lt; std::string &gt; split(const std::string &amp;s, char delim)</div><div class="ttdoc">split a string into substrings </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:15</div></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_a7c3016088a3a014e9a446c7e2a78a0d3"><div class="ttname"><a href="namespaceglass3_1_1util.html#a7c3016088a3a014e9a446c7e2a78a0d3">glass3::util::removeChars</a></div><div class="ttdeci">std::string &amp; removeChars(std::string &amp;s, const std::string &amp;chars)</div><div class="ttdoc">remove all instances of characters from a string </div><div class="ttdef"><b>Definition:</b> stringutil.cpp:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 27 2018 15:21:36 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 16 2018 18:29:10 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

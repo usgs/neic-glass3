@@ -95,32 +95,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> * the comments so that Doxygen will still</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> * be able to work.</span></div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> ****************************************/</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef TIMEUTIL_H</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define TIMEUTIL_H</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span>util {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;std::string <a class="code" href="namespaceutil.html#afb2d6fc37740353c86492e88949567ab">convertEpochTimeToISO8601</a>(<span class="keywordtype">double</span> epochtime);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;std::string <a class="code" href="namespaceutil.html#afb2d6fc37740353c86492e88949567ab">convertEpochTimeToISO8601</a>(time_t now, <span class="keywordtype">double</span> decimalseconds = 0);</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;std::string <a class="code" href="namespaceutil.html#a936639b71bc52d2343e46f9994b2afec">convertDateTimeToISO8601</a>(<span class="keyword">const</span> std::string &amp;TimeString);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keywordtype">double</span> <a class="code" href="namespaceutil.html#ad73db9ae66f72abfd84312bc3fc1b2aa">convertDateTimeToEpochTime</a>(<span class="keyword">const</span> std::string &amp;TimeString);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keywordtype">double</span> <a class="code" href="namespaceutil.html#a05f6fcac19cb79171bdb0a551cbc47e3">convertISO8601ToEpochTime</a>(<span class="keyword">const</span> std::string &amp;TimeString);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">#endif  // TIMEUTIL_H</span></div>
-<div class="ttc" id="namespaceutil_html_a936639b71bc52d2343e46f9994b2afec"><div class="ttname"><a href="namespaceutil.html#a936639b71bc52d2343e46f9994b2afec">util::convertDateTimeToISO8601</a></div><div class="ttdeci">std::string convertDateTimeToISO8601(const std::string &amp;TimeString)</div><div class="ttdoc">Convert time from date time to ISO8601. </div><div class="ttdef"><b>Definition:</b> timeutil.cpp:69</div></div>
-<div class="ttc" id="namespaceutil_html_a05f6fcac19cb79171bdb0a551cbc47e3"><div class="ttname"><a href="namespaceutil.html#a05f6fcac19cb79171bdb0a551cbc47e3">util::convertISO8601ToEpochTime</a></div><div class="ttdeci">double convertISO8601ToEpochTime(const std::string &amp;TimeString)</div><div class="ttdoc">Convert time from ISO8601 time to epoch time. </div><div class="ttdef"><b>Definition:</b> timeutil.cpp:75</div></div>
-<div class="ttc" id="namespaceutil_html_afb2d6fc37740353c86492e88949567ab"><div class="ttname"><a href="namespaceutil.html#afb2d6fc37740353c86492e88949567ab">util::convertEpochTimeToISO8601</a></div><div class="ttdeci">std::string convertEpochTimeToISO8601(double epochtime)</div><div class="ttdoc">Convert time from epoch time to ISO8601. </div><div class="ttdef"><b>Definition:</b> timeutil.cpp:26</div></div>
-<div class="ttc" id="namespaceutil_html_ad73db9ae66f72abfd84312bc3fc1b2aa"><div class="ttname"><a href="namespaceutil.html#ad73db9ae66f72abfd84312bc3fc1b2aa">util::convertDateTimeToEpochTime</a></div><div class="ttdeci">double convertDateTimeToEpochTime(const std::string &amp;TimeString)</div><div class="ttdoc">Convert time from date time to epoch time. </div><div class="ttdef"><b>Definition:</b> timeutil.cpp:200</div></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#ifndef TIMEUTIL_H</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define TIMEUTIL_H</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">namespace </span>glass3 {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">namespace </span>util {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;std::string <a class="code" href="namespaceglass3_1_1util.html#a9f64ff79ddae88b47c95a67ffa9bd804">convertEpochTimeToISO8601</a>(<span class="keywordtype">double</span> epochtime);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;std::string <a class="code" href="namespaceglass3_1_1util.html#a9f64ff79ddae88b47c95a67ffa9bd804">convertEpochTimeToISO8601</a>(std::time_t epochtime,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                                        <span class="keywordtype">double</span> decimalseconds = 0);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;std::string <a class="code" href="namespaceglass3_1_1util.html#af62331896271a1078140eb4dd61f050d">convertDateTimeToISO8601</a>(<span class="keyword">const</span> std::string &amp;TimeString);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="keywordtype">double</span> <a class="code" href="namespaceglass3_1_1util.html#ab4fd6e13bbc09953c98236703b93e9d6">convertDateTimeToEpochTime</a>(<span class="keyword">const</span> std::string &amp;TimeString);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keywordtype">double</span> <a class="code" href="namespaceglass3_1_1util.html#aa4c25bb8da2f50c00ee88e40e3173b6a">convertISO8601ToEpochTime</a>(<span class="keyword">const</span> std::string &amp;TimeString);</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#endif  // TIMEUTIL_H</span></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_aa4c25bb8da2f50c00ee88e40e3173b6a"><div class="ttname"><a href="namespaceglass3_1_1util.html#aa4c25bb8da2f50c00ee88e40e3173b6a">glass3::util::convertISO8601ToEpochTime</a></div><div class="ttdeci">double convertISO8601ToEpochTime(const std::string &amp;TimeString)</div><div class="ttdoc">Convert time from ISO8601 time to epoch time. </div><div class="ttdef"><b>Definition:</b> timeutil.cpp:80</div></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_ab4fd6e13bbc09953c98236703b93e9d6"><div class="ttname"><a href="namespaceglass3_1_1util.html#ab4fd6e13bbc09953c98236703b93e9d6">glass3::util::convertDateTimeToEpochTime</a></div><div class="ttdeci">double convertDateTimeToEpochTime(const std::string &amp;TimeString)</div><div class="ttdoc">Convert time from date time to epoch time. </div><div class="ttdef"><b>Definition:</b> timeutil.cpp:206</div></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_af62331896271a1078140eb4dd61f050d"><div class="ttname"><a href="namespaceglass3_1_1util.html#af62331896271a1078140eb4dd61f050d">glass3::util::convertDateTimeToISO8601</a></div><div class="ttdeci">std::string convertDateTimeToISO8601(const std::string &amp;TimeString)</div><div class="ttdoc">Convert time from date time format to ISO8601 format. </div><div class="ttdef"><b>Definition:</b> timeutil.cpp:73</div></div>
+<div class="ttc" id="namespaceglass3_1_1util_html_a9f64ff79ddae88b47c95a67ffa9bd804"><div class="ttname"><a href="namespaceglass3_1_1util.html#a9f64ff79ddae88b47c95a67ffa9bd804">glass3::util::convertEpochTimeToISO8601</a></div><div class="ttdeci">std::string convertEpochTimeToISO8601(double epochtime)</div><div class="ttdoc">Convert time from epoch time to ISO8601. </div><div class="ttdef"><b>Definition:</b> timeutil.cpp:28</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 27 2018 15:21:36 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 16 2018 18:29:10 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

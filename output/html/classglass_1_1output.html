@@ -139,9 +139,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8b12417bb48fa5544a2e6d3e815bbfcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8ec603c1239527806e221a0fefd85a8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#ac8ec603c1239527806e221a0fefd85a8">isRunning</a> () override</td></tr>
 <tr class="separator:ac8ec603c1239527806e221a0fefd85a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21fc540187a7c91c7ad9584d7f5b450c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a21fc540187a7c91c7ad9584d7f5b450c">check</a> () override</td></tr>
-<tr class="memdesc:a21fc540187a7c91c7ad9584d7f5b450c"><td class="mdescLeft">&#160;</td><td class="mdescRight">thread pool check function  <a href="#a21fc540187a7c91c7ad9584d7f5b450c">More...</a><br/></td></tr>
-<tr class="separator:a21fc540187a7c91c7ad9584d7f5b450c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad928504fd52fff5862c5620b06cfc7f9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#ad928504fd52fff5862c5620b06cfc7f9">healthCheck</a> () override</td></tr>
+<tr class="memdesc:ad928504fd52fff5862c5620b06cfc7f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">output heath check function  <a href="#ad928504fd52fff5862c5620b06cfc7f9">More...</a><br/></td></tr>
+<tr class="separator:ad928504fd52fff5862c5620b06cfc7f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e263129ed7ef4d0537626b9023d7ae7"><td class="memItemLeft" align="right" valign="top">const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a7e263129ed7ef4d0537626b9023d7ae7">getSOutputAgencyId</a> ()</td></tr>
 <tr class="separator:a7e263129ed7ef4d0537626b9023d7ae7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a663fbc64e414831a1c7fe50218bd020f"><td class="memItemLeft" align="right" valign="top">const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a663fbc64e414831a1c7fe50218bd020f">getSOutputAuthor</a> ()</td></tr>
@@ -186,9 +186,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aaf39cc7c403d22f46defcd8e4dec822a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#aaf39cc7c403d22f46defcd8e4dec822a">ReportInterval</a></td></tr>
 <tr class="memdesc:aaf39cc7c403d22f46defcd8e4dec822a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Information Report interval.  <a href="#aaf39cc7c403d22f46defcd8e4dec822a">More...</a><br/></td></tr>
 <tr class="separator:aaf39cc7c403d22f46defcd8e4dec822a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a80559b80cefd86f92ade369a047011bf"><td class="memItemLeft" align="right" valign="top">util::iAssociator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a80559b80cefd86f92ade369a047011bf">Associator</a></td></tr>
-<tr class="memdesc:a80559b80cefd86f92ade369a047011bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to Association class.  <a href="#a80559b80cefd86f92ade369a047011bf">More...</a><br/></td></tr>
-<tr class="separator:a80559b80cefd86f92ade369a047011bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a671dcb7d92e7bb0eaa108d174e60a6a4"><td class="memItemLeft" align="right" valign="top">glass3::util::iAssociator *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass_1_1output.html#a671dcb7d92e7bb0eaa108d174e60a6a4">Associator</a></td></tr>
+<tr class="memdesc:a671dcb7d92e7bb0eaa108d174e60a6a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to Association class.  <a href="#a671dcb7d92e7bb0eaa108d174e60a6a4">More...</a><br/></td></tr>
+<tr class="separator:a671dcb7d92e7bb0eaa108d174e60a6a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -268,33 +268,6 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns true if successful, false otherwise </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a21fc540187a7c91c7ad9584d7f5b450c"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glass::output::check </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>thread pool check function </p>
-<p>Checks to see if the thread pool is still running, calls threadbaseclass::check for worker thread monitoring. </p>
-<dl class="section return"><dt>Returns</dt><dd>returns true if thread pool is still running. </dd></dl>
 
 </div>
 </div>
@@ -531,6 +504,33 @@ Protected Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ad928504fd52fff5862c5620b06cfc7f9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glass::output::healthCheck </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>output heath check function </p>
+<p>Checks to see if the thread pool is still running, calls threadbaseclass::healthCheck for worker thread monitoring. </p>
+<dl class="section return"><dt>Returns</dt><dd>returns true if thread pool is still running. </dd></dl>
 
 </div>
 </div>
@@ -897,18 +897,18 @@ Protected Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a80559b80cefd86f92ade369a047011bf"></a>
+<a class="anchor" id="a671dcb7d92e7bb0eaa108d174e60a6a4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">util::iAssociator* glass::output::Associator</td>
+          <td class="memname">glass3::util::iAssociator* glass::output::Associator</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Pointer to Association class. </p>
-<p>A util::iassociator pointer to the class that handles association for glass </p>
+<p>A glass3::util::iassociator pointer to the class that handles association for glass </p>
 
 </div>
 </div>
@@ -934,7 +934,7 @@ Protected Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 27 2018 15:26:40 for output by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 16 2018 18:31:15 for output by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

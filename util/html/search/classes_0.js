@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['baseclass',['BaseClass',['../classutil_1_1BaseClass.html',1,'util']]]
+  ['baseclass',['BaseClass',['../classglass3_1_1util_1_1BaseClass.html',1,'glass3::util']]]
 ];

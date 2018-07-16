@@ -101,32 +101,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span>parse {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;std::string <a class="code" href="namespaceparse.html#a4b92f49fe5516eeb11d9b9406b72aa9a">hypoToJSONDetection</a>(std::shared_ptr&lt;json::Object&gt;,</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                                <span class="keyword">const</span> std::string &amp;outputAgencyID,</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                                <span class="keyword">const</span> std::string &amp;outputAuthor);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;std::string <a class="code" href="namespaceparse.html#ab43155f3507159666f3c01eb2c564948">cancelToJSONRetract</a>(std::shared_ptr&lt;json::Object&gt;,</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                                <span class="keyword">const</span> std::string &amp;outputAgencyID,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                                <span class="keyword">const</span> std::string &amp;outputAuthor);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;std::string <a class="code" href="namespaceparse.html#afb31c72bd58940e930a4e8d09a41507c">siteListToStationList</a>(std::shared_ptr&lt;json::Object&gt;);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;std::string <a class="code" href="namespaceparse.html#a64e7487582f87709493ec03c829958fa">siteLookupToStationInfoRequest</a>(std::shared_ptr&lt;json::Object&gt;,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                                            <span class="keyword">const</span> std::string &amp;outputAgencyID,</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                                            <span class="keyword">const</span> std::string &amp;outputAuthor);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;}  <span class="comment">// namespace parse</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">#endif  // CONVERT_H</span></div>
-<div class="ttc" id="namespaceparse_html_ab43155f3507159666f3c01eb2c564948"><div class="ttname"><a href="namespaceparse.html#ab43155f3507159666f3c01eb2c564948">parse::cancelToJSONRetract</a></div><div class="ttdeci">std::string cancelToJSONRetract(std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</div><div class="ttdoc">json cancel conversion function </div><div class="ttdef"><b>Definition:</b> convert.cpp:392</div></div>
-<div class="ttc" id="namespaceparse_html_a4b92f49fe5516eeb11d9b9406b72aa9a"><div class="ttname"><a href="namespaceparse.html#a4b92f49fe5516eeb11d9b9406b72aa9a">parse::hypoToJSONDetection</a></div><div class="ttdeci">std::string hypoToJSONDetection(std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</div><div class="ttdoc">json hypo conversion function </div><div class="ttdef"><b>Definition:</b> convert.cpp:14</div></div>
-<div class="ttc" id="namespaceparse_html_a64e7487582f87709493ec03c829958fa"><div class="ttname"><a href="namespaceparse.html#a64e7487582f87709493ec03c829958fa">parse::siteLookupToStationInfoRequest</a></div><div class="ttdeci">std::string siteLookupToStationInfoRequest(std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</div><div class="ttdoc">json station list conversion function </div><div class="ttdef"><b>Definition:</b> convert.cpp:545</div></div>
-<div class="ttc" id="namespaceparse_html_afb31c72bd58940e930a4e8d09a41507c"><div class="ttname"><a href="namespaceparse.html#afb31c72bd58940e930a4e8d09a41507c">parse::siteListToStationList</a></div><div class="ttdeci">std::string siteListToStationList(std::shared_ptr&lt; json::Object &gt;)</div><div class="ttdoc">json station list conversion function </div><div class="ttdef"><b>Definition:</b> convert.cpp:457</div></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span>glass3 {</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span>parse {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;std::string <a class="code" href="namespaceglass3_1_1parse.html#a88dd6af073a52f8ea58d97cb42503760">hypoToJSONDetection</a>(std::shared_ptr&lt;json::Object&gt;,</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                                <span class="keyword">const</span> std::string &amp;outputAgencyID,</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                                <span class="keyword">const</span> std::string &amp;outputAuthor);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;std::string <a class="code" href="namespaceglass3_1_1parse.html#a6dae4f07c0ec21ced9e8c8f4b290c301">cancelToJSONRetract</a>(std::shared_ptr&lt;json::Object&gt;,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                                <span class="keyword">const</span> std::string &amp;outputAgencyID,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                                <span class="keyword">const</span> std::string &amp;outputAuthor);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;std::string <a class="code" href="namespaceglass3_1_1parse.html#a0bd68c94fb036f8792fb2d636bc8b1f3">siteListToStationList</a>(std::shared_ptr&lt;json::Object&gt;);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;std::string <a class="code" href="namespaceglass3_1_1parse.html#a8c456c0c82b4f1412b37c77bf60decdb">siteLookupToStationInfoRequest</a>(std::shared_ptr&lt;json::Object&gt;,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                                            <span class="keyword">const</span> std::string &amp;outputAgencyID,</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                                            <span class="keyword">const</span> std::string &amp;outputAuthor);</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}  <span class="comment">// namespace parse</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">#endif  // CONVERT_H</span></div>
+<div class="ttc" id="namespaceglass3_1_1parse_html_a8c456c0c82b4f1412b37c77bf60decdb"><div class="ttname"><a href="namespaceglass3_1_1parse.html#a8c456c0c82b4f1412b37c77bf60decdb">glass3::parse::siteLookupToStationInfoRequest</a></div><div class="ttdeci">std::string siteLookupToStationInfoRequest(std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</div><div class="ttdoc">json station list conversion function </div><div class="ttdef"><b>Definition:</b> convert.cpp:546</div></div>
+<div class="ttc" id="namespaceglass3_1_1parse_html_a6dae4f07c0ec21ced9e8c8f4b290c301"><div class="ttname"><a href="namespaceglass3_1_1parse.html#a6dae4f07c0ec21ced9e8c8f4b290c301">glass3::parse::cancelToJSONRetract</a></div><div class="ttdeci">std::string cancelToJSONRetract(std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</div><div class="ttdoc">json cancel conversion function </div><div class="ttdef"><b>Definition:</b> convert.cpp:393</div></div>
+<div class="ttc" id="namespaceglass3_1_1parse_html_a0bd68c94fb036f8792fb2d636bc8b1f3"><div class="ttname"><a href="namespaceglass3_1_1parse.html#a0bd68c94fb036f8792fb2d636bc8b1f3">glass3::parse::siteListToStationList</a></div><div class="ttdeci">std::string siteListToStationList(std::shared_ptr&lt; json::Object &gt;)</div><div class="ttdoc">json station list conversion function </div><div class="ttdef"><b>Definition:</b> convert.cpp:458</div></div>
+<div class="ttc" id="namespaceglass3_1_1parse_html_a88dd6af073a52f8ea58d97cb42503760"><div class="ttname"><a href="namespaceglass3_1_1parse.html#a88dd6af073a52f8ea58d97cb42503760">glass3::parse::hypoToJSONDetection</a></div><div class="ttdeci">std::string hypoToJSONDetection(std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</div><div class="ttdoc">json hypo conversion function </div><div class="ttdef"><b>Definition:</b> convert.cpp:15</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jun 27 2018 15:26:02 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 16 2018 18:30:46 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

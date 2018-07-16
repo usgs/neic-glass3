@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['queue',['Queue',['../classutil_1_1Queue.html#a339802b2f3f17ab674cc1415bd580bcb',1,'util::Queue']]]
+  ['openfile',['openFile',['../classglass3_1_1util_1_1Config.html#aa4a575b8c574c43cb71c82a56d5542c2',1,'glass3::util::Config']]]
 ];

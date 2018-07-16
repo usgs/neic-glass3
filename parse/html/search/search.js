@@ -9,7 +9,7 @@ var indexSectionsWithContent =
 {
   0: "cghjmpsv~",
   1: "cgjp",
-  2: "p",
+  2: "g",
   3: "cgjp",
   4: "cghjpsv~",
   5: "m"

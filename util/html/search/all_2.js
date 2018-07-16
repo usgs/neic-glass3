@@ -1,16 +1,18 @@
 var searchData=
 [
-  ['cache',['Cache',['../classutil_1_1Cache.html',1,'util']]],
-  ['cache',['Cache',['../classutil_1_1Cache.html#ac92066e408059d9401682a9768475679',1,'util::Cache::Cache()'],['../classutil_1_1Cache.html#ad69168193c1395a8f7938bd3c3ca2970',1,'util::Cache::Cache(json::Object *config)']]],
+  ['cache',['Cache',['../classglass3_1_1util_1_1Cache.html',1,'glass3::util']]],
+  ['cache',['Cache',['../classglass3_1_1util_1_1Cache.html#a553eb53eaa30ca8c1f4d7e74ba45d4ab',1,'glass3::util::Cache']]],
   ['cache_2ecpp',['cache.cpp',['../cache_8cpp.html',1,'']]],
   ['cache_2eh',['cache.h',['../cache_8h.html',1,'']]],
-  ['check',['check',['../classutil_1_1ThreadBaseClass.html#a2036431c5a7c5063d578227d7b0e2fb4',1,'util::ThreadBaseClass::check()'],['../classutil_1_1ThreadPool.html#a5c360cd1e7d444394731ece2e3668880',1,'util::ThreadPool::check()']]],
-  ['clear',['clear',['../classutil_1_1BaseClass.html#ac53c992fe65cb50ef7ddbf3333c96d1a',1,'util::BaseClass::clear()'],['../classutil_1_1Cache.html#a70b03a3b1c3363ca8c654a7c7675fd66',1,'util::Cache::clear()']]],
-  ['clearcache',['clearCache',['../classutil_1_1Cache.html#a54778ea322ac19bae8b56096ee22a9ed',1,'util::Cache']]],
-  ['clearqueue',['clearQueue',['../classutil_1_1Queue.html#a10d6dd308323652999e80dd66a1ff8b7',1,'util::Queue']]],
-  ['convertdatetimetoepochtime',['convertDateTimeToEpochTime',['../namespaceutil.html#ad73db9ae66f72abfd84312bc3fc1b2aa',1,'util']]],
-  ['convertdatetimetoiso8601',['convertDateTimeToISO8601',['../namespaceutil.html#a936639b71bc52d2343e46f9994b2afec',1,'util']]],
-  ['convertepochtimetoiso8601',['convertEpochTimeToISO8601',['../namespaceutil.html#afb2d6fc37740353c86492e88949567ab',1,'util::convertEpochTimeToISO8601(double epochtime)'],['../namespaceutil.html#ad05f89a46087fa7376f01319818507cf',1,'util::convertEpochTimeToISO8601(time_t now, double decimalseconds=0)']]],
-  ['convertiso8601toepochtime',['convertISO8601ToEpochTime',['../namespaceutil.html#a05f6fcac19cb79171bdb0a551cbc47e3',1,'util']]],
-  ['copyfileto',['copyFileTo',['../namespaceutil.html#a89598d70d05f268596a5e1adca5e8ab3',1,'util']]]
+  ['clear',['clear',['../classglass3_1_1util_1_1BaseClass.html#a8c0feba557ca41b22fc14c655e26668e',1,'glass3::util::BaseClass::clear()'],['../classglass3_1_1util_1_1Cache.html#ae4b4d59d612cd142a3b03fdf5650f8be',1,'glass3::util::Cache::clear()'],['../classglass3_1_1util_1_1Config.html#a74a9b946a3db89cd181eaf8ca5222ac0',1,'glass3::util::Config::clear()'],['../classglass3_1_1util_1_1Queue.html#a9d719e935732b8f2d6e16e0196312ae2',1,'glass3::util::Queue::clear()']]],
+  ['closefile',['closeFile',['../classglass3_1_1util_1_1Config.html#a8f8f35a856ee9420e0d72234ba6875b8',1,'glass3::util::Config']]],
+  ['config',['Config',['../classglass3_1_1util_1_1Config.html',1,'glass3::util']]],
+  ['config',['Config',['../classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4',1,'glass3::util::Config::Config()'],['../classglass3_1_1util_1_1Config.html#aab657a31b369369f416ac113294f43a2',1,'glass3::util::Config::Config(std::string filepath, std::string filename)'],['../classglass3_1_1util_1_1Config.html#a105b8b9105c8d5796df50f40fb58448e',1,'glass3::util::Config::Config(std::string newconfig)']]],
+  ['config_2ecpp',['config.cpp',['../config_8cpp.html',1,'']]],
+  ['config_2eh',['config.h',['../config_8h.html',1,'']]],
+  ['convertdatetimetoepochtime',['convertDateTimeToEpochTime',['../namespaceglass3_1_1util.html#ab4fd6e13bbc09953c98236703b93e9d6',1,'glass3::util']]],
+  ['convertdatetimetoiso8601',['convertDateTimeToISO8601',['../namespaceglass3_1_1util.html#af62331896271a1078140eb4dd61f050d',1,'glass3::util']]],
+  ['convertepochtimetoiso8601',['convertEpochTimeToISO8601',['../namespaceglass3_1_1util.html#a9f64ff79ddae88b47c95a67ffa9bd804',1,'glass3::util::convertEpochTimeToISO8601(double epochtime)'],['../namespaceglass3_1_1util.html#adcf3187beff630e67e34127919c97324',1,'glass3::util::convertEpochTimeToISO8601(std::time_t epochtime, double decimalseconds=0)'],['../namespaceglass3_1_1util.html#a5fdc351b4ca8c12447b555bcd352ba79',1,'glass3::util::convertEpochTimeToISO8601(time_t epochtime, double decimalseconds)']]],
+  ['convertiso8601toepochtime',['convertISO8601ToEpochTime',['../namespaceglass3_1_1util.html#aa4c25bb8da2f50c00ee88e40e3173b6a',1,'glass3::util']]],
+  ['copyfileto',['copyFileTo',['../namespaceglass3_1_1util.html#ab71d80ad46da4def692e8914e6ae59b4',1,'glass3::util']]]
 ];

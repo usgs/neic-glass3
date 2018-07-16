@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['reportinterval',['ReportInterval',['../classglass_1_1Associator.html#a7632a2693f436faad8b8836ced826723',1,'glass::Associator']]]
+  ['output',['Output',['../classglass_1_1Associator.html#aa1a855a3b1dbad35d436a7f687216fa7',1,'glass::Associator']]]
 ];

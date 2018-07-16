@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hypotojsondetection',['hypoToJSONDetection',['../namespaceparse.html#a4b92f49fe5516eeb11d9b9406b72aa9a',1,'parse']]]
+  ['hypotojsondetection',['hypoToJSONDetection',['../namespaceglass3_1_1parse.html#a88dd6af073a52f8ea58d97cb42503760',1,'glass3::parse']]]
 ];
