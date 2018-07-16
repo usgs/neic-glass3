@@ -92,7 +92,7 @@ class CHypo {
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100,
-			double aziTaper = 360., double maxDepth = 800.);
+			double aziTap = 360., double maxDep = 800.);
 
 	/**
 	 * \brief CHypo alternate constructor
@@ -175,7 +175,7 @@ class CHypo {
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
 					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
 							100,
-					double aziTaper = 360., double maxDepth = 800.);
+					double aziTap = 360., double maxDep = 800.);
 
 	/**
 	 * \brief Add pick reference to this hypo
