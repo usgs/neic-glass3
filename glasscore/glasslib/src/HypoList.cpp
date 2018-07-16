@@ -1132,8 +1132,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 											->getTOrg() + hypo->getTOrg()) / 2., glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
 											->getThresh(), hypo->getCut(), hypo
 											->getTrv1(), hypo->getTrv2(), pGlass
-											->getTTT(), hypo->getRes(), hypo
-											->getAziTaper(), hypo->getMaxDepth());
+											->getTTT(), distanceCut * DEG2KM, hypo
+											->getAziTaper());
 
 					// set hypo glass pointer and such
 					hypo3->setGlass(pGlass);
@@ -1188,7 +1188,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					if (hypo3->getBayes()
 							> (std::fmax(hypo->getBayes(), hypo2->getBayes())
 									+ 0.5
-											* std::fmin(hypo->getBayes(),
+											* std::fabs(hypo->getBayes(),
 														hypo2->getBayes()))) {
 						snprintf(
 								sLog,
@@ -1238,7 +1238,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 						hypo2->unlockAfterProcessing();
 					}
+				} else {
+					hypo2->unlockAfterProcessing();
 				}
+			} else {
+				hypo2->unlockAfterProcessing();
 			}
 	
 			hypo2->unlockAfterProcessing();
