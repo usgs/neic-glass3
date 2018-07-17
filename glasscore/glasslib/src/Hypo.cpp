@@ -1017,7 +1017,7 @@ bool CHypo::cancelCheck() {
 	}
 
 	// Whispy (event fragment) check (does the quake have a gap greater than 270
-	// while being shallower than 550)
+	// while being deeper than 550)
 	// NOTE: Hardcoded
 	if ((dZ > 550.0) && (dGap > 270.0)) {
 		// failure
