@@ -714,6 +714,40 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 
 	// if event is all good check if proximal events can be merged.
 	if (mergeCloseEvents(hyp)) {
+
+		std::chrono::high_resolution_clock::time_point tCancelEndTime =
+				std::chrono::high_resolution_clock::now();
+		double cancelTime = std::chrono::duration_cast<
+				std::chrono::duration<double>>(tCancelEndTime - tPruneEndTime)
+				.count();
+
+		remHypo(hyp);
+
+		std::chrono::high_resolution_clock::time_point tRemoveEndTime =
+				std::chrono::high_resolution_clock::now();
+		double removeTime = std::chrono::duration_cast<
+				std::chrono::duration<double>>(tRemoveEndTime - tCancelEndTime)
+				.count();
+
+		double evolveTime = std::chrono::duration_cast<
+				std::chrono::duration<double>>(
+				tRemoveEndTime - tEvolveStartTime).count();
+
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CHypoList::evolve: Canceled Merged sPid:" + pid + " cycle:"
+						+ std::to_string(hyp->getCycle()) + " processCount:"
+						+ std::to_string(hyp->getProcessCount())
+						+ " Evolve Timing: localizeTime:"
+						+ std::to_string(localizeTime) + " scavengeTime:"
+						+ std::to_string(scavengeTime) + " resolveTime:"
+						+ std::to_string(resolveTime) + " pruneTime:"
+						+ std::to_string(pruneTime) + " cancelTime:"
+						+ std::to_string(cancelTime) + " removeTime:"
+						+ std::to_string(removeTime) + " evolveTime:"
+						+ std::to_string(evolveTime));
+
+		// return false since the hypo was canceled.
 		return (false);
 	}
 
@@ -1071,17 +1105,16 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	for (int i = 0; i < hypoList.size(); i++) {
 		// make sure hypo is still valid before associating
 		if (std::shared_ptr<CHypo> hypo2 = hypoList[i].lock()) {
+
 			// make sure we're not looking at ourself
 			if (hypo->getPid() == hypo2->getPid()) {
 				continue;
 			}
-			// make sure no one else is messing with hypo2
-			if (hypo2->isLockedForProcessing() == true) {
-				continue;
-			} else {
-				hypo2->lockForProcessing();
-			}
 
+			// check to make sure that the hypo2 has a stack
+			if (hypo2->cancelCheck() == true) {
+				continue;
+			}
 			snprintf(sLog, sizeof(sLog),
 						"CHypoList::merge: Testing merger of %s and %s\n",
 						hypo->getPid().c_str(), hypo2->getPid().c_str());
@@ -1089,12 +1122,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
-
-			// check to make sure that the hypo2 has a stack
-			if (hypo2->cancelCheck() == true) {
-				hypo2->unlockAfterProcessing();
-				continue;
-			}
 
 			// check time difference
 			double diff = std::fabs(hypo->getTOrg() - hypo2->getTOrg());
@@ -1207,15 +1234,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									" ** Canceling merged event %s\n",
 									hypo->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
-						remHypo(hypo);
-
-						snprintf(sLog, sizeof(sLog),
-									" ** Canceling merged event %s\n",
-									hypo2->getPid().c_str());
-						glassutil::CLogit::Out(sLog);
-						remHypo(hypo2);
-						// done with hypo 2
-						hypo2->unlockAfterProcessing();
 
 						// add merged hypo to hypolist
 						addHypo(hypo3);
@@ -1239,8 +1257,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					}
 				}
 			}
-	
-			hypo2->unlockAfterProcessing();
 		}
 	}
 	return (false);
