@@ -9,12 +9,11 @@ namespace util {
 // ---------------------------------------------------------ThreadPool
 ThreadPool::ThreadPool() {
 	// init variables
-	setPoolName("NYI");
-	setRunning(false);
+	setPoolName("unknown");
 	setNumThreads(0);
 	setSleepTime(100);
 	setHealthCheckInterval(1);
-	setLastHealthCheck(std::time(nullptr));
+	setThreadState(glass3::util::ThreadState::Initialized);
 }
 
 // ---------------------------------------------------------ThreadPool
@@ -22,11 +21,10 @@ ThreadPool::ThreadPool(std::string poolname, int num_threads, int sleeptime,
 						int checkinterval) {
 	// init variables
 	setPoolName(poolname);
-	setRunning(false);
 	setNumThreads(num_threads);
 	setSleepTime(sleeptime);
 	setHealthCheckInterval(checkinterval);
-	setLastHealthCheck(std::time(nullptr));
+	setThreadState(glass3::util::ThreadState::Initialized);
 
 	start();
 }
@@ -39,15 +37,12 @@ ThreadPool::~ThreadPool() {
 
 // ---------------------------------------------------------start
 bool ThreadPool::start() {
-	logger::log("trace",
-				"ThreadPool::start(): Starting pool. (" + getPoolName() + ")");
-
 	// are we already running
-	if (isRunning() == true) {
-		logger::log(
-				"warning",
-				"ThreadPool::start(): Pool is already running. ("
-						+ getPoolName() + ")");
+	if ((getThreadState() == glass3::util::ThreadState::Starting)
+			|| (getThreadState() == glass3::util::ThreadState::Started)) {
+		logger::log("warning",
+					"ThreadPool::start(): Work Thread is already starting "
+							"or running. (" + getPoolName() + ")");
 		return (false);
 	}
 
@@ -60,7 +55,8 @@ bool ThreadPool::start() {
 		return (false);
 	}
 
-	setRunning(true);
+	// we're starting
+	setThreadState(glass3::util::ThreadState::Started);
 
 	// create threads in pool
 	for (int i = 0; i < getNumThreads(); i++) {
@@ -69,9 +65,7 @@ bool ThreadPool::start() {
 
 		// add to status map if we're tracking status
 		if (getHealthCheckInterval() > 0) {
-			m_StatusMutex.lock();
-			m_ThreadStatusMap[m_ThreadPool[i].get_id()] = true;
-			m_StatusMutex.unlock();
+			m_ThreadHealthMap[m_ThreadPool[i].get_id()] = std::time(nullptr);
 		}
 
 		logger::log(
@@ -85,16 +79,22 @@ bool ThreadPool::start() {
 
 // ---------------------------------------------------------stop
 bool ThreadPool::stop() {
-	logger::log("trace",
-				"ThreadPool::ThreadPool(): Stop. (" + getPoolName() + ")");
+	// check if we're running
+	if ((getThreadState() == glass3::util::ThreadState::Stopping)
+			|| (getThreadState() == glass3::util::ThreadState::Stopped)
+			|| (getThreadState() == glass3::util::ThreadState::Initialized)) {
+		logger::log("warning",
+					"ThreadPool::stop(): Work Threads is are not running, "
+							"or is already stopping. (" + getPoolName() + ")");
+		return (false);
+	}
 
 	// disable status checking
-	m_StatusMutex.lock();
-	m_ThreadStatusMap.clear();
-	m_StatusMutex.unlock();
+	m_ThreadHealthMap.clear();
 
-	// signal threads to finish
-	setRunning(false);
+	// we're stopping
+	setThreadState(glass3::util::ThreadState::Stopping);
+
 	// wait for threads to finish
 	for (int i = 0; i < m_ThreadPool.size(); i++) {
 		try {
@@ -108,8 +108,8 @@ bool ThreadPool::stop() {
 		}
 	}
 
-	// we're no longer running
-	setAllJobsHealth(false);
+	// we're now stopped
+	setThreadState(glass3::util::ThreadState::Stopped);
 
 	logger::log("debug",
 				"ThreadPool::ThreadPool(): Stopped. (" + getPoolName() + ")");
@@ -130,16 +130,10 @@ void ThreadPool::addJob(std::function<void()> newjob) {
 
 // ---------------------------------------------------------jobLoop
 void ThreadPool::jobLoop() {
-	logger::log("debug",
-				"ThreadPool::jobLoop(): Thread Start.(" + getPoolName() + ")");
-
-	while (isRunning() == true) {
-		// make sure we're still running
-		if (isRunning() == false)
-			break;
-
+	// run until told to stop
+	while (getThreadState() == glass3::util::ThreadState::Started) {
 		// update thread status
-		setJobHealth(true);
+		setJobHealth();
 
 		// lock for queue access
 		getMutex().lock();
@@ -192,7 +186,7 @@ void ThreadPool::jobLoop() {
 
 // ---------------------------------------------------------jobSleep
 void ThreadPool::jobSleep() {
-	if (isRunning() == true) {
+	if (getThreadState() == glass3::util::ThreadState::Started) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
 	}
 }
@@ -200,17 +194,9 @@ void ThreadPool::jobSleep() {
 // ---------------------------------------------------------healthCheck
 bool ThreadPool::healthCheck() {
 	// if we have a negative check interval,
-	// we shouldn't worry about thread status checks.
-	if (getHealthCheckInterval() < 0)
+	// we shouldn't worry about thread health checks.
+	if (getHealthCheckInterval() < 0) {
 		return (true);
-
-	// thread is dead if we're not running
-	if (isRunning() == false) {
-		logger::log(
-				"error",
-				"ThreadPool::healthCheck(): m_bRunJobLoop is false. ("
-						+ getPoolName() + ")");
-		return (false);
 	}
 
 	// are there any threads? Not sure how this would happen,
@@ -218,35 +204,30 @@ bool ThreadPool::healthCheck() {
 	if (getNumThreads() == 0) {
 		logger::log(
 				"error",
-				"ThreadPool::healthCheck(): all threads have exited! ("
+				"ThreadPool::healthCheck(): no threads in pool! ("
 						+ getPoolName() + ")");
 		return (false);
+	}
+
+	// don't check if we've not started yet
+	if (getThreadState() == glass3::util::ThreadState::Initialized) {
+		return (true);
 	}
 
 	// see if it's time to check
 	time_t tNow;
 	std::time(&tNow);
-	if ((tNow - getLastHealthCheck()) >= getHealthCheckInterval()) {
-		// get the thread status
-		if (getAllJobsHealth() != true) {
-			logger::log(
-					"error",
-					"ThreadPool::healthCheck(): At least one thread"
-							" did not respond (" + getPoolName()
-							+ ") in the last"
-							+ std::to_string(getHealthCheckInterval())
-							+ "seconds.");
+	int lastCheckInterval = (tNow - getAllLastHealthy());
+	if (lastCheckInterval > getHealthCheckInterval()) {
+		logger::log(
+				"error",
+				"ThreadPool::healthCheck():"
+						" lastCheckInterval for at least one thread in"
+						+ getPoolName() + " exceeds health check interval ( "
+						+ std::to_string(lastCheckInterval) + " > "
+						+ std::to_string(getHealthCheckInterval()) + " )");
 
-			return (false);
-		}
-
-		// mark check as false until next time
-		// if the thread is alive, it'll mark it
-		// as true again.
-		setAllJobsHealth(false);
-
-		// remember the last time we checked
-		setLastHealthCheck(tNow);
+		return (false);
 	}
 
 	// everything is awesome
@@ -254,48 +235,64 @@ bool ThreadPool::healthCheck() {
 }
 
 // ---------------------------------------------------------setJobHealth
-void ThreadPool::setJobHealth(bool status) {
-	// update thread status
-	std::lock_guard<std::mutex> guard(m_StatusMutex);
-	if (m_ThreadStatusMap.find(std::this_thread::get_id())
-			!= m_ThreadStatusMap.end()) {
-		m_ThreadStatusMap[std::this_thread::get_id()] = status;
+void ThreadPool::setJobHealth(bool health) {
+	if (health == true) {
+		std::time_t tNow;
+		std::time(&tNow);
+		setLastHealthy(tNow);
+	} else {
+		setLastHealthy(0);
+		logger::log("warning",
+					"ThreadPool::setThreadHealth(): health set to false");
 	}
 }
 
 // ---------------------------------------------------------setAllJobsHealth
-void ThreadPool::setAllJobsHealth(bool status) {
-	// update thread status
-	std::lock_guard<std::mutex> guard(m_StatusMutex);
-	std::map<std::thread::id, bool>::iterator StatusItr;
-	for (StatusItr = m_ThreadStatusMap.begin();
-			StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
-		StatusItr->second = status;
+void ThreadPool::setAllJobsHealth(bool health) {
+	if (health == true) {
+		std::time_t tNow;
+		std::time(&tNow);
+		setAllLastHealthy(tNow);
+	} else {
+		setAllLastHealthy(0);
+		logger::log("warning",
+					"ThreadPool::setAllJobsHealth(): health set to false");
 	}
 }
 
-// ---------------------------------------------------------getAllJobsHealth
-bool ThreadPool::getAllJobsHealth() {
-	// check thread status
-	std::lock_guard<std::mutex> guard(m_StatusMutex);
+// ---------------------------------------------------------getLastHealthy
+std::time_t ThreadPool::getLastHealthy() {
+	// get this thread status
+	if (m_ThreadHealthMap.find(std::this_thread::get_id())
+			!= m_ThreadHealthMap.end()) {
+		return (m_ThreadHealthMap[std::this_thread::get_id()]);
+	}
+	return (0);
+}
 
+// ---------------------------------------------------------getAllLastHealthy
+std::time_t ThreadPool::getAllLastHealthy() {
 	// empty check
-	if (m_ThreadStatusMap.size() == 0) {
-		return (false);
+	if (m_ThreadHealthMap.size() == 0) {
+		return (0);
 	}
 
-	std::map<std::thread::id, bool>::iterator StatusItr;
-	for (StatusItr = m_ThreadStatusMap.begin();
-			StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
+	// init oldest time to now
+	double oldestTime = std::time(nullptr);
+
+	// go through all threads in the pool
+	std::map<std::thread::id, std::atomic<double>>::iterator StatusItr;
+	for (StatusItr = m_ThreadHealthMap.begin();
+			StatusItr != m_ThreadHealthMap.end(); ++StatusItr) {
 		// get the thread status
-		bool status = static_cast<bool>(StatusItr->second);
+		double healthTime = static_cast<double>(StatusItr->second);
 
 		// at least one thread did not respond
-		if (status != true) {
-			return (false);
+		if (healthTime < oldestTime) {
+			oldestTime = healthTime;
 		}
 	}
-	return (true);
+	return (oldestTime);
 }
 
 // ---------------------------------------------------------getJobQueueSize
@@ -315,14 +312,14 @@ int ThreadPool::getHealthCheckInterval() {
 	return (m_iHealthCheckInterval);
 }
 
-// ---------------------------------------------------------setRunning
-void ThreadPool::setRunning(bool running) {
-	m_bRunJobLoop = running;
+// ---------------------------------------------------------setThreadState
+void ThreadPool::setThreadState(glass3::util::ThreadState status) {
+	m_bThreadState = status;
 }
 
-// ---------------------------------------------------------setNumThreads
-bool ThreadPool::isRunning() {
-	return (m_bRunJobLoop);
+// ---------------------------------------------------------getThreadState
+glass3::util::ThreadState ThreadPool::getThreadState() {
+	return (m_bThreadState);
 }
 
 // ---------------------------------------------------------setNumThreads
@@ -357,14 +354,23 @@ const std::string& ThreadPool::getPoolName() {
 	return (m_sPoolName);
 }
 
-// ---------------------------------------------------------setLastHealthCheck
-void ThreadPool::setLastHealthCheck(time_t now) {
-	m_tLastHealthCheck = now;
+// ---------------------------------------------------------setLastHealthy
+void ThreadPool::setLastHealthy(std::time_t now) {
+	// update this thread status
+	if (m_ThreadHealthMap.find(std::this_thread::get_id())
+			!= m_ThreadHealthMap.end()) {
+		m_ThreadHealthMap[std::this_thread::get_id()] = now;
+	}
 }
 
-// ---------------------------------------------------------getLastHealthCheck
-time_t ThreadPool::getLastHealthCheck() {
-	return ((time_t)m_tLastHealthCheck);
+// ---------------------------------------------------------setAllLastHealthy
+void ThreadPool::setAllLastHealthy(std::time_t now) {
+	// update each thread status
+	std::map<std::thread::id, std::atomic<double>>::iterator StatusItr;
+	for (StatusItr = m_ThreadHealthMap.begin();
+			StatusItr != m_ThreadHealthMap.end(); ++StatusItr) {
+		StatusItr->second = now;
+	}
 }
 
 }  // namespace util
