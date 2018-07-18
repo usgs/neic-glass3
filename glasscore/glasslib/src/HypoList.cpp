@@ -747,13 +747,13 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 
 		// return false since the hypo was canceled.
 		return (false);
-	}
+	}*/
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
 	double mergeTime =
 			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tMergeEndTime - tCancelEndTime).count();*/
+					tMergeEndTime - tCancelEndTime).count();
 
 	// announce if a correlation has been added to an existing event
 	// NOTE: Is there a better way to do this?
