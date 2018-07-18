@@ -713,7 +713,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	if (mergeCloseEvents(hyp)) {
+/*	if (mergeCloseEvents(hyp)) {
 
 		std::chrono::high_resolution_clock::time_point tCancelEndTime =
 				std::chrono::high_resolution_clock::now();
@@ -753,7 +753,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 			std::chrono::high_resolution_clock::now();
 	double mergeTime =
 			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tMergeEndTime - tCancelEndTime).count();
+					tMergeEndTime - tCancelEndTime).count();*/
 
 	// announce if a correlation has been added to an existing event
 	// NOTE: Is there a better way to do this?
