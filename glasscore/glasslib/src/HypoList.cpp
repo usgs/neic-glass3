@@ -632,25 +632,11 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 		hyp->localize();
 	}
 
+
 	std::chrono::high_resolution_clock::time_point tScavengeEndTime =
 			std::chrono::high_resolution_clock::now();
 	double scavengeTime = std::chrono::duration_cast<
 			std::chrono::duration<double>>(tScavengeEndTime - tLocalizeEndTime)
-			.count();
-
-	// Ensure all data belong to hypo
-	if (resolve(hyp)) {
-		// we should report this hypo since it has changed
-		breport = true;
-
-		// relocate the hypo
-		hyp->localize();
-	}
-
-	std::chrono::high_resolution_clock::time_point tResolveEndTime =
-			std::chrono::high_resolution_clock::now();
-	double resolveTime = std::chrono::duration_cast<
-			std::chrono::duration<double>>(tResolveEndTime - tScavengeEndTime)
 			.count();
 
 	// Remove data that no longer fit hypo's association criteria
@@ -666,7 +652,23 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 			std::chrono::high_resolution_clock::now();
 	double pruneTime =
 			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tPruneEndTime - tResolveEndTime).count();
+					tPruneEndTime - tScavengeEndTime).count();
+
+	// Ensure all data belong to hypo
+	if (resolve(hyp)) {
+		// we should report this hypo since it has changed
+		breport = true;
+
+		// relocate the hypo
+		hyp->localize();
+	}
+
+	std::chrono::high_resolution_clock::time_point tResolveEndTime =
+			std::chrono::high_resolution_clock::now();
+	double resolveTime = std::chrono::duration_cast<
+			std::chrono::duration<double>>(tResolveEndTime - tPruneEndTime)
+			.count();
+
 
 	// check to see if this hypo is viable.
 	if (hyp->cancelCheck()) {
@@ -713,41 +715,10 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-/*	if (mergeCloseEvents(hyp)) {
+	if (mergeCloseEvents(hyp)) {
 
-		std::chrono::high_resolution_clock::time_point tCancelEndTime =
-				std::chrono::high_resolution_clock::now();
-		double cancelTime = std::chrono::duration_cast<
-				std::chrono::duration<double>>(tCancelEndTime - tPruneEndTime)
-				.count();
-
-		std::chrono::high_resolution_clock::time_point tRemoveEndTime =
-				std::chrono::high_resolution_clock::now();
-		double removeTime = std::chrono::duration_cast<
-				std::chrono::duration<double>>(tRemoveEndTime - tCancelEndTime)
-				.count();
-
-		double evolveTime = std::chrono::duration_cast<
-				std::chrono::duration<double>>(
-				tRemoveEndTime - tEvolveStartTime).count();
-
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
-				"CHypoList::evolve: Canceled Merged sPid:" + pid + " cycle:"
-						+ std::to_string(hyp->getCycle()) + " processCount:"
-						+ std::to_string(hyp->getProcessCount())
-						+ " Evolve Timing: localizeTime:"
-						+ std::to_string(localizeTime) + " scavengeTime:"
-						+ std::to_string(scavengeTime) + " resolveTime:"
-						+ std::to_string(resolveTime) + " pruneTime:"
-						+ std::to_string(pruneTime) + " cancelTime:"
-						+ std::to_string(cancelTime) + " removeTime:"
-						+ std::to_string(removeTime) + " evolveTime:"
-						+ std::to_string(evolveTime));
-
-		// return false since the hypo was canceled.
 		return (false);
-	}*/
+	}
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -1070,18 +1041,10 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
-	// freeze the list to check for splits
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
-
-	// Make sure our hypo is in good shape
-	if (hypo->cancelCheck() == true) {
-		return (false);
-	}
-
 	char sLog[1024];  // logging string
-	double distanceCut = 3.0;  // distance difference to try merging events
+	double distanceCut = 5.0;  // distance difference to try merging events
 							   // in degrees
-	double timeCut = 30.;  // origin time difference to merge events
+	double timeCut = 60.;  // origin time difference to merge events
 	double delta;  // this holds delta distance
 
 	// this events pick list
@@ -1115,6 +1078,13 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			// check to make sure that the hypo2 has a stack
 			if (hypo2->cancelCheck() == true) {
 				continue;
+			}
+
+			if(hypo2->isLockedForProcessing()) {
+				continue;
+			}
+			else {
+				hypo2->lockForProcessing();
 			}
 
 			// get hypo2's picks
@@ -1268,6 +1238,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					}
 				}
 			}
+			hypo2->unlockAfterProcessing();
 		}
 	}
 	return (false);
