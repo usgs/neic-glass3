@@ -17,6 +17,7 @@ ThreadBaseClass::ThreadBaseClass()
 	setHealthCheckInterval(1);
 	setThreadHealth();
 
+	// set to default inter-loop sleep
 	setSleepTime(100);
 }
 
@@ -30,6 +31,7 @@ ThreadBaseClass::ThreadBaseClass(std::string threadname, int sleeptimems)
 	setHealthCheckInterval(1);
 	setThreadHealth();
 
+	// set to provided inter-loop sleep
 	setSleepTime(sleeptimems);
 }
 

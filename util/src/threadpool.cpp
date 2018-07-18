@@ -65,6 +65,8 @@ bool ThreadPool::start() {
 
 		// add to status map if we're tracking status
 		if (getHealthCheckInterval() > 0) {
+			// insert a new key into the health map for this thread
+			// to track status
 			m_ThreadHealthMap[m_ThreadPool[i].get_id()] = std::time(nullptr);
 		}
 
@@ -88,9 +90,6 @@ bool ThreadPool::stop() {
 							"or is already stopping. (" + getPoolName() + ")");
 		return (false);
 	}
-
-	// disable status checking
-	m_ThreadHealthMap.clear();
 
 	// we're stopping
 	setThreadState(glass3::util::ThreadState::Stopping);
@@ -186,6 +185,8 @@ void ThreadPool::jobLoop() {
 
 // ---------------------------------------------------------jobSleep
 void ThreadPool::jobSleep() {
+	// only sleep if we're running, if we are not, we don't want to
+	// wait to exit.
 	if (getThreadState() == glass3::util::ThreadState::Started) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
 	}
@@ -247,29 +248,6 @@ void ThreadPool::setJobHealth(bool health) {
 	}
 }
 
-// ---------------------------------------------------------setAllJobsHealth
-void ThreadPool::setAllJobsHealth(bool health) {
-	if (health == true) {
-		std::time_t tNow;
-		std::time(&tNow);
-		setAllLastHealthy(tNow);
-	} else {
-		setAllLastHealthy(0);
-		logger::log("warning",
-					"ThreadPool::setAllJobsHealth(): health set to false");
-	}
-}
-
-// ---------------------------------------------------------getLastHealthy
-std::time_t ThreadPool::getLastHealthy() {
-	// get this thread status
-	if (m_ThreadHealthMap.find(std::this_thread::get_id())
-			!= m_ThreadHealthMap.end()) {
-		return (m_ThreadHealthMap[std::this_thread::get_id()]);
-	}
-	return (0);
-}
-
 // ---------------------------------------------------------getAllLastHealthy
 std::time_t ThreadPool::getAllLastHealthy() {
 	// empty check
@@ -277,10 +255,19 @@ std::time_t ThreadPool::getAllLastHealthy() {
 		return (0);
 	}
 
+	// don't bother if we're not running
+	if ((getThreadState() == glass3::util::ThreadState::Stopping)
+			|| (getThreadState() == glass3::util::ThreadState::Stopped)
+			|| (getThreadState() == glass3::util::ThreadState::Initialized)) {
+		return (0);
+	}
+
 	// init oldest time to now
 	double oldestTime = std::time(nullptr);
 
 	// go through all threads in the pool
+	// I don't think we need a mutex here because the only function that
+	// can modify the size of a map is start()
 	std::map<std::thread::id, std::atomic<double>>::iterator StatusItr;
 	for (StatusItr = m_ThreadHealthMap.begin();
 			StatusItr != m_ThreadHealthMap.end(); ++StatusItr) {
@@ -324,6 +311,14 @@ glass3::util::ThreadState ThreadPool::getThreadState() {
 
 // ---------------------------------------------------------setNumThreads
 void ThreadPool::setNumThreads(int num) {
+	if ((getThreadState() == glass3::util::ThreadState::Starting)
+			|| (getThreadState() == glass3::util::ThreadState::Started)) {
+		logger::log("warning",
+					"ThreadPool::setNumThreads(): Cannot change number of "
+					"threads while thread pool is running");
+		return;
+	}
+
 	m_iNumThreads = num;
 }
 
@@ -356,20 +351,17 @@ const std::string& ThreadPool::getPoolName() {
 
 // ---------------------------------------------------------setLastHealthy
 void ThreadPool::setLastHealthy(std::time_t now) {
+	// don't bother if we're not running
+	if ((getThreadState() == glass3::util::ThreadState::Stopping)
+			|| (getThreadState() == glass3::util::ThreadState::Stopped)
+			|| (getThreadState() == glass3::util::ThreadState::Initialized)) {
+		return;
+	}
+
 	// update this thread status
 	if (m_ThreadHealthMap.find(std::this_thread::get_id())
 			!= m_ThreadHealthMap.end()) {
 		m_ThreadHealthMap[std::this_thread::get_id()] = now;
-	}
-}
-
-// ---------------------------------------------------------setAllLastHealthy
-void ThreadPool::setAllLastHealthy(std::time_t now) {
-	// update each thread status
-	std::map<std::thread::id, std::atomic<double>>::iterator StatusItr;
-	for (StatusItr = m_ThreadHealthMap.begin();
-			StatusItr != m_ThreadHealthMap.end(); ++StatusItr) {
-		StatusItr->second = now;
 	}
 }
 

@@ -10,6 +10,7 @@
 #include <json.h>
 #include <mutex>
 #include <atomic>
+#include <memory>
 
 namespace glass3 {
 namespace util {
@@ -46,34 +47,32 @@ class BaseClass {
 	 * \brief baseclass configuration function
 	 *
 	 * The this function configures the baseclass class
-	 * \param config - A pointer to a json::Object containing to the
+	 * \param config - A shared_ptr to a json::Object containing to the
 	 * configuration to use
-	 * \warning Uses the base class mutex available via getMutex(), locking
-	 * getMutex(), or any other method where the class mutex is obtained and
-	 * locked, before calling setup will cause a deadlock.
+	 * \warning WARNING! Uses the base class mutex available via getMutex(),
+	 * locking getMutex(), or any other method where the class mutex is obtained
+	 * and locked, before calling setup will cause a deadlock.
 	 * \return returns true if successful.
 	 */
-	virtual bool setup(json::Object *config);
+	virtual bool setup(std::shared_ptr<json::Object> config);
 
 	/**
 	 * \brief baseclass clear function
 	 *
 	 * The clear function for the baseclass class.
 	 * Clears all configuration.
-	 * \warning This function does not clean up memory (m_Config), it assumes
-	 * that the original owner of the json::Object * will.
+	 * \warning WARNING! Uses the base class mutex available via getMutex(),
+	 * locking getMutex(), or any other method where the class mutex is obtained
+	 * and locked, before calling setup will cause a deadlock.
 	 */
 	virtual void clear();
 
 	/* \brief Retrieves a pointer to the class member json::Object that holds
 	 * the configuration.
 	 *
-	 * \warning Caller is responsible for ensuring that the configuration object
-	 * pointer is not referenced after the original config object is destroyed
-	 *
-	 * \return returns a json::Object pointer to the configuration
+	 * \return returns a share_ptr to a json::Object containing the configuration
 	 */
-	const json::Object * getConfig();
+	const std::shared_ptr<json::Object> getConfig();
 
 	/**
 	 * \brief Retrieves the class member boolean flag indicating whether the
@@ -89,9 +88,9 @@ class BaseClass {
 	std::mutex & getMutex();
 
 	/**
-	 * \brief A pointer to the json::Object that holds the configuration
+	 * \brief A shared pointer to the json::Object that holds the configuration
 	 */
-	json::Object *m_Config;
+	std::shared_ptr<json::Object> m_Config;
 
 	/**
 	 * \brief the boolean flag indicating whether the class has been

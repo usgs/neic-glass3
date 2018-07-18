@@ -4,6 +4,12 @@
  * the comments so that Doxygen will still
  * be able to work.
  ****************************************/
+/**
+ * \file
+ * \brief associatorinterface.h
+ *
+ * associatorinterface.h contains the associator interface
+ */
 #ifndef ASSOCINTERFACE_H
 #define ASSOCINTERFACE_H
 

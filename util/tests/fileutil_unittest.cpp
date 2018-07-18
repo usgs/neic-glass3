@@ -112,7 +112,7 @@ class FileUtil : public ::testing::Test {
 	}
 
 	virtual void TearDown() {
-		// file should already cleaned up as part of tests, but look for it
+		// file should already be cleaned up as part of tests, but look for it
 		// anyway in case this was part of some failed test
 		if (std::ifstream(testfilename).good()) {
 			std::remove(testfilename.c_str());
@@ -156,8 +156,9 @@ class FileUtil : public ::testing::Test {
 TEST_F(FileUtil, CombinedTests) {
 	// getnextfilename
 	std::string foundfilename = "";
-	bool result = glass3::util::getNextFileName(firsttestpath, fileextension,
-												foundfilename);
+	bool result = glass3::util::getFirstFileNameByExtension(firsttestpath,
+															fileextension,
+															foundfilename);
 
 	// make sure we found the file
 	ASSERT_TRUE(result)<< "getnextfilename call";
@@ -174,8 +175,9 @@ TEST_F(FileUtil, CombinedTests) {
 
 	// look for the moved file
 	foundfilename = "";
-	result = glass3::util::getNextFileName(secondtestpath, fileextension,
-											foundfilename);
+	result = glass3::util::getFirstFileNameByExtension(secondtestpath,
+														fileextension,
+														foundfilename);
 
 	// make sure we found the moved file
 	ASSERT_TRUE(result)<< "getnextfilename moved call";
@@ -199,8 +201,9 @@ TEST_F(FileUtil, CombinedTests) {
 
 	// look for the copied file
 	foundfilename = "";
-	result = glass3::util::getNextFileName(secondtestpath, copyfileextenstion,
-											foundfilename);
+	result = glass3::util::getFirstFileNameByExtension(secondtestpath,
+														copyfileextenstion,
+														foundfilename);
 
 	// make sure we found the copied file
 	ASSERT_TRUE(result)<< "getnextfilename copy call";
@@ -213,8 +216,9 @@ TEST_F(FileUtil, CombinedTests) {
 // test failure cases
 TEST_F(FileUtil, FailTests) {
 	std::string foundfilename = "";
-	bool result = glass3::util::getNextFileName(badpath, fileextension,
-												foundfilename);
+	bool result = glass3::util::getFirstFileNameByExtension(badpath,
+															fileextension,
+															foundfilename);
 
 	// make sure we found the file
 	ASSERT_FALSE(result)<< "getnextfilename call";
@@ -232,15 +236,13 @@ TEST_F(FileUtil, FailTests) {
 	ASSERT_TRUE(result)<< "movefileto call";
 
 	// copyfileto
-	result = glass3::util::copyFileTo(badfilename,
-										copydestinationfilename);
+	result = glass3::util::copyFileTo(badfilename, copydestinationfilename);
 
 	// make sure we copied the file
 	ASSERT_FALSE(result)<< "copyfileto call";
 
 	// copyfileto
-	result = glass3::util::copyFileTo(copysourcefilename,
-									  badfilename);
+	result = glass3::util::copyFileTo(copysourcefilename, badfilename);
 
 	// make sure we copied the file
 	ASSERT_FALSE(result)<< "copyfileto call";

@@ -6,6 +6,16 @@
 #define ISO8601TIME "2015-12-28T21:32:24.017Z"
 #define DATETIME "20151228213224.017"
 #define EPOCHTIME 1451338344.017
+
+#define ISO8601TIME2 "2015-12-28T21:32:24.500Z"
+#define EPOCHTIME2 1451338344.50
+
+#define ISO8601TIME3 "2015-12-28T21:32:25.000Z"
+#define EPOCHTIME3 1451338344.9999997
+
+#define ISO8601TIME4 "2015-12-28T21:32:24.000Z"
+#define EPOCHTIME4 1451338344.00000000001
+
 #define TIMET 1451338344
 #define DECIMALSEC .017
 
@@ -24,6 +34,24 @@ TEST(TimeUtil, ConvertEpochTimeToISO8601) {
 	double dDecimalSec = DECIMALSEC;
 	ConvertedISO8601 = glass3::util::convertEpochTimeToISO8601(tEpochTime,
 																dDecimalSec);
+	ASSERT_STREQ(ConvertedISO8601.c_str(), ExpectedISO8601.c_str());
+
+	// edge case 1
+	double dEpochTime2 = EPOCHTIME2;
+	ExpectedISO8601 = std::string(ISO8601TIME2);
+	ConvertedISO8601 = glass3::util::convertEpochTimeToISO8601(dEpochTime2);
+	ASSERT_STREQ(ConvertedISO8601.c_str(), ExpectedISO8601.c_str());
+
+	// edge case 2
+	double dEpochTime3 = EPOCHTIME3;
+	ExpectedISO8601 = std::string(ISO8601TIME3);
+	ConvertedISO8601 = glass3::util::convertEpochTimeToISO8601(dEpochTime3);
+	ASSERT_STREQ(ConvertedISO8601.c_str(), ExpectedISO8601.c_str());
+
+	// edge case 3
+	double dEpochTime4 = EPOCHTIME4;
+	ExpectedISO8601 = std::string(ISO8601TIME4);
+	ConvertedISO8601 = glass3::util::convertEpochTimeToISO8601(dEpochTime4);
 	ASSERT_STREQ(ConvertedISO8601.c_str(), ExpectedISO8601.c_str());
 }
 

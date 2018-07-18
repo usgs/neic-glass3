@@ -42,6 +42,8 @@ TEST(QueueTest, CombinedTest) {
 	// assert that we got something
 	ASSERT_TRUE(outputobject != NULL)<< "non-null queue data";
 
+	// build a string from outputobject, so that we can str compare input and
+	// output below
 	std::string outputstring1 = json::Serialize(*outputobject);
 
 	// assert that we got the object we expect

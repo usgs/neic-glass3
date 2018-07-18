@@ -137,16 +137,6 @@ class ThreadPool : public util::BaseClass {
 	void setJobHealth(bool health = true);
 
 	/**
-	 * \brief pool status update function
-	 *
-	 * Updates the status for each thread running jobLoop() in the
-	 * m_ThreadStatusMap
-	 *
-	 * \param health - A boolean flag containing the health to set
-	 */
-	void setAllJobsHealth(bool health = true);
-
-	/**
 	 * \brief Retrieves the number of threads in the pool
 	 *
 	 * Retrieves the number of threads managed by this thread pool
@@ -242,17 +232,6 @@ class ThreadPool : public util::BaseClass {
 	int getHealthCheckInterval();
 
 	/**
-	 * \brief Function to retrieve the last time the job thread health status
-	 * was checked
-	 *
-	 * This function retrieves the last time the health status of the job thread
-	 * was checked by the healthCheck() function
-	 *
-	 * \return A std::time_t containing the last check time
-	 */
-	std::time_t getLastHealthy();
-
-	/**
 	 * \brief Function to retrieve the last time any of the job threads health
 	 * status was checked
 	 *
@@ -302,16 +281,6 @@ class ThreadPool : public util::BaseClass {
 	 * healthy
 	 */
 	void setLastHealthy(std::time_t now);
-
-	/**
-	 * \brief Function to set the last time the all the job threads were healthy
-	 *
-	 * This function sets the last time the all the job threads were healthy
-	 *
-	 * \param now - A std::time_t containing the last time the threads were
-	 * healthy
-	 */
-	void setAllLastHealthy(std::time_t now);
 
  private:
 	/**

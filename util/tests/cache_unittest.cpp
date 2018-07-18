@@ -12,7 +12,7 @@
 #define TESTDATA3ID "test3"
 #define CACHEFILE "./testdata/cachetest.txt"
 
-// tests to see if the queue is functional
+// tests to see if the cache is functional
 TEST(CacheTest, Construction) {
 	glass3::util::Cache TestCache;
 
@@ -21,7 +21,7 @@ TEST(CacheTest, Construction) {
 	ASSERT_EQ(TestCache.size(), 0)<< "cache size check";
 }
 
-// tests to see if the queue is functional
+// tests to see if the cache is functional
 TEST(CacheTest, CombinedTest) {
 	// create cache
 	glass3::util::Cache * TestCache = new glass3::util::Cache();

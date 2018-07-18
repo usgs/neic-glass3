@@ -15,12 +15,12 @@
 namespace glass3 {
 namespace util {
 
-// maximum size of the environment varible TZ
+// maximum size of the environment variable TZ
 #define MAXENV 128
 
 /**
  * \brief A character array used to store the environment variable
- * TZ will be stored after the first call to ConvertISO8601ToEpochTime()
+ * TZ.  It will be stored after the first call to ConvertISO8601ToEpochTime()
  */
 char envTZ[MAXENV];
 
@@ -29,15 +29,19 @@ std::string convertEpochTimeToISO8601(double epochtime) {
 	double integerpart;
 	double fractionpart;
 
+	// split the double
 	fractionpart = modf(epochtime, &integerpart);
 
-	time_t time = static_cast<int>(integerpart);
+	// modf returns only the integer part (3.14159265 -> 3.000000)
+	// so a simple cast is sufficient
+	std::time_t time = static_cast<int>(integerpart);
 
 	return (convertEpochTimeToISO8601(time, fractionpart));
 }
 
 // ----------------------------------------------------convertEpochTimeToISO8601
-std::string convertEpochTimeToISO8601(time_t epochtime, double decimalseconds) {
+std::string convertEpochTimeToISO8601(std::time_t epochtime,
+										double decimalseconds) {
 	// build the time portion, all but the seconds which are
 	// separate since time_t can't do decimal seconds
 	char timebuf[sizeof "2011-10-08T07:07:"];
@@ -126,7 +130,9 @@ double convertISO8601ToEpochTime(const std::string &TimeString) {
 		char * pTZ;
 		char szTZExisting[32] = "TZ=";
 
-		// Save current TZ setting locally
+		// Save current TZ settings locally
+		int timezoneExisting = _timezone;
+		int daylightExisting = _daylight;
 		pTZ = getenv("TZ");
 
 		if (pTZ) {
@@ -144,14 +150,16 @@ double convertISO8601ToEpochTime(const std::string &TimeString) {
 		// set the DST-offset to 0
 		_daylight = 0;
 
-		// ensure _tzset() has been called, so that it isn't called again.
+		// change the timezone settings
 		_tzset();
 
 		// convert to epoch time
 		double usabletime = static_cast<double>(mktime(&timeinfo));
 
-		// Restore original TZ setting
+		// Restore original TZ settings
 		_putenv(szTZExisting);
+		_timezone = timezoneExisting;
+		_daylight = daylightExisting;
 		_tzset();
 
 #else
@@ -191,7 +199,7 @@ double convertISO8601ToEpochTime(const std::string &TimeString) {
 #endif
 
 		// add decimal seconds and return
-		return (static_cast<double>(usabletime) + seconds);
+		return (usabletime + seconds);
 	} catch (const std::exception &) {
 		logger::log(
 				"warning",

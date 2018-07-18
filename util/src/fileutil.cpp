@@ -24,9 +24,10 @@
 namespace glass3 {
 namespace util {
 
-// ---------------------------------------------------------getNextFileName
-bool getNextFileName(const std::string &path, const std::string &extension,
-						std::string &filename) {  // NOLINT
+// -------------------------------------------------getFirstFileNameByExtension
+bool getFirstFileNameByExtension(const std::string &path,
+									const std::string &extension,
+									std::string &filename) { // NOLINT
 	logger::log(
 			"trace",
 			"getnextfilename(): Using path:" + path + " and extension: "
@@ -56,7 +57,6 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 					+ ".");
 		}
 
-		// FindClose(findfileshandle);
 		return (false);
 	}
 
@@ -65,7 +65,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 		if (!(findfiledata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 			// found something that isn't a directory
 			filefound = true;
-			continue;
+			break;
 		}
 
 		// The preceding file wasn't one we can use.  Keep looking...
@@ -159,6 +159,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 bool moveFileTo(std::string filename, const std::string &dirname) {
 	std::string fromStr;
 	std::string toStr;
+	std::string filenameNoPath;
 
 	// get where the file name starts
 	int startPosOfFilename = static_cast<int>(filename.find_last_of("/"));
@@ -170,8 +171,6 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 #endif
 
 	int filenameLength = static_cast<int>(filename.size()) - startPosOfFilename;
-
-	std::string filenameNoPath;
 
 	// build fromstring
 	if (startPosOfFilename > 0 && filenameLength > 1) {
@@ -199,6 +198,8 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 		std::string badfilename;
 
 		if (errno == EACCES) {
+			// We are presuming the EACCES is an error when trying to overwrite
+			// an existing file and not a permission issue with the "from" file.
 			// Somehow, we already dealt with this file - we're either testing,
 			// or somehow got two copies of the same file.  Since they should
 			// be identical, just log it and delete the file we had wanted to
@@ -214,8 +215,11 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 
 			return (true);
 		} else if (errno == ENOENT) {
-			// This happens on occasion, and really it's fine so let's not freak
-			// out...
+			// This is saying that it can't move the file likely because it
+			// can't find or access the from file. This implies that either it's
+			// somewhat ready but not fully ready for finding or someone came
+			// along and removed it between the time we found it and the time
+			// we could move it.
 			logger::log(
 					"warning",
 					"movefileto(): Unable to move " + fromStr + " to " + toStr
