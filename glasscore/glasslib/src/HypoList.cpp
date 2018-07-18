@@ -1214,6 +1214,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						glassutil::CLogit::Out(sLog);
 
 						remHypo(hypo);
+						hypo2->unlockAfterProcessing();
 						remHypo(hypo2);
 
 						// add merged hypo to hypolist
@@ -1238,6 +1239,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					}
 				}
 			}
+
 			hypo2->unlockAfterProcessing();
 		}
 	}
