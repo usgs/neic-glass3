@@ -1204,7 +1204,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					snprintf(sLog, sizeof(sLog),
 								"CHypoList::merge: -- data new event %s which"
-								" associated %d picks of %d potential picks/n"
+								" associated %d picks of %lu potential picks/n"
 								"CHypoList::merge:    New Bayes %.3f, old bayes"
 								"%.3f and %.3f",
 								hypo3->getPid().c_str(), npick,
@@ -1224,7 +1224,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								sLog,
 								sizeof(sLog),
 								"CHypoList::merge: -- keeping new event %s which"
-								" associated %d picks of %d potential picks/n"
+								" associated %d picks of %lu potential picks/n"
 								"CHypoList::merge:     "
 								"New Bayes %.3f, old bayes %.3f and %.3f",
 								hypo3->getPid().c_str(), npick,
@@ -1248,7 +1248,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 						// add merged hypo to hypolist
 						addHypo(hypo3);
-						hypo3->resolve();
 
 						return (true);
 					} else {
