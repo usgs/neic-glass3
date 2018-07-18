@@ -712,7 +712,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 			std::chrono::duration_cast<std::chrono::duration<double>>(
 					tCancelEndTime - tPruneEndTime).count();
 
-	/*// if event is all good check if proximal events can be merged.
+	// if event is all good check if proximal events can be merged.
 	if (mergeCloseEvents(hyp)) {
 
 		std::chrono::high_resolution_clock::time_point tCancelEndTime =
@@ -720,8 +720,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 		double cancelTime = std::chrono::duration_cast<
 				std::chrono::duration<double>>(tCancelEndTime - tPruneEndTime)
 				.count();
-
-		remHypo(hyp);
 
 		std::chrono::high_resolution_clock::time_point tRemoveEndTime =
 				std::chrono::high_resolution_clock::now();
@@ -749,7 +747,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 
 		// return false since the hypo was canceled.
 		return (false);
-	}*/
+	}
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -1072,13 +1070,16 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
+	// freeze the list to check for splits
+	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+
 	// Make sure our hypo is in good shape
 	if (hypo->cancelCheck() == true) {
 		return (false);
 	}
 
 	char sLog[1024];  // logging string
-	double distanceCut = 2.0;  // distance difference to try merging events
+	double distanceCut = 3.0;  // distance difference to try merging events
 							   // in degrees
 	double timeCut = 30.;  // origin time difference to merge events
 	double delta;  // this holds delta distance
@@ -1115,10 +1116,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			if (hypo2->cancelCheck() == true) {
 				continue;
 			}
-			snprintf(sLog, sizeof(sLog),
-						"CHypoList::merge: Testing merger of %s and %s\n",
-						hypo->getPid().c_str(), hypo2->getPid().c_str());
-			glassutil::CLogit::log(sLog);
 
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
@@ -1135,6 +1132,12 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				delta = geo.delta(&geo2) / DEG2RAD;
 
 				if (delta < distanceCut) {
+
+					snprintf(sLog, sizeof(sLog),
+								"CHypoList::merge: Testing merger of %s and %s\n",
+								hypo->getPid().c_str(), hypo2->getPid().c_str());
+					glassutil::CLogit::log(sLog);
+
 					// Log info on two events
 					snprintf(
 							sLog, sizeof(sLog),
@@ -1235,8 +1238,17 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									hypo->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
 
+						snprintf(sLog, sizeof(sLog),
+									" ** Canceling merged event %s\n",
+									hypo2->getPid().c_str());
+						glassutil::CLogit::Out(sLog);
+
+						remHypo(hypo);
+						remHypo(hypo2);
+
 						// add merged hypo to hypolist
 						addHypo(hypo3);
+						hypo3->resolve();
 
 						return (true);
 					} else {
