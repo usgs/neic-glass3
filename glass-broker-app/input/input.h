@@ -64,7 +64,7 @@ class input : public glass3::util::iInput, public glass3::util::ThreadBaseClass 
 	 * \param linesleepms - An integer value holding the time to sleep
 	 * between reading input lines from a file, in milliseconds
 	 */
-	input(std::shared_ptr<json::Object> config, int linesleepms);
+	input(std::shared_ptr<json::Object> &config, int linesleepms);
 
 	/**
 	 * \brief input destructor

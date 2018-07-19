@@ -23,7 +23,7 @@ fileOutput::fileOutput()
 	clear();
 }
 
-fileOutput::fileOutput(std::shared_ptr<json::Object> config)
+fileOutput::fileOutput(std::shared_ptr<json::Object> &config)
 		: output() {
 	logger::log("debug", "fileOutput::fileOutput(): Advanced Construction.");
 

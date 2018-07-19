@@ -45,7 +45,7 @@ class brokerOutput : public output {
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	explicit brokerOutput(std::shared_ptr<json::Object> config);
+	explicit brokerOutput(std::shared_ptr<json::Object> &config);
 
 	/**
 	 * \brief brokerOutput destructor

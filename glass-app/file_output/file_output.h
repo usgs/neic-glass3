@@ -51,7 +51,7 @@ class fileOutput : public output {
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	explicit fileOutput(std::shared_ptr<json::Object> config);
+	explicit fileOutput(std::shared_ptr<json::Object> &config);
 
 	/**
 	 * \brief fileOutput destructor

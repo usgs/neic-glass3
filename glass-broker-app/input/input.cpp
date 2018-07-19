@@ -34,7 +34,7 @@ input::input(int linesleepms)
 	clear();
 }
 
-input::input(std::shared_ptr<json::Object> config, int linesleepms)
+input::input(std::shared_ptr<json::Object> &config, int linesleepms)
 		: glass3::util::ThreadBaseClass("input", 100) {
 	m_DataQueue = NULL;
 	m_Consumer = NULL;

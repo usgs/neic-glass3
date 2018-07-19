@@ -29,7 +29,7 @@ brokerOutput::brokerOutput()
 	clear();
 }
 
-brokerOutput::brokerOutput(std::shared_ptr<json::Object> config)
+brokerOutput::brokerOutput(std::shared_ptr<json::Object> &config)
 		: output() {
 	logger::log("debug",
 				"brokerOutput::brokerOutput(): Advanced Construction.");
