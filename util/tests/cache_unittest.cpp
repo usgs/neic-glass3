@@ -23,6 +23,8 @@ TEST(CacheTest, Construction) {
 
 // tests to see if the cache is functional
 TEST(CacheTest, CombinedTest) {
+	// logger::log_init("CacheTest", spdlog::level::debug, ".", true);
+
 	// create cache
 	glass3::util::Cache * TestCache = new glass3::util::Cache();
 
