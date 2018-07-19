@@ -112,7 +112,6 @@ class output : public glass3::util::iOutput,
 	 * running
 	 */
 	bool stop() override;
-	glass3::util::ThreadState getThreadState() override;
 
 	/**
 	 * \brief output heath check function
@@ -323,8 +322,8 @@ class output : public glass3::util::iOutput,
 	 */
 	bool addTrackingData(std::shared_ptr<json::Object> data);
 
-	<<<<<<< HEAD
-	std::shared_ptr<const json::Object> getTrackingData(std::string id);=======
+	std::shared_ptr<const json::Object> getTrackingData(std::string id);
+
 	/**
 	 * \brief get data from the output tracking cache by id
 	 *
@@ -335,7 +334,7 @@ class output : public glass3::util::iOutput,
 	 * retrieve from the cache
 	 * \return Returns the data if found, null otherwise
 	 */
-	std::shared_ptr<json::Object> getTrackingData(std::string id);>>>>>>> cleaned up doxygen comments for new setters and getters
+	std::shared_ptr<json::Object> getTrackingData(std::string id);
 
 	/**
 	 * \brief get data from the output tracking cache
@@ -454,17 +453,6 @@ class output : public glass3::util::iOutput,
 	std::time_t getLastEventHealthCheck();
 
 	/**
-	 * \brief Function to set thread health
-	 *
-	 * This function signifies the thread health by setting m_bCheckWorkThread
-	 * to the provided value.
-	 *
-	 * \param check = A boolean value indicating thread health, true indicates
-	 * that the the thread is alive, false indicates that the thread is not
-	 */
-	void setEventThreadHealth(bool check = true);
-
-	/**
 	 * \brief Function to check thread health
 	 *
 	 * This function checks the thread health by getting the value of
@@ -494,7 +482,6 @@ class output : public glass3::util::iOutput,
 	 */
 	void writeOutput(std::shared_ptr<json::Object> data);
 
- protected:
 	/**
 	 * \brief output background work function
 	 *
@@ -506,6 +493,41 @@ class output : public glass3::util::iOutput,
 	 */
 	bool work() override;
 
+	/**
+	 * \brief Function to retrieve the last time the event thread health status
+	 * was checked
+	 *
+	 * This function retrieves the last time the health status of the event
+	 *  thread was set by the setEventLastHealthy() function
+	 *
+	 * \return A std::time_t containing the last check time
+	 */
+	std::time_t getEventLastHealthy();
+
+	/**
+	 * \brief Function to get event thread state
+	 *
+	 * This function gets the event thread state by getting the value of
+	 * m_bEventThreadState.
+	 *
+	 * \return Returns a glass3::util::ThreadState enumeration value representing
+	 * the event thread state
+	 */
+	virtual glass3::util::ThreadState getEventThreadState();
+
+	/**
+	 * \brief Function to set event thread health
+	 *
+	 * This function signifies the event thread health by using
+	 * setEventLastHealthy to set m_tEventLastHealthy to now if health is true
+	 *
+	 * \param health = A boolean value indicating thread health, true indicates
+	 * that setLastHealthy to set m_tEventLastHealthy to now, false indicates
+	 * it should not
+	 */
+	void setEventThreadHealth(bool health = true);
+
+ protected:
 	/**
 	 * \brief output tracking data background work function
 	 *
@@ -528,36 +550,25 @@ class output : public glass3::util::iOutput,
 							const std::string &message) = 0;
 
 	/**
-	 * \brief Sets whether the event thread is running
+	 * \brief Function to set thread state
 	 *
-	 * This function sets m_bEventThreadRunning. Setting m_bEventThreadRunning
-	 * to true indicates that the thread should still run (via checkEventsLoop()).
-	 * Setting m_bEventThreadRunning to false indicates that the thread should
-	 * stop (and checkEventsLoop() should return)
+	 * This function signifies the wcwnr thread state by setting
+	 * m_bEventThreadState to the provided value.
+	 *
+	 * \param state = A glass3::util::ThreadState enumeration value indicating
+	 * the new event thread state
 	 */
-	void setEventThreadRunning(bool running);
+	void setEventThreadState(glass3::util::ThreadState state);
 
 	/**
-	 * \brief Function to sset the last time the event thread health status
-	 * was checked
+	 * \brief Function to set the last time the event thread was healthy
 	 *
-	 * This function sets the last time the health status of the event thread
-	 * was checked.
+	 * This function sets the last time the event thread was healthy
 	 *
-	 * \param now - A std::time_t containing the last time the health status
-	 * was checked
+	 * \param now - A std::time_t containing the last time the event thread was
+	 * healthy
 	 */
-	void setLastEventHealthCheck(std::time_t now);
-
-	/**
-	 *\brief Sets whether the event thread has been started
-	 *
-	 * This function sets the value of m_bEventThreadStarted, which indicates whether
-	 * the event thread has been created and started
-	 * \param started - a boolean flag indicating whether the event thread has
-	 * been started
-	 */
-	void setEventThreadStarted(bool started);
+	void setEventLastHealthy(std::time_t now);
 
  private:
 	/**
@@ -690,24 +701,16 @@ class output : public glass3::util::iOutput,
 	std::thread *m_EventThread;
 
 	/**
-	 * \brief boolean flag indicating whether the event thread should run
+	 * \brief glass3::util::ThreadState enumeration used to track event thread
+	 * status, set by setEventThreadState()
 	 */
-	std::atomic<bool> m_bEventThreadRunning;
+	std::atomic<glass3::util::ThreadState> m_bEventThreadState;
 
 	/**
-	 * \brief boolean flag indicating whether the event thread has been started
+	 * \brief the time_t holding the last time the event thread status was
+	 * checked, set by setEventLastHealthy() in check
 	 */
-	std::atomic<bool> m_bEventThreadStarted;
-
-	/**
-	 * \brief boolean flag used to check thread status
-	 */
-	std::atomic<bool> m_bEventThreadHealth;
-
-	/**
-	 * \brief the std::time_t holding the last time the thread status was checked
-	 */
-	std::atomic<double> tLastEventHealthCheck;
+	std::atomic<double> m_tEventLastHealthy;
 };
 }  // namespace output
 }  // namespace glass3

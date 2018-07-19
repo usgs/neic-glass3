@@ -238,12 +238,6 @@ class ThreadBaseClass : public util::BaseClass {
 	 */
 	void setLastHealthy(std::time_t now);
 
-	/**
-	 * \brief Retrieves a reference to the class member containing the mutex
-	 * used to control access to status checks
-	 */
-	std::mutex & getHealthCheckMutex();
-
  private:
 	/**
 	 * \brief the std::string containing the name of the work thread,
@@ -272,7 +266,7 @@ class ThreadBaseClass : public util::BaseClass {
 
 	/**
 	 * \brief the time_t holding the last time the thread status was checked,
-	 * set by setLastCheck() in check
+	 * set by setLastHealthy() in check
 	 */
 	std::atomic<double> m_tLastHealthy;
 

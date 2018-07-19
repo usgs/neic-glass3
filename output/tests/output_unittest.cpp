@@ -277,16 +277,8 @@ TEST(Output, Construction) {
 	ASSERT_TRUE(outputObject.getConfig() == NULL)<< "output config is null";
 
 	// assert class is not started
-	ASSERT_FALSE(outputObject.isStarted())<< "output thread is not started";
-
-	// assert class is not running
-	ASSERT_FALSE(outputObject.isRunning())<< "output thread is not running";
-
-	// assert event thread is not started
-	ASSERT_FALSE(outputObject.isEventThreadStarted())<< "event thread is not started";
-
-	// assert event thread is not running
-	ASSERT_FALSE(outputObject.isEventThreadRunning())<< "event thread is not running";
+	ASSERT_TRUE(outputObject.getEventThreadState() ==
+			glass3::util::ThreadState::Initialized)<< "output thread is not started";
 
 	// assert no associator
 	ASSERT_TRUE(outputObject.getAssociator()== NULL)<< "associator is null";
@@ -302,7 +294,7 @@ TEST(Output, Configuration) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -311,9 +303,9 @@ TEST(Output, Configuration) {
 	// config failure cases
 	ASSERT_FALSE(outputObject->setup(NULL));
 	ASSERT_FALSE(
-			outputObject->setup(new json::Object(json::Deserialize(CONFIGFAIL1))));  // NOLINT
+			outputObject->setup(std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL1))));  // NOLINT
 	ASSERT_TRUE(
-			outputObject->setup(new json::Object(json::Deserialize(EMPTYCONFIG))));  // NOLINT
+			outputObject->setup(std::make_shared<json::Object>(json::Deserialize(EMPTYCONFIG))));  // NOLINT
 
 	// assert config successful
 	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
@@ -370,7 +362,7 @@ TEST(Output, ThreadTests) {
 	// configure output
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			std::string(TESTPATH), std::string(CONFIGFILENAME));
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	// assert config successful
 	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
@@ -381,17 +373,9 @@ TEST(Output, ThreadTests) {
 	// give time for startup?
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
-	// assert class is started
-	ASSERT_TRUE(outputObject->isStarted())<< "output thread is started";
-
-	// assert class is running
-	ASSERT_TRUE(outputObject->isRunning())<< "output thread is running";
-
-	// assert event thread is started
-	ASSERT_TRUE(outputObject->isEventThreadStarted())<< "event thread is started";
-
-	// assert event thread is running
-	ASSERT_TRUE(outputObject->isEventThreadRunning())<< "event thread is running";
+	// assert class is  started
+	ASSERT_TRUE(outputObject->getEventThreadState() ==
+			glass3::util::ThreadState::Started)<< "output thread is started";
 
 	// thread status checks
 	ASSERT_TRUE(outputObject->healthCheck());
@@ -406,16 +390,8 @@ TEST(Output, ThreadTests) {
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert class is not started
-	ASSERT_FALSE(outputObject->isStarted())<< "output thread is not started";
-
-	// assert class is not running
-	ASSERT_FALSE(outputObject->isRunning())<< "output thread is not running";
-
-	// assert event thread is not started
-	ASSERT_FALSE(outputObject->isEventThreadStarted())<< "event thread is not started";
-
-	// assert event thread is not running
-	ASSERT_FALSE(outputObject->isEventThreadRunning())<< "event thread is not running";
+	ASSERT_FALSE(outputObject->getEventThreadState() ==
+			glass3::util::ThreadState::Started)<< "output thread is not started";
 
 	// stop output thread again
 	ASSERT_FALSE(outputObject->stop())<< "second stop unsuccessful";
@@ -512,7 +488,7 @@ TEST(Output, OutputTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -567,7 +543,7 @@ TEST(Output, UpdateTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -676,7 +652,7 @@ TEST(Output, CancelTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -729,7 +705,7 @@ TEST(Output, RetractTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -788,7 +764,7 @@ TEST(Output, ExpireTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -867,7 +843,7 @@ TEST(Output, StationRequestTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -910,7 +886,7 @@ TEST(Output, StationListTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -944,7 +920,7 @@ TEST(Output, FailTests) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	json::Object * OutputJSON = new json::Object(OutputConfig->getJSON());
+	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
