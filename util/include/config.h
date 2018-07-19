@@ -10,6 +10,7 @@
 #include <json.h>
 #include <string>
 #include <fstream>
+#include <memory>
 
 namespace glass3 {
 namespace util {
@@ -87,7 +88,8 @@ class Config {
 	 * \throws For possible exceptions passed through this function see
 	 * Config::parseJSONFromString and Config::openFile
 	 */
-	json::Object parseJSONFromFile(std::string filepath, std::string filename);
+	std::shared_ptr<json::Object> parseJSONFromFile(std::string filepath,
+													std::string filename);
 
 	/**
 	 * \brief A function that parses a configuration from a JSON formatted
@@ -104,7 +106,7 @@ class Config {
 	 * \throw Throws std::invalid_argument if the newconfig string failed to
 	 * parse
 	 */
-	json::Object parseJSONFromString(std::string newconfig);
+	std::shared_ptr<json::Object> parseJSONFromString(std::string newconfig);
 
 	/**
 	 * \brief Get configuration as json object
@@ -113,7 +115,7 @@ class Config {
 	 *
 	 * \returns Return a json::Object containing the configuration
 	 */
-	json::Object getJSON();
+	std::shared_ptr<json::Object> getJSON();
 
 	/**
 	 * \brief Config clear function
@@ -180,7 +182,7 @@ class Config {
 	/**
 	 * \brief The parsed configuration as a json::Object
 	 */
-	json::Object m_ConfigJSON;
+	std::shared_ptr<json::Object> m_ConfigJSON;
 };
 }  // namespace util
 }  // namespace glass3

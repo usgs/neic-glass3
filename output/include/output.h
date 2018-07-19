@@ -65,7 +65,7 @@ class output : public glass3::util::iOutput,
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(json::Object *config) override;
+	bool setup(std::shared_ptr<json::Object> config) override;
 
 	/**
 	 * \brief output clear function
@@ -87,7 +87,7 @@ class output : public glass3::util::iOutput,
 
 	bool start() override;
 	bool stop() override;
-	bool isRunning() override;
+	glass3::util::ThreadState getThreadState() override;
 
 	/**
 	 * \brief output heath check function

@@ -139,7 +139,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \return Returns a glass3::util::ThreadState enumeration value representing
 	 * the thread state
 	 */
-	glass3::util::ThreadState getThreadState();
+	virtual glass3::util::ThreadState getThreadState();
 
 	/**
 	 * \brief Function to set thread health check interval
@@ -262,7 +262,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \brief glass3::util::ThreadState enumeration used to track thread status,
 	 * set by setThreadState()
 	 */
-	std::atomic<ThreadState> m_bThreadState;
+	std::atomic<glass3::util::ThreadState> m_bThreadState;
 
 	/**
 	 * \brief the time_t holding the last time the thread status was checked,

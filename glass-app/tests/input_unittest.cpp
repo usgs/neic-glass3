@@ -28,8 +28,8 @@
 
 #define EXPECTEDDATA "{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":4.630000},\"Filter\":[{\"HighPass\":0.500000,\"LowPass\":4.000000}],\"ID\":\"22637615\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"SHZ\",\"Location\":\"FB\",\"Network\":\"IM\",\"Station\":\"PDAR\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-03-02T23:59:03.849Z\",\"Type\":\"Pick\"}"  // NOLINT
 
-class InputTest: public ::testing::Test {
-protected:
+class InputTest : public ::testing::Test {
+ protected:
 	virtual void SetUp() {
 		// create input test
 		InputThread = new glass::input(5);
@@ -88,12 +88,11 @@ protected:
 		InputConfig = new glass3::util::Config(configdirectory, configfile);
 
 		// get json formatted configuration
-		input_config_json = new json::Object(InputConfig->getJSON());
+		input_config_json = InputConfig->getJSON();
 
 		// configure input
-		return(InputThread->setup(input_config_json));
+		return (InputThread->setup(input_config_json));
 	}
-
 
 	virtual void TearDown() {
 		// need to move the files in error and archive back to input
@@ -128,14 +127,12 @@ protected:
 		// cleanup input thread
 		delete (InputThread);
 		if (InputConfig != NULL)
-			delete(InputConfig);
-		if (input_config_json != NULL)
-			delete(input_config_json);
+			delete (InputConfig);
 	}
 
 	glass::input * InputThread;
 	glass3::util::Config * InputConfig;
-	json::Object * input_config_json;
+	std::shared_ptr<json::Object> input_config_json;
 
 	std::string testpath;
 	std::string testdatapath;
@@ -157,16 +154,16 @@ protected:
 // write json output
 TEST_F(InputTest, Construction) {
 	// assert that this is an input thread
-	ASSERT_STREQ(InputThread->getThreadName().c_str(), "input")
-		<< "check input thread name";
+	ASSERT_STREQ(InputThread->getThreadName().c_str(),
+			"input")<< "check input thread name";
 
 	// assert the thread sleeptime
 	ASSERT_EQ(InputThread->getSleepTime(), SLEEPTIME)
-		<< "check input thread sleep time";
+	<< "check input thread sleep time";
 
 	// assert infile sleep
 	ASSERT_EQ(InputThread->getIInFileSleep(), FILESLEEPTIME)
-		<< "check in file sleep time";
+	<< "check in file sleep time";
 
 	// assert class is not set up
 	ASSERT_FALSE(InputThread->getSetup()) << "input thread is not set up";
@@ -175,7 +172,8 @@ TEST_F(InputTest, Construction) {
 	ASSERT_TRUE(InputThread->getConfig() == NULL) << "input config is null";
 
 	// assert class is not running
-	ASSERT_FALSE(InputThread->isRunning()) << "input thread is not running";
+	ASSERT_FALSE(InputThread->getThreadState() ==
+			glass3::util::ThreadState::Started) << "input thread is not running";
 
 	// assert no data in class
 	ASSERT_EQ(InputThread->dataCount(), -1) << "input thread has no data";
@@ -183,7 +181,7 @@ TEST_F(InputTest, Construction) {
 
 TEST_F(InputTest, Configuration) {
 	// configure input
-	ASSERT_TRUE(configure()) << "InputThread->setup returned true";
+	ASSERT_TRUE(configure())<< "InputThread->setup returned true";
 
 	// assert class is set up
 	ASSERT_TRUE(InputThread->getSetup()) << "input thread is set up";
@@ -197,38 +195,38 @@ TEST_F(InputTest, Configuration) {
 
 	// assert class is archiving
 	ASSERT_TRUE(InputThread->getBArchive())
-		<< "input thread is archiving input";
+	<< "input thread is archiving input";
 
 	// check archive path
 	ASSERT_STREQ(InputThread->getSArchiveDir().c_str(),
-		archivedirectory.c_str()) << "check input thread archive directory";
+			archivedirectory.c_str()) << "check input thread archive directory";
 
 	// assert class is keepign errors
 	ASSERT_TRUE(InputThread->getBError())
-		<< "input class is keeping errors";
+	<< "input class is keeping errors";
 
 	// check error path
 	ASSERT_STREQ(InputThread->getSErrorDir().c_str(),
-		errordirectory.c_str()) << "check input thread archive directory";
+			errordirectory.c_str()) << "check input thread archive directory";
 
 	// check queue max size
 	ASSERT_EQ(InputThread->getQueueMaxSize(), QUEUEMAXSIZE)
-		<< "check queue max size";
+	<< "check queue max size";
 
 	// check agency id
 	std::string agencyid = std::string(TESTAGENCYID);
 	ASSERT_STREQ(InputThread->getSDefaultAgencyId().c_str(),
-		agencyid.c_str()) << "check agency id";
+			agencyid.c_str()) << "check agency id";
 
 	// check author
 	std::string author = std::string(TESTAUTHOR);
 	ASSERT_STREQ(InputThread->getSDefaultAuthor().c_str(),
-		author.c_str()) << "check author";
+			author.c_str()) << "check author";
 }
 
 TEST_F(InputTest, Run) {
 	// configure input
-	ASSERT_TRUE(configure()) << "InputThread->setup returned true";
+	ASSERT_TRUE(configure())<< "InputThread->setup returned true";
 
 	// start input thread
 	InputThread->start();

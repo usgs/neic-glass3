@@ -23,7 +23,7 @@ fileOutput::fileOutput()
 	clear();
 }
 
-fileOutput::fileOutput(json::Object *config)
+fileOutput::fileOutput(std::shared_ptr<json::Object> config)
 		: output() {
 	logger::log("debug", "fileOutput::fileOutput(): Advanced Construction.");
 
@@ -45,7 +45,7 @@ fileOutput::~fileOutput() {
 }
 
 // configuration
-bool fileOutput::setup(json::Object *config) {
+bool fileOutput::setup(std::shared_ptr<json::Object> config) {
 	if (config == NULL) {
 		logger::log("error",
 					"fileOutput::setup(): NULL configuration passed in.");

@@ -10,23 +10,24 @@
 #define BADFILENAME "bad.d"
 #define BADCONFIGSTRING "bad"
 
-void checkdata(json::Object ConfigObject) {
+void checkdata(std::shared_ptr<json::Object> ConfigObject) {
 	// assert config object
-	ASSERT_FALSE(ConfigObject.size() == 0)<< "populated config object";
+	ASSERT_TRUE(ConfigObject != NULL);
+	ASSERT_FALSE(ConfigObject->size() == 0)<< "populated config object";
 
 	// check to see if expected keys are present
-	ASSERT_TRUE(ConfigObject.HasKey("Cmd"))<< "Cmd Key Present";
-	ASSERT_TRUE(ConfigObject.HasKey("ConfigString"))
+	ASSERT_TRUE(ConfigObject->HasKey("Cmd"))<< "Cmd Key Present";
+	ASSERT_TRUE(ConfigObject->HasKey("ConfigString"))
 	<< "ConfigString Key Present";
-	ASSERT_TRUE(ConfigObject.HasKey("ConfigInteger"))
+	ASSERT_TRUE(ConfigObject->HasKey("ConfigInteger"))
 	<< "ConfigInteger";
-	ASSERT_TRUE(ConfigObject.HasKey("ConfigDouble"))
+	ASSERT_TRUE(ConfigObject->HasKey("ConfigDouble"))
 	<< "ConfigDouble Key Present";
-	ASSERT_TRUE(ConfigObject.HasKey("ConfigList"))
+	ASSERT_TRUE(ConfigObject->HasKey("ConfigList"))
 	<< "ConfigList Key Present";
 
 	// check to see if commented out key is not present
-	ASSERT_FALSE(ConfigObject.HasKey("Commented"))
+	ASSERT_FALSE(ConfigObject->HasKey("Commented"))
 	<< "Commented Key Not Present";
 }
 
@@ -49,7 +50,7 @@ TEST(ConfigTest, TestFileLoading) {
 	glass3::util::Config * TestConfig2 = new glass3::util::Config();
 
 	// assert empty config object
-	ASSERT_TRUE(TestConfig2->getJSON().size() == 0)<< "empty config object";
+	ASSERT_TRUE(TestConfig2->getJSON() == NULL) << "empty config object";
 
 	// load config file
 	checkdata(TestConfig2->parseJSONFromFile(filepath, filename));
@@ -76,7 +77,7 @@ TEST(ConfigTest, TestStringParsing) {
 	glass3::util::Config * TestConfig2 = new glass3::util::Config();
 
 	// assert empty config object
-	ASSERT_TRUE(TestConfig2->getJSON().size() == 0)<< "empty config object";
+	ASSERT_TRUE(TestConfig2->getJSON() == NULL) << "empty config object";
 
 	// parse config string
 	checkdata(TestConfig2->parseJSONFromString(configstring));

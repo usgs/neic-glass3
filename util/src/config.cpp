@@ -3,6 +3,7 @@
 #include <logger.h>
 #include <stringutil.h>
 #include <string>
+#include <memory>
 
 namespace glass3 {
 namespace util {
@@ -30,12 +31,12 @@ Config::~Config() {
 // ---------------------------------------------------------clear
 void Config::clear() {
 	m_sConfigString = "";
-	m_ConfigJSON.Clear();
+	m_ConfigJSON.reset();
 }
 
 // ---------------------------------------------------------parseJSONFromFile
-json::Object Config::parseJSONFromFile(std::string filepath,
-										std::string filename) {
+std::shared_ptr<json::Object> Config::parseJSONFromFile(std::string filepath,
+														std::string filename) {
 	clear();
 
 	// first open the file
@@ -67,7 +68,8 @@ json::Object Config::parseJSONFromFile(std::string filepath,
 }
 
 // ---------------------------------------------------------parseJSONFromString
-json::Object Config::parseJSONFromString(std::string newconfig) {
+std::shared_ptr<json::Object> Config::parseJSONFromString(
+		std::string newconfig) {
 	clear();
 
 	// nullchecks
@@ -75,22 +77,25 @@ json::Object Config::parseJSONFromString(std::string newconfig) {
 		throw std::invalid_argument("Empty JSON string");
 	}
 
-	json::Value deserializedJSON;
-	json::Object jsonObject;
-
 	// deserialize the string into JSON
-	deserializedJSON = json::Deserialize(newconfig);
+	json::Value deserializedJSON = json::Deserialize(newconfig);
 
 	// make sure we got valid json
 	if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
 		// convert our resulting value to a json object
-		jsonObject = deserializedJSON.ToObject();
+		m_ConfigJSON =
+				std::make_shared<json::Object>(
+						json::Object(deserializedJSON.ToObject()));
 
 		logger::log(
 				"debug",
 				"config::setconfig_string: json::Deserialize read: {"
 						+ json::Serialize(deserializedJSON)
 						+ "} from configuration string.");
+
+		m_sConfigString = newconfig;
+
+		return(m_ConfigJSON);
 	} else {
 		// we're in trouble, clear our stuff
 		clear();
@@ -101,15 +106,12 @@ json::Object Config::parseJSONFromString(std::string newconfig) {
 		throw std::invalid_argument("Invalid configuration string");
 	}
 
-	// save our config string and JSON
-	m_sConfigString = newconfig;
-	m_ConfigJSON = jsonObject;
-
-	return (jsonObject);
+	// Should never get here
+	return (NULL);
 }
 
 // ---------------------------------------------------------getJSON
-json::Object Config::getJSON() {
+std::shared_ptr<json::Object> Config::getJSON() {
 	return (m_ConfigJSON);
 }
 

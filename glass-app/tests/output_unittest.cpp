@@ -205,7 +205,7 @@ class OutputTest : public ::testing::Test {
 		OutputConfig = new glass3::util::Config(configdirectory, configfile);
 
 		// get json formatted configuration
-		output_config_json = new json::Object(OutputConfig->getJSON());
+		output_config_json = OutputConfig->getJSON();
 
 		AssocThread = new AssociatorStub();
 		AssocThread->Output = OutputThread;
@@ -223,19 +223,19 @@ class OutputTest : public ::testing::Test {
 	bool configurefail2() {
 		// configure fail
 		return (OutputThread->setup(
-				new json::Object(json::Deserialize(CONFIGFAIL1))));
+				std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL1))));
 	}
 
 	bool configurefail3() {
 		// configure fail
 		return (OutputThread->setup(
-				new json::Object(json::Deserialize(CONFIGFAIL2))));
+				std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL2))));
 	}
 
 	bool emptyconfig() {
 		// configure empty
 		return (OutputThread->setup(
-				new json::Object(json::Deserialize(EMPTYCONFIG))));
+				std::make_shared<json::Object>(json::Deserialize(EMPTYCONFIG))));
 	}
 
 	void CheckData(std::shared_ptr<json::Object> dataone,
@@ -325,16 +325,15 @@ class OutputTest : public ::testing::Test {
 		// cleanup output thread
 		delete (OutputThread);
 		if (OutputConfig != NULL)
-		delete(OutputConfig);
-		if (output_config_json != NULL)
-		delete(output_config_json);
+			delete(OutputConfig);
+
 	}
 
 	glass::fileOutput * OutputThread;
 	AssociatorStub * AssocThread;
 
 	glass3::util::Config * OutputConfig;
-	json::Object * output_config_json;
+	std::shared_ptr<json::Object> output_config_json;
 
 	std::string testpath;
 	std::string testdatapath;
@@ -377,7 +376,8 @@ TEST_F(OutputTest, Construction) {
 	ASSERT_TRUE(OutputThread->getConfig() == NULL) << "output config is null";
 
 	// assert class is not running
-	ASSERT_FALSE(OutputThread->isRunning()) << "output thread is not running";
+	ASSERT_FALSE(OutputThread->getThreadState() ==
+			glass3::util::ThreadState::Started) << "output thread is not running";
 
 	// assert no data in class
 	ASSERT_EQ(OutputThread->ReportInterval, REPORTINTERVAL)
@@ -420,161 +420,161 @@ TEST_F(OutputTest, Configuration) {
 			author.c_str()) << "check author";
 }
 /*
-TEST_F(OutputTest, Output) {
-	// configure output
-	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
+ TEST_F(OutputTest, Output) {
+ // configure output
+ ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
 
-	// start input thread
-	OutputThread->start();
-	OutputThread->clearTrackingData();
+ // start input thread
+ OutputThread->start();
+ OutputThread->clearTrackingData();
 
-	std::shared_ptr<json::Object> outputevent = GetDataFromFile(eventfile);
-	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
-	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
+ std::shared_ptr<json::Object> outputevent = GetDataFromFile(eventfile);
+ (*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
+ (*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
 
-	// add data to output
-	OutputThread->sendToOutput(outputevent);
+ // add data to output
+ OutputThread->sendToOutput(outputevent);
 
-	// give time for file to write
-	std::this_thread::sleep_for(std::chrono::seconds(4));
+ // give time for file to write
+ std::this_thread::sleep_for(std::chrono::seconds(4));
 
-	// assert that the file is there
-	ASSERT_TRUE(std::ifstream(outputfile).good()) << "hypo output file created";
+ // assert that the file is there
+ ASSERT_TRUE(std::ifstream(outputfile).good()) << "hypo output file created";
 
-	// get the data
-	std::shared_ptr<json::Object> senthypo = GetDataFromFile(hypofile);
-	std::shared_ptr<json::Object> outputorigin = GetDataFromFile(outputfile);
+ // get the data
+ std::shared_ptr<json::Object> senthypo = GetDataFromFile(hypofile);
+ std::shared_ptr<json::Object> outputorigin = GetDataFromFile(outputfile);
 
-	// check the output data against the input
-	CheckData(senthypo, outputorigin);
-}
+ // check the output data against the input
+ CheckData(senthypo, outputorigin);
+ }
 
-TEST_F(OutputTest, Update) {
-	// configure output
-	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
+ TEST_F(OutputTest, Update) {
+ // configure output
+ ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
 
-	// start input thread
-	OutputThread->start();
-	OutputThread->clearTrackingData();
+ // start input thread
+ OutputThread->start();
+ OutputThread->clearTrackingData();
 
-	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event2file);
-	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
-	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
+ std::shared_ptr<json::Object> outputevent = GetDataFromFile(event2file);
+ (*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
+ (*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
 
-	// add data to output
-	OutputThread->sendToOutput(outputevent);
+ // add data to output
+ OutputThread->sendToOutput(outputevent);
 
-	// give time for file to write
-	std::this_thread::sleep_for(std::chrono::seconds(4));
+ // give time for file to write
+ std::this_thread::sleep_for(std::chrono::seconds(4));
 
-	// assert that the file is there
-	ASSERT_TRUE(std::ifstream(output2file).good())
-	<< "hypo output file created";
+ // assert that the file is there
+ ASSERT_TRUE(std::ifstream(output2file).good())
+ << "hypo output file created";
 
-	// get the data
-	std::shared_ptr<json::Object> senthypo2 = GetDataFromFile(hypo2file);
-	std::shared_ptr<json::Object> output2origin = GetDataFromFile(output2file);
+ // get the data
+ std::shared_ptr<json::Object> senthypo2 = GetDataFromFile(hypo2file);
+ std::shared_ptr<json::Object> output2origin = GetDataFromFile(output2file);
 
-	// check the output data against the update
-	CheckData(senthypo2, output2origin);
+ // check the output data against the update
+ CheckData(senthypo2, output2origin);
 
-	//remove output for update
-	std::remove(output2file.c_str());
+ //remove output for update
+ std::remove(output2file.c_str());
 
-	std::shared_ptr<json::Object> updateevent = GetDataFromFile(event2updatefile);
-	(*updateevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
-	(*updateevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
+ std::shared_ptr<json::Object> updateevent = GetDataFromFile(event2updatefile);
+ (*updateevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
+ (*updateevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
 
-	// send update to output
-	OutputThread->sendToOutput(updateevent);
+ // send update to output
+ OutputThread->sendToOutput(updateevent);
 
-	// give time for file to write
-	std::this_thread::sleep_for(std::chrono::seconds(10));
+ // give time for file to write
+ std::this_thread::sleep_for(std::chrono::seconds(10));
 
-	// assert that the file is there
-	ASSERT_TRUE(std::ifstream(output2file).good())
-	<< "hypo update file created";
+ // assert that the file is there
+ ASSERT_TRUE(std::ifstream(output2file).good())
+ << "hypo update file created";
 
-	// get the data
-	std::shared_ptr<json::Object> sentupdatehypo2 = GetDataFromFile(hypo2updatefile);
-	std::shared_ptr<json::Object> output2origin2 = GetDataFromFile(output2file);
+ // get the data
+ std::shared_ptr<json::Object> sentupdatehypo2 = GetDataFromFile(hypo2updatefile);
+ std::shared_ptr<json::Object> output2origin2 = GetDataFromFile(output2file);
 
-	// check the output data against the update
-	CheckData(sentupdatehypo2, output2origin2);
-}
+ // check the output data against the update
+ CheckData(sentupdatehypo2, output2origin2);
+ }
 
-TEST_F(OutputTest, Cancel) {
-	// configure output
-	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
+ TEST_F(OutputTest, Cancel) {
+ // configure output
+ ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
 
-	// start input thread
-	OutputThread->start();
-	OutputThread->clearTrackingData();
+ // start input thread
+ OutputThread->start();
+ OutputThread->clearTrackingData();
 
-	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
-	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
-	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
+ std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
+ (*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
+ (*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
 
-	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
+ std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
 
-	// add data to output
-	OutputThread->sendToOutput(outputevent);
+ // add data to output
+ OutputThread->sendToOutput(outputevent);
 
-	// send cancel to output
-	OutputThread->sendToOutput(cancelmessage);
+ // send cancel to output
+ OutputThread->sendToOutput(cancelmessage);
 
-	// give time for file to write
-	std::this_thread::sleep_for(std::chrono::seconds(4));
+ // give time for file to write
+ std::this_thread::sleep_for(std::chrono::seconds(4));
 
-	// assert that the file is not there
-	ASSERT_FALSE(std::ifstream(output3file).good())
-	<< "hypo output file not created";
+ // assert that the file is not there
+ ASSERT_FALSE(std::ifstream(output3file).good())
+ << "hypo output file not created";
 
-	ASSERT_TRUE(OutputThread->check());
-}
+ ASSERT_TRUE(OutputThread->check());
+ }
 
-TEST_F(OutputTest, Retract) {
-	// configure output
-	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
+ TEST_F(OutputTest, Retract) {
+ // configure output
+ ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
 
-	// start input thread
-	OutputThread->start();
-	OutputThread->clearTrackingData();
+ // start input thread
+ OutputThread->start();
+ OutputThread->clearTrackingData();
 
-	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
-	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
-	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
+ std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
+ (*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
+ (*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+ glassutil::CDate::now());
 
-	// add data to output
-	OutputThread->sendToOutput(outputevent);
+ // add data to output
+ OutputThread->sendToOutput(outputevent);
 
-	// give time for file to write
-	std::this_thread::sleep_for(std::chrono::seconds(4));
+ // give time for file to write
+ std::this_thread::sleep_for(std::chrono::seconds(4));
 
-	// assert that the file is there
-	ASSERT_TRUE(std::ifstream(output3file).good())
-	<< "output file created";
+ // assert that the file is there
+ ASSERT_TRUE(std::ifstream(output3file).good())
+ << "output file created";
 
-	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
+ std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
 
-	// send cancel to output
-	OutputThread->sendToOutput(cancelmessage);
+ // send cancel to output
+ OutputThread->sendToOutput(cancelmessage);
 
-	// give time for files to write
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+ // give time for files to write
+ std::this_thread::sleep_for(std::chrono::seconds(1));
 
-	// assert that the file is not there
-	ASSERT_TRUE(std::ifstream(retract3file).good())
-	<< "retract output file created";
-}
-*/
+ // assert that the file is not there
+ ASSERT_TRUE(std::ifstream(retract3file).good())
+ << "retract output file created";
+ }
+ */

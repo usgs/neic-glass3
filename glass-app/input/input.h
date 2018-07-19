@@ -74,7 +74,7 @@ class input : public glass3::util::iInput, public glass3::util::ThreadBaseClass 
 	 * \param linesleepms - An integer value holding the time to sleep
 	 * between reading input lines from a file, in milliseconds
 	 */
-	input(json::Object *config, int linesleepms);
+	input(std::shared_ptr<json::Object> config, int linesleepms);
 
 	/**
 	 * \brief input destructor
@@ -94,7 +94,7 @@ class input : public glass3::util::iInput, public glass3::util::ThreadBaseClass 
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(json::Object *config) override;
+	bool setup(std::shared_ptr<json::Object> config) override;
 
 	/**
 	 * \brief output clear function

@@ -29,7 +29,7 @@ brokerOutput::brokerOutput()
 	clear();
 }
 
-brokerOutput::brokerOutput(json::Object *config)
+brokerOutput::brokerOutput(std::shared_ptr<json::Object> config)
 		: output() {
 	logger::log("debug",
 				"brokerOutput::brokerOutput(): Advanced Construction.");
@@ -57,7 +57,7 @@ brokerOutput::~brokerOutput() {
 }
 
 // configuration
-bool brokerOutput::setup(json::Object *config) {
+bool brokerOutput::setup(std::shared_ptr<json::Object> config) {
 	if (config == NULL) {
 		logger::log("error",
 					"brokerOutput::setup(): NULL configuration passed in.");

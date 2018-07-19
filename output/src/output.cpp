@@ -84,7 +84,7 @@ output::~output() {
 }
 
 // configuration
-bool output::setup(json::Object *config) {
+bool output::setup(std::shared_ptr<json::Object> config) {
 	if (config == NULL) {
 		logger::log("error", "output::setup(): NULL configuration passed in.");
 		return (false);
@@ -337,9 +337,13 @@ bool output::stop() {
 	return (ThreadBaseClass::stop());
 }
 
-bool output::isRunning() {
+glass3::util::ThreadState output::getThreadState() {
+	if (m_bRunEventThread == false) {
+		return (glass3::util::ThreadState::Stopped);
+	}
+
 	// let threadbaseclass handle background worker thread
-	return (ThreadBaseClass::isRunning() && m_bRunEventThread);
+	return (ThreadBaseClass::getThreadState());
 }
 
 bool output::healthCheck() {
@@ -415,11 +419,6 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 		return (false);
 	}
 
-	logger::log(
-			"debug",
-			"output::addTrackingData(): New tracking data: "
-					+ json::Serialize(*data));
-
 	// check to see if this event is already being tracked
 	std::shared_ptr<json::Object> existingdata = m_TrackingCache->getFromCache(
 			id);
@@ -447,6 +446,11 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 		}
 		(*data)["PubLog"] = pubLog;
 	}
+
+	logger::log(
+			"debug",
+			"output::addTrackingData(): New tracking data: "
+					+ json::Serialize(*data));
 
 	// add, cache handles updates
 	return (m_TrackingCache->addToCache(data, id));
@@ -662,9 +666,8 @@ bool output::work() {
 	// null check
 	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
 		// no message queues means we've got big problems
-		logger::log(
-				"critical",
-				"output::work(): No m_OutputQueue and/or m_LookupQueue.");
+		logger::log("critical",
+					"output::work(): No m_OutputQueue and/or m_LookupQueue.");
 		return (false);
 	}
 
@@ -968,25 +971,28 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 
 	if (dataType == "Hypo") {
 		// convert a hypo to a detection
-		std::string detectionString = glass3::parse::hypoToJSONDetection(data, agency,
-																	author);
+		std::string detectionString = glass3::parse::hypoToJSONDetection(
+				data, agency, author);
 
 		sendOutput("Detection", ID, detectionString);
 	} else if (dataType == "Cancel") {
 		// convert a cancel to a retract
-		std::string retractString = glass3::parse::cancelToJSONRetract(data, agency,
-																author);
+		std::string retractString = glass3::parse::cancelToJSONRetract(data,
+																		agency,
+																		author);
 
 		sendOutput("Retraction", ID, retractString);
 	} else if (dataType == "SiteLookup") {
 		// convert a site lookup to a station info request
 		std::string stationInfoRequestString =
-				glass3::parse::siteLookupToStationInfoRequest(data, agency, author);
+				glass3::parse::siteLookupToStationInfoRequest(data, agency,
+																author);
 
 		sendOutput("StationInfoRequest", ID, stationInfoRequestString);
 	} else if (dataType == "SiteList") {
 		// convert a site list to a station list
-		std::string stationListString = glass3::parse::siteListToStationList(data);
+		std::string stationListString = glass3::parse::siteListToStationList(
+				data);
 
 		sendOutput("StationList", ID, stationListString);
 	} else {
@@ -1062,6 +1068,14 @@ bool output::isDataReady(std::shared_ptr<json::Object> data) {
 		// update pubLog for this time
 		pubLog[i] = currentVersion;
 		(*data)["PubLog"] = pubLog;
+
+		// update data in cache
+		m_TrackingCache->addToCache(data, id);
+
+		logger::log(
+				"debug",
+				"output::isDataReady(): Updated data: "
+						+ json::Serialize(*m_TrackingCache->getFromCache(id)));
 
 		// depending on whether this version has already been changed
 		if (changed == true) {

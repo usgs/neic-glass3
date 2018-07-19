@@ -45,7 +45,7 @@ class brokerOutput : public output {
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	explicit brokerOutput(json::Object *config);
+	explicit brokerOutput(std::shared_ptr<json::Object> config);
 
 	/**
 	 * \brief brokerOutput destructor
@@ -65,7 +65,7 @@ class brokerOutput : public output {
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(json::Object *config) override;
+	bool setup(std::shared_ptr<json::Object> config) override;
 
 	/**
 	 * \brief brokerOutput clear function

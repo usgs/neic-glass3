@@ -42,7 +42,7 @@ input::input(int linesleepms)
 	clear();
 }
 
-input::input(json::Object *config, int linesleepms)
+input::input(std::shared_ptr<json::Object> config, int linesleepms)
 		: glass3::util::ThreadBaseClass("input", 100) {
 	m_iInFileSleep = linesleepms;
 
@@ -85,7 +85,7 @@ input::~input() {
 }
 
 // configuration
-bool input::setup(json::Object *config) {
+bool input::setup(std::shared_ptr<json::Object> config) {
 	if (config == NULL) {
 		logger::log("error", "input::setup(): NULL configuration passed in.");
 		return (false);
@@ -253,15 +253,17 @@ bool input::setup(json::Object *config) {
 	if (m_GPickParser != NULL)
 		delete (m_GPickParser);
 	m_GPickParser = new glass3::parse::GPickParser(m_sDefaultAgencyID,
-											m_sDefaultAuthor);
+													m_sDefaultAuthor);
 
 	if (m_JSONParser != NULL)
 		delete (m_JSONParser);
-	m_JSONParser = new glass3::parse::JSONParser(m_sDefaultAgencyID, m_sDefaultAuthor);
+	m_JSONParser = new glass3::parse::JSONParser(m_sDefaultAgencyID,
+													m_sDefaultAuthor);
 
 	if (m_CCParser != NULL)
 		delete (m_CCParser);
-	m_CCParser = new glass3::parse::CCParser(m_sDefaultAgencyID, m_sDefaultAuthor);
+	m_CCParser = new glass3::parse::CCParser(m_sDefaultAgencyID,
+												m_sDefaultAuthor);
 
 	if (m_DataQueue != NULL)
 		delete (m_DataQueue);
@@ -392,7 +394,8 @@ bool input::readFiles(std::string extension, const std::string &inputdir,
 	std::string filename = "";
 
 	// look for files with json picks
-	if (glass3::util::getNextFileName(inputdir, extension, filename) == true) {
+	if (glass3::util::getFirstFileNameByExtension(inputdir, extension, filename)
+			== true) {
 		logger::log("debug",
 					"input::readfiles(): Processing  file: " + filename + " .");
 
@@ -413,7 +416,7 @@ bool input::readFiles(std::string extension, const std::string &inputdir,
 		// while infile is valid
 		while (infile) {
 			// make sure we've not been told to stop
-			if (isRunning() == false) {
+			if (getThreadState() != glass3::util::ThreadState::Started) {
 				infile.close();
 				logger::log(
 						"warning",
