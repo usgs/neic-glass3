@@ -15,11 +15,11 @@
 namespace glass3 {
 namespace util {
 /**
- * \brief util baseclass class - encapsulates the most basic setup and
+ * \brief glass3::util::BaseClass class - encapsulates the most basic setup and
  * configuration logic.
  *
  * Class encapsulating the setup and configuration logic, which is common to
- * most neic-glass3 classes outside of glasscore.  The baseclass is a
+ * most neic-glass3 classes outside of glasscore.  The BaseClass is a
  * simple, almost abstract class that provides setup and clear interfaces and
  * keeps a pointer to the current configuration. The class also provides a
  * mutex for thread safety
@@ -29,24 +29,24 @@ namespace util {
 class BaseClass {
  public:
 	/**
-	 * \brief baseclass constructor
+	 * \brief BaseClass constructor
 	 *
-	 * The constructor for the baseclass class.
+	 * The constructor for the BaseClass class.
 	 * Initializes members to default values.
 	 */
 	BaseClass();
 
 	/**
-	 * \brief baseclass destructor
+	 * \brief BaseClass destructor
 	 *
-	 * The destructor for the baseclass class.
+	 * The destructor for the BaseClass class.
 	 */
 	virtual ~BaseClass();
 
 	/**
-	 * \brief baseclass configuration function
+	 * \brief BaseClass configuration function
 	 *
-	 * The this function configures the baseclass class
+	 * The this function configures the BaseClass class
 	 * \param config - A shared_ptr to a json::Object containing to the
 	 * configuration to use
 	 * \warning WARNING! Uses the base class mutex available via getMutex(),
@@ -57,9 +57,9 @@ class BaseClass {
 	virtual bool setup(std::shared_ptr<json::Object> config);
 
 	/**
-	 * \brief baseclass clear function
+	 * \brief BaseClass clear function
 	 *
-	 * The clear function for the baseclass class.
+	 * The clear function for the BaseClass class.
 	 * Clears all configuration.
 	 * \warning WARNING! Uses the base class mutex available via getMutex(),
 	 * locking getMutex(), or any other method where the class mutex is obtained
@@ -99,7 +99,7 @@ class BaseClass {
 	std::atomic<bool> m_bIsSetup;
 
 	/**
-	 * \brief A mutex to control access to baseclass members
+	 * \brief A mutex to control access to BaseClass members
 	 */
 	std::mutex m_Mutex;
 };

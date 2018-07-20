@@ -17,7 +17,7 @@ namespace glass3 {
 namespace util {
 
 /**
- * \brief util ThreadState enumeration
+ * \brief glass3::util::ThreadState enumeration
  *
  * This enumeration defines the values used in tracking the state of a thread.
  */

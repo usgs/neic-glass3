@@ -17,7 +17,7 @@
 namespace glass3 {
 namespace util {
 /**
- * \brief util threadbaseclass class
+ * \brief glass3::util::ThreadBaseClass class
  *
  * This class supports creating, starting, stopping, and monitoring a single
  * work thread, allowing for specific thread name and sleep between work time.
@@ -25,38 +25,38 @@ namespace util {
  * It is intended that the derived class implement the desired thread work by
  * overriding the pure virtual function work()
  *
- * This class inherits from util::baseclass
+ * This class inherits from util::BaseClass
  *
  * \note This class has no tie-in or relation with glass3::util::ThreadPool
  */
 class ThreadBaseClass : public util::BaseClass {
  public:
 	/**
-	 * \brief threadbaseclass constructor
+	 * \brief ThreadBaseClass constructor
 	 *
-	 * The constructor for the threadbaseclass class.
+	 * The constructor for the ThreadBaseClass class.
 	 * Initializes members to default values.
 	 */
 	ThreadBaseClass();
 
 	/**
-	 * \brief  An advanced constructor that sets up the threadbaseclass with
+	 * \brief  An advanced constructor that sets up the ThreadBaseClass with
 	 * a provided thread name and sleep between work time
 	 *
-	 * The advanced constructor for the threadbaseclass class.
+	 * The advanced constructor for the ThreadBaseClass class.
 	 * Initializes members to provided values.
 	 *
-	 * \param threadname - A std::string containing the desired
+	 * \param threadName - A std::string containing the desired
 	 * name of the work thread.
-	 * \param sleeptimems - An integer value containing the amount of
+	 * \param sleepTimeMS - An integer value containing the amount of
 	 * time to sleep between work() calls in the work thread
 	 */
-	ThreadBaseClass(std::string threadname, int sleeptimems);
+	ThreadBaseClass(std::string threadName, int sleepTimeMS);
 
 	/**
-	 * \brief threadbaseclass destructor
+	 * \brief ThreadBaseClass destructor
 	 *
-	 * The destructor for the threadbaseclass class.
+	 * The destructor for the ThreadBaseClass class.
 	 */
 	~ThreadBaseClass();
 
@@ -114,10 +114,10 @@ class ThreadBaseClass : public util::BaseClass {
 	 * Sets the amount of time to sleep between work() function calls in the
 	 * workLoop() function, which is run by the thread
 	 *
-	 * \param sleeptimems - An integer value containing the sleep between work()
+	 * \param sleepTimeMS - An integer value containing the sleep between work()
 	 * calls in integer milliseconds.
 	 */
-	void setSleepTime(int sleeptimems);
+	void setSleepTime(int sleepTimeMS);
 
 	/**
 	 * \brief Retrieves the time to sleep between work() calls
@@ -169,9 +169,9 @@ class ThreadBaseClass : public util::BaseClass {
 	 * This function sets the name of the work thread, this name is used to
 	 * identify the work thread in logging
 	 *
-	 * \param name = A std::string containing the thread name to set
+	 * \param threadName = A std::string containing the thread name to set
 	 */
-	void setThreadName(std::string name);
+	void setThreadName(std::string threadName);
 
 	/**
 	 * \brief Function to retrieve the name of the work thread
@@ -195,7 +195,7 @@ class ThreadBaseClass : public util::BaseClass {
 	std::time_t getLastHealthy();
 
 	/**
-	 * \brief threadbaseclass work function
+	 * \brief ThreadBaseClass work function
 	 *
 	 * This function is a pure virtual work function. It is intended that the
 	 * derived class implement the desired thread work by overriding this
@@ -218,7 +218,7 @@ class ThreadBaseClass : public util::BaseClass {
 	void setThreadState(glass3::util::ThreadState state);
 
 	/**
-	 * \brief threadbaseclass work loop function
+	 * \brief ThreadBaseClass work loop function
 	 *
 	 * This function is the thread work loop function. It runs in a loop while
 	 * m_bRunWorkThread is true, calls work() every m_iSleepTimeMS milliseconds,

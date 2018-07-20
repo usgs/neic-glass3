@@ -22,9 +22,9 @@ ThreadBaseClass::ThreadBaseClass()
 }
 
 // ---------------------------------------------------------ThreadBaseClass
-ThreadBaseClass::ThreadBaseClass(std::string threadname, int sleeptimems)
+ThreadBaseClass::ThreadBaseClass(std::string threadName, int sleepTimeMS)
 		: util::BaseClass() {
-	setThreadName(threadname);
+	setThreadName(threadName);
 	setThreadState(glass3::util::ThreadState::Initialized);
 	m_WorkThread = NULL;
 
@@ -32,7 +32,7 @@ ThreadBaseClass::ThreadBaseClass(std::string threadname, int sleeptimems)
 	setThreadHealth();
 
 	// set to provided inter-loop sleep
-	setSleepTime(sleeptimems);
+	setSleepTime(sleepTimeMS);
 }
 
 // ---------------------------------------------------------~ThreadBaseClass
@@ -232,8 +232,8 @@ glass3::util::ThreadState ThreadBaseClass::getThreadState() {
 }
 
 // ---------------------------------------------------------setSleepTime
-void ThreadBaseClass::setSleepTime(int sleeptimems) {
-	m_iSleepTimeMS = sleeptimems;
+void ThreadBaseClass::setSleepTime(int sleepTimeMS) {
+	m_iSleepTimeMS = sleepTimeMS;
 }
 
 // ---------------------------------------------------------getSleepTime
@@ -252,9 +252,9 @@ int ThreadBaseClass::getHealthCheckInterval() {
 }
 
 // ---------------------------------------------------------setThreadName
-void ThreadBaseClass::setThreadName(std::string name) {
+void ThreadBaseClass::setThreadName(std::string threadName) {
 	std::lock_guard<std::mutex> guard(getMutex());
-	m_sThreadName = name;
+	m_sThreadName = threadName;
 }
 
 // ---------------------------------------------------------getThreadName

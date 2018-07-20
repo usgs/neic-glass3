@@ -28,7 +28,7 @@
 namespace glass3 {
 
 /**
- * \namespace util
+ * \namespace glass3::util
  * \brief neic-glass3 namespace containing utility classes and functions
  *
  * The neic-glass3 util namespace contains various base classes, class

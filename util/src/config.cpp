@@ -14,13 +14,13 @@ Config::Config() {
 }
 
 // ---------------------------------------------------------Config
-Config::Config(std::string filepath, std::string filename) {
-	parseJSONFromFile(filepath, filename);
+Config::Config(std::string filePath, std::string fileName) {
+	parseJSONFromFile(filePath, fileName);
 }
 
 // ---------------------------------------------------------Config
-Config::Config(std::string newconfig) {
-	parseJSONFromString(newconfig);
+Config::Config(std::string newConfig) {
+	parseJSONFromString(newConfig);
 }
 
 // ---------------------------------------------------------~Config
@@ -35,12 +35,12 @@ void Config::clear() {
 }
 
 // ---------------------------------------------------------parseJSONFromFile
-std::shared_ptr<json::Object> Config::parseJSONFromFile(std::string filepath,
-														std::string filename) {
+std::shared_ptr<json::Object> Config::parseJSONFromFile(std::string filePath,
+														std::string fileName) {
 	clear();
 
 	// first open the file
-	std::ifstream inFile = openFile(filepath, filename);
+	std::ifstream inFile = openFile(filePath, fileName);
 
 	std::string currentline = "";
 	std::string configline = "";
@@ -69,16 +69,16 @@ std::shared_ptr<json::Object> Config::parseJSONFromFile(std::string filepath,
 
 // ---------------------------------------------------------parseJSONFromString
 std::shared_ptr<json::Object> Config::parseJSONFromString(
-		std::string newconfig) {
+		std::string newConfig) {
 	clear();
 
 	// nullchecks
-	if (newconfig.length() == 0) {
+	if (newConfig.length() == 0) {
 		throw std::invalid_argument("Empty JSON string");
 	}
 
 	// deserialize the string into JSON
-	json::Value deserializedJSON = json::Deserialize(newconfig);
+	json::Value deserializedJSON = json::Deserialize(newConfig);
 
 	// make sure we got valid json
 	if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
@@ -93,7 +93,7 @@ std::shared_ptr<json::Object> Config::parseJSONFromString(
 						+ json::Serialize(deserializedJSON)
 						+ "} from configuration string.");
 
-		m_sConfigString = newconfig;
+		m_sConfigString = newConfig;
 
 		return(m_ConfigJSON);
 	} else {
@@ -116,22 +116,22 @@ std::shared_ptr<json::Object> Config::getJSON() {
 }
 
 // ---------------------------------------------------------openFile
-std::ifstream Config::openFile(std::string filepath, std::string filename) {
+std::ifstream Config::openFile(std::string filePath, std::string fileName) {
 	// nullchecks
-	if (filename.length() == 0) {
+	if (fileName.length() == 0) {
 		logger::log("error", "config::openFile: Empty file name");
 		throw std::invalid_argument("Empty file name");
 	}
 
-	// create the filename
+	// create the fileName
 	std::string fileToOpen = "";
 
-	if (filepath.length() == 0) {
+	if (filePath.length() == 0) {
 		// no path means just the name
-		fileToOpen = filename;
+		fileToOpen = fileName;
 	} else {
 		// combine path and name
-		fileToOpen = filepath + "/" + filename;
+		fileToOpen = filePath + "/" + fileName;
 	}
 
 	// open the file

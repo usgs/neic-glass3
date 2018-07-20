@@ -12,7 +12,7 @@ namespace util {
 
 // string functions
 // split a string into substrings using the provided cDelimitersiter
-std::vector<std::string> split(const std::string &sInput, char cDelimiters) {
+std::vector<std::string> split(const std::string &sInput, char cDelimiter) {
 	std::vector<std::string> vElements;
 	// load the input string into the stream
 	std::stringstream stream(sInput);
@@ -20,7 +20,7 @@ std::vector<std::string> split(const std::string &sInput, char cDelimiters) {
 
 	// while we have string left in the steam, get the next "line" from the
 	// stream, who's end is identified by the delimiter character
-	while (std::getline(stream, sItem, cDelimiters)) {
+	while (std::getline(stream, sItem, cDelimiter)) {
 		// no empty strings
 		if (!sItem.empty()) {
 			// new substring to vector

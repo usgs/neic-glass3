@@ -26,11 +26,11 @@ namespace util {
  * Split a string into substrings using the provided delimiter,
  * creating a std::vector to hold the results
  *
- * \param s - A std::string containing the string to split
- * \param delim - A char containing the the delimiter to split with.
+ * \param sInput - A std::string containing the string to split
+ * \param cDelimiter - A char containing the the delimiter to split with.
  * \return returns a std::vector containing the split std::string elements
  */
-std::vector<std::string> split(const std::string &s, char delim);
+std::vector<std::string> split(const std::string &sInput, char cDelimiter);
 
 /**
  * \brief remove all instances of characters from a string
@@ -39,11 +39,12 @@ std::vector<std::string> split(const std::string &s, char delim);
  * string.
  * This is NOT removing a substring from a string.
  *
- * \param s - A std::string containing the string to remove characters from
- * \param chars - A std::string containing the individual characters to remove.
+ * \param sInput - A std::string containing the string to remove characters from
+ * \param sRemoveChars - A std::string containing the individual characters to
+ * remove.
  * \return returns a std::string containing modified string.
  */
-std::string& removeChars(std::string& s, const std::string& chars);  // NOLINT
+std::string& removeChars(std::string& sInput, const std::string& sRemoveChars);  // NOLINT
 }  // namespace util
 }  // namespace glass3
 #endif  // STRINGUTIL_H

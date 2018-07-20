@@ -38,38 +38,54 @@ namespace util {
  * Convert the given epoch time (seconds from 1970) from decimal seconds to an
  * ISO8601 time string in the format YYYY-MM-DDTHH:MM:SS.SSSZ
  *
- * \param epochtime - A double containing the epoch time (seconds from 1970)
+ * For more information on epoch time, see
+ * https://en.wikipedia.org/wiki/Unix_time
+ *
+ * For more information on ISO8601, see
+ * https://en.wikipedia.org/wiki/ISO_8601
+ *
+ * \param epochTime - A double containing the epoch time (seconds from 1970)
  * \return returns a std::string containing the ISO8601 time string in the format
  * YYYY-MM-DDTHH:MM:SS.SSSZ
  */
-std::string convertEpochTimeToISO8601(double epochtime);
+std::string convertEpochTimeToISO8601(double epochTime);
 
 /**
  * \brief Convert time from epoch time to ISO8601
  *
  * Convert the given epoch time (seconds from 1970) from decimal seconds to an
  * ISO8601 time string
- * \param epochtime - A time_t containing the epoch time (seconds from 1970)
- * \param decimalseconds - A an optional double containing the decimal seconds,
+ *
+ * For more information on epoch time, see
+ * https://en.wikipedia.org/wiki/Unix_time
+ *
+ * For more information on ISO8601, see
+ * https://en.wikipedia.org/wiki/ISO_8601
+ *
+ * \param epochTime - A time_t containing the epoch time (seconds from 1970)
+ * \param decimalSeconds - A an optional double containing the decimal seconds,
  * default is 0
  * \return returns a std::string containing the ISO8601 time string in the format
  * YYYY-MM-DDTHH:MM:SS.SSSZ
  */
-std::string convertEpochTimeToISO8601(std::time_t epochtime,
-										double decimalseconds = 0);
+std::string convertEpochTimeToISO8601(std::time_t epochTime,
+										double decimalSeconds = 0);
 
 /**
  * \brief Convert time from date time format to ISO8601 format
  *
  * Convert the given DateTime time string in the format YYYYMMDDHHMMSS.SSS to an
  * ISO8601 time string in the format YYYY-MM-DDTHH:MM:SS.SSSZ
+  *
+ * For more information on ISO8601, see
+ * https://en.wikipedia.org/wiki/ISO_8601
  *
- * \param TimeString - A std::string containing the date time in the format
+ * \param timeString - A std::string containing the date time in the format
  * YYYYMMDDHHMMSS.SS
  * \return returns a std::string containing the ISO8601 time string in the format
  * YYYY-MM-DDTHH:MM:SS.SSSZ
  */
-std::string convertDateTimeToISO8601(const std::string &TimeString);
+std::string convertDateTimeToISO8601(const std::string &timeString);
 
 /**
  * \brief Convert time from date time to epoch time
@@ -77,12 +93,15 @@ std::string convertDateTimeToISO8601(const std::string &TimeString);
  * Convert the given DateTime time string in the format YYYYMMDDHHMMSS.SSS to an
  * epoch time (seconds from 1970)
  *
- * \param TimeString - A std::string containing the date time in the format
+ * For more information on epoch time, see
+ * https://en.wikipedia.org/wiki/Unix_time
+ *
+ * \param timeString - A std::string containing the date time in the format
  * YYYYMMDDHHMMSS.SSS
  * \return returns a double variable containing the epoch time (seconds from
  * 1970)
  */
-double convertDateTimeToEpochTime(const std::string &TimeString);
+double convertDateTimeToEpochTime(const std::string &timeString);
 
 /**
  * \brief Convert time from ISO8601 time to epoch time
@@ -90,12 +109,18 @@ double convertDateTimeToEpochTime(const std::string &TimeString);
  * Convert the given ISO8601 string in the format YYYY-MM-DDTHH:MM:SS.SSSZ to an
  * epoch time
  *
- * \param TimeString - A std::string containing the ISO8601 time in the format
+ * For more information on epoch time, see
+ * https://en.wikipedia.org/wiki/Unix_time
+ *
+ * For more information on ISO8601, see
+ * https://en.wikipedia.org/wiki/ISO_8601
+ *
+ * \param timeString - A std::string containing the ISO8601 time in the format
  * YYYY-MM-DDTHH:MM:SS.SSSZ
  * \return returns a double variable containing the epoch time (seconds from
  * 1970)
  */
-double convertISO8601ToEpochTime(const std::string &TimeString);
+double convertISO8601ToEpochTime(const std::string &timeString);
 }  // namespace util
 }  // namespace glass3
 #endif  // TIMEUTIL_H

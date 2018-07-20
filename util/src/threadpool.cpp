@@ -17,13 +17,13 @@ ThreadPool::ThreadPool() {
 }
 
 // ---------------------------------------------------------ThreadPool
-ThreadPool::ThreadPool(std::string poolname, int num_threads, int sleeptime,
-						int checkinterval) {
+ThreadPool::ThreadPool(std::string poolName, int numThreads, int sleepTime,
+						int checkInterval) {
 	// init variables
-	setPoolName(poolname);
-	setNumThreads(num_threads);
-	setSleepTime(sleeptime);
-	setHealthCheckInterval(checkinterval);
+	setPoolName(poolName);
+	setNumThreads(numThreads);
+	setSleepTime(sleepTime);
+	setHealthCheckInterval(checkInterval);
 	setThreadPoolState(glass3::util::ThreadState::Initialized);
 
 	start();
@@ -236,16 +236,10 @@ bool ThreadPool::healthCheck() {
 }
 
 // ---------------------------------------------------------setJobHealth
-void ThreadPool::setJobHealth(bool health) {
-	if (health == true) {
-		std::time_t tNow;
-		std::time(&tNow);
-		setLastHealthy(tNow);
-	} else {
-		setLastHealthy(0);
-		logger::log("warning",
-					"ThreadPool::setThreadHealth(): health set to false");
-	}
+void ThreadPool::setJobHealth() {
+	std::time_t tNow;
+	std::time(&tNow);
+	setLastHealthy(tNow);
 }
 
 // ---------------------------------------------------------getAllLastHealthy
@@ -310,7 +304,7 @@ glass3::util::ThreadState ThreadPool::getThreadPoolState() {
 }
 
 // ---------------------------------------------------------setNumThreads
-void ThreadPool::setNumThreads(int num) {
+void ThreadPool::setNumThreads(int numThreads) {
 	if ((getThreadPoolState() == glass3::util::ThreadState::Starting)
 			|| (getThreadPoolState() == glass3::util::ThreadState::Started)) {
 		logger::log("warning",
@@ -319,7 +313,7 @@ void ThreadPool::setNumThreads(int num) {
 		return;
 	}
 
-	m_iNumThreads = num;
+	m_iNumThreads = numThreads;
 }
 
 // ---------------------------------------------------------getNumThreads
@@ -328,8 +322,8 @@ int ThreadPool::getNumThreads() {
 }
 
 // ---------------------------------------------------------setSleepTime
-void ThreadPool::setSleepTime(int sleeptimems) {
-	m_iSleepTimeMS = sleeptimems;
+void ThreadPool::setSleepTime(int sleepTimeMS) {
+	m_iSleepTimeMS = sleepTimeMS;
 }
 
 // ---------------------------------------------------------getSleepTime
@@ -338,9 +332,9 @@ int ThreadPool::getSleepTime() {
 }
 
 // ---------------------------------------------------------setPoolName
-void ThreadPool::setPoolName(std::string name) {
+void ThreadPool::setPoolName(std::string poolName) {
 	std::lock_guard<std::mutex> guard(getMutex());
-	m_sPoolName = name;
+	m_sPoolName = poolName;
 }
 
 // ---------------------------------------------------------getPoolName

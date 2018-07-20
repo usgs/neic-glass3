@@ -152,6 +152,7 @@ TEST(ThreadPoolTest, MonitoringTest) {
 // tests various failure conditions
 TEST(ThreadPoolTest, FailTests) {
 	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool();
+	aThreadPool->setNumThreads(0);
 
 	// assert that check is false
 	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
