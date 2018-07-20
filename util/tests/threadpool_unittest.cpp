@@ -61,7 +61,7 @@ TEST(ThreadPoolTest, CombinedTest) {
 			CHECKTIME);
 
 	// assert threads running
-	ASSERT_TRUE(aThreadPool->getThreadState() ==
+	ASSERT_TRUE(aThreadPool->getThreadPoolState() ==
 				glass3::util::ThreadState::Started)<< "check threads running";
 
 	// assert pool name

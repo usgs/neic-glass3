@@ -10,10 +10,10 @@ namespace util {
 ThreadPool::ThreadPool() {
 	// init variables
 	setPoolName("unknown");
-	setNumThreads(0);
+	setNumThreads(5);
 	setSleepTime(100);
-	setHealthCheckInterval(1);
-	setThreadState(glass3::util::ThreadState::Initialized);
+	setHealthCheckInterval(30);
+	setThreadPoolState(glass3::util::ThreadState::Initialized);
 }
 
 // ---------------------------------------------------------ThreadPool
@@ -24,7 +24,7 @@ ThreadPool::ThreadPool(std::string poolname, int num_threads, int sleeptime,
 	setNumThreads(num_threads);
 	setSleepTime(sleeptime);
 	setHealthCheckInterval(checkinterval);
-	setThreadState(glass3::util::ThreadState::Initialized);
+	setThreadPoolState(glass3::util::ThreadState::Initialized);
 
 	start();
 }
@@ -38,8 +38,8 @@ ThreadPool::~ThreadPool() {
 // ---------------------------------------------------------start
 bool ThreadPool::start() {
 	// are we already running
-	if ((getThreadState() == glass3::util::ThreadState::Starting)
-			|| (getThreadState() == glass3::util::ThreadState::Started)) {
+	if ((getThreadPoolState() == glass3::util::ThreadState::Starting)
+			|| (getThreadPoolState() == glass3::util::ThreadState::Started)) {
 		logger::log("warning",
 					"ThreadPool::start(): Work Thread is already starting "
 							"or running. (" + getPoolName() + ")");
@@ -56,7 +56,7 @@ bool ThreadPool::start() {
 	}
 
 	// we're starting
-	setThreadState(glass3::util::ThreadState::Started);
+	setThreadPoolState(glass3::util::ThreadState::Started);
 
 	// create threads in pool
 	for (int i = 0; i < getNumThreads(); i++) {
@@ -82,9 +82,9 @@ bool ThreadPool::start() {
 // ---------------------------------------------------------stop
 bool ThreadPool::stop() {
 	// check if we're running
-	if ((getThreadState() == glass3::util::ThreadState::Stopping)
-			|| (getThreadState() == glass3::util::ThreadState::Stopped)
-			|| (getThreadState() == glass3::util::ThreadState::Initialized)) {
+	if ((getThreadPoolState() == glass3::util::ThreadState::Stopping)
+			|| (getThreadPoolState() == glass3::util::ThreadState::Stopped)
+			|| (getThreadPoolState() == glass3::util::ThreadState::Initialized)) {
 		logger::log("warning",
 					"ThreadPool::stop(): Work Threads is are not running, "
 							"or is already stopping. (" + getPoolName() + ")");
@@ -92,7 +92,7 @@ bool ThreadPool::stop() {
 	}
 
 	// we're stopping
-	setThreadState(glass3::util::ThreadState::Stopping);
+	setThreadPoolState(glass3::util::ThreadState::Stopping);
 
 	// wait for threads to finish
 	for (int i = 0; i < m_ThreadPool.size(); i++) {
@@ -108,7 +108,7 @@ bool ThreadPool::stop() {
 	}
 
 	// we're now stopped
-	setThreadState(glass3::util::ThreadState::Stopped);
+	setThreadPoolState(glass3::util::ThreadState::Stopped);
 
 	logger::log("debug",
 				"ThreadPool::ThreadPool(): Stopped. (" + getPoolName() + ")");
@@ -130,7 +130,7 @@ void ThreadPool::addJob(std::function<void()> newjob) {
 // ---------------------------------------------------------jobLoop
 void ThreadPool::jobLoop() {
 	// run until told to stop
-	while (getThreadState() == glass3::util::ThreadState::Started) {
+	while (getThreadPoolState() == glass3::util::ThreadState::Started) {
 		// update thread status
 		setJobHealth();
 
@@ -187,7 +187,7 @@ void ThreadPool::jobLoop() {
 void ThreadPool::jobSleep() {
 	// only sleep if we're running, if we are not, we don't want to
 	// wait to exit.
-	if (getThreadState() == glass3::util::ThreadState::Started) {
+	if (getThreadPoolState() == glass3::util::ThreadState::Started) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
 	}
 }
@@ -211,7 +211,7 @@ bool ThreadPool::healthCheck() {
 	}
 
 	// don't check if we've not started yet
-	if (getThreadState() == glass3::util::ThreadState::Initialized) {
+	if (getThreadPoolState() == glass3::util::ThreadState::Initialized) {
 		return (true);
 	}
 
@@ -256,9 +256,9 @@ std::time_t ThreadPool::getAllLastHealthy() {
 	}
 
 	// don't bother if we're not running
-	if ((getThreadState() == glass3::util::ThreadState::Stopping)
-			|| (getThreadState() == glass3::util::ThreadState::Stopped)
-			|| (getThreadState() == glass3::util::ThreadState::Initialized)) {
+	if ((getThreadPoolState() == glass3::util::ThreadState::Stopping)
+			|| (getThreadPoolState() == glass3::util::ThreadState::Stopped)
+			|| (getThreadPoolState() == glass3::util::ThreadState::Initialized)) {
 		return (0);
 	}
 
@@ -299,20 +299,20 @@ int ThreadPool::getHealthCheckInterval() {
 	return (m_iHealthCheckInterval);
 }
 
-// ---------------------------------------------------------setThreadState
-void ThreadPool::setThreadState(glass3::util::ThreadState status) {
-	m_bThreadState = status;
+// ---------------------------------------------------------setThreadPoolState
+void ThreadPool::setThreadPoolState(glass3::util::ThreadState status) {
+	m_ThreadPoolState = status;
 }
 
-// ---------------------------------------------------------getThreadState
-glass3::util::ThreadState ThreadPool::getThreadState() {
-	return (m_bThreadState);
+// ---------------------------------------------------------getThreadPoolState
+glass3::util::ThreadState ThreadPool::getThreadPoolState() {
+	return (m_ThreadPoolState);
 }
 
 // ---------------------------------------------------------setNumThreads
 void ThreadPool::setNumThreads(int num) {
-	if ((getThreadState() == glass3::util::ThreadState::Starting)
-			|| (getThreadState() == glass3::util::ThreadState::Started)) {
+	if ((getThreadPoolState() == glass3::util::ThreadState::Starting)
+			|| (getThreadPoolState() == glass3::util::ThreadState::Started)) {
 		logger::log("warning",
 					"ThreadPool::setNumThreads(): Cannot change number of "
 					"threads while thread pool is running");
@@ -352,9 +352,9 @@ const std::string& ThreadPool::getPoolName() {
 // ---------------------------------------------------------setLastHealthy
 void ThreadPool::setLastHealthy(std::time_t now) {
 	// don't bother if we're not running
-	if ((getThreadState() == glass3::util::ThreadState::Stopping)
-			|| (getThreadState() == glass3::util::ThreadState::Stopped)
-			|| (getThreadState() == glass3::util::ThreadState::Initialized)) {
+	if ((getThreadPoolState() == glass3::util::ThreadState::Stopping)
+			|| (getThreadPoolState() == glass3::util::ThreadState::Stopped)
+			|| (getThreadPoolState() == glass3::util::ThreadState::Initialized)) {
 		return;
 	}
 

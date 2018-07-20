@@ -134,7 +134,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \brief Function to get thread state
 	 *
 	 * This function gets the thread state by getting the value of
-	 * m_bThreadState.
+	 * m_ThreadState.
 	 *
 	 * \return Returns a glass3::util::ThreadState enumeration value representing
 	 * the thread state
@@ -209,7 +209,7 @@ class ThreadBaseClass : public util::BaseClass {
 	/**
 	 * \brief Function to set thread state
 	 *
-	 * This function signifies the thread state by setting m_bThreadState
+	 * This function signifies the thread state by setting m_ThreadState
 	 * to the provided value.
 	 *
 	 * \param state = A glass3::util::ThreadState enumeration value indicating
@@ -262,7 +262,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \brief glass3::util::ThreadState enumeration used to track thread status,
 	 * set by setThreadState()
 	 */
-	std::atomic<glass3::util::ThreadState> m_bThreadState;
+	std::atomic<glass3::util::ThreadState> m_ThreadState;
 
 	/**
 	 * \brief the time_t holding the last time the thread status was checked,

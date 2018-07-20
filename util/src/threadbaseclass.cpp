@@ -223,12 +223,12 @@ void ThreadBaseClass::workLoop() {
 
 // ---------------------------------------------------------setThreadState
 void ThreadBaseClass::setThreadState(glass3::util::ThreadState status) {
-	m_bThreadState = status;
+	m_ThreadState = status;
 }
 
 // ---------------------------------------------------------getThreadState
 glass3::util::ThreadState ThreadBaseClass::getThreadState() {
-	return (m_bThreadState);
+	return (m_ThreadState);
 }
 
 // ---------------------------------------------------------setSleepTime
