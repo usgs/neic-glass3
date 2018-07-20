@@ -39,7 +39,7 @@ namespace util {
 
 /**
  * \interface iAssociator
- * \brief associator messaging interface, used in sending configuration and
+ * \brief The associator messaging interface, used in sending configuration and
  * input data to neic-glass3, specifically the glasscore libraries
  *
  * The iAssociator interface is a class interface implemented by class that

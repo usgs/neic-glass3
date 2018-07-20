@@ -83,9 +83,8 @@ std::shared_ptr<json::Object> Config::parseJSONFromString(
 	// make sure we got valid json
 	if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
 		// convert our resulting value to a json object
-		m_ConfigJSON =
-				std::make_shared<json::Object>(
-						json::Object(deserializedJSON.ToObject()));
+		m_ConfigJSON = std::make_shared<json::Object>(
+				json::Object(deserializedJSON.ToObject()));
 
 		logger::log(
 				"debug",
@@ -95,7 +94,7 @@ std::shared_ptr<json::Object> Config::parseJSONFromString(
 
 		m_sConfigString = newConfig;
 
-		return(m_ConfigJSON);
+		return (m_ConfigJSON);
 	} else {
 		// we're in trouble, clear our stuff
 		clear();
@@ -112,7 +111,15 @@ std::shared_ptr<json::Object> Config::parseJSONFromString(
 
 // ---------------------------------------------------------getJSON
 std::shared_ptr<json::Object> Config::getJSON() {
-	return (m_ConfigJSON);
+	if (m_ConfigJSON == NULL) {
+		return(NULL);
+	}
+
+	// make a copy to return
+	std::shared_ptr<json::Object> config = std::make_shared<json::Object>(
+			json::Object(*m_ConfigJSON));
+
+	return (config);
 }
 
 // ---------------------------------------------------------openFile
