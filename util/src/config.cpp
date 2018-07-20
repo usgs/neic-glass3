@@ -94,7 +94,7 @@ std::shared_ptr<json::Object> Config::parseJSONFromString(
 
 		m_sConfigString = newConfig;
 
-		return (m_ConfigJSON);
+		return (getJSON());
 	} else {
 		// we're in trouble, clear our stuff
 		clear();
