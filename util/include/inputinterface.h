@@ -35,7 +35,7 @@ class iInput {
 	 * \return Returns a std::shared_ptr to a json::object containing the input
 	 * data.
 	 */
-	virtual std::shared_ptr<json::Object> getData() = 0;
+	virtual std::shared_ptr<json::Object> getInputData() = 0;
 
 	/**
 	 * \brief Get count of remaining input data
@@ -46,7 +46,7 @@ class iInput {
 	 * \return Returns an integer value containing the current count of
 	 * remaining input data.
 	 */
-	virtual int dataCount() = 0;
+	virtual int getInputDataCount() = 0;
 };
 }  // namespace util
 }  // namespace glass3

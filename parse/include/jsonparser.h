@@ -22,7 +22,7 @@ namespace parse {
  *
  * This class inherits from the parser class
  */
-class JSONParser : public Parser {
+class JSONParser : public glass3::parse::Parser {
  public:
 	/**
 	 * \brief jsonparser constructor

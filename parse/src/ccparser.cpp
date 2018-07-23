@@ -12,7 +12,7 @@ namespace glass3 {
 namespace parse {
 // ---------------------------------------------------------------------CCParser
 CCParser::CCParser(const std::string &newAgencyID, const std::string &newAuthor)
-		: Parser::Parser(newAgencyID, newAuthor) {
+		: glass3::parse::Parser::Parser(newAgencyID, newAuthor) {
 }
 
 // --------------------------------------------------------------------~CCParser

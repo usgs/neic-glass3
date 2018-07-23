@@ -174,9 +174,9 @@ class output : public glass3::util::iOutput,
 	void setSiteListDelay(int delay);
 
 	/**
-	 * \brief Function to retrive the delay in requesting the site list
+	 * \brief Function to retrieve the delay in requesting the site list
 	 *
-	 * This function retrives the delay in seconds before requesting glass
+	 * This function retrieves the delay in seconds before requesting glass
 	 * core's current sitelist
 	 *
 	 * \return Returns an integer value containing the delay in seconds

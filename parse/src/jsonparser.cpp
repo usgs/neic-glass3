@@ -12,7 +12,7 @@ namespace parse {
 // -------------------------------------------------------------------JSONParser
 JSONParser::JSONParser(const std::string &newAgencyID,
 						const std::string &newAuthor)
-		: Parser::Parser(newAgencyID, newAuthor) {
+		: glass3::parse::Parser::Parser(newAgencyID, newAuthor) {
 }
 
 // ------------------------------------------------------------------~JSONParser
