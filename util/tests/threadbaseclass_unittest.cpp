@@ -138,11 +138,14 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	// stop the thread
 	ASSERT_TRUE(TestThreadBaseStub->stop())<< "stop was successful";
 
+	// wait a little while
+		std::this_thread::sleep_for(std::chrono::seconds(WAITTIME / 2));
+
 	// assert that class not started
 	ASSERT_TRUE(TestThreadBaseStub->getThreadState() ==
 			glass3::util::ThreadState::Stopped)<< "TestThreadBaseStub not started";
 
-	// assert that healthCheck is true
+	// assert that healthCheck is false
 	ASSERT_FALSE(TestThreadBaseStub->healthCheck())<<
 	"TestThreadBaseStub healthCheck is false";
 

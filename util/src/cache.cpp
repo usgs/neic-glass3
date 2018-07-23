@@ -65,7 +65,7 @@ bool Cache::addToCache(std::shared_ptr<json::Object> data, std::string id) {
 		m_Cache.erase(m_Cache.find(id));
 	}
 
-	// add/update in cache
+	// add to cache
 	m_Cache[id] = newData;
 
 	return (true);

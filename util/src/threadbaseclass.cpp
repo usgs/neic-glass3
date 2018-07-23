@@ -48,8 +48,8 @@ ThreadBaseClass::~ThreadBaseClass() {
 // ---------------------------------------------------------start
 bool ThreadBaseClass::start() {
 	// are we already running
-	if ((getThreadState() == glass3::util::ThreadState::Starting)
-			|| (getThreadState() == glass3::util::ThreadState::Started)) {
+	if ((getThreadState() != glass3::util::ThreadState::Initialized)
+			|| (getThreadState() != glass3::util::ThreadState::Stopped)) {
 		logger::log("warning",
 					"ThreadBaseClass::start(): Work Thread is already starting "
 							"or running. (" + getThreadName() + ")");
@@ -81,9 +81,7 @@ bool ThreadBaseClass::start() {
 // ---------------------------------------------------------stop
 bool ThreadBaseClass::stop() {
 	// check if we're running
-	if ((getThreadState() == glass3::util::ThreadState::Stopping)
-			|| (getThreadState() == glass3::util::ThreadState::Stopped)
-			|| (getThreadState() == glass3::util::ThreadState::Initialized)) {
+	if (getThreadState() != glass3::util::ThreadState::Started) {
 		logger::log(
 				"warning",
 				"ThreadBaseClass::stop(): Work Thread is not running, "
@@ -109,9 +107,6 @@ bool ThreadBaseClass::stop() {
 	// delete it
 	delete (m_WorkThread);
 	m_WorkThread = NULL;
-
-	// we're now stopped
-	setThreadState(glass3::util::ThreadState::Stopped);
 
 	// done
 	logger::log(

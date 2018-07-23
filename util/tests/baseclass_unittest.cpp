@@ -17,9 +17,8 @@ TEST(BaseClassTest, CombinedTest) {
 
 	// generate configuration
 	std::string configstring = std::string(TESTCONFIG);
-	json::Object* configuration = new json::Object(
+	std::shared_ptr<json::Object> sharedConfig = std::make_shared<json::Object>(
 			json::Deserialize(configstring));
-	std::shared_ptr<json::Object> sharedConfig(configuration);
 
 	// configure baseclass
 	ASSERT_TRUE(TestBaseClass->setup(sharedConfig))<< "setup baseclass";
