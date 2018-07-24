@@ -116,11 +116,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="classglass_1_1fileOutput.html#a0e3eed693a010d2928fd91a3f9c3cf1e">fileOutput</a>();</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglass_1_1fileOutput.html#a0e3eed693a010d2928fd91a3f9c3cf1e">fileOutput</a>(json::Object *config);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglass_1_1fileOutput.html#a0e3eed693a010d2928fd91a3f9c3cf1e">fileOutput</a>(std::shared_ptr&lt;json::Object&gt; &amp;config);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <a class="code" href="classglass_1_1fileOutput.html#a6f1f2877a100c62af267a34fa0f1a32c">~fileOutput</a>();</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1fileOutput.html#ab83e3e87f96a69d1484251044fd05cc6">setup</a>(json::Object *config) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass_1_1fileOutput.html#ad48079cb76d507947c1d8de0749cad49">setup</a>(std::shared_ptr&lt;const json::Object&gt; config) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass_1_1fileOutput.html#a7fbf970d0fdd8671cc185c8985e89add">clear</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
@@ -164,7 +164,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classglass_1_1fileOutput_html_a13a46240500c1d4df737fe783edb5b4a"><div class="ttname"><a href="classglass_1_1fileOutput.html#a13a46240500c1d4df737fe783edb5b4a">glass::fileOutput::getSOutputDir</a></div><div class="ttdeci">const std::string getSOutputDir()</div><div class="ttdef"><b>Definition:</b> file_output.h:85</div></div>
 <div class="ttc" id="classglass_1_1fileOutput_html_a7fbf970d0fdd8671cc185c8985e89add"><div class="ttname"><a href="classglass_1_1fileOutput.html#a7fbf970d0fdd8671cc185c8985e89add">glass::fileOutput::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">fileOutput clear function </div><div class="ttdef"><b>Definition:</b> file_output.cpp:135</div></div>
 <div class="ttc" id="classglass_1_1fileOutput_html"><div class="ttname"><a href="classglass_1_1fileOutput.html">glass::fileOutput</a></div><div class="ttdoc">glass fileOutput class </div><div class="ttdef"><b>Definition:</b> file_output.h:34</div></div>
-<div class="ttc" id="classglass_1_1fileOutput_html_ab83e3e87f96a69d1484251044fd05cc6"><div class="ttname"><a href="classglass_1_1fileOutput.html#ab83e3e87f96a69d1484251044fd05cc6">glass::fileOutput::setup</a></div><div class="ttdeci">bool setup(json::Object *config) override</div><div class="ttdoc">fileOutput configuration function </div><div class="ttdef"><b>Definition:</b> file_output.cpp:48</div></div>
+<div class="ttc" id="classglass_1_1fileOutput_html_ad48079cb76d507947c1d8de0749cad49"><div class="ttname"><a href="classglass_1_1fileOutput.html#ad48079cb76d507947c1d8de0749cad49">glass::fileOutput::setup</a></div><div class="ttdeci">bool setup(std::shared_ptr&lt; const json::Object &gt; config) override</div><div class="ttdoc">fileOutput configuration function </div><div class="ttdef"><b>Definition:</b> file_output.cpp:48</div></div>
 <div class="ttc" id="classglass_1_1fileOutput_html_a46a7a030ab41535c3e1b0168454d3afd"><div class="ttname"><a href="classglass_1_1fileOutput.html#a46a7a030ab41535c3e1b0168454d3afd">glass::fileOutput::getBTimestampFileName</a></div><div class="ttdeci">bool getBTimestampFileName()</div><div class="ttdef"><b>Definition:</b> file_output.h:99</div></div>
 <div class="ttc" id="classglass_1_1fileOutput_html_ac7d5960f55187a900b07bf40c377d9ae"><div class="ttname"><a href="classglass_1_1fileOutput.html#ac7d5960f55187a900b07bf40c377d9ae">glass::fileOutput::sendOutput</a></div><div class="ttdeci">void sendOutput(const std::string &amp;type, const std::string &amp;id, const std::string &amp;message) override</div><div class="ttdoc">fileOutput file writing function </div><div class="ttdef"><b>Definition:</b> file_output.cpp:155</div></div>
 <div class="ttc" id="classglass_1_1fileOutput_html_af3b0702d3cb0c994981451d4fa262358"><div class="ttname"><a href="classglass_1_1fileOutput.html#af3b0702d3cb0c994981451d4fa262358">glass::fileOutput::getSOutputFormat</a></div><div class="ttdeci">const std::string getSOutputFormat()</div><div class="ttdef"><b>Definition:</b> file_output.h:92</div></div>
@@ -173,7 +173,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 16 2018 18:31:41 for glass-app by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 24 2018 21:57:45 for glass-app by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

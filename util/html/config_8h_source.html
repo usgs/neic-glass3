@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -101,60 +101,63 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;json.h&gt;</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;fstream&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">namespace </span>glass3 {</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span>util {</div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="classglass3_1_1util_1_1Config.html">   26</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1util_1_1Config.html">Config</a> {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <a class="code" href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">Config</a>();</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">Config</a>(std::string filepath, std::string filename);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">Config</a>(std::string newconfig);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <a class="code" href="classglass3_1_1util_1_1Config.html#abc26b14a7ce4d6ee137b6722382fbe4d">~Config</a>();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    json::Object <a class="code" href="classglass3_1_1util_1_1Config.html#a67a36e7d8ff4a6cab3a29bfde7de960d">parseJSONFromFile</a>(std::string filepath, std::string filename);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    json::Object <a class="code" href="classglass3_1_1util_1_1Config.html#a395cc0d0ef730ace309d9c8c4a7df113">parseJSONFromString</a>(std::string newconfig);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    json::Object <a class="code" href="classglass3_1_1util_1_1Config.html#a60abb900cfd0af4816f1fca77fee9e8b">getJSON</a>();</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1Config.html#a74a9b946a3db89cd181eaf8ca5222ac0">clear</a>();</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    std::ifstream <a class="code" href="classglass3_1_1util_1_1Config.html#aa4a575b8c574c43cb71c82a56d5542c2">openFile</a>(std::string filepath, std::string filename);</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    std::string <a class="code" href="classglass3_1_1util_1_1Config.html#ad61286ed66259466d2aa98a49f2b94ad">parseLineFromFile</a>(std::ifstream &amp;inFile);</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1util_1_1Config.html#a5668baa64c35eeda0516ed156ca258a0">isFileOpen</a>(std::ifstream &amp;inFile);</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1Config.html#a8f8f35a856ee9420e0d72234ba6875b8">closeFile</a>(std::ifstream &amp;inFile);</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    std::string m_sConfigString;</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    json::Object m_ConfigJSON;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;};</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;}  <span class="comment">// namespace glass3</span></div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="preprocessor">#endif  // CONFIG_H</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;<span class="preprocessor"></span></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_a60abb900cfd0af4816f1fca77fee9e8b"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a60abb900cfd0af4816f1fca77fee9e8b">glass3::util::Config::getJSON</a></div><div class="ttdeci">json::Object getJSON()</div><div class="ttdoc">Get configuration as json object. </div><div class="ttdef"><b>Definition:</b> config.cpp:112</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_ad61286ed66259466d2aa98a49f2b94ad"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#ad61286ed66259466d2aa98a49f2b94ad">glass3::util::Config::parseLineFromFile</a></div><div class="ttdeci">std::string parseLineFromFile(std::ifstream &amp;inFile)</div><div class="ttdoc">Parses next line from file. </div><div class="ttdef"><b>Definition:</b> config.cpp:150</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_a8f8f35a856ee9420e0d72234ba6875b8"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a8f8f35a856ee9420e0d72234ba6875b8">glass3::util::Config::closeFile</a></div><div class="ttdeci">void closeFile(std::ifstream &amp;inFile)</div><div class="ttdoc">Closes the open file. </div><div class="ttdef"><b>Definition:</b> config.cpp:211</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_aa4a575b8c574c43cb71c82a56d5542c2"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#aa4a575b8c574c43cb71c82a56d5542c2">glass3::util::Config::openFile</a></div><div class="ttdeci">std::ifstream openFile(std::string filepath, std::string filename)</div><div class="ttdoc">Opens the configuration file. </div><div class="ttdef"><b>Definition:</b> config.cpp:117</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_abc26b14a7ce4d6ee137b6722382fbe4d"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#abc26b14a7ce4d6ee137b6722382fbe4d">glass3::util::Config::~Config</a></div><div class="ttdeci">~Config()</div><div class="ttdoc">Config destructor. </div><div class="ttdef"><b>Definition:</b> config.cpp:26</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html">glass3::util::Config</a></div><div class="ttdoc">neic-glass3 configuration class using JSON formatting </div><div class="ttdef"><b>Definition:</b> config.h:26</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_a5668baa64c35eeda0516ed156ca258a0"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a5668baa64c35eeda0516ed156ca258a0">glass3::util::Config::isFileOpen</a></div><div class="ttdeci">bool isFileOpen(std::ifstream &amp;inFile)</div><div class="ttdoc">Checks if provided file is open. </div><div class="ttdef"><b>Definition:</b> config.cpp:196</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_a74a9b946a3db89cd181eaf8ca5222ac0"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a74a9b946a3db89cd181eaf8ca5222ac0">glass3::util::Config::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">Config clear function. </div><div class="ttdef"><b>Definition:</b> config.cpp:31</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_a395cc0d0ef730ace309d9c8c4a7df113"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a395cc0d0ef730ace309d9c8c4a7df113">glass3::util::Config::parseJSONFromString</a></div><div class="ttdeci">json::Object parseJSONFromString(std::string newconfig)</div><div class="ttdoc">A function that parses a configuration from a JSON formatted string. </div><div class="ttdef"><b>Definition:</b> config.cpp:70</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_ab477dd5a10fc0b3e4cbf01bfb42bf0b4"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">glass3::util::Config::Config</a></div><div class="ttdeci">Config()</div><div class="ttdoc">Config constructor. </div><div class="ttdef"><b>Definition:</b> config.cpp:11</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Config_html_a67a36e7d8ff4a6cab3a29bfde7de960d"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a67a36e7d8ff4a6cab3a29bfde7de960d">glass3::util::Config::parseJSONFromFile</a></div><div class="ttdeci">json::Object parseJSONFromFile(std::string filepath, std::string filename)</div><div class="ttdoc">A function that loads configuration from a JSON formatted file accessed via filepath/filename. </div><div class="ttdef"><b>Definition:</b> config.cpp:37</div></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span>glass3 {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">namespace </span>util {</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classglass3_1_1util_1_1Config.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1util_1_1Config.html">Config</a> {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <a class="code" href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">Config</a>();</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <a class="code" href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">Config</a>(std::string filePath, std::string fileName);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">Config</a>(std::string newConfig);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <a class="code" href="classglass3_1_1util_1_1Config.html#abc26b14a7ce4d6ee137b6722382fbe4d">~Config</a>();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    std::shared_ptr&lt;const json::Object&gt; <a class="code" href="classglass3_1_1util_1_1Config.html#a5c8d3b3f3ef1d36997b54941ed9affab">parseJSONFromFile</a>(</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            std::string filePath, std::string fileName);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    std::shared_ptr&lt;const json::Object&gt; <a class="code" href="classglass3_1_1util_1_1Config.html#a1350d7f09427f64b701f5e8e8d35516e">parseJSONFromString</a>(</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            std::string newConfig);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    std::shared_ptr&lt;const json::Object&gt; <a class="code" href="classglass3_1_1util_1_1Config.html#a3cd334cee6b01722b04f3e1bcd53fd85">getJSON</a>();</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1Config.html#a74a9b946a3db89cd181eaf8ca5222ac0">clear</a>();</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    std::ifstream <a class="code" href="classglass3_1_1util_1_1Config.html#ad387dbd877afc53a7afcb4eaacfb79b2">openFile</a>(std::string filePath, std::string fileName);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    std::string <a class="code" href="classglass3_1_1util_1_1Config.html#ad61286ed66259466d2aa98a49f2b94ad">parseLineFromFile</a>(std::ifstream &amp;inFile);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1util_1_1Config.html#a5668baa64c35eeda0516ed156ca258a0">isFileOpen</a>(std::ifstream &amp;inFile);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1util_1_1Config.html#a8f8f35a856ee9420e0d72234ba6875b8">closeFile</a>(std::ifstream &amp;inFile);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    std::string m_sConfigString;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    std::shared_ptr&lt;json::Object&gt; m_ConfigJSON;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;};</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="preprocessor">#endif  // CONFIG_H</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="preprocessor"></span></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_ad61286ed66259466d2aa98a49f2b94ad"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#ad61286ed66259466d2aa98a49f2b94ad">glass3::util::Config::parseLineFromFile</a></div><div class="ttdeci">std::string parseLineFromFile(std::ifstream &amp;inFile)</div><div class="ttdoc">Parses next line from file. </div><div class="ttdef"><b>Definition:</b> config.cpp:155</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_a8f8f35a856ee9420e0d72234ba6875b8"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a8f8f35a856ee9420e0d72234ba6875b8">glass3::util::Config::closeFile</a></div><div class="ttdeci">void closeFile(std::ifstream &amp;inFile)</div><div class="ttdoc">Closes the open file. </div><div class="ttdef"><b>Definition:</b> config.cpp:216</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_a5c8d3b3f3ef1d36997b54941ed9affab"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a5c8d3b3f3ef1d36997b54941ed9affab">glass3::util::Config::parseJSONFromFile</a></div><div class="ttdeci">std::shared_ptr&lt; const json::Object &gt; parseJSONFromFile(std::string filePath, std::string fileName)</div><div class="ttdoc">A function that loads configuration from a JSON formatted file accessed via filePath/fileName. </div><div class="ttdef"><b>Definition:</b> config.cpp:38</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_abc26b14a7ce4d6ee137b6722382fbe4d"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#abc26b14a7ce4d6ee137b6722382fbe4d">glass3::util::Config::~Config</a></div><div class="ttdeci">~Config()</div><div class="ttdoc">Config destructor. </div><div class="ttdef"><b>Definition:</b> config.cpp:27</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html">glass3::util::Config</a></div><div class="ttdoc">neic-glass3 configuration class using JSON formatting </div><div class="ttdef"><b>Definition:</b> config.h:27</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_a5668baa64c35eeda0516ed156ca258a0"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a5668baa64c35eeda0516ed156ca258a0">glass3::util::Config::isFileOpen</a></div><div class="ttdeci">bool isFileOpen(std::ifstream &amp;inFile)</div><div class="ttdoc">Checks if provided file is open. </div><div class="ttdef"><b>Definition:</b> config.cpp:201</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_ad387dbd877afc53a7afcb4eaacfb79b2"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#ad387dbd877afc53a7afcb4eaacfb79b2">glass3::util::Config::openFile</a></div><div class="ttdeci">std::ifstream openFile(std::string filePath, std::string fileName)</div><div class="ttdoc">Opens the configuration file. </div><div class="ttdef"><b>Definition:</b> config.cpp:122</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_a1350d7f09427f64b701f5e8e8d35516e"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a1350d7f09427f64b701f5e8e8d35516e">glass3::util::Config::parseJSONFromString</a></div><div class="ttdeci">std::shared_ptr&lt; const json::Object &gt; parseJSONFromString(std::string newConfig)</div><div class="ttdoc">A function that parses a configuration from a JSON formatted string. </div><div class="ttdef"><b>Definition:</b> config.cpp:71</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_a74a9b946a3db89cd181eaf8ca5222ac0"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a74a9b946a3db89cd181eaf8ca5222ac0">glass3::util::Config::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">Config clear function. </div><div class="ttdef"><b>Definition:</b> config.cpp:32</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_ab477dd5a10fc0b3e4cbf01bfb42bf0b4"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">glass3::util::Config::Config</a></div><div class="ttdeci">Config()</div><div class="ttdoc">Config constructor. </div><div class="ttdef"><b>Definition:</b> config.cpp:12</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Config_html_a3cd334cee6b01722b04f3e1bcd53fd85"><div class="ttname"><a href="classglass3_1_1util_1_1Config.html#a3cd334cee6b01722b04f3e1bcd53fd85">glass3::util::Config::getJSON</a></div><div class="ttdeci">std::shared_ptr&lt; const json::Object &gt; getJSON()</div><div class="ttdoc">Get configuration as json object. </div><div class="ttdef"><b>Definition:</b> config.cpp:113</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 16 2018 18:29:10 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 24 2018 21:54:30 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

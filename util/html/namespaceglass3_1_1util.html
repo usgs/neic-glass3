@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,89 +87,141 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">glass3::util Namespace Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>neic-glass3 namespace containing utility classes and functions  
+<a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1iAssociator.html">iAssociator</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">associator messaging interface, used in sending configuration and input data to neic-glass3, specifically the glasscore libraries  <a href="classglass3_1_1util_1_1iAssociator.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The associator messaging interface, used in sending configuration and input data to neic-glass3, specifically the glasscore libraries.  <a href="classglass3_1_1util_1_1iAssociator.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1BaseClass.html">BaseClass</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">util baseclass class - encapsulates the most basic setup and configuration logic.  <a href="classglass3_1_1util_1_1BaseClass.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1BaseClass.html" title="glass3::util::BaseClass class - encapsulates the most basic setup and configuration logic...">glass3::util::BaseClass</a> class - encapsulates the most basic setup and configuration logic.  <a href="classglass3_1_1util_1_1BaseClass.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Cache.html">Cache</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">util cache class - a thread safe in-memory cache  <a href="classglass3_1_1util_1_1Cache.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1Cache.html" title="glass3::util::Cache class - a thread safe in-memory cache ">glass3::util::Cache</a> class - a thread safe in-memory cache  <a href="classglass3_1_1util_1_1Cache.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html">Config</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">neic-glass3 configuration class using JSON formatting  <a href="classglass3_1_1util_1_1Config.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1iInput.html">iInput</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">input data retrieval interface, used to provide input data to other parts of neic-glass3  <a href="classglass3_1_1util_1_1iInput.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The input data retrieval interface, used to provide input data to other parts of neic-glass3.  <a href="classglass3_1_1util_1_1iInput.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1iOutput.html">iOutput</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">output message interface, used in sending data to output classes in neic-glass3  <a href="classglass3_1_1util_1_1iOutput.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The output message interface, used in sending data to output classes in neic-glass3.  <a href="classglass3_1_1util_1_1iOutput.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Queue.html">Queue</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">util queue class  <a href="classglass3_1_1util_1_1Queue.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1Queue.html" title="glass3::util::Queue class ">glass3::util::Queue</a> class  <a href="classglass3_1_1util_1_1Queue.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1ThreadBaseClass.html">ThreadBaseClass</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">util threadbaseclass class  <a href="classglass3_1_1util_1_1ThreadBaseClass.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1ThreadBaseClass.html" title="glass3::util::ThreadBaseClass class ">glass3::util::ThreadBaseClass</a> class  <a href="classglass3_1_1util_1_1ThreadBaseClass.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1ThreadPool.html">ThreadPool</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">util threadpool class  <a href="classglass3_1_1util_1_1ThreadPool.html#details">More...</a><br/></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1ThreadPool.html" title="glass3::util::ThreadPool class ">glass3::util::ThreadPool</a> class  <a href="classglass3_1_1util_1_1ThreadPool.html#details">More...</a><br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:aa78125c29b681a9f05783cb703f69553"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553">ThreadState</a> { <br/>
+&#160;&#160;<a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553a0bcd0d294ee2c4699365cbf8a9a1ac9c">Initialized</a> = 0, 
+<a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553addd6dacdb34fc8639ccb774271cd0dc7">Starting</a> = 1, 
+<a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553a127dadc12122df57f6bb0e8f42021ca3">Started</a> = 2, 
+<a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553a4fd28a2aa89f3d07d7304ddeda714299">Stopping</a> = -1, 
+<br/>
+&#160;&#160;<a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553aeeb9c88a3c4d6c041331cb4fa467f8f7">Stopped</a> = -2
+<br/>
+ }</td></tr>
+<tr class="memdesc:aa78125c29b681a9f05783cb703f69553"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553" title="glass3::util::ThreadState enumeration ">glass3::util::ThreadState</a> enumeration  <a href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553">More...</a><br/></td></tr>
+<tr class="separator:aa78125c29b681a9f05783cb703f69553"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a13c9cad6adb1a9dcfc7007ad2a7ff44d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a13c9cad6adb1a9dcfc7007ad2a7ff44d">getNextFileName</a> (const std::string &amp;path, const std::string &amp;extension, std::string &amp;filename)</td></tr>
-<tr class="memdesc:a13c9cad6adb1a9dcfc7007ad2a7ff44d"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the next file name in a directory  <a href="#a13c9cad6adb1a9dcfc7007ad2a7ff44d">More...</a><br/></td></tr>
-<tr class="separator:a13c9cad6adb1a9dcfc7007ad2a7ff44d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6656f908e0a4576adb43731c29a8fb3f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a6656f908e0a4576adb43731c29a8fb3f">moveFileTo</a> (std::string filename, const std::string &amp;dirname)</td></tr>
-<tr class="memdesc:a6656f908e0a4576adb43731c29a8fb3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">move a file from one directory to another  <a href="#a6656f908e0a4576adb43731c29a8fb3f">More...</a><br/></td></tr>
-<tr class="separator:a6656f908e0a4576adb43731c29a8fb3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4a0b94d6a51de163c0fff680077cb6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ae4a0b94d6a51de163c0fff680077cb6f">getFirstFileNameByExtension</a> (const std::string &amp;path, const std::string &amp;extension, std::string &amp;fileName)</td></tr>
+<tr class="memdesc:ae4a0b94d6a51de163c0fff680077cb6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the next file name in a directory  <a href="#ae4a0b94d6a51de163c0fff680077cb6f">More...</a><br/></td></tr>
+<tr class="separator:ae4a0b94d6a51de163c0fff680077cb6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1321cbdbcb2f05c38ae3e77e0bd1f0d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ae1321cbdbcb2f05c38ae3e77e0bd1f0d">moveFileTo</a> (std::string fileName, const std::string &amp;dirName)</td></tr>
+<tr class="memdesc:ae1321cbdbcb2f05c38ae3e77e0bd1f0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">move a file from one directory to another  <a href="#ae1321cbdbcb2f05c38ae3e77e0bd1f0d">More...</a><br/></td></tr>
+<tr class="separator:ae1321cbdbcb2f05c38ae3e77e0bd1f0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab71d80ad46da4def692e8914e6ae59b4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ab71d80ad46da4def692e8914e6ae59b4">copyFileTo</a> (std::string from, std::string to)</td></tr>
 <tr class="memdesc:ab71d80ad46da4def692e8914e6ae59b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy a file from one directory to another  <a href="#ab71d80ad46da4def692e8914e6ae59b4">More...</a><br/></td></tr>
 <tr class="separator:ab71d80ad46da4def692e8914e6ae59b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a621d33f654815801f90bf669c61a2e17"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a621d33f654815801f90bf669c61a2e17">deleteFileFrom</a> (std::string filename)</td></tr>
-<tr class="memdesc:a621d33f654815801f90bf669c61a2e17"><td class="mdescLeft">&#160;</td><td class="mdescRight">delete a file  <a href="#a621d33f654815801f90bf669c61a2e17">More...</a><br/></td></tr>
-<tr class="separator:a621d33f654815801f90bf669c61a2e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c96aeae2347986e5276099c127e5b52"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a9c96aeae2347986e5276099c127e5b52">split</a> (const std::string &amp;s, char delim)</td></tr>
-<tr class="memdesc:a9c96aeae2347986e5276099c127e5b52"><td class="mdescLeft">&#160;</td><td class="mdescRight">split a string into substrings  <a href="#a9c96aeae2347986e5276099c127e5b52">More...</a><br/></td></tr>
-<tr class="separator:a9c96aeae2347986e5276099c127e5b52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c3016088a3a014e9a446c7e2a78a0d3"><td class="memItemLeft" align="right" valign="top">std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a7c3016088a3a014e9a446c7e2a78a0d3">removeChars</a> (std::string &amp;s, const std::string &amp;chars)</td></tr>
-<tr class="memdesc:a7c3016088a3a014e9a446c7e2a78a0d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove all instances of characters from a string  <a href="#a7c3016088a3a014e9a446c7e2a78a0d3">More...</a><br/></td></tr>
-<tr class="separator:a7c3016088a3a014e9a446c7e2a78a0d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f64ff79ddae88b47c95a67ffa9bd804"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a9f64ff79ddae88b47c95a67ffa9bd804">convertEpochTimeToISO8601</a> (double epochtime)</td></tr>
-<tr class="memdesc:a9f64ff79ddae88b47c95a67ffa9bd804"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from epoch time to ISO8601.  <a href="#a9f64ff79ddae88b47c95a67ffa9bd804">More...</a><br/></td></tr>
-<tr class="separator:a9f64ff79ddae88b47c95a67ffa9bd804"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adcf3187beff630e67e34127919c97324"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#adcf3187beff630e67e34127919c97324">convertEpochTimeToISO8601</a> (std::time_t epochtime, double decimalseconds=0)</td></tr>
-<tr class="memdesc:adcf3187beff630e67e34127919c97324"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from epoch time to ISO8601.  <a href="#adcf3187beff630e67e34127919c97324">More...</a><br/></td></tr>
-<tr class="separator:adcf3187beff630e67e34127919c97324"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af62331896271a1078140eb4dd61f050d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#af62331896271a1078140eb4dd61f050d">convertDateTimeToISO8601</a> (const std::string &amp;TimeString)</td></tr>
-<tr class="memdesc:af62331896271a1078140eb4dd61f050d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from date time format to ISO8601 format.  <a href="#af62331896271a1078140eb4dd61f050d">More...</a><br/></td></tr>
-<tr class="separator:af62331896271a1078140eb4dd61f050d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4fd6e13bbc09953c98236703b93e9d6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ab4fd6e13bbc09953c98236703b93e9d6">convertDateTimeToEpochTime</a> (const std::string &amp;TimeString)</td></tr>
-<tr class="memdesc:ab4fd6e13bbc09953c98236703b93e9d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from date time to epoch time.  <a href="#ab4fd6e13bbc09953c98236703b93e9d6">More...</a><br/></td></tr>
-<tr class="separator:ab4fd6e13bbc09953c98236703b93e9d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4c25bb8da2f50c00ee88e40e3173b6a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#aa4c25bb8da2f50c00ee88e40e3173b6a">convertISO8601ToEpochTime</a> (const std::string &amp;TimeString)</td></tr>
-<tr class="memdesc:aa4c25bb8da2f50c00ee88e40e3173b6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from ISO8601 time to epoch time.  <a href="#aa4c25bb8da2f50c00ee88e40e3173b6a">More...</a><br/></td></tr>
-<tr class="separator:aa4c25bb8da2f50c00ee88e40e3173b6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5fdc351b4ca8c12447b555bcd352ba79"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a5fdc351b4ca8c12447b555bcd352ba79">convertEpochTimeToISO8601</a> (time_t epochtime, double decimalseconds)</td></tr>
-<tr class="separator:a5fdc351b4ca8c12447b555bcd352ba79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49d20f140da88095d78a873577669d42"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a49d20f140da88095d78a873577669d42">deleteFileFrom</a> (std::string fileName)</td></tr>
+<tr class="memdesc:a49d20f140da88095d78a873577669d42"><td class="mdescLeft">&#160;</td><td class="mdescRight">delete a file  <a href="#a49d20f140da88095d78a873577669d42">More...</a><br/></td></tr>
+<tr class="separator:a49d20f140da88095d78a873577669d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a197b9e4e3fffdb1fa0ec397bba112d9c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a197b9e4e3fffdb1fa0ec397bba112d9c">split</a> (const std::string &amp;sInput, char cDelimiter)</td></tr>
+<tr class="memdesc:a197b9e4e3fffdb1fa0ec397bba112d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">split a string into substrings  <a href="#a197b9e4e3fffdb1fa0ec397bba112d9c">More...</a><br/></td></tr>
+<tr class="separator:a197b9e4e3fffdb1fa0ec397bba112d9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86ff9cc6bc0636dec5df9eff2d4e3afe"><td class="memItemLeft" align="right" valign="top">std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a86ff9cc6bc0636dec5df9eff2d4e3afe">removeChars</a> (std::string &amp;sInput, const std::string &amp;sRemoveChars)</td></tr>
+<tr class="memdesc:a86ff9cc6bc0636dec5df9eff2d4e3afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove all instances of characters from a string  <a href="#a86ff9cc6bc0636dec5df9eff2d4e3afe">More...</a><br/></td></tr>
+<tr class="separator:a86ff9cc6bc0636dec5df9eff2d4e3afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2403517e1445e2da0fab499ad3002673"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a2403517e1445e2da0fab499ad3002673">convertEpochTimeToISO8601</a> (double epochTime)</td></tr>
+<tr class="memdesc:a2403517e1445e2da0fab499ad3002673"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from epoch time to ISO8601.  <a href="#a2403517e1445e2da0fab499ad3002673">More...</a><br/></td></tr>
+<tr class="separator:a2403517e1445e2da0fab499ad3002673"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2cec779d7564b756dbf920361c6ec6d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ac2cec779d7564b756dbf920361c6ec6d">convertEpochTimeToISO8601</a> (std::time_t epochTime, double decimalSeconds=0)</td></tr>
+<tr class="memdesc:ac2cec779d7564b756dbf920361c6ec6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from epoch time to ISO8601.  <a href="#ac2cec779d7564b756dbf920361c6ec6d">More...</a><br/></td></tr>
+<tr class="separator:ac2cec779d7564b756dbf920361c6ec6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15be857c71411144d39322e1b0462021"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a15be857c71411144d39322e1b0462021">convertDateTimeToISO8601</a> (const std::string &amp;timeString)</td></tr>
+<tr class="memdesc:a15be857c71411144d39322e1b0462021"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from date time format to ISO8601 format.  <a href="#a15be857c71411144d39322e1b0462021">More...</a><br/></td></tr>
+<tr class="separator:a15be857c71411144d39322e1b0462021"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a152b44265e6c1494221287991e049c16"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a152b44265e6c1494221287991e049c16">convertDateTimeToEpochTime</a> (const std::string &amp;timeString)</td></tr>
+<tr class="memdesc:a152b44265e6c1494221287991e049c16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from date time to epoch time.  <a href="#a152b44265e6c1494221287991e049c16">More...</a><br/></td></tr>
+<tr class="separator:a152b44265e6c1494221287991e049c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71723a69a1453073aff053e32a127d53"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a71723a69a1453073aff053e32a127d53">convertISO8601ToEpochTime</a> (const std::string &amp;timeString)</td></tr>
+<tr class="memdesc:a71723a69a1453073aff053e32a127d53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert time from ISO8601 time to epoch time.  <a href="#a71723a69a1453073aff053e32a127d53">More...</a><br/></td></tr>
+<tr class="separator:a71723a69a1453073aff053e32a127d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:a723949db20a96db487f4d02e94ee2b7f"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a723949db20a96db487f4d02e94ee2b7f">envTZ</a> [<a class="el" href="timeutil_8cpp.html#a36949d3fe06982ccfe4f775105f88fa9">MAXENV</a>]</td></tr>
-<tr class="memdesc:a723949db20a96db487f4d02e94ee2b7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">A character array used to store the environment variable TZ will be stored after the first call to ConvertISO8601ToEpochTime()  <a href="#a723949db20a96db487f4d02e94ee2b7f">More...</a><br/></td></tr>
+<tr class="memdesc:a723949db20a96db487f4d02e94ee2b7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">A character array used to store the environment variable TZ. It will be stored after the first call to ConvertISO8601ToEpochTime()  <a href="#a723949db20a96db487f4d02e94ee2b7f">More...</a><br/></td></tr>
 <tr class="separator:a723949db20a96db487f4d02e94ee2b7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>neic-glass3 namespace containing utility classes and functions </p>
+<p>The neic-glass3 util namespace contains various base classes, class interfaces, and utility classes and functions used by other components of neic-glass3. </p>
+</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+<a class="anchor" id="aa78125c29b681a9f05783cb703f69553"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553">glass3::util::ThreadState</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="namespaceglass3_1_1util.html#aa78125c29b681a9f05783cb703f69553" title="glass3::util::ThreadState enumeration ">glass3::util::ThreadState</a> enumeration </p>
+<p>This enumeration defines the values used in tracking the state of a thread. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><em><a class="anchor" id="aa78125c29b681a9f05783cb703f69553a0bcd0d294ee2c4699365cbf8a9a1ac9c"></a>Initialized</em>&#160;</td><td class="fielddoc">
+<p>thread has been initialized </p>
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="aa78125c29b681a9f05783cb703f69553addd6dacdb34fc8639ccb774271cd0dc7"></a>Starting</em>&#160;</td><td class="fielddoc">
+<p>thread is starting up </p>
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="aa78125c29b681a9f05783cb703f69553a127dadc12122df57f6bb0e8f42021ca3"></a>Started</em>&#160;</td><td class="fielddoc">
+<p>thread has been started </p>
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="aa78125c29b681a9f05783cb703f69553a4fd28a2aa89f3d07d7304ddeda714299"></a>Stopping</em>&#160;</td><td class="fielddoc">
+<p>thread is shutting down </p>
+</td></tr>
+<tr><td class="fieldname"><em><a class="anchor" id="aa78125c29b681a9f05783cb703f69553aeeb9c88a3c4d6c041331cb4fa467f8f7"></a>Stopped</em>&#160;</td><td class="fielddoc">
+<p>thread is shut down </p>
+</td></tr>
+</table>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="ab4fd6e13bbc09953c98236703b93e9d6"></a>
+<a class="anchor" id="a152b44265e6c1494221287991e049c16"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -177,7 +229,7 @@ Variables</h2></td></tr>
           <td class="memname">double glass3::util::convertDateTimeToEpochTime </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>TimeString</em></td><td>)</td>
+          <td class="paramname"><em>timeString</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -185,9 +237,10 @@ Variables</h2></td></tr>
 
 <p>Convert time from date time to epoch time. </p>
 <p>Convert the given DateTime time string in the format YYYYMMDDHHMMSS.SSS to an epoch time (seconds from 1970)</p>
+<p>For more information on epoch time, see <a href="https://en.wikipedia.org/wiki/Unix_time">https://en.wikipedia.org/wiki/Unix_time</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">TimeString</td><td>- A std::string containing the date time in the format YYYYMMDDHHMMSS.SSS </td></tr>
+    <tr><td class="paramname">timeString</td><td>- A std::string containing the date time in the format YYYYMMDDHHMMSS.SSS </td></tr>
   </table>
   </dd>
 </dl>
@@ -195,7 +248,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af62331896271a1078140eb4dd61f050d"></a>
+<a class="anchor" id="a15be857c71411144d39322e1b0462021"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -203,7 +256,7 @@ Variables</h2></td></tr>
           <td class="memname">std::string glass3::util::convertDateTimeToISO8601 </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>TimeString</em></td><td>)</td>
+          <td class="paramname"><em>timeString</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -211,9 +264,10 @@ Variables</h2></td></tr>
 
 <p>Convert time from date time format to ISO8601 format. </p>
 <p>Convert the given DateTime time string in the format YYYYMMDDHHMMSS.SSS to an ISO8601 time string in the format YYYY-MM-DDTHH:MM:SS.SSSZ</p>
+<p>For more information on ISO8601, see <a href="https://en.wikipedia.org/wiki/ISO_8601">https://en.wikipedia.org/wiki/ISO_8601</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">TimeString</td><td>- A std::string containing the date time in the format YYYYMMDDHHMMSS.SS </td></tr>
+    <tr><td class="paramname">timeString</td><td>- A std::string containing the date time in the format YYYYMMDDHHMMSS.SS </td></tr>
   </table>
   </dd>
 </dl>
@@ -221,33 +275,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5fdc351b4ca8c12447b555bcd352ba79"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string glass3::util::convertEpochTimeToISO8601 </td>
-          <td>(</td>
-          <td class="paramtype">time_t&#160;</td>
-          <td class="paramname"><em>epochtime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>decimalseconds</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a9f64ff79ddae88b47c95a67ffa9bd804"></a>
+<a class="anchor" id="a2403517e1445e2da0fab499ad3002673"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -255,7 +283,7 @@ Variables</h2></td></tr>
           <td class="memname">std::string glass3::util::convertEpochTimeToISO8601 </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>epochtime</em></td><td>)</td>
+          <td class="paramname"><em>epochTime</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -263,9 +291,11 @@ Variables</h2></td></tr>
 
 <p>Convert time from epoch time to ISO8601. </p>
 <p>Convert the given epoch time (seconds from 1970) from decimal seconds to an ISO8601 time string in the format YYYY-MM-DDTHH:MM:SS.SSSZ</p>
+<p>For more information on epoch time, see <a href="https://en.wikipedia.org/wiki/Unix_time">https://en.wikipedia.org/wiki/Unix_time</a></p>
+<p>For more information on ISO8601, see <a href="https://en.wikipedia.org/wiki/ISO_8601">https://en.wikipedia.org/wiki/ISO_8601</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">epochtime</td><td>- A double containing the epoch time (seconds from 1970) </td></tr>
+    <tr><td class="paramname">epochTime</td><td>- A double containing the epoch time (seconds from 1970) </td></tr>
   </table>
   </dd>
 </dl>
@@ -273,7 +303,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="adcf3187beff630e67e34127919c97324"></a>
+<a class="anchor" id="ac2cec779d7564b756dbf920361c6ec6d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -281,13 +311,13 @@ Variables</h2></td></tr>
           <td class="memname">std::string glass3::util::convertEpochTimeToISO8601 </td>
           <td>(</td>
           <td class="paramtype">std::time_t&#160;</td>
-          <td class="paramname"><em>epochtime</em>, </td>
+          <td class="paramname"><em>epochTime</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>decimalseconds</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>decimalSeconds</em> = <code>0</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -298,11 +328,13 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Convert time from epoch time to ISO8601. </p>
-<p>Convert the given epoch time (seconds from 1970) from decimal seconds to an ISO8601 time string </p>
+<p>Convert the given epoch time (seconds from 1970) from decimal seconds to an ISO8601 time string</p>
+<p>For more information on epoch time, see <a href="https://en.wikipedia.org/wiki/Unix_time">https://en.wikipedia.org/wiki/Unix_time</a></p>
+<p>For more information on ISO8601, see <a href="https://en.wikipedia.org/wiki/ISO_8601">https://en.wikipedia.org/wiki/ISO_8601</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">epochtime</td><td>- A time_t containing the epoch time (seconds from 1970) </td></tr>
-    <tr><td class="paramname">decimalseconds</td><td>- A an optional double containing the decimal seconds, default is 0 </td></tr>
+    <tr><td class="paramname">epochTime</td><td>- A time_t containing the epoch time (seconds from 1970) </td></tr>
+    <tr><td class="paramname">decimalSeconds</td><td>- A an optional double containing the decimal seconds, default is 0 </td></tr>
   </table>
   </dd>
 </dl>
@@ -310,7 +342,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa4c25bb8da2f50c00ee88e40e3173b6a"></a>
+<a class="anchor" id="a71723a69a1453073aff053e32a127d53"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -318,7 +350,7 @@ Variables</h2></td></tr>
           <td class="memname">double glass3::util::convertISO8601ToEpochTime </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>TimeString</em></td><td>)</td>
+          <td class="paramname"><em>timeString</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -326,9 +358,11 @@ Variables</h2></td></tr>
 
 <p>Convert time from ISO8601 time to epoch time. </p>
 <p>Convert the given ISO8601 string in the format YYYY-MM-DDTHH:MM:SS.SSSZ to an epoch time</p>
+<p>For more information on epoch time, see <a href="https://en.wikipedia.org/wiki/Unix_time">https://en.wikipedia.org/wiki/Unix_time</a></p>
+<p>For more information on ISO8601, see <a href="https://en.wikipedia.org/wiki/ISO_8601">https://en.wikipedia.org/wiki/ISO_8601</a></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">TimeString</td><td>- A std::string containing the ISO8601 time in the format YYYY-MM-DDTHH:MM:SS.SSSZ </td></tr>
+    <tr><td class="paramname">timeString</td><td>- A std::string containing the ISO8601 time in the format YYYY-MM-DDTHH:MM:SS.SSSZ </td></tr>
   </table>
   </dd>
 </dl>
@@ -373,7 +407,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a621d33f654815801f90bf669c61a2e17"></a>
+<a class="anchor" id="a49d20f140da88095d78a873577669d42"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -381,7 +415,7 @@ Variables</h2></td></tr>
           <td class="memname">bool glass3::util::deleteFileFrom </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td class="paramname"><em>fileName</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -391,7 +425,7 @@ Variables</h2></td></tr>
 <p>Delete a given file from the file system</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filename</td><td>- A std::string containing the path and name of the file to delete </td></tr>
+    <tr><td class="paramname">fileName</td><td>- A std::string containing the path and name of the file to delete </td></tr>
   </table>
   </dd>
 </dl>
@@ -399,12 +433,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a13c9cad6adb1a9dcfc7007ad2a7ff44d"></a>
+<a class="anchor" id="ae4a0b94d6a51de163c0fff680077cb6f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool glass3::util::getNextFileName </td>
+          <td class="memname">bool glass3::util::getFirstFileNameByExtension </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>path</em>, </td>
@@ -419,7 +453,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em>&#160;</td>
+          <td class="paramname"><em>fileName</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -435,7 +469,7 @@ Variables</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">path</td><td>- A std::string containing the directory to search for a file name </td></tr>
     <tr><td class="paramname">extension</td><td>- A std::string containing the extension to filter with. </td></tr>
-    <tr><td class="paramname">filename</td><td>- A std::string containing the file name that was found </td></tr>
+    <tr><td class="paramname">fileName</td><td>- A std::string containing the file name that was found </td></tr>
   </table>
   </dd>
 </dl>
@@ -443,7 +477,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6656f908e0a4576adb43731c29a8fb3f"></a>
+<a class="anchor" id="ae1321cbdbcb2f05c38ae3e77e0bd1f0d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -451,13 +485,13 @@ Variables</h2></td></tr>
           <td class="memname">bool glass3::util::moveFileTo </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
+          <td class="paramname"><em>fileName</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>dirname</em>&#160;</td>
+          <td class="paramname"><em>dirName</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -471,16 +505,16 @@ Variables</h2></td></tr>
 <p>Move a given file to a given directory</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filename</td><td>- A std::string containing the path and name of the file to move </td></tr>
-    <tr><td class="paramname">dirname</td><td>- A std::string containing the directory to move the file to move </td></tr>
+    <tr><td class="paramname">fileName</td><td>- A std::string containing the path and name of the file to move </td></tr>
+    <tr><td class="paramname">dirName</td><td>- A std::string containing the directory to move the file to move </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>returns true if successful or expected error (ENOENT) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>returns true if successful or expected error (ENOENT), or (EACCES - trying to overwrite an existing file in the move), in either case the fileName is expected to no longer exist after a return of true. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7c3016088a3a014e9a446c7e2a78a0d3"></a>
+<a class="anchor" id="a86ff9cc6bc0636dec5df9eff2d4e3afe"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -488,13 +522,13 @@ Variables</h2></td></tr>
           <td class="memname">std::string &amp; glass3::util::removeChars </td>
           <td>(</td>
           <td class="paramtype">std::string &amp;&#160;</td>
-          <td class="paramname"><em>s</em>, </td>
+          <td class="paramname"><em>sInput</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>chars</em>&#160;</td>
+          <td class="paramname"><em>sRemoveChars</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -508,8 +542,8 @@ Variables</h2></td></tr>
 <p>Remove all instances of the set of characters stored in chars from the given string. This is NOT removing a substring from a string.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">s</td><td>- A std::string containing the string to remove characters from </td></tr>
-    <tr><td class="paramname">chars</td><td>- A std::string containing the individual characters to remove. </td></tr>
+    <tr><td class="paramname">sInput</td><td>- A std::string containing the string to remove characters from </td></tr>
+    <tr><td class="paramname">sRemoveChars</td><td>- A std::string containing the individual characters to remove. </td></tr>
   </table>
   </dd>
 </dl>
@@ -517,7 +551,7 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9c96aeae2347986e5276099c127e5b52"></a>
+<a class="anchor" id="a197b9e4e3fffdb1fa0ec397bba112d9c"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -525,13 +559,13 @@ Variables</h2></td></tr>
           <td class="memname">std::vector&lt; std::string &gt; glass3::util::split </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>s</em>, </td>
+          <td class="paramname"><em>sInput</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>delim</em>&#160;</td>
+          <td class="paramname"><em>cDelimiter</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -545,8 +579,8 @@ Variables</h2></td></tr>
 <p>Split a string into substrings using the provided delimiter, creating a std::vector to hold the results</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">s</td><td>- A std::string containing the string to split </td></tr>
-    <tr><td class="paramname">delim</td><td>- A char containing the the delimiter to split with. </td></tr>
+    <tr><td class="paramname">sInput</td><td>- A std::string containing the string to split </td></tr>
+    <tr><td class="paramname">cDelimiter</td><td>- A char containing the the delimiter to split with. </td></tr>
   </table>
   </dd>
 </dl>
@@ -565,14 +599,14 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>A character array used to store the environment variable TZ will be stored after the first call to ConvertISO8601ToEpochTime() </p>
+<p>A character array used to store the environment variable TZ. It will be stored after the first call to ConvertISO8601ToEpochTime() </p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 16 2018 18:29:10 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 24 2018 21:54:30 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

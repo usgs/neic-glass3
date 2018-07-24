@@ -72,7 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -113,33 +113,36 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab477dd5a10fc0b3e4cbf01bfb42bf0b4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">Config</a> ()</td></tr>
 <tr class="memdesc:ab477dd5a10fc0b3e4cbf01bfb42bf0b4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> constructor.  <a href="#ab477dd5a10fc0b3e4cbf01bfb42bf0b4">More...</a><br/></td></tr>
 <tr class="separator:ab477dd5a10fc0b3e4cbf01bfb42bf0b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab657a31b369369f416ac113294f43a2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#aab657a31b369369f416ac113294f43a2">Config</a> (std::string filepath, std::string filename)</td></tr>
-<tr class="memdesc:aab657a31b369369f416ac113294f43a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">An advanced constructor that loads configuration from a JSON formatted file accessed via filepath/filename.  <a href="#aab657a31b369369f416ac113294f43a2">More...</a><br/></td></tr>
-<tr class="separator:aab657a31b369369f416ac113294f43a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a105b8b9105c8d5796df50f40fb58448e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a105b8b9105c8d5796df50f40fb58448e">Config</a> (std::string newconfig)</td></tr>
-<tr class="memdesc:a105b8b9105c8d5796df50f40fb58448e"><td class="mdescLeft">&#160;</td><td class="mdescRight">An advanced constructor that parses configuration from a JSON formatted string provided in newconfig.  <a href="#a105b8b9105c8d5796df50f40fb58448e">More...</a><br/></td></tr>
-<tr class="separator:a105b8b9105c8d5796df50f40fb58448e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d4a6fd7857ebca9c3f4b685a3554fc4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a2d4a6fd7857ebca9c3f4b685a3554fc4">Config</a> (std::string filePath, std::string fileName)</td></tr>
+<tr class="memdesc:a2d4a6fd7857ebca9c3f4b685a3554fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">An advanced constructor that loads configuration from a JSON formatted file accessed via filePath/fileName.  <a href="#a2d4a6fd7857ebca9c3f4b685a3554fc4">More...</a><br/></td></tr>
+<tr class="separator:a2d4a6fd7857ebca9c3f4b685a3554fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ed65f5d19f5f8d447fa9ae13e4fa8d8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a2ed65f5d19f5f8d447fa9ae13e4fa8d8">Config</a> (std::string newConfig)</td></tr>
+<tr class="memdesc:a2ed65f5d19f5f8d447fa9ae13e4fa8d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">An advanced constructor that parses configuration from a JSON formatted string provided in newConfig.  <a href="#a2ed65f5d19f5f8d447fa9ae13e4fa8d8">More...</a><br/></td></tr>
+<tr class="separator:a2ed65f5d19f5f8d447fa9ae13e4fa8d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc26b14a7ce4d6ee137b6722382fbe4d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#abc26b14a7ce4d6ee137b6722382fbe4d">~Config</a> ()</td></tr>
 <tr class="memdesc:abc26b14a7ce4d6ee137b6722382fbe4d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> destructor.  <a href="#abc26b14a7ce4d6ee137b6722382fbe4d">More...</a><br/></td></tr>
 <tr class="separator:abc26b14a7ce4d6ee137b6722382fbe4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67a36e7d8ff4a6cab3a29bfde7de960d"><td class="memItemLeft" align="right" valign="top">json::Object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a67a36e7d8ff4a6cab3a29bfde7de960d">parseJSONFromFile</a> (std::string filepath, std::string filename)</td></tr>
-<tr class="memdesc:a67a36e7d8ff4a6cab3a29bfde7de960d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function that loads configuration from a JSON formatted file accessed via filepath/filename.  <a href="#a67a36e7d8ff4a6cab3a29bfde7de960d">More...</a><br/></td></tr>
-<tr class="separator:a67a36e7d8ff4a6cab3a29bfde7de960d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a395cc0d0ef730ace309d9c8c4a7df113"><td class="memItemLeft" align="right" valign="top">json::Object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a395cc0d0ef730ace309d9c8c4a7df113">parseJSONFromString</a> (std::string newconfig)</td></tr>
-<tr class="memdesc:a395cc0d0ef730ace309d9c8c4a7df113"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function that parses a configuration from a JSON formatted string.  <a href="#a395cc0d0ef730ace309d9c8c4a7df113">More...</a><br/></td></tr>
-<tr class="separator:a395cc0d0ef730ace309d9c8c4a7df113"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60abb900cfd0af4816f1fca77fee9e8b"><td class="memItemLeft" align="right" valign="top">json::Object&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a60abb900cfd0af4816f1fca77fee9e8b">getJSON</a> ()</td></tr>
-<tr class="memdesc:a60abb900cfd0af4816f1fca77fee9e8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get configuration as json object.  <a href="#a60abb900cfd0af4816f1fca77fee9e8b">More...</a><br/></td></tr>
-<tr class="separator:a60abb900cfd0af4816f1fca77fee9e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c8d3b3f3ef1d36997b54941ed9affab"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <br class="typebreak"/>
+json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a5c8d3b3f3ef1d36997b54941ed9affab">parseJSONFromFile</a> (std::string filePath, std::string fileName)</td></tr>
+<tr class="memdesc:a5c8d3b3f3ef1d36997b54941ed9affab"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function that loads configuration from a JSON formatted file accessed via filePath/fileName.  <a href="#a5c8d3b3f3ef1d36997b54941ed9affab">More...</a><br/></td></tr>
+<tr class="separator:a5c8d3b3f3ef1d36997b54941ed9affab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1350d7f09427f64b701f5e8e8d35516e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <br class="typebreak"/>
+json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a1350d7f09427f64b701f5e8e8d35516e">parseJSONFromString</a> (std::string newConfig)</td></tr>
+<tr class="memdesc:a1350d7f09427f64b701f5e8e8d35516e"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function that parses a configuration from a JSON formatted string.  <a href="#a1350d7f09427f64b701f5e8e8d35516e">More...</a><br/></td></tr>
+<tr class="separator:a1350d7f09427f64b701f5e8e8d35516e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cd334cee6b01722b04f3e1bcd53fd85"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; const <br class="typebreak"/>
+json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a3cd334cee6b01722b04f3e1bcd53fd85">getJSON</a> ()</td></tr>
+<tr class="memdesc:a3cd334cee6b01722b04f3e1bcd53fd85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get configuration as json object.  <a href="#a3cd334cee6b01722b04f3e1bcd53fd85">More...</a><br/></td></tr>
+<tr class="separator:a3cd334cee6b01722b04f3e1bcd53fd85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74a9b946a3db89cd181eaf8ca5222ac0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#a74a9b946a3db89cd181eaf8ca5222ac0">clear</a> ()</td></tr>
 <tr class="memdesc:a74a9b946a3db89cd181eaf8ca5222ac0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> clear function.  <a href="#a74a9b946a3db89cd181eaf8ca5222ac0">More...</a><br/></td></tr>
 <tr class="separator:a74a9b946a3db89cd181eaf8ca5222ac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:aa4a575b8c574c43cb71c82a56d5542c2"><td class="memItemLeft" align="right" valign="top">std::ifstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#aa4a575b8c574c43cb71c82a56d5542c2">openFile</a> (std::string filepath, std::string filename)</td></tr>
-<tr class="memdesc:aa4a575b8c574c43cb71c82a56d5542c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the configuration file.  <a href="#aa4a575b8c574c43cb71c82a56d5542c2">More...</a><br/></td></tr>
-<tr class="separator:aa4a575b8c574c43cb71c82a56d5542c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad387dbd877afc53a7afcb4eaacfb79b2"><td class="memItemLeft" align="right" valign="top">std::ifstream&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#ad387dbd877afc53a7afcb4eaacfb79b2">openFile</a> (std::string filePath, std::string fileName)</td></tr>
+<tr class="memdesc:ad387dbd877afc53a7afcb4eaacfb79b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Opens the configuration file.  <a href="#ad387dbd877afc53a7afcb4eaacfb79b2">More...</a><br/></td></tr>
+<tr class="separator:ad387dbd877afc53a7afcb4eaacfb79b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad61286ed66259466d2aa98a49f2b94ad"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1Config.html#ad61286ed66259466d2aa98a49f2b94ad">parseLineFromFile</a> (std::ifstream &amp;inFile)</td></tr>
 <tr class="memdesc:ad61286ed66259466d2aa98a49f2b94ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses next line from file.  <a href="#ad61286ed66259466d2aa98a49f2b94ad">More...</a><br/></td></tr>
 <tr class="separator:ad61286ed66259466d2aa98a49f2b94ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,7 +155,7 @@ Protected Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>neic-glass3 configuration class using JSON formatting </p>
-<p>The glass <a class="el" href="classglass3_1_1util_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> class is a class used to read JSON formatted configuration files from disk. The <a class="el" href="classglass3_1_1util_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> class filters out comment lines (signified by '#'), newlines, and white space, and provides the configuration as a JSON object.</p>
+<p>The <a class="el" href="classglass3_1_1util_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">glass3::util::Config</a> class is a class used to read JSON formatted configuration files from disk. The <a class="el" href="classglass3_1_1util_1_1Config.html" title="neic-glass3 configuration class using JSON formatting ">Config</a> class filters out comment lines (signified by '#'), newlines, and white space, and provides the configuration as a JSON object.</p>
 <dl class="section warning"><dt>Warning</dt><dd>This class is NOT thread safe </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="ab477dd5a10fc0b3e4cbf01bfb42bf0b4"></a>
@@ -173,7 +176,7 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aab657a31b369369f416ac113294f43a2"></a>
+<a class="anchor" id="a2d4a6fd7857ebca9c3f4b685a3554fc4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -181,13 +184,13 @@ Protected Member Functions</h2></td></tr>
           <td class="memname">glass3::util::Config::Config </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
+          <td class="paramname"><em>filePath</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filename</em>&#160;</td>
+          <td class="paramname"><em>fileName</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -197,25 +200,25 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>An advanced constructor that loads configuration from a JSON formatted file accessed via filepath/filename. </p>
-<p>Loads the provided configuration file identified by filepath/filename which contains the configuration.</p>
+<p>An advanced constructor that loads configuration from a JSON formatted file accessed via filePath/fileName. </p>
+<p>Loads the provided configuration file identified by filePath/fileName which contains the configuration.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filepath</td><td>- A std::string containing the path to the configuration file </td></tr>
-    <tr><td class="paramname">filename</td><td>- A std::string containing the configuration file name.</td></tr>
+    <tr><td class="paramname">filePath</td><td>- A std::string containing the path to the configuration file </td></tr>
+    <tr><td class="paramname">fileName</td><td>- A std::string containing the configuration file name.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">For</td><td>possible exceptions passed through this constructor see <a class="el" href="classglass3_1_1util_1_1Config.html#a395cc0d0ef730ace309d9c8c4a7df113" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> and <a class="el" href="classglass3_1_1util_1_1Config.html#aa4a575b8c574c43cb71c82a56d5542c2" title="Opens the configuration file. ">Config::openFile</a> </td></tr>
+    <tr><td class="paramname">For</td><td>possible exceptions passed through this constructor see <a class="el" href="classglass3_1_1util_1_1Config.html#a1350d7f09427f64b701f5e8e8d35516e" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> and <a class="el" href="classglass3_1_1util_1_1Config.html#ad387dbd877afc53a7afcb4eaacfb79b2" title="Opens the configuration file. ">Config::openFile</a> </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a105b8b9105c8d5796df50f40fb58448e"></a>
+<a class="anchor" id="a2ed65f5d19f5f8d447fa9ae13e4fa8d8"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -226,7 +229,7 @@ Protected Member Functions</h2></td></tr>
           <td class="memname">glass3::util::Config::Config </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>newconfig</em></td><td>)</td>
+          <td class="paramname"><em>newConfig</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -237,17 +240,17 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>An advanced constructor that parses configuration from a JSON formatted string provided in newconfig. </p>
-<p>Parses the provided newconfig std::string which contains the configuration.</p>
+<p>An advanced constructor that parses configuration from a JSON formatted string provided in newConfig. </p>
+<p>Parses the provided newConfig std::string which contains the configuration.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">newconfig</td><td>- A std::string containing the json formatted configuration data to load.</td></tr>
+    <tr><td class="paramname">newConfig</td><td>- A std::string containing the JSON formatted configuration data to load.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">For</td><td>possible exceptions passed through this constructor see <a class="el" href="classglass3_1_1util_1_1Config.html#a395cc0d0ef730ace309d9c8c4a7df113" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> </td></tr>
+    <tr><td class="paramname">For</td><td>possible exceptions passed through this constructor see <a class="el" href="classglass3_1_1util_1_1Config.html#a1350d7f09427f64b701f5e8e8d35516e" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> </td></tr>
   </table>
   </dd>
 </dl>
@@ -324,12 +327,12 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a60abb900cfd0af4816f1fca77fee9e8b"></a>
+<a class="anchor" id="a3cd334cee6b01722b04f3e1bcd53fd85"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">json::Object glass3::util::Config::getJSON </td>
+          <td class="memname">std::shared_ptr&lt; const json::Object &gt; glass3::util::Config::getJSON </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -377,7 +380,7 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa4a575b8c574c43cb71c82a56d5542c2"></a>
+<a class="anchor" id="ad387dbd877afc53a7afcb4eaacfb79b2"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -388,13 +391,13 @@ Protected Member Functions</h2></td></tr>
           <td class="memname">std::ifstream glass3::util::Config::openFile </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
+          <td class="paramname"><em>filePath</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filename</em>&#160;</td>
+          <td class="paramname"><em>fileName</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -412,15 +415,15 @@ Protected Member Functions</h2></td></tr>
 <p>Opens the configuration file. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filepath</td><td>- A std::string containing the path to the configuration file </td></tr>
-    <tr><td class="paramname">filename</td><td>- A std::string containing the configuration file name.</td></tr>
+    <tr><td class="paramname">filePath</td><td>- A std::string containing the path to the configuration file </td></tr>
+    <tr><td class="paramname">fileName</td><td>- A std::string containing the configuration file name.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a std::ifstream for accessing the open file </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the filename is empty </td></tr>
+    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the fileName is empty </td></tr>
     <tr><td class="paramname">Throws</td><td>std::ios_base::failure if the file failed to open </td></tr>
   </table>
   </dd>
@@ -428,21 +431,21 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a67a36e7d8ff4a6cab3a29bfde7de960d"></a>
+<a class="anchor" id="a5c8d3b3f3ef1d36997b54941ed9affab"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">json::Object glass3::util::Config::parseJSONFromFile </td>
+          <td class="memname">std::shared_ptr&lt; const json::Object &gt; glass3::util::Config::parseJSONFromFile </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filepath</em>, </td>
+          <td class="paramname"><em>filePath</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>filename</em>&#160;</td>
+          <td class="paramname"><em>fileName</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -452,52 +455,52 @@ Protected Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>A function that loads configuration from a JSON formatted file accessed via filepath/filename. </p>
-<p>Loads the provided configuration file identified by filepath/filename which contains the configuration.</p>
+<p>A function that loads configuration from a JSON formatted file accessed via filePath/fileName. </p>
+<p>Loads the provided configuration file identified by filePath/fileName which contains the configuration.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filepath</td><td>- A std::string containing the path to the configuration file </td></tr>
-    <tr><td class="paramname">filename</td><td>- A std::string containing the configuration file name.</td></tr>
+    <tr><td class="paramname">filePath</td><td>- A std::string containing the path to the configuration file </td></tr>
+    <tr><td class="paramname">fileName</td><td>- A std::string containing the configuration file name.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a json::Object containing the loaded configuration</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">For</td><td>possible exceptions passed through this function see <a class="el" href="classglass3_1_1util_1_1Config.html#a395cc0d0ef730ace309d9c8c4a7df113" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> and <a class="el" href="classglass3_1_1util_1_1Config.html#aa4a575b8c574c43cb71c82a56d5542c2" title="Opens the configuration file. ">Config::openFile</a> </td></tr>
+    <tr><td class="paramname">For</td><td>possible exceptions passed through this function see <a class="el" href="classglass3_1_1util_1_1Config.html#a1350d7f09427f64b701f5e8e8d35516e" title="A function that parses a configuration from a JSON formatted string. ">Config::parseJSONFromString</a> and <a class="el" href="classglass3_1_1util_1_1Config.html#ad387dbd877afc53a7afcb4eaacfb79b2" title="Opens the configuration file. ">Config::openFile</a> </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a395cc0d0ef730ace309d9c8c4a7df113"></a>
+<a class="anchor" id="a1350d7f09427f64b701f5e8e8d35516e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">json::Object glass3::util::Config::parseJSONFromString </td>
+          <td class="memname">std::shared_ptr&lt; const json::Object &gt; glass3::util::Config::parseJSONFromString </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>newconfig</em></td><td>)</td>
+          <td class="paramname"><em>newConfig</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>A function that parses a configuration from a JSON formatted string. </p>
-<p>Parses the provided JSON formatted configuration string contained in newconfig</p>
+<p>Parses the provided JSON formatted configuration string contained in newConfig</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">newconfig</td><td>- A std::string containing the json formatted configuration data to parse.</td></tr>
+    <tr><td class="paramname">newConfig</td><td>- A std::string containing the JSON formatted configuration data to parse.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns a json::Object containing the loaded configuration </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the newconfig string is empty </td></tr>
-    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the newconfig string failed to parse </td></tr>
+    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the newConfig string is empty </td></tr>
+    <tr><td class="paramname">Throws</td><td>std::invalid_argument if the newConfig string failed to parse </td></tr>
   </table>
   </dd>
 </dl>
@@ -545,7 +548,7 @@ Protected Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 16 2018 18:29:10 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 24 2018 21:54:30 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

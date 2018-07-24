@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Macros</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -120,6 +120,7 @@ Namespaces</h2></td></tr>
 <tr class="memdesc:namespaceglass3"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespaceglass3.html" title="glass3 namespace containing all the classes and functions that make up neic-glass3 ...">glass3</a> namespace containing all the classes and functions that make up neic-glass3 <br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceglass3_1_1util"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html">glass3::util</a></td></tr>
+<tr class="memdesc:namespaceglass3_1_1util"><td class="mdescLeft">&#160;</td><td class="mdescRight">neic-glass3 namespace containing utility classes and functions <br/></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
@@ -129,18 +130,18 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a13c9cad6adb1a9dcfc7007ad2a7ff44d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a13c9cad6adb1a9dcfc7007ad2a7ff44d">glass3::util::getNextFileName</a> (const std::string &amp;path, const std::string &amp;extension, std::string &amp;filename)</td></tr>
-<tr class="memdesc:a13c9cad6adb1a9dcfc7007ad2a7ff44d"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the next file name in a directory  <a href="#a13c9cad6adb1a9dcfc7007ad2a7ff44d">More...</a><br/></td></tr>
-<tr class="separator:a13c9cad6adb1a9dcfc7007ad2a7ff44d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6656f908e0a4576adb43731c29a8fb3f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a6656f908e0a4576adb43731c29a8fb3f">glass3::util::moveFileTo</a> (std::string filename, const std::string &amp;dirname)</td></tr>
-<tr class="memdesc:a6656f908e0a4576adb43731c29a8fb3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">move a file from one directory to another  <a href="#a6656f908e0a4576adb43731c29a8fb3f">More...</a><br/></td></tr>
-<tr class="separator:a6656f908e0a4576adb43731c29a8fb3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4a0b94d6a51de163c0fff680077cb6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ae4a0b94d6a51de163c0fff680077cb6f">glass3::util::getFirstFileNameByExtension</a> (const std::string &amp;path, const std::string &amp;extension, std::string &amp;fileName)</td></tr>
+<tr class="memdesc:ae4a0b94d6a51de163c0fff680077cb6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the next file name in a directory  <a href="#ae4a0b94d6a51de163c0fff680077cb6f">More...</a><br/></td></tr>
+<tr class="separator:ae4a0b94d6a51de163c0fff680077cb6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1321cbdbcb2f05c38ae3e77e0bd1f0d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ae1321cbdbcb2f05c38ae3e77e0bd1f0d">glass3::util::moveFileTo</a> (std::string fileName, const std::string &amp;dirName)</td></tr>
+<tr class="memdesc:ae1321cbdbcb2f05c38ae3e77e0bd1f0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">move a file from one directory to another  <a href="#ae1321cbdbcb2f05c38ae3e77e0bd1f0d">More...</a><br/></td></tr>
+<tr class="separator:ae1321cbdbcb2f05c38ae3e77e0bd1f0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab71d80ad46da4def692e8914e6ae59b4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ab71d80ad46da4def692e8914e6ae59b4">glass3::util::copyFileTo</a> (std::string from, std::string to)</td></tr>
 <tr class="memdesc:ab71d80ad46da4def692e8914e6ae59b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">copy a file from one directory to another  <a href="#ab71d80ad46da4def692e8914e6ae59b4">More...</a><br/></td></tr>
 <tr class="separator:ab71d80ad46da4def692e8914e6ae59b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a621d33f654815801f90bf669c61a2e17"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a621d33f654815801f90bf669c61a2e17">glass3::util::deleteFileFrom</a> (std::string filename)</td></tr>
-<tr class="memdesc:a621d33f654815801f90bf669c61a2e17"><td class="mdescLeft">&#160;</td><td class="mdescRight">delete a file  <a href="#a621d33f654815801f90bf669c61a2e17">More...</a><br/></td></tr>
-<tr class="separator:a621d33f654815801f90bf669c61a2e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49d20f140da88095d78a873577669d42"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a49d20f140da88095d78a873577669d42">glass3::util::deleteFileFrom</a> (std::string fileName)</td></tr>
+<tr class="memdesc:a49d20f140da88095d78a873577669d42"><td class="mdescLeft">&#160;</td><td class="mdescRight">delete a file  <a href="#a49d20f140da88095d78a873577669d42">More...</a><br/></td></tr>
+<tr class="separator:a49d20f140da88095d78a873577669d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="a8f2228cc325c0bb655b3e79fbf935896"></a>
@@ -158,7 +159,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 16 2018 18:29:10 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 24 2018 21:54:30 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
