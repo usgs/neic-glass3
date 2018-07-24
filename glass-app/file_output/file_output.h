@@ -109,8 +109,9 @@ class fileOutput : public glass3::output::output {
 	 *
 	 * The function used fileOutput detection data
 	 *
-	 * \param data - A pointer to a json::Object containing the data to be
-	 * fileOutput.
+	 * \param type - A std::string containing the output message type
+	 * \param id - A std::string containing the output message id
+	 * \param message - A std::string containing the output message
 	 */
 	void sendOutput(const std::string &type, const std::string &id,
 					const std::string &message) override;

@@ -49,7 +49,7 @@ class brokerInput : public glass3::input::input {
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	brokerInput(std::shared_ptr<json::Object> &config);
+	brokerInput(std::shared_ptr<const json::Object> &config);
 
 	/**
 	 * \brief brokerInput destructor
@@ -69,7 +69,7 @@ class brokerInput : public glass3::input::input {
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(std::shared_ptr<json::Object> config) override;
+	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
 	 * \brief output clear function

@@ -23,7 +23,7 @@ brokerInput::brokerInput()
 	clear();
 }
 
-brokerInput::brokerInput(std::shared_ptr<json::Object> &config)
+brokerInput::brokerInput(std::shared_ptr<const json::Object> &config)
 		: glass3::input::input() {
 	m_Consumer = NULL;
 
@@ -49,7 +49,7 @@ brokerInput::~brokerInput() {
 }
 
 // configuration
-bool brokerInput::setup(std::shared_ptr<json::Object> config) {
+bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		logger::log("error",
 					"brokerInput::setup(): NULL configuration passed in.");

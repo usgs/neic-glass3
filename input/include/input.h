@@ -68,7 +68,7 @@ class input
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	explicit input(std::shared_ptr<json::Object> config);
+	explicit input(std::shared_ptr<const json::Object> config);
 
 	/**
 	 * \brief input destructor
@@ -88,7 +88,7 @@ class input
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(std::shared_ptr<json::Object> config) override;
+	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
 	 * \brief input clear function

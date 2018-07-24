@@ -24,7 +24,7 @@ fileInput::fileInput()
 	clear();
 }
 
-fileInput::fileInput(std::shared_ptr<json::Object> &config)
+fileInput::fileInput(std::shared_ptr<const json::Object> &config)
 		: glass3::input::input() {
 	logger::log("debug", "fileInput::fileInput(): Advanced Construction.");
 	// do basic construction
@@ -45,7 +45,7 @@ fileInput::~fileInput() {
 }
 
 // configuration
-bool fileInput::setup(std::shared_ptr<json::Object> config) {
+bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		logger::log("error",
 					"fileInput::setup(): NULL configuration passed in.");

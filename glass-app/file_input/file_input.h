@@ -52,7 +52,7 @@ class fileInput : public glass3::input::input {
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	fileInput(std::shared_ptr<json::Object> &config);
+	fileInput(std::shared_ptr<const json::Object> &config);
 
 	/**
 	 * \brief fileInput destructor
@@ -72,7 +72,7 @@ class fileInput : public glass3::input::input {
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(std::shared_ptr<json::Object> config) override;
+	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
 	 * \brief output clear function
@@ -163,7 +163,7 @@ class fileInput : public glass3::input::input {
 	 * This function sets the wait time before shutting down due to no
 	 * data
 	 *
-	 * \param delay = An integer value containing the shutdown wait in seconds
+	 * \param waitTime = An integer value containing the shutdown wait in seconds
 	 */
 	void setShutdownWait(int waitTime);
 

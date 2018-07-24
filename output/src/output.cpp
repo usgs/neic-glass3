@@ -505,12 +505,11 @@ bool output::removeTrackingData(std::string ID) {
 	}
 }
 
-<<<<<<< HEAD
-std::shared_ptr<const json::Object> output::getTrackingData(std::string id) {
-=======
+
+
+
 // ---------------------------------------------------------getTrackingData
-std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
->>>>>>> updated output to new thread scheme
+std::shared_ptr<const json::Object> output::getTrackingData(std::string id) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	std::shared_ptr<json::Object> nullObj;
 	if (id == "") {
@@ -531,12 +530,8 @@ std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
 	}
 }
 
-<<<<<<< HEAD
-std::shared_ptr<const json::Object> output::getNextTrackingData() {
-=======
 // ---------------------------------------------------------getNextTrackingData
-std::shared_ptr<json::Object> output::getNextTrackingData() {
->>>>>>> updated output to new thread scheme
+std::shared_ptr<const json::Object> output::getNextTrackingData() {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	// get the data
 	std::shared_ptr<const json::Object> data =
@@ -1020,13 +1015,9 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 	}
 }
 
-<<<<<<< HEAD
-// filter
-bool output::isDataReady(std::shared_ptr<const json::Object> data) {
-=======
+
 // ---------------------------------------------------------isDataReady
-bool output::isDataReady(std::shared_ptr<json::Object> data) {
->>>>>>> updated output to new thread scheme
+bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
 					"output::isdataready(): Null tracking object passed in.");
@@ -1138,12 +1129,8 @@ bool output::isDataReady(std::shared_ptr<json::Object> data) {
 	return (false);
 }
 
-<<<<<<< HEAD
-bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
-=======
 // ---------------------------------------------------------isDataChanged
-bool output::isDataChanged(std::shared_ptr<json::Object> data) {
->>>>>>> updated output to new thread scheme
+bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
 					"output::isDataChanged(): Null tracking object passed in.");
@@ -1185,12 +1172,8 @@ bool output::isDataChanged(std::shared_ptr<json::Object> data) {
 	return (true);
 }
 
-<<<<<<< HEAD
-bool output::isDataPublished(std::shared_ptr<const json::Object> data,
-=======
 // ---------------------------------------------------------isDataPublished
-bool output::isDataPublished(std::shared_ptr<json::Object> data,
->>>>>>> updated output to new thread scheme
+bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 								bool ignoreVersion) {
 	if (data == NULL) {
 		logger::log(
@@ -1241,12 +1224,8 @@ bool output::isDataPublished(std::shared_ptr<json::Object> data,
 	return (false);
 }
 
-<<<<<<< HEAD
-bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
-=======
 // ---------------------------------------------------------isDataFinished
-bool output::isDataFinished(std::shared_ptr<json::Object> data) {
->>>>>>> updated output to new thread scheme
+bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log(
 				"error",

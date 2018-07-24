@@ -32,7 +32,7 @@ input::input()
 	clear();
 }
 
-input::input(std::shared_ptr<json::Object> config)
+input::input(std::shared_ptr<const json::Object> config)
 		: glass3::util::ThreadBaseClass("input", 100) {
 	m_GPickParser = NULL;
 	m_JSONParser = NULL;
@@ -74,7 +74,7 @@ input::~input() {
 }
 
 // ---------------------------------------------------------setup
-bool input::setup(std::shared_ptr<json::Object> config) {
+bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		logger::log("error", "input::setup(): NULL configuration passed in.");
 		return (false);

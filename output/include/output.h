@@ -322,8 +322,6 @@ class output : public glass3::util::iOutput,
 	 */
 	bool addTrackingData(std::shared_ptr<json::Object> data);
 
-	std::shared_ptr<const json::Object> getTrackingData(std::string id);
-
 	/**
 	 * \brief get data from the output tracking cache by id
 	 *
@@ -334,7 +332,7 @@ class output : public glass3::util::iOutput,
 	 * retrieve from the cache
 	 * \return Returns the data if found, null otherwise
 	 */
-	std::shared_ptr<json::Object> getTrackingData(std::string id);
+	std::shared_ptr<const json::Object> getTrackingData(std::string id);
 
 	/**
 	 * \brief get data from the output tracking cache

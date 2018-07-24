@@ -294,7 +294,7 @@ TEST(Output, Configuration) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -362,7 +362,7 @@ TEST(Output, ThreadTests) {
 	// configure output
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			std::string(TESTPATH), std::string(CONFIGFILENAME));
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	// assert config successful
 	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
@@ -488,7 +488,7 @@ TEST(Output, OutputTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -543,7 +543,7 @@ TEST(Output, UpdateTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -652,7 +652,7 @@ TEST(Output, CancelTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -705,7 +705,7 @@ TEST(Output, RetractTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -764,7 +764,7 @@ TEST(Output, ExpireTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -843,7 +843,7 @@ TEST(Output, StationRequestTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -886,7 +886,7 @@ TEST(Output, StationListTest) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
@@ -920,7 +920,7 @@ TEST(Output, FailTests) {
 	// load configuration
 	glass3::util::Config * OutputConfig = new glass3::util::Config(
 			configdirectory, configfile);
-	std::shared_ptr<json::Object> OutputJSON = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
 	AssociatorStub * AssocThread = new AssociatorStub();
 	AssocThread->Output = outputObject;
