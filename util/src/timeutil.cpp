@@ -34,7 +34,8 @@ std::string convertEpochTimeToISO8601(double epochTime) {
 
 	// modf returns only the integer part (3.14159265 -> 3.000000)
 	// so a simple cast is sufficient
-	std::time_t time = static_cast<int>(integerpart);
+	std::time_t time = static_cast<int>(
+			integerpart >= 0.0 ? (integerpart + 0.1) : (integerpart - 0.1));
 
 	return (convertEpochTimeToISO8601(time, fractionpart));
 }

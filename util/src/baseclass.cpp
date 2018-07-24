@@ -19,7 +19,7 @@ BaseClass::~BaseClass() {
 }
 
 // ---------------------------------------------------------setup
-bool BaseClass::setup(std::shared_ptr<json::Object> config) {
+bool BaseClass::setup(std::shared_ptr<const json::Object> config) {
 	std::lock_guard<std::mutex> guard(getMutex());
 
 	// null check
@@ -44,7 +44,7 @@ void BaseClass::clear() {
 }
 
 // ---------------------------------------------------------getConfig
-const std::shared_ptr<json::Object> BaseClass::getConfig() {
+const std::shared_ptr<const json::Object> BaseClass::getConfig() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_Config);
 }

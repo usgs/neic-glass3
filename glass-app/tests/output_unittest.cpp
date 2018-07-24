@@ -151,7 +151,7 @@ class OutputTest : public ::testing::Test {
 		testdatapath = std::string(TESTDATAPATH);
 		std::string output = std::string(OUTPUTDIRECTORY);
 
-		logger::log_init("outputtest", spdlog::level::debug, testpath, true);
+		// logger::log_init("outputtest", spdlog::level::debug, testpath, true);
 
 		// create input test
 		OutputThread = new glass::fileOutput();
@@ -333,7 +333,7 @@ class OutputTest : public ::testing::Test {
 	AssociatorStub * AssocThread;
 
 	glass3::util::Config * OutputConfig;
-	std::shared_ptr<json::Object> output_config_json;
+	std::shared_ptr<const json::Object> output_config_json;
 
 	std::string testpath;
 	std::string testdatapath;

@@ -10,7 +10,7 @@
 #define BADFILENAME "bad.d"
 #define BADCONFIGSTRING "bad"
 
-void checkdata(std::shared_ptr<json::Object> ConfigObject) {
+void checkdata(std::shared_ptr<const json::Object> ConfigObject) {
 	// assert config object
 	ASSERT_TRUE(ConfigObject != NULL);
 	ASSERT_FALSE(ConfigObject->size() == 0)<< "populated config object";

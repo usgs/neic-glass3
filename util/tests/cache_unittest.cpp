@@ -64,11 +64,11 @@ TEST(CacheTest, CombinedTest) {
 
 	// get data from cache
 	ASSERT_TRUE(NULL == TestCache->getFromCache(""));
-	std::shared_ptr<json::Object> outputobject1 = TestCache->getFromCache(
+	std::shared_ptr<const json::Object> outputobject1 = TestCache->getFromCache(
 			inputid1);
-	std::shared_ptr<json::Object> outputobject2 = TestCache->getFromCache(
+	std::shared_ptr<const json::Object> outputobject2 = TestCache->getFromCache(
 			inputid2);
-	std::shared_ptr<json::Object> outputobject3 = TestCache->getFromCache(
+	std::shared_ptr<const json::Object> outputobject3 = TestCache->getFromCache(
 			inputid3);
 
 	// assert that we got something

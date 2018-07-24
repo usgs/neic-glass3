@@ -132,7 +132,8 @@ int main(int argc, char* argv[]) {
 		return (1);
 	}
 
-	std::shared_ptr<json::Object> InitializeJSON = InitializeConfig->getJSON();
+	std::shared_ptr<const json::Object> InitializeJSON = InitializeConfig
+			->getJSON();
 
 	// Load our initial stationlist
 	std::string stationlistfile;
@@ -163,7 +164,8 @@ int main(int argc, char* argv[]) {
 		return (1);
 	}
 
-	std::shared_ptr<json::Object> StationListJSON = StationList->getJSON();
+	std::shared_ptr<const json::Object> StationListJSON =
+			StationList->getJSON();
 
 	// get detection grid file list
 	json::Array gridconfigfilelist;
@@ -258,7 +260,8 @@ int main(int argc, char* argv[]) {
 	glass::Associator * AssocThread = new glass::Associator();
 
 	// input setup
-	std::shared_ptr<json::Object> input_config_json = InputConfig->getJSON();
+	std::shared_ptr<const json::Object> input_config_json =
+			InputConfig->getJSON();
 	if (InputThread->setup(input_config_json) != true) {
 		logger::log("critical", "glass: Failed to setup Input.  Exiting.");
 
@@ -274,7 +277,8 @@ int main(int argc, char* argv[]) {
 	}
 
 	// output setup
-	std::shared_ptr<json::Object> output_config_json = OutputConfig->getJSON();
+	std::shared_ptr<const json::Object> output_config_json = OutputConfig
+			->getJSON();
 	if (OutputThread->setup(output_config_json) != true) {
 		logger::log("critical", "glass: Failed to setup Output.  Exiting.");
 
@@ -310,8 +314,8 @@ int main(int argc, char* argv[]) {
 		if (gridconfigfile != "") {
 			glass3::util::Config * GridConfig = new glass3::util::Config(
 					configdir, gridconfigfile);
-			std::shared_ptr<json::Object> GridConfigJSON =
-					GridConfig->getJSON();
+			std::shared_ptr<const json::Object> GridConfigJSON = GridConfig
+					->getJSON();
 
 			// send in grid
 			AssocThread->setup(GridConfigJSON);

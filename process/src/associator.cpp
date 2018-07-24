@@ -82,7 +82,7 @@ Associator::~Associator() {
 	}
 }
 
-bool Associator::setup(std::shared_ptr<json::Object> config) {
+bool Associator::setup(std::shared_ptr<const json::Object> config) {
 	if (Input == NULL) {
 		logger::log("error", "associator::setup(): Input interface is NULL .");
 		return (false);

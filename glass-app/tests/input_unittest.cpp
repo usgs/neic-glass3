@@ -132,7 +132,7 @@ class InputTest : public ::testing::Test {
 
 	glass::input * InputThread;
 	glass3::util::Config * InputConfig;
-	std::shared_ptr<json::Object> input_config_json;
+	std::shared_ptr<const json::Object> input_config_json;
 
 	std::string testpath;
 	std::string testdatapath;

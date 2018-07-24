@@ -39,7 +39,7 @@ ThreadPool::~ThreadPool() {
 bool ThreadPool::start() {
 	// are we already running
 	if ((getThreadPoolState() != glass3::util::ThreadState::Initialized)
-			|| (getThreadPoolState() != glass3::util::ThreadState::Stopped)) {
+			 && (getThreadPoolState() != glass3::util::ThreadState::Stopped)) {
 		logger::log("warning",
 					"ThreadPool::start(): Work Thread is already starting "
 							"or running. (" + getPoolName() + ")");
@@ -252,7 +252,6 @@ std::time_t ThreadPool::getAllLastHealthy() {
 
 	// init oldest time to now
 	double oldestTime = std::time(nullptr);
-	double healthTime = 0;
 
 	// go through all threads in the pool
 	// I don't think we need a mutex here because the only function that
@@ -261,7 +260,7 @@ std::time_t ThreadPool::getAllLastHealthy() {
 	for (StatusItr = m_ThreadHealthMap.begin();
 			StatusItr != m_ThreadHealthMap.end(); ++StatusItr) {
 		// get the thread status
-		healthTime = static_cast<double>(StatusItr->second);
+		double healthTime = static_cast<double>(StatusItr->second);
 
 		// at least one thread did not respond
 		if (healthTime < oldestTime) {

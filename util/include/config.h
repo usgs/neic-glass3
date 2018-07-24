@@ -88,8 +88,8 @@ class Config {
 	 * \throws For possible exceptions passed through this function see
 	 * Config::parseJSONFromString and Config::openFile
 	 */
-	std::shared_ptr<json::Object> parseJSONFromFile(std::string filePath,
-													std::string fileName);
+	std::shared_ptr<const json::Object> parseJSONFromFile(
+			std::string filePath, std::string fileName);
 
 	/**
 	 * \brief A function that parses a configuration from a JSON formatted
@@ -106,7 +106,8 @@ class Config {
 	 * \throw Throws std::invalid_argument if the newConfig string failed to
 	 * parse
 	 */
-	std::shared_ptr<json::Object> parseJSONFromString(std::string newConfig);
+	std::shared_ptr<const json::Object> parseJSONFromString(
+			std::string newConfig);
 
 	/**
 	 * \brief Get configuration as json object
@@ -115,7 +116,7 @@ class Config {
 	 *
 	 * \returns Return a json::Object containing the configuration
 	 */
-	std::shared_ptr<json::Object> getJSON();
+	std::shared_ptr<const json::Object> getJSON();
 
 	/**
 	 * \brief Config clear function

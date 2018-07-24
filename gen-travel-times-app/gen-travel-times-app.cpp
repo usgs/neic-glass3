@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
 
 	// load our basic config
 	glass3::util::Config * genConfig = new glass3::util::Config("", configFile);
-	std::shared_ptr<json::Object> jsonConfig = genConfig->getJSON();
+	std::shared_ptr<const json::Object> jsonConfig = genConfig->getJSON();
 	// check to see if our config is of the right format
 	if (jsonConfig->HasKey("Configuration")
 			&& ((*jsonConfig)["Configuration"].GetType()

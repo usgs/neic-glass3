@@ -35,8 +35,8 @@ void Config::clear() {
 }
 
 // ---------------------------------------------------------parseJSONFromFile
-std::shared_ptr<json::Object> Config::parseJSONFromFile(std::string filePath,
-														std::string fileName) {
+std::shared_ptr<const json::Object> Config::parseJSONFromFile(
+		std::string filePath, std::string fileName) {
 	clear();
 
 	// first open the file
@@ -68,7 +68,7 @@ std::shared_ptr<json::Object> Config::parseJSONFromFile(std::string filePath,
 }
 
 // ---------------------------------------------------------parseJSONFromString
-std::shared_ptr<json::Object> Config::parseJSONFromString(
+std::shared_ptr<const json::Object> Config::parseJSONFromString(
 		std::string newConfig) {
 	clear();
 
@@ -110,16 +110,12 @@ std::shared_ptr<json::Object> Config::parseJSONFromString(
 }
 
 // ---------------------------------------------------------getJSON
-std::shared_ptr<json::Object> Config::getJSON() {
+std::shared_ptr<const json::Object> Config::getJSON() {
 	if (m_ConfigJSON == NULL) {
-		return(NULL);
+		return (NULL);
 	}
 
-	// make a copy to return
-	std::shared_ptr<json::Object> config = std::make_shared<json::Object>(
-			json::Object(*m_ConfigJSON));
-
-	return (config);
+	return (m_ConfigJSON);
 }
 
 // ---------------------------------------------------------openFile

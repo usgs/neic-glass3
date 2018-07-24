@@ -73,7 +73,7 @@ input::~input() {
 }
 
 // configuration
-bool input::setup(std::shared_ptr<json::Object> config) {
+bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		logger::log("error", "input::setup(): NULL configuration passed in.");
 		return (false);

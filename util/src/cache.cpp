@@ -118,7 +118,7 @@ bool Cache::isInCache(std::string id) {
 }
 
 // ---------------------------------------------------------getFromCache
-std::shared_ptr<json::Object> Cache::getFromCache(std::string id) {
+std::shared_ptr<const json::Object> Cache::getFromCache(std::string id) {
 	// don't do anything if we didn't get an id
 	if (id == "") {
 		logger::log("error", "cache::getfromcache(): Bad ID passed in.");
@@ -134,16 +134,12 @@ std::shared_ptr<json::Object> Cache::getFromCache(std::string id) {
 		return (NULL);
 	}
 
-	// make a copy to return
-	std::shared_ptr<json::Object> data = std::make_shared<json::Object>(
-			json::Object(*m_Cache[id].get()));
-
 	// return our result
-	return (data);
+	return (m_Cache[id]);
 }
 
 // ---------------------------------------------------------getNextFromCache
-std::shared_ptr<json::Object> Cache::getNextFromCache(bool restart) {
+std::shared_ptr<const json::Object> Cache::getNextFromCache(bool restart) {
 	// lock in case someone else is using the cache
 	std::lock_guard<std::mutex> guard(getMutex());
 
@@ -163,14 +159,10 @@ std::shared_ptr<json::Object> Cache::getNextFromCache(bool restart) {
 	std::shared_ptr<json::Object> cachedata =
 			(std::shared_ptr<json::Object>) m_CacheDumpItr->second;
 
-	// make a copy to return
-	std::shared_ptr<json::Object> data = std::make_shared<json::Object>(
-			json::Object(*cachedata.get()));
-
 	// advance the iterator
 	++m_CacheDumpItr;
 
-	return (data);
+	return (cachedata);
 }
 
 // ---------------------------------------------------------isEmpty

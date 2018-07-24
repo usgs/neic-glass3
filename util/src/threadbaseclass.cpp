@@ -49,7 +49,7 @@ ThreadBaseClass::~ThreadBaseClass() {
 bool ThreadBaseClass::start() {
 	// are we already running
 	if ((getThreadState() != glass3::util::ThreadState::Initialized)
-			|| (getThreadState() != glass3::util::ThreadState::Stopped)) {
+			&& (getThreadState() != glass3::util::ThreadState::Stopped)) {
 		logger::log("warning",
 					"ThreadBaseClass::start(): Work Thread is already starting "
 							"or running. (" + getThreadName() + ")");
@@ -73,8 +73,8 @@ bool ThreadBaseClass::start() {
 
 	logger::log(
 			"debug",
-			"ThreadBaseClass::start(): Started Work Thread. (" + getThreadName()
-					+ ")");
+			"ThreadBaseClass::start(): Starting Work Thread. ("
+					+ getThreadName() + ")");
 	return (true);
 }
 
@@ -174,11 +174,19 @@ bool ThreadBaseClass::healthCheck() {
 
 // ---------------------------------------------------------workLoop
 void ThreadBaseClass::workLoop() {
+	logger::log(
+			"debug",
+			"ThreadBaseClass::workLoop():  Work Thread Startup. ("
+					+ getThreadName() + ")");
+
 	// we're running
 	setThreadState(glass3::util::ThreadState::Started);
 
 	// run until told to stop
-	while (getThreadState() == glass3::util::ThreadState::Started) {
+	while (true) {
+		// signal that we're still running
+		setThreadHealth();
+
 		try {
 			// do our work
 			if (work() == false) {
@@ -195,11 +203,21 @@ void ThreadBaseClass::workLoop() {
 			logger::log(
 					"error",
 					"ThreadBaseClass::workLoop: Exception during work(): "
-							+ std::string(e.what()));
+							+ std::string(e.what())
+							+ "something's wrong, stopping thread. ("
+							+ getThreadName() + ")");
 			break;
 		}
-		// signal that we're still running
-		setThreadHealth();
+
+		if (getThreadState() != glass3::util::ThreadState::Started) {
+			logger::log(
+					"info",
+					"ThreadBaseClass::workLoop(): Non-Starting thread "
+							"status detected ("
+							+ std::to_string(getThreadState())
+							+ "), stopping thread. (" + getThreadName() + ")");
+			break;
+		}
 
 		// give up some time at the end of the loop
 		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
@@ -217,8 +235,8 @@ void ThreadBaseClass::workLoop() {
 }
 
 // ---------------------------------------------------------setThreadState
-void ThreadBaseClass::setThreadState(glass3::util::ThreadState status) {
-	m_ThreadState = status;
+void ThreadBaseClass::setThreadState(glass3::util::ThreadState state) {
+	m_ThreadState = state;
 }
 
 // ---------------------------------------------------------getThreadState

@@ -83,7 +83,7 @@ class Associator : public glasscore::IGlassSend,
 	 * \param config - A json::Object containing configuration, ignored
 	 * \return Always returns false.
 	 */
-	bool setup(std::shared_ptr<json::Object> config) override;
+	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
 	 * \brief associator clear function

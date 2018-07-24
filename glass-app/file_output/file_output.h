@@ -71,7 +71,7 @@ class fileOutput : public output {
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(std::shared_ptr<json::Object> config) override;
+	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
 	 * \brief fileOutput clear function

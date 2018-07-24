@@ -94,7 +94,7 @@ class input : public glass3::util::iInput, public glass3::util::ThreadBaseClass 
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(std::shared_ptr<json::Object> config) override;
+	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
 	 * \brief output clear function

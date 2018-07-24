@@ -45,7 +45,7 @@ fileOutput::~fileOutput() {
 }
 
 // configuration
-bool fileOutput::setup(std::shared_ptr<json::Object> config) {
+bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		logger::log("error",
 					"fileOutput::setup(): NULL configuration passed in.");

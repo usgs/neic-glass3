@@ -93,7 +93,7 @@ class Cache : public util::BaseClass {
 	 * if the data
 	 * was not found
 	 */
-	virtual std::shared_ptr<json::Object> getFromCache(std::string id);
+	virtual std::shared_ptr<const json::Object> getFromCache(std::string id);
 
 	/**
 	 * \brief get next data from Cache
@@ -105,7 +105,7 @@ class Cache : public util::BaseClass {
 	 * NULL if there is no
 	 * more data available.
 	 */
-	virtual std::shared_ptr<json::Object> getNextFromCache(
+	virtual std::shared_ptr<const json::Object> getNextFromCache(
 			bool restart = false);
 
 	/**

@@ -57,7 +57,7 @@ brokerOutput::~brokerOutput() {
 }
 
 // configuration
-bool brokerOutput::setup(std::shared_ptr<json::Object> config) {
+bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		logger::log("error",
 					"brokerOutput::setup(): NULL configuration passed in.");

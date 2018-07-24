@@ -54,7 +54,7 @@ class BaseClass {
 	 * and locked, before calling setup will cause a deadlock.
 	 * \return returns true if successful.
 	 */
-	virtual bool setup(std::shared_ptr<json::Object> config);
+	virtual bool setup(std::shared_ptr<const json::Object> config);
 
 	/**
 	 * \brief BaseClass clear function
@@ -72,7 +72,7 @@ class BaseClass {
 	 *
 	 * \return returns a share_ptr to a json::Object containing the configuration
 	 */
-	const std::shared_ptr<json::Object> getConfig();
+	const std::shared_ptr<const json::Object> getConfig();
 
 	/**
 	 * \brief Retrieves the class member boolean flag indicating whether the
@@ -90,7 +90,7 @@ class BaseClass {
 	/**
 	 * \brief A shared pointer to the json::Object that holds the configuration
 	 */
-	std::shared_ptr<json::Object> m_Config;
+	std::shared_ptr<const json::Object> m_Config;
 
 	/**
 	 * \brief the boolean flag indicating whether the class has been

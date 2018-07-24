@@ -65,7 +65,7 @@ class output : public glass3::util::iOutput,
 	 * configuration to use
 	 * \return returns true if successful.
 	 */
-	bool setup(std::shared_ptr<json::Object> config) override;
+	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
 	 * \brief output clear function
@@ -152,7 +152,7 @@ class output : public glass3::util::iOutput,
 	 */
 	bool addTrackingData(std::shared_ptr<json::Object> data);
 
-	std::shared_ptr<json::Object> getTrackingData(std::string id);
+	std::shared_ptr<const json::Object> getTrackingData(std::string id);
 
 	/**
 	 * \brief get data from the output tracking cache
@@ -163,7 +163,7 @@ class output : public glass3::util::iOutput,
 	 * \return Returns a pointer to the json::Object containing the detection
 	 * data ready for output, NULL if no data found that is ready.
 	 */
-	std::shared_ptr<json::Object> getNextTrackingData();
+	std::shared_ptr<const json::Object> getNextTrackingData();
 
 	/**
 	 * \brief check if data is in output tracking cache
@@ -185,7 +185,7 @@ class output : public glass3::util::iOutput,
 	 * \param data - A pointer to a json::Object containing the detection data.
 	 * \return Returns true if successful, false otherwise
 	 */
-	bool removeTrackingData(std::shared_ptr<json::Object> data);
+	bool removeTrackingData(std::shared_ptr<const json::Object> data);
 	bool removeTrackingData(std::string ID);
 
 	/**
@@ -204,11 +204,11 @@ class output : public glass3::util::iOutput,
 	 * data to check
 	 * \return Returns true if the data is ready, false if not.
 	 */
-	bool isDataReady(std::shared_ptr<json::Object> data);
-	bool isDataChanged(std::shared_ptr<json::Object> data);
-	bool isDataPublished(std::shared_ptr<json::Object> data,
+	bool isDataReady(std::shared_ptr<const json::Object> data);
+	bool isDataChanged(std::shared_ptr<const json::Object> data);
+	bool isDataPublished(std::shared_ptr<const json::Object> data,
 							bool ignoreVersion = true);
-	bool isDataFinished(std::shared_ptr<json::Object> data);
+	bool isDataFinished(std::shared_ptr<const json::Object> data);
 
  protected:
 	/**
