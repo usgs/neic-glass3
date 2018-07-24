@@ -295,7 +295,7 @@ const std::string fileInput::getInputDir() {
 	return (m_sInputDir);
 }
 
-void fileInput::setInputDir(std::string dir) {
+void fileInput::setInputDir(std::string& dir) {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_sInputDir = dir;
 }
@@ -305,7 +305,7 @@ const std::string fileInput::getArchiveDir() {
 	return (m_sArchiveDir);
 }
 
-void fileInput::setArchiveDir(std::string dir) {
+void fileInput::setArchiveDir(std::string& dir) {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_sArchiveDir = dir;
 }
@@ -315,7 +315,7 @@ const std::string fileInput::getFormat() {
 	return (m_sFormat);
 }
 
-void fileInput::setFormat(std::string format) {
+void fileInput::setFormat(std::string& format) {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_sFormat = format;
 }

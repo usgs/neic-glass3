@@ -99,7 +99,7 @@ class fileInput : public glass3::input::input {
 	 *
 	 * \param dir = A std::string containing the input directory to set
 	 */
-	void setInputDir(std::string dir);
+	void setInputDir(std::string& dir);
 
 	/**
 	 * \brief Function to retrieve the name of the archive directory
@@ -117,7 +117,7 @@ class fileInput : public glass3::input::input {
 	 *
 	 * \param dir = A std::string containing the archive directory to set
 	 */
-	void setArchiveDir(std::string dir);
+	void setArchiveDir(std::string& dir);
 
 	/**
 	 * \brief Function to retrieve the format type (extension)
@@ -135,7 +135,7 @@ class fileInput : public glass3::input::input {
 	 *
 	 * \param format = A std::string containing the format type
 	 */
-	void setFormat(std::string format);
+	void setFormat(std::string& format);
 
 	/**
 	 * \brief Function to set whether to shutdown when no data

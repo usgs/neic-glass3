@@ -779,8 +779,7 @@ TEST(Output, ExpireTest) {
 
 	std::string event2file = std::string(TESTPATH) + "/"
 			+ std::string(EVENT2FILE);
-	std::string hypo2file = std::string(TESTPATH) + "/"
-			+ std::string(HYPO2FILE);
+
 	time_t tNow;
 	std::time(&tNow);
 
