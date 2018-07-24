@@ -24,9 +24,10 @@
 namespace glass3 {
 namespace util {
 
-// ---------------------------------------------------------getNextFileName
-bool getNextFileName(const std::string &path, const std::string &extension,
-						std::string &filename) {  // NOLINT
+// -------------------------------------------------getFirstFileNameByExtension
+bool getFirstFileNameByExtension(const std::string &path,
+									const std::string &extension,
+									std::string &fileName) { // NOLINT
 	logger::log(
 			"trace",
 			"getnextfilename(): Using path:" + path + " and extension: "
@@ -56,7 +57,6 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 					+ ".");
 		}
 
-		// FindClose(findfileshandle);
 		return (false);
 	}
 
@@ -65,7 +65,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 		if (!(findfiledata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 			// found something that isn't a directory
 			filefound = true;
-			continue;
+			break;
 		}
 
 		// The preceding file wasn't one we can use.  Keep looking...
@@ -89,7 +89,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 	}
 
 	// format file name
-	filename = path + std::string("/") + std::string(findfiledata.cFileName);
+	fileName = path + std::string("/") + std::string(findfiledata.cFileName);
 
 	// done looking for files
 	FindClose(findfileshandle);
@@ -112,7 +112,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 	}
 
 	while ((ent = readdir(dir)) != NULL) {
-		// convert filename to string
+		// convert fileName to string
 		std::string file_name = std::string(ent->d_name);
 		std::string full_file_name = path + "/" + file_name;
 
@@ -127,7 +127,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 		if ((st.st_mode & S_IFDIR) != 0)
 			continue;
 
-		// check to see if filename contains our extension.
+		// check to see if fileName contains our extension.
 		if (file_name.find("." + extension) != std::string::npos)
 			files.push_back(file_name);
 	}
@@ -135,7 +135,7 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 	// find anything?
 	if (files.size() == 0) {
 		// nothing found
-		filename = "";
+		fileName = "";
 
 		// done looking for files
 		closedir(dir);
@@ -145,9 +145,9 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 	// sort filenames
 	std::sort(files.begin(), files.end());
 
-	// get the first filename in the list
+	// get the first fileName in the list
 	// and format it
-	filename = path + std::string("/") + files[0];
+	fileName = path + std::string("/") + files[0];
 
 	// done looking for files
 	closedir(dir);
@@ -156,37 +156,36 @@ bool getNextFileName(const std::string &path, const std::string &extension,
 }
 
 // ---------------------------------------------------------moveFileTo
-bool moveFileTo(std::string filename, const std::string &dirname) {
+bool moveFileTo(std::string fileName, const std::string &dirName) {
 	std::string fromStr;
 	std::string toStr;
+	std::string filenameNoPath;
 
 	// get where the file name starts
-	int startPosOfFilename = static_cast<int>(filename.find_last_of("/"));
+	int startPosOfFilename = static_cast<int>(fileName.find_last_of("/"));
 
 	// special case for windows paths
 #ifdef _WIN32
 	if (startPosOfFilename == std::string::npos)
-	startPosOfFilename = static_cast<int>(filename.find_last_of("\\"));
+	startPosOfFilename = static_cast<int>(fileName.find_last_of("\\"));
 #endif
 
-	int filenameLength = static_cast<int>(filename.size()) - startPosOfFilename;
-
-	std::string filenameNoPath;
+	int filenameLength = static_cast<int>(fileName.size()) - startPosOfFilename;
 
 	// build fromstring
 	if (startPosOfFilename > 0 && filenameLength > 1) {
-		// filename is assumed to contain path
-		fromStr = filename;
-		filenameNoPath = filename.substr(startPosOfFilename, filenameLength);
+		// fileName is assumed to contain path
+		fromStr = fileName;
+		filenameNoPath = fileName.substr(startPosOfFilename, filenameLength);
 	} else {
 		return (false);
 	}
 
 	// build tostring
 #ifdef _WIN32
-	toStr = dirname + "\\" + filenameNoPath;
+	toStr = dirName + "\\" + filenameNoPath;
 #else
-	toStr = dirname + "/" + filenameNoPath;
+	toStr = dirName + "/" + filenameNoPath;
 #endif
 
 	logger::log("debug",
@@ -199,6 +198,8 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 		std::string badfilename;
 
 		if (errno == EACCES) {
+			// We are presuming the EACCES is an error when trying to overwrite
+			// an existing file and not a permission issue with the "from" file.
 			// Somehow, we already dealt with this file - we're either testing,
 			// or somehow got two copies of the same file.  Since they should
 			// be identical, just log it and delete the file we had wanted to
@@ -214,8 +215,11 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 
 			return (true);
 		} else if (errno == ENOENT) {
-			// This happens on occasion, and really it's fine so let's not freak
-			// out...
+			// This is saying that it can't move the file likely because it
+			// can't find or access the from file. This implies that either it's
+			// somewhat ready but not fully ready for finding or someone came
+			// along and removed it between the time we found it and the time
+			// we could move it.
 			logger::log(
 					"warning",
 					"movefileto(): Unable to move " + fromStr + " to " + toStr
@@ -234,8 +238,8 @@ bool moveFileTo(std::string filename, const std::string &dirname) {
 		// Rather just leave the file alone, we'll want to rename it as an error
 		// file.  This is so the inserter doesn't eternally attempt to insert
 		// this one file.
-		badfilename = filename + std::string(MOVEERROREXTENSION);
-		if (std::rename(filename.c_str(), badfilename.c_str()) != 0) {
+		badfilename = fileName + std::string(MOVEERROREXTENSION);
+		if (std::rename(fileName.c_str(), badfilename.c_str()) != 0) {
 			logger::log(
 					"error",
 					"movefileto(): Unable to rename " + fromStr + " to " + toStr
@@ -283,27 +287,27 @@ bool copyFileTo(std::string from, std::string to) {
 }
 
 // ---------------------------------------------------------deleteFileFrom
-bool deleteFileFrom(std::string filename) {
-	logger::log("debug", "deletefilefrom(): Deleting file " + filename + ".");
+bool deleteFileFrom(std::string fileName) {
+	logger::log("debug", "deletefilefrom(): Deleting file " + fileName + ".");
 
 	// check to see if the file exists
-	if (!std::ifstream(filename.c_str())) {
+	if (!std::ifstream(fileName.c_str())) {
 		logger::log(
 				"error",
-				"deletefilefrom(): Unable to delete file " + filename
+				"deletefilefrom(): Unable to delete file " + fileName
 						+ ": file did not exist.");
 
 		return (false);
 	}
 
 	// delete it
-	std::remove(filename.c_str());
+	std::remove(fileName.c_str());
 
 	// check to see if file is still there
-	if (std::ifstream(filename.c_str())) {
+	if (std::ifstream(fileName.c_str())) {
 		logger::log(
 				"error",
-				"deletefilefrom(): Unable to delete file " + filename
+				"deletefilefrom(): Unable to delete file " + fileName
 						+ ": Error " + strerror(errno) + ".");
 
 		return (false);

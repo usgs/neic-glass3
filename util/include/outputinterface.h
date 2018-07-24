@@ -9,7 +9,7 @@ namespace util {
 
 /**
  * \interface iOutput
- * \brief output message interface, used in sending data to output classes in
+ * \brief The output message interface, used in sending data to output classes in
  * neic-glass3
  *
  * The iOutput interface is implemented by classes that manage outputting

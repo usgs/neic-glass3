@@ -15,7 +15,7 @@ namespace util {
 
 /**
  * \interface iInput
- * \brief input data retrieval interface, used to provide input data to other
+ * \brief The input data retrieval interface, used to provide input data to other
  * parts of neic-glass3
  *
  * The iInput interface is a class interface implemented by class that

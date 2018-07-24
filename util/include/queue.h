@@ -18,68 +18,68 @@
 namespace glass3 {
 namespace util {
 /**
- * \brief util queue class
+ * \brief glass3::util::Queue class
  *
- * The util queue is a class implementing a FIFO queue of
- * shared_ptr's to json::Objects.  The queue is thread safe.
+ * The glass3::util::Queue is a class implementing a FIFO Queue of
+ * shared_ptr's to json::Objects.  The Queue is thread safe.
  *
- * queue inherits from the baseclass class.
+ * Queue inherits from the baseclass class.
  */
 class Queue : public util::BaseClass {
  public:
 	/**
-	 * \brief queue constructor
+	 * \brief Queue constructor
 	 *
-	 * The constructor for the queue class.
+	 * The constructor for the Queue class.
 	 */
 	Queue();
 
 	/**
-	 * \brief queue destructor
+	 * \brief Queue destructor
 	 *
-	 * The destructor for the queue class.
+	 * The destructor for the Queue class.
 	 */
 	~Queue();
 
 	/**
-	 * \brief queue clear function
+	 * \brief Queue clear function
 	 *
-	 * The clear function for the queue class.
-	 * Clear all data currently contained in the queue
+	 * The clear function for the Queue class.
+	 * Clear all data currently contained in the Queue
 	 */
 	void clear() override;
 
 	/**
-	 *\brief add data to queue
+	 *\brief add data to Queue
 	 *
-	 * Add the provided data the queue
-	 * \param data - A pointer to a json::Object to add to the queue
+	 * Add the provided data the Queue
+	 * \param data - A pointer to a json::Object to add to the Queue
 	 * \return returns true if successful, false otherwise.
 	 */
 	bool addDataToQueue(std::shared_ptr<json::Object> data);
 
 	/**
-	 *\brief get data from queue
+	 *\brief get data from Queue
 	 *
-	 * Get the next data from the queue
+	 * Get the next data from the Queue
 	 * \return returns a pointer to the json::Object containing the data, NULL
 	 * there was no
-	 * data in the queue
+	 * data in the Queue
 	 */
 	std::shared_ptr<json::Object> getDataFromQueue();
 
 	/**
-	 *\brief get the size of the queue
+	 *\brief get the size of the Queue
 	 *
-	 * Get the current size of the queue
+	 * Get the current size of the Queue
 	 * \return returns an integer value containing the current size of the
-	 * queue
+	 * Queue
 	 */
 	int size();
 
  private:
 	/**
-	 * \brief the std::queue used to store the queue
+	 * \brief the std::Queue used to store the Queue
 	 */
 	std::queue<std::shared_ptr<json::Object>> m_DataQueue;
 };

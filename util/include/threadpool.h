@@ -8,6 +8,7 @@
 #define THREADPOOL_H
 
 #include <baseclass.h>
+#include <threadstate.h>
 #include <thread>
 #include <mutex>
 #include <queue>
@@ -19,46 +20,49 @@
 namespace glass3 {
 namespace util {
 /**
- * \brief util threadpool class
+ * \brief glass3::util::ThreadPool class
  *
  * This class supports creating, starting, stopping, and monitoring a pool of
- * work threads, managing a FIFO queue for jobs to be processed, and allowing
- * for specific pool name and sleep between work time.
+ * job threads, managing a FIFO queue for jobs to be processed, and allowing
+ * for specific pool name and sleep between jobs.
  *
+ * This class inherits from util::baseclass
+ *
+ * \note This class has no tie-in or relation with glass3::util::ThreadBaseClass
  */
 class ThreadPool : public util::BaseClass {
  public:
 	/**
-	 * \brief threadpool constructor
+	 * \brief ThreadPool constructor
 	 *
-	 * The constructor for the threadpool class.
+	 * The constructor for the ThreadPool class.
 	 * Initializes members to default values.
 	 */
 	ThreadPool();
 
 	/**
-	 * \brief An advanced constructor that sets up the threadpool with
-	 * a provided pool name, number of threads, sleep between work time and
+	 * \brief An advanced constructor that sets up the ThreadPool with
+	 * a provided pool name, number of threads, sleep between jobs time and
 	 * status check interval
 	 *
-	 * The advanced constructor for the threadpool class.
+	 * The advanced constructor for the ThreadPool class.
 	 * Initializes members to provided values.
 	 *
-	 * \param poolname - A std::string containing the name of the thread pool
-	 * \param num_threads - An integer containing the number of
+	 * \param poolName - A std::string containing the name of the thread pool
+	 * \param numThreads - An integer containing the number of
 	 * threads in the pool.  Default 5
-	 * \param sleeptime - An integer containing the amount of
+	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 100
-	 * \param checkinterval - An integer containing the amount of time in
-	 * seconds between status checks. -1 to disable status checks.  Default 10.
+	 * \param checkInterval - An integer containing the amount of time in
+	 * seconds between status checks. -1 to disable status checks.  Default 30.
 	 */
-	explicit ThreadPool(std::string poolname, int num_threads = 5,
-						int sleeptime = 100, int checkinterval = 30);
+	explicit ThreadPool(std::string poolName, int numThreads = 5,
+						int sleepTime = 100, int checkInterval = 30);
 
 	/**
-	 * \brief threadpool destructor
+	 * \brief ThreadPool destructor
 	 *
-	 * The destructor for the threadpool class.
+	 * The destructor for the ThreadPool class.
 	 */
 	~ThreadPool();
 
@@ -77,7 +81,7 @@ class ThreadPool : public util::BaseClass {
 	 * \brief pool stop function
 	 *
 	 * Stops, waits for, and deletes each thread that runs the jobLoop() function,
-	 * setting m_bRunJobLoop to false, and clearing m_ThreadStatusMap
+	 * setting m_bRunJobLoop to false, and clearing m_ThreadHealthMap
 	 *
 	 * \return returns true if successful, false if the thread is not created and
 	 * running
@@ -88,8 +92,8 @@ class ThreadPool : public util::BaseClass {
 	 * \brief pool health check function
 	 *
 	 * Checks to see if each thread that runs the jobLoop() function is still
-	 * operational, by checking the value of m_ThreadStatusMap[id] (==true) every
-	 * m_iHealthCheckInterval seconds, setting m_ThreadStatusMap[id] to false after the
+	 * operational, by checking the value of m_ThreadHealthMap[id] (==true) every
+	 * m_iHealthCheckInterval seconds, setting m_ThreadHealthMap[id] to false after the
 	 * check. It is expected that the jobs processed by the thread pool will
 	 * finish within m_iHealthCheckInterval seconds
 	 *
@@ -105,41 +109,10 @@ class ThreadPool : public util::BaseClass {
 	 * bound to the function to run, to the queue of jobs to be run by the thread
 	 * pool.
 	 *
-	 * \param newjob - A std::function<void()> bound to the function containing
+	 * \param newJob - A std::function<void()> bound to the function containing
 	 * the job to run
 	 */
-	void addJob(std::function<void()> newjob);
-
-	/**
-	 * \brief pool status update function
-	 *
-	 * Updates the status for a specific thread running jobLoop() in the thread
-	 * pool by using std::this_thread::get_id() to set the correct flag within
-	 * m_ThreadStatusMap
-	 *
-	 * \param status - A boolean flag containing the status to set
-	 */
-	void setJobHealth(bool status);
-
-	/**
-	 * \brief pool status update function
-	 *
-	 * Updates the status for each thread running jobLoop() in the
-	 * m_ThreadStatusMap
-	 *
-	 * \param status - A boolean flag containing the status to set
-	 */
-	void setAllJobsHealth(bool status);
-
-	/**
-	 * \brief pool status check function
-	 *
-	 * Checks each thread running jobLoop() tracked by m_ThreadStatusMap.
-	 *
-	 * \return returns true if all thread statuses are true, false if at least
-	 * one of the thread statuses is false.
-	 */
-	bool getAllJobsHealth();
+	void addJob(std::function<void()> newJob);
 
 	/**
 	 *\brief Retrieve the current number of jobs in the queue
@@ -152,6 +125,14 @@ class ThreadPool : public util::BaseClass {
 	int getJobQueueSize();
 
 	/**
+	 * \brief pool status update function
+	 *
+	 * Updates the last time healthy for a specific thread running jobLoop() in
+	 * the thread pool by setting setLastHealthy() to now
+	 */
+	void setJobHealth();
+
+	/**
 	 * \brief Retrieves the number of threads in the pool
 	 *
 	 * Retrieves the number of threads managed by this thread pool
@@ -161,23 +142,37 @@ class ThreadPool : public util::BaseClass {
 	int getNumThreads();
 
 	/**
-	 * \brief Sets the time to sleep between work() calls
+	 * \brief Sets the number of job threads
 	 *
-	 * Sets the amount of time to sleep between work() function calls in the
-	 * workLoop() function, which is run by the thread
+	 * This function sets m_iNumThreads. This function sets the number of
+	 * threads that should be in the thread pool, and thus will be started in
+	 * start().
 	 *
-	 * \param sleeptimems - An integer value containing the sleep between work()
-	 * calls in integer milliseconds.
+	 * \note This function is only effective when the ThreadPool is not started.
+	 *
+	 * \param numThreads - An integer containing the number of threads in the
+	 * pool.
 	 */
-	void setSleepTime(int sleeptimems);
+	void setNumThreads(int numThreads);
 
 	/**
-	 * \brief Retrieves the time to sleep between work() calls
+	 * \brief Sets the time to sleep between job queue checks
 	 *
-	 * Retrieves the amount of time to sleep between work() function calls in
-	 * the workLoop() function, which is run by the thread
+	 * Sets the amount of time to sleep between job queue checks in
+	 * the jobLoop() function, which is run by each job thread
 	 *
-	 * \return Returns the amount of time to sleep between work() calls in
+	 * \param sleepTimeMS - An integer value containing the sleep between job
+	 * queue checks in integer milliseconds.
+	 */
+	void setSleepTime(int sleepTimeMS);
+
+	/**
+	 * \brief Retrieves the time to sleep between job queue checks
+	 *
+	 * Retrieves the amount of time to sleep between job queue checks in
+	 * the jobLoop() function, which is run by each job thread
+	 *
+	 * \return Returns the amount of time to sleep between job queue checks in
 	 * integer milliseconds.
 	 */
 	int getSleepTime();
@@ -188,9 +183,9 @@ class ThreadPool : public util::BaseClass {
 	 * This function sets the name of the thread pool, this name is used to
 	 * identify the pool in logging
 	 *
-	 * \param name = A std::string containing the thread pool name to set
+	 * \param poolName = A std::string containing the thread pool name to set
 	 */
-	void setPoolName(std::string name);
+	void setPoolName(std::string poolName);
 
 	/**
 	 * \brief Function to retrieve the name of the thread pool
@@ -203,11 +198,22 @@ class ThreadPool : public util::BaseClass {
 	const std::string& getPoolName();
 
 	/**
+	 * \brief Function to get thread pool state
+	 *
+	 * This function gets the state of the thread pool by getting the value of
+	 * m_ThreadPoolState.
+	 *
+	 * \return Returns a glass3::util::ThreadState enumeration value representing
+	 * the thread pool state
+	 */
+	glass3::util::ThreadState getThreadPoolState();
+
+	/**
 	 * \brief Function to set thread pool health check interval
 	 *
 	 * This function sets the time interval after which an entry in
-	 * m_ThreadStatusMap being false (not responded) indicates that a thread in
-	 * the pool has died in healthCheck()
+	 * m_ThreadHealthMap being older than now minus the time interval (not
+	 * responded) indicates that the thread in the pool has died in healthCheck()
 	 *
 	 * \param interval = An integer value indicating the thread pool health check
 	 * interval in seconds
@@ -218,8 +224,8 @@ class ThreadPool : public util::BaseClass {
 	 * \brief Function to retrieve the thread pool health check interval
 	 *
 	 * This function retrieves the time interval after which an entry in
-	 * m_ThreadStatusMap being false (not responded) indicates that the thread
-	 * in the pool has died in check()
+	 * m_ThreadHealthMap being older than now minus the time interval (not
+	 * responded) indicates that the thread in the pool has died in healthCheck()
 	 *
 	 * \return An integer value containing the thread pool health check interval
 	 * in seconds
@@ -227,30 +233,30 @@ class ThreadPool : public util::BaseClass {
 	int getHealthCheckInterval();
 
 	/**
-	 * \brief Checks to see if the job threads in the pool should still be
-	 * running
+	 * \brief Function to retrieve the oldest time any of the job threads last
+	 * updated their health status as healthy
 	 *
-	 * This function checks to see if the job thread should still running by
-	 * returning the value of m_bRunJobLoop.
-	 * \return Returns true if the job threads should still running, false if it
-	 * they should be stopped
-	 */
-	virtual bool isRunning();
-
-	/**
-	 * \brief Function to retrieve the last time the job threads health status
-	 * was checked
-	 *
-	 * This function retrieves the last time the health status of the job threads
-	 * was checked by the healthCheck() function
+	 * This function retrieves the oldest time any of the the health statuses of
+	 * the job threads was updated as healthy by the setJobHealth function
 	 *
 	 * \return A std::time_t containing the last check time
 	 */
-	std::time_t getLastHealthCheck();
+	std::time_t getAllLastHealthy();
 
  protected:
 	/**
-	 * \brief thread pool job work loop function
+	 * \brief Function to set thread pool state
+	 *
+	 * This function signifies the thread pool state by setting m_ThreadPoolState
+	 * to the provided value.
+	 *
+	 * \param state = A glass3::util::ThreadState enumeration value indicating
+	 * the new thread state
+	 */
+	void setThreadPoolState(glass3::util::ThreadState state);
+
+	/**
+	 * \brief thread pool job loop function
 	 *
 	 * This function is the thread job loop function. It runs in a loop while
 	 * m_bRunJobLoop is true, polling m_JobQueue for jobs to process, running
@@ -260,7 +266,7 @@ class ThreadPool : public util::BaseClass {
 	void jobLoop();
 
 	/**
-	 * \brief the job work sleep function
+	 * \brief the job loop sleep function
 	 *
 	 * The function that performs the sleep between jobs or checks of the
 	 * m_JobQueue
@@ -268,35 +274,16 @@ class ThreadPool : public util::BaseClass {
 	void jobSleep();
 
 	/**
-	 * \brief Function to sset the last time the job threads health status
-	 * was checked
+	 * \brief Function to set the last time a job thread was healthy
 	 *
-	 * This function sets the last time the health status of the job threads
-	 * was checked.
+	 * This function sets the last time a job thread was healthy pool by using
+	 * std::this_thread::get_id() to set the correct epoch time within
+	 * m_ThreadHealthMap to the provided time
 	 *
-	 * \param now - A std::time_t containing the last time the health status
-	 * was checked
+	 * \param now - A std::time_t containing the last time the thread was
+	 * healthy
 	 */
-	void setLastHealthCheck(std::time_t now);
-
-	/**
-	 * \brief Sets whether the job threads are running
-	 *
-	 * This function sets m_bRunJobLoop. Setting m_bRunJobLoop to true
-	 * indicates that the threads should still run (via jobLoop()). Setting
-	 * m_bRunJobLoop to false indicates that the threads should stop (and
-	 * jobLoop() should return)
-	 */
-	void setRunning(bool running);
-
-	/**
-	 * \brief Sets the number of job threads
-	 *
-	 * This function sets m_iNumThreads. This function sets the number of
-	 * threads that should be in the thread pool, and thus will be started in
-	 * start().
-	 */
-	void setNumThreads(int num);
+	void setLastHealthy(std::time_t now);
 
  private:
 	/**
@@ -305,15 +292,11 @@ class ThreadPool : public util::BaseClass {
 	std::vector<std::thread> m_ThreadPool;
 
 	/**
-	 * \brief A std::map containing the boolean status flags for each thread in
-	 * the pool
+	 * \brief A std::map containing the epoch times as std::atomic<double>> that
+	 * each thread in the pool was last marked as healthy, identified by the
+	 * thread id
 	 */
-	std::map<std::thread::id, bool> m_ThreadStatusMap;
-
-	/**
-	 * \brief the std::mutex to control access to m_ThreadStatusMap
-	 */
-	std::mutex m_StatusMutex;
+	std::map<std::thread::id, std::atomic<double>> m_ThreadHealthMap;
 
 	/**
 	 * \brief the std::queue of std::function<void() jobs for the jobLoop()
@@ -322,10 +305,10 @@ class ThreadPool : public util::BaseClass {
 	std::queue<std::function<void()>> m_JobQueue;
 
 	/**
-	 * \brief the boolean flags indicating that the jobloop() threads
-	 * should keep running.
+	 * \brief glass3::util::ThreadState enumeration used to track thread status,
+	 * set by setThreadPoolState()
 	 */
-	std::atomic<bool> m_bRunJobLoop;
+	std::atomic<ThreadState> m_ThreadPoolState;
 
 	/**
 	 * \brief An integer containing the amount of time to sleep in milliseconds
@@ -335,6 +318,7 @@ class ThreadPool : public util::BaseClass {
 
 	/**
 	 * \brief An integer containing the number of threads in the pool.
+	 * \note can only be changed when the job threads are not running
 	 */
 	std::atomic<int> m_iNumThreads;
 
@@ -342,12 +326,6 @@ class ThreadPool : public util::BaseClass {
 	 * \brief the std::string containing the name of the thread pool
 	 */
 	std::string m_sPoolName;
-
-	/**
-	 * \brief the std::time_t holding the last time the thread status was
-	 * checked
-	 */
-	std::atomic<double> m_tLastHealthCheck;
 
 	/**
 	 * \brief the integer interval in seconds after which the a job thread

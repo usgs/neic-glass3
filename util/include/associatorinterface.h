@@ -4,6 +4,12 @@
  * the comments so that Doxygen will still
  * be able to work.
  ****************************************/
+/**
+ * \file
+ * \brief associatorinterface.h
+ *
+ * associatorinterface.h contains the associator interface
+ */
 #ifndef ASSOCINTERFACE_H
 #define ASSOCINTERFACE_H
 
@@ -22,7 +28,7 @@
 namespace glass3 {
 
 /**
- * \namespace util
+ * \namespace glass3::util
  * \brief neic-glass3 namespace containing utility classes and functions
  *
  * The neic-glass3 util namespace contains various base classes, class
@@ -33,7 +39,7 @@ namespace util {
 
 /**
  * \interface iAssociator
- * \brief associator messaging interface, used in sending configuration and
+ * \brief The associator messaging interface, used in sending configuration and
  * input data to neic-glass3, specifically the glasscore libraries
  *
  * The iAssociator interface is a class interface implemented by class that

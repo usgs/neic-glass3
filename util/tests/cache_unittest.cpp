@@ -12,7 +12,7 @@
 #define TESTDATA3ID "test3"
 #define CACHEFILE "./testdata/cachetest.txt"
 
-// tests to see if the queue is functional
+// tests to see if the cache is functional
 TEST(CacheTest, Construction) {
 	glass3::util::Cache TestCache;
 
@@ -21,8 +21,10 @@ TEST(CacheTest, Construction) {
 	ASSERT_EQ(TestCache.size(), 0)<< "cache size check";
 }
 
-// tests to see if the queue is functional
+// tests to see if the cache is functional
 TEST(CacheTest, CombinedTest) {
+	// logger::log_init("CacheTest", spdlog::level::debug, ".", true);
+
 	// create cache
 	glass3::util::Cache * TestCache = new glass3::util::Cache();
 
@@ -62,11 +64,11 @@ TEST(CacheTest, CombinedTest) {
 
 	// get data from cache
 	ASSERT_TRUE(NULL == TestCache->getFromCache(""));
-	std::shared_ptr<json::Object> outputobject1 = TestCache->getFromCache(
+	std::shared_ptr<const json::Object> outputobject1 = TestCache->getFromCache(
 			inputid1);
-	std::shared_ptr<json::Object> outputobject2 = TestCache->getFromCache(
+	std::shared_ptr<const json::Object> outputobject2 = TestCache->getFromCache(
 			inputid2);
-	std::shared_ptr<json::Object> outputobject3 = TestCache->getFromCache(
+	std::shared_ptr<const json::Object> outputobject3 = TestCache->getFromCache(
 			inputid3);
 
 	// assert that we got something

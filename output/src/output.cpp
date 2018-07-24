@@ -84,7 +84,7 @@ output::~output() {
 }
 
 // configuration
-bool output::setup(json::Object *config) {
+bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		logger::log("error", "output::setup(): NULL configuration passed in.");
 		return (false);
@@ -337,9 +337,13 @@ bool output::stop() {
 	return (ThreadBaseClass::stop());
 }
 
-bool output::isRunning() {
+glass3::util::ThreadState output::getThreadState() {
+	if (m_bRunEventThread == false) {
+		return (glass3::util::ThreadState::Stopped);
+	}
+
 	// let threadbaseclass handle background worker thread
-	return (ThreadBaseClass::isRunning() && m_bRunEventThread);
+	return (ThreadBaseClass::getThreadState());
 }
 
 bool output::healthCheck() {
@@ -415,14 +419,9 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 		return (false);
 	}
 
-	logger::log(
-			"debug",
-			"output::addTrackingData(): New tracking data: "
-					+ json::Serialize(*data));
-
 	// check to see if this event is already being tracked
-	std::shared_ptr<json::Object> existingdata = m_TrackingCache->getFromCache(
-			id);
+	std::shared_ptr<const json::Object> existingdata = m_TrackingCache
+			->getFromCache(id);
 	if (existingdata != NULL) {
 		// it is, copy the pub log for an existing event
 		if (!(*existingdata).HasKey("PubLog")) {
@@ -448,12 +447,17 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 		(*data)["PubLog"] = pubLog;
 	}
 
+	logger::log(
+			"debug",
+			"output::addTrackingData(): New tracking data: "
+					+ json::Serialize(*data));
+
 	// add, cache handles updates
 	return (m_TrackingCache->addToCache(data, id));
 }
 
 // remove data from output cache
-bool output::removeTrackingData(std::shared_ptr<json::Object> data) {
+bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
 					"output::removetrackingdata(): Bad json object passed in.");
@@ -492,7 +496,7 @@ bool output::removeTrackingData(std::string ID) {
 	}
 }
 
-std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
+std::shared_ptr<const json::Object> output::getTrackingData(std::string id) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	std::shared_ptr<json::Object> nullObj;
 	if (id == "") {
@@ -513,11 +517,11 @@ std::shared_ptr<json::Object> output::getTrackingData(std::string id) {
 	}
 }
 
-std::shared_ptr<json::Object> output::getNextTrackingData() {
+std::shared_ptr<const json::Object> output::getNextTrackingData() {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	// get the data
-	std::shared_ptr<json::Object> data = m_TrackingCache->getNextFromCache(
-			true);
+	std::shared_ptr<const json::Object> data =
+			m_TrackingCache->getNextFromCache(true);
 
 	// loop until we hit the end of the list
 	while (data != NULL) {
@@ -585,7 +589,7 @@ void output::checkEventsLoop() {
 		m_CheckEventMutex.unlock();
 
 		// see if there's anything in the tracking cache
-		std::shared_ptr<json::Object> data = getNextTrackingData();
+		std::shared_ptr<const json::Object> data = getNextTrackingData();
 
 		// got something
 		if (data != NULL) {
@@ -662,9 +666,8 @@ bool output::work() {
 	// null check
 	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
 		// no message queues means we've got big problems
-		logger::log(
-				"critical",
-				"output::work(): No m_OutputQueue and/or m_LookupQueue.");
+		logger::log("critical",
+					"output::work(): No m_OutputQueue and/or m_LookupQueue.");
 		return (false);
 	}
 
@@ -720,7 +723,7 @@ bool output::work() {
 
 		// glass has a hypo it wants us to send
 		if (messagetype == "Hypo") {
-			std::shared_ptr<json::Object> trackingData = getTrackingData(
+			std::shared_ptr<const json::Object> trackingData = getTrackingData(
 					messageid);
 
 			if (trackingData == NULL) {
@@ -765,7 +768,7 @@ bool output::work() {
 
 			m_iEventCounter++;
 		} else if (messagetype == "Cancel") {
-			std::shared_ptr<json::Object> trackingData = getTrackingData(
+			std::shared_ptr<const json::Object> trackingData = getTrackingData(
 					messageid);
 
 			// see if we've tracked this event
@@ -799,7 +802,7 @@ bool output::work() {
 
 			m_iCancelCounter++;
 		} else if (messagetype == "Expire") {
-			std::shared_ptr<json::Object> trackingData = getTrackingData(
+			std::shared_ptr<const json::Object> trackingData = getTrackingData(
 					messageid);
 			// see if we've tracked this event
 			if (trackingData != NULL) {
@@ -968,25 +971,28 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 
 	if (dataType == "Hypo") {
 		// convert a hypo to a detection
-		std::string detectionString = glass3::parse::hypoToJSONDetection(data, agency,
-																	author);
+		std::string detectionString = glass3::parse::hypoToJSONDetection(
+				data, agency, author);
 
 		sendOutput("Detection", ID, detectionString);
 	} else if (dataType == "Cancel") {
 		// convert a cancel to a retract
-		std::string retractString = glass3::parse::cancelToJSONRetract(data, agency,
-																author);
+		std::string retractString = glass3::parse::cancelToJSONRetract(data,
+																		agency,
+																		author);
 
 		sendOutput("Retraction", ID, retractString);
 	} else if (dataType == "SiteLookup") {
 		// convert a site lookup to a station info request
 		std::string stationInfoRequestString =
-				glass3::parse::siteLookupToStationInfoRequest(data, agency, author);
+				glass3::parse::siteLookupToStationInfoRequest(data, agency,
+																author);
 
 		sendOutput("StationInfoRequest", ID, stationInfoRequestString);
 	} else if (dataType == "SiteList") {
 		// convert a site list to a station list
-		std::string stationListString = glass3::parse::siteListToStationList(data);
+		std::string stationListString = glass3::parse::siteListToStationList(
+				data);
 
 		sendOutput("StationList", ID, stationListString);
 	} else {
@@ -995,7 +1001,7 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 }
 
 // filter
-bool output::isDataReady(std::shared_ptr<json::Object> data) {
+bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
 					"output::isdataready(): Null tracking object passed in.");
@@ -1060,8 +1066,18 @@ bool output::isDataReady(std::shared_ptr<json::Object> data) {
 		}
 
 		// update pubLog for this time
+		std::shared_ptr<json::Object> newData = std::make_shared<json::Object>(
+				*data);
 		pubLog[i] = currentVersion;
-		(*data)["PubLog"] = pubLog;
+		(*newData)["PubLog"] = pubLog;
+
+		// update data in cache
+		m_TrackingCache->addToCache(newData, id);
+
+		logger::log(
+				"debug",
+				"output::isDataReady(): Updated data: "
+						+ json::Serialize(*m_TrackingCache->getFromCache(id)));
 
 		// depending on whether this version has already been changed
 		if (changed == true) {
@@ -1098,7 +1114,7 @@ bool output::isDataReady(std::shared_ptr<json::Object> data) {
 	return (false);
 }
 
-bool output::isDataChanged(std::shared_ptr<json::Object> data) {
+bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
 					"output::isDataChanged(): Null tracking object passed in.");
@@ -1140,7 +1156,7 @@ bool output::isDataChanged(std::shared_ptr<json::Object> data) {
 	return (true);
 }
 
-bool output::isDataPublished(std::shared_ptr<json::Object> data,
+bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 								bool ignoreVersion) {
 	if (data == NULL) {
 		logger::log(
@@ -1191,7 +1207,7 @@ bool output::isDataPublished(std::shared_ptr<json::Object> data,
 	return (false);
 }
 
-bool output::isDataFinished(std::shared_ptr<json::Object> data) {
+bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log(
 				"error",

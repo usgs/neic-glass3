@@ -8,6 +8,7 @@
 #define THREADBASECLASS_H
 
 #include <baseclass.h>
+#include <threadstate.h>
 #include <thread>
 #include <mutex>
 #include <string>
@@ -16,7 +17,7 @@
 namespace glass3 {
 namespace util {
 /**
- * \brief util threadbaseclass class
+ * \brief glass3::util::ThreadBaseClass class
  *
  * This class supports creating, starting, stopping, and monitoring a single
  * work thread, allowing for specific thread name and sleep between work time.
@@ -24,36 +25,38 @@ namespace util {
  * It is intended that the derived class implement the desired thread work by
  * overriding the pure virtual function work()
  *
- * This class inherits from util::baseclass
+ * This class inherits from util::BaseClass
+ *
+ * \note This class has no tie-in or relation with glass3::util::ThreadPool
  */
 class ThreadBaseClass : public util::BaseClass {
  public:
 	/**
-	 * \brief threadbaseclass constructor
+	 * \brief ThreadBaseClass constructor
 	 *
-	 * The constructor for the threadbaseclass class.
+	 * The constructor for the ThreadBaseClass class.
 	 * Initializes members to default values.
 	 */
 	ThreadBaseClass();
 
 	/**
-	 * \brief  An advanced constructor that sets up the threadbaseclass with
+	 * \brief  An advanced constructor that sets up the ThreadBaseClass with
 	 * a provided thread name and sleep between work time
 	 *
-	 * The advanced constructor for the threadbaseclass class.
+	 * The advanced constructor for the ThreadBaseClass class.
 	 * Initializes members to provided values.
 	 *
-	 * \param threadname - A std::string containing the desired
+	 * \param threadName - A std::string containing the desired
 	 * name of the work thread.
-	 * \param sleeptimems - An integer value containing the amount of
+	 * \param sleepTimeMS - An integer value containing the amount of
 	 * time to sleep between work() calls in the work thread
 	 */
-	ThreadBaseClass(std::string threadname, int sleeptimems);
+	ThreadBaseClass(std::string threadName, int sleepTimeMS);
 
 	/**
-	 * \brief threadbaseclass destructor
+	 * \brief ThreadBaseClass destructor
 	 *
-	 * The destructor for the threadbaseclass class.
+	 * The destructor for the ThreadBaseClass class.
 	 */
 	~ThreadBaseClass();
 
@@ -80,6 +83,18 @@ class ThreadBaseClass : public util::BaseClass {
 	virtual bool stop();
 
 	/**
+	 * \brief Function to set thread health
+	 *
+	 * This function signifies the thread health by using setLastHealthy
+	 * to set m_tLastHealthy to now if health is true
+	 *
+	 * \param health = A boolean value indicating thread health, true indicates
+	 * that setLastHealthy to set m_tLastHealthy to now, false indicates
+	 * it should not
+	 */
+	void setThreadHealth(bool health = true);
+
+	/**
 	 * \brief work thread check function
 	 *
 	 * Checks to see if the thread that runs the workLoop() function is still
@@ -99,10 +114,10 @@ class ThreadBaseClass : public util::BaseClass {
 	 * Sets the amount of time to sleep between work() function calls in the
 	 * workLoop() function, which is run by the thread
 	 *
-	 * \param sleeptimems - An integer value containing the sleep between work()
+	 * \param sleepTimeMS - An integer value containing the sleep between work()
 	 * calls in integer milliseconds.
 	 */
-	void setSleepTime(int sleeptimems);
+	void setSleepTime(int sleepTimeMS);
 
 	/**
 	 * \brief Retrieves the time to sleep between work() calls
@@ -116,36 +131,15 @@ class ThreadBaseClass : public util::BaseClass {
 	int getSleepTime();
 
 	/**
-	 * \brief Checks to see if the work thread should still be running
+	 * \brief Function to get thread state
 	 *
-	 * This function checks to see if the work thread should still running by
-	 * returning the value of m_bRunWorkThread.
-	 * \return Returns true if the thread should still running, false if it
-	 * has been stopped
+	 * This function gets the thread state by getting the value of
+	 * m_ThreadState.
+	 *
+	 * \return Returns a glass3::util::ThreadState enumeration value representing
+	 * the thread state
 	 */
-	virtual bool isRunning();
-
-	/**
-	 * \brief Function to set thread health
-	 *
-	 * This function signifies the thread health by setting m_bThreadHealth
-	 * to the provided value.
-	 *
-	 * \param health = A boolean value indicating thread health, true indicates
-	 * that the the thread is alive, false indicates that the thread is not
-	 */
-	void setThreadHealth(bool health = true);
-
-	/**
-	 * \brief Function to get thread health
-	 *
-	 * This function gets the thread health by getting the value of
-	 * m_bThreadHealth.
-	 *
-	 * \return Returns true if the thread is alive, false if the thread has
-	 * not responded yet
-	 */
-	bool getThreadHealth();
+	virtual glass3::util::ThreadState getThreadState();
 
 	/**
 	 * \brief Function to set thread health check interval
@@ -170,23 +164,14 @@ class ThreadBaseClass : public util::BaseClass {
 	int getHealthCheckInterval();
 
 	/**
-	 *\brief Retrieves whether the work thread has been started
-	 *
-	 * This function retrieves the value of m_bStarted, which indicates whether
-	 * the work thread has been created and started
-	 * \returns true if the work thread has been started, false otherwise
-	 */
-	bool isStarted();
-
-	/**
 	 * \brief Function to set the name of the work thread
 	 *
 	 * This function sets the name of the work thread, this name is used to
 	 * identify the work thread in logging
 	 *
-	 * \param name = A std::string containing the thread name to set
+	 * \param threadName = A std::string containing the thread name to set
 	 */
-	void setThreadName(std::string name);
+	void setThreadName(std::string threadName);
 
 	/**
 	 * \brief Function to retrieve the name of the work thread
@@ -203,14 +188,14 @@ class ThreadBaseClass : public util::BaseClass {
 	 * was checked
 	 *
 	 * This function retrieves the last time the health status of this thread
-	 * was checked by the check() function
+	 * was set by the setLastHealthy() function
 	 *
 	 * \return A std::time_t containing the last check time
 	 */
-	std::time_t getLastHealthCheck();
+	std::time_t getLastHealthy();
 
 	/**
-	 * \brief threadbaseclass work function
+	 * \brief ThreadBaseClass work function
 	 *
 	 * This function is a pure virtual work function. It is intended that the
 	 * derived class implement the desired thread work by overriding this
@@ -222,7 +207,18 @@ class ThreadBaseClass : public util::BaseClass {
 
  protected:
 	/**
-	 * \brief threadbaseclass work loop function
+	 * \brief Function to set thread state
+	 *
+	 * This function signifies the thread state by setting m_ThreadState
+	 * to the provided value.
+	 *
+	 * \param state = A glass3::util::ThreadState enumeration value indicating
+	 * the new thread state
+	 */
+	void setThreadState(glass3::util::ThreadState state);
+
+	/**
+	 * \brief ThreadBaseClass work loop function
 	 *
 	 * This function is the thread work loop function. It runs in a loop while
 	 * m_bRunWorkThread is true, calls work() every m_iSleepTimeMS milliseconds,
@@ -233,36 +229,14 @@ class ThreadBaseClass : public util::BaseClass {
 	void workLoop();
 
 	/**
-	 * \brief Function to sset the last time the work thread health status
-	 * was checked
+	 * \brief Function to set the last time the work thread was healthy
 	 *
-	 * This function sets the last time the health status of this thread
-	 * was checked.
+	 * This function sets the last time the work thread was healthy
 	 *
-	 * \param now - A std::time_t containing the last time the health status
-	 * was checked
+	 * \param now - A std::time_t containing the last time the thread was
+	 * healthy
 	 */
-	void setLastHealthCheck(std::time_t now);
-
-	/**
-	 *\brief Sets whether the work thread has been started
-	 *
-	 * This function sets the value of m_bStarted, which indicates whether
-	 * the work thread has been created and started
-	 * \param started - a boolean flag indicating whether the the thread has
-	 * been started
-	 */
-	void setStarted(bool started);
-
-	/**
-	 * \brief Sets whether the work thread is running
-	 *
-	 * This function sets m_bRunWorkThread. Setting m_bRunWorkThread to true
-	 * indicates that the thread should still run (via workloop()). Setting
-	 * m_bRunWorkThread to false indicates that the thread should stop (and
-	 * workloop() should return)
-	 */
-	void setRunning(bool running);
+	void setLastHealthy(std::time_t now);
 
  private:
 	/**
@@ -285,33 +259,16 @@ class ThreadBaseClass : public util::BaseClass {
 	std::thread *m_WorkThread;
 
 	/**
-	 * \brief boolean flag indicating whether the work thread should run,
-	 * controls the loop in workloop()
+	 * \brief glass3::util::ThreadState enumeration used to track thread status,
+	 * set by setThreadState()
 	 */
-	std::atomic<bool> m_bRunWorkThread;
-
-	/**
-	 * \brief boolean flag indicating whether the work thread has been started,
-	 * set via setRunning() in start()
-	 */
-	std::atomic<bool> m_bStarted;
-
-	/**
-	 * \brief boolean flag used to check thread status, set by
-	 * setThreadHealth()
-	 */
-	std::atomic<bool> m_bThreadHealth;
-
-	/**
-	 * \brief the std::mutex used to control access to m_bThreadHealth
-	 */
-	std::mutex m_HealthCheckMutex;
+	std::atomic<glass3::util::ThreadState> m_ThreadState;
 
 	/**
 	 * \brief the time_t holding the last time the thread status was checked,
 	 * set by setLastCheck() in check
 	 */
-	std::atomic<double> m_tLastHealthCheck;
+	std::atomic<double> m_tLastHealthy;
 
 	/**
 	 * \brief integer variable indicating how long to sleep in milliseconds

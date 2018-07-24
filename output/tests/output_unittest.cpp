@@ -48,9 +48,10 @@ TEST(Output, TrackingTests) {
 	// setup
 	ASSERT_FALSE(outputThread.setup(NULL));
 	ASSERT_FALSE(
-			outputThread.setup(new json::Object(json::Deserialize(CONFIGFAIL1))));  // NOLINT
+			outputThread.setup(std::make_shared<json::Object>( json::Object(json::Deserialize(CONFIGFAIL1)))));  // NOLINT
+
 	ASSERT_TRUE(
-			outputThread.setup(new json::Object(json::Deserialize(EMPTYCONFIG))));  // NOLINT
+			outputThread.setup(std::make_shared<json::Object>( json::Object(json::Deserialize(EMPTYCONFIG)))));  // NOLINT
 
 	std::shared_ptr<json::Object> tracking1 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING1)));

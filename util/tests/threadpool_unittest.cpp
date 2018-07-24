@@ -61,7 +61,8 @@ TEST(ThreadPoolTest, CombinedTest) {
 			CHECKTIME);
 
 	// assert threads running
-	ASSERT_TRUE(aThreadPool->isRunning())<< "check threads running";
+	ASSERT_TRUE(aThreadPool->getThreadPoolState() ==
+				glass3::util::ThreadState::Started)<< "check threads running";
 
 	// assert pool name
 	ASSERT_STREQ(aThreadPool->getPoolName().c_str(), poolname.c_str())<<
@@ -105,8 +106,6 @@ TEST(ThreadPoolTest, CombinedTest) {
 
 	// assert that stop is true
 	ASSERT_TRUE(aThreadPool->stop())<< "ThreadPool stop is true";
-
-	ASSERT_FALSE(aThreadPool->getAllJobsHealth())<< "getAllStatus is false";
 
 	// assert that check is false
 	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
@@ -153,6 +152,7 @@ TEST(ThreadPoolTest, MonitoringTest) {
 // tests various failure conditions
 TEST(ThreadPoolTest, FailTests) {
 	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool();
+	aThreadPool->setNumThreads(0);
 
 	// assert that check is false
 	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";

@@ -48,33 +48,25 @@ bool Cache::addToCache(std::shared_ptr<json::Object> data, std::string id) {
 
 	// don't do anything if we didn't get an ID
 	if (id == "") {
-		logger::log("error", "cache::addstationtocache(): Bad id passed in.");
+		logger::log("error", "cache::addToCache(): Bad id passed in.");
 		return (false);
 	}
 
 	// lock in case someone else is using the cache
 	std::lock_guard<std::mutex> guard(getMutex());
 
+	// make a copy for the cache
+	std::shared_ptr<json::Object> newData = std::make_shared<json::Object>(
+			json::Object(*data.get()));
+
 	// see if we have it already
 	if (m_Cache.find(id) != m_Cache.end()) {
-		// we do, replace what we have
-		// update the cache
-		m_Cache[id] = data;
-
-		logger::log(
-				"trace",
-				"cache::addtocache(): Updated Data " + json::Serialize(*data)
-						+ " was in the Cache.");
-		return (true);
+		// remove old element
+		m_Cache.erase(m_Cache.find(id));
 	}
 
-	// we don't, add it
-	m_Cache[id] = data;
-
-	logger::log(
-			"trace",
-			"cache::addtocache(): Added Data " + json::Serialize(*data)
-					+ " to Cache.");
+	// add to cache
+	m_Cache[id] = newData;
 
 	return (true);
 }
@@ -83,7 +75,7 @@ bool Cache::addToCache(std::shared_ptr<json::Object> data, std::string id) {
 bool Cache::removeFromCache(std::string id) {
 	// don't do anything if we didn't get an id
 	if (id == "") {
-		logger::log("error", "cache::removefromcache(): Bad ID passed in.");
+		logger::log("error", "cache::removeFromCache(): Bad ID passed in.");
 		return (false);
 	}
 
@@ -103,10 +95,6 @@ bool Cache::removeFromCache(std::string id) {
 	// erase the element from the map
 	m_Cache.erase(m_Cache.find(id));
 
-	logger::log(
-			"trace",
-			"cache::removefromcache(): Removed data " + id + " from Cache.");
-
 	return (true);
 }
 
@@ -114,7 +102,7 @@ bool Cache::removeFromCache(std::string id) {
 bool Cache::isInCache(std::string id) {
 	// don't do anything if we didn't get an id
 	if (id == "") {
-		logger::log("error", "cache::isincache(): Bad ID passed in.");
+		logger::log("error", "cache::isInCache(): Bad ID passed in.");
 		return (false);
 	}
 
@@ -130,15 +118,12 @@ bool Cache::isInCache(std::string id) {
 }
 
 // ---------------------------------------------------------getFromCache
-std::shared_ptr<json::Object> Cache::getFromCache(std::string id) {
+std::shared_ptr<const json::Object> Cache::getFromCache(std::string id) {
 	// don't do anything if we didn't get an id
 	if (id == "") {
 		logger::log("error", "cache::getfromcache(): Bad ID passed in.");
 		return (NULL);
 	}
-
-	logger::log("trace",
-				"cache::getfromcache(): Looking for ID " + id + " in Cache.");
 
 	// lock in case someone else is using the cache
 	std::lock_guard<std::mutex> guard(getMutex());
@@ -146,26 +131,15 @@ std::shared_ptr<json::Object> Cache::getFromCache(std::string id) {
 	// see if we even have it
 	if (m_Cache.find(id) == m_Cache.end()) {
 		// we don't
-		logger::log(
-				"trace",
-				"cache::getfromcache(): ID " + id + " was not found in Cache.");
 		return (NULL);
 	}
 
-	// get result from cache
-	std::shared_ptr<json::Object> data = m_Cache[id];
-
-	logger::log(
-			"trace",
-			"cache::getstationfromcache(): Got ID " + json::Serialize(*data)
-					+ " from Cache.");
-
 	// return our result
-	return (data);
+	return (m_Cache[id]);
 }
 
 // ---------------------------------------------------------getNextFromCache
-std::shared_ptr<json::Object> Cache::getNextFromCache(bool restart) {
+std::shared_ptr<const json::Object> Cache::getNextFromCache(bool restart) {
 	// lock in case someone else is using the cache
 	std::lock_guard<std::mutex> guard(getMutex());
 
@@ -181,14 +155,14 @@ std::shared_ptr<json::Object> Cache::getNextFromCache(bool restart) {
 		return (NULL);
 	}
 
-	// get current data from the iterator
-	std::shared_ptr<json::Object> data =
+	// get the shared_ptr from the map
+	std::shared_ptr<json::Object> cachedata =
 			(std::shared_ptr<json::Object>) m_CacheDumpItr->second;
 
 	// advance the iterator
 	++m_CacheDumpItr;
 
-	return (data);
+	return (cachedata);
 }
 
 // ---------------------------------------------------------isEmpty

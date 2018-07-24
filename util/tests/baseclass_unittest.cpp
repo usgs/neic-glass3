@@ -17,10 +17,11 @@ TEST(BaseClassTest, CombinedTest) {
 
 	// generate configuration
 	std::string configstring = std::string(TESTCONFIG);
-	json::Object configuration = json::Deserialize(configstring);
+	std::shared_ptr<json::Object> sharedConfig = std::make_shared<json::Object>(
+			json::Deserialize(configstring));
 
 	// configure baseclass
-	ASSERT_TRUE(TestBaseClass->setup(&configuration))<< "setup baseclass";
+	ASSERT_TRUE(TestBaseClass->setup(sharedConfig))<< "setup baseclass";
 
 	// assert that class is set up
 	ASSERT_TRUE(TestBaseClass->getSetup())<< "baseclass is set up";

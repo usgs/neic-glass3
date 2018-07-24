@@ -3,6 +3,7 @@
 #include <logger.h>
 #include <stringutil.h>
 #include <string>
+#include <memory>
 
 namespace glass3 {
 namespace util {
@@ -13,13 +14,13 @@ Config::Config() {
 }
 
 // ---------------------------------------------------------Config
-Config::Config(std::string filepath, std::string filename) {
-	parseJSONFromFile(filepath, filename);
+Config::Config(std::string filePath, std::string fileName) {
+	parseJSONFromFile(filePath, fileName);
 }
 
 // ---------------------------------------------------------Config
-Config::Config(std::string newconfig) {
-	parseJSONFromString(newconfig);
+Config::Config(std::string newConfig) {
+	parseJSONFromString(newConfig);
 }
 
 // ---------------------------------------------------------~Config
@@ -30,16 +31,16 @@ Config::~Config() {
 // ---------------------------------------------------------clear
 void Config::clear() {
 	m_sConfigString = "";
-	m_ConfigJSON.Clear();
+	m_ConfigJSON.reset();
 }
 
 // ---------------------------------------------------------parseJSONFromFile
-json::Object Config::parseJSONFromFile(std::string filepath,
-										std::string filename) {
+std::shared_ptr<const json::Object> Config::parseJSONFromFile(
+		std::string filePath, std::string fileName) {
 	clear();
 
 	// first open the file
-	std::ifstream inFile = openFile(filepath, filename);
+	std::ifstream inFile = openFile(filePath, fileName);
 
 	std::string currentline = "";
 	std::string configline = "";
@@ -67,30 +68,33 @@ json::Object Config::parseJSONFromFile(std::string filepath,
 }
 
 // ---------------------------------------------------------parseJSONFromString
-json::Object Config::parseJSONFromString(std::string newconfig) {
+std::shared_ptr<const json::Object> Config::parseJSONFromString(
+		std::string newConfig) {
 	clear();
 
 	// nullchecks
-	if (newconfig.length() == 0) {
+	if (newConfig.length() == 0) {
 		throw std::invalid_argument("Empty JSON string");
 	}
 
-	json::Value deserializedJSON;
-	json::Object jsonObject;
-
 	// deserialize the string into JSON
-	deserializedJSON = json::Deserialize(newconfig);
+	json::Value deserializedJSON = json::Deserialize(newConfig);
 
 	// make sure we got valid json
 	if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
 		// convert our resulting value to a json object
-		jsonObject = deserializedJSON.ToObject();
+		m_ConfigJSON = std::make_shared<json::Object>(
+				json::Object(deserializedJSON.ToObject()));
 
 		logger::log(
 				"debug",
 				"config::setconfig_string: json::Deserialize read: {"
 						+ json::Serialize(deserializedJSON)
 						+ "} from configuration string.");
+
+		m_sConfigString = newConfig;
+
+		return (getJSON());
 	} else {
 		// we're in trouble, clear our stuff
 		clear();
@@ -101,35 +105,36 @@ json::Object Config::parseJSONFromString(std::string newconfig) {
 		throw std::invalid_argument("Invalid configuration string");
 	}
 
-	// save our config string and JSON
-	m_sConfigString = newconfig;
-	m_ConfigJSON = jsonObject;
-
-	return (jsonObject);
+	// Should never get here
+	return (NULL);
 }
 
 // ---------------------------------------------------------getJSON
-json::Object Config::getJSON() {
+std::shared_ptr<const json::Object> Config::getJSON() {
+	if (m_ConfigJSON == NULL) {
+		return (NULL);
+	}
+
 	return (m_ConfigJSON);
 }
 
 // ---------------------------------------------------------openFile
-std::ifstream Config::openFile(std::string filepath, std::string filename) {
+std::ifstream Config::openFile(std::string filePath, std::string fileName) {
 	// nullchecks
-	if (filename.length() == 0) {
+	if (fileName.length() == 0) {
 		logger::log("error", "config::openFile: Empty file name");
 		throw std::invalid_argument("Empty file name");
 	}
 
-	// create the filename
+	// create the fileName
 	std::string fileToOpen = "";
 
-	if (filepath.length() == 0) {
+	if (filePath.length() == 0) {
 		// no path means just the name
-		fileToOpen = filename;
+		fileToOpen = fileName;
 	} else {
 		// combine path and name
-		fileToOpen = filepath + "/" + filename;
+		fileToOpen = filePath + "/" + fileName;
 	}
 
 	// open the file

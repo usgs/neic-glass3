@@ -47,6 +47,7 @@
 #include <cstdlib>
 #include <string>
 #include <iostream>
+#include <memory>
 
 /**
  * \brief glassutil::CLogit call back function
@@ -121,12 +122,12 @@ int main(int argc, char* argv[]) {
 
 	// load our basic config
 	glass3::util::Config * genConfig = new glass3::util::Config("", configFile);
-
+	std::shared_ptr<const json::Object> jsonConfig = genConfig->getJSON();
 	// check to see if our config is of the right format
-	if (genConfig->getJSON().HasKey("Configuration")
-			&& ((genConfig->getJSON())["Configuration"].GetType()
+	if (jsonConfig->HasKey("Configuration")
+			&& ((*jsonConfig)["Configuration"].GetType()
 					== json::ValueType::StringVal)) {
-		std::string configType = (genConfig->getJSON())["Configuration"]
+		std::string configType = (*jsonConfig)["Configuration"]
 				.ToString();
 
 		if (configType != "gen-travel-times-app") {
@@ -148,10 +149,10 @@ int main(int argc, char* argv[]) {
 
 	// model
 	std::string model = "";
-	if (genConfig->getJSON().HasKey("Model")
-			&& ((genConfig->getJSON())["Model"].GetType()
+	if (jsonConfig->HasKey("Model")
+			&& ((*jsonConfig)["Model"].GetType()
 					== json::ValueType::StringVal)) {
-		model = (genConfig->getJSON())["Model"].ToString();
+		model = (*jsonConfig)["Model"].ToString();
 		logger::log("info",
 								"gen-travel-times-app: Using Model: " + model);
 	} else {
@@ -164,19 +165,19 @@ int main(int argc, char* argv[]) {
 
 	// output path
 	std::string path = "./";
-	if (genConfig->getJSON().HasKey("OutputPath")
-			&& ((genConfig->getJSON())["OutputPath"].GetType()
+	if (jsonConfig->HasKey("OutputPath")
+			&& ((*jsonConfig)["OutputPath"].GetType()
 					== json::ValueType::StringVal)) {
-		path = (genConfig->getJSON())["OutputPath"].ToString();
+		path = (*jsonConfig)["OutputPath"].ToString();
 	}
 	logger::log("info", "gen-travel-times-app: Using OutputPath: " + path);
 
 	// file extension
 	std::string extension = ".trv";
-	if (genConfig->getJSON().HasKey("FileExtension")
-			&& ((genConfig->getJSON())["FileExtension"].GetType()
+	if (jsonConfig->HasKey("FileExtension")
+			&& ((*jsonConfig)["FileExtension"].GetType()
 					== json::ValueType::StringVal)) {
-		extension = (genConfig->getJSON())["FileExtension"].ToString();
+		extension = (*jsonConfig)["FileExtension"].ToString();
 	}
 	logger::log("info",
 				"gen-travel-times-app: Using FileExtension: " + extension);
@@ -194,11 +195,11 @@ int main(int argc, char* argv[]) {
 
 	logger::log("info", "gen-travel-times-app: Startup.");
 
-	if (genConfig->getJSON().HasKey("Branches")
-			&& ((genConfig->getJSON())["Branches"].GetType()
+	if (jsonConfig->HasKey("Branches")
+			&& ((*jsonConfig)["Branches"].GetType()
 					== json::ValueType::ArrayVal)) {
 		// get the array of phase entries
-		json::Array branches = (genConfig->getJSON())["Branches"].ToArray();
+		json::Array branches = (*jsonConfig)["Branches"].ToArray();
 
 		// for each branch in the array
 		for (auto branchVal : branches) {
