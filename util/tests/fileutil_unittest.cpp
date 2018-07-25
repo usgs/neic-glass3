@@ -25,7 +25,7 @@
 class FileUtil : public ::testing::Test {
  protected:
 	virtual void SetUp() {
-		// logger::log_init("fileutil", spdlog::level::debug, true, "./");
+		// glass3::util::log_init("fileutil", spdlog::level::debug, true, "./");
 
 		int nError1 = 0;
 		int nError2 = 0;

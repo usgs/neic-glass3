@@ -17,13 +17,13 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor) {
 	if (data == NULL) {
-		logger::log("error",
+		glass3::util::log("error",
 					"hypoToJSONDetection(): Null json data object passed in.");
 		return ("");
 	}
 
 	if (!(data->HasKey("Type"))) {
-		logger::log("error",
+		glass3::util::log("error",
 					"hypoToJSONDetection(): Bad json data object passed in.");
 		return ("");
 	}
@@ -38,18 +38,18 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 	} else if ((*data).HasKey("Pid")) {
 		ID = (*data)["Pid"].ToString();
 	} else {
-		logger::log("error",
+		glass3::util::log("error",
 					"hypoToJSONDetection(): Bad json data object passed in, no "
 					"ID.");
 		return ("");
 	}
 
-	logger::log(
+	glass3::util::log(
 			"info",
 			"hypoToJSONDetection(): Converting a hypo message with id: " + ID
 					+ ".");
 
-	logger::log(
+	glass3::util::log(
 			"debug",
 			"hypoToJSONDetection(): data = |" + json::Serialize(*data) + "|.");
 
@@ -218,11 +218,11 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 				if (pick.isvalid() == false) {
 					std::vector<std::string> errors = pick.geterrors();
 
-					logger::log("error", "Error validating pick.");
+					glass3::util::log("error", "Error validating pick.");
 					for (int errorcount = 0;
 							errorcount < static_cast<int>(errors.size());
 							errorcount++) {
-						logger::log(
+						glass3::util::log(
 								"error",
 								"hypoToJSONDetection: Pick Error: "
 										+ errors[errorcount]);
@@ -353,13 +353,13 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 
 				if (correlation.isvalid() == false) {
 					std::vector<std::string> errors = correlation.geterrors();
-					logger::log(
+					glass3::util::log(
 							"error",
 							"hypoToJSONDetection: Error validating correlation.");
 					for (int errorcount = 0;
 							errorcount < static_cast<int>(errors.size());
 							errorcount++) {
-						logger::log(
+						glass3::util::log(
 								"error",
 								"hypoToJSONDetection: Correlation Error: "
 										+ errors[errorcount]);
@@ -374,7 +374,7 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 		detection.pickdata = pickdata;
 		detection.correlationdata = correlationdata;
 	} catch (const std::exception &e) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"hypoToJSONDetection: Problem building detection message: "
 						+ std::string(e.what()));
@@ -396,13 +396,13 @@ std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor) {
 	if (data == NULL) {
-		logger::log("error",
+		glass3::util::log("error",
 					"cancelToJSONRetract(): Null json data object passed in.");
 		return ("");
 	}
 
 	if (!(data->HasKey("Type"))) {
-		logger::log("error",
+		glass3::util::log("error",
 					"cancelToJSONRetract(): Bad json data object passed in.");
 		return ("");
 	}
@@ -417,18 +417,18 @@ std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 	} else if ((*data).HasKey("Pid")) {
 		ID = (*data)["Pid"].ToString();
 	} else {
-		logger::log("error",
+		glass3::util::log("error",
 					"hypoToJSONDetection(): Bad json data object passed in, no "
 					"ID.");
 		return ("");
 	}
 
-	logger::log(
+	glass3::util::log(
 			"info",
 			"cancelToJSONRetract(): Converting a cancel message with id: " + ID
 					+ ".");
 
-	logger::log(
+	glass3::util::log(
 			"debug",
 			"cancelToJSONRetract(): data = |" + json::Serialize(*data) + "|.");
 
@@ -443,7 +443,7 @@ std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 		retract.source.agencyid = outputAgencyID;
 		retract.source.author = outputAuthor;
 	} catch (const std::exception &e) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"cancelToJSONRetract: Problem building retract message: "
 						+ std::string(e.what()));
@@ -460,26 +460,26 @@ std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 // --------------------------------------------------------siteListToStationList
 std::string siteListToStationList(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"siteListToStationList(): Null json data object passed in.");
 		return ("");
 	}
 
 	if (!(data->HasKey("Cmd"))) {
-		logger::log("error",
+		glass3::util::log("error",
 					"siteListToStationList(): Bad json data object passed in.");
 		return ("");
 	}
 
 	if ((*data)["Cmd"].ToString() != "SiteList") {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"siteListToStationList(): Wrong json data object passed in.");
 		return ("");
 	}
 
-	logger::log(
+	glass3::util::log(
 			"debug",
 			"siteListToStationList(): data = |" + json::Serialize(*data)
 					+ "|.");
@@ -551,27 +551,27 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 											const std::string &outputAgencyID,
 											const std::string &outputAuthor) {
 	if (data == NULL) {
-		logger::log("error",
+		glass3::util::log("error",
 					"siteLookupToStationInfoRequest(): Null json data object "
 					"passed in.");
 		return ("");
 	}
 
 	if (!(data->HasKey("Type"))) {
-		logger::log("error",
+		glass3::util::log("error",
 					"siteLookupToStationInfoRequest(): Bad json data object "
 					"passed in.");
 		return ("");
 	}
 
 	if ((*data)["Type"].ToString() != "SiteLookup") {
-		logger::log("error",
+		glass3::util::log("error",
 					"siteLookupToStationInfoRequest(): Wrong json data object "
 					"passed in.");
 		return ("");
 	}
 
-	logger::log(
+	glass3::util::log(
 			"debug",
 			"siteLookupToStationInfoRequest(): data = |"
 					+ json::Serialize(*data) + "|.");
@@ -586,7 +586,7 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 	if (data->HasKey("Site")) {
 		site = (*data)["Site"].ToString();
 	} else {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"siteLookupToStationInfoRequest(): Missing required Site key");
 		return ("");
@@ -599,7 +599,7 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 	if (data->HasKey("Net")) {
 		net = (*data)["Net"].ToString();
 	} else {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"siteLookupToStationInfoRequest(): Missing required Net key");
 		return ("");
@@ -621,7 +621,7 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 		stationInfoRequest.source.agencyid = outputAgencyID;
 		stationInfoRequest.source.author = outputAuthor;
 	} catch (const std::exception &e) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"siteLookupToStationInfoRequest: Problem building station info "
 						"request message: " + std::string(e.what()));
@@ -642,7 +642,7 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 			errorstring += errorlist[i];
 		}
 
-		logger::log(
+		glass3::util::log(
 				"error",
 				"siteLookupToStationInfoRequest: Invalid station info request "
 						"message: " + errorstring);

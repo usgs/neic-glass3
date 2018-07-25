@@ -151,7 +151,7 @@ class OutputTest : public ::testing::Test {
 		testdatapath = std::string(TESTDATAPATH);
 		std::string output = std::string(OUTPUTDIRECTORY);
 
-		// logger::log_init("outputtest", spdlog::level::debug, testpath, true);
+		// glass3::util::log_init("outputtest", spdlog::level::debug, testpath, true);
 
 		// create input test
 		OutputThread = new glass::fileOutput();

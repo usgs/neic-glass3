@@ -63,9 +63,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	// now set up our logging
-	logger::log_init(logName, spdlog::level::info, logpath, logConsole);
+	glass3::util::log_init(logName, spdlog::level::info, logpath, logConsole);
 
-	logger::log(
+	glass3::util::log(
 			"info",
 			"glass-broker-app: Glass Version "
 					+ std::to_string(PROJECT_VERSION_MAJOR) + "."
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 	// get our config file location from the arguments
 	std::string configFile = argv[1];
 
-	logger::log("info", "glass-broker-app: using config file: " + configFile);
+	glass3::util::log("info", "glass-broker-app: using config file: " + configFile);
 
 	// load our basic config
 	glass3::util::Config * glassConfig = new glass3::util::Config("",
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
 				.ToString();
 
 		if (configType != "glass-broker-app") {
-			logger::log("critcal",
+			glass3::util::log("critcal",
 						"glass-broker-app: Wrong configuration, exiting.");
 
 			delete (glassConfig);
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
 		}
 	} else {
 		// no command or type
-		logger::log("critcal",
+		glass3::util::log("critcal",
 					"glass-broker-app: Missing required Configuration Key.");
 
 		delete (glassConfig);
@@ -109,10 +109,10 @@ int main(int argc, char* argv[]) {
 			&& ((*glassConfig->getJSON())["ConfigDirectory"].GetType()
 					== json::ValueType::StringVal)) {
 		configdir = (*glassConfig->getJSON())["ConfigDirectory"].ToString();
-		logger::log("info", "Reading glass configurations from: " + configdir);
+		glass3::util::log("info", "Reading glass configurations from: " + configdir);
 	} else {
 		configdir = "./";
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"missing <ConfigDirectory>, defaulting to local directory.");
 	}
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
 	if (glassConfig->getJSON()->HasKey("LogLevel")
 			&& ((*glassConfig->getJSON())["LogLevel"].GetType()
 					== json::ValueType::StringVal)) {
-		logger::log_update_level((*glassConfig->getJSON())["LogLevel"]);
+		glass3::util::log_update_level((*glassConfig->getJSON())["LogLevel"]);
 	}
 
 	// get initialize config file location
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::StringVal)) {
 		initconfigfile = (*glassConfig->getJSON())["InitializeFile"].ToString();
 	} else {
-		logger::log(
+		glass3::util::log(
 				"critcal",
 				"Invalid configuration, missing <InitializeFile>, exiting.");
 
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::StringVal)) {
 		stationlistfile = (*glassConfig->getJSON())["StationList"].ToString();
 	} else {
-		logger::log("critcal",
+		glass3::util::log("critcal",
 					"Invalid configuration, missing <StationList>, exiting.");
 
 		delete (glassConfig);
@@ -173,7 +173,7 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::ArrayVal)) {
 		gridconfigfilelist = (*glassConfig->getJSON())["GridFiles"];
 	} else {
-		logger::log("critcal",
+		glass3::util::log("critcal",
 					"Invalid configuration, missing <GridFiles>, exiting.");
 
 		delete (glassConfig);
@@ -184,7 +184,7 @@ int main(int argc, char* argv[]) {
 
 	// check to see if any files were in the array
 	if (gridconfigfilelist.size() == 0) {
-		logger::log("critcal", "No <GridFiles> specified, exiting.");
+		glass3::util::log("critcal", "No <GridFiles> specified, exiting.");
 
 		delete (glassConfig);
 		delete (InitializeConfig);
@@ -199,7 +199,7 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::StringVal)) {
 		inputconfigfile = (*glassConfig->getJSON())["InputConfig"].ToString();
 	} else {
-		logger::log("critcal",
+		glass3::util::log("critcal",
 					"Invalid configuration, missing <InputConfig>, exiting.");
 
 		delete (glassConfig);
@@ -219,7 +219,7 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::StringVal)) {
 		outputconfigfile = (*glassConfig->getJSON())["OutputConfig"].ToString();
 	} else {
-		logger::log("critcal",
+		glass3::util::log("critcal",
 					"Invalid configuration, missing <OutputConfig>, exiting.");
 
 		delete (glassConfig);
@@ -242,7 +242,7 @@ int main(int argc, char* argv[]) {
 	std::shared_ptr<const json::Object> input_config_json =
 			InputConfig->getJSON();
 	if (InputThread->setup(input_config_json) != true) {
-		logger::log("critical", "glass: Failed to setup Input.  Exiting.");
+		glass3::util::log("critical", "glass: Failed to setup Input.  Exiting.");
 
 		delete (glassConfig);
 		delete (InitializeConfig);
@@ -259,7 +259,7 @@ int main(int argc, char* argv[]) {
 	std::shared_ptr<const json::Object> output_config_json = OutputConfig
 			->getJSON();
 	if (OutputThread->setup(output_config_json) != true) {
-		logger::log("critical", "glass: Failed to setup Output.  Exiting.");
+		glass3::util::log("critical", "glass: Failed to setup Output.  Exiting.");
 
 		delete (glassConfig);
 		delete (InitializeConfig);
@@ -309,27 +309,27 @@ int main(int argc, char* argv[]) {
 	OutputThread->start();
 	AssocThread->start();
 
-	logger::log("info", "glass: glass is running.");
+	glass3::util::log("info", "glass: glass is running.");
 
 	// run forever
 	while (true) {
-		logger::log("trace", "glass: Checking thread status.");
+		glass3::util::log("trace", "glass: Checking thread status.");
 
 		if (InputThread->healthCheck() == false) {
-			logger::log("error", "glass: Input thread has exited!!");
+			glass3::util::log("error", "glass: Input thread has exited!!");
 			break;
 		} else if (OutputThread->healthCheck() == false) {
-			logger::log("error", "glass: Output thread has exited!!");
+			glass3::util::log("error", "glass: Output thread has exited!!");
 			break;
 		} else if (AssocThread->healthCheck() == false) {
-			logger::log("error", "glass: Association thread has exited!!");
+			glass3::util::log("error", "glass: Association thread has exited!!");
 			break;
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 	}
 
-	logger::log("info", "glass: glass is shutting down.");
+	glass3::util::log("info", "glass: glass is shutting down.");
 
 	// shutdown
 	InputThread->stop();

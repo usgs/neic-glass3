@@ -26,7 +26,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 		return (NULL);
 	}
 
-	logger::log("trace", "jsonparser::parse: Input String: " + input + ".");
+	glass3::util::log("trace", "jsonparser::parse: Input String: " + input + ".");
 
 	// JSON format
 	// JSON doesn't have a fixed format
@@ -37,7 +37,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 
 		// make sure we got valid json
 		if (deserializedvalue.GetType() == json::ValueType::NULLVal) {
-			logger::log("error",
+			glass3::util::log("error",
 						"jsonparser::parse: json::Deserialize returned null, "
 						"returning.");
 			return (NULL);
@@ -49,7 +49,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 	} catch (const std::runtime_error &e) {
 		// oopse
 		std::string exceptionstring = e.what();
-		logger::log(
+		glass3::util::log(
 				"error",
 				"jsonparser::parse: json::Deserialize encountered error "
 						+ exceptionstring + ", returning.");
@@ -58,13 +58,13 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 
 	// make sure Deserialize gave us something
 	if (newobject == NULL) {
-		logger::log("error",
+		glass3::util::log("error",
 					"jsonparser::parse: json::Deserialize returned null, "
 					"returning.");
 		return (NULL);
 	}
 
-	logger::log(
+	glass3::util::log(
 			"trace",
 			"jsonparser::parse: Output JSON: " + json::Serialize(*newobject)
 					+ ".");
@@ -103,7 +103,7 @@ bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 				errorstring += errors[i] + " ";
 			}
 
-			logger::log(
+			glass3::util::log(
 					"error",
 					"jsonparser::validate: Pick validation errors:"
 							+ errorstring + " for input:" + inputstring);
@@ -129,7 +129,7 @@ bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 				errorstring += errors[i] + " ";
 			}
 
-			logger::log(
+			glass3::util::log(
 					"error",
 					"jsonparser::validate: Correlation validation errors:"
 							+ errorstring + " for input:" + inputstring);
@@ -155,7 +155,7 @@ bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 				errorstring += errors[i] + " ";
 			}
 
-			logger::log(
+			glass3::util::log(
 					"error",
 					"jsonparser::validate: detection validation errors:"
 							+ errorstring + " for input:" + inputstring);
@@ -180,7 +180,7 @@ bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 				errorstring += errors[i] + " ";
 			}
 
-			logger::log(
+			glass3::util::log(
 					"error",
 					"jsonparser::validate: stationInfo validation errors:"
 							+ errorstring + " for input:" + inputstring);
@@ -191,7 +191,7 @@ bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 						!= getAgencyId())
 						|| (stationObject.informationRequestor.author
 								!= getAuthor())) {
-					logger::log(
+					glass3::util::log(
 							"debug",
 							"jsonparser::validate: stationInfo is not for this "
 							"glass by agencyID and author.");

@@ -37,7 +37,7 @@ ThreadBaseClass::ThreadBaseClass(std::string threadName, int sleepTimeMS)
 
 // ---------------------------------------------------------~ThreadBaseClass
 ThreadBaseClass::~ThreadBaseClass() {
-	logger::log(
+	glass3::util::log(
 			"debug",
 			"ThreadBaseClass::~ThreadBaseClass(): Destruction. ("
 					+ getThreadName() + ")");
@@ -50,7 +50,7 @@ bool ThreadBaseClass::start() {
 	// are we already running
 	if ((getThreadState() != glass3::util::ThreadState::Initialized)
 			&& (getThreadState() != glass3::util::ThreadState::Stopped)) {
-		logger::log("warning",
+		glass3::util::log("warning",
 					"ThreadBaseClass::start(): Work Thread is already starting "
 							"or running. (" + getThreadName() + ")");
 		return (false);
@@ -58,7 +58,7 @@ bool ThreadBaseClass::start() {
 
 	// nullcheck
 	if (m_WorkThread != NULL) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"ThreadBaseClass::start(): Work Thread is already allocated. ("
 						+ getThreadName() + ")");
@@ -71,7 +71,7 @@ bool ThreadBaseClass::start() {
 	// start the thread
 	m_WorkThread = new std::thread(&ThreadBaseClass::workLoop, this);
 
-	logger::log(
+	glass3::util::log(
 			"debug",
 			"ThreadBaseClass::start(): Starting Work Thread. ("
 					+ getThreadName() + ")");
@@ -82,7 +82,7 @@ bool ThreadBaseClass::start() {
 bool ThreadBaseClass::stop() {
 	// check if we're running
 	if (getThreadState() != glass3::util::ThreadState::Started) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"ThreadBaseClass::stop(): Work Thread is not running, "
 						"or is already stopping. (" + getThreadName() + ")");
@@ -91,7 +91,7 @@ bool ThreadBaseClass::stop() {
 
 	// nullcheck
 	if (m_WorkThread == NULL) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"ThreadBaseClass::stop(): Work Thread is not allocated. ("
 						+ getThreadName() + ")");
@@ -109,7 +109,7 @@ bool ThreadBaseClass::stop() {
 	m_WorkThread = NULL;
 
 	// done
-	logger::log(
+	glass3::util::log(
 			"debug",
 			"ThreadBaseClass::stop(): Stopped Work Thread. (" + getThreadName()
 					+ ")");
@@ -124,7 +124,7 @@ void ThreadBaseClass::setThreadHealth(bool health) {
 		setLastHealthy(tNow);
 	} else {
 		setLastHealthy(0);
-		logger::log("warning",
+		glass3::util::log("warning",
 					"ThreadBaseClass::setThreadHealth(): health set to false");
 	}
 }
@@ -145,7 +145,7 @@ bool ThreadBaseClass::healthCheck() {
 
 	// thread is dead if we're not running
 	if (getThreadState() != glass3::util::ThreadState::Started) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"ThreadBaseClass::healthCheck(): Thread is not running. ("
 						+ getThreadName() + ")");
@@ -159,7 +159,7 @@ bool ThreadBaseClass::healthCheck() {
 	if (lastCheckInterval > getHealthCheckInterval()) {
 		// if the we've exceeded the health check interval, the thread
 		// is dead
-		logger::log(
+		glass3::util::log(
 				"error",
 				"ThreadBaseClass::healthCheck(): lastCheckInterval for thread "
 						+ getThreadName() + " exceeds health check interval ( "
@@ -174,7 +174,7 @@ bool ThreadBaseClass::healthCheck() {
 
 // ---------------------------------------------------------workLoop
 void ThreadBaseClass::workLoop() {
-	logger::log(
+	glass3::util::log(
 			"debug",
 			"ThreadBaseClass::workLoop():  Work Thread Startup. ("
 					+ getThreadName() + ")");
@@ -192,7 +192,7 @@ void ThreadBaseClass::workLoop() {
 			if (work() == false) {
 				// something has gone wrong
 				// break out of the loop
-				logger::log(
+				glass3::util::log(
 						"error",
 						"ThreadBaseClass::workLoop(): Work returned false, "
 								"something's wrong, stopping thread. ("
@@ -200,7 +200,7 @@ void ThreadBaseClass::workLoop() {
 				break;
 			}
 		} catch (const std::exception &e) {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"ThreadBaseClass::workLoop: Exception during work(): "
 							+ std::string(e.what())
@@ -210,7 +210,7 @@ void ThreadBaseClass::workLoop() {
 		}
 
 		if (getThreadState() != glass3::util::ThreadState::Started) {
-			logger::log(
+			glass3::util::log(
 					"info",
 					"ThreadBaseClass::workLoop(): Non-Starting thread "
 							"status detected ("
@@ -223,7 +223,7 @@ void ThreadBaseClass::workLoop() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
 	}
 
-	logger::log(
+	glass3::util::log(
 			"info",
 			"ThreadBaseClass::workLoop(): Stopped thread. (" + getThreadName()
 					+ ")");

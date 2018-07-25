@@ -42,13 +42,13 @@ void Cache::clear() {
 // ---------------------------------------------------------addToCache
 bool Cache::addToCache(std::shared_ptr<json::Object> data, std::string id) {
 	if (data == NULL) {
-		logger::log("error", "cache::addtocache(): Bad json object passed in.");
+		glass3::util::log("error", "cache::addtocache(): Bad json object passed in.");
 		return (false);
 	}
 
 	// don't do anything if we didn't get an ID
 	if (id == "") {
-		logger::log("error", "cache::addToCache(): Bad id passed in.");
+		glass3::util::log("error", "cache::addToCache(): Bad id passed in.");
 		return (false);
 	}
 
@@ -75,7 +75,7 @@ bool Cache::addToCache(std::shared_ptr<json::Object> data, std::string id) {
 bool Cache::removeFromCache(std::string id) {
 	// don't do anything if we didn't get an id
 	if (id == "") {
-		logger::log("error", "cache::removeFromCache(): Bad ID passed in.");
+		glass3::util::log("error", "cache::removeFromCache(): Bad ID passed in.");
 		return (false);
 	}
 
@@ -84,7 +84,7 @@ bool Cache::removeFromCache(std::string id) {
 	// see if we have it
 	if (m_Cache.find(id) == m_Cache.end()) {
 		// we don't, do nothing
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"cache::removefromcache(): Did not erase data " + id
 						+ "; not found in Cache.");
@@ -102,7 +102,7 @@ bool Cache::removeFromCache(std::string id) {
 bool Cache::isInCache(std::string id) {
 	// don't do anything if we didn't get an id
 	if (id == "") {
-		logger::log("error", "cache::isInCache(): Bad ID passed in.");
+		glass3::util::log("error", "cache::isInCache(): Bad ID passed in.");
 		return (false);
 	}
 
@@ -121,7 +121,7 @@ bool Cache::isInCache(std::string id) {
 std::shared_ptr<const json::Object> Cache::getFromCache(std::string id) {
 	// don't do anything if we didn't get an id
 	if (id == "") {
-		logger::log("error", "cache::getfromcache(): Bad ID passed in.");
+		glass3::util::log("error", "cache::getfromcache(): Bad ID passed in.");
 		return (NULL);
 	}
 

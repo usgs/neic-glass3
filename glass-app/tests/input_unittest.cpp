@@ -6,6 +6,10 @@
 #include <string>
 #include <memory>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 #define CONFIGFILENAME "inputtest.d"
 #define TESTPATH "testdata"
 #define TESTDATAPATH "inputtests"
@@ -35,7 +39,7 @@ class InputTest : public ::testing::Test {
 		InputConfig = NULL;
 		input_config_json = NULL;
 
-		// logger::log_init("inputtest", spdlog::level::debug, true, testpath);
+		// glass3::util::log_init("inputtest", spdlog::level::debug, true, testpath);
 
 		int nError2 = 0;
 

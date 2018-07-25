@@ -107,10 +107,6 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	// start the thread
 	ASSERT_TRUE(TestThreadBaseStub->start())<< "start was successful";
 
-	// assert that class started
-	ASSERT_TRUE(TestThreadBaseStub->getThreadState() ==
-			glass3::util::ThreadState::Starting)<< "TestThreadBaseStub started";
-
 	// wait a little while
 	std::this_thread::sleep_for(std::chrono::seconds(WAITTIME / 2));
 

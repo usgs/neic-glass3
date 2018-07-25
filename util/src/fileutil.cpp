@@ -28,7 +28,7 @@ namespace util {
 bool getFirstFileNameByExtension(const std::string &path,
 									const std::string &extension,
 									std::string &fileName) { // NOLINT
-	logger::log(
+	glass3::util::log(
 			"trace",
 			"getnextfilename(): Using path:" + path + " and extension: "
 					+ extension);
@@ -48,9 +48,9 @@ bool getFirstFileNameByExtension(const std::string &path,
 	if (findfileshandle == INVALID_HANDLE_VALUE) {
 		error = GetLastError();
 		if (error == ERROR_FILE_NOT_FOUND) {
-			logger::log("trace", "getnextfilename(): File not found.");
+			glass3::util::log("trace", "getnextfilename(): File not found.");
 		} else {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"getnextfilename(): Error " + std::to_string(error)
 					+ " calling FindFirstFile with filter " + findfilter
@@ -72,10 +72,10 @@ bool getFirstFileNameByExtension(const std::string &path,
 		if (FindNextFile(findfileshandle, &findfiledata) == 0) {
 			error = GetLastError();
 			if (error == ERROR_NO_MORE_FILES) {
-				logger::log("trace", "getnextfilename(): No more files in "
+				glass3::util::log("trace", "getnextfilename(): No more files in "
 						"directory.");
 			} else {
-				logger::log(
+				glass3::util::log(
 						"error",
 						"getnextfilename(): Error " + std::to_string(error)
 						+ " calling FindNextFile with filter "
@@ -104,7 +104,7 @@ bool getFirstFileNameByExtension(const std::string &path,
 	dir = opendir(path.c_str());
 
 	if (dir == NULL) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"Couldn't open directory " + path + " Error: "
 						+ std::to_string(errno));
@@ -188,7 +188,7 @@ bool moveFileTo(std::string fileName, const std::string &dirName) {
 	toStr = dirName + "/" + filenameNoPath;
 #endif
 
-	logger::log("debug",
+	glass3::util::log("debug",
 				"movefileto(): Moving file " + fromStr + " to " + toStr + ".");
 
 	// move it!
@@ -204,7 +204,7 @@ bool moveFileTo(std::string fileName, const std::string &dirName) {
 			// or somehow got two copies of the same file.  Since they should
 			// be identical, just log it and delete the file we had wanted to
 			// move.
-			logger::log(
+			glass3::util::log(
 					"warning",
 					"movefileto(): Unable to move " + fromStr + " to " + toStr
 							+ ": File already exists.");
@@ -220,7 +220,7 @@ bool moveFileTo(std::string fileName, const std::string &dirName) {
 			// somewhat ready but not fully ready for finding or someone came
 			// along and removed it between the time we found it and the time
 			// we could move it.
-			logger::log(
+			glass3::util::log(
 					"warning",
 					"movefileto(): Unable to move " + fromStr + " to " + toStr
 							+ ": File Not Found Error.");
@@ -229,7 +229,7 @@ bool moveFileTo(std::string fileName, const std::string &dirName) {
 		}
 
 		// Something else happened...
-		logger::log(
+		glass3::util::log(
 				"error",
 				"movefileto(): Unable to move " + fromStr + " to " + toStr
 						+ ": Error " + strerror(errno) + " errno: "
@@ -240,7 +240,7 @@ bool moveFileTo(std::string fileName, const std::string &dirName) {
 		// this one file.
 		badfilename = fileName + std::string(MOVEERROREXTENSION);
 		if (std::rename(fileName.c_str(), badfilename.c_str()) != 0) {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"movefileto(): Unable to rename " + fromStr + " to " + toStr
 							+ ": Error " + strerror(errno) + ".");
@@ -260,7 +260,7 @@ bool moveFileTo(std::string fileName, const std::string &dirName) {
 bool copyFileTo(std::string from, std::string to) {
 	std::ifstream source(from, std::ios::binary);
 	if (!source) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"copyfileto(): Unable to open source " + from
 						+ " for copying.");
@@ -269,7 +269,7 @@ bool copyFileTo(std::string from, std::string to) {
 
 	std::ofstream dest(to, std::ios::binary);
 	if (!dest) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"copyfileto(): Unable to open destination" + to
 						+ " for copying.");
@@ -288,11 +288,11 @@ bool copyFileTo(std::string from, std::string to) {
 
 // ---------------------------------------------------------deleteFileFrom
 bool deleteFileFrom(std::string fileName) {
-	logger::log("debug", "deletefilefrom(): Deleting file " + fileName + ".");
+	glass3::util::log("debug", "deletefilefrom(): Deleting file " + fileName + ".");
 
 	// check to see if the file exists
 	if (!std::ifstream(fileName.c_str())) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"deletefilefrom(): Unable to delete file " + fileName
 						+ ": file did not exist.");
@@ -305,7 +305,7 @@ bool deleteFileFrom(std::string fileName) {
 
 	// check to see if file is still there
 	if (std::ifstream(fileName.c_str())) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"deletefilefrom(): Unable to delete file " + fileName
 						+ ": Error " + strerror(errno) + ".");
