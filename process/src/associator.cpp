@@ -38,7 +38,8 @@ Associator::Associator()
 Associator::Associator(glass3::util::iInput* inputint,
 						glass3::util::iOutput* outputint)
 		: glass3::util::ThreadBaseClass("Associator", 5) {
-	glass3::util::log("debug", "associator::associator(...): Advanced Construction.");
+	glass3::util::log("debug",
+						"associator::associator(...): Advanced Construction.");
 
 	m_pGlass = NULL;
 	m_MessageQueue = NULL;
@@ -84,26 +85,28 @@ Associator::~Associator() {
 
 bool Associator::setup(std::shared_ptr<const json::Object> config) {
 	if (Input == NULL) {
-		glass3::util::log("error", "associator::setup(): Input interface is NULL .");
+		glass3::util::log("error",
+							"associator::setup(): Input interface is NULL .");
 		return (false);
 	}
 
 	if (Output == NULL) {
-		glass3::util::log("error", "associator::setup(): Output interface is NULL .");
+		glass3::util::log("error",
+							"associator::setup(): Output interface is NULL .");
 		return (false);
 	}
 
 	if (m_pGlass == NULL) {
-		glass3::util::log("error",
-					"associator::setup(): Class Core interface is NULL .");
+		glass3::util::log(
+				"error", "associator::setup(): Class Core interface is NULL .");
 		return (false);
 	}
 	std::shared_ptr<json::Object> pConfig = std::make_shared<json::Object>(
 			*config);
 	// send the config to glass
 	m_pGlass->dispatch(pConfig);
-	glass3::util::log("debug",
-				"associator::setup(): Done Passing in provided config.");
+	glass3::util::log(
+			"debug", "associator::setup(): Done Passing in provided config.");
 
 	return (true);
 }
@@ -290,7 +293,7 @@ bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 
 	if (communication == NULL) {
 		glass3::util::log("critical",
-					"associator::dispatch(): NULL message passed in.");
+							"associator::dispatch(): NULL message passed in.");
 		return (false);
 	}
 
@@ -298,9 +301,10 @@ bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 	if (Output != NULL) {
 		Output->sendToOutput(communication);
 	} else {
-		glass3::util::log("error",
-					"associator::dispatch(): Output interface is NULL, nothing "
-					"to dispatch to.");
+		glass3::util::log(
+				"error",
+				"associator::dispatch(): Output interface is NULL, nothing "
+				"to dispatch to.");
 		return (false);
 	}
 

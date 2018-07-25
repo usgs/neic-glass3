@@ -3,7 +3,7 @@
 #include <stringutil.h>
 
 #ifdef _WIN32
-#include <windows.h>
+#include <Windows.h>
 #else
 #include <dirent.h>
 #include <sys/stat.h>
@@ -27,7 +27,7 @@ namespace util {
 // -------------------------------------------------getFirstFileNameByExtension
 bool getFirstFileNameByExtension(const std::string &path,
 									const std::string &extension,
-									std::string &fileName) { // NOLINT
+									std::string &fileName) {  // NOLINT
 	glass3::util::log(
 			"trace",
 			"getnextfilename(): Using path:" + path + " and extension: "
@@ -188,8 +188,9 @@ bool moveFileTo(std::string fileName, const std::string &dirName) {
 	toStr = dirName + "/" + filenameNoPath;
 #endif
 
-	glass3::util::log("debug",
-				"movefileto(): Moving file " + fromStr + " to " + toStr + ".");
+	glass3::util::log(
+			"debug",
+			"movefileto(): Moving file " + fromStr + " to " + toStr + ".");
 
 	// move it!
 	if (std::rename(fromStr.c_str(), toStr.c_str()) == 0) {
@@ -288,7 +289,8 @@ bool copyFileTo(std::string from, std::string to) {
 
 // ---------------------------------------------------------deleteFileFrom
 bool deleteFileFrom(std::string fileName) {
-	glass3::util::log("debug", "deletefilefrom(): Deleting file " + fileName + ".");
+	glass3::util::log("debug",
+						"deletefilefrom(): Deleting file " + fileName + ".");
 
 	// check to see if the file exists
 	if (!std::ifstream(fileName.c_str())) {
