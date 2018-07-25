@@ -41,12 +41,13 @@ class Parser : public glass3::util::BaseClass {
 	 * The constructor for the parser class.
 	 * Initializes members to provided values.
 	 *
-	 * \param newAgencyID - A std::string containing the agency id to
+	 * \param defaultAgencyID - A std::string containing the agency id to
 	 * use if one is not provided by the parsed message.
-	 * \param newAuthor - A std::string containing the author to
+	 * \param defaultAuthor - A std::string containing the author to
 	 * use if one is not provided by the parsed message.
 	 */
-	Parser(const std::string &newAgencyID, const std::string &newAuthor);
+	Parser(const std::string &defaultAgencyID,
+			const std::string &defaultAuthor);
 
 	/**
 	 * \brief parser destructor

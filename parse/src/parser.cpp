@@ -12,10 +12,11 @@ Parser::Parser()
 }
 
 // ---------------------------------------------------------Parser
-Parser::Parser(const std::string &newAgencyID, const std::string &newAuthor)
+Parser::Parser(const std::string &defaultAgencyID,
+				const std::string &defaultAuthor)
 		: glass3::util::BaseClass() {
-	setAgencyId(newAgencyID);
-	setAuthor(newAuthor);
+	setAgencyId(defaultAgencyID);
+	setAuthor(defaultAuthor);
 }
 
 // ---------------------------------------------------------~Parser
@@ -24,7 +25,6 @@ Parser::~Parser() {
 
 // ---------------------------------------------------------getAgencyId
 const std::string& Parser::getAgencyId() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_AgencyID);
 }
 

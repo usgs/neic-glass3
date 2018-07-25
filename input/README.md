@@ -1,2 +1,2 @@
-# output
-Glass output formatting and publication library.
+# input
+Glass input parsing and queuing library.

@@ -74,7 +74,7 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 		return (false);
 	} else {
 		std::string configtype = (*config)["Configuration"];
-		if (configtype != "glass-broker-app-output") {
+		if (configtype != "GlassOutput") {
 			logger::log("error",
 						"brokerOutput::setup(): Wrong configuration provided, "
 								"configuration is for: " + configtype + ".");
