@@ -109,19 +109,19 @@ Collaboration diagram for glass3::util::iInput:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:addd37a8f2ecfb1ea1772d4e97eec1569"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr<br class="typebreak"/>
-&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1iInput.html#addd37a8f2ecfb1ea1772d4e97eec1569">getData</a> ()=0</td></tr>
-<tr class="memdesc:addd37a8f2ecfb1ea1772d4e97eec1569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get input data.  <a href="#addd37a8f2ecfb1ea1772d4e97eec1569">More...</a><br/></td></tr>
-<tr class="separator:addd37a8f2ecfb1ea1772d4e97eec1569"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb6eb7659080fc434515f54278f83eb9"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1iInput.html#adb6eb7659080fc434515f54278f83eb9">dataCount</a> ()=0</td></tr>
-<tr class="memdesc:adb6eb7659080fc434515f54278f83eb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get count of remaining input data.  <a href="#adb6eb7659080fc434515f54278f83eb9">More...</a><br/></td></tr>
-<tr class="separator:adb6eb7659080fc434515f54278f83eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7665a7f05c0ce8482d9d0fa9ed8d88f4"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr<br class="typebreak"/>
+&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1iInput.html#a7665a7f05c0ce8482d9d0fa9ed8d88f4">getInputData</a> ()=0</td></tr>
+<tr class="memdesc:a7665a7f05c0ce8482d9d0fa9ed8d88f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get input data.  <a href="#a7665a7f05c0ce8482d9d0fa9ed8d88f4">More...</a><br/></td></tr>
+<tr class="separator:a7665a7f05c0ce8482d9d0fa9ed8d88f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af207243e05ffd0ed1b9643ab81a4ee40"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1iInput.html#af207243e05ffd0ed1b9643ab81a4ee40">getInputDataCount</a> ()=0</td></tr>
+<tr class="memdesc:af207243e05ffd0ed1b9643ab81a4ee40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get count of remaining input data.  <a href="#af207243e05ffd0ed1b9643ab81a4ee40">More...</a><br/></td></tr>
+<tr class="separator:af207243e05ffd0ed1b9643ab81a4ee40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The input data retrieval interface, used to provide input data to other parts of neic-glass3. </p>
-<p>The <a class="el" href="classglass3_1_1util_1_1iInput.html" title="The input data retrieval interface, used to provide input data to other parts of neic-glass3. ">iInput</a> interface is a class interface implemented by class that manages an input source for neic-glass three (such as an input file directory or a HazDevBroker topic). This interface provides a method for other classes in neic-glass3 to retrieve input messages via the getdata() function, and a method for querying the pending data via the <a class="el" href="classglass3_1_1util_1_1iInput.html#adb6eb7659080fc434515f54278f83eb9" title="Get count of remaining input data. ">dataCount()</a> function. </p>
+<p>The <a class="el" href="classglass3_1_1util_1_1iInput.html" title="The input data retrieval interface, used to provide input data to other parts of neic-glass3. ">iInput</a> interface is a class interface implemented by class that manages an input source for neic-glass three (such as an input file directory or a HazDevBroker topic). This interface provides a method for other classes in neic-glass3 to retrieve input messages via the getdata() function, and a method for querying the pending data via the dataCount() function. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="adb6eb7659080fc434515f54278f83eb9"></a>
+<a class="anchor" id="a7665a7f05c0ce8482d9d0fa9ed8d88f4"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -129,34 +129,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual int glass3::util::iInput::dataCount </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get count of remaining input data. </p>
-<p>This pure virtual function is implemented by a class to support retrieving the current count of the remaining input data managed by the class.</p>
-<dl class="section return"><dt>Returns</dt><dd>Returns an integer value containing the current count of remaining input data. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="addd37a8f2ecfb1ea1772d4e97eec1569"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual std::shared_ptr&lt;json::Object&gt; glass3::util::iInput::getData </td>
+          <td class="memname">virtual std::shared_ptr&lt;json::Object&gt; glass3::util::iInput::getInputData </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -175,13 +148,40 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="af207243e05ffd0ed1b9643ab81a4ee40"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int glass3::util::iInput::getInputDataCount </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get count of remaining input data. </p>
+<p>This pure virtual function is implemented by a class to support retrieving the current count of the remaining input data managed by the class.</p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer value containing the current count of remaining input data. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this interface was generated from the following file:<ul>
 <li>include/<a class="el" href="inputinterface_8h_source.html">inputinterface.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 24 2018 21:54:30 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 25 2018 20:25:51 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

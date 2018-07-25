@@ -2,11 +2,12 @@ var searchData=
 [
   ['getalllasthealthy',['getAllLastHealthy',['../classglass3_1_1util_1_1ThreadPool.html#a24b96f7e3d9f2f792a40f3a6c4876a2b',1,'glass3::util::ThreadPool']]],
   ['getconfig',['getConfig',['../classglass3_1_1util_1_1BaseClass.html#a63c776b4c8caff231ed544d83769b290',1,'glass3::util::BaseClass']]],
-  ['getdata',['getData',['../classglass3_1_1util_1_1iInput.html#addd37a8f2ecfb1ea1772d4e97eec1569',1,'glass3::util::iInput']]],
   ['getdatafromqueue',['getDataFromQueue',['../classglass3_1_1util_1_1Queue.html#ad31ecf8ff0aeeae71a58ddcc1ec68e1b',1,'glass3::util::Queue']]],
   ['getfirstfilenamebyextension',['getFirstFileNameByExtension',['../namespaceglass3_1_1util.html#ae4a0b94d6a51de163c0fff680077cb6f',1,'glass3::util']]],
   ['getfromcache',['getFromCache',['../classglass3_1_1util_1_1Cache.html#af7eccfa6aec9132793c9c10f04086c7e',1,'glass3::util::Cache']]],
   ['gethealthcheckinterval',['getHealthCheckInterval',['../classglass3_1_1util_1_1ThreadBaseClass.html#a57aeeec2416f5896e51ad3bb59f7d5a6',1,'glass3::util::ThreadBaseClass::getHealthCheckInterval()'],['../classglass3_1_1util_1_1ThreadPool.html#a21c88ed51e84d031aa15b671549f5540',1,'glass3::util::ThreadPool::getHealthCheckInterval()']]],
+  ['getinputdata',['getInputData',['../classglass3_1_1util_1_1iInput.html#a7665a7f05c0ce8482d9d0fa9ed8d88f4',1,'glass3::util::iInput']]],
+  ['getinputdatacount',['getInputDataCount',['../classglass3_1_1util_1_1iInput.html#af207243e05ffd0ed1b9643ab81a4ee40',1,'glass3::util::iInput']]],
   ['getjobqueuesize',['getJobQueueSize',['../classglass3_1_1util_1_1ThreadPool.html#ac4ea75bc0fafa18d9888f18b8936ee35',1,'glass3::util::ThreadPool']]],
   ['getjson',['getJSON',['../classglass3_1_1util_1_1Config.html#a3cd334cee6b01722b04f3e1bcd53fd85',1,'glass3::util::Config']]],
   ['getlasthealthy',['getLastHealthy',['../classglass3_1_1util_1_1ThreadBaseClass.html#afa253a7c9fcf58c8ab15f298e535995f',1,'glass3::util::ThreadBaseClass']]],

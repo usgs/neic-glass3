@@ -1,6 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classglass3_1_1parse_1_1Parser.html" title="glass parser class " alt="" coords="5,56,152,83"/>
-<area shape="rect" id="node2" href="$classglass3_1_1parse_1_1CCParser.html" title="glass cross correlation parser class " alt="" coords="209,5,375,32"/>
-<area shape="rect" id="node3" href="$classglass3_1_1parse_1_1GPickParser.html" title="glass global pick parser class " alt="" coords="201,56,383,83"/>
-<area shape="rect" id="node4" href="$classglass3_1_1parse_1_1JSONParser.html" title="json parser class " alt="" coords="201,107,383,133"/>
+<area shape="rect" id="node1" href="$classglass3_1_1util_1_1BaseClass.html" title="BaseClass" alt="" coords="6,56,93,83"/>
+<area shape="rect" id="node2" href="$classglass3_1_1parse_1_1Parser.html" title="glass parser class " alt="" coords="141,56,288,83"/>
+<area shape="rect" id="node3" href="$classglass3_1_1parse_1_1CCParser.html" title="glass cross correlation parser class " alt="" coords="345,5,511,32"/>
+<area shape="rect" id="node4" href="$classglass3_1_1parse_1_1GPickParser.html" title="glass global pick parser class " alt="" coords="337,56,519,83"/>
+<area shape="rect" id="node5" href="$classglass3_1_1parse_1_1JSONParser.html" title="json parser class " alt="" coords="337,107,519,133"/>
 </map>

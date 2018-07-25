@@ -1,10 +1,17 @@
 var searchData=
 [
-  ['getisitelistdelay',['getISiteListDelay',['../classglass_1_1output.html#a786ab89489446f2528941b2cba272856',1,'glass::output']]],
-  ['getnexttrackingdata',['getNextTrackingData',['../classglass_1_1output.html#ac45854605d05d95044c55c263ed81971',1,'glass::output']]],
-  ['getsoutputagencyid',['getSOutputAgencyId',['../classglass_1_1output.html#a7e263129ed7ef4d0537626b9023d7ae7',1,'glass::output']]],
-  ['getsoutputauthor',['getSOutputAuthor',['../classglass_1_1output.html#a663fbc64e414831a1c7fe50218bd020f',1,'glass::output']]],
-  ['getsstationfile',['getSStationFile',['../classglass_1_1output.html#a28da7c8f5b4696a5594babc64268985a',1,'glass::output']]],
-  ['getthreadstate',['getThreadState',['../classglass_1_1output.html#afce2b4c6bc3ec9f15a33da223f120d88',1,'glass::output']]],
-  ['gettrackingdata',['getTrackingData',['../classglass_1_1output.html#a23596241c2b50966f4042c551660b957',1,'glass::output']]]
+  ['getassociator',['getAssociator',['../classglass3_1_1output_1_1output.html#ad38a3eb977c66b0069358c6fcbd66733',1,'glass3::output::output']]],
+  ['geteventlasthealthy',['getEventLastHealthy',['../classglass3_1_1output_1_1output.html#afc768ed539adcc510e897ef66ca3522c',1,'glass3::output::output']]],
+  ['geteventthreadhealth',['getEventThreadHealth',['../classglass3_1_1output_1_1output.html#aa9a6b322ad3d144936ca89f91982bcb2',1,'glass3::output::output']]],
+  ['geteventthreadstate',['getEventThreadState',['../classglass3_1_1output_1_1output.html#a1348ce5e1eefa2712627a7d02a67448a',1,'glass3::output::output']]],
+  ['getlasteventhealthcheck',['getLastEventHealthCheck',['../classglass3_1_1output_1_1output.html#a202775671760b13526449c8e5f4ad7f4',1,'glass3::output::output']]],
+  ['getnexttrackingdata',['getNextTrackingData',['../classglass3_1_1output_1_1output.html#a17e80e511c4f9c9deaef2a398c6efe7d',1,'glass3::output::output']]],
+  ['getoutputagencyid',['getOutputAgencyId',['../classglass3_1_1output_1_1output.html#a001666e46a1fbce517a34ac5b12fc711',1,'glass3::output::output']]],
+  ['getoutputauthor',['getOutputAuthor',['../classglass3_1_1output_1_1output.html#a7ad28523407e81a7df38e70a9a8a4297',1,'glass3::output::output']]],
+  ['getpubonexpiration',['getPubOnExpiration',['../classglass3_1_1output_1_1output.html#a0d3bb6c60934c2336d598a01ffaa3eb9',1,'glass3::output::output']]],
+  ['getpubtimes',['getPubTimes',['../classglass3_1_1output_1_1output.html#a95e0a72e5fd34ca3ce6d2b3d19b63c83',1,'glass3::output::output']]],
+  ['getreportinterval',['getReportInterval',['../classglass3_1_1output_1_1output.html#a1615ebf0f03a001bfbe43b836680ae32',1,'glass3::output::output']]],
+  ['getsitelistdelay',['getSiteListDelay',['../classglass3_1_1output_1_1output.html#a2ce3fb9faca18f62bcbf366ba5d92047',1,'glass3::output::output']]],
+  ['getstationfile',['getStationFile',['../classglass3_1_1output_1_1output.html#aea18280733447443c06f5fa1ea8b9faa',1,'glass3::output::output']]],
+  ['gettrackingdata',['getTrackingData',['../classglass3_1_1output_1_1output.html#aa56f8b697e491e707aced2996014f4d6',1,'glass3::output::output']]]
 ];

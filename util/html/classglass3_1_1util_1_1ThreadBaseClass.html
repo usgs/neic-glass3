@@ -420,7 +420,7 @@ json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 </div><div class="memdoc">
 
 <p>work thread check function </p>
-<p>Checks to see if the thread that runs the <a class="el" href="classglass3_1_1util_1_1ThreadBaseClass.html#a8c9f9b8f1770dc7478cfc841cdb59b4f" title="ThreadBaseClass work loop function. ">workLoop()</a> function is still operational, by checking the value of m_bRunWorkThread (==true) every m_iCheckInterval seconds, setting m_bRunWorkThread to false after the check. It is expected that the derived class's overridden <a class="el" href="classglass3_1_1util_1_1ThreadBaseClass.html#acc418ce4d47b7c07bf3f0309fac4c3ea" title="ThreadBaseClass work function. ">work()</a> function periodically updates m_bRunWorkThread by calling <a class="el" href="classglass3_1_1util_1_1ThreadBaseClass.html#ad04ed0961ca30819b86b34f99d61f900" title="Function to set thread health. ">setThreadHealth()</a></p>
+<p>Checks to see if the thread that runs the <a class="el" href="classglass3_1_1util_1_1ThreadBaseClass.html#a8c9f9b8f1770dc7478cfc841cdb59b4f" title="ThreadBaseClass work loop function. ">workLoop()</a> function is still operational, by checking the value of m_bCheckWorkThread (==true) every m_iCheckInterval seconds, setting m_bCheckWorkThread to false after the check. It is expected that the derived class's overridden <a class="el" href="classglass3_1_1util_1_1ThreadBaseClass.html#acc418ce4d47b7c07bf3f0309fac4c3ea" title="ThreadBaseClass work function. ">work()</a> function periodically updates m_bRunWorkThread by calling <a class="el" href="classglass3_1_1util_1_1ThreadBaseClass.html#ad04ed0961ca30819b86b34f99d61f900" title="Function to set thread health. ">setThreadHealth()</a></p>
 <dl class="section return"><dt>Returns</dt><dd>returns true if thread is still running after m_iCheckInterval seconds, false otherwise </dd></dl>
 
 </div>
@@ -705,7 +705,7 @@ json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 24 2018 21:54:30 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 25 2018 20:25:51 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
