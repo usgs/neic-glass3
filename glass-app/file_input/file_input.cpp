@@ -305,7 +305,7 @@ const std::string fileInput::getArchiveDir() {
 	return (m_sArchiveDir);
 }
 
-void fileInput::setArchiveDir(std::string& dir) {
+void fileInput::setArchiveDir(std::string dir) {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_sArchiveDir = dir;
 }
