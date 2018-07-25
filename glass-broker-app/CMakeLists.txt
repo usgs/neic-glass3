@@ -26,15 +26,11 @@ include_directories(${SuperEasyJSON_INCLUDE_DIRS})
 find_package(glasscore CONFIG REQUIRED)
 include_directories(${glasscore_INCLUDE_DIRS})
 
-# log
-find_package(log CONFIG REQUIRED)
-include_directories(${log_INCLUDE_DIRS})
-include_directories(${spdlog_INCLUDE_DIRS}/..)
-include_directories(${spdlog_INCLUDE_DIRS})
-
 # util
 find_package(util CONFIG REQUIRED)
 include_directories(${util_INCLUDE_DIRS})
+include_directories(${spdlog_INCLUDE_DIRS}/..)
+include_directories(${spdlog_INCLUDE_DIRS})
 
 # detection-formats
 find_package(DetectionFormats CONFIG REQUIRED)
@@ -111,7 +107,7 @@ set(SRCS "${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
 
 # ----- BUILD EXECUTABLE ----- #
 # NOTE: Order libraries are linked matters for G++
-set(EXE_LIBRARIES broker_input ${input_LIBRARIES} broker_output ${HazdevBroker_LIBRARIES} ${LIBRDKAFKA_CPP_LIB} ${LIBRDKAFKA_C_LIB} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
+set(EXE_LIBRARIES broker_input ${input_LIBRARIES} broker_output ${HazdevBroker_LIBRARIES} ${LIBRDKAFKA_CPP_LIB} ${LIBRDKAFKA_C_LIB} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
 if (UNIX AND NOT APPLE)
     set(ZLIB -lz)
     set(LIBDL -ldl)

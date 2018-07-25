@@ -4,7 +4,8 @@
 #include <memory>
 #include <vector>
 
-namespace logger {
+namespace glass3 {
+namespace util {
 
 void log_init(const std::string &programname,
 				spdlog::level::level_enum loglevel,
@@ -222,4 +223,5 @@ void logCriticalError(const std::string &message) {
 	} catch (spdlog::spdlog_ex&) {
 	}
 }
-}  // namespace logger
+}  // namespace util
+}  // namespace glass3

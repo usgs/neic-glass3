@@ -17,7 +17,8 @@
  * The namespace containing a collection of error logging functions that
  * utilize spdlog.
  */
-namespace logger {
+namespace glass3 {
+namespace util {
 
 /**
  * \brief initialize logging
@@ -121,5 +122,6 @@ void logError(const std::string &message);
  * \param message - A std::string representing the message to log.
  */
 void logCriticalError(const std::string &message);
-}  // namespace logger
+}  // namespace util
+}  // namespace glass3
 #endif  // LOGGER_H

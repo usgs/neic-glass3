@@ -222,24 +222,6 @@ ExternalProject_Add(
 
 if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
 
-    # log
-    ExternalProject_Add(
-        log
-        SOURCE_DIR ${PROJECT_SOURCE_DIR}/log/
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
-          -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-          -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
-          -DGENERATE_DOCUMENTATION=${GENERATE_DOCUMENTATION}
-          -DRUN_CPPCHECK=${RUN_CPPCHECK}
-          -DRUN_CPPLINT=${RUN_CPPLINT}
-          -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
-          -DPYTHON_PATH=${PYTHON_PATH}
-          -DCPPLINT_PATH=${CPPLINT_PATH}
-          -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS ${DOXYGEN_DEPEND}
-        UPDATE_COMMAND ""
-    )
-
     # util
     ExternalProject_Add(
         util
@@ -256,7 +238,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON log ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -276,7 +258,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON util log DetectionFormats ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util DetectionFormats ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -294,7 +276,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON glasscore util log ${DOXYGEN_DEPEND}
+        DEPENDS SuperEasyJSON glasscore util ${DOXYGEN_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -314,7 +296,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON util log DetectionFormats parse ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util DetectionFormats parse ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -334,7 +316,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON util log DetectionFormats parse ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util DetectionFormats parse ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -359,7 +341,7 @@ if (BUILD_GLASS-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON util log DetectionFormats parse glasscore process output input ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util DetectionFormats parse glasscore process output input ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -384,7 +366,7 @@ if (BUILD_GLASS-BROKER-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON util log DetectionFormats parse glasscore process output input HazdevBroker ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util DetectionFormats parse glasscore process output input HazdevBroker ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 
@@ -406,7 +388,7 @@ if (BUILD_GEN-TRAVELTMES-APP)
           -DPYTHON_PATH=${PYTHON_PATH}
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON util log glasscore ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
+        DEPENDS SuperEasyJSON util glasscore ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 

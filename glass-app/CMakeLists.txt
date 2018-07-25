@@ -26,15 +26,11 @@ include_directories(${SuperEasyJSON_INCLUDE_DIRS})
 find_package(glasscore CONFIG REQUIRED)
 include_directories(${glasscore_INCLUDE_DIRS})
 
-# log
-find_package(log CONFIG REQUIRED)
-include_directories(${log_INCLUDE_DIRS})
-include_directories(${spdlog_INCLUDE_DIRS}/..)
-include_directories(${spdlog_INCLUDE_DIRS})
-
 # util
 find_package(util CONFIG REQUIRED)
 include_directories(${util_INCLUDE_DIRS})
+include_directories(${spdlog_INCLUDE_DIRS}/..)
+include_directories(${spdlog_INCLUDE_DIRS})
 
 # detection-formats
 find_package(DetectionFormats CONFIG REQUIRED)
