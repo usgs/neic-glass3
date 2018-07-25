@@ -1,5 +1,5 @@
-# outputtest.d 
-# Configuration file for the glass output component
+# outputtest.d
+# Configuration file for the glass output unit tests
 {
 	# this config is for glass 
 	"Cmd":"GlassOutput",
@@ -8,17 +8,18 @@
 	# entries indicate multiple publications.
 	"PublicationTimes":[3,6],
 
-	# the directory to write output to
-	"OutputDirectory":"./testdata/outputtests/output",
+	# Whether to publish an event on expiration from glass
+	"PublishOnExpiration":true,
 
-	# the format to write output in
-	# for now, the only format is json
-	"OutputFormat":"json",
+	# The optional delay between requesting a current sitelist from glasscore
+	# for station list creating in seconds
+	"SiteListDelay":72,
 
-	# whether to timestamp output file names
-	"TimeStampFileName":false,
+	# The optional file name of the stationlist to create from the sitelist from
+	# glasscore
+	"StationFile":"./testdata/stationlist.d",
 
-	# The  source to use when outputing data
+	# The  source to use when outputting data
 	"OutputAgencyID":"US",
 	"OutputAuthor":"glass"
 }

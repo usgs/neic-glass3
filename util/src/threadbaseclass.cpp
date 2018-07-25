@@ -285,5 +285,6 @@ void ThreadBaseClass::setLastHealthy(time_t now) {
 time_t ThreadBaseClass::getLastHealthy() {
 	return ((time_t) m_tLastHealthy);
 }
+
 }  // namespace util
 }  // namespace glass3

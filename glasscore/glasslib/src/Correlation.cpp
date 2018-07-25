@@ -168,7 +168,7 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 	}
 
 	// check to see if we're using this site
-	if (!site->getUse()) {
+	if (!site->getEnable()) {
 		return;
 	}
 

@@ -10,7 +10,10 @@
 #define TESTGPICKSTRING4 "228041013 22637651 1 BOZ BHZ US 00 20150303000047.175 P -1.0000 U  q e 1.050 2.650 0.0 0.000000 3.49 0.000000 0.000000" // NOLINT
 #define TESTGPICKSTRING5 "228041013 22637652 1 BOZ BHZ US 00 20150303000048.175 P -1.0000 U  q U 1.050 2.650 0.0 0.000000 3.49 0.000000 0.000000" // NOLINT
 
-#define TESTFAILSTRING "228041013 22637648 1 BOZ BHZ US 00 P -1.0000 U  ? r 1.050 2.650 0.0 0.000000 3.49 0.000000 0.000000" // NOLINT
+#define TESTFAILSTRING1 "228041013 22637648 1 BOZ BHZ US 00 P -1.0000 U  ? r 1.050 2.650 0.0 0.000000 3.49 0.000000 0.000000" // NOLINT
+#define TESTFAILSTRING2 "228041013 22637648 1 BOZ BHZ US 00 20150303000044.175 P -1.0000 U  ? m BBC 2.650 0.0 0.000000 3.49 0.000000 0.000000" // NOLINT
+#define TESTFAILSTRING3 "228041013 22637649 1 BOZ BHZ US 00 20150303000045.175 P -1.0000 D  i r 1.050 2.650 0.0 0.000000 AFW 0.000000 0.000000" // NOLINT
+
 #define TESTAGENCYID "US"
 #define TESTAUTHOR "glasstest"
 
@@ -36,7 +39,7 @@ class GPickParser : public ::testing::Test {
 // tests to see gpick parser constructs correctly
 TEST_F(GPickParser, Construction) {
 	// assert that agencyid is ok
-	ASSERT_STREQ(Parser->getAgencyid().c_str(), agencyid.c_str())<<
+	ASSERT_STREQ(Parser->getAgencyId().c_str(), agencyid.c_str())<<
 	"AgencyID check";
 
 	// assert that author is ok
@@ -100,9 +103,12 @@ TEST_F(GPickParser, PickParsing) {
 
 // test failure
 TEST_F(GPickParser, FailTest) {
-	std::string failstring = std::string(TESTFAILSTRING);
+	std::string failstring1 = std::string(TESTFAILSTRING1);
+	std::string failstring2 = std::string(TESTFAILSTRING2);
+	std::string failstring3 = std::string(TESTFAILSTRING3);
 
-	std::shared_ptr<json::Object> FailObject = Parser->parse(failstring);
+	// test missing time
+	std::shared_ptr<json::Object> FailObject = Parser->parse(failstring1);
 
 	// parse the bad data
 	ASSERT_TRUE(FailObject == NULL)<< "Parsed fail string is null.";
@@ -111,7 +117,27 @@ TEST_F(GPickParser, FailTest) {
 	ASSERT_FALSE(Parser->validate(FailObject))<<
 	"Parsed failstring is not valid";
 
-	// parse empty string
+	// test bad filter
+	FailObject = Parser->parse(failstring2);
+
+	// parse the bad data
+	ASSERT_FALSE(FailObject == NULL)<< "Parsed fail string is not null.";
+
+	// validate the bad data
+	ASSERT_TRUE(Parser->validate(FailObject))<<
+	"Parsed failstring is valid";
+
+	// test bad snr
+	FailObject = Parser->parse(failstring3);
+
+	// parse the bad data
+	ASSERT_FALSE(FailObject == NULL)<< "Parsed fail string is not null.";
+
+	// validate the bad data
+	ASSERT_TRUE(Parser->validate(FailObject))<<
+	"Parsed failstring is valid";
+
+	// test empty string
 	FailObject = Parser->parse("");
 
 	// parse the empty string

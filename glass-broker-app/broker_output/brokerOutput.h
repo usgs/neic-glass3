@@ -25,7 +25,7 @@ namespace glass {
  * output inherits from the threadbaseclass class.
  * output implements the ioutput interface.
  */
-class brokerOutput : public output {
+class brokerOutput : public glass3::output::output {
  public:
 	/**
 	 * \brief brokerOutput constructor

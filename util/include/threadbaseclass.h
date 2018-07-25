@@ -98,8 +98,8 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \brief work thread check function
 	 *
 	 * Checks to see if the thread that runs the workLoop() function is still
-	 * operational, by checking the value of m_bRunWorkThread (==true) every
-	 * m_iCheckInterval seconds, setting m_bRunWorkThread to false after the
+	 * operational, by checking the value of m_bCheckWorkThread (==true) every
+	 * m_iCheckInterval seconds, setting m_bCheckWorkThread to false after the
 	 * check. It is expected that the derived class's overridden work() function
 	 * periodically updates m_bRunWorkThread by calling setThreadHealth()
 	 *
@@ -266,7 +266,7 @@ class ThreadBaseClass : public util::BaseClass {
 
 	/**
 	 * \brief the time_t holding the last time the thread status was checked,
-	 * set by setLastCheck() in check
+	 * set by setLastHealthy() in check
 	 */
 	std::atomic<double> m_tLastHealthy;
 

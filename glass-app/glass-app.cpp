@@ -3,7 +3,7 @@
 #include <json.h>
 #include <logger.h>
 #include <config.h>
-#include <input.h>
+#include <file_input.h>
 #include <file_output.h>
 #include <associator.h>
 
@@ -255,7 +255,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// create our objects
-	glass::input * InputThread = new glass::input(5);
+	glass::fileInput * InputThread = new glass::fileInput();
 	glass::fileOutput * OutputThread = new glass::fileOutput();
 	glass::Associator * AssocThread = new glass::Associator();
 
@@ -295,7 +295,7 @@ int main(int argc, char* argv[]) {
 
 	// output needs to know about the associator thread to request
 	// information
-	OutputThread->Associator = AssocThread;
+	OutputThread->setAssociator(AssocThread);
 
 	// assoc thread needs to know about the input and output threads
 	AssocThread->Input = InputThread;

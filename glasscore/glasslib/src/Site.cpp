@@ -278,7 +278,8 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	dQual = qual;
 
 	// copy use
-	bUse = enable;
+	bEnable = enable;
+	bUse = true;
 	bUseForTele = useTele;
 
 	// pointer to main glass class
@@ -306,6 +307,7 @@ void CSite::clear() {
 	sLoc = "";
 
 	bUse = true;
+	bEnable = true;
 	bUseForTele = true;
 	dQual = 1.0;
 
@@ -329,6 +331,9 @@ void CSite::clear() {
 
 	// reset last pick added time
 	std::time(&tLastPickAdded);
+
+	// reset picks since last check
+	setPicksSinceCheck(0);
 }
 
 void CSite::clearVPick() {
@@ -345,7 +350,7 @@ void CSite::update(CSite *aSite) {
 	}
 
 	// update station quality metrics
-	bUse = aSite->getUse();
+	bEnable = aSite->getEnable();
 	bUseForTele = aSite->getUseForTele();
 	dQual = aSite->getQual();
 
@@ -457,6 +462,9 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 
 	// remember the time the last pick was added
 	std::time(&tLastPickAdded);
+
+	// keep track of how many picks
+	setPicksSinceCheck(getPicksSinceCheck() + 1);
 }
 
 // ---------------------------------------------------------remPick
@@ -672,9 +680,19 @@ int CSite::getNodeLinksCount() const {
 	return (size);
 }
 
+bool CSite::getEnable() const {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	return (bEnable);
+}
+
+void CSite::setEnable(bool enable) {
+	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	bEnable = enable;
+}
+
 bool CSite::getUse() const {
 	std::lock_guard<std::recursive_mutex> guard(siteMutex);
-	return (bUse);
+	return (bUse && bEnable);
 }
 
 void CSite::setUse(bool use) {
@@ -742,6 +760,16 @@ const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
 time_t CSite::getTLastPickAdded() const {
 	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	return (tLastPickAdded);
+}
+
+void CSite::setPicksSinceCheck(int count) {
+	std::lock_guard<std::recursive_mutex> siteListGuard(siteMutex);
+	nPicksSinceCheck = count;
+}
+
+int CSite::getPicksSinceCheck() const {
+	std::lock_guard<std::recursive_mutex> siteListGuard(siteMutex);
+	return(nPicksSinceCheck);
 }
 
 }  // namespace glasscore

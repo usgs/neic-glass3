@@ -14,13 +14,17 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <vector>
 
-namespace glass {
+namespace glass3 {
+namespace output {
 
+// ---------------------------------------------------------output
 output::output()
 		: glass3::util::ThreadBaseClass("output", 100) {
 	logger::log("debug", "output::output(): Construction.");
 
+	setEventThreadState(glass3::util::ThreadState::Initialized);
 	std::time(&tLastWorkReport);
 	std::time(&m_tLastSiteRequest);
 
@@ -29,7 +33,7 @@ output::output()
 	setHealthCheckInterval(120);
 
 	// interval to report performance statistics
-	ReportInterval = 60;
+	setReportInterval(60);
 
 	// init performance counters
 	m_iMessageCounter = 0;
@@ -48,16 +52,16 @@ output::output()
 	// setup thread pool for output
 	m_ThreadPool = new glass3::util::ThreadPool("outputpool");
 
-	m_bRunEventThread = false;
-	m_bCheckEventThread = true;
-	m_bEventStarted = false;
+	setEventThreadHealth();
 	m_EventThread = NULL;
-	std::time(&tLastEventCheck);
+
+	setAssociator(NULL);
 
 	// init config to defaults and allocate
 	clear();
 }
 
+// ---------------------------------------------------------~output
 output::~output() {
 	logger::log("debug", "output::~output(): Destruction.");
 
@@ -106,40 +110,38 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 		}
 	}
 
-	// lock our configuration while we're updating it
-	// this mutex may be pointless
-	m_ConfigMutex.lock();
-
 	// publish on expiration
 	if (!(config->HasKey("PublishOnExpiration"))) {
 		// publish on expiration is optional, default to false
-		m_bPubOnExpiration = false;
+		setPubOnExpiration(false);
 		logger::log(
 				"info",
 				"output::setup(): PublishOnExpiration not specified, using default "
 				"of false.");
 	} else {
-		m_bPubOnExpiration = (*config)["PublishOnExpiration"].ToBool();
+		setPubOnExpiration((*config)["PublishOnExpiration"].ToBool());
 
 		logger::log(
 				"info",
 				"output::setup(): Using PublishOnExpiration: "
-						+ std::to_string(m_bPubOnExpiration) + " .");
+						+ std::to_string(getPubOnExpiration()) + " .");
 	}
 
 	// publicationTimes
 	if (!(config->HasKey("PublicationTimes"))) {
 		// pubdelay is optional, default to 0
-		m_PublicationTimes.push_back(0);
+		clearPubTimes();
+		addPubTime(0);
 		logger::log(
 				"info",
 				"output::setup(): PublicationTimes not specified, using default "
 				"of 0.");
 	} else {
 		json::Array dataarray = (*config)["PublicationTimes"];
+		clearPubTimes();
 		for (int i = 0; i < dataarray.size(); i++) {
 			int pubTime = dataarray[i].ToInt();
-			m_PublicationTimes.push_back(pubTime);
+			addPubTime(pubTime);
 
 			logger::log(
 					"info",
@@ -152,28 +154,28 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	// agencyid
 	if (!(config->HasKey("OutputAgencyID"))) {
 		// agencyid is optional
-		m_sOutputAgencyID = "US";
+		setOutputAgency("US");
 		logger::log("info",
 					"output::setup(): Defaulting to US as OutputAgencyID.");
 	} else {
-		m_sOutputAgencyID = (*config)["OutputAgencyID"].ToString();
+		setOutputAgency((*config)["OutputAgencyID"].ToString());
 		logger::log(
 				"info",
-				"output::setup(): Using AgencyID: " + m_sOutputAgencyID
+				"output::setup(): Using AgencyID: " + getOutputAgencyId()
 						+ " for output.");
 	}
 
 	// author
 	if (!(config->HasKey("OutputAuthor"))) {
 		// agencyid is optional
-		m_sOutputAuthor = "glass";
+		setOutputAuthor("glass3");
 		logger::log("info",
 					"output::setup(): Defaulting to glass as OutputAuthor.");
 	} else {
-		m_sOutputAuthor = (*config)["OutputAuthor"].ToString();
+		setOutputAuthor((*config)["OutputAuthor"].ToString());
 		logger::log(
 				"info",
-				"output::setup(): Using Author: " + m_sOutputAuthor
+				"output::setup(): Using Author: " + getOutputAuthor()
 						+ " for output.");
 	}
 
@@ -181,27 +183,25 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("SiteListDelay"))) {
 		logger::log("info", "output::setup(): SiteListDelay not specified.");
 	} else {
-		m_iSiteListDelay = (*config)["SiteListDelay"].ToInt();
+		setSiteListDelay((*config)["SiteListDelay"].ToInt());
 
 		logger::log(
 				"info",
 				"output::setup(): Using SiteListDelay: "
-						+ std::to_string(m_iSiteListDelay) + ".");
+						+ std::to_string(getSiteListDelay()) + ".");
 	}
 
 	// StationFile
 	if (!(config->HasKey("StationFile"))) {
 		logger::log("info", "output::setup(): StationFile not specified.");
 	} else {
-		m_sStationFile = (*config)["StationFile"].ToString();
+		setStationFile((*config)["StationFile"].ToString());
 
 		logger::log(
 				"info",
-				"output::setup(): Using StationFile: " + m_sStationFile + ".");
+				"output::setup(): Using StationFile: " + getStationFile()
+						+ ".");
 	}
-
-	// unlock our configuration
-	m_ConfigMutex.unlock();
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_TrackingCache != NULL) {
@@ -231,24 +231,24 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	return (true);
 }
 
+// ---------------------------------------------------------clear
 void output::clear() {
 	logger::log("debug", "output::clear(): clearing configuration.");
 
-	// lock our configuration while we're updating it
-	// this mutex may be pointless
-	m_ConfigMutex.lock();
+	setPubOnExpiration(false);
 
-	m_PublicationTimes.clear();
-	m_iSiteListDelay = -1;
-	m_sStationFile = "";
+	clearPubTimes();
+	setSiteListDelay(-1);
+	setStationFile("");
 
-	// unlock our configuration
-	m_ConfigMutex.unlock();
+	setOutputAgency("US");
+	setOutputAuthor("glass3");
 
 	// finally do baseclass clear
 	glass3::util::BaseClass::clear();
 }
 
+// ---------------------------------------------------------sendToOutput
 void output::sendToOutput(std::shared_ptr<json::Object> message) {
 	if (message == NULL) {
 		return;
@@ -280,11 +280,14 @@ void output::sendToOutput(std::shared_ptr<json::Object> message) {
 	}
 }
 
+// ---------------------------------------------------------start
 bool output::start() {
 	// are we already running
-	if (m_bRunEventThread == true) {
+	if ((getEventThreadState() == glass3::util::ThreadState::Starting)
+			|| (getEventThreadState() == glass3::util::ThreadState::Started)) {
 		logger::log("warning",
-					"output::start(): Event Thread is already running.");
+					"output::start(): Event Thread is already starting "
+							"or running. (" + getThreadName() + ")");
 		return (false);
 	}
 
@@ -295,7 +298,8 @@ bool output::start() {
 		return (false);
 	}
 
-	m_bEventStarted = true;
+	// we're starting
+	setEventThreadState(glass3::util::ThreadState::Starting);
 
 	// start the thread
 	m_EventThread = new std::thread(&output::checkEventsLoop, this);
@@ -304,10 +308,14 @@ bool output::start() {
 	return (ThreadBaseClass::start());
 }
 
+// ---------------------------------------------------------stop
 bool output::stop() {
 	// check if we're running
-	if (m_bRunEventThread == false) {
-		logger::log("warning", "output::stop(): Event Thread is not running. ");
+	if ((getEventThreadState() == glass3::util::ThreadState::Stopping)
+			|| (getEventThreadState() == glass3::util::ThreadState::Stopped)
+			|| (getEventThreadState() == glass3::util::ThreadState::Initialized)) {
+		logger::log("warning", "output::stop(): Event Thread is not running, "
+				"or is already stopping. (" + getThreadName() + ")");
 		return (false);
 	}
 
@@ -318,10 +326,8 @@ bool output::stop() {
 		return (false);
 	}
 
-	m_bEventStarted = false;
-
-	// tell the thread to stop
-	m_bRunEventThread = false;
+	// we're stopping
+	setEventThreadState(glass3::util::ThreadState::Stopping);
 
 	// wait for the thread to finish
 	m_EventThread->join();
@@ -330,22 +336,27 @@ bool output::stop() {
 	delete (m_EventThread);
 	m_EventThread = NULL;
 
-	// we're no longer running
-	m_bCheckEventThread = false;
+	// we're now stopped
+	setEventThreadState(glass3::util::ThreadState::Stopped);
 
 	// let threadbaseclass handle background worker thread
 	return (ThreadBaseClass::stop());
 }
 
-glass3::util::ThreadState output::getThreadState() {
-	if (m_bRunEventThread == false) {
-		return (glass3::util::ThreadState::Stopped);
+// ---------------------------------------------------------setEventThreadHealth
+void output::setEventThreadHealth(bool health) {
+	if (health == true) {
+		std::time_t tNow;
+		std::time(&tNow);
+		setEventLastHealthy(tNow);
+	} else {
+		setEventLastHealthy(0);
+		logger::log("warning",
+					"output::setEventThreadHealth(): health set to false");
 	}
-
-	// let threadbaseclass handle background worker thread
-	return (ThreadBaseClass::getThreadState());
 }
 
+// ---------------------------------------------------------healthCheck
 bool output::healthCheck() {
 	// don't check threadpool if it is not created yet
 	if (m_ThreadPool != NULL) {
@@ -355,35 +366,33 @@ bool output::healthCheck() {
 		}
 	}
 
-	if ((m_bEventStarted == true) && (getHealthCheckInterval() > 0)) {
+	if ((getThreadState() != glass3::util::ThreadState::Starting)
+			&& (getThreadState() != glass3::util::ThreadState::Initialized)
+			&& (getHealthCheckInterval() > 0)) {
+		// thread is dead if we're not running
+		if (getEventThreadState() != glass3::util::ThreadState::Started) {
+			logger::log(
+					"error",
+					"output::healthCheck(): Thread is not running. ("
+							+ getThreadName() + ")");
+			return (false);
+		}
+
 		// see if it's time to check
 		time_t tNow;
 		std::time(&tNow);
-		if ((tNow - tLastEventCheck) >= getHealthCheckInterval()) {
-			// lock the mutex to make sure we
-			// don't run into a threading issue
-			// this *may* be excessive
-			m_CheckEventMutex.lock();
-
-			// if the check is false, the thread is dead
-			if (m_bCheckEventThread == false) {
-				m_CheckEventMutex.unlock();
-				logger::log(
-						"error",
-						"output::check(): m_bCheckEventThread is false. "
-								" after an interval of "
-								+ std::to_string(getHealthCheckInterval())
-								+ " seconds.");
-				return (false);
-			}
-
-			// mark check as false until next time
-			// if the thread is alive, it'll mark it
-			// as true.
-			m_bCheckEventThread = false;
-			m_CheckEventMutex.unlock();
-
-			tLastEventCheck = tNow;
+		int lastCheckInterval = (tNow - getEventLastHealthy());
+		if (lastCheckInterval > getHealthCheckInterval()) {
+			// if the we've exceeded the health check interval, the thread
+			// is dead
+			logger::log(
+					"error",
+					"output::healthCheck(): lastCheckInterval for thread "
+							+ getThreadName()
+							+ " exceeds health check interval ( "
+							+ std::to_string(lastCheckInterval) + " > "
+							+ std::to_string(getHealthCheckInterval()) + " )");
+			return (false);
 		}
 	}
 
@@ -391,7 +400,7 @@ bool output::healthCheck() {
 	return (ThreadBaseClass::healthCheck());
 }
 
-// add data to output cache
+// ---------------------------------------------------------addTrackingData
 bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (data == NULL) {
@@ -440,7 +449,7 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 		json::Array pubLog;
 
 		// for each pub time
-		for (auto pubTime : m_PublicationTimes) {
+		for (auto pubTime : getPubTimes()) {
 			// generate a pub log entry
 			pubLog.push_back(0);
 		}
@@ -456,7 +465,7 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 	return (m_TrackingCache->addToCache(data, id));
 }
 
-// remove data from output cache
+// ---------------------------------------------------------removeTrackingData
 bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
@@ -480,7 +489,7 @@ bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 	return (removeTrackingData(ID));
 }
 
-// remove data from output cache
+// ---------------------------------------------------------removeTrackingData
 bool output::removeTrackingData(std::string ID) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
@@ -496,6 +505,10 @@ bool output::removeTrackingData(std::string ID) {
 	}
 }
 
+
+
+
+// ---------------------------------------------------------getTrackingData
 std::shared_ptr<const json::Object> output::getTrackingData(std::string id) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	std::shared_ptr<json::Object> nullObj;
@@ -517,6 +530,7 @@ std::shared_ptr<const json::Object> output::getTrackingData(std::string id) {
 	}
 }
 
+// ---------------------------------------------------------getNextTrackingData
 std::shared_ptr<const json::Object> output::getNextTrackingData() {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	// get the data
@@ -539,7 +553,7 @@ std::shared_ptr<const json::Object> output::getNextTrackingData() {
 	return (NULL);
 }
 
-// check if data in output cache
+// ---------------------------------------------------------haveTrackingData
 bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
@@ -562,6 +576,7 @@ bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 	return (haveTrackingData(ID));
 }
 
+// ---------------------------------------------------------haveTrackingData
 bool output::haveTrackingData(std::string ID) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
@@ -572,21 +587,21 @@ bool output::haveTrackingData(std::string ID) {
 	return (m_TrackingCache->isInCache(ID));
 }
 
+// ---------------------------------------------------------clearTrackingData
 void output::clearTrackingData() {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	m_TrackingCache->clear();
 }
 
+// ---------------------------------------------------------checkEventsLoop
 void output::checkEventsLoop() {
 	// we're running
-	m_bRunEventThread = true;
+	setEventThreadState(glass3::util::ThreadState::Started);
 
 	// run until told to stop
-	while (m_bRunEventThread) {
+	while (getEventThreadState() == glass3::util::ThreadState::Started) {
 		// signal that we're still running
-		m_CheckEventMutex.lock();
-		m_bCheckEventThread = true;
-		m_CheckEventMutex.unlock();
+		setEventThreadHealth();
 
 		// see if there's anything in the tracking cache
 		std::shared_ptr<const json::Object> data = getNextTrackingData();
@@ -632,7 +647,7 @@ void output::checkEventsLoop() {
 			// process the data based on the tracking message
 			if (command == "Event") {
 				// Request the hypo from associator
-				if (Associator != NULL) {
+				if (getAssociator() != NULL) {
 					// build the request
 					std::shared_ptr<json::Object> datarequest =
 							std::make_shared<json::Object>(json::Object());
@@ -640,7 +655,7 @@ void output::checkEventsLoop() {
 					(*datarequest)["Pid"] = id;
 
 					// send the request
-					Associator->sendToAssociator(datarequest);
+					getAssociator()->sendToAssociator(datarequest);
 				}
 			}
 		}
@@ -651,17 +666,17 @@ void output::checkEventsLoop() {
 
 	logger::log("info", "output::checkEventsLoop(): Stopped thread.");
 
+	setEventThreadState(glass3::util::ThreadState::Stopped);
+
 	// done with thread
 	return;
 }
 
+// ---------------------------------------------------------work
 bool output::work() {
 	// pull data from our config at the start of each loop
 	// so that we can have config that changes
-	// should I do this?
-	m_ConfigMutex.lock();
-	int siteListDelay = m_iSiteListDelay;
-	m_ConfigMutex.unlock();
+	int siteListDelay = getSiteListDelay();
 
 	// null check
 	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
@@ -684,14 +699,14 @@ bool output::work() {
 
 	// if we got something
 	if (message != NULL) {
-		/* logger::log(
+		/*logger::log(
 		 "debug",
 		 "associator::dispatch(): got message:"
 		 + json::Serialize(*message)
 		 + " from associator. (outputQueueSize:"
 		 + std::to_string(outputQueueSize) + ", lookupQueueSize:"
-		 + std::to_string(lookupQueueSize) + ")");
-		 */
+		 + std::to_string(lookupQueueSize) + ")");*/
+
 		// what time is it
 		time_t tNow;
 		std::time(&tNow);
@@ -819,7 +834,7 @@ bool output::work() {
 					// or if we're configured to always send expiration
 					// hypos
 					if ((isDataFinished(trackingData) == false)
-							|| (m_bPubOnExpiration == true)) {
+							|| (getPubOnExpiration() == true)) {
 						// get the hypo from the event
 						json::Object jsonHypo = (*message)["Hypo"];
 
@@ -854,7 +869,7 @@ bool output::work() {
 			m_iExpireCounter++;
 		} else if (messagetype == "SiteLookup") {
 			// station info request
-
+			logger::log("debug", "output::work(): Writing site lookup message");
 			// output immediately
 			writeOutput(message);
 
@@ -868,7 +883,7 @@ bool output::work() {
 		}
 
 		// reporting
-		if ((tNow - tLastWorkReport) >= ReportInterval) {
+		if ((tNow - tLastWorkReport) >= getReportInterval()) {
 			if (m_iMessageCounter == 0)
 				logger::log(
 						"warning",
@@ -923,14 +938,14 @@ bool output::work() {
 		// every interval
 		if ((tNowRequest - m_tLastSiteRequest) >= siteListDelay) {
 			// Request the sitelist from associator
-			if (Associator != NULL) {
+			if (getAssociator() != NULL) {
 				// build the request
 				std::shared_ptr<json::Object> datarequest = std::make_shared<
 						json::Object>(json::Object());
 				(*datarequest)["Cmd"] = "ReqSiteList";
 
 				// send the request
-				Associator->sendToAssociator(datarequest);
+				getAssociator()->sendToAssociator(datarequest);
 			}
 
 			// this is now the last time we wrote
@@ -942,7 +957,7 @@ bool output::work() {
 	return (true);
 }
 
-// handle output
+// ---------------------------------------------------------writeOutput
 void output::writeOutput(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
@@ -966,8 +981,8 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 		ID = (*data)["Pid"].ToString();
 	}
 
-	std::string agency = getSOutputAgencyId();
-	std::string author = getSOutputAuthor();
+	std::string agency = getOutputAgencyId();
+	std::string author = getOutputAuthor();
 
 	if (dataType == "Hypo") {
 		// convert a hypo to a detection
@@ -1000,7 +1015,8 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 	}
 }
 
-// filter
+
+// ---------------------------------------------------------isDataReady
 bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
@@ -1049,7 +1065,7 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	bool changed = isDataChanged(data);
 
 	// for each publication time
-	for (int i = 0; i < m_PublicationTimes.size(); i++) {
+	for (int i = 0; i < getPubTimes().size(); i++) {
 		// get the published version for this pub time
 		int pubVersion = pubLog[i].ToInt();
 
@@ -1060,7 +1076,7 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 		}
 
 		// has this pub time passed?
-		if (tNow < (createTime + m_PublicationTimes[i])) {
+		if (tNow < (createTime + getPubTimes()[i])) {
 			// no, move on
 			continue;
 		}
@@ -1086,14 +1102,13 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 					"output::isdataready(): Publishing " + id + " version:"
 							+ std::to_string(currentVersion) + " tNow:"
 							+ std::to_string(static_cast<int>(tNow))
-							+ " > (createTime + m_PublicationTimes[i]): "
+							+ " > (createTime + getPubTimes()[i]): "
 							+ std::to_string(
 									static_cast<int>((createTime
-											+ m_PublicationTimes[i])))
+											+ getPubTimes()[i])))
 							+ " (createTime: " + std::to_string(createTime)
-							+ " m_PublicationTimes[i]: "
-							+ std::to_string(
-									static_cast<int>(m_PublicationTimes[i]))
+							+ " getPubTimes()[i]: "
+							+ std::to_string(static_cast<int>(getPubTimes()[i]))
 							+ ")");
 
 			// ready to publish
@@ -1114,6 +1129,7 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	return (false);
 }
 
+// ---------------------------------------------------------isDataChanged
 bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log("error",
@@ -1156,6 +1172,7 @@ bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 	return (true);
 }
 
+// ---------------------------------------------------------isDataPublished
 bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 								bool ignoreVersion) {
 	if (data == NULL) {
@@ -1207,6 +1224,7 @@ bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 	return (false);
 }
 
+// ---------------------------------------------------------isDataFinished
 bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
 		logger::log(
@@ -1245,4 +1263,127 @@ bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	return (true);
 }
 
-}  // namespace glass
+// ---------------------------------------------------------setOutputAgency
+void output::setOutputAgency(std::string agency) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_sOutputAgencyID = agency;
+}
+
+// ---------------------------------------------------------getOutputAgencyId
+const std::string output::getOutputAgencyId() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sOutputAgencyID);
+}
+
+// ---------------------------------------------------------setOutputAuthor
+void output::setOutputAuthor(std::string author) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_sOutputAuthor = author;
+}
+
+// ---------------------------------------------------------getOutputAuthor
+const std::string output::getOutputAuthor() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sOutputAuthor);
+}
+
+// ---------------------------------------------------------setSiteListDelay
+void output::setSiteListDelay(int delay) {
+	m_iSiteListDelay = delay;
+}
+
+// ---------------------------------------------------------getSiteListDelay
+int output::getSiteListDelay() {
+	return (m_iSiteListDelay);
+}
+
+// ---------------------------------------------------------setStationFile
+void output::setStationFile(std::string filename) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_sStationFile = filename;
+}
+
+// ---------------------------------------------------------getStationFile
+const std::string output::getStationFile() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sStationFile);
+}
+
+// ---------------------------------------------------------setReportInterval
+void output::setReportInterval(int interval) {
+	m_iReportInterval = interval;
+}
+
+// ---------------------------------------------------------getReportInterval
+int output::getReportInterval() {
+	return (m_iReportInterval);
+}
+
+// ---------------------------------------------------------setAssociator
+void output::setAssociator(glass3::util::iAssociator* associator) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_Associator = associator;
+}
+
+// ---------------------------------------------------------getAssociator
+glass3::util::iAssociator* output::getAssociator() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_Associator);
+}
+
+// ---------------------------------------------------------setPubOnExpiration
+void output::setPubOnExpiration(bool pub) {
+	m_bPubOnExpiration = pub;
+}
+
+// ---------------------------------------------------------getPubOnExpiration
+int output::getPubOnExpiration() {
+	return (m_bPubOnExpiration);
+}
+
+// ---------------------------------------------------------getPubTimes
+std::vector<int> output::getPubTimes() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_PublicationTimes);
+}
+
+// ---------------------------------------------------------setPubTimes
+void output::setPubTimes(std::vector<int> pubTimes) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_PublicationTimes = pubTimes;
+}
+
+// ---------------------------------------------------------addPubTime
+void output::addPubTime(int pubTime) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_PublicationTimes.push_back(pubTime);
+}
+
+// ---------------------------------------------------------clearPubTimes
+void output::clearPubTimes() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_PublicationTimes.clear();
+}
+
+// ---------------------------------------------------------setEventLastHealthy
+void output::setEventLastHealthy(std::time_t now) {
+	m_tEventLastHealthy = now;
+}
+
+// ---------------------------------------------------------getEventLastHealthy
+time_t output::getEventLastHealthy() {
+	return ((std::time_t) m_tEventLastHealthy);
+}
+
+// ---------------------------------------------------------setEventThreadState
+void output::setEventThreadState(glass3::util::ThreadState status) {
+	m_bEventThreadState = status;
+}
+
+// ---------------------------------------------------------getEventThreadState
+glass3::util::ThreadState output::getEventThreadState() {
+	return (m_bEventThreadState);
+}
+
+}  // namespace output
+}  // namespace glass3

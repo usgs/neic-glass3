@@ -183,7 +183,7 @@ bool Associator::work() {
 	std::time(&tNow);
 
 	// now grab whatever input might have for us and send it into glass
-	std::shared_ptr<json::Object> data = Input->getData();
+	std::shared_ptr<json::Object> data = Input->getInputData();
 
 	// only send in something if we got something
 	if (data != NULL) {
@@ -203,7 +203,7 @@ bool Associator::work() {
 	}
 
 	if ((tNow - tLastWorkReport) >= ReportInterval) {
-		int pendingdata = Input->dataCount();
+		int pendingdata = Input->getInputDataCount();
 		double averageglasstime = tGlassDuration.count() / m_iWorkCounter;
 
 		if (m_iWorkCounter == 0) {

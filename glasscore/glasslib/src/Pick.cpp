@@ -156,7 +156,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, int pickId,
 	}
 
 	// check to see if we're using this site
-	if (!site->getUse()) {
+	if (!site->getEnable()) {
 		return;
 	}
 

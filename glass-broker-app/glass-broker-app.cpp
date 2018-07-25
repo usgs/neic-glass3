@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 
+#include "broker_input/broker_input.h"
 #include "broker_output/brokerOutput.h"
 
 int main(int argc, char* argv[]) {
@@ -135,7 +136,7 @@ int main(int argc, char* argv[]) {
 				"Invalid configuration, missing <InitializeFile>, exiting.");
 
 		delete (glassConfig);
-		return (0);
+		return (1);
 	}
 
 	// load our initialize config
@@ -233,7 +234,7 @@ int main(int argc, char* argv[]) {
 			configdir, outputconfigfile);
 
 	// create our objects
-	glass::input * InputThread = new glass::input(5);
+	glass::brokerInput * InputThread = new glass::brokerInput();
 	glass::brokerOutput * OutputThread = new glass::brokerOutput();
 	glass::Associator * AssocThread = new glass::Associator();
 
@@ -273,7 +274,7 @@ int main(int argc, char* argv[]) {
 
 	// output needs to know about the associator thread to request
 	// information
-	OutputThread->Associator = AssocThread;
+	OutputThread->setAssociator(AssocThread);
 
 	// assoc thread needs to know about the input and output threads
 	AssocThread->Input = InputThread;

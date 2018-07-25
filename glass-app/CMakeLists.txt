@@ -53,17 +53,21 @@ include_directories(${process_INCLUDE_DIRS})
 find_package(output CONFIG REQUIRED)
 include_directories(${output_INCLUDE_DIRS})
 
+# input
+find_package(input CONFIG REQUIRED)
+include_directories(${input_INCLUDE_DIRS})
+
 # uuid
 include(${CMAKE_DIR}/uuid.cmake)
 
 # ----- SET INCLUDE DIRECTORIES ----- #
 include_directories ("${PROJECT_BINARY_DIR}")
-include_directories(${PROJECT_SOURCE_DIR}/input)
+include_directories(${PROJECT_SOURCE_DIR}/file_input)
 include_directories(${PROJECT_SOURCE_DIR}/file_output)
 
 # ----- LIBRARIES ----- #
 # input
-add_library (input STATIC ${PROJECT_SOURCE_DIR}/input/input.cpp ${PROJECT_SOURCE_DIR}/input/input.h)
+add_library (file_input STATIC ${PROJECT_SOURCE_DIR}/file_input/file_input.cpp ${PROJECT_SOURCE_DIR}/file_input/file_input.h)
 
 # output
 add_library (file_output STATIC  ${PROJECT_SOURCE_DIR}/file_output/file_output.cpp ${PROJECT_SOURCE_DIR}/file_output/file_output.h)
@@ -76,11 +80,11 @@ set(SRCS "${PROJECT_SOURCE_DIR}/glass-app.cpp")
 
 # ----- BUILD EXECUTABLE ----- #
 # NOTE: Order libraries are linked matters for G++
-set(EXE_LIBRARIES input file_output ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
+set(EXE_LIBRARIES file_input ${input_LIBRARIES} file_output ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
 include(${CMAKE_DIR}/build_exe.cmake)
 
 # ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/input ${PROJECT_SOURCE_DIR}/file_output ${PROJECT_SOURCE_DIR}/glass-app.cpp")
+set(DOC_DIRS "${PROJECT_SOURCE_DIR}/file_input ${PROJECT_SOURCE_DIR}/file_output ${PROJECT_SOURCE_DIR}/glass-app.cpp")
 include(${CMAKE_DIR}/documentation.cmake)
 
 # ----- RUN CPPCHECK ----- #

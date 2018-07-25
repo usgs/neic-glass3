@@ -25,7 +25,8 @@
 #include <vector>
 #include <memory>
 
-namespace glass {
+namespace glass3 {
+namespace output {
 /**
  * \brief glass output class
  *
@@ -85,9 +86,32 @@ class output : public glass3::util::iOutput,
 	 */
 	void sendToOutput(std::shared_ptr<json::Object> message) override;
 
+	/**
+	 * \brief work thread start function
+	 *
+	 * Overrides ThreadBaseClass::start(). Creates a thread object to run the
+	 * checkEventsLoop() function, and starts it, setting m_bEventThreadStarted to be
+	 * true, then calls ThreadBaseClass::start() to start the ThreadBaseClass
+	 * work thread
+	 *
+	 * \return returns true if successful, false if the thread creation failed
+	 * or if a thread had already been started
+	 */
 	bool start() override;
+
+	/**
+	 * \brief work thread stop function
+	 *
+	 * Overrides ThreadBaseClass::stop(). Stops, waits for, and deletes the
+	 * thread that runs the checkEventsLoop() function,
+	 * setting m_bEventThreadStarted, m_bEventThreadRunning, and m_bEventThreadHealth to
+	 * false, then calls ThreadBaseClass::stop() to stop the ThreadBaseClass
+	 * work thread
+	 *
+	 * \return returns true if successful, false if the thread is not created and
+	 * running
+	 */
 	bool stop() override;
-	glass3::util::ThreadState getThreadState() override;
 
 	/**
 	 * \brief output heath check function
@@ -98,49 +122,195 @@ class output : public glass3::util::iOutput,
 	 */
 	bool healthCheck() override;
 
-	const std::string getSOutputAgencyId() {
-		m_ConfigMutex.lock();
-		std::string outputagency = m_sOutputAgencyID;
-		m_ConfigMutex.unlock();
-		return outputagency;
-	}
-
-	const std::string getSOutputAuthor() {
-		m_ConfigMutex.lock();
-		std::string outputauthor = m_sOutputAuthor;
-		m_ConfigMutex.unlock();
-		return outputauthor;
-	}
-
-	int getISiteListDelay() {
-		m_ConfigMutex.lock();
-		int sitelistdelay = m_iSiteListDelay;
-		m_ConfigMutex.unlock();
-		return sitelistdelay;
-	}
-
-	const std::string getSStationFile() {
-		m_ConfigMutex.lock();
-		std::string stationfile = m_sStationFile;
-		m_ConfigMutex.unlock();
-		return stationfile;
-	}
+	/**
+	 * \brief Function to set the name of the output agency id
+	 *
+	 * This function sets the name of the output agency id, this name is used in
+	 * generating output
+	 *
+	 * \param id = A std::string containing the agency id to set
+	 */
+	void setOutputAgency(std::string agency);
 
 	/**
-	 * \brief Information Report interval
+	 * \brief Function to retrieve the name of the output agency id
 	 *
-	 * An integer containing the interval (in seconds) between
-	 * logging informational reports.
+	 * This function retrieves the name of output agency id, this name is used
+	 * in generating output
+	 *
+	 * \return A std::string containing the agency id
 	 */
-	int ReportInterval;
+	const std::string getOutputAgencyId();
 
 	/**
-	 * \brief Pointer to Association class
+	 * \brief Function to set the name of the output author
 	 *
-	 * A glass3::util::iassociator pointer to the class that handles association for
-	 * glass
+	 * This function sets the name of the output author, this name is used in
+	 * generating output
+	 *
+	 * \param author = A std::string containing the author to set
 	 */
-	glass3::util::iAssociator* Associator;
+	void setOutputAuthor(std::string author);
+
+	/**
+	 * \brief Function to retrieve the name of the output author
+	 *
+	 * This function retrieves the name of the output author, this name is used
+	 * in generating output
+	 *
+	 * \return A std::string containing the author
+	 */
+	const std::string getOutputAuthor();
+
+	/**
+	 * \brief Function to set the delay in requesting the site list
+	 *
+	 * This function sets the delay in seconds before requesting glass core's
+	 * current sitelist. A negative delay indicates that the site list should
+	 * not be requested
+	 *
+	 * \param delay = An integer value containing the delay in seconds
+	 */
+	void setSiteListDelay(int delay);
+
+	/**
+	 * \brief Function to retrieve the delay in requesting the site list
+	 *
+	 * This function retrieves the delay in seconds before requesting glass
+	 * core's current sitelist
+	 *
+	 * \return Returns an integer value containing the delay in seconds
+	 */
+	int getSiteListDelay();
+
+	void setStationFile(std::string filename);
+
+	const std::string getStationFile();
+
+	/**
+	 * \brief Function to set the interval to generate informational reports
+	 *
+	 * This function sets the interval in seconds between logging informational
+	 * reports on output throughput and performance
+	 *
+	 * \param interval = An integer value containing the interval in seconds
+	 */
+	void setReportInterval(int interval);
+
+	/**
+	 * \brief Function to retrieve the interval to generate informational reports
+	 *
+	 * This function retrieves the interval in seconds between logging
+	 * informationalreports on output throughput and performance
+	 *
+	 * \return Returns an integer value containing the interval in seconds
+	 */
+	int getReportInterval();
+
+	/**
+	 * \brief Function to set the associator interface pointer
+	 *
+	 * This function sets the associator interface pointer used by output to
+	 * communicate with the associator via the sendToAssociator() function
+	 *
+	 * \param associator = A pointer to an object that implements the
+	 * glass3::util::iAssociator interface.
+	 */
+	void setAssociator(glass3::util::iAssociator* associator);
+
+	/**
+	 * \brief Function to get the associator interface pointer
+	 *
+	 * This function gets the associator interface pointer used by output to
+	 * communicate with the associator via the sendToAssociator() function
+	 *
+	 * \return Returns a pointer to an object that implements the
+	 * glass3::util::iAssociator interface.
+	 */
+	glass3::util::iAssociator* getAssociator();
+
+	/**
+	 * \brief Function to set the publish on expiration flag
+	 *
+	 * This function sets the boolean flag that indicates whether output should
+	 * generate a detection message when it receives an expiration notification
+	 * from the associator.
+	 *
+	 * \param pub = A boolean flag indicating whether to generate a detection
+	 * message on expiration
+	 */
+	void setPubOnExpiration(bool pub);
+
+	/**
+	 * \brief Function to retrieve the publish on expiration flag
+	 *
+	 * This function retrieves the boolean flag that indicates whether output
+	 * should generate a detection message when it receives an expiration
+	 * notification from the associator.
+	 *
+	 * \return Returns a boolean flag indicating whether to generate a detection
+	 * message on expiration
+	 */
+	int getPubOnExpiration();
+
+	/**
+	 * \brief Function to retrieve the publication times
+	 *
+	 * This function retrieves the publication times in seconds used to determine
+	 * when to generate detection messages for events. An event will not generate
+	 * a message if it has not changed, and will not generate a message if all
+	 * publication times have passed (unless m_bPubOnExpiration is set to true)
+	 *
+	 * \return Returns a std::vector of integers containing the times in seconds
+	 * since initial report that events should generate detection messages
+	 */
+	std::vector<int> getPubTimes();
+
+	/**
+	 * \brief Function to set the publication times
+	 *
+	 * This function sets the publication times in seconds used to determine when
+	 * to generate detection messages for events. An event will not generate
+	 * a message if it has not changed, and will not generate a message if all
+	 * publication times have passed (unless m_bPubOnExpiration is set to true)
+	 *
+	 * \param pubTimes = A std::vector of integers containing the times in seconds
+	 * since initial report that events should generate detection messages
+	 */
+	void setPubTimes(std::vector<int> pubTimes);
+
+	/**
+	 * \brief Function to add a single publication time to the list
+	 *
+	 * This function adds a single publication times in seconds to the list used
+	 * to determine when to generate detection messages for events. An event
+	 * will not generate a message if it has not changed, and will not generate
+	 * a message if all publication times have passed (unless m_bPubOnExpiration
+	 * is set to true)
+	 *
+	 * \param pubTime = An integer containing a times in seconds since initial
+	 * report that events should generate detection messages
+	 *
+	 */
+	void addPubTime(int pubTime);
+
+	/**
+	 * \brief Function to clear the publication times
+	 *
+	 * This function clears the publication times in seconds used to determine
+	 * when to generate detection messages for events.
+	 */
+	void clearPubTimes();
+
+	/**
+	 * \brief Checks to see if the event thread should still be running
+	 *
+	 * This function checks to see if the event thread should still running by
+	 * returning the value of m_bRunWorkThread.
+	 * \return Returns true if the thread should still running, false if it
+	 * has been stopped
+	 */
+	bool isEventThreadRunning();
 
 	/**
 	 * \brief add data to the output tracking cache
@@ -152,6 +322,16 @@ class output : public glass3::util::iOutput,
 	 */
 	bool addTrackingData(std::shared_ptr<json::Object> data);
 
+	/**
+	 * \brief get data from the output tracking cache by id
+	 *
+	 * Get the detection data from the cache of data pending for output based
+	 * on a provided id
+	 *
+	 * \param id - A std::string contaning the id of the detection data to
+	 * retrieve from the cache
+	 * \return Returns the data if found, null otherwise
+	 */
 	std::shared_ptr<const json::Object> getTrackingData(std::string id);
 
 	/**
@@ -175,6 +355,16 @@ class output : public glass3::util::iOutput,
 	 * \return Returns true if the data is in the cache, false otherwise
 	 */
 	bool haveTrackingData(std::shared_ptr<json::Object> data);
+
+	/**
+	 * \brief check if data is in output tracking cache by id
+	 *
+	 * Check to see if given detection data is already in the output tracking
+	 * cache by id.
+	 *
+	 * \param ID - A std::string containing the id of the detection data to check.
+	 * \return Returns true if the data is in the cache, false otherwise
+	 */
 	bool haveTrackingData(std::string ID);
 
 	/**
@@ -186,6 +376,15 @@ class output : public glass3::util::iOutput,
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool removeTrackingData(std::shared_ptr<const json::Object> data);
+
+	/**
+	 * \brief remove data from the output tracking cache by id
+	 *
+	 * Remove the provided detection data from the output tracking cache. by id
+	 *
+	 * \param ID - A std::string containing the id of the detection data to remove.
+	 * \return Returns true if successful, false otherwise
+	 */
 	bool removeTrackingData(std::string ID);
 
 	/**
@@ -205,22 +404,71 @@ class output : public glass3::util::iOutput,
 	 * \return Returns true if the data is ready, false if not.
 	 */
 	bool isDataReady(std::shared_ptr<const json::Object> data);
+
+	/**
+	 * \brief check to see if detection data has changed
+	 *
+	 * Check the given detection data to see if it has been changed
+	 *
+	 * \param data - A pointer to the json::Object containing the detection
+	 * data to check
+	 * \return Returns true if the data is has been changed, false if not.
+	 */
 	bool isDataChanged(std::shared_ptr<const json::Object> data);
+
+	/**
+	 * \brief check to see if detection data has been published before
+	 *
+	 * Check the given detection data to see if it has been previously published
+	 *
+	 * \param data - A pointer to the json::Object containing the detection
+	 * data to check
+	 * \return Returns true if the data is has been published, false if not.
+	 */
 	bool isDataPublished(std::shared_ptr<const json::Object> data,
 							bool ignoreVersion = true);
+	/**
+	 * \brief check to see if detection data is finished
+	 *
+	 * Check the given detection data to see if is finished (no more
+	 * publications)
+	 *
+	 * \param data - A pointer to the json::Object containing the detection
+	 * data to check
+	 * \return Returns true if the data is finished, false if not.
+	 */
 	bool isDataFinished(std::shared_ptr<const json::Object> data);
 
- protected:
 	/**
-	 * \brief output work function
+	 * \brief Function to retrieve the last time the event thread health status
+	 * was checked
 	 *
-	 * The function (from threadclassbase) used to do work.
+	 * This function retrieves the last time the health status of the event
+	 * thread was checked by the check() function
 	 *
-	 * \return returns true if work was successful, false otherwise.
+	 * \return A std::time_t containing the last check time
 	 */
-	bool work() override;
+	std::time_t getLastEventHealthCheck();
 
-	void checkEventsLoop();
+	/**
+	 * \brief Function to check thread health
+	 *
+	 * This function checks the thread health by getting the value of
+	 * m_bCheckWorkThread.
+	 *
+	 * \return Returns true if the thread is alive, false if the thread has
+	 * not responded yet
+	 */
+	bool getEventThreadHealth();
+
+	/**
+	 *\brief Retrieves whether the event thread has been started
+	 *
+	 * This function retrieves the value of m_bEventThreadStarted, which indicates
+	 * whether the event thread has been created and started
+	 * \returns true if the event thread has been started, false otherwise
+	 */
+	bool isEventThreadStarted();
 
 	/**
 	 * \brief output file writing function
@@ -232,10 +480,126 @@ class output : public glass3::util::iOutput,
 	 */
 	void writeOutput(std::shared_ptr<json::Object> data);
 
+	/**
+	 * \brief output background work function
+	 *
+	 * The function (from threadclassbase) used to do background work. It is
+	 * used to  process messages from the associator, and to queue messages to
+	 * be written out
+	 *
+	 * \return returns true if work was successful, false otherwise.
+	 */
+	bool work() override;
+
+	/**
+	 * \brief Function to retrieve the last time the event thread health status
+	 * was checked
+	 *
+	 * This function retrieves the last time the health status of the event
+	 *  thread was set by the setEventLastHealthy() function
+	 *
+	 * \return A std::time_t containing the last check time
+	 */
+	std::time_t getEventLastHealthy();
+
+	/**
+	 * \brief Function to get event thread state
+	 *
+	 * This function gets the event thread state by getting the value of
+	 * m_bEventThreadState.
+	 *
+	 * \return Returns a glass3::util::ThreadState enumeration value representing
+	 * the event thread state
+	 */
+	virtual glass3::util::ThreadState getEventThreadState();
+
+	/**
+	 * \brief Function to set event thread health
+	 *
+	 * This function signifies the event thread health by using
+	 * setEventLastHealthy to set m_tEventLastHealthy to now if health is true
+	 *
+	 * \param health = A boolean value indicating thread health, true indicates
+	 * that setLastHealthy to set m_tEventLastHealthy to now, false indicates
+	 * it should not
+	 */
+	void setEventThreadHealth(bool health = true);
+
+ protected:
+	/**
+	 * \brief output tracking data background work function
+	 *
+	 * This function is used to manage the tracking cache, and to send request
+	 * data (such as hypocenters) from the associator
+	 */
+	void checkEventsLoop();
+
+	/**
+	 * \brief Send output data
+	 *
+	 * This pure virtual function is implemented by a class to support writing
+	 * a message, be it to disk, memory, kafka, etc.
+	 *
+	 * \param type - A std::string containing the type of the message
+	 * \param id - A std::string containing the id of the message
+	 * \param message - A std::string containing the message
+	 */
 	virtual void sendOutput(const std::string &type, const std::string &id,
 							const std::string &message) = 0;
 
+	/**
+	 * \brief Function to set thread state
+	 *
+	 * This function signifies the wcwnr thread state by setting
+	 * m_bEventThreadState to the provided value.
+	 *
+	 * \param state = A glass3::util::ThreadState enumeration value indicating
+	 * the new event thread state
+	 */
+	void setEventThreadState(glass3::util::ThreadState state);
+
+	/**
+	 * \brief Function to set the last time the event thread was healthy
+	 *
+	 * This function sets the last time the event thread was healthy
+	 *
+	 * \param now - A std::time_t containing the last time the event thread was
+	 * healthy
+	 */
+	void setEventLastHealthy(std::time_t now);
+
  private:
+	/**
+	 * \brief A std::vector of integers containing the times in seconds
+	 * since initial report that events should generate detection messages. An
+	 * event will not generate a message if it has not changed, and will not
+	 * generate a message if all publication times have passed (unless
+	 * m_bPubOnExpiration is set to true)
+	 */
+	std::vector<int> m_PublicationTimes;
+
+	/**
+	 * \brief The boolean flag controlling whether to generate a detection
+	 * message on expiration notification from the associator
+	 */
+	std::atomic<bool> m_bPubOnExpiration;
+
+	/**
+	 * \brief Information Report interval
+	 *
+	 * An integer containing the interval (in seconds) between
+	 * logging informational reports.
+	 */
+	std::atomic<int> m_iReportInterval;
+
+	/**
+	 * \brief Pointer to Association class
+	 *
+	 * A glass3::util::iassociator pointer to the class that handles association for
+	 * glass
+	 */
+	glass3::util::iAssociator* m_Associator;
+
 	/**
 	 * \brief the std::string configuration value defining the
 	 * agency identifier used when generating output files
@@ -252,17 +616,12 @@ class output : public glass3::util::iOutput,
 	 * \brief the integer configuration value indicating the delay in seconds
 	 * before requesting glass core's current sitelist
 	 */
-	int m_iSiteListDelay;
+	std::atomic<int> m_iSiteListDelay;
 
 	/**
 	 * \brief the std::string containing the station file name.
 	 */
 	std::string m_sStationFile;
-
-	/**
-	 * \brief the mutex for configuration
-	 */
-	std::mutex m_ConfigMutex;
 
 	/**
 	 * \brief pointer to the glass3::util::cache class used to
@@ -282,10 +641,6 @@ class output : public glass3::util::iOutput,
 	 * incoming lookup messages
 	 */
 	glass3::util::Queue* m_LookupQueue;
-
-	std::vector<int> m_PublicationTimes;
-
-	bool m_bPubOnExpiration;
 
 	/**
 	 * \brief the total messages performance counter
@@ -344,29 +699,17 @@ class output : public glass3::util::iOutput,
 	std::thread *m_EventThread;
 
 	/**
-	 * \brief boolean flag indicating whether the event thread should run
+	 * \brief glass3::util::ThreadState enumeration used to track event thread
+	 * status, set by setEventThreadState()
 	 */
-	bool m_bRunEventThread;
+	std::atomic<glass3::util::ThreadState> m_bEventThreadState;
 
 	/**
-	 * \brief boolean flag indicating whether the event thread has been started
+	 * \brief the time_t holding the last time the event thread status was
+	 * checked, set by setEventLastHealthy() in check
 	 */
-	bool m_bEventStarted;
-
-	/**
-	 * \brief boolean flag used to check thread status
-	 */
-	bool m_bCheckEventThread;
-
-	/**
-	 * \brief the std::time_t holding the last time the thread status was checked
-	 */
-	std::time_t tLastEventCheck;
-
-	/**
-	 * \brief the std::mutex for m_bCheckEventThread
-	 */
-	std::mutex m_CheckEventMutex;
+	std::atomic<double> m_tEventLastHealthy;
 };
-}  // namespace glass
+}  // namespace output
+}  // namespace glass3
 #endif  // OUTPUT_H

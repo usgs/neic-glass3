@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <input.h>
+#include <file_input.h>
 #include <config.h>
 #include <fileutil.h>
 
@@ -17,14 +17,13 @@
 #define QUEUEMAXSIZE 1000
 #define TESTAGENCYID "US"
 #define TESTAUTHOR "glassConverter"
-#define DATACOUNT 89
+#define DATACOUNT 6
 
 #define CCFILE "example.dat"
 #define GPICKFILE "example.gpick"
 #define JSONPICKFILE "example.jsonpick"
 #define JSONCORLFILE "example.jsoncorl"
 #define JSONORIGFILE "example.jsondetect"
-#define BADFILE "bad.jsonpick"
 
 #define EXPECTEDDATA "{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":4.630000},\"Filter\":[{\"HighPass\":0.500000,\"LowPass\":4.000000}],\"ID\":\"22637615\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"SHZ\",\"Location\":\"FB\",\"Network\":\"IM\",\"Station\":\"PDAR\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-03-02T23:59:03.849Z\",\"Type\":\"Pick\"}"  // NOLINT
 
@@ -32,52 +31,43 @@ class InputTest : public ::testing::Test {
  protected:
 	virtual void SetUp() {
 		// create input test
-		InputThread = new glass::input(5);
+		InputThread = new glass::fileInput();
 		InputConfig = NULL;
 		input_config_json = NULL;
 
-		//logger::log_init("inputtest", spdlog::level::debug, true, testpath);
+		// logger::log_init("inputtest", spdlog::level::debug, true, testpath);
 
-		int nError1 = 0;
 		int nError2 = 0;
 
 		testpath = std::string(TESTPATH);
 		testdatapath = std::string(TESTDATAPATH);
-		std::string error = std::string(ERRORDIRECTORY);
 		std::string archive = std::string(ARCHIVEDIRECTORY);
 
 		// create archive and error directories
 		configdirectory = "./" + testpath;
 		inputdirectory = "./" + testpath + "/" + testdatapath;
-		errordirectory = "./" + testpath + "/" + testdatapath + "/" + error;
 		archivedirectory = "./" + testpath + "/" + testdatapath + "/" + archive;
 
 		// create testing directories
 #ifdef _WIN32
-		nError1 = _mkdir(errordirectory.c_str());
 		nError2 = _mkdir(archivedirectory.c_str());
 #else
 		mode_t nMode = 0733;
-		nError1 = mkdir(errordirectory.c_str(), nMode);
 		nError2 = mkdir(archivedirectory.c_str(), nMode);
 #endif
 
-		if (nError1 != 0) {
-			printf("Failed to create testing error directory %s.\n",
-					errordirectory.c_str());
-		}
 		if (nError2 != 0) {
 			printf("Failed to create testing archive directory %s.\n",
 					archivedirectory.c_str());
 		}
 
 		// build file names
-		ccfile = archivedirectory + "/" + std::string(CCFILE);
+		// ccfile = archivedirectory + "/" + std::string(CCFILE);
 		gpickfile = archivedirectory + "/" + std::string(GPICKFILE);
-		jsonpickfile = archivedirectory + "/" + std::string(JSONPICKFILE);
-		jsoncorlfile = archivedirectory + "/" + std::string(JSONCORLFILE);
-		jsonorigfile = archivedirectory + "/" + std::string(JSONORIGFILE);
-		badfile = errordirectory + "/" + std::string(BADFILE);
+		// jsonpickfile = archivedirectory + "/" + std::string(JSONPICKFILE);
+		//  jsoncorlfile = archivedirectory + "/" + std::string(JSONCORLFILE);
+		// jsonorigfile = archivedirectory + "/" + std::string(JSONORIGFILE);
+		// badfile = errordirectory + "/" + std::string(BADFILE);
 	}
 
 	bool configure() {
@@ -96,31 +86,29 @@ class InputTest : public ::testing::Test {
 
 	virtual void TearDown() {
 		// need to move the files in error and archive back to input
-		if (std::ifstream(ccfile).good()) {
-			glass3::util::moveFileTo(ccfile, inputdirectory);
-		}
+		// if (std::ifstream(ccfile).good()) {
+		// 	glass3::util::moveFileTo(ccfile, inputdirectory);
+		// }
 		if (std::ifstream(gpickfile).good()) {
 			glass3::util::moveFileTo(gpickfile, inputdirectory);
 		}
-		if (std::ifstream(jsonpickfile).good()) {
-			glass3::util::moveFileTo(jsonpickfile, inputdirectory);
-		}
-		if (std::ifstream(jsoncorlfile).good()) {
-			glass3::util::moveFileTo(jsoncorlfile, inputdirectory);
-		}
-		if (std::ifstream(jsonorigfile).good()) {
-			glass3::util::moveFileTo(jsonorigfile, inputdirectory);
-		}
-		if (std::ifstream(badfile).good()) {
-			glass3::util::moveFileTo(badfile, inputdirectory);
-		}
+		// if (std::ifstream(jsonpickfile).good()) {
+		// 	glass3::util::moveFileTo(jsonpickfile, inputdirectory);
+		// }
+		// if (std::ifstream(jsoncorlfile).good()) {
+		// 	glass3::util::moveFileTo(jsoncorlfile, inputdirectory);
+		// }
+		// if (std::ifstream(jsonorigfile).good()) {
+		// 	glass3::util::moveFileTo(jsonorigfile, inputdirectory);
+		// }
+		// if (std::ifstream(badfile).good()) {
+		// 	glass3::util::moveFileTo(badfile, inputdirectory);
+		// }
 
 		// need to clean up error and archive directories
 #ifdef _WIN32
-		RemoveDirectory(errordirectory.c_str());
 		RemoveDirectory(archivedirectory.c_str());
 #else
-		rmdir(errordirectory.c_str());
 		rmdir(archivedirectory.c_str());
 #endif
 
@@ -130,7 +118,7 @@ class InputTest : public ::testing::Test {
 			delete (InputConfig);
 	}
 
-	glass::input * InputThread;
+	glass::fileInput * InputThread;
 	glass3::util::Config * InputConfig;
 	std::shared_ptr<const json::Object> input_config_json;
 
@@ -139,15 +127,15 @@ class InputTest : public ::testing::Test {
 
 	std::string configdirectory;
 	std::string inputdirectory;
-	std::string errordirectory;
+	// std::string errordirectory;
 	std::string archivedirectory;
 
-	std::string ccfile;
+	// std::string ccfile;
 	std::string gpickfile;
-	std::string jsonpickfile;
-	std::string jsoncorlfile;
-	std::string jsonorigfile;
-	std::string badfile;
+	// std::string jsonpickfile;
+	// std::string jsoncorlfile;
+	// std::string jsonorigfile;
+	// std::string badfile;
 };
 
 // tests to see if correlation can successfully
@@ -161,10 +149,6 @@ TEST_F(InputTest, Construction) {
 	ASSERT_EQ(InputThread->getSleepTime(), SLEEPTIME)
 	<< "check input thread sleep time";
 
-	// assert infile sleep
-	ASSERT_EQ(InputThread->getIInFileSleep(), FILESLEEPTIME)
-	<< "check in file sleep time";
-
 	// assert class is not set up
 	ASSERT_FALSE(InputThread->getSetup()) << "input thread is not set up";
 
@@ -176,7 +160,7 @@ TEST_F(InputTest, Construction) {
 			glass3::util::ThreadState::Started) << "input thread is not running";
 
 	// assert no data in class
-	ASSERT_EQ(InputThread->dataCount(), -1) << "input thread has no data";
+	ASSERT_EQ(InputThread->getInputDataCount(), -1) << "input thread has no data";
 }
 
 TEST_F(InputTest, Configuration) {
@@ -190,24 +174,12 @@ TEST_F(InputTest, Configuration) {
 	ASSERT_TRUE(InputThread->getConfig() != NULL) << "input config is notnull";
 
 	// check input directory
-	ASSERT_STREQ(InputThread->getSInputDir().c_str(),
+	ASSERT_STREQ(InputThread->getInputDir().c_str(),
 			inputdirectory.c_str()) << "check input thread input directory";
 
-	// assert class is archiving
-	ASSERT_TRUE(InputThread->getBArchive())
-	<< "input thread is archiving input";
-
 	// check archive path
-	ASSERT_STREQ(InputThread->getSArchiveDir().c_str(),
+	ASSERT_STREQ(InputThread->getArchiveDir().c_str(),
 			archivedirectory.c_str()) << "check input thread archive directory";
-
-	// assert class is keepign errors
-	ASSERT_TRUE(InputThread->getBError())
-	<< "input class is keeping errors";
-
-	// check error path
-	ASSERT_STREQ(InputThread->getSErrorDir().c_str(),
-			errordirectory.c_str()) << "check input thread archive directory";
 
 	// check queue max size
 	ASSERT_EQ(InputThread->getQueueMaxSize(), QUEUEMAXSIZE)
@@ -215,12 +187,12 @@ TEST_F(InputTest, Configuration) {
 
 	// check agency id
 	std::string agencyid = std::string(TESTAGENCYID);
-	ASSERT_STREQ(InputThread->getSDefaultAgencyId().c_str(),
+	ASSERT_STREQ(InputThread->getDefaultAgencyId().c_str(),
 			agencyid.c_str()) << "check agency id";
 
 	// check author
 	std::string author = std::string(TESTAUTHOR);
-	ASSERT_STREQ(InputThread->getSDefaultAuthor().c_str(),
+	ASSERT_STREQ(InputThread->getDefaultAuthor().c_str(),
 			author.c_str()) << "check author";
 }
 
@@ -235,17 +207,17 @@ TEST_F(InputTest, Run) {
 	std::this_thread::sleep_for(std::chrono::seconds(3));
 
 	// assert that the right amount of data is in class
-	ASSERT_EQ(InputThread->dataCount(), DATACOUNT) << "input thread has data";
+	ASSERT_EQ(InputThread->getInputDataCount(), DATACOUNT) << "input thread has data";
 
 	// check that the files were archived
-	ASSERT_TRUE(std::ifstream(ccfile).good()) << "ccfile archived";
+	// ASSERT_TRUE(std::ifstream(ccfile).good()) << "ccfile archived";
 	ASSERT_TRUE(std::ifstream(gpickfile).good()) << "gpickfile archived";
-	ASSERT_TRUE(std::ifstream(jsonpickfile).good()) << "jsonpickfile archived";
-	ASSERT_TRUE(std::ifstream(jsoncorlfile).good()) << "jsoncorlfile archived";
-	ASSERT_TRUE(std::ifstream(jsonorigfile).good()) << "jsonorigfile archived";
-	ASSERT_TRUE(std::ifstream(badfile).good()) << "badfile errored";
+	// ASSERT_TRUE(std::ifstream(jsonpickfile).good()) << "jsonpickfile archived";
+	// ASSERT_TRUE(std::ifstream(jsoncorlfile).good()) << "jsoncorlfile archived";
+	// ASSERT_TRUE(std::ifstream(jsonorigfile).good()) << "jsonorigfile archived";
+	// ASSERT_TRUE(std::ifstream(badfile).good()) << "badfile errored";
 
-	std::shared_ptr<json::Object> data = InputThread->getData();
+	std::shared_ptr<json::Object> data = InputThread->getInputData();
 
 	// assert input data ok
 	ASSERT_TRUE(data != NULL) << "input data is not null";
@@ -260,5 +232,5 @@ TEST_F(InputTest, Run) {
 	InputThread->clear();
 
 	// assert that class is empty
-	ASSERT_EQ(InputThread->dataCount(), 0) << "input thread is empty";
+	ASSERT_EQ(InputThread->getInputDataCount(), 0) << "input thread is empty";
 }

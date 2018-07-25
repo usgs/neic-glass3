@@ -31,7 +31,7 @@ class CCParser : public ::testing::Test {
 // tests to see gpick parser constructs correctly
 TEST_F(CCParser, Construction) {
 	// assert that agencyid is ok
-	ASSERT_STREQ(Parser->getAgencyid().c_str(), agencyid.c_str())<<
+	ASSERT_STREQ(Parser->getAgencyId().c_str(), agencyid.c_str())<<
 	"AgencyID check";
 
 	// assert that author is ok

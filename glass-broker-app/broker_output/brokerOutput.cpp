@@ -17,7 +17,7 @@
 namespace glass {
 
 brokerOutput::brokerOutput()
-		: output() {
+		: glass3::output::output() {
 	logger::log("debug", "brokerOutput::brokerOutput(): Construction.");
 
 	m_OutputProducer = NULL;
@@ -29,8 +29,9 @@ brokerOutput::brokerOutput()
 	clear();
 }
 
+
 brokerOutput::brokerOutput(std::shared_ptr<json::Object> &config)
-		: output() {
+		: glass3::output::output() {
 	logger::log("debug",
 				"brokerOutput::brokerOutput(): Advanced Construction.");
 
@@ -73,7 +74,7 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 		return (false);
 	} else {
 		std::string configtype = (*config)["Configuration"];
-		if (configtype != "glass-broker-app-output") {
+		if (configtype != "GlassOutput") {
 			logger::log("error",
 						"brokerOutput::setup(): Wrong configuration provided, "
 								"configuration is for: " + configtype + ".");
@@ -212,7 +213,7 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	logger::log("debug", "brokerOutput::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
-	output::setup(config);
+	glass3::output::output::setup(config);
 
 	// we're done
 	return (true);
@@ -222,7 +223,7 @@ void brokerOutput::clear() {
 	logger::log("debug", "brokerOutput::clear(): clearing configuration.");
 
 	// finally do baseclass clear
-	output::clear();
+	glass3::output::output::clear();
 }
 
 // handle output
@@ -259,7 +260,7 @@ void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 													message);
 		}
 	} else if (type == "StationList") {
-		std::string filename = getSStationFile();
+		std::string filename = getStationFile();
 
 		if (filename != "") {
 			// write to disk

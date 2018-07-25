@@ -10,14 +10,17 @@
 
 namespace glass3 {
 namespace parse {
+// ------------------------------------------------------------------GPickParser
 GPickParser::GPickParser(const std::string &newAgencyID,
 							const std::string &newAuthor)
-		: Parser::Parser(newAgencyID, newAuthor) {
+		: glass3::parse::Parser::Parser(newAgencyID, newAuthor) {
 }
+
+// -----------------------------------------------------------------~GPickParser
 GPickParser::~GPickParser() {
 }
 
-// parse a json object from an input string
+// ------------------------------------------------------------------------parse
 std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0)
@@ -79,7 +82,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 		// build the source object
 		// need to think more about this one
 		// as far as ew logos are concerned....
-		newpick.source.agencyid = m_AgencyID;
+		newpick.source.agencyid = getAgencyId();
 		newpick.source.author = splitgpick[0];
 
 		// phase
@@ -196,7 +199,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 	return (NULL);
 }
 
-// validate a json object
+// ---------------------------------------------------------------------validate
 bool GPickParser::validate(std::shared_ptr<json::Object> &input) {
 	// nullcheck
 	if (input == NULL) {

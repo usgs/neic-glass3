@@ -9,10 +9,12 @@
 #include <memory>
 
 #define HYPOSTRING "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Type\":\"Correlation\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Phase\":\"P\",\"Time\":\"2015-12-28T21:32:24.017Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2015-12-28T21:30:44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\",\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}},{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"ID\":\"20311B8E10AF5649BDC52ED099CF173E\",\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\",\"Type\":\"Hypo\"}" // NOLINT
+#define HYPOSTRING2 "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Type\":\"Correlation\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Phase\":\"?\",\"Time\":\"2015-12-28T21:32:24.017Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"LatitudeError\":0.3344,\"Longitude\":-121.44,\"LongitudeError\":-1.44,\"Depth\":32.44,\"DepthError\":30.0,\"Time\":\"2015-12-28T21:30:44.039Z\",\"TimeError\":3.12},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\",\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.442559,\"Azimuth\":0.418479,\"Residual\":-0.025393,\"Sigma\":0.086333}},{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"?\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Onset\":\"impulsive\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"Pid\":\"20311B8E10AF5649BDC52ED099CF173E\",\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\",\"Type\":\"Hypo\"}" // NOLINT
 #define BADHYPOSTRING1 "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"ID\":\"20311B8E10AF5649BDC52ED099CF173E\",\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\"}" // NOLINT
 #define BADHYPOSTRING2 "{\"Bayes\":2.087726,\"Cmd\":\"Hypo\",\"Data\":[{\"Amplitude\":{\"Amplitude\":0.000000,\"Period\":0.000000,\"SNR\":3.410000},\"AssociationInfo\":{\"Azimuth\":146.725914,\"Distance\":0.114828,\"Phase\":\"P\",\"Residual\":0.000904,\"Sigma\":1.000000},\"Filter\":[{\"HighPass\":1.050000,\"LowPass\":2.650000}],\"ID\":\"100725\",\"Phase\":\"P\",\"Picker\":\"raypicker\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"--\",\"Network\":\"AK\",\"Station\":\"SSN\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T03:35:25.947Z\",\"Type\":\"Pick\"}],\"Depth\":24.717898,\"Gap\":110.554774,\"IsUpdate\":false,\"Latitude\":61.559315,\"Longitude\":-150.877897,\"MinimumDistance\":0.110850,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"glass\"},\"T\":\"20150814033521.219\",\"Time\":\"2015-08-14T03:35:21.219Z\",\"Type\":\"Hypo\"}" // NOLINT
 
-#define CANCELSTRING "{\"Pid\":\"20311B8E10AF5649BDC52ED099CF173E\",\"Type\":\"Cancel\"}" // NOLINT
+#define CANCELSTRING "{\"ID\":\"20311B8E10AF5649BDC52ED099CF173E\",\"Type\":\"Cancel\"}" // NOLINT
+#define CANCELSTRING2 "{\"Pid\":\"20311B8E10AF5649BDC52ED099CF173E\",\"Type\":\"Cancel\"}" // NOLINT
 #define BADCANCELSTRING1 "{\"Type\":\"Cancel\"}"
 #define BADCANCELSTRING2 "{\"Pid\":\"20311B8E10AF5649BDC52ED099CF173E\"}"
 
@@ -23,6 +25,8 @@
 
 #define SITELOOKUPSTRING "{\"Comp\":\"BHZ\",\"Loc\":"",\"Net\":\"AU\",\"Site\":\"WR10\",\"Type\":\"SiteLookup\"}" // NOLINT
 #define BADSITELOOKUPSTRING1 "{\"Comp\":\"BHZ\",\"Loc\":"",\"Net\":\"AU\",\"Site\":\"WR10\"}" // NOLINT
+#define BADSITELOOKUPSTRING2 "{\"Comp\":\"BHZ\",\"Loc\":"",\"Net\":\"AU\",\"Type\":\"SiteLookup\"}" // NOLINT
+#define BADSITELOOKUPSTRING3 "{\"Comp\":\"BHZ\",\"Loc\":"",\"Site\":\"WR10\",\"Type\":\"SiteLookup\"}" // NOLINT
 
 #define TESTAGENCYID "US"
 #define TESTAUTHOR "glasstest"
@@ -33,8 +37,9 @@ TEST(Convert, HypoTest) {
 	std::string author = std::string(TESTAUTHOR);
 
 	// failure cases
-	ASSERT_STREQ(glass3::parse::hypoToJSONDetection(NULL, agencyid, author).c_str(),
-					"");
+	ASSERT_STREQ(
+			glass3::parse::hypoToJSONDetection(NULL, agencyid, author).c_str(),
+			"");
 	ASSERT_STREQ(
 			glass3::parse::hypoToJSONDetection(std::make_shared<json::Object>(json::Object(json::Deserialize(BADHYPOSTRING1))), agencyid, author).c_str(),  // NOLINT
 			"");
@@ -113,6 +118,20 @@ TEST(Convert, HypoTest) {
 	double detectiongap = detectionobject.gap;
 	double expectedgap = 110.554774;
 	ASSERT_EQ(detectiongap, expectedgap);
+
+	// Hypo2
+	std::string detectionoutput2 = glass3::parse::hypoToJSONDetection(
+			std::make_shared<json::Object>(
+					json::Object(json::Deserialize(HYPOSTRING2))),
+			agencyid, author);
+	// build detection object
+	rapidjson::Document detectiondocument2;
+	detectionformats::detection detectionobject2(
+			detectionformats::FromJSONString(detectionoutput2,
+												detectiondocument2));
+
+	// check valid code
+	ASSERT_TRUE(detectionobject2.isvalid())<< "Converted detection is valid";
 }
 
 TEST(Convert, CancelTest) {
@@ -121,8 +140,9 @@ TEST(Convert, CancelTest) {
 	std::string author = std::string(TESTAUTHOR);
 
 	// failure cases
-	ASSERT_STREQ(glass3::parse::cancelToJSONRetract(NULL, agencyid, author).c_str(),
-					"");
+	ASSERT_STREQ(
+			glass3::parse::cancelToJSONRetract(NULL, agencyid, author).c_str(),
+			"");
 	ASSERT_STREQ(
 			glass3::parse::cancelToJSONRetract(std::make_shared<json::Object>(json::Object(json::Deserialize(BADCANCELSTRING1))), agencyid, author).c_str(),  // NOLINT
 			"");
@@ -159,6 +179,18 @@ TEST(Convert, CancelTest) {
 	std::string sourceauthor = retractobject.source.author;
 	std::string expectedauthor = std::string(TESTAUTHOR);
 	ASSERT_STREQ(sourceauthor.c_str(), expectedauthor.c_str());
+
+	// Cancel2
+	std::string retractoutput2 = glass3::parse::cancelToJSONRetract(
+			std::make_shared<json::Object>(
+					json::Object(json::Deserialize(CANCELSTRING2))),
+			agencyid, author);
+	// build detection object
+	rapidjson::Document retractdocument2;
+	detectionformats::retract retractobject2(
+			detectionformats::FromJSONString(retractoutput2, retractdocument2));
+	// check valid code
+	ASSERT_TRUE(retractobject2.isvalid())<< "Converted retraction is valid";
 }
 
 TEST(Convert, SiteListTest) {
@@ -176,6 +208,7 @@ TEST(Convert, SiteListTest) {
 	std::string sitelistfile = "./" + std::string(TESTPATH) + "/"
 			+ std::string(SITELISTFILE);
 
+
 	// open the file
 	std::ifstream inFile;
 	inFile.open(sitelistfile, std::ios::in);
@@ -191,7 +224,8 @@ TEST(Convert, SiteListTest) {
 					json::Object(json::Deserialize(sitelist)));
 	int numsites = (*sitelistobject)["SiteList"].ToArray().size();
 
-	std::string stationlist = glass3::parse::siteListToStationList(sitelistobject);
+	std::string stationlist = glass3::parse::siteListToStationList(
+			sitelistobject);
 
 	std::shared_ptr<json::Object> stationlistobject = std::make_shared<
 			json::Object>(json::Object(json::Deserialize(stationlist)));
@@ -215,6 +249,12 @@ TEST(Convert, SiteLookupTest) {
 			"");
 	ASSERT_STREQ(
 			glass3::parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object(json::Deserialize(BADSITELOOKUPSTRING1))), agencyid, author).c_str(),  // NOLINT
+			"");
+	ASSERT_STREQ(
+			glass3::parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object(json::Deserialize(BADSITELOOKUPSTRING2))), agencyid, author).c_str(),  // NOLINT
+			"");
+	ASSERT_STREQ(
+			glass3::parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object(json::Deserialize(BADSITELOOKUPSTRING3))), agencyid, author).c_str(),  // NOLINT
 			"");
 	ASSERT_STREQ(
 			glass3::parse::siteLookupToStationInfoRequest(std::make_shared<json::Object>( json::Object( json::Deserialize(CANCELSTRING))), agencyid, author).c_str(),  // NOLINT

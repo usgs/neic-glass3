@@ -22,7 +22,7 @@ namespace parse {
  *
  * This class inherits from the parser class
  */
-class GPickParser : public Parser {
+class GPickParser : public glass3::parse::Parser {
  public:
 	/**
 	 * \brief gpickparser constructor

@@ -9,14 +9,17 @@
 
 namespace glass3 {
 namespace parse {
+// -------------------------------------------------------------------JSONParser
 JSONParser::JSONParser(const std::string &newAgencyID,
 						const std::string &newAuthor)
-		: Parser::Parser(newAgencyID, newAuthor) {
+		: glass3::parse::Parser::Parser(newAgencyID, newAuthor) {
 }
+
+// ------------------------------------------------------------------~JSONParser
 JSONParser::~JSONParser() {
 }
 
-// parse a json object from an input string
+// ------------------------------------------------------------------------parse
 std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0) {
@@ -69,7 +72,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 	return (newobject);
 }
 
-// validate a json object
+// ---------------------------------------------------------------------validate
 bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 	// nullcheck
 	if (input == NULL) {
@@ -184,9 +187,10 @@ bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 		} else {
 			// check information requestor if it's present
 			if (stationObject.informationRequestor.isempty() == false) {
-				if ((stationObject.informationRequestor.agencyid != m_AgencyID)
+				if ((stationObject.informationRequestor.agencyid
+						!= getAgencyId())
 						|| (stationObject.informationRequestor.author
-								!= m_Author)) {
+								!= getAuthor())) {
 					logger::log(
 							"debug",
 							"jsonparser::validate: stationInfo is not for this "

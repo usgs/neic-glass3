@@ -53,6 +53,10 @@ include_directories(${process_INCLUDE_DIRS})
 find_package(output CONFIG REQUIRED)
 include_directories(${output_INCLUDE_DIRS})
 
+# input
+find_package(input CONFIG REQUIRED)
+include_directories(${input_INCLUDE_DIRS})
+
 # HazdevBroker
 find_package(HazdevBroker CONFIG REQUIRED)
 include_directories(${HazdevBroker_INCLUDE_DIRS})
@@ -89,12 +93,12 @@ include(${CMAKE_DIR}/uuid.cmake)
 
 # ----- SET INCLUDE DIRECTORIES ----- #
 include_directories ("${PROJECT_BINARY_DIR}")
-include_directories(${PROJECT_SOURCE_DIR}/input)
+include_directories(${PROJECT_SOURCE_DIR}/broker_input)
 include_directories(${PROJECT_SOURCE_DIR}/broker_output)
 
 # ----- LIBRARIES ----- #
 # input
-add_library (input STATIC ${PROJECT_SOURCE_DIR}/input/input.cpp ${PROJECT_SOURCE_DIR}/input/input.h)
+add_library (broker_input STATIC ${PROJECT_SOURCE_DIR}/broker_input/broker_input.cpp ${PROJECT_SOURCE_DIR}/broker_input/broker_input.h)
 
 # output
 add_library (broker_output STATIC  ${PROJECT_SOURCE_DIR}/broker_output/brokerOutput.cpp ${PROJECT_SOURCE_DIR}/broker_output/brokerOutput.h)
@@ -107,7 +111,7 @@ set(SRCS "${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
 
 # ----- BUILD EXECUTABLE ----- #
 # NOTE: Order libraries are linked matters for G++
-set(EXE_LIBRARIES input broker_output ${HazdevBroker_LIBRARIES} ${LIBRDKAFKA_CPP_LIB} ${LIBRDKAFKA_C_LIB} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
+set(EXE_LIBRARIES broker_input ${input_LIBRARIES} broker_output ${HazdevBroker_LIBRARIES} ${LIBRDKAFKA_CPP_LIB} ${LIBRDKAFKA_C_LIB} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
 if (UNIX AND NOT APPLE)
     set(ZLIB -lz)
     set(LIBDL -ldl)
@@ -115,7 +119,7 @@ endif (UNIX AND NOT APPLE)
 include(${CMAKE_DIR}/build_exe.cmake)
 
 # ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/input ${PROJECT_SOURCE_DIR}/broker_output ${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
+set(DOC_DIRS "${PROJECT_SOURCE_DIR}/broker_input ${PROJECT_SOURCE_DIR}/broker_output ${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
 include(${CMAKE_DIR}/documentation.cmake)
 
 # ----- RUN CPPCHECK ----- #

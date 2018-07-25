@@ -22,7 +22,7 @@ namespace parse {
  *
  * This class inherits from the parser class
  */
-class CCParser : public Parser {
+class CCParser : public glass3::parse::Parser {
  public:
 	/**
 	 * \brief ccparser constructor

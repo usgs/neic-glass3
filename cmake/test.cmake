@@ -74,6 +74,15 @@ if (RUN_TESTS)
 
         # make sure we support coverage
         if(SUPPORT_COVERAGE)
+            # do coverage cleanup of test application prior to test build
+            add_custom_command(TARGET ${PROJECT_NAME}-unit-tests
+              PRE_BUILD
+              COMMAND /bin/sh
+              ${CMAKE_CURRENT_LIST_DIR}/clean_coverage.sh
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/CMakeFiles/${PROJECT_NAME}-unit-tests.dir/
+              COMMENT "Cleanup old Coverage Info" VERBATIM
+            )
+
             # ----- RUN COVERAGE OPTION----- #
             option(RUN_COVERAGE "Run Coverage Report (requires lcov installed)" OFF)
 

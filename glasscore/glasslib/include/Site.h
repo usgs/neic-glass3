@@ -227,6 +227,10 @@ class CSite {
 	 */
 	int getNodeLinksCount() const;
 
+	bool getEnable() const;
+
+	void setEnable(bool enable);
+
 	/**
 	 * \brief Use flag getter
 	 * \return the use flag
@@ -321,6 +325,11 @@ class CSite {
 
 	double * getVec(double * vec);
 
+
+	void setPicksSinceCheck(int count);
+
+	int getPicksSinceCheck() const;
+
  private:
 	/**
 	 * \brief A mutex to control threading access to vPick.
@@ -378,6 +387,13 @@ class CSite {
 	double dVec[3];
 
 	/**
+	 * \brief A boolean flag indicating whether this site is disabled external
+	 * to glass. This is different than bUse, which is managed by glass
+	 * processes.
+	 */
+	bool bEnable;
+
+	/**
 	 * \brief A boolean flag indicating whether to use this site in calculations.
 	 */
 	bool bUse;
@@ -398,6 +414,12 @@ class CSite {
 	 * the vector in this site
 	 */
 	int nSitePickMax;
+
+	/**
+	 * \brief An integer containing the number of picks made at this site since
+	 * the last check
+	 */
+	int nPicksSinceCheck;
 
 	/**
 	 * \brief A mutex to control threading access to vNode.
