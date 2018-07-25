@@ -156,9 +156,8 @@ class AssociatorStub : public glass3::util::iAssociator {
 	AssociatorStub() {
 		Output = NULL;
 
-		testpath = std::string(TESTPATH);
-
 		// build file names
+		testpath = std::string(TESTPATH);
 		inputdirectory = "./" + testpath;
 		hypofile = inputdirectory + "/" + std::string(HYPOFILE);
 		hypo2file = inputdirectory + "/" + std::string(HYPO2FILE);
