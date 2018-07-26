@@ -156,6 +156,39 @@ Functions</h2></td></tr>
 <tr class="memitem:a49d20f140da88095d78a873577669d42"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a49d20f140da88095d78a873577669d42">deleteFileFrom</a> (std::string fileName)</td></tr>
 <tr class="memdesc:a49d20f140da88095d78a873577669d42"><td class="mdescLeft">&#160;</td><td class="mdescRight">delete a file  <a href="#a49d20f140da88095d78a873577669d42">More...</a><br/></td></tr>
 <tr class="separator:a49d20f140da88095d78a873577669d42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12282d219ae1fb0a37fb359defefbe6a"><td class="memItemLeft" align="right" valign="top">spdlog::level::level_enum&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a12282d219ae1fb0a37fb359defefbe6a">string_to_log_level</a> (const std::string &amp;levelString)</td></tr>
+<tr class="memdesc:a12282d219ae1fb0a37fb359defefbe6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">convert string level to spdlog level  <a href="#a12282d219ae1fb0a37fb359defefbe6a">More...</a><br/></td></tr>
+<tr class="separator:a12282d219ae1fb0a37fb359defefbe6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3de2ab3f72c87808d8b2c6074fba2b2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a3de2ab3f72c87808d8b2c6074fba2b2c">log_init</a> (const std::string &amp;programName, const std::string &amp;logLevel, const std::string &amp;logPath, bool logConsole=true)</td></tr>
+<tr class="memdesc:a3de2ab3f72c87808d8b2c6074fba2b2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">initialize logging  <a href="#a3de2ab3f72c87808d8b2c6074fba2b2c">More...</a><br/></td></tr>
+<tr class="separator:a3de2ab3f72c87808d8b2c6074fba2b2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd90ac0dafa8b4046832ee84c0fb6f10"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#afd90ac0dafa8b4046832ee84c0fb6f10">log_update_level</a> (spdlog::level::level_enum loglevel)</td></tr>
+<tr class="memdesc:afd90ac0dafa8b4046832ee84c0fb6f10"><td class="mdescLeft">&#160;</td><td class="mdescRight">update log level  <a href="#afd90ac0dafa8b4046832ee84c0fb6f10">More...</a><br/></td></tr>
+<tr class="separator:afd90ac0dafa8b4046832ee84c0fb6f10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5e545343af2f2cc7eb8f5b1236a619b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#aa5e545343af2f2cc7eb8f5b1236a619b">log_update_level</a> (const std::string &amp;levelString)</td></tr>
+<tr class="memdesc:aa5e545343af2f2cc7eb8f5b1236a619b"><td class="mdescLeft">&#160;</td><td class="mdescRight">update log level  <a href="#aa5e545343af2f2cc7eb8f5b1236a619b">More...</a><br/></td></tr>
+<tr class="separator:aa5e545343af2f2cc7eb8f5b1236a619b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8206bd779cffa0b0b29f1c4548025a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ae8206bd779cffa0b0b29f1c4548025a0">log</a> (const std::string &amp;level, const std::string &amp;message)</td></tr>
+<tr class="memdesc:ae8206bd779cffa0b0b29f1c4548025a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">log a message  <a href="#ae8206bd779cffa0b0b29f1c4548025a0">More...</a><br/></td></tr>
+<tr class="separator:ae8206bd779cffa0b0b29f1c4548025a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a953f2b5f7ad11f88dc2c276a687c5a51"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a953f2b5f7ad11f88dc2c276a687c5a51">logInfo</a> (const std::string &amp;message)</td></tr>
+<tr class="memdesc:a953f2b5f7ad11f88dc2c276a687c5a51"><td class="mdescLeft">&#160;</td><td class="mdescRight">log a message at info level  <a href="#a953f2b5f7ad11f88dc2c276a687c5a51">More...</a><br/></td></tr>
+<tr class="separator:a953f2b5f7ad11f88dc2c276a687c5a51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33fa4e2696319bc5a4c418c19d9a177e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a33fa4e2696319bc5a4c418c19d9a177e">logTrace</a> (const std::string &amp;message)</td></tr>
+<tr class="memdesc:a33fa4e2696319bc5a4c418c19d9a177e"><td class="mdescLeft">&#160;</td><td class="mdescRight">log a message at trace level  <a href="#a33fa4e2696319bc5a4c418c19d9a177e">More...</a><br/></td></tr>
+<tr class="separator:a33fa4e2696319bc5a4c418c19d9a177e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab032261890b590a6c608d185f762d775"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#ab032261890b590a6c608d185f762d775">logDebug</a> (const std::string &amp;message)</td></tr>
+<tr class="memdesc:ab032261890b590a6c608d185f762d775"><td class="mdescLeft">&#160;</td><td class="mdescRight">log a message at debug level  <a href="#ab032261890b590a6c608d185f762d775">More...</a><br/></td></tr>
+<tr class="separator:ab032261890b590a6c608d185f762d775"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48e6ecaea2421a8b6a04c684b21d656a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a48e6ecaea2421a8b6a04c684b21d656a">logWarning</a> (const std::string &amp;message)</td></tr>
+<tr class="memdesc:a48e6ecaea2421a8b6a04c684b21d656a"><td class="mdescLeft">&#160;</td><td class="mdescRight">log a message at warning level  <a href="#a48e6ecaea2421a8b6a04c684b21d656a">More...</a><br/></td></tr>
+<tr class="separator:a48e6ecaea2421a8b6a04c684b21d656a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6653c4ddbb7d8d0ba8d658c1ee183b7f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a6653c4ddbb7d8d0ba8d658c1ee183b7f">logError</a> (const std::string &amp;message)</td></tr>
+<tr class="memdesc:a6653c4ddbb7d8d0ba8d658c1ee183b7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">log a message at error level  <a href="#a6653c4ddbb7d8d0ba8d658c1ee183b7f">More...</a><br/></td></tr>
+<tr class="separator:a6653c4ddbb7d8d0ba8d658c1ee183b7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06c09a51f68668c86b5d3456f6360a3b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a06c09a51f68668c86b5d3456f6360a3b">logCriticalError</a> (const std::string &amp;message)</td></tr>
+<tr class="memdesc:a06c09a51f68668c86b5d3456f6360a3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">log a message at critical error level  <a href="#a06c09a51f68668c86b5d3456f6360a3b">More...</a><br/></td></tr>
+<tr class="separator:a06c09a51f68668c86b5d3456f6360a3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a197b9e4e3fffdb1fa0ec397bba112d9c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a197b9e4e3fffdb1fa0ec397bba112d9c">split</a> (const std::string &amp;sInput, char cDelimiter)</td></tr>
 <tr class="memdesc:a197b9e4e3fffdb1fa0ec397bba112d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">split a string into substrings  <a href="#a197b9e4e3fffdb1fa0ec397bba112d9c">More...</a><br/></td></tr>
 <tr class="separator:a197b9e4e3fffdb1fa0ec397bba112d9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -477,6 +510,295 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ae8206bd779cffa0b0b29f1c4548025a0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::log </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>level</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>log a message </p>
+<p>Log a message with the provided level</p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="namespaceglass3_1_1util.html#a12282d219ae1fb0a37fb359defefbe6a" title="convert string level to spdlog level ">string_to_log_level</a></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">level</td><td>- A std::string representing the desired log level. Supported levels are: "info", "trace", "debug", "warning", "error", and "criticalerror" </td></tr>
+    <tr><td class="paramname">message</td><td>- A std::string representing the message to log. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a3de2ab3f72c87808d8b2c6074fba2b2c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::log_init </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>programName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>logLevel</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>logPath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>logConsole</em> = <code>true</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>initialize logging </p>
+<p>Initialize the logging system for the application, setting whether to log to disk and/or console, and setting the desired minimum logging level</p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="namespaceglass3_1_1util.html#a12282d219ae1fb0a37fb359defefbe6a" title="convert string level to spdlog level ">string_to_log_level</a></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">programName</td><td>- A std::string containing the name of the program </td></tr>
+    <tr><td class="paramname">logLevel</td><td>- A std::string representing the desired log level, Supported levelString are: "info", "trace", "debug", "warning", "error", and "criticalerror" </td></tr>
+    <tr><td class="paramname">logConsole</td><td>- A boolean flag representing whether to log to console </td></tr>
+    <tr><td class="paramname">logPath</td><td>- A std::string containing the name of path for the log file, empty string disables logging to file. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="afd90ac0dafa8b4046832ee84c0fb6f10"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::log_update_level </td>
+          <td>(</td>
+          <td class="paramtype">spdlog::level::level_enum&#160;</td>
+          <td class="paramname"><em>loglevel</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>update log level </p>
+<p>Update the current log level to the provided spdlog level enum</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">loglevel</td><td>- A spdlog::level::level_enum representing the desired minimum logging level. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="aa5e545343af2f2cc7eb8f5b1236a619b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::log_update_level </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>levelString</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>update log level </p>
+<p>Update the current log level to the provided level string, primarily used to update the logging system to a desired minimum logging level after startup</p>
+<dl class="section see"><dt>See Also</dt><dd><a class="el" href="namespaceglass3_1_1util.html#a12282d219ae1fb0a37fb359defefbe6a" title="convert string level to spdlog level ">string_to_log_level</a></dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">levelString</td><td>- A std::string representing the desired log level, Supported levelString are: "info", "trace", "debug", "warning", "error", and "criticalerror" </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a06c09a51f68668c86b5d3456f6360a3b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::logCriticalError </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>log a message at critical error level </p>
+<p>Log a message at the critical error log level</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>- A std::string representing the message to log. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ab032261890b590a6c608d185f762d775"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::logDebug </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>log a message at debug level </p>
+<p>Log a message at the debug log level</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>- A std::string representing the message to log. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a6653c4ddbb7d8d0ba8d658c1ee183b7f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::logError </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>log a message at error level </p>
+<p>Log a message at the error log level</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>- A std::string representing the message to log. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a953f2b5f7ad11f88dc2c276a687c5a51"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::logInfo </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>log a message at info level </p>
+<p>Log a message at the info log level</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>- A std::string representing the message to log. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a33fa4e2696319bc5a4c418c19d9a177e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::logTrace </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>log a message at trace level </p>
+<p>Log a message at the trace log level</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>- A std::string representing the message to log. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a48e6ecaea2421a8b6a04c684b21d656a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::util::logWarning </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>log a message at warning level </p>
+<p>Log a message at the warning log level</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>- A std::string representing the message to log. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="ae1321cbdbcb2f05c38ae3e77e0bd1f0d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -588,6 +910,33 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a12282d219ae1fb0a37fb359defefbe6a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">spdlog::level::level_enum glass3::util::string_to_log_level </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>levelString</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>convert string level to spdlog level </p>
+<p>This function converts the provided string log level to the spdlog enum equivalent.</p>
+<p>Supported logging level strings are: criticalerror - log critical error messages prior to program exit error - log algorithmic error messages warning - log warning messages info - log informational messages debug - log debugging messages, used to debug algorithms trace - log tracing messages, used to trace code execution</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">levelString</td><td>- A std::string containing the logging level to convert </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a spdlog::level::level_enum containing logging level </dd></dl>
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a class="anchor" id="a723949db20a96db487f4d02e94ee2b7f"></a>
 <div class="memitem">
@@ -606,7 +955,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 25 2018 20:25:51 for util by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jul 26 2018 20:06:19 for util by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

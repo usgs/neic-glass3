@@ -1,5 +1,6 @@
 <map id="src/threadpool.cpp" name="src/threadpool.cpp">
-<area shape="rect" id="node2" href="$threadpool_8h.html" title="threadpool.h" alt="" coords="399,80,492,107"/>
-<area shape="rect" id="node3" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="135,155,227,181"/>
-<area shape="rect" id="node8" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="252,155,351,181"/>
+<area shape="rect" id="node2" href="$threadpool_8h.html" title="threadpool.h" alt="" coords="391,80,484,107"/>
+<area shape="rect" id="node15" href="$logger_8h.html" title="logger.h contains the interface to the neic&#45;glass3 logging library " alt="" coords="735,80,803,107"/>
+<area shape="rect" id="node3" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="507,155,599,181"/>
+<area shape="rect" id="node8" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="5,155,104,181"/>
 </map>
