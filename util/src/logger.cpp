@@ -7,9 +7,31 @@
 namespace glass3 {
 namespace util {
 
-void log_init(const std::string &programname,
-				spdlog::level::level_enum loglevel,
-				const std::string &logpath, bool logConsole) {
+// ----------------------------------------------------------string_to_log_level
+spdlog::level::level_enum string_to_log_level(const std::string &levelString) {
+	// update current log level
+	if (levelString == "debug") {
+		return (spdlog::level::debug);
+	} else if (levelString == "trace") {
+		return (spdlog::level::trace);
+	} else if (levelString == "info") {
+		return (spdlog::level::info);
+	} else if (levelString == "warning") {
+		return (spdlog::level::warn);
+	} else if (levelString == "error") {
+		return (spdlog::level::err);
+	} else if (levelString == "criticalerror") {
+		return (spdlog::level::critical);
+	} else if (levelString == "critical") {
+		return (spdlog::level::critical);
+	} else {
+		return (spdlog::level::info);
+	}
+}
+
+// -------------------------------------------------------------log_init
+void log_init(const std::string &programName, const std::string &logLevel,
+				const std::string &logPath, bool logConsole) {
 	// inits logging
 	try {
 		// create sink vector
@@ -21,8 +43,8 @@ void log_init(const std::string &programname,
 		}
 
 		// only log to disk if asked. Log rolls over at 0 hours and 0 minutes.
-		if (logpath != "") {
-			std::string logfile = logpath + "/" + programname;
+		if (logPath != "") {
+			std::string logfile = logPath + "/" + programName;
 			sinks.push_back(
 					std::make_shared<spdlog::sinks::daily_file_sink_mt>(logfile,
 																		"log",
@@ -39,16 +61,16 @@ void log_init(const std::string &programname,
 		spdlog::set_pattern("%Y%m%d_%H:%M:%S.%e <%t> [%l] %v");
 
 		// set logging level
-		spdlog::set_level(loglevel);
+		spdlog::set_level(string_to_log_level(logLevel));
 
-		std::string startupmessage = "***** " + programname
+		std::string startupmessage = "***** " + programName
 				+ ": Logger startup; ";
 
 		if (logConsole) {
 			startupmessage += "logging enabled to console; ";
 		}
 
-		if (logpath != "") {
+		if (logPath != "") {
 			startupmessage += "logging enabled to disk; ";
 		}
 
@@ -59,56 +81,35 @@ void log_init(const std::string &programname,
 		logger->info(startupmessage);
 		logger->info("************************************************");
 	} catch (spdlog::spdlog_ex& ex) {
-		std::cout << programname << ": logging initialization failed: "
+		std::cout << programName << ": logging initialization failed: "
 					<< ex.what() << std::endl;
 	}
 }
 
+// -------------------------------------------------------------log_update_level
 void log_update_level(spdlog::level::level_enum loglevel) {
 	// update current log level
 	try {
 		// set logging level
 		spdlog::set_level(loglevel);
+		auto logger = spdlog::get("logger");
+		logger->set_level(loglevel);
 
-		std::string logstring = spdlog::level::to_str(loglevel);
-		log("info", "logging set to level: " + logstring);
+		std::string levelString = spdlog::level::to_str(loglevel);
+		log("info", "logging set to level: " + levelString);
 	} catch (spdlog::spdlog_ex& ex) {
 		std::cout << "Exception setting logging level: " << ex.what()
 					<< std::endl;
 	}
 }
 
-void log_update_level(const std::string &logstring) {
+// -------------------------------------------------------------log_update_level
+void log_update_level(const std::string &levelString) {
 	// update current log level
-	if (logstring == "debug") {
-		log_update_level(spdlog::level::debug);
-	} else if (logstring == "trace") {
-		log_update_level(spdlog::level::trace);
-	} else if (logstring == "info") {
-		log_update_level(spdlog::level::info);
-	} else if (logstring == "warning") {
-		log_update_level(spdlog::level::warn);
-	} else if (logstring == "error") {
-		log_update_level(spdlog::level::err);
-	} else if (logstring == "criticalerror") {
-		log_update_level(spdlog::level::critical);
-	} else {
-		log_update_level(spdlog::level::info);
-	}
+	log_update_level(string_to_log_level(levelString));
 }
 
-/* Available Logging levels, we're only interested in 5 of them
- * details::line_logger trace();
- * details::line_logger debug();
- * details::line_logger info();
- * details::line_logger notice();
- * details::line_logger warn();
- * details::line_logger error();
- * details::line_logger critical();
- * details::line_logger alert();
- * details::line_logger emerg();
- */
-
+// -------------------------------------------------------------log
 void log(const std::string &level, const std::string &message) {
 	// log a message
 	if (level == "info") {
@@ -123,9 +124,12 @@ void log(const std::string &level, const std::string &message) {
 		logError(message);
 	} else if (level == "criticalerror") {
 		logCriticalError(message);
+	} else if (level == "critical") {
+		logCriticalError(message);
 	}
 }
 
+// -------------------------------------------------------------logInfo
 void logInfo(const std::string &message) {
 	// log an info message
 	if (message == "") {
@@ -142,6 +146,7 @@ void logInfo(const std::string &message) {
 	}
 }
 
+// -------------------------------------------------------------logTrace
 void logTrace(const std::string &message) {
 	// log a debug message
 	if (message == "") {
@@ -158,6 +163,7 @@ void logTrace(const std::string &message) {
 	}
 }
 
+// -------------------------------------------------------------logDebug
 void logDebug(const std::string &message) {
 	// log a debug message
 	if (message == "") {
@@ -174,6 +180,7 @@ void logDebug(const std::string &message) {
 	}
 }
 
+// -------------------------------------------------------------logWarning
 void logWarning(const std::string &message) {
 	// log a warning message
 	if (message == "") {
@@ -190,6 +197,7 @@ void logWarning(const std::string &message) {
 	}
 }
 
+// -------------------------------------------------------------logError
 void logError(const std::string &message) {
 	// log an error message
 	if (message == "") {
@@ -207,6 +215,7 @@ void logError(const std::string &message) {
 	}
 }
 
+// -------------------------------------------------------------logCriticalError
 void logCriticalError(const std::string &message) {
 	// log a critical error message
 	if (message == "") {

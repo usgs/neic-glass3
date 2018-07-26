@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// now set up our logging
-	glass3::util::log_init(logName, spdlog::level::debug, logpath, true);
+	glass3::util::log_init(logName, "debug", logpath, true);
 
 	glass3::util::log(
 			"info",
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 				.ToString();
 
 		if (configType != "gen-travel-times-app") {
-			glass3::util::log("critcal",
+			glass3::util::log("critical",
 						"gen-travel-times-app: Wrong configuration, exiting.");
 
 			delete (genConfig);
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 	} else {
 		// no command or type
 		glass3::util::log(
-				"critcal",
+				"critical",
 				"gen-travel-times-app: Missing required Configuration Key.");
 
 		delete (genConfig);

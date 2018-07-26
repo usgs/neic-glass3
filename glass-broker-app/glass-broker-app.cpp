@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// now set up our logging
-	glass3::util::log_init(logName, spdlog::level::info, logpath, logConsole);
+	glass3::util::log_init(logName, "info", logpath, logConsole);
 
 	glass3::util::log(
 			"info",
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
 
 		if (configType != "glass-broker-app") {
 			glass3::util::log(
-					"critcal",
+					"critical",
 					"glass-broker-app: Wrong configuration, exiting.");
 
 			delete (glassConfig);
@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
 	} else {
 		// no command or type
 		glass3::util::log(
-				"critcal",
+				"critical",
 				"glass-broker-app: Missing required Configuration Key.");
 
 		delete (glassConfig);
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
 		initconfigfile = (*glassConfig->getJSON())["InitializeFile"].ToString();
 	} else {
 		glass3::util::log(
-				"critcal",
+				"critical",
 				"Invalid configuration, missing <InitializeFile>, exiting.");
 
 		delete (glassConfig);
@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
 		stationlistfile = (*glassConfig->getJSON())["StationList"].ToString();
 	} else {
 		glass3::util::log(
-				"critcal",
+				"critical",
 				"Invalid configuration, missing <StationList>, exiting.");
 
 		delete (glassConfig);
@@ -179,7 +179,7 @@ int main(int argc, char* argv[]) {
 		gridconfigfilelist = (*glassConfig->getJSON())["GridFiles"];
 	} else {
 		glass3::util::log(
-				"critcal",
+				"critical",
 				"Invalid configuration, missing <GridFiles>, exiting.");
 
 		delete (glassConfig);
@@ -190,7 +190,7 @@ int main(int argc, char* argv[]) {
 
 	// check to see if any files were in the array
 	if (gridconfigfilelist.size() == 0) {
-		glass3::util::log("critcal", "No <GridFiles> specified, exiting.");
+		glass3::util::log("critical", "No <GridFiles> specified, exiting.");
 
 		delete (glassConfig);
 		delete (InitializeConfig);
@@ -206,7 +206,7 @@ int main(int argc, char* argv[]) {
 		inputconfigfile = (*glassConfig->getJSON())["InputConfig"].ToString();
 	} else {
 		glass3::util::log(
-				"critcal",
+				"critical",
 				"Invalid configuration, missing <InputConfig>, exiting.");
 
 		delete (glassConfig);
@@ -227,7 +227,7 @@ int main(int argc, char* argv[]) {
 		outputconfigfile = (*glassConfig->getJSON())["OutputConfig"].ToString();
 	} else {
 		glass3::util::log(
-				"critcal",
+				"critical",
 				"Invalid configuration, missing <OutputConfig>, exiting.");
 
 		delete (glassConfig);

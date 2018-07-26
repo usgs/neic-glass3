@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// now set up our logging
-	glass3::util::log_init("glass-app", spdlog::level::info, logpath, logConsole);
+	glass3::util::log_init("glass-app", "info", logpath, logConsole);
 
 	glass3::util::log(
 			"info",
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 		glassConfig->parseJSONFromFile("", std::string(argv[1]));
 	} catch (std::exception& e) {
 		glass3::util::log(
-				"critcalerror",
+				"criticalerror",
 				"Failed to load file: " + std::string(argv[1]) + "; "
 						+ std::string(e.what()));
 
@@ -77,13 +77,13 @@ int main(int argc, char* argv[]) {
 
 	// check to see if our json config is of the right format
 	if (!(glassConfig->getJSON()->HasKey("Cmd"))) {
-		glass3::util::log("critcalerror", "Invalid configuration, exiting.");
+		glass3::util::log("criticalerror", "Invalid configuration, exiting.");
 
 		delete (glassConfig);
 		return (1);
 	}
 	if ((*glassConfig->getJSON())["Cmd"] != "Glass") {
-		glass3::util::log("critcalerror", "Wrong configuration, exiting.");
+		glass3::util::log("criticalerror", "Wrong configuration, exiting.");
 
 		delete (glassConfig);
 		return (1);
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
 	std::string initconfigfile;
 	if (!(glassConfig->getJSON()->HasKey("InitializeFile"))) {
 		glass3::util::log(
-				"critcalerror",
+				"criticalerror",
 				"Invalid configuration, missing <InitializeFile>, exiting.");
 
 		delete (glassConfig);
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 		InitializeConfig = new glass3::util::Config(configdir, initconfigfile);
 	} catch (std::exception& e) {
 		glass3::util::log(
-				"critcalerror",
+				"criticalerror",
 				"Failed to load file: " + initconfigfile + "; "
 						+ std::string(e.what()));
 
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
 	// Load our initial stationlist
 	std::string stationlistfile;
 	if (!(glassConfig->getJSON()->HasKey("StationList"))) {
-		glass3::util::log("critcalerror",
+		glass3::util::log("criticalerror",
 					"Invalid configuration, missing <StationList>, exiting.");
 
 		delete (glassConfig);
@@ -154,7 +154,7 @@ int main(int argc, char* argv[]) {
 		StationList = new glass3::util::Config(configdir, stationlistfile);
 	} catch (std::exception& e) {
 		glass3::util::log(
-				"critcalerror",
+				"criticalerror",
 				"Failed to load file: " + stationlistfile + "; "
 						+ std::string(e.what()));
 
@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::ArrayVal)) {
 		gridconfigfilelist = (*glassConfig->getJSON())["GridFiles"];
 	} else {
-		glass3::util::log("critcal",
+		glass3::util::log("critical",
 					"Invalid configuration, missing <GridFiles>, exiting.");
 
 		delete (glassConfig);
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
 
 	// check to see if any files were in the array
 	if (gridconfigfilelist.size() == 0) {
-		glass3::util::log("critcal", "No <GridFiles> specified, exiting.");
+		glass3::util::log("critical", "No <GridFiles> specified, exiting.");
 
 		delete (glassConfig);
 		delete (InitializeConfig);
@@ -196,7 +196,7 @@ int main(int argc, char* argv[]) {
 	// load our input config
 	std::string inputconfigfile;
 	if (!(glassConfig->getJSON()->HasKey("InputConfig"))) {
-		glass3::util::log("critcalerror",
+		glass3::util::log("criticalerror",
 					"Invalid configuration, missing <InputConfig>, exiting.");
 
 		delete (glassConfig);
@@ -212,7 +212,7 @@ int main(int argc, char* argv[]) {
 		InputConfig = new glass3::util::Config(configdir, inputconfigfile);
 	} catch (std::exception& e) {
 		glass3::util::log(
-				"critcalerror",
+				"criticalerror",
 				"Failed to load file: " + inputconfigfile + "; "
 						+ std::string(e.what()));
 
@@ -226,7 +226,7 @@ int main(int argc, char* argv[]) {
 	// load our output config
 	std::string outputconfigfile;
 	if (!(glassConfig->getJSON()->HasKey("OutputConfig"))) {
-		glass3::util::log("critcalerror",
+		glass3::util::log("criticalerror",
 					"Invalid configuration, missing <OutputConfig>, exiting.");
 
 		delete (glassConfig);
@@ -242,7 +242,7 @@ int main(int argc, char* argv[]) {
 		OutputConfig = new glass3::util::Config(configdir, outputconfigfile);
 	} catch (std::exception& e) {
 		glass3::util::log(
-				"critcalerror",
+				"criticalerror",
 				"Failed to load file: " + outputconfigfile + "; "
 						+ std::string(e.what()));
 
