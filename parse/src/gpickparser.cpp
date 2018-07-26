@@ -26,7 +26,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 	if (input.length() == 0)
 		return (NULL);
 
-	logger::log("trace", "gpickparser::parse: Input String: " + input + ".");
+	glass3::util::log("trace", "gpickparser::parse: Input String: " + input + ".");
 
 	// gpick format
 	// 228041013 22637620 1 GLI BHZ AK -- 20150302235859.307 P -1.0000 U  ? r 1.050 2.650 0.0 0.000000 5.00 0.000000 0.000000  // NOLINT
@@ -56,7 +56,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 		// make sure we split the response into at
 		// least as many elements as we need
 		if (splitgpick.size() < 20) {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"gpickparser::parse: Provided input did not split into at "
 							"least the 20 elements needed for a global pick "
@@ -134,7 +134,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			HighPass = std::stod(splitgpick[13]);
 			LowPass = std::stod(splitgpick[14]);
 		} catch (const std::exception &) {
-			logger::log(
+			glass3::util::log(
 					"warning",
 					"gpickparser::parse: Problem converting optional filter "
 					"values to doubles.");
@@ -157,7 +157,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			Period = std::stod(splitgpick[19]);
 			SNR = std::stod(splitgpick[17]);
 		} catch (const std::exception &) {
-			logger::log(
+			glass3::util::log(
 					"warning",
 					"gpickparser::parse: Problem converting optional amplitude "
 					"values to doubles.");
@@ -182,7 +182,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			std::shared_ptr<json::Object> newjsonpick = std::make_shared<
 					json::Object>(json::Object(deserializedJSON.ToObject()));
 
-			logger::log(
+			glass3::util::log(
 					"trace",
 					"gpickparser::parse: Output JSON: "
 							+ json::Serialize(*newjsonpick) + ".");
@@ -190,7 +190,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			return (newjsonpick);
 		}
 	} catch (const std::exception &e) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"gpickparser::parse: Problem parsing global pick: "
 						+ std::string(e.what()));

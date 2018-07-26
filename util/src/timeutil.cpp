@@ -85,14 +85,14 @@ std::string convertDateTimeToISO8601(const std::string &timeString) {
 double convertISO8601ToEpochTime(const std::string &timeString) {
 	// make sure we got something
 	if (timeString.length() == 0) {
-		logger::log("error",
+		glass3::util::log("error",
 					"ConvertISO8601ToEpochTime: Time string is empty.");
 		return (-1.0);
 	}
 
 	// time string is too short
 	if (timeString.length() < 24) {
-		logger::log("error",
+		glass3::util::log("error",
 					"ConvertISO8601ToEpochTime: Time string is too short.");
 		return (-1.0);
 	}
@@ -202,7 +202,7 @@ double convertISO8601ToEpochTime(const std::string &timeString) {
 		// add decimal seconds and return
 		return (usabletime + seconds);
 	} catch (const std::exception &) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"ConvertISO8601ToEpochTime: Problem converting time string: "
 						+ timeString);
@@ -215,13 +215,13 @@ double convertISO8601ToEpochTime(const std::string &timeString) {
 double convertDateTimeToEpochTime(const std::string &timeString) {
 	// make sure we got something
 	if (timeString.length() == 0) {
-		logger::log("error",
+		glass3::util::log("error",
 					"ConvertDTStringToEpochTime: Time string is empty.");
 		return (-1.0);
 	}
 	// time string is too short
 	if (timeString.length() < 18) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"ConvertDTStringToEpochTime: Time string: " + timeString
 						+ " is too short.");
@@ -329,7 +329,7 @@ double convertDateTimeToEpochTime(const std::string &timeString) {
 		// add decimal seconds and return
 		return (static_cast<double>(usabletime) + seconds);
 	} catch (const std::exception &) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"ConvertDTStringToEpochTime: Problem converting time string: "
 						+ timeString);

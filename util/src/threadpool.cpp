@@ -40,7 +40,7 @@ bool ThreadPool::start() {
 	// are we already running
 	if ((getThreadPoolState() != glass3::util::ThreadState::Initialized)
 			 && (getThreadPoolState() != glass3::util::ThreadState::Stopped)) {
-		logger::log("warning",
+		glass3::util::log("warning",
 					"ThreadPool::start(): Work Thread is already starting "
 							"or running. (" + getPoolName() + ")");
 		return (false);
@@ -48,7 +48,7 @@ bool ThreadPool::start() {
 
 	// make sure we have no threads
 	if (m_ThreadPool.size() > 0) {
-		logger::log(
+		glass3::util::log(
 				"warning",
 				"ThreadPool::start(): Pool Threads are already allocated. ("
 						+ getPoolName() + ")");
@@ -72,7 +72,7 @@ bool ThreadPool::start() {
 			m_ThreadHealthMap[m_ThreadPool[i].get_id()] = std::time(nullptr);
 		}
 
-		logger::log(
+		glass3::util::log(
 				"debug",
 				"ThreadPool::start(): Created Thread #" + std::to_string(i)
 						+ " (" + getPoolName() + ")");
@@ -85,7 +85,7 @@ bool ThreadPool::start() {
 bool ThreadPool::stop() {
 	// check if we're running
 	if (getThreadPoolState() != glass3::util::ThreadState::Started) {
-		logger::log("warning",
+		glass3::util::log("warning",
 					"ThreadPool::stop(): Work Threads is are not running, "
 							"or is already stopping. (" + getPoolName() + ")");
 		return (false);
@@ -99,7 +99,7 @@ bool ThreadPool::stop() {
 		try {
 			m_ThreadPool[i].join();
 		} catch (const std::system_error& e) {
-			logger::log(
+			glass3::util::log(
 					"warning",
 					"ThreadPool::stop(): Exception " + std::string(e.what())
 							+ " joining thread #" + std::to_string(i) + "("
@@ -110,7 +110,7 @@ bool ThreadPool::stop() {
 	// we're now stopped
 	setThreadPoolState(glass3::util::ThreadState::Stopped);
 
-	logger::log("debug",
+	glass3::util::log("debug",
 				"ThreadPool::ThreadPool(): Stopped. (" + getPoolName() + ")");
 
 	return (true);
@@ -123,7 +123,7 @@ void ThreadPool::addJob(std::function<void()> newjob) {
 	m_JobQueue.push(newjob);
 	getMutex().unlock();
 
-	logger::log("debug",
+	glass3::util::log("debug",
 				"ThreadPool::addJob(): Added Job.(" + getPoolName() + ")");
 }
 
@@ -156,14 +156,14 @@ void ThreadPool::jobLoop() {
 		// done with queue
 		getMutex().unlock();
 
-		logger::log("debug",
+		glass3::util::log("debug",
 					"ThreadPool::jobLoop(): Found Job.(" + getPoolName() + ")");
 
 		// run the job
 		try {
 			newjob();
 		} catch (const std::exception &e) {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"ThreadPool::jobLoop: Exception during job(): "
 							+ std::string(e.what()) + " (" + getPoolName()
@@ -171,7 +171,7 @@ void ThreadPool::jobLoop() {
 			break;
 		}
 
-		logger::log(
+		glass3::util::log(
 				"debug",
 				"ThreadPool::jobLoop(): Finished Job.(" + getPoolName() + ")");
 
@@ -179,7 +179,7 @@ void ThreadPool::jobLoop() {
 		jobSleep();
 	}
 
-	logger::log("debug",
+	glass3::util::log("debug",
 				"ThreadPool::jobLoop(): Thread Exit.(" + getPoolName() + ")");
 }
 
@@ -203,7 +203,7 @@ bool ThreadPool::healthCheck() {
 	// are there any threads? Not sure how this would happen,
 	// but it's worth asking
 	if (getNumThreads() == 0) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"ThreadPool::healthCheck(): no threads in pool! ("
 						+ getPoolName() + ")");
@@ -218,7 +218,7 @@ bool ThreadPool::healthCheck() {
 	// see if it's time to check
 	int lastCheckInterval = (std::time(nullptr) - getAllLastHealthy());
 	if (lastCheckInterval > getHealthCheckInterval()) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"ThreadPool::healthCheck():"
 						" lastCheckInterval for at least one thread in"
@@ -300,7 +300,7 @@ glass3::util::ThreadState ThreadPool::getThreadPoolState() {
 // ---------------------------------------------------------setNumThreads
 void ThreadPool::setNumThreads(int numThreads) {
 	if (getThreadPoolState() == glass3::util::ThreadState::Started) {
-		logger::log("warning",
+		glass3::util::log("warning",
 					"ThreadPool::setNumThreads(): Cannot change number of "
 					"threads while thread pool is running");
 		return;

@@ -2,7 +2,7 @@
 #
 # This file contains the CMake configuration file that builds the associator
 # processing library for neic-glass3. This configuration follows the "CMake
-# Superbuilds and Git Submodules" scheme to organize and orchestrate the build 
+# Superbuilds and Git Submodules" scheme to organize and orchestrate the build
 # process.
 
 cmake_minimum_required (VERSION 3.4)
@@ -22,15 +22,11 @@ include(${CMAKE_DIR}/base.cmake)
 find_package(SuperEasyJSON CONFIG REQUIRED)
 include_directories(${SuperEasyJSON_INCLUDE_DIRS})
 
-# log
-find_package(log CONFIG REQUIRED)
-include_directories(${log_INCLUDE_DIRS})
-include_directories(${spdlog_INCLUDE_DIRS}/..)
-include_directories(${spdlog_INCLUDE_DIRS})
-
 # util
 find_package(util CONFIG REQUIRED)
 include_directories(${util_INCLUDE_DIRS})
+include_directories(${spdlog_INCLUDE_DIRS}/..)
+include_directories(${spdlog_INCLUDE_DIRS})
 
 # glasscore
 find_package(glasscore CONFIG REQUIRED)

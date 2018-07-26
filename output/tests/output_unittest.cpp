@@ -353,7 +353,7 @@ TEST(Output, Configuration) {
 }
 
 TEST(Output, ThreadTests) {
-	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 
 	OutputStub* outputObject = new OutputStub();
@@ -475,7 +475,7 @@ TEST(Output, TrackingTests) {
 }
 
 TEST(Output, OutputTest) {
-	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 
 	OutputStub* outputObject = new OutputStub();
@@ -530,7 +530,7 @@ TEST(Output, OutputTest) {
 }
 
 TEST(Output, UpdateTest) {
-	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 
 	OutputStub* outputObject = new OutputStub();
@@ -639,7 +639,7 @@ TEST(Output, UpdateTest) {
 }
 
 TEST(Output, CancelTest) {
-	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 
 	OutputStub* outputObject = new OutputStub();
@@ -692,7 +692,7 @@ TEST(Output, CancelTest) {
 }
 
 TEST(Output, RetractTest) {
-	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 
 	OutputStub* outputObject = new OutputStub();
@@ -751,7 +751,7 @@ TEST(Output, RetractTest) {
 }
 
 TEST(Output, ExpireTest) {
-	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 
 	OutputStub* outputObject = new OutputStub();
@@ -829,7 +829,7 @@ TEST(Output, ExpireTest) {
 }
 
 TEST(Output, StationRequestTest) {
-	// logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	// glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 
 	OutputStub* outputObject = new OutputStub();
@@ -872,7 +872,7 @@ TEST(Output, StationRequestTest) {
 }
 
 TEST(Output, StationListTest) {
-	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 
 	OutputStub* outputObject = new OutputStub();
@@ -907,7 +907,7 @@ TEST(Output, StationListTest) {
 }
 
 TEST(Output, FailTests) {
-	//logger::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
+	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
 	//					true);
 	OutputStub* outputObject = new OutputStub();
 

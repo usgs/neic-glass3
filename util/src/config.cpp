@@ -86,7 +86,7 @@ std::shared_ptr<const json::Object> Config::parseJSONFromString(
 		m_ConfigJSON = std::make_shared<json::Object>(
 				json::Object(deserializedJSON.ToObject()));
 
-		logger::log(
+		glass3::util::log(
 				"debug",
 				"config::setconfig_string: json::Deserialize read: {"
 						+ json::Serialize(deserializedJSON)
@@ -99,7 +99,7 @@ std::shared_ptr<const json::Object> Config::parseJSONFromString(
 		// we're in trouble, clear our stuff
 		clear();
 
-		logger::log(
+		glass3::util::log(
 				"error",
 				"config::parseJSONFromString: Invalid configuration string");
 		throw std::invalid_argument("Invalid configuration string");
@@ -122,7 +122,7 @@ std::shared_ptr<const json::Object> Config::getJSON() {
 std::ifstream Config::openFile(std::string filePath, std::string fileName) {
 	// nullchecks
 	if (fileName.length() == 0) {
-		logger::log("error", "config::openFile: Empty file name");
+		glass3::util::log("error", "config::openFile: Empty file name");
 		throw std::invalid_argument("Empty file name");
 	}
 
@@ -143,7 +143,7 @@ std::ifstream Config::openFile(std::string filePath, std::string fileName) {
 
 	if (!inFile) {
 		// yell if we failed to open the file
-		logger::log("error",
+		glass3::util::log("error",
 					"config::openFile: Failed to open file: " + fileToOpen);
 		throw std::ios_base::failure("Failed to open file");
 	}

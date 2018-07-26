@@ -16,7 +16,7 @@ namespace glass {
 
 brokerInput::brokerInput()
 		: glass3::input::input() {
-	logger::log("debug", "brokerInput::brokerInput(): Construction.");
+	glass3::util::log("debug", "brokerInput::brokerInput(): Construction.");
 
 	m_Consumer = NULL;
 
@@ -38,7 +38,7 @@ brokerInput::brokerInput(std::shared_ptr<const json::Object> &config)
 }
 
 brokerInput::~brokerInput() {
-	logger::log("debug", "brokerInput::~brokerInput(): Destruction.");
+	glass3::util::log("debug", "brokerInput::~brokerInput(): Destruction.");
 
 	// stop the brokerInput thread
 	stop();
@@ -51,22 +51,22 @@ brokerInput::~brokerInput() {
 // configuration
 bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		logger::log("error",
+		glass3::util::log("error",
 					"brokerInput::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
-	logger::log("debug", "brokerInput::setup(): Setting Up.");
+	glass3::util::log("debug", "brokerInput::setup(): Setting Up.");
 
 	// Configuration
 	if (!(config->HasKey("Configuration"))) {
-		logger::log("error",
+		glass3::util::log("error",
 					"brokerInput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Configuration"].ToString();
 		if (configtype != "GlassInput") {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"brokerInput::setup(): Wrong configuration provided, configuration "
 							"is for: " + configtype + ".");
@@ -79,7 +79,7 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("HazdevBrokerConfig"))) {
 		// consumer config is required
 		consumerConfig = "";
-		logger::log(
+		glass3::util::log(
 				"error",
 				"brokerInput::setup(): Required configuration value HazdevBrokerConfig not "
 				"specified.");
@@ -87,7 +87,7 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	} else {
 		consumerConfig = json::Serialize(
 				(*config)["HazdevBrokerConfig"].ToObject());
-		logger::log(
+		glass3::util::log(
 				"info",
 				"brokerInput::setup(): Using HazdevBrokerConfig: "
 						+ consumerConfig + ".");
@@ -98,12 +98,12 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("HazdevBrokerTopicConfig"))) {
 		// consumer config is required
 		topicConfig = "";
-		logger::log("info",
+		glass3::util::log("info",
 					"brokerInput::setup(): Using default topic configuration.");
 	} else {
 		topicConfig = json::Serialize(
 				(*config)["HazdevBrokerTopicConfig"].ToObject());
-		logger::log(
+		glass3::util::log(
 				"info",
 				"brokerInput::setup(): Using HazdevBrokerTopicConfig: "
 						+ topicConfig + ".");
@@ -113,7 +113,7 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	std::vector<std::string> topicList;
 	if (!(config->HasKey("Topics"))) {
 		// topics are required
-		logger::log(
+		glass3::util::log(
 				"error",
 				"brokerInput::setup(): Required configuration value Topics not "
 				"specified.");
@@ -143,7 +143,7 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	// subscribe to topics
 	m_Consumer->subscribe(topicList);
 
-	logger::log("debug", "brokerInput::setup(): Done Setting Up.");
+	glass3::util::log("debug", "brokerInput::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
@@ -154,7 +154,7 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 }
 
 void brokerInput::clear() {
-	logger::log("debug", "brokerInput::clear(): clearing configuration.");
+	glass3::util::log("debug", "brokerInput::clear(): clearing configuration.");
 
 	// finally do baseclass clear
 	glass3::util::BaseClass::clear();
@@ -183,6 +183,6 @@ std::string brokerInput::fetchRawData() {
 }
 
 void brokerInput::logConsumer(const std::string &message) {
-	logger::log("debug", "brokerInput::logConsumer(): " + message);
+	glass3::util::log("debug", "brokerInput::logConsumer(): " + message);
 }
 }  // namespace glass

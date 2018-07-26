@@ -17,7 +17,7 @@ namespace glass {
 
 fileOutput::fileOutput()
 		: glass3::output::output() {
-	logger::log("debug", "fileOutput::fileOutput(): Construction.");
+	glass3::util::log("debug", "fileOutput::fileOutput(): Construction.");
 
 	// init config to defaults and allocate
 	clear();
@@ -25,7 +25,7 @@ fileOutput::fileOutput()
 
 fileOutput::fileOutput(std::shared_ptr<json::Object> &config)
 		: glass3::output::output() {
-	logger::log("debug", "fileOutput::fileOutput(): Advanced Construction.");
+	glass3::util::log("debug", "fileOutput::fileOutput(): Advanced Construction.");
 
 	// init config to defaults and allocate
 	clear();
@@ -38,7 +38,7 @@ fileOutput::fileOutput(std::shared_ptr<json::Object> &config)
 }
 
 fileOutput::~fileOutput() {
-	logger::log("debug", "fileOutput::~fileOutput(): Destruction.");
+	glass3::util::log("debug", "fileOutput::~fileOutput(): Destruction.");
 
 	// stop the input thread
 	stop();
@@ -47,22 +47,22 @@ fileOutput::~fileOutput() {
 // configuration
 bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		logger::log("error",
+		glass3::util::log("error",
 					"fileOutput::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
-	logger::log("debug", "fileOutput::setup(): Setting Up.");
+	glass3::util::log("debug", "fileOutput::setup(): Setting Up.");
 
 	// Cmd
 	if (!(config->HasKey("Cmd"))) {
-		logger::log("error",
+		glass3::util::log("error",
 					"fileOutput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Cmd"];
 		if (configtype != "GlassOutput") {
-			logger::log("error",
+			glass3::util::log("error",
 						"fileOutput::setup(): Wrong configuration provided, "
 								"configuration is for: " + configtype + ".");
 			return (false);
@@ -77,12 +77,12 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputDirectory"))) {
 		// fileOutputdir is required
 		m_sOutputDir = "";
-		logger::log("error",
+		glass3::util::log("error",
 					"fileOutput::setup(): OutputDirectory not specified.");
 		return (false);
 	} else {
 		m_sOutputDir = (*config)["OutputDirectory"].ToString();
-		logger::log(
+		glass3::util::log(
 				"info",
 				"fileOutput::setup(): Using Output Directory: " + m_sOutputDir
 						+ " .");
@@ -92,13 +92,13 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputFormat"))) {
 		// fileOutputformat is optional, default to JSON
 		m_sOutputFormat = "json";
-		logger::log(
+		glass3::util::log(
 				"info",
 				"fileOutput::setup(): OutputMethod not specified, defaulting to "
 				"json fileOutput.");
 	} else {
 		m_sOutputFormat = (*config)["OutputFormat"].ToString();
-		logger::log(
+		glass3::util::log(
 				"info",
 				"fileOutput::setup(): Using Output format: " + m_sOutputFormat
 						+ " .");
@@ -108,13 +108,13 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("TimeStampFileName"))) {
 		// TimeStampFileName is optional
 		m_bTimestampFileName = true;
-		logger::log(
+		glass3::util::log(
 				"info",
 				"fileOutput::setup(): Defaulting to including a time stamp in "
 				"fileOutput file names.");
 	} else {
 		m_bTimestampFileName = (*config)["TimeStampFileName"].ToBool();
-		logger::log(
+		glass3::util::log(
 				"info",
 				"fileOutput::setup(): Including a time stamp in fileOutput file names "
 						"is: " + std::to_string(m_bTimestampFileName) + ".");
@@ -123,7 +123,7 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	// unlock our configuration
 	m_FileOutputConfigMutex.unlock();
 
-	logger::log("debug", "fileOutput::setup(): Done Setting Up.");
+	glass3::util::log("debug", "fileOutput::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	glass3::output::output::setup(config);
@@ -133,7 +133,7 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 }
 
 void fileOutput::clear() {
-	logger::log("debug", "fileOutput::clear(): clearing configuration.");
+	glass3::util::log("debug", "fileOutput::clear(): clearing configuration.");
 
 	// lock our configuration while we're updating it
 	// this mutex may be pointless
@@ -155,20 +155,20 @@ void fileOutput::clear() {
 void fileOutput::sendOutput(const std::string &type, const std::string &id,
 							const std::string &message) {
 	if (type == "") {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"fileOutput::sendOutput(): empty type passed in.");
 		return;
 	}
 
 	if (id == "") {
-		logger::log("error",
+		glass3::util::log("error",
 					"fileOutput::sendOutput(): empty id passed in.");
 		return;
 	}
 
 	if (message == "") {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"fileOutput::sendOutput(): empty message passed in.");
 		return;
@@ -182,7 +182,7 @@ void fileOutput::sendOutput(const std::string &type, const std::string &id,
 	std::string fileOutputdir = getSOutputDir();
 	bool timeStampName = getBTimestampFileName();
 
-	logger::log(
+	glass3::util::log(
 			"info",
 			"fileOutput::sendOutput(): Writing to output file a "
 					+ type + " message with id: " + id + ".");
@@ -242,13 +242,13 @@ void fileOutput::sendOutput(const std::string &type, const std::string &id,
 		// try again
 		outfile.open(filename, std::ios::out);
 		if ((outfile.rdstate() & std::ifstream::failbit) != 0) {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"fileOutput::sendOutput: Failed to create file "
 							+ filename + "; Second try.");
 			return;
 		} else {
-			logger::log(
+			glass3::util::log(
 					"debug",
 					"fileOutput::sendOutput: Created file " + filename
 							+ "; Second Try.");
@@ -259,11 +259,11 @@ void fileOutput::sendOutput(const std::string &type, const std::string &id,
 	try {
 		outfile << OutputData;
 	} catch (const std::exception &e) {
-		logger::log(
+		glass3::util::log(
 				"error",
 				"fileOutput::sendOutput: Problem writing json data to disk: "
 						+ std::string(e.what()));
-		logger::log(
+		glass3::util::log(
 				"error",
 				"fileOutput::sendOutput: Problem Data: "
 						+ OutputData);

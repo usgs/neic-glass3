@@ -32,7 +32,7 @@
 #define TESTAUTHOR "glasstest"
 
 TEST(Convert, HypoTest) {
-	// logger::log_init("converttest", spdlog::level::debug, ".", true);
+	// glass3::util::log_init("converttest", spdlog::level::debug, ".", true);
 	std::string agencyid = std::string(TESTAGENCYID);
 	std::string author = std::string(TESTAUTHOR);
 
@@ -135,7 +135,7 @@ TEST(Convert, HypoTest) {
 }
 
 TEST(Convert, CancelTest) {
-	// logger::log_init("converttest", spdlog::level::debug, ".", true);
+	// glass3::util::log_init("converttest", spdlog::level::debug, ".", true);
 	std::string agencyid = std::string(TESTAGENCYID);
 	std::string author = std::string(TESTAUTHOR);
 
@@ -194,7 +194,7 @@ TEST(Convert, CancelTest) {
 }
 
 TEST(Convert, SiteListTest) {
-	// logger::log_init("converttest", spdlog::level::debug, ".", true);
+	// glass3::util::log_init("converttest", spdlog::level::debug, ".", true);
 
 	// failure cases
 	ASSERT_STREQ(glass3::parse::siteListToStationList(NULL).c_str(), "");
@@ -239,7 +239,7 @@ TEST(Convert, SiteListTest) {
 }
 
 TEST(Convert, SiteLookupTest) {
-	// logger::log_init("converttest", spdlog::level::debug, ".", true);
+	// glass3::util::log_init("converttest", spdlog::level::debug, ".", true);
 	std::string agencyid = std::string(TESTAGENCYID);
 	std::string author = std::string(TESTAUTHOR);
 

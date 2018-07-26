@@ -22,7 +22,7 @@ namespace input {
 // ---------------------------------------------------------input
 input::input()
 		: glass3::util::ThreadBaseClass("input", 100) {
-	logger::log("debug", "input::input(): Construction.");
+	glass3::util::log("debug", "input::input(): Construction.");
 
 	m_GPickParser = NULL;
 	m_JSONParser = NULL;
@@ -51,7 +51,7 @@ input::input(std::shared_ptr<const json::Object> config)
 
 // ---------------------------------------------------------~input
 input::~input() {
-	logger::log("debug", "input::~input(): Destruction.");
+	glass3::util::log("debug", "input::~input(): Destruction.");
 
 	// stop the input thread
 	stop();
@@ -76,20 +76,20 @@ input::~input() {
 // ---------------------------------------------------------setup
 bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		logger::log("error", "input::setup(): NULL configuration passed in.");
+		glass3::util::log("error", "input::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
-	logger::log("debug", "input::setup(): Setting Up.");
+	glass3::util::log("debug", "input::setup(): Setting Up.");
 
 	// Cmd
 	if (!(config->HasKey("Cmd"))) {
-		logger::log("error", "input::setup(): BAD configuration passed in.");
+		glass3::util::log("error", "input::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Cmd"].ToString();
 		if (configtype != "GlassInput") {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"input::setup(): Wrong configuration provided, configuration "
 							"is for: " + configtype + ".");
@@ -101,10 +101,10 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("DefaultAgencyID"))) {
 		// agencyid is optional
 		setDefaultAgency("US");
-		logger::log("info", "input::setup(): Defaulting to US as AgencyID.");
+		glass3::util::log("info", "input::setup(): Defaulting to US as AgencyID.");
 	} else {
 		setDefaultAgency((*config)["DefaultAgencyID"].ToString());
-		logger::log(
+		glass3::util::log(
 				"info",
 				"input::setup(): Using AgencyID: " + getDefaultAgencyId()
 						+ " as default.");
@@ -114,11 +114,11 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("DefaultAuthor"))) {
 		// author is optional
 		setDefaultAuthor("glassConverter");
-		logger::log("info",
+		glass3::util::log("info",
 					"input::setup(): Defaulting to glassConverter as Author.");
 	} else {
 		setDefaultAuthor((*config)["DefaultAuthor"].ToString());
-		logger::log(
+		glass3::util::log(
 				"info",
 				"input::setup(): Using Author: " + getDefaultAuthor()
 						+ " as default.");
@@ -128,13 +128,13 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("QueueMaxSize"))) {
 		// queue max size is optional
 		setQueueMaxSize(-1);
-		logger::log(
+		glass3::util::log(
 				"info",
 				"input::setup(): Defaulting to -1 for QueueMaxSize (no maximum "
 				"queue size).");
 	} else {
 		setQueueMaxSize((*config)["QueueMaxSize"].ToInt());
-		logger::log(
+		glass3::util::log(
 				"info",
 				"input::setup(): Using QueueMaxSize: "
 						+ std::to_string(getQueueMaxSize()) + ".");
@@ -163,7 +163,7 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 	}
 	m_DataQueue = new glass3::util::Queue();
 
-	logger::log("debug", "input::setup(): Done Setting Up.");
+	glass3::util::log("debug", "input::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
@@ -175,7 +175,7 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 
 // ---------------------------------------------------------clear
 void input::clear() {
-	logger::log("debug", "input::clear(): clearing configuration.");
+	glass3::util::log("debug", "input::clear(): clearing configuration.");
 
 	setDefaultAgency("");
 	setDefaultAuthor("");
@@ -219,13 +219,13 @@ bool input::work() {
 	std::string message = fetchRawData();
 
 	if (message != "") {
-		logger::log("trace", "input::work(): Got message: " + message);
+		glass3::util::log("trace", "input::work(): Got message: " + message);
 		std::string type = getDataType(message);
 		std::shared_ptr<json::Object> newdata;
 		try {
 			newdata = parse(type, message);
 		} catch (const std::exception &e) {
-			logger::log(
+			glass3::util::log(
 					"debug",
 					"input::work(): Exception:" + std::string(e.what())
 							+ " parsing string: " + message);

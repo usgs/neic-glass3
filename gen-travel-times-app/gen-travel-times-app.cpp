@@ -59,13 +59,13 @@
  */
 void logTravelTimes(glassutil::logMessageStruct message) {
 	if (message.level == glassutil::log_level::info) {
-		logger::log("info", "traveltime: " + message.message);
+		glass3::util::log("info", "traveltime: " + message.message);
 	} else if (message.level == glassutil::log_level::debug) {
-		logger::log("debug", "traveltime: " + message.message);
+		glass3::util::log("debug", "traveltime: " + message.message);
 	} else if (message.level == glassutil::log_level::warn) {
-		logger::log("warning", "traveltime: " + message.message);
+		glass3::util::log("warning", "traveltime: " + message.message);
 	} else if (message.level == glassutil::log_level::error) {
-		logger::log("error", "traveltime: " + message.message);
+		glass3::util::log("error", "traveltime: " + message.message);
 	}
 }
 
@@ -105,9 +105,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	// now set up our logging
-	logger::log_init(logName, spdlog::level::debug, logpath, true);
+	glass3::util::log_init(logName, "debug", logpath, true);
 
-	logger::log(
+	glass3::util::log(
 			"info",
 			"gen-travel-times-app: Version "
 					+ std::to_string(PROJECT_VERSION_MAJOR) + "."
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
 	// get our config file location from the arguments
 	std::string configFile = argv[1];
 
-	logger::log("info",
+	glass3::util::log("info",
 				"gen-travel-times-app: using config file: " + configFile);
 
 	// load our basic config
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 				.ToString();
 
 		if (configType != "gen-travel-times-app") {
-			logger::log("critcal",
+			glass3::util::log("critical",
 						"gen-travel-times-app: Wrong configuration, exiting.");
 
 			delete (genConfig);
@@ -139,8 +139,8 @@ int main(int argc, char* argv[]) {
 		}
 	} else {
 		// no command or type
-		logger::log(
-				"critcal",
+		glass3::util::log(
+				"critical",
 				"gen-travel-times-app: Missing required Configuration Key.");
 
 		delete (genConfig);
@@ -153,10 +153,10 @@ int main(int argc, char* argv[]) {
 			&& ((*jsonConfig)["Model"].GetType()
 					== json::ValueType::StringVal)) {
 		model = (*jsonConfig)["Model"].ToString();
-		logger::log("info",
+		glass3::util::log("info",
 								"gen-travel-times-app: Using Model: " + model);
 	} else {
-		logger::log("critical",
+		glass3::util::log("critical",
 				"gen-travel-times-app: Missing required Model Key.");
 
 		delete (genConfig);
@@ -170,7 +170,7 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::StringVal)) {
 		path = (*jsonConfig)["OutputPath"].ToString();
 	}
-	logger::log("info", "gen-travel-times-app: Using OutputPath: " + path);
+	glass3::util::log("info", "gen-travel-times-app: Using OutputPath: " + path);
 
 	// file extension
 	std::string extension = ".trv";
@@ -179,10 +179,10 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::StringVal)) {
 		extension = (*jsonConfig)["FileExtension"].ToString();
 	}
-	logger::log("info",
+	glass3::util::log("info",
 				"gen-travel-times-app: Using FileExtension: " + extension);
 
-	logger::log("info", "gen-travel-times-app: Setup.");
+	glass3::util::log("info", "gen-travel-times-app: Setup.");
 
 	// create generator
 	traveltime::CGenTrv *travelGenerator = new traveltime::CGenTrv();
@@ -193,7 +193,7 @@ int main(int argc, char* argv[]) {
 
 	travelGenerator->setup(model, path, extension);
 
-	logger::log("info", "gen-travel-times-app: Startup.");
+	glass3::util::log("info", "gen-travel-times-app: Startup.");
 
 	if (jsonConfig->HasKey("Branches")
 			&& ((*jsonConfig)["Branches"].GetType()
@@ -212,7 +212,7 @@ int main(int argc, char* argv[]) {
 			json::Object branchObj = branchVal.ToObject();
 
 			if (travelGenerator->generate(&branchObj) != true) {
-				logger::log(
+				glass3::util::log(
 						"error",
 						"gen-travel-times-app: Failed to generate travel time "
 						"file.");
@@ -225,7 +225,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	logger::log("info", "gen-travel-times-app: Shutdown.");
+	glass3::util::log("info", "gen-travel-times-app: Shutdown.");
 
 	// cleanup
 	delete (genConfig);

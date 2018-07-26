@@ -12,7 +12,7 @@ namespace glass {
 // Construction/Destruction
 Associator::Associator()
 		: glass3::util::ThreadBaseClass("Associator", 5) {
-	logger::log("debug", "associator::Associator(): Construction.");
+	glass3::util::log("debug", "associator::Associator(): Construction.");
 
 	m_iWorkCounter = 0;
 	m_iTotalWorkCounter = 0;
@@ -38,7 +38,8 @@ Associator::Associator()
 Associator::Associator(glass3::util::iInput* inputint,
 						glass3::util::iOutput* outputint)
 		: glass3::util::ThreadBaseClass("Associator", 5) {
-	logger::log("debug", "associator::associator(...): Advanced Construction.");
+	glass3::util::log("debug",
+						"associator::associator(...): Advanced Construction.");
 
 	m_pGlass = NULL;
 	m_MessageQueue = NULL;
@@ -63,7 +64,7 @@ Associator::Associator(glass3::util::iInput* inputint,
 }
 
 Associator::~Associator() {
-	logger::log("debug", "associator::~Associator(): Destruction.");
+	glass3::util::log("debug", "associator::~Associator(): Destruction.");
 
 	// stop the processing thread
 	stop();
@@ -84,32 +85,34 @@ Associator::~Associator() {
 
 bool Associator::setup(std::shared_ptr<const json::Object> config) {
 	if (Input == NULL) {
-		logger::log("error", "associator::setup(): Input interface is NULL .");
+		glass3::util::log("error",
+							"associator::setup(): Input interface is NULL .");
 		return (false);
 	}
 
 	if (Output == NULL) {
-		logger::log("error", "associator::setup(): Output interface is NULL .");
+		glass3::util::log("error",
+							"associator::setup(): Output interface is NULL .");
 		return (false);
 	}
 
 	if (m_pGlass == NULL) {
-		logger::log("error",
-					"associator::setup(): Class Core interface is NULL .");
+		glass3::util::log(
+				"error", "associator::setup(): Class Core interface is NULL .");
 		return (false);
 	}
 	std::shared_ptr<json::Object> pConfig = std::make_shared<json::Object>(
 			*config);
 	// send the config to glass
 	m_pGlass->dispatch(pConfig);
-	logger::log("debug",
-				"associator::setup(): Done Passing in provided config.");
+	glass3::util::log(
+			"debug", "associator::setup(): Done Passing in provided config.");
 
 	return (true);
 }
 
 void Associator::clear() {
-	logger::log("debug", "associator::clear(): clearing configuration.");
+	glass3::util::log("debug", "associator::clear(): clearing configuration.");
 
 	// we "clear" by deleting the whole glass object
 	if (m_pGlass != NULL) {
@@ -136,13 +139,13 @@ void Associator::clear() {
 
 void Associator::logGlass(glassutil::logMessageStruct message) {
 	if (message.level == glassutil::log_level::info) {
-		logger::log("info", "glasscore: " + message.message);
+		glass3::util::log("info", "glasscore: " + message.message);
 	} else if (message.level == glassutil::log_level::debug) {
-		logger::log("debug", "glasscore: " + message.message);
+		glass3::util::log("debug", "glasscore: " + message.message);
 	} else if (message.level == glassutil::log_level::warn) {
-		logger::log("warning", "glasscore: " + message.message);
+		glass3::util::log("warning", "glasscore: " + message.message);
 	} else if (message.level == glassutil::log_level::error) {
-		logger::log("error", "glasscore: " + message.message);
+		glass3::util::log("error", "glasscore: " + message.message);
 	}
 }
 
@@ -207,7 +210,7 @@ bool Associator::work() {
 		double averageglasstime = tGlassDuration.count() / m_iWorkCounter;
 
 		if (m_iWorkCounter == 0) {
-			logger::log(
+			glass3::util::log(
 					"warning",
 					"associator::work(): Sent NO data to glass in the last "
 							+ std::to_string(
@@ -239,7 +242,7 @@ bool Associator::work() {
 					* (m_iRunningAverageCounter - 1) + dataAverage)
 					/ m_iRunningAverageCounter;
 
-			logger::log(
+			glass3::util::log(
 					"info",
 					"Associator::work(): Sent " + std::to_string(m_iWorkCounter)
 							+ " data to glass (" + std::to_string(pendingdata)
@@ -272,7 +275,7 @@ bool Associator::healthCheck() {
 		// check glass
 		// check glass thread status
 		if (m_pGlass->statusCheck() == false) {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"Associator::statusCheck(): GlassLib statusCheck() returned false!.");
 			return (false);
@@ -289,8 +292,8 @@ bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 	ThreadBaseClass::setThreadHealth();
 
 	if (communication == NULL) {
-		logger::log("critical",
-					"associator::dispatch(): NULL message passed in.");
+		glass3::util::log("critical",
+							"associator::dispatch(): NULL message passed in.");
 		return (false);
 	}
 
@@ -298,9 +301,10 @@ bool Associator::dispatch(std::shared_ptr<json::Object> communication) {
 	if (Output != NULL) {
 		Output->sendToOutput(communication);
 	} else {
-		logger::log("error",
-					"associator::dispatch(): Output interface is NULL, nothing "
-					"to dispatch to.");
+		glass3::util::log(
+				"error",
+				"associator::dispatch(): Output interface is NULL, nothing "
+				"to dispatch to.");
 		return (false);
 	}
 

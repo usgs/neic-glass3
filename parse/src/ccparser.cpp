@@ -25,7 +25,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 	if (input.length() == 0)
 		return (NULL);
 
-	logger::log("trace", "ccparser::parse: Input String: " + input + ".");
+	glass3::util::log("trace", "ccparser::parse: Input String: " + input + ".");
 
 	// cc pick  format
 	// 2015/03/23 07:36:32.880 36.769 -98.019 5.0 2.6136482 mblg GS OK032 HHZ 00 P 2015/03/23 07:36:36.100 0.6581729 0.65 // NOLINT
@@ -49,7 +49,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		// least as many elements as we need (16 since the pick is on the
 		// end of the message)
 		if (splitccpick.size() < 15) {
-			logger::log(
+			glass3::util::log(
 					"error",
 					"ccparser::parse: ccpick did not split into at least 15 "
 					"elements, returning.");
@@ -129,7 +129,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 			std::shared_ptr<json::Object> newjsoncorrelation = std::make_shared<
 					json::Object>(json::Object(deserializedJSON.ToObject()));
 
-			logger::log(
+			glass3::util::log(
 					"trace",
 					"ccparser::parse: Output JSON: "
 							+ json::Serialize(*newjsoncorrelation) + ".");
@@ -137,7 +137,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 			return (newjsoncorrelation);
 		}
 	} catch (const std::exception &) {
-		logger::log("warning", "ccparser::parse: Problem parsing cc pick.");
+		glass3::util::log("warning", "ccparser::parse: Problem parsing cc pick.");
 	}
 
 	return (NULL);

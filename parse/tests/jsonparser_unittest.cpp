@@ -27,7 +27,7 @@ class JSONParser : public ::testing::Test {
 
 		Parser = new glass3::parse::JSONParser(agencyid, author);
 
-		// logger::log_init("jsonparsertest", spdlog::level::debug, ".", true);
+		// glass3::util::log_init("jsonparsertest", spdlog::level::debug, ".", true);
 	}
 
 	virtual void TearDown() {
