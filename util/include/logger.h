@@ -26,7 +26,8 @@ namespace util {
 /**
  * \brief convert string level to spdlog level
  *
- * This function converts the provided string log level to
+ * This function converts the provided string log level to the spdlog enum
+ * equivalent.
  *
  * Supported logging level strings are:
  * criticalerror - log critical error messages prior to program exit
@@ -45,14 +46,14 @@ spdlog::level::level_enum string_to_log_level(const std::string &levelString);
  * \brief initialize logging
  *
  * Initialize the logging system for the application, setting whether to log to
- * disk and/or console, and setting the desired logging level
+ * disk and/or console, and setting the desired minimum logging level
  *
  * \see string_to_log_level
  *
  * \param programName - A std::string containing the name of the program
  * \param logLevel - A std::string representing the desired log level,
  * Supported levelString are: "info", "trace", "debug", "warning", "error",
- * and "critical_error"
+ * and "criticalerror"
  * \param logConsole - A boolean flag representing whether to log to console
  * \param logPath - A std::string containing the name of path for the log file,
  * empty string disables logging to file.
@@ -66,8 +67,8 @@ void log_init(const std::string &programName,
  *
  * Update the current log level to the provided spdlog level enum
  *
- * \param loglevel - A spdlog::level::level_enum representing the desired log
- * level.
+ * \param loglevel - A spdlog::level::level_enum representing the desired
+ * minimum logging level.
  */
 void log_update_level(spdlog::level::level_enum loglevel);
 
@@ -75,13 +76,13 @@ void log_update_level(spdlog::level::level_enum loglevel);
  * \brief update log level
  *
  * Update the current log level to the provided level string, primarily used
- * to update the logging system to a configured logging level after startup
+ * to update the logging system to a desired minimum logging level after startup
  *
  * \see string_to_log_level
  *
  * \param levelString - A std::string representing the desired log level,
  * Supported levelString are: "info", "trace", "debug", "warning", "error",
- * and "critical_error"
+ * and "criticalerror"
  */
 void log_update_level(const std::string &levelString);
 
@@ -94,7 +95,7 @@ void log_update_level(const std::string &levelString);
  *
  * \param level - A std::string representing the desired log level.
  * Supported levels are: "info", "trace", "debug", "warning", "error",
- * and "critical_error"
+ * and "criticalerror"
  * \param message - A std::string representing the message to log.
  */
 void log(const std::string &level, const std::string &message);
