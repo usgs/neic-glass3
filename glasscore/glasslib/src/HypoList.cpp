@@ -1132,6 +1132,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 											->getTTT(), hypo->getRes(), hypo
 											->getAziTaper(), hypo->getMaxDepth());
 
+					// lock new hypo
+					hypo3->lockForProcessing();
+
 					// set hypo glass pointer and such
 					hypo3->setGlass(pGlass);
 					hypo3->setCutFactor(pGlass->getCutFactor());
@@ -1188,14 +1191,12 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 											* std::fmin(hypo->getBayes(),
 														hypo2->getBayes()))) {
 						snprintf(
-								sLog,
-								sizeof(sLog),
-								"CHypoList::merge: -- keeping new event %s which"
+								sLog, sizeof(sLog),
+								"CHypoList::merge: -- keeping new event which"
 								" associated %d picks of %lu potential picks/n"
 								"CHypoList::merge:     "
 								"New Bayes %.3f, old bayes %.3f and %.3f",
-								hypo3->getPid().c_str(), npick,
-								(hVPick.size() + h2VPick.size()),
+								npick, (hVPick.size() + h2VPick.size()),
 								hypo3->getBayes(), hypo->getBayes(),
 								hypo2->getBayes());
 						glassutil::CLogit::log(sLog);
@@ -1222,6 +1223,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 							hypo2->addPick(pick);
 						}
 
+						remHypo(hypo3);
 						hypo2->unlockAfterProcessing();
 
 						return (true);
