@@ -632,7 +632,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 		hyp->localize();
 	}
 
-
 	std::chrono::high_resolution_clock::time_point tScavengeEndTime =
 			std::chrono::high_resolution_clock::now();
 	double scavengeTime = std::chrono::duration_cast<
@@ -668,7 +667,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	double resolveTime = std::chrono::duration_cast<
 			std::chrono::duration<double>>(tResolveEndTime - tPruneEndTime)
 			.count();
-
 
 	// check to see if this hypo is viable.
 	if (hyp->cancelCheck()) {
@@ -714,17 +712,16 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 			std::chrono::duration_cast<std::chrono::duration<double>>(
 					tCancelEndTime - tPruneEndTime).count();
 
-	// if event is all good check if proximal events can be merged.
-	// if (mergeCloseEvents(hyp)) {
-    //
-	//	return (false);
-	// }
+	if event is all good check if proximal events can be merged.
+	if (mergeCloseEvents(hyp)) {
+		return (false);
+	}
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
-	 		std::chrono::high_resolution_clock::now();
+			std::chrono::high_resolution_clock::now();
 	double mergeTime =
-	 		std::chrono::duration_cast<std::chrono::duration<double>>(
-	 				tMergeEndTime - tCancelEndTime).count();
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tMergeEndTime - tCancelEndTime).count();
 
 	// announce if a correlation has been added to an existing event
 	// NOTE: Is there a better way to do this?
@@ -1080,10 +1077,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-			if(hypo2->isLockedForProcessing()) {
+			if (hypo2->isLockedForProcessing()) {
 				continue;
-			}
-			else {
+			} else {
 				hypo2->lockForProcessing();
 			}
 
@@ -1103,9 +1099,10 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 				if (delta < distanceCut) {
 
-					snprintf(sLog, sizeof(sLog),
-								"CHypoList::merge: Testing merger of %s and %s\n",
-								hypo->getPid().c_str(), hypo2->getPid().c_str());
+					snprintf(
+							sLog, sizeof(sLog),
+							"CHypoList::merge: Testing merger of %s and %s\n",
+							hypo->getPid().c_str(), hypo2->getPid().c_str());
 					glassutil::CLogit::log(sLog);
 
 					// Log info on two events
