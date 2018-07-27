@@ -1077,11 +1077,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-			// if (hypo2->isLockedForProcessing()) {
-			// 	continue;
-			// } else {
-			// 	hypo2->lockForProcessing();
-			// }
+			if (hypo2->isLockedForProcessing()) {
+				continue;
+			} else {
+				hypo2->lockForProcessing();
+			}
 
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
@@ -1224,13 +1224,12 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						}
 
 						remHypo(hypo3);
-						// hypo2->unlockAfterProcessing();
+						hypo2->unlockAfterProcessing();
 
 						return (true);
 					} else {
 						// otherwise do nothing (don't add the new event to the
 						// hypo list, don't delete the unmerged hypos)
-						remHypo(hypo3);
 						snprintf(
 								sLog,
 								sizeof(sLog),
@@ -1244,10 +1243,13 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						glassutil::CLogit::log(sLog);
 
 					}
+
+					remHypo(hypo3);
+
 				}
 			}
 
-			// hypo2->unlockAfterProcessing();
+			hypo2->unlockAfterProcessing();
 		}
 	}
 	return (false);
