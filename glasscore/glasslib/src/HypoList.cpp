@@ -1077,11 +1077,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-			if (hypo2->isLockedForProcessing()) {
-				continue;
-			} else {
-				hypo2->lockForProcessing();
-			}
+			// if (hypo2->isLockedForProcessing()) {
+			// 	continue;
+			// } else {
+			// 	hypo2->lockForProcessing();
+			// }
 
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
@@ -1224,7 +1224,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						}
 
 						remHypo(hypo3);
-						hypo2->unlockAfterProcessing();
+						// hypo2->unlockAfterProcessing();
 
 						return (true);
 					} else {
@@ -1247,7 +1247,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				}
 			}
 
-			hypo2->unlockAfterProcessing();
+			// hypo2->unlockAfterProcessing();
 		}
 	}
 	return (false);
