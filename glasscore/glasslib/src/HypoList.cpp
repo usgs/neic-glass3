@@ -1205,17 +1205,24 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									hypo->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
 
-						snprintf(sLog, sizeof(sLog),
-									" ** Canceling merged event %s\n",
-									hypo2->getPid().c_str());
+						snprintf(
+								sLog,
+								sizeof(sLog),
+								" ** Updating merged event %s with new location and picks\n",
+								hypo2->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
 
-						remHypo(hypo);
-						hypo2->unlockAfterProcessing();
-						remHypo(hypo2);
+						hypo2->setLat(hypo3->getLat());
+						hypo2->setLon(hypo3->getLon());
+						hypo2->setZ(hypo3->getZ());
+						hypo2->setTOrg(hypo3->getTOrg());
+						hypo2->clearPicks();
 
-						// add merged hypo to hypolist
-						addHypo(hypo3);
+						for (auto pick : hypo3->getVPick()) {
+							hypo2->addPick(pick);
+						}
+
+						hypo2->unlockAfterProcessing();
 
 						return (true);
 					} else {
