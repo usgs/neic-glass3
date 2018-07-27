@@ -1230,6 +1230,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					} else {
 						// otherwise do nothing (don't add the new event to the
 						// hypo list, don't delete the unmerged hypos)
+						remHypo(hypo3);
 						snprintf(
 								sLog,
 								sizeof(sLog),
