@@ -592,7 +592,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	}
 
 	std::string pid = hyp->getPid();
-
+	int OriginalPicks = hyp->getVPickSize();
 	std::chrono::high_resolution_clock::time_point tEvolveStartTime =
 			std::chrono::high_resolution_clock::now();
 
@@ -617,7 +617,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	if (pGlass->getPickList()->scavenge(hyp)) {
 		// we should report this hypo since it has changed
 		breport = true;
-		pushFifo(hyp);
 		// relocate the hypo
 		hyp->localize();
 	}
@@ -642,7 +641,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	if (hyp->prune()) {
 		// we should report this hypo since it has changed
 		breport = true;
-		pushFifo(hyp);
 		// relocate the hypo
 		hyp->localize();
 	}
@@ -800,6 +798,16 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					+ std::to_string(reportTime) + " trapTime:"
 					+ std::to_string(trapTime) + " evolveTime:"
 					+ std::to_string(evolveTime));
+
+	// if the number of picks associated with the event changed, reprocess
+	if (hyp->getVPickSize() != OriginalPicks) {
+		glassutil::CLogit::log(
+				glassutil::log_level::debug,
+				"CHypoList::evolve: Picks changed for sPid:" + pid
+						+ " old picks:" + std::to_string(OriginalPicks)
+						+ " new picks:" + std::to_string(hyp->getVPickSize()));
+		pushFifo(hyp);
+	}
 
 	// the hypo survived, so return true
 	return (true);
@@ -1239,8 +1247,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						}
 
 						pGlass->getHypoList()->pushFifo(hypo2);
-
-
 
 						return (true);
 					} else {
