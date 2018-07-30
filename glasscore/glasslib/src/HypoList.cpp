@@ -1038,7 +1038,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	// std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
 
 	char sLog[1024];  // logging string
 	double distanceCut = 5.0;  // distance difference to try merging events
