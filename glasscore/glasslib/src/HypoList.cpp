@@ -617,7 +617,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	if (pGlass->getPickList()->scavenge(hyp)) {
 		// we should report this hypo since it has changed
 		breport = true;
-		pushFifo(hypo);
+		pushFifo(hyp);
 		// relocate the hypo
 		hyp->localize();
 	}
@@ -642,7 +642,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	if (hyp->prune()) {
 		// we should report this hypo since it has changed
 		breport = true;
-		pushFifo(hypo);
+		pushFifo(hyp);
 		// relocate the hypo
 		hyp->localize();
 	}
