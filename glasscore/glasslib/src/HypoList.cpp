@@ -617,7 +617,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	if (pGlass->getPickList()->scavenge(hyp)) {
 		// we should report this hypo since it has changed
 		breport = true;
-
+		pushFifo(hypo);
 		// relocate the hypo
 		hyp->localize();
 	}
@@ -642,7 +642,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	if (hyp->prune()) {
 		// we should report this hypo since it has changed
 		breport = true;
-
+		pushFifo(hypo);
 		// relocate the hypo
 		hyp->localize();
 	}
@@ -713,9 +713,9 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	if (mergeCloseEvents(hyp)) {
-		return (false);
-	}
+	// if (mergeCloseEvents(hyp)) {
+	// 	return (false);
+	// }
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -1112,9 +1112,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 				if (delta < distanceCut) {
 
-					// lock if trying new hypo
-					std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
-
 					snprintf(
 							sLog, sizeof(sLog),
 							"CHypoList::merge: Testing merger of %s and %s\n",
@@ -1214,6 +1211,10 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								hypo2->getBayes());
 						glassutil::CLogit::log(sLog);
 
+						addHypo(hypo3);
+
+						pGlass->getHypoList()->pushFifo(hypo3);
+
 						snprintf(
 								sLog,
 								sizeof(sLog),
@@ -1239,8 +1240,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 						pGlass->getHypoList()->pushFifo(hypo2);
 
-						addHypo(hypo3);
-						pGlass->getHypoList()->pushFifo(hypo3);
+
 
 						return (true);
 					} else {
