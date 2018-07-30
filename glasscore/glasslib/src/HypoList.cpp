@@ -713,9 +713,9 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	// if (mergeCloseEvents(hyp)) {
-	// 	return (false);
-	// }
+	if (mergeCloseEvents(hyp)) {
+		return (false);
+	}
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -1038,9 +1038,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
+	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+
 	char sLog[1024];  // logging string
 	double distanceCut = 5.0;  // distance difference to try merging events
-							   // in degrees
+	// in degrees
 	double timeCut = 60.;  // origin time difference to merge events
 	double delta;  // this holds delta distance
 
@@ -1056,9 +1058,28 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	std::vector < std::weak_ptr < CHypo >> hypoList = getHypos(
 			hypo->getTOrg() - timeCut, hypo->getTOrg() + timeCut);
 
-	// make sure we got any hypos
+	// make sure we got hypos returned
 	if (hypoList.size() == 0) {
-		// nope
+		// print not events to merge message
+		snprintf(
+				sLog,
+				sizeof(sLog),
+				"CHypoList::merge: No events returned in ot time frame for merger of %s, Skipping",
+				hypo->getPid().c_str());
+		glassutil::CLogit::log(sLog);
+		return (false);
+	}
+
+	// only this hypo was returned
+	if (hypoList.size() == 1) {
+		// print not events to merge message
+		std::shared_ptr<CHypo> thypo = hypoList[0].lock();
+		snprintf(
+				sLog,
+				sizeof(sLog),
+				"CHypoList::merge: Only event returned in ot time frame for merger of %s was %s, Skipping",
+				hypo->getPid().c_str(), thypo->getPid().c_str());
+		glassutil::CLogit::log(sLog);
 		return (false);
 	}
 
@@ -1075,12 +1096,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			// check to make sure that the hypo2 has a stack
 			if (hypo2->cancelCheck() == true) {
 				continue;
-			}
-
-			if (hypo2->isLockedForProcessing()) {
-				continue;
-			} else {
-				hypo2->lockForProcessing();
 			}
 
 			// get hypo2's picks
@@ -1131,9 +1146,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 											->getTrv1(), hypo->getTrv2(), pGlass
 											->getTTT(), hypo->getRes(), hypo
 											->getAziTaper(), hypo->getMaxDepth());
-
-					// lock new hypo
-					hypo3->lockForProcessing();
 
 					// set hypo glass pointer and such
 					hypo3->setGlass(pGlass);
@@ -1201,30 +1213,33 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								hypo2->getBayes());
 						glassutil::CLogit::log(sLog);
 
-						snprintf(sLog, sizeof(sLog),
-									" ** Canceling merged event %s\n",
-									hypo->getPid().c_str());
+						snprintf(
+								sLog,
+								sizeof(sLog),
+								" ** Removing picks from merged event and pushing to evolve %s\n",
+								hypo->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
+
+						for (auto pick : hVPick) {
+							hypo->remPick(pick);
+						}
+						pGlass->getHypoList()->pushFifo(hypo);
 
 						snprintf(
 								sLog,
 								sizeof(sLog),
-								" ** Updating merged event %s with new location and picks\n",
+								" ** Removing picks from merged event and pushing to evolve %s\n",
 								hypo2->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
 
-						hypo2->setLat(hypo3->getLat());
-						hypo2->setLon(hypo3->getLon());
-						hypo2->setZ(hypo3->getZ());
-						hypo2->setTOrg(hypo3->getTOrg());
-						hypo2->clearPicks();
-
-						for (auto pick : hypo3->getVPick()) {
-							hypo2->addPick(pick);
+						for (auto pick : h2VPick) {
+							hypo2->remPick(pick);
 						}
 
-						remHypo(hypo3);
-						hypo2->unlockAfterProcessing();
+						pGlass->getHypoList()->pushFifo(hypo2);
+
+						addHypo(hypo3);
+						pGlass->getHypoList()->pushFifo(hypo3);
 
 						return (true);
 					} else {
@@ -1243,13 +1258,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						glassutil::CLogit::log(sLog);
 
 					}
-
-					remHypo(hypo3);
-
 				}
 			}
-
-			hypo2->unlockAfterProcessing();
 		}
 	}
 	return (false);
