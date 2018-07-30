@@ -711,9 +711,9 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	if (mergeCloseEvents(hyp)) {
-		return (false);
-	}
+	// if (mergeCloseEvents(hyp)) {
+	//	return (false);
+	// }
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
