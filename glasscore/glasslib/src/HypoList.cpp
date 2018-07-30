@@ -1039,6 +1039,7 @@ void CHypoList::listHypos() {
 }
 
 // --------------------------------------------------mergeCloseEvents
+/*
 bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -1243,7 +1244,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	}
 	return (false);
 }
-
+*/
 // ---------------------------------------------------------pushFifo
 int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 	std::lock_guard < std::mutex > queueGuard(m_QueueMutex);
