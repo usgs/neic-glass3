@@ -1038,8 +1038,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
-	// std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
-
 	char sLog[1024];  // logging string
 	double distanceCut = 5.0;  // distance difference to try merging events
 	// in degrees
@@ -1113,6 +1111,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				delta = geo.delta(&geo2) / DEG2RAD;
 
 				if (delta < distanceCut) {
+
+					// lock if trying new hypo
+					std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
 
 					snprintf(
 							sLog, sizeof(sLog),
@@ -1256,6 +1257,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								(static_cast<int>(hypo->getVPickSize())
 										+ static_cast<int>(hypo2->getVPickSize())));
 						glassutil::CLogit::log(sLog);
+						remHypo(hypo3);
 
 					}
 				}
