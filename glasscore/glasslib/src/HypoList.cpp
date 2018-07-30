@@ -711,9 +711,9 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	// if (mergeCloseEvents(hyp)) {
-	// 	return (false);
-	// }
+	if (mergeCloseEvents(hyp)) {
+		return (false);
+	}
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -1174,14 +1174,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									(distanceCut / 10.) * DEG2KM,
 									(timeCut / 2.), .1);
 
-					hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
-									(distanceCut / 10.) * DEG2KM,
-									(timeCut / 2.), .1);
-
-					hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
-									(distanceCut / 100.) * DEG2KM,
-									(timeCut / 2.), .1);
-
 					// Remove picks that do not fit hypo 3
 					if (hypo3->prune()) {
 						// relocate the hypo
@@ -1220,33 +1212,17 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						glassutil::CLogit::log(sLog);
 
 						addHypo(hypo3);
+						remHypo(hypo);
+						remHypo(hypo2);
+						pushFifo(hypo3);
 
-						pGlass->getHypoList()->pushFifo(hypo3);
-
-						snprintf(
-								sLog,
-								sizeof(sLog),
-								" ** Removing picks from merged event and pushing to evolve %s\n",
-								hypo->getPid().c_str());
+						snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
+									hypo->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
 
-						for (auto pick : hVPick) {
-							hypo->remPick(pick);
-						}
-						pGlass->getHypoList()->pushFifo(hypo);
-
-						snprintf(
-								sLog,
-								sizeof(sLog),
-								" ** Removing picks from merged event and pushing to evolve %s\n",
-								hypo2->getPid().c_str());
+						snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
+									hypo2->getPid().c_str());
 						glassutil::CLogit::Out(sLog);
-
-						for (auto pick : h2VPick) {
-							hypo2->remPick(pick);
-						}
-
-						pGlass->getHypoList()->pushFifo(hypo2);
 
 						return (true);
 					} else {
@@ -1263,8 +1239,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								(static_cast<int>(hypo->getVPickSize())
 										+ static_cast<int>(hypo2->getVPickSize())));
 						glassutil::CLogit::log(sLog);
-						remHypo(hypo3);
-
 					}
 				}
 			}
