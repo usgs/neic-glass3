@@ -494,7 +494,7 @@ void CHypoList::darwin() {
 
 		// check to see if this hypo is viable.
 		if (hyp->cancelCheck()) {
-			hyp->unlockAfterProcessing();
+			// hyp->unlockAfterProcessing();
 
 			// this hypo is no longer viable
 			// log
@@ -1109,7 +1109,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			if (hypo2->isLockedForProcessing()) {
 				continue;
 			} else {
-				hypo2->locklockForProcessing();
+				hypo2->lockForProcessing();
 			}
 
 			// check to make sure that the hypo2 has a stack
@@ -1257,6 +1257,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					}
 				}
 			}
+			hypo2->unlockAfterProcessing();
 		}
 	}
 	return (false);
