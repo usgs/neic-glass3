@@ -494,7 +494,7 @@ void CHypoList::darwin() {
 
 		// check to see if this hypo is viable.
 		if (hyp->cancelCheck()) {
-			// hyp->unlockAfterProcessing();
+			hyp->unlockAfterProcessing();
 
 			// this hypo is no longer viable
 			// log
@@ -1227,10 +1227,10 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 						std::lock_guard < std::recursive_mutex
 								> listGuard(m_vHypoMutex);
+
 						addHypo(hypo3);
 						remHypo(hypo);
 						remHypo(hypo2);
-						pushFifo(hypo3);
 
 						snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
 									hypo->getPid().c_str());
