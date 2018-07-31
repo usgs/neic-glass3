@@ -1189,7 +1189,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									(timeCut / 2.), .1);
 
 					// Remove picks that do not fit hypo 3
-					if (hypo3->scavange()) {
+					if (pGlass->getPickList()->scavenge(hypo3)) {
 						// relocate the hypo
 						hypo3->localize();
 					}
