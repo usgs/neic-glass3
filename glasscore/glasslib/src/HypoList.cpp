@@ -1204,7 +1204,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					snprintf(sLog, sizeof(sLog),
 								"CHypoList::merge: -- data new event %s which"
-								" scavanged %d picks (%lu picks in old events)/n"
+								" scavanged %d picks (%lu picks in old events)\n"
 								"CHypoList::merge:    New Bayes %.3f, old bayes"
 								"%.3f and %.3f",
 								hypo3->getPid().c_str(), npick,
@@ -1217,23 +1217,21 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					// check that bayestack is at least 50% of sum of others
 					if (hypo3->getBayes()
 							> (std::fmax(hypo->getBayes(), hypo2->getBayes())
-									+ 0.5
+									+ 0.3
 											* std::fmin(hypo->getBayes(),
 														hypo2->getBayes()))) {
 						snprintf(
 								sLog, sizeof(sLog),
-								"CHypoList::merge:     "
-								"New Bayes %.3f, old bayes %.3f and %.3f",
-								hypo3->getBayes(), hypo->getBayes(),
-								hypo2->getBayes());
+								"CHypoList::merge: keeping %s\n"
+								hypo3->getPid().c_str());
 						glassutil::CLogit::log(sLog);
 
 						std::lock_guard < std::recursive_mutex
 								> listGuard(m_vHypoMutex);
 						addHypo(hypo3);
 						remHypo(hypo);
-						hypo2->unlockAfterProcessing();
 						remHypo(hypo2);
+						hypo2->unlockAfterProcessing();
 
 						snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
 									hypo->getPid().c_str());
