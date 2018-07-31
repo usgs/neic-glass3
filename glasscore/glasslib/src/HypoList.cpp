@@ -476,7 +476,9 @@ void CHypoList::darwin() {
 	}
 
 	// only allow one thread to process a hypo at at time
+	// checks if it is locked in case it is locked in merge
 	if (hyp->isLockedForProcessing()) {
+		pushFifo(hyp);
 		return;
 	} else {
 		hyp->lockForProcessing();
