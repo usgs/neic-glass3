@@ -487,9 +487,11 @@ class output : public glass3::util::iOutput,
 	 * used to  process messages from the associator, and to queue messages to
 	 * be written out
 	 *
-	 * \return returns true if work was successful, false otherwise.
+	 * \return This function returns glass3::util::WorkState, indicating whether
+	 * the work was successful, encountered an error, or was idle (no work to
+	 * perform
 	 */
-	bool work() override;
+	glass3::util::WorkState work() override;
 
 	/**
 	 * \brief Function to retrieve the last time the event thread health status

@@ -76,7 +76,8 @@ input::~input() {
 // ---------------------------------------------------------setup
 bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		glass3::util::log("error", "input::setup(): NULL configuration passed in.");
+		glass3::util::log("error",
+							"input::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
@@ -84,7 +85,8 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 
 	// Cmd
 	if (!(config->HasKey("Cmd"))) {
-		glass3::util::log("error", "input::setup(): BAD configuration passed in.");
+		glass3::util::log("error",
+							"input::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Cmd"].ToString();
@@ -101,7 +103,8 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("DefaultAgencyID"))) {
 		// agencyid is optional
 		setDefaultAgency("US");
-		glass3::util::log("info", "input::setup(): Defaulting to US as AgencyID.");
+		glass3::util::log("info",
+							"input::setup(): Defaulting to US as AgencyID.");
 	} else {
 		setDefaultAgency((*config)["DefaultAgencyID"].ToString());
 		glass3::util::log(
@@ -114,8 +117,9 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("DefaultAuthor"))) {
 		// author is optional
 		setDefaultAuthor("glassConverter");
-		glass3::util::log("info",
-					"input::setup(): Defaulting to glassConverter as Author.");
+		glass3::util::log(
+				"info",
+				"input::setup(): Defaulting to glassConverter as Author.");
 	} else {
 		setDefaultAuthor((*config)["DefaultAuthor"].ToString());
 		glass3::util::log(
@@ -208,36 +212,39 @@ int input::getInputDataCount() {
 }
 
 // ---------------------------------------------------------work
-bool input::work() {
+glass3::util::WorkState input::work() {
 	// check to see if we have room
-	if ((m_QueueMaxSize != -1) && (m_DataQueue->size() > m_QueueMaxSize)) {
+	if ((getQueueMaxSize() != -1)
+			&& (getInputDataCount() >= getQueueMaxSize())) {
 		// we don't, yet
-		return(true);
+		return (glass3::util::WorkState::Idle);
 	}
 
 	// get next data
 	std::string message = fetchRawData();
 
-	if (message != "") {
-		glass3::util::log("trace", "input::work(): Got message: " + message);
-		std::string type = getDataType(message);
-		std::shared_ptr<json::Object> newdata;
-		try {
-			newdata = parse(type, message);
-		} catch (const std::exception &e) {
-			glass3::util::log(
-					"debug",
-					"input::work(): Exception:" + std::string(e.what())
-							+ " parsing string: " + message);
-		}
+	if (message == "") {
+		return (glass3::util::WorkState::Idle);
+	}
 
-		if ((newdata != NULL) && (validate(type, newdata) == true)) {
-			m_DataQueue->addDataToQueue(newdata);
-		}
+	glass3::util::log("trace", "input::work(): Got message: " + message);
+	std::string type = getDataType(message);
+	std::shared_ptr<json::Object> newdata;
+	try {
+		newdata = parse(type, message);
+	} catch (const std::exception &e) {
+		glass3::util::log(
+				"debug",
+				"input::work(): Exception:" + std::string(e.what())
+						+ " parsing string: " + message);
+	}
+
+	if ((newdata != NULL) && (validate(type, newdata) == true)) {
+		m_DataQueue->addDataToQueue(newdata);
 	}
 
 	// work was successful
-	return (true);
+	return (glass3::util::WorkState::OK);
 }
 
 // ---------------------------------------------------------parse

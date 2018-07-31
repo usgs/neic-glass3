@@ -154,7 +154,7 @@ class Associator : public glasscore::IGlassSend,
 	 *
 	 * \return returns true if work was successful, false otherwise.
 	 */
-	bool work() override;
+	glass3::util::WorkState work() override;
 
 	/**
 	 * \brief glasscore dispatch function

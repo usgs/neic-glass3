@@ -90,7 +90,8 @@ output::~output() {
 // configuration
 bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		glass3::util::log("error", "output::setup(): NULL configuration passed in.");
+		glass3::util::log("error",
+							"output::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
@@ -98,14 +99,15 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 
 	// Cmd
 	if (!(config->HasKey("Cmd"))) {
-		glass3::util::log("error", "output::setup(): BAD configuration passed in.");
+		glass3::util::log("error",
+							"output::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Cmd"];
 		if (configtype != "GlassOutput") {
-			glass3::util::log("error",
-						"output::setup(): Wrong configuration provided, "
-								"configuration is for: " + configtype + ".");
+			glass3::util::log(
+					"error", "output::setup(): Wrong configuration provided, "
+							"configuration is for: " + configtype + ".");
 			return (false);
 		}
 	}
@@ -155,8 +157,8 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputAgencyID"))) {
 		// agencyid is optional
 		setOutputAgency("US");
-		glass3::util::log("info",
-					"output::setup(): Defaulting to US as OutputAgencyID.");
+		glass3::util::log(
+				"info", "output::setup(): Defaulting to US as OutputAgencyID.");
 	} else {
 		setOutputAgency((*config)["OutputAgencyID"].ToString());
 		glass3::util::log(
@@ -169,8 +171,9 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputAuthor"))) {
 		// agencyid is optional
 		setOutputAuthor("glass3");
-		glass3::util::log("info",
-					"output::setup(): Defaulting to glass as OutputAuthor.");
+		glass3::util::log(
+				"info",
+				"output::setup(): Defaulting to glass as OutputAuthor.");
 	} else {
 		setOutputAuthor((*config)["OutputAuthor"].ToString());
 		glass3::util::log(
@@ -181,7 +184,8 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 
 	// SiteListDelay
 	if (!(config->HasKey("SiteListDelay"))) {
-		glass3::util::log("info", "output::setup(): SiteListDelay not specified.");
+		glass3::util::log("info",
+							"output::setup(): SiteListDelay not specified.");
 	} else {
 		setSiteListDelay((*config)["SiteListDelay"].ToInt());
 
@@ -193,7 +197,8 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 
 	// StationFile
 	if (!(config->HasKey("StationFile"))) {
-		glass3::util::log("info", "output::setup(): StationFile not specified.");
+		glass3::util::log("info",
+							"output::setup(): StationFile not specified.");
 	} else {
 		setStationFile((*config)["StationFile"].ToString());
 
@@ -286,15 +291,16 @@ bool output::start() {
 	if ((getEventThreadState() == glass3::util::ThreadState::Starting)
 			|| (getEventThreadState() == glass3::util::ThreadState::Started)) {
 		glass3::util::log("warning",
-					"output::start(): Event Thread is already starting "
-							"or running. (" + getThreadName() + ")");
+							"output::start(): Event Thread is already starting "
+									"or running. (" + getThreadName() + ")");
 		return (false);
 	}
 
 	// nullcheck
 	if (m_EventThread != NULL) {
-		glass3::util::log("warning",
-					"output::start(): Event Thread is already allocated.");
+		glass3::util::log(
+				"warning",
+				"output::start(): Event Thread is already allocated.");
 		return (false);
 	}
 
@@ -314,15 +320,16 @@ bool output::stop() {
 	if ((getEventThreadState() == glass3::util::ThreadState::Stopping)
 			|| (getEventThreadState() == glass3::util::ThreadState::Stopped)
 			|| (getEventThreadState() == glass3::util::ThreadState::Initialized)) {
-		glass3::util::log("warning", "output::stop(): Event Thread is not running, "
-				"or is already stopping. (" + getThreadName() + ")");
+		glass3::util::log(
+				"warning", "output::stop(): Event Thread is not running, "
+						"or is already stopping. (" + getThreadName() + ")");
 		return (false);
 	}
 
 	// nullcheck
 	if (m_EventThread == NULL) {
 		glass3::util::log("warning",
-					"output::stop(): Event Thread is not allocated. ");
+							"output::stop(): Event Thread is not allocated. ");
 		return (false);
 	}
 
@@ -351,8 +358,9 @@ void output::setEventThreadHealth(bool health) {
 		setEventLastHealthy(tNow);
 	} else {
 		setEventLastHealthy(0);
-		glass3::util::log("warning",
-					"output::setEventThreadHealth(): health set to false");
+		glass3::util::log(
+				"warning",
+				"output::setEventThreadHealth(): health set to false");
 	}
 }
 
@@ -404,8 +412,9 @@ bool output::healthCheck() {
 bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (data == NULL) {
-		glass3::util::log("error",
-					"output::addtrackingdata(): Bad json object passed in.");
+		glass3::util::log(
+				"error",
+				"output::addtrackingdata(): Bad json object passed in.");
 		return (false);
 	}
 
@@ -416,15 +425,15 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 	} else if ((*data).HasKey("Pid")) {
 		id = (*data)["Pid"].ToString();
 	} else {
-		glass3::util::log("error",
-					"output::addtrackingdata(): No ID found data json.");
+		glass3::util::log(
+				"error", "output::addtrackingdata(): No ID found data json.");
 		return (false);
 	}
 
 	// don't do anything if we didn't get an ID
 	if (id == "") {
-		glass3::util::log("error",
-					"output::addtrackingdata(): Bad ID from data json.");
+		glass3::util::log(
+				"error", "output::addtrackingdata(): Bad ID from data json.");
 		return (false);
 	}
 
@@ -468,8 +477,9 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 // ---------------------------------------------------------removeTrackingData
 bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log("error",
-					"output::removetrackingdata(): Bad json object passed in.");
+		glass3::util::log(
+				"error",
+				"output::removetrackingdata(): Bad json object passed in.");
 		return (false);
 	}
 
@@ -493,8 +503,8 @@ bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 bool output::removeTrackingData(std::string ID) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
-		glass3::util::log("error",
-					"output::removetrackingdata(): Empty ID passed in.");
+		glass3::util::log(
+				"error", "output::removetrackingdata(): Empty ID passed in.");
 		return (false);
 	}
 
@@ -505,20 +515,17 @@ bool output::removeTrackingData(std::string ID) {
 	}
 }
 
-
-
-
 // ---------------------------------------------------------getTrackingData
 std::shared_ptr<const json::Object> output::getTrackingData(std::string id) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	std::shared_ptr<json::Object> nullObj;
 	if (id == "") {
-		glass3::util::log("error",
-					"output::removetrackingdata(): Empty ID passed in.");
+		glass3::util::log(
+				"error", "output::removetrackingdata(): Empty ID passed in.");
 		return (nullObj);
 	} else if (id == "null") {
-		glass3::util::log("warn",
-					"output::removetrackingdata(): Invalid ID passed in.");
+		glass3::util::log(
+				"warn", "output::removetrackingdata(): Invalid ID passed in.");
 		return (nullObj);
 	}
 
@@ -556,8 +563,9 @@ std::shared_ptr<const json::Object> output::getNextTrackingData() {
 // ---------------------------------------------------------haveTrackingData
 bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log("error",
-					"output::havetrackingdata(): Bad json object passed in.");
+		glass3::util::log(
+				"error",
+				"output::havetrackingdata(): Bad json object passed in.");
 		return (false);
 	}
 
@@ -580,7 +588,8 @@ bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 bool output::haveTrackingData(std::string ID) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
-		glass3::util::log("error", "output::haveTrackingData(): Empty ID passed in.");
+		glass3::util::log("error",
+							"output::haveTrackingData(): Empty ID passed in.");
 		return (false);
 	}
 
@@ -673,270 +682,15 @@ void output::checkEventsLoop() {
 }
 
 // ---------------------------------------------------------work
-bool output::work() {
-	// pull data from our config at the start of each loop
-	// so that we can have config that changes
-	int siteListDelay = getSiteListDelay();
-
-	// null check
-	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
-		// no message queues means we've got big problems
-		glass3::util::log("critical",
-					"output::work(): No m_OutputQueue and/or m_LookupQueue.");
-		return (false);
-	}
-
-	// first see what we're supposed to do with a new message
-	// see if there's an output in the message queue
-	std::shared_ptr<json::Object> message = m_OutputQueue->getDataFromQueue();
-	// int outputQueueSize = m_OutputQueue->size();
-	// int lookupQueueSize = m_LookupQueue->size();
-
-	// if there's no output, check for a lookup
-	if (message == NULL) {
-		message = m_LookupQueue->getDataFromQueue();
-	}
-
-	// if we got something
-	if (message != NULL) {
-		/*glass3::util::log(
-		 "debug",
-		 "associator::dispatch(): got message:"
-		 + json::Serialize(*message)
-		 + " from associator. (outputQueueSize:"
-		 + std::to_string(outputQueueSize) + ", lookupQueueSize:"
-		 + std::to_string(lookupQueueSize) + ")");*/
-
-		// what time is it
-		time_t tNow;
-		std::time(&tNow);
-
-		// get the message type
-		std::string messagetype;
-		if (message->HasKey("Cmd")) {
-			messagetype = (*message)["Cmd"].ToString();
-		} else if (message->HasKey("Type")) {
-			messagetype = (*message)["Type"].ToString();
-		} else {
-			glass3::util::log(
-					"critical",
-					"output::work(): BAD message passed in, no Cmd/Type found.");
-			return (false);
-		}
-
-		std::string messageid;
-		if ((*message).HasKey("ID")) {
-			messageid = (*message)["ID"].ToString();
-		} else if ((*message).HasKey("Pid")) {
-			messageid = (*message)["Pid"].ToString();
-		} else {
-			messageid = "null";
-		}
-
-		// count the message
-		m_iMessageCounter++;
-
-		// glass has a hypo it wants us to send
-		if (messagetype == "Hypo") {
-			std::shared_ptr<const json::Object> trackingData = getTrackingData(
-					messageid);
-
-			if (trackingData == NULL) {
-				return (false);
-			}
-
-			glass3::util::log(
-					"debug",
-					"output::work(): Outputting a " + messagetype + " message"
-							+ " for " + messageid + " tracking: "
-							+ json::Serialize(*trackingData));
-
-			// check to see if we've published this event before
-			// for this check, we want to know if the current version
-			// has been marked as pub
-			if (isDataPublished(trackingData, false) == true) {
-				(*message)["IsUpdate"] = true;
-			} else {
-				(*message)["IsUpdate"] = false;
-			}
-
-			// write out the hypo to a disk file,
-			// using the threadpool
-			m_ThreadPool->addJob(
-					std::bind(&output::writeOutput, this, message));
-			m_iHypoCounter++;
-		} else if (messagetype == "SiteList") {
-			// glass has a stationlist to write to disk
-			glass3::util::log(
-					"debug",
-					"output::work(): Outputting a " + messagetype
-							+ " message.");
-
-			// write out the stationlist
-			// using the threadpool
-			m_ThreadPool->addJob(
-					std::bind(&output::writeOutput, this, message));
-			m_iSiteListCounter++;
-		} else if (messagetype == "Event") {
-			// add the event to the tracking cache
-			addTrackingData(message);
-
-			m_iEventCounter++;
-		} else if (messagetype == "Cancel") {
-			std::shared_ptr<const json::Object> trackingData = getTrackingData(
-					messageid);
-
-			// see if we've tracked this event
-			if (trackingData != NULL) {
-				// we have
-				glass3::util::log(
-						"debug",
-						"output::work(): Canceling event " + messageid
-								+ " and removing it from tracking.");
-
-				// check to see if this has been published, we don't care what
-				// version
-				bool published = isDataPublished(trackingData, true);
-				if (published == true) {
-					// make sure we have a type
-					if (!((*message).HasKey("Type")))
-						(*message)["Type"] = messagetype;
-
-					glass3::util::log(
-							"debug",
-							"output::work(): Generating retraction message for"
-									" published event " + messageid + ".");
-
-					// output retraction immediately
-					writeOutput(message);
-				}
-
-				// remove from the tracking cache
-				removeTrackingData(messageid);
-			}
-
-			m_iCancelCounter++;
-		} else if (messagetype == "Expire") {
-			std::shared_ptr<const json::Object> trackingData = getTrackingData(
-					messageid);
-			// see if we've tracked this event
-			if (trackingData != NULL) {
-				// we have
-				// glass has expired an event we have tracked
-				glass3::util::log(
-						"debug",
-						"output::work(): Expiring event " + messageid
-								+ " and removing it from tracking.");
-
-				// check to see if there was a hypo with this expire message
-				if ((message->HasKey("Hypo")) == true) {
-					// check to see if this event was not finished publishing
-					// or if we're configured to always send expiration
-					// hypos
-					if ((isDataFinished(trackingData) == false)
-							|| (getPubOnExpiration() == true)) {
-						// get the hypo from the event
-						json::Object jsonHypo = (*message)["Hypo"];
-
-						// make it shared
-						std::shared_ptr<json::Object> hypo = std::make_shared<
-								json::Object>(jsonHypo);
-
-						// check to see if we've published this event before
-						// for this check, we want to know if the current version
-						// has been marked as pub
-						if (isDataPublished(trackingData, false) == true) {
-							(*hypo)["IsUpdate"] = true;
-						} else {
-							(*hypo)["IsUpdate"] = false;
-						}
-
-						glass3::util::log(
-								"debug",
-								"output::work(): Writing final hypo for expiring event "
-										+ messageid);
-
-						// write out the hypo to a disk file,
-						// using the threadpool
-						m_ThreadPool->addJob(
-								std::bind(&output::writeOutput, this, hypo));
-					}
-				}
-				// first try to remove any pending events
-				// from the tracking cache
-				removeTrackingData(message);
-			}
-			m_iExpireCounter++;
-		} else if (messagetype == "SiteLookup") {
-			// station info request
-			glass3::util::log("debug", "output::work(): Writing site lookup message");
-			// output immediately
-			writeOutput(message);
-
-			m_iLookupCounter++;
-		} else {
-			// got some other message
-			glass3::util::log(
-					"warning",
-					"output::work(): Unknown message from glasslib: "
-							+ json::Serialize(*message) + ".");
-		}
-
-		// reporting
-		if ((tNow - tLastWorkReport) >= getReportInterval()) {
-			if (m_iMessageCounter == 0)
-				glass3::util::log(
-						"warning",
-						"output::work(): Received NO messages from associator "
-								"thread in "
-								+ std::to_string(
-										static_cast<int>(tNow)
-												- tLastWorkReport)
-								+ " seconds.");
-			else
-				glass3::util::log(
-						"info",
-						"output::work(): Received "
-								+ std::to_string(m_iMessageCounter)
-								+ " messages from associator thread (events: "
-								+ std::to_string(m_iEventCounter)
-								+ "; cancels: "
-								+ std::to_string(m_iCancelCounter)
-								+ "; expires: "
-								+ std::to_string(m_iExpireCounter) + "; hypos:"
-								+ std::to_string(m_iHypoCounter) + "; lookups:"
-								+ std::to_string(m_iLookupCounter)
-								+ "; sitelists:"
-								+ std::to_string(m_iSiteListCounter) + ")"
-								+ " in "
-								+ std::to_string(
-										static_cast<int>(tNow - tLastWorkReport))
-								+ " seconds. ("
-								+ std::to_string(
-										static_cast<double>(m_iMessageCounter)
-												/ (static_cast<double>(tNow)
-														- tLastWorkReport))
-								+ " dps)");
-
-			tLastWorkReport = tNow;
-			m_iMessageCounter = 0;
-			m_iEventCounter = 0;
-			m_iCancelCounter = 0;
-			m_iHypoCounter = 0;
-			m_iExpireCounter = 0;
-			m_iLookupCounter = 0;
-			m_iSiteListCounter = 0;
-		}
-	}
-
+glass3::util::WorkState output::work() {
 	// request current stationlist
-	if (siteListDelay > 0) {
+	if (getSiteListDelay() > 0) {
 		// what time is it
 		time_t tNowRequest;
 		std::time(&tNowRequest);
 
 		// every interval
-		if ((tNowRequest - m_tLastSiteRequest) >= siteListDelay) {
+		if ((tNowRequest - m_tLastSiteRequest) >= getSiteListDelay()) {
 			// Request the sitelist from associator
 			if (getAssociator() != NULL) {
 				// build the request
@@ -953,15 +707,264 @@ bool output::work() {
 		}
 	}
 
+	// null check
+	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
+		// no message queues means we've got big problems
+		glass3::util::log(
+				"critical",
+				"output::work(): No m_OutputQueue and/or m_LookupQueue.");
+		return (glass3::util::WorkState::Error);
+	}
+
+	// first see what we're supposed to do with a new message
+	// see if there's an output in the message queue
+	std::shared_ptr<json::Object> message = m_OutputQueue->getDataFromQueue();
+	// int outputQueueSize = m_OutputQueue->size();
+	// int lookupQueueSize = m_LookupQueue->size();
+
+	// if there's no output, check for a lookup
+	if (message == NULL) {
+		message = m_LookupQueue->getDataFromQueue();
+	}
+
+	if (message == NULL) {
+		return (glass3::util::WorkState::Idle);
+	}
+
+	// if we got something
+	/*glass3::util::log(
+	 "debug",
+	 "associator::dispatch(): got message:"
+	 + json::Serialize(*message)
+	 + " from associator. (outputQueueSize:"
+	 + std::to_string(outputQueueSize) + ", lookupQueueSize:"
+	 + std::to_string(lookupQueueSize) + ")");*/
+
+	// what time is it
+	time_t tNow;
+	std::time(&tNow);
+
+	// get the message type
+	std::string messagetype;
+	if (message->HasKey("Cmd")) {
+		messagetype = (*message)["Cmd"].ToString();
+	} else if (message->HasKey("Type")) {
+		messagetype = (*message)["Type"].ToString();
+	} else {
+		glass3::util::log(
+				"critical",
+				"output::work(): BAD message passed in, no Cmd/Type found.");
+		return (glass3::util::WorkState::Error);
+	}
+
+	std::string messageid;
+	if ((*message).HasKey("ID")) {
+		messageid = (*message)["ID"].ToString();
+	} else if ((*message).HasKey("Pid")) {
+		messageid = (*message)["Pid"].ToString();
+	} else {
+		messageid = "null";
+	}
+
+	// count the message
+	m_iMessageCounter++;
+
+	// glass has a hypo it wants us to send
+	if (messagetype == "Hypo") {
+		std::shared_ptr<const json::Object> trackingData = getTrackingData(
+				messageid);
+
+		if (trackingData == NULL) {
+			glass3::util::log("critical",
+								"output::work(): NULL tracking data for Hypo.");
+			return (glass3::util::WorkState::Error);
+		}
+
+		glass3::util::log(
+				"debug",
+				"output::work(): Outputting a " + messagetype + " message"
+						+ " for " + messageid + " tracking: "
+						+ json::Serialize(*trackingData));
+
+		// check to see if we've published this event before
+		// for this check, we want to know if the current version
+		// has been marked as pub
+		if (isDataPublished(trackingData, false) == true) {
+			(*message)["IsUpdate"] = true;
+		} else {
+			(*message)["IsUpdate"] = false;
+		}
+
+		// write out the hypo to a disk file,
+		// using the threadpool
+		m_ThreadPool->addJob(std::bind(&output::writeOutput, this, message));
+		m_iHypoCounter++;
+	} else if (messagetype == "SiteList") {
+		// glass has a stationlist to write to disk
+		glass3::util::log(
+				"debug",
+				"output::work(): Outputting a " + messagetype + " message.");
+
+		// write out the stationlist
+		// using the threadpool
+		m_ThreadPool->addJob(std::bind(&output::writeOutput, this, message));
+		m_iSiteListCounter++;
+	} else if (messagetype == "Event") {
+		// add the event to the tracking cache
+		addTrackingData(message);
+
+		m_iEventCounter++;
+	} else if (messagetype == "Cancel") {
+		std::shared_ptr<const json::Object> trackingData = getTrackingData(
+				messageid);
+
+		// see if we've tracked this event
+		if (trackingData != NULL) {
+			// we have
+			glass3::util::log(
+					"debug",
+					"output::work(): Canceling event " + messageid
+							+ " and removing it from tracking.");
+
+			// check to see if this has been published, we don't care what
+			// version
+			bool published = isDataPublished(trackingData, true);
+			if (published == true) {
+				// make sure we have a type
+				if (!((*message).HasKey("Type")))
+					(*message)["Type"] = messagetype;
+
+				glass3::util::log(
+						"debug",
+						"output::work(): Generating retraction message for"
+								" published event " + messageid + ".");
+
+				// output retraction immediately
+				writeOutput(message);
+			}
+
+			// remove from the tracking cache
+			removeTrackingData(messageid);
+		}
+
+		m_iCancelCounter++;
+	} else if (messagetype == "Expire") {
+		std::shared_ptr<const json::Object> trackingData = getTrackingData(
+				messageid);
+		// see if we've tracked this event
+		if (trackingData != NULL) {
+			// we have
+			// glass has expired an event we have tracked
+			glass3::util::log(
+					"debug",
+					"output::work(): Expiring event " + messageid
+							+ " and removing it from tracking.");
+
+			// check to see if there was a hypo with this expire message
+			if ((message->HasKey("Hypo")) == true) {
+				// check to see if this event was not finished publishing
+				// or if we're configured to always send expiration
+				// hypos
+				if ((isDataFinished(trackingData) == false)
+						|| (getPubOnExpiration() == true)) {
+					// get the hypo from the event
+					json::Object jsonHypo = (*message)["Hypo"];
+
+					// make it shared
+					std::shared_ptr<json::Object> hypo = std::make_shared<
+							json::Object>(jsonHypo);
+
+					// check to see if we've published this event before
+					// for this check, we want to know if the current version
+					// has been marked as pub
+					if (isDataPublished(trackingData, false) == true) {
+						(*hypo)["IsUpdate"] = true;
+					} else {
+						(*hypo)["IsUpdate"] = false;
+					}
+
+					glass3::util::log(
+							"debug",
+							"output::work(): Writing final hypo for expiring event "
+									+ messageid);
+
+					// write out the hypo to a disk file,
+					// using the threadpool
+					m_ThreadPool->addJob(
+							std::bind(&output::writeOutput, this, hypo));
+				}
+			}
+			// first try to remove any pending events
+			// from the tracking cache
+			removeTrackingData(message);
+		}
+		m_iExpireCounter++;
+	} else if (messagetype == "SiteLookup") {
+		// station info request
+		glass3::util::log("debug",
+							"output::work(): Writing site lookup message");
+		// output immediately
+		writeOutput(message);
+
+		m_iLookupCounter++;
+	} else {
+		// got some other message
+		glass3::util::log(
+				"warning",
+				"output::work(): Unknown message from glasslib: "
+						+ json::Serialize(*message) + ".");
+	}
+
+	// reporting
+	if ((tNow - tLastWorkReport) >= getReportInterval()) {
+		if (m_iMessageCounter == 0)
+			glass3::util::log(
+					"warning",
+					"output::work(): Received NO messages from associator "
+							"thread in "
+							+ std::to_string(
+									static_cast<int>(tNow) - tLastWorkReport)
+							+ " seconds.");
+		else
+			glass3::util::log(
+					"info",
+					"output::work(): Received "
+							+ std::to_string(m_iMessageCounter)
+							+ " messages from associator thread (events: "
+							+ std::to_string(m_iEventCounter) + "; cancels: "
+							+ std::to_string(m_iCancelCounter) + "; expires: "
+							+ std::to_string(m_iExpireCounter) + "; hypos:"
+							+ std::to_string(m_iHypoCounter) + "; lookups:"
+							+ std::to_string(m_iLookupCounter) + "; sitelists:"
+							+ std::to_string(m_iSiteListCounter) + ")" + " in "
+							+ std::to_string(
+									static_cast<int>(tNow - tLastWorkReport))
+							+ " seconds. ("
+							+ std::to_string(
+									static_cast<double>(m_iMessageCounter)
+											/ (static_cast<double>(tNow)
+													- tLastWorkReport))
+							+ " dps)");
+
+		tLastWorkReport = tNow;
+		m_iMessageCounter = 0;
+		m_iEventCounter = 0;
+		m_iCancelCounter = 0;
+		m_iHypoCounter = 0;
+		m_iExpireCounter = 0;
+		m_iLookupCounter = 0;
+		m_iSiteListCounter = 0;
+	}
+
 	// work was successful
-	return (true);
+	return (glass3::util::WorkState::OK);
 }
 
 // ---------------------------------------------------------writeOutput
 void output::writeOutput(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log("error",
-					"output::writeoutput(): Null json object passed in.");
+		glass3::util::log(
+				"error", "output::writeoutput(): Null json object passed in.");
 		return;
 	}
 
@@ -1015,19 +1018,20 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 	}
 }
 
-
 // ---------------------------------------------------------isDataReady
 bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log("error",
-					"output::isdataready(): Null tracking object passed in.");
+		glass3::util::log(
+				"error",
+				"output::isdataready(): Null tracking object passed in.");
 		return (false);
 	}
 
 	if (!(data->HasKey("Cmd"))) {
-		glass3::util::log("error",
-					"output::isdataready(): Bad tracking object passed in, "
-							" missing cmd: " + json::Serialize(*data));
+		glass3::util::log(
+				"error",
+				"output::isdataready(): Bad tracking object passed in, "
+						" missing cmd: " + json::Serialize(*data));
 		return (false);
 	} else if ((!(data->HasKey("PubLog"))) || (!(data->HasKey("Version")))) {
 		glass3::util::log(
@@ -1132,15 +1136,17 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 // ---------------------------------------------------------isDataChanged
 bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log("error",
-					"output::isDataChanged(): Null tracking object passed in.");
+		glass3::util::log(
+				"error",
+				"output::isDataChanged(): Null tracking object passed in.");
 		return (false);
 	}
 
 	if (!(data->HasKey("Cmd"))) {
-		glass3::util::log("error",
-					"output::isDataChanged(): Bad tracking object passed in, "
-							" missing cmd: " + json::Serialize(*data));
+		glass3::util::log(
+				"error",
+				"output::isDataChanged(): Bad tracking object passed in, "
+						" missing cmd: " + json::Serialize(*data));
 		return (false);
 	} else if ((!(data->HasKey("PubLog"))) || (!(data->HasKey("Version")))) {
 		glass3::util::log(

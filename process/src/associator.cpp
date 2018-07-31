@@ -161,17 +161,17 @@ void Associator::sendToAssociator(std::shared_ptr<json::Object> &message) {
 	}
 }
 
-bool Associator::work() {
+glass3::util::WorkState Associator::work() {
 	if (Input == NULL) {
-		return (false);
+		return (glass3::util::WorkState::Error);
 	}
 
 	if (m_pGlass == NULL) {
-		return (false);
+		return (glass3::util::WorkState::Error);
 	}
 
 	if (m_MessageQueue == NULL) {
-		return (false);
+		return (glass3::util::WorkState::Error);
 	}
 
 	// first check to see if we have any messages to send
@@ -188,22 +188,24 @@ bool Associator::work() {
 	// now grab whatever input might have for us and send it into glass
 	std::shared_ptr<json::Object> data = Input->getInputData();
 
-	// only send in something if we got something
-	if (data != NULL) {
-		m_iWorkCounter++;
-
-		std::chrono::high_resolution_clock::time_point tGlassStartTime =
-				std::chrono::high_resolution_clock::now();
-		// glass can sort things out from here
-		// note that if this takes too long, we may need to adjust
-		// thread monitoring, or add a call to setworkcheck()
-		m_pGlass->dispatch(data);
-		std::chrono::high_resolution_clock::time_point tGlassEndTime =
-				std::chrono::high_resolution_clock::now();
-
-		tGlassDuration += std::chrono::duration_cast<
-				std::chrono::duration<double>>(tGlassEndTime - tGlassStartTime);
+	if (data == NULL) {
+		return (glass3::util::WorkState::Idle);
 	}
+
+	// only send in something if we got something
+	m_iWorkCounter++;
+
+	std::chrono::high_resolution_clock::time_point tGlassStartTime =
+			std::chrono::high_resolution_clock::now();
+	// glass can sort things out from here
+	// note that if this takes too long, we may need to adjust
+	// thread monitoring, or add a call to setworkcheck()
+	m_pGlass->dispatch(data);
+	std::chrono::high_resolution_clock::time_point tGlassEndTime =
+			std::chrono::high_resolution_clock::now();
+
+	tGlassDuration += std::chrono::duration_cast<std::chrono::duration<double>>(
+			tGlassEndTime - tGlassStartTime);
 
 	if ((tNow - tLastWorkReport) >= ReportInterval) {
 		int pendingdata = Input->getInputDataCount();
@@ -266,7 +268,7 @@ bool Associator::work() {
 
 	// we only send in one item per work loop
 	// work was successful
-	return (true);
+	return (glass3::util::WorkState::OK);
 }
 
 bool Associator::healthCheck() {

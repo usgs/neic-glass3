@@ -9,6 +9,7 @@
 
 #include <baseclass.h>
 #include <threadstate.h>
+#include <workstate.h>
 #include <thread>
 #include <mutex>
 #include <string>
@@ -200,10 +201,11 @@ class ThreadBaseClass : public util::BaseClass {
 	 * This function is a pure virtual work function. It is intended that the
 	 * derived class implement the desired thread work by overriding this
 	 * function
-	 * \return This function returns true if the work was successful, false
-	 * if it was not.
+	 * \return This function returns glass3::util::WorkState, indicating whether
+	 * the work was successful, encountered an error, or was idle (no work to
+	 * perform
 	 */
-	virtual bool work() = 0;
+	virtual glass3::util::WorkState work() = 0;
 
  protected:
 	/**

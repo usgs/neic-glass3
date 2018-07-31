@@ -44,8 +44,8 @@ namespace input {
  * input inherits from the threadbaseclass class.
  * input implements the ioutput interface.
  */
-class input
-		: public glass3::util::iInput, public glass3::util::ThreadBaseClass {
+class input : public glass3::util::iInput,
+	public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief input advanced constructor
@@ -193,7 +193,9 @@ class input
 	 * This function retrieves the interval in seconds between logging
 	 * informationalreports on output throughput and performance
 	 *
-	 * \return Returns an integer value containing the interval in seconds
+	 * \return This function returns glass3::util::WorkState, indicating whether
+	 * the work was successful, encountered an error, or was idle (no work to
+	 * perform
 	 */
 	int getReportInterval();
 
@@ -204,7 +206,7 @@ class input
 	 * The function (from threadclassbase) used to do work.
 	 * \return returns true if work was successful, false otherwise.
 	 */
-	bool work() override;
+	glass3::util::WorkState work() override;
 
 	/**
 	 * \brief parse line function
