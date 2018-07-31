@@ -1053,7 +1053,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	}
 
 	char sLog[1024];  // logging string
-	double distanceCut = 4.0;  // distance difference to try merging events
+	double distanceCut = 5.0;  // distance difference to try merging events
 	// in degrees
 	double timeCut = 60.;  // origin time difference to merge events
 	double delta;  // this holds delta distance
@@ -1184,9 +1184,15 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					// First localization attempt after nucleation
 					// make 3 passes
-					hypo3->anneal(5000, (distanceCut / 2.) * DEG2KM,
+					hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
 									(distanceCut / 10.) * DEG2KM,
 									(timeCut / 2.), .1);
+
+					// Remove picks that do not fit hypo 3
+					if (hypo3->scavange()) {
+						// relocate the hypo
+						hypo3->localize();
+					}
 
 					// Remove picks that do not fit hypo 3
 					if (hypo3->prune()) {
@@ -1198,7 +1204,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					snprintf(sLog, sizeof(sLog),
 								"CHypoList::merge: -- data new event %s which"
-								" associated %d picks of %lu potential picks/n"
+								" scavanged %d picks (%lu picks in old events)/n"
 								"CHypoList::merge:    New Bayes %.3f, old bayes"
 								"%.3f and %.3f",
 								hypo3->getPid().c_str(), npick,
@@ -1208,7 +1214,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					glassutil::CLogit::log(sLog);
 
-					// check that bayestack is at least 70% of sum of others
+					// check that bayestack is at least 50% of sum of others
 					if (hypo3->getBayes()
 							> (std::fmax(hypo->getBayes(), hypo2->getBayes())
 									+ 0.5
@@ -1216,20 +1222,17 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 														hypo2->getBayes()))) {
 						snprintf(
 								sLog, sizeof(sLog),
-								"CHypoList::merge: -- keeping new event which"
-								" associated %d picks of %lu potential picks/n"
 								"CHypoList::merge:     "
 								"New Bayes %.3f, old bayes %.3f and %.3f",
-								npick, (hVPick.size() + h2VPick.size()),
 								hypo3->getBayes(), hypo->getBayes(),
 								hypo2->getBayes());
 						glassutil::CLogit::log(sLog);
 
 						std::lock_guard < std::recursive_mutex
 								> listGuard(m_vHypoMutex);
-
 						addHypo(hypo3);
 						remHypo(hypo);
+						hypo2->unlockAfterProcessing();
 						remHypo(hypo2);
 
 						snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
