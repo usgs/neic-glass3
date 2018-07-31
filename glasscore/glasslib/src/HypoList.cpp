@@ -476,7 +476,11 @@ void CHypoList::darwin() {
 	}
 
 	// only allow one thread to process a hypo at at time
-	hyp->lockForProcessing();
+	if (hyp->isLockedForProcessing()) {
+		return;
+	} else {
+		hyp->lockForProcessing();
+	}
 
 	try {
 		// log the hypo we're working on
@@ -711,9 +715,9 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	// if (mergeCloseEvents(hyp)) {
-	//	return (false);
-	// }
+	if (mergeCloseEvents(hyp)) {
+		return (false);
+	}
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -1039,7 +1043,6 @@ void CHypoList::listHypos() {
 }
 
 // --------------------------------------------------mergeCloseEvents
-/*
 bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -1048,7 +1051,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	}
 
 	char sLog[1024];  // logging string
-	double distanceCut = 5.0;  // distance difference to try merging events
+	double distanceCut = 4.0;  // distance difference to try merging events
 	// in degrees
 	double timeCut = 60.;  // origin time difference to merge events
 	double delta;  // this holds delta distance
@@ -1092,114 +1095,124 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 	// for each hypo in the list within the time range
 	for (int i = 0; i < hypoList.size(); i++) {
+		// make sure hypo is still valid before associating
+		if (std::shared_ptr<CHypo> hypo2 = hypoList[i].lock()) {
 
-		// get compare hypo
-		std::string pid = vHypo[it].second;
-		hypo2 = mHypo[pid];
+			// make sure we're not looking at ourself
+			if (hypo->getPid() == hypo2->getPid()) {
+				continue;
+			}
 
-		// make sure we're not looking at ourself
-		if (hypo->getPid() == hypo2->getPid()) {
-			continue;
-		}
+			// check to see if hypo2 is locked
+			if (hypo2->isLockedForProcessing()) {
+				continue;
+			} else {
+				hypo2->locklockForProcessing();
+			}
 
-		// check to make sure that the hypo2 has a stack
-		if (hypo2->cancelCheck() == true) {
-			continue;
-		}
+			// check to make sure that the hypo2 has a stack
+			if (hypo2->cancelCheck() == true) {
+				continue;
+			}
 
-		// get hypo2's picks
-		auto h2VPick = hypo2->getVPick();
+			// get hypo2's picks
+			auto h2VPick = hypo2->getVPick();
 
-		// check time difference
-		double diff = std::fabs(hypo->getTOrg() - hypo2->getTOrg());
+			// check time difference
+			double diff = std::fabs(hypo->getTOrg() - hypo2->getTOrg());
 
-		if (diff < timeCut) {
-			glassutil::CGeo geo2;
-			geo2.setGeographic(hypo2->getLat(), hypo2->getLon(),
-			EARTHRADIUSKM);
+			if (diff < timeCut) {
+				glassutil::CGeo geo2;
+				geo2.setGeographic(hypo2->getLat(), hypo2->getLon(),
+				EARTHRADIUSKM);
 
-			// check distance between events
-			delta = geo.delta(&geo2) / DEG2RAD;
+				// check distance between events
+				delta = geo.delta(&geo2) / DEG2RAD;
 
-			if (delta < distanceCut) {
+				if (delta < distanceCut) {
 
-				snprintf(sLog, sizeof(sLog),
+					snprintf(
+							sLog, sizeof(sLog),
 							"CHypoList::merge: Testing merger of %s and %s\n",
 							hypo->getPid().c_str(), hypo2->getPid().c_str());
-				glassutil::CLogit::log(sLog);
+					glassutil::CLogit::log(sLog);
 
-				// Log info on two events
-				snprintf(sLog, sizeof(sLog),
+					// Log info on two events
+					snprintf(
+							sLog, sizeof(sLog),
 							"CHypoList::merge: %s: %.3f, %.3f, %.3f, %.3f\n",
 							hypo->getPid().c_str(), hypo->getLat(),
 							hypo->getLon(), hypo->getZ(), hypo->getTOrg());
-				glassutil::CLogit::log(sLog);
+					glassutil::CLogit::log(sLog);
 
-				snprintf(sLog, sizeof(sLog),
+					snprintf(
+							sLog, sizeof(sLog),
 							"CHypoList::merge: %s: %.3f, %.3f, %.3f, %.3f\n",
 							hypo2->getPid().c_str(), hypo2->getLat(),
 							hypo2->getLon(), hypo2->getZ(), hypo2->getTOrg());
-				glassutil::CLogit::log(sLog);
+					glassutil::CLogit::log(sLog);
 
-				// create a new merged event hypo3
-				std::shared_ptr<CHypo> hypo3 =
-						std::make_shared < CHypo
-								> ((hypo2->getLat() + hypo->getLat()) / 2., (hypo2
-										->getLon() + hypo->getLon()) / 2., (hypo2
-										->getZ() + hypo->getZ()) / 2., (hypo2
-										->getTOrg() + hypo->getTOrg()) / 2., glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
-										->getThresh(), hypo->getCut(), hypo
-										->getTrv1(), hypo->getTrv2(), pGlass
-										->getTTT(), hypo->getRes(), hypo
-										->getAziTaper(), hypo->getMaxDepth());
+					// create a new merged event hypo3
+					std::shared_ptr<CHypo> hypo3 =
+							std::make_shared < CHypo
+									> ((hypo2->getLat() + hypo->getLat()) / 2., (hypo2
+											->getLon() + hypo->getLon()) / 2., (hypo2
+											->getZ() + hypo->getZ()) / 2., (hypo2
+											->getTOrg() + hypo->getTOrg()) / 2., glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
+											->getThresh(), hypo->getCut(), hypo
+											->getTrv1(), hypo->getTrv2(), pGlass
+											->getTTT(), hypo->getRes(), hypo
+											->getAziTaper(), hypo->getMaxDepth());
 
-				// set hypo glass pointer and such
-				hypo3->setGlass(pGlass);
-				hypo3->setCutFactor(pGlass->getCutFactor());
-				hypo3->setCutPercentage(pGlass->getCutPercentage());
-				hypo3->setCutMin(pGlass->getCutMin());
+					// set hypo glass pointer and such
+					hypo3->setGlass(pGlass);
+					hypo3->setCutFactor(pGlass->getCutFactor());
+					hypo3->setCutPercentage(pGlass->getCutPercentage());
+					hypo3->setCutMin(pGlass->getCutMin());
 
-				// add all picks for other two events
-				for (auto pick : hVPick) {
-					hypo3->addPick(pick);
-				}
+					// add all picks for other two events
+					for (auto pick : hVPick) {
+						hypo3->addPick(pick);
+					}
 
-				for (auto pick : h2VPick) {
-					hypo3->addPick(pick);
-				}
+					for (auto pick : h2VPick) {
+						hypo3->addPick(pick);
+					}
 
-				// First localization attempt after nucleation
-				// make 3 passes
-				hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
-								(distanceCut / 10.) * DEG2KM, (timeCut / 2.),
-								.1);
+					// First localization attempt after nucleation
+					// make 3 passes
+					hypo3->anneal(5000, (distanceCut / 2.) * DEG2KM,
+									(distanceCut / 10.) * DEG2KM,
+									(timeCut / 2.), .1);
 
-				// Remove picks that do not fit hypo 3
-				if (hypo3->prune()) {
-					// relocate the hypo
-					hypo3->localize();
-				}
+					// Remove picks that do not fit hypo 3
+					if (hypo3->prune()) {
+						// relocate the hypo
+						hypo3->localize();
+					}
 
-				int npick = hypo3->getVPickSize();
+					int npick = hypo3->getVPickSize();
 
-				snprintf(sLog, sizeof(sLog),
-							"CHypoList::merge: -- data new event %s which"
-							" associated %d picks of %lu potential picks/n"
-							"CHypoList::merge:    New Bayes %.3f, old bayes"
-							"%.3f and %.3f",
-							hypo3->getPid().c_str(), npick,
-							(hVPick.size() + h2VPick.size()), hypo3->getBayes(),
-							hypo->getBayes(), hypo2->getBayes());
-
-				glassutil::CLogit::log(sLog);
-
-				// check that bayestack is at least 70% of sum of others
-				if (hypo3->getBayes()
-						> (std::fmax(hypo->getBayes(), hypo2->getBayes())
-								+ 0.5
-										* std::fmin(hypo->getBayes(),
-													hypo2->getBayes()))) {
 					snprintf(sLog, sizeof(sLog),
+								"CHypoList::merge: -- data new event %s which"
+								" associated %d picks of %lu potential picks/n"
+								"CHypoList::merge:    New Bayes %.3f, old bayes"
+								"%.3f and %.3f",
+								hypo3->getPid().c_str(), npick,
+								(hVPick.size() + h2VPick.size()),
+								hypo3->getBayes(), hypo->getBayes(),
+								hypo2->getBayes());
+
+					glassutil::CLogit::log(sLog);
+
+					// check that bayestack is at least 70% of sum of others
+					if (hypo3->getBayes()
+							> (std::fmax(hypo->getBayes(), hypo2->getBayes())
+									+ 0.5
+											* std::fmin(hypo->getBayes(),
+														hypo2->getBayes()))) {
+						snprintf(
+								sLog, sizeof(sLog),
 								"CHypoList::merge: -- keeping new event which"
 								" associated %d picks of %lu potential picks/n"
 								"CHypoList::merge:     "
@@ -1207,44 +1220,46 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								npick, (hVPick.size() + h2VPick.size()),
 								hypo3->getBayes(), hypo->getBayes(),
 								hypo2->getBayes());
-					glassutil::CLogit::log(sLog);
+						glassutil::CLogit::log(sLog);
 
-					addHypo(hypo3);
-					remHypo(hypo);
-					remHypo (hypo2);
-					pushFifo(hypo3);
+						std::lock_guard < std::recursive_mutex
+								> listGuard(m_vHypoMutex);
+						addHypo(hypo3);
+						remHypo(hypo);
+						remHypo(hypo2);
+						pushFifo(hypo3);
 
-					snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
-								hypo->getPid().c_str());
-					glassutil::CLogit::Out(sLog);
+						snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
+									hypo->getPid().c_str());
+						glassutil::CLogit::Out(sLog);
 
-					snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
-								hypo2->getPid().c_str());
-					glassutil::CLogit::Out(sLog);
+						snprintf(sLog, sizeof(sLog), " ** Removing %s\n",
+									hypo2->getPid().c_str());
+						glassutil::CLogit::Out(sLog);
 
-					return (true);
-				} else {
-					// otherwise do nothing (don't add the new event to the
-					// hypo list, don't delete the unmerged hypos)
-					snprintf(
-							sLog,
-							sizeof(sLog),
-							"CHypoList::merge: -- canceling potential new"
-							" event %s which associated %d picks of %d"
-							" potential picks",
-							hypo3->getPid().c_str(),
-							npick,
-							(static_cast<int>(hypo->getVPickSize())
-									+ static_cast<int>(hypo2->getVPickSize())));
-					glassutil::CLogit::log(sLog);
+						return (true);
+					} else {
+						// otherwise do nothing (don't add the new event to the
+						// hypo list, don't delete the unmerged hypos)
+						snprintf(
+								sLog,
+								sizeof(sLog),
+								"CHypoList::merge: -- canceling potential new"
+								" event %s which associated %d picks of %d"
+								" potential picks",
+								hypo3->getPid().c_str(),
+								npick,
+								(static_cast<int>(hypo->getVPickSize())
+										+ static_cast<int>(hypo2->getVPickSize())));
+						glassutil::CLogit::log(sLog);
+					}
 				}
 			}
 		}
-
 	}
 	return (false);
 }
-*/
+
 // ---------------------------------------------------------pushFifo
 int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 	std::lock_guard < std::mutex > queueGuard(m_QueueMutex);
