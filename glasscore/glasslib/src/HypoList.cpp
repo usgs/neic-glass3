@@ -1038,7 +1038,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 	// compute the list of hypos to try merging with with
 	// (a potential hypo must be within time cut to consider)
-	sort()
+	sort();
 	std::vector < std::weak_ptr < CHypo >> hypoList = getHypos(
 			hypo->getTOrg() - timeCut, hypo->getTOrg() + timeCut);
 
