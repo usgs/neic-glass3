@@ -475,7 +475,8 @@ void CHypoList::darwin() {
 		return;
 	}
 
-	hyp->lockForProcessing();
+	std::lock_guard < std::recursive_mutex > hypoGuard(hyp->getMutex());
+	//hyp->lockForProcessing();
 
 	try {
 		// log the hypo we're working on
@@ -497,8 +498,8 @@ void CHypoList::darwin() {
 							+ std::to_string(hyp->getProcessCount()));
 
 			// remove hypo from the hypo list
+			// hyp->unlockAfterProcessing();
 			remHypo(hyp);
-			hyp->unlockAfterProcessing();
 			sort();
 
 			// done with processing
@@ -508,7 +509,7 @@ void CHypoList::darwin() {
 		// check to see if we've hit the iCycle Limit for this
 		// hypo
 		if (hyp->getCycle() >= pGlass->getCycleLimit()) {
-			hyp->unlockAfterProcessing();
+			// hyp->unlockAfterProcessing();
 			// log
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
@@ -524,7 +525,7 @@ void CHypoList::darwin() {
 		// process this hypocenter
 		evolve(hyp);
 
-		hyp->unlockAfterProcessing();
+		// hyp->unlockAfterProcessing();
 
 		// resort the hypocenter list to maintain
 		// time order
@@ -1075,13 +1076,14 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			if (hypo2->isLockedForProcessing()) {
 				continue;
 			} else {
-				hypo2->lockForProcessing();
+				std::lock_guard < std::recursive_mutex > hypoGuard(hyp->getMutex());
+]
 			}
 
 			// check to make sure hypo2 is still good
 			if (hypo2->cancelCheck() == true) {
 				remHypo(hypo2);
-				hypo2->unlockAfterProcessing();
+				// hypo2->unlockAfterProcessing();
 				continue;
 			}
 
@@ -1089,10 +1091,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
 
-			if(h2VPick.size()>20) {
-				hypo2->unlockAfterProcessing();
-				continue;
-			}
 
 			// check time difference
 			double diff = std::fabs(hypo->getTOrg() - hypo2->getTOrg());
@@ -1174,6 +1172,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						hypo3->localize();
 					}
 
+					resolve(hypo3);
+
 					int npick = hypo3->getVPickSize();
 
 					// check that the number of picks is sufficient to create new event
@@ -1200,9 +1200,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								> listGuard(m_vHypoMutex);
 						addHypo(hypo3);
 						remHypo(hypo);
+						// hypo2->unlockAfterProcessing();
 						remHypo(hypo2);
 						sort();
-						hypo2->unlockAfterProcessing();
 
 						snprintf(sLog, sizeof(sLog),
 									"CHypoList::merge: Removing %s\n",
@@ -1230,7 +1230,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					}
 				}
 			}
-			hypo2->unlockAfterProcessing();
+			// hypo2->unlockAfterProcessing();
 		}
 	}
 	return (false);
