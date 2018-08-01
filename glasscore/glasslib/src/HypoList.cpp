@@ -1119,6 +1119,13 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
+			resolve(hypo2);
+
+			// check to make sure that the hypo2 has a stack
+			if (hypo2->cancelCheck() == true) {
+				hypo2->unlockAfterProcessing();
+				continue;
+			}
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
 
@@ -1218,10 +1225,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								" scavanged %d picks (%lu, %lu picks in old events)\n"
 								"CHypoList::merge:    New Bayes %.3f, old bayes"
 								"%.3f and %.3f",
-								hypo3->getPid().c_str(), npick,
-								(hVPick.size()),(h2VPick.size()),
-								hypo3->getBayes(), hypo->getBayes(),
-								hypo2->getBayes());
+								hypo3->getPid().c_str(), npick, (hVPick.size()),
+								(h2VPick.size()), hypo3->getBayes(),
+								hypo->getBayes(), hypo2->getBayes());
 
 						glassutil::CLogit::log(sLog);
 
@@ -1247,15 +1253,13 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						// otherwise do nothing (don't add the new event to the
 						// hypo list, don't delete the unmerged hypos)
 						snprintf(
-								sLog,
-								sizeof(sLog),
+								sLog, sizeof(sLog),
 								"CHypoList::merge: -- canceling potential new"
-								" event %s which associated %d picks of %d"
+								" event %s which associated %d picks of %d + %d"
 								" potential picks",
-								hypo3->getPid().c_str(),
-								npick,
-								(static_cast<int>(hypo->getVPickSize())
-										+ static_cast<int>(hypo2->getVPickSize())));
+								hypo3->getPid().c_str(), npick,
+								(static_cast<int>(hypo->getVPickSize())),
+								(static_cast<int>(hypo2->getVPickSize())));
 						glassutil::CLogit::log(sLog);
 					}
 				}
