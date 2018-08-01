@@ -475,14 +475,7 @@ void CHypoList::darwin() {
 		return;
 	}
 
-	// only allow one thread to process a hypo at at time
-	// checks if it is locked in case it is locked in merge
-	if (hyp->isLockedForProcessing()) {
-		pushFifo(hyp);
-		return;
-	} else {
-		hyp->lockForProcessing();
-	}
+	hyp->lockForProcessing();
 
 	try {
 		// log the hypo we're working on
@@ -680,6 +673,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 				.count();
 
 		remHypo(hyp);
+		sort();
 
 		std::chrono::high_resolution_clock::time_point tRemoveEndTime =
 				std::chrono::high_resolution_clock::now();
@@ -1084,7 +1078,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				hypo2->lockForProcessing();
 			}
 
-			// check to make sure that the hypo2 has a stack
+			// check to make sure hypo2 is still good
 			if (hypo2->cancelCheck() == true) {
 				remHypo(hypo2);
 				hypo2->unlockAfterProcessing();
@@ -1094,6 +1088,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
+
+			if(h2VPick.size()>20) {
+				hypo2->unlockAfterProcessing();
+				continue;
+			}
 
 			// check time difference
 			double diff = std::fabs(hypo->getTOrg() - hypo2->getTOrg());
@@ -1159,8 +1158,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					// First localization attempt after nucleation
 					// make 3 passes
 					hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
-									(distanceCut / 10.) * DEG2KM,
-									(timeCut / 2.), .1);
+									(distanceCut / 100.) * DEG2KM,
+									(timeCut / 2.), .01);
 
 					// Remove picks that do not fit hypo 3
 					/*
@@ -1179,7 +1178,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					// check that the number of picks is sufficient to create new event
 					if (npick
-							> (.9*std::max(hVPick.size(), h2VPick.size()))
+							> (std::max(hVPick.size(), h2VPick.size()))
 									+( .3
 											* std::min(hVPick.size(),
 														h2VPick.size()))) {
@@ -1202,6 +1201,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						addHypo(hypo3);
 						remHypo(hypo);
 						remHypo(hypo2);
+						sort();
 						hypo2->unlockAfterProcessing();
 
 						snprintf(sLog, sizeof(sLog),
