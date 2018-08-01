@@ -1215,11 +1215,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								sLog,
 								sizeof(sLog),
 								"CHypoList::merge: keeping new event %s which"
-								" scavanged %d picks (%lu picks in old events)\n"
+								" scavanged %d picks (%lu, %lu picks in old events)\n"
 								"CHypoList::merge:    New Bayes %.3f, old bayes"
 								"%.3f and %.3f",
 								hypo3->getPid().c_str(), npick,
-								(hVPick.size() + h2VPick.size()),
+								(hVPick.size()),(h2VPick.size()),
 								hypo3->getBayes(), hypo->getBayes(),
 								hypo2->getBayes());
 
