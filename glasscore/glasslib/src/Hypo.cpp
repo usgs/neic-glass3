@@ -1493,6 +1493,11 @@ double CHypo::getMin() const {
 	return (dMin);
 }
 
+std::mutex CHypo::getMutex() const {
+	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
+	return (hypoMutex);
+}
+
 const std::string& CHypo::getPid() const {
 	return (sPid);
 }

@@ -808,6 +808,12 @@ class CHypo {
 	double getMin() const;
 
 	/**
+	 * \brief Mutex getter
+	 * \return the hypo mutex
+	 */
+	std::mutex getMutex() const;
+
+	/**
 	 * \brief Residual getter
 	 * \return the residual value
 	 */
