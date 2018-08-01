@@ -475,7 +475,7 @@ void CHypoList::darwin() {
 		return;
 	}
 
-	std::lock_guard < std::recursive_mutex > hypoGuard(hyp->getMutex());
+	std::lock_guard< std::mutex > hypoGuard(hyp->getProcessingMutex());
 	//hyp->lockForProcessing();
 
 	try {
@@ -532,9 +532,9 @@ void CHypoList::darwin() {
 		sort();
 	} catch (...) {
 		// ensure the hypo is unlocked
-		if (hyp->isLockedForProcessing()) {
-			hyp->unlockAfterProcessing();
-		}
+		// if (hyp->isLockedForProcessing()) {
+		//	hyp->unlockAfterProcessing();
+		// }
 
 		throw;
 	}
@@ -1075,10 +1075,10 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 			// check to see if hypo2 is locked
 			if (hypo2->isLockedForProcessing()) {
 				continue;
-			} else {
-				std::lock_guard < std::recursive_mutex > hypoGuard(hyp->getMutex());
-]
 			}
+
+			std::lock_guard< std::mutex > hypoGuard(hyp->getProcessingMutex());
+
 
 			// check to make sure hypo2 is still good
 			if (hypo2->cancelCheck() == true) {

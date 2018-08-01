@@ -811,7 +811,7 @@ class CHypo {
 	 * \brief Mutex getter
 	 * \return the hypo mutex
 	 */
-	std::recursive_mutex getMutex() const;
+	std::mutex getProcessingMutex() const;
 
 	/**
 	 * \brief Residual getter
