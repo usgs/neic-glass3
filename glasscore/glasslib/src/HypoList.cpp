@@ -494,7 +494,6 @@ void CHypoList::darwin() {
 
 		// check to see if this hypo is viable.
 		if (hyp->cancelCheck()) {
-			hyp->unlockAfterProcessing();
 
 			// this hypo is no longer viable
 			// log
@@ -506,7 +505,7 @@ void CHypoList::darwin() {
 
 			// remove hypo from the hypo list
 			remHypo(hyp);
-
+			hyp->unlockAfterProcessing();
 			sort();
 
 			// done with processing
@@ -1017,35 +1016,6 @@ int CHypoList::indexHypo(double tOrg) {
 }
 
 // ---------------------------------------------------------jobSleep
-void CHypoList::jobSleep() {
-	// if we're processing jobs
-	if (m_bRunProcessLoop == true) {
-		// sleep for a random amount of time, to better distribute
-		// the load across all job threads.
-		std::uniform_int_distribution<> distribution(m_iSleepTimeMS / 4,
-														m_iSleepTimeMS);
-		int sleeptime = distribution(m_RandomGenerator);
-		std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
-	}
-}
-
-// ---------------------------------------------------------listPicks
-void CHypoList::listHypos() {
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
-
-	int n = 0;
-	char sLog[1024];
-
-	// for each hypo
-	for (auto p : vHypo) {
-		// list it
-		snprintf(sLog, sizeof(sLog), "%d: %.2f %s", n++, p.first,
-					p.second.c_str());
-		glassutil::CLogit::Out(sLog);
-	}
-}
-
-// --------------------------------------------------mergeCloseEvents
 bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	if (pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -1068,6 +1038,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 	// compute the list of hypos to try merging with with
 	// (a potential hypo must be within time cut to consider)
+	sort()
 	std::vector < std::weak_ptr < CHypo >> hypoList = getHypos(
 			hypo->getTOrg() - timeCut, hypo->getTOrg() + timeCut);
 
@@ -1120,21 +1091,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-			resolve(hypo2);
-			resolve(hypo);
-
-			// check to make sure that the hypo2 has a stack
-			if (hypo2->cancelCheck() == true) {
-				remHypo(hypo2);
-				hypo2->unlockAfterProcessing();
-				continue;
-			}
-
-			// check to make sure that the hypo2 has a stack
-			if (hypo->cancelCheck() == true) {
-				remHypo(hypo);
-				return (true);
-			}
 
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
@@ -1223,8 +1179,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					// check that the number of picks is sufficient to create new event
 					if (npick
-							> (.9*std::max(hVPick.size(), h2VPick.size())
-									+ .3
+							> (.9*std::max(hVPick.size(), h2VPick.size()))
+									+( .3
 											* std::min(hVPick.size(),
 														h2VPick.size()))) {
 
@@ -1280,6 +1236,35 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	return (false);
 }
 
+void CHypoList::jobSleep() {
+	// if we're processing jobs
+	if (m_bRunProcessLoop == true) {
+		// sleep for a random amount of time, to better distribute
+		// the load across all job threads.
+		std::uniform_int_distribution<> distribution(m_iSleepTimeMS / 4,
+														m_iSleepTimeMS);
+		int sleeptime = distribution(m_RandomGenerator);
+		std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
+	}
+}
+
+// ---------------------------------------------------------listPicks
+void CHypoList::listHypos() {
+	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+
+	int n = 0;
+	char sLog[1024];
+
+	// for each hypo
+	for (auto p : vHypo) {
+		// list it
+		snprintf(sLog, sizeof(sLog), "%d: %.2f %s", n++, p.first,
+					p.second.c_str());
+		glassutil::CLogit::Out(sLog);
+	}
+}
+
+// --------------------------------------------------mergeCloseEvents
 // ---------------------------------------------------------pushFifo
 int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 	std::lock_guard < std::mutex > queueGuard(m_QueueMutex);
