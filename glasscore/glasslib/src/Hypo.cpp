@@ -1493,7 +1493,7 @@ double CHypo::getMin() const {
 	return (dMin);
 }
 
-std::mutex CHypo::getProcessingMutex() {
+std::mutex & CHypo::getProcessingMutex() {
 	return (processingMutex);
 }
 
