@@ -1223,8 +1223,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					// check that the number of picks is sufficient to create new event
 					if (npick
-							> (std::max(hVPick.size(), h2VPick.size())
-									+ .5
+							> (.9*std::max(hVPick.size(), h2VPick.size())
+									+ .3
 											* std::min(hVPick.size(),
 														h2VPick.size()))) {
 
