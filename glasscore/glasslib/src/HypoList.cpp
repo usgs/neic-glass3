@@ -1115,8 +1115,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 			// check to make sure that the hypo2 has a stack
 			if (hypo2->cancelCheck() == true) {
-				hypo2->unlockAfterProcessing();
 				remHypo(hypo2);
+				hypo2->unlockAfterProcessing();
 				continue;
 			}
 
@@ -1125,8 +1125,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 			// check to make sure that the hypo2 has a stack
 			if (hypo2->cancelCheck() == true) {
-				hypo2->unlockAfterProcessing();
 				remHypo(hypo2);
+				hypo2->unlockAfterProcessing();
 				continue;
 			}
 
