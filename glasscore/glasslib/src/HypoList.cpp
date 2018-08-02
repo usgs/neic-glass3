@@ -1077,7 +1077,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-			std::lock_guard< std::mutex > hypoGuard(hypo2->getProcessingMutex());
+			// std::lock_guard< std::mutex > hypoGuard(hypo2->getProcessingMutex());
 
 
 			// check to make sure hypo2 is still good
