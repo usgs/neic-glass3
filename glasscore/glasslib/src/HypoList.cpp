@@ -475,7 +475,7 @@ void CHypoList::darwin() {
 		return;
 	}
 
-	std::lock_guard< std::mutex > hypoGuard(hyp->getProcessingMutex());
+	std::lock_guard < std::mutex > hypoGuard(hyp->getProcessingMutex());
 	//hyp->lockForProcessing();
 
 	try {
@@ -1077,8 +1077,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-			// std::lock_guard< std::mutex > hypoGuard(hypo2->getProcessingMutex());
-
+			std::lock_guard < std::mutex
+					> hypoGuard(hypo2->getProcessingMutex());
 
 			// check to make sure hypo2 is still good
 			if (hypo2->cancelCheck() == true) {
@@ -1087,10 +1087,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-
 			// get hypo2's picks
 			auto h2VPick = hypo2->getVPick();
-
 
 			// check time difference
 			double diff = std::fabs(hypo->getTOrg() - hypo2->getTOrg());
@@ -1176,7 +1174,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					// check that the number of picks is sufficient to create new event
 					if (npick
 							> (std::max(hVPick.size(), h2VPick.size()))
-									+( .3
+									+ (.3
 											* std::min(hVPick.size(),
 														h2VPick.size()))) {
 
@@ -1278,14 +1276,23 @@ int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 
 	// get this hypo's id
 	std::string pid = hyp->getPid();
+	m_vHypoMutex.lock();
+	if (mHypo[pid] == NULL) {
+		// it's not, we can't really process a hypo we don't have
+		m_vHypoMutex.unlock();
+		// return the current size of the queue
+		int size = qFifo.size();
+		return (size);
+	}
+	m_vHypoMutex.unlock();
 
-	// is this id already on the queue?
+// is this id already on the queue?
 	if (std::find(qFifo.begin(), qFifo.end(), pid) == qFifo.end()) {
 		// it is not, add it
 		qFifo.push_back(pid);
 	}
 
-	// return the current size of the queue
+// return the current size of the queue
 	int size = qFifo.size();
 
 	glassutil::CLogit::log(
@@ -1298,36 +1305,36 @@ int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 
 // ---------------------------------------------------------popFifo
 std::shared_ptr<CHypo> CHypoList::popFifo() {
-	// don't use a lock guard for queue mutex and hypomutex,
-	// to avoid a deadlock when both mutexes are locked
+// don't use a lock guard for queue mutex and hypomutex,
+// to avoid a deadlock when both mutexes are locked
 	m_QueueMutex.lock();
 
-	// Pop first hypocenter off processing fifo
-	// is there anything on the queue?
+// Pop first hypocenter off processing fifo
+// is there anything on the queue?
 	if (qFifo.size() < 1) {
 		// nope
 		m_QueueMutex.unlock();
 		return (NULL);
 	}
 
-	// get the first id on the queue
+// get the first id on the queue
 	std::string pid = qFifo.front();
 
-	// remove the first id from the queue now that we have it
-	// Does not throw unless an exception is thrown by the assignment operator
-	// of T.
+// remove the first id from the queue now that we have it
+// Does not throw unless an exception is thrown by the assignment operator
+// of T.
 	qFifo.erase(qFifo.begin());
 
 	m_QueueMutex.unlock();
 
 	m_vHypoMutex.lock();
 
-	// use the map to get the hypo based on the id
+// use the map to get the hypo based on the id
 	std::shared_ptr<CHypo> hyp = mHypo[pid];
 
 	m_vHypoMutex.unlock();
 
-	// return the hypo
+// return the hypo
 	return (hyp);
 }
 
@@ -1365,7 +1372,7 @@ void CHypoList::processHypos() {
 // ---------------------------------------------------------remHypo
 // Remove and unmap Hypocenter from vector, map, and pick
 void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
-	// nullcheck
+// nullcheck
 	if (hypo == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypoList::remHypo: NULL hypo provided.");
@@ -1375,15 +1382,15 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 
 	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
 
-	// get the id
+// get the id
 	std::string pid = hypo->getPid();
 
-	// unlink all the hypo's data
+// unlink all the hypo's data
 	hypo->clearPicks();
 	hypo->clearCorrelations();
 
-	// erase this hypo from the vector
-	// search through all hypos
+// erase this hypo from the vector
+// search through all hypos
 	for (int iq = 0; iq < vHypo.size(); iq++) {
 		// get current hypo
 		auto q = vHypo[iq];
@@ -1407,20 +1414,20 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		}
 	}
 
-	// erase this hypo from the map
+// erase this hypo from the map
 	mHypo.erase(pid);
 }
 
 // ---------------------------------------------------------ReqHypo
 bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
-	// null check json
+// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypoList::reqHypo: NULL json communication.");
 		return (false);
 	}
 
-	// check cmd
+// check cmd
 	if (com->HasKey("Cmd")
 			&& ((*com)["Cmd"].GetType() == json::ValueType::StringVal)) {
 		std::string cmd = (*com)["Cmd"].ToString();
@@ -1448,7 +1455,7 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
-	// pid
+// pid
 	std::string sPid;
 	if (com->HasKey("Pid")
 			&& ((*com)["Pid"].GetType() == json::ValueType::StringVal)) {
@@ -1461,10 +1468,10 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 
 	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
 
-	// get the hypo
+// get the hypo
 	std::shared_ptr<CHypo> hyp = mHypo[sPid];
 
-	// check the hypo
+// check the hypo
 	if (!hyp) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
@@ -1475,16 +1482,16 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 		return (true);
 	}
 
-	// generate the hypo message
+// generate the hypo message
 	hyp->hypo();
 
-	// done
+// done
 	return (true);
 }
 
 // ---------------------------------------------------------resolve
 bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
-	// null checks
+// null checks
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CHypoList::resolve: NULL hypo provided.");
@@ -1498,11 +1505,11 @@ bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
 		return (false);
 	}
 
-	// this lock guard exists to avoid a deadlock that occurs
-	// when it isn't present
+// this lock guard exists to avoid a deadlock that occurs
+// when it isn't present
 	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
 
-	// return whether we've changed the pick set
+// return whether we've changed the pick set
 	return (hyp->resolve(hyp));
 }
 
@@ -1521,7 +1528,7 @@ void CHypoList::setNHypoMax(int hypoMax) {
 // ---------------------------------------------------------setStatus
 void CHypoList::setStatus(bool status) {
 	std::lock_guard < std::mutex > statusGuard(m_StatusMutex);
-	// update thread status
+// update thread status
 	if (m_ThreadStatusMap.find(std::this_thread::get_id())
 			!= m_ThreadStatusMap.end()) {
 		m_ThreadStatusMap[std::this_thread::get_id()] = status;
@@ -1531,18 +1538,18 @@ void CHypoList::setStatus(bool status) {
 // ---------------------------------------------------------sort
 void CHypoList::sort() {
 	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
-	// sort hypos
+// sort hypos
 	std::sort(vHypo.begin(), vHypo.end(), sortHypo);
 }
 
 // ---------------------------------------------------------statusCheck
 bool CHypoList::statusCheck() {
-	// if we have a negative check interval,
-	// we shouldn't worry about thread status checks.
+// if we have a negative check interval,
+// we shouldn't worry about thread status checks.
 	if (m_iStatusCheckInterval < 0)
 		return (true);
 
-	// thread is dead if we're not running
+// thread is dead if we're not running
 	if (m_bRunProcessLoop == false) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
@@ -1550,7 +1557,7 @@ bool CHypoList::statusCheck() {
 		return (false);
 	}
 
-	// see if it's time to check
+// see if it's time to check
 	time_t tNow;
 	std::time(&tNow);
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
@@ -1586,7 +1593,7 @@ bool CHypoList::statusCheck() {
 		tLastStatusCheck = tNow;
 	}
 
-	// everything is awesome
+// everything is awesome
 	return (true);
 }
 }  // namespace glasscore
