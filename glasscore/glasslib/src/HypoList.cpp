@@ -1019,9 +1019,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	}
 
 	char sLog[1024];  // logging string
-	double distanceCut = 5.0;  // distance difference to try merging events
+	double distanceCut = 3.0;  // distance difference to try merging events
 	// in degrees
-	double timeCut = 60.;  // origin time difference to merge events
+	double timeCut = 30.;  // origin time difference to merge events
 	double delta;  // this holds delta distance
 
 	// this events pick list
@@ -1172,11 +1172,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					int npick = hypo3->getVPickSize();
 
 					// check that the number of picks is sufficient to create new event
-					if (npick
-							> (std::max(hVPick.size(), h2VPick.size()))
-									+ (.3
-											* std::min(hVPick.size(),
-														h2VPick.size()))) {
+					if (hypo3->getBayes()
+							> (std::max(hypo->getBayes(), hypo2->getBayes()))
+									+ (.25
+											* std::min(hypo->getBayes(),
+													   hypo2->getBayes()))) {
 
 						snprintf(
 								sLog,
@@ -1191,8 +1191,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 						glassutil::CLogit::log(sLog);
 
-						std::lock_guard < std::recursive_mutex
-								> listGuard(m_vHypoMutex);
 						remHypo(hypo);
 						remHypo(hypo2);
 						addHypo(hypo3);
@@ -1257,42 +1255,41 @@ void CHypoList::listHypos() {
 	}
 }
 
-// --------------------------------------------------mergeCloseEvents
 // ---------------------------------------------------------pushFifo
 int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
-	std::lock_guard < std::mutex > queueGuard(m_QueueMutex);
+	// don't use a lock guard for queue mutex and vhypo mutex,
+	// to avoid a deadlock when both mutexes are locked
+	m_QueueMutex.lock();
+	int size = qFifo.size();
+	m_QueueMutex.unlock();
+
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypoList::pushFifo: NULL hypo provided.");
-
-		// return the current size of the queue
-		int size = qFifo.size();
-
 		return (size);
 	}
 
 	// get this hypo's id
 	std::string pid = hyp->getPid();
-	/*
-	 m_vHypoMutex.lock();
-	 if (mHypo[pid] == NULL) {
-	 // it's not, we can't really process a hypo we don't have
-	 m_vHypoMutex.unlock();
-	 // return the current size of the queue
-	 int size = qFifo.size();
-	 return (size);
-	 }
-	 m_vHypoMutex.unlock();
-	 */
-// is this id already on the queue?
+
+	// use the map to get see if this hypo is even on the hypo list
+	m_vHypoMutex.lock();
+	if (mHypo[pid] == NULL) {
+		// it's not, we can't really process a hypo we don't have
+		m_vHypoMutex.unlock();
+
+		return (size);
+	}
+	m_vHypoMutex.unlock();
+
+	// is this id already on the queue?
+	m_QueueMutex.lock();
 	if (std::find(qFifo.begin(), qFifo.end(), pid) == qFifo.end()) {
 		// it is not, add it
 		qFifo.push_back(pid);
 	}
-
-// return the current size of the queue
-	int size = qFifo.size();
+	m_QueueMutex.unlock();
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
