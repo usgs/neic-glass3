@@ -909,7 +909,7 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 	int ix2 = indexHypo(t2);
 
 	// check ending index
-	if (ix2 <= 0) {
+	if (ix2 < 0) {
 		// end time is before the start of the list
 		// no hypos to find
 		return (hypos);
@@ -1154,7 +1154,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					}
 
 					// First localization attempt after nucleation
-					// make 3 passes
 					hypo3->anneal(10000, (distanceCut / 2.) * DEG2KM,
 									(distanceCut / 100.) * DEG2KM,
 									(timeCut / 2.), .01);
@@ -1171,8 +1170,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						// relocate the hypo
 						hypo3->localize();
 					}
-
-					resolve(hypo3);
 
 					int npick = hypo3->getVPickSize();
 
