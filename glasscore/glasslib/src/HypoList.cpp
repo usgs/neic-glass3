@@ -711,9 +711,9 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	// if (mergeCloseEvents(hyp)) {
-	//	return (false);
-	// }
+	if (mergeCloseEvents(hyp)) {
+		return (false);
+	}
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -1193,11 +1193,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 						std::lock_guard < std::recursive_mutex
 								> listGuard(m_vHypoMutex);
-						addHypo(hypo3);
 						remHypo(hypo);
-						// hypo2->unlockAfterProcessing();
 						remHypo(hypo2);
-						sort();
+						addHypo(hypo3);
 
 						snprintf(sLog, sizeof(sLog),
 									"CHypoList::merge: Removing %s\n",
@@ -1277,16 +1275,16 @@ int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 	// get this hypo's id
 	std::string pid = hyp->getPid();
 	/*
-	m_vHypoMutex.lock();
-	if (mHypo[pid] == NULL) {
-		// it's not, we can't really process a hypo we don't have
-		m_vHypoMutex.unlock();
-		// return the current size of the queue
-		int size = qFifo.size();
-		return (size);
-	}
-	m_vHypoMutex.unlock();
-	*/
+	 m_vHypoMutex.lock();
+	 if (mHypo[pid] == NULL) {
+	 // it's not, we can't really process a hypo we don't have
+	 m_vHypoMutex.unlock();
+	 // return the current size of the queue
+	 int size = qFifo.size();
+	 return (size);
+	 }
+	 m_vHypoMutex.unlock();
+	 */
 // is this id already on the queue?
 	if (std::find(qFifo.begin(), qFifo.end(), pid) == qFifo.end()) {
 		// it is not, add it

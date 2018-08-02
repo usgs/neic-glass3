@@ -95,7 +95,8 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 					trigger->getWeb()->getNucleate(),
 					trigger->getWeb()->getTrv1(), trigger->getWeb()->getTrv2(),
 					ttt, trigger->getResolution(),
-					trigger->getWeb()->getAziTaper(), trigger->getWeb()->getMaxDepth())) {
+					trigger->getWeb()->getAziTaper(),
+					trigger->getWeb()->getMaxDepth())) {
 		clear();
 	}
 }
@@ -393,7 +394,9 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 	// for each pick to remove
 	for (auto pick : vkill) {
 		// remove the pick hypo link
-		pick->clearHypo();
+		if (pick->getHypo()->getPid() == getPid()) {
+			pick->clearHypo();
+		}
 
 		// remove the pick from this hypo
 		remPick(pick);
