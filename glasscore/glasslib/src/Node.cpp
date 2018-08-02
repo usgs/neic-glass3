@@ -436,7 +436,7 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 	}
 	// compute significances using residuals
 	// pick sigma is defined as resolution / 5.0 * 2.0
-	// should trigger be a loser cutoff than location cutoff
+	// should trigger be a looser cutoff than location cutoff
 	double dSig1 = 0;
 	if (tRes1 > 0) {
 		dSig1 = pWeb->getGlass()->sig(tRes1, dResolution);

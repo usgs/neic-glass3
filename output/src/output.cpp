@@ -374,8 +374,8 @@ bool output::healthCheck() {
 		}
 	}
 
-	if ((getThreadState() != glass3::util::ThreadState::Starting)
-			&& (getThreadState() != glass3::util::ThreadState::Initialized)
+	if ((getWorkThreadsState() != glass3::util::ThreadState::Starting)
+			&& (getWorkThreadsState() != glass3::util::ThreadState::Initialized)
 			&& (getHealthCheckInterval() > 0)) {
 		// thread is dead if we're not running
 		if (getEventThreadState() != glass3::util::ThreadState::Started) {

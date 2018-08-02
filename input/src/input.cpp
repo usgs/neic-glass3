@@ -236,7 +236,7 @@ glass3::util::WorkState input::work() {
 		glass3::util::log(
 				"debug",
 				"input::work(): Exception:" + std::string(e.what())
-						+ " parsing string: " + message);
+						+ " processing input: " + message);
 	}
 
 	if ((newdata != NULL) && (validate(type, newdata) == true)) {

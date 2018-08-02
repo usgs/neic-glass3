@@ -269,7 +269,7 @@ std::string fileInput::fetchRawData() {
 				}
 
 				// shut it down
-				setThreadState(glass3::util::ThreadState::Stopping);
+				setWorkThreadsState(glass3::util::ThreadState::Stopping);
 			}
 		}
 	}

@@ -160,7 +160,7 @@ TEST_F(InputTest, Construction) {
 	ASSERT_TRUE(InputThread->getConfig() == NULL) << "input config is null";
 
 	// assert class is not running
-	ASSERT_FALSE(InputThread->getThreadState() ==
+	ASSERT_FALSE(InputThread->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started) << "input thread is not running";
 
 	// assert no data in class

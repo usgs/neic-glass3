@@ -56,16 +56,14 @@ TEST(ThreadPoolTest, CombinedTest) {
 
 	// create a threadpool object
 	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool(
-			poolname, NUMTHREADS,
-			SLEEPTIME,
-			CHECKTIME);
+			poolname, NUMTHREADS, SLEEPTIME, CHECKTIME);
 
 	// assert threads running
-	ASSERT_TRUE(aThreadPool->getThreadPoolState() ==
-				glass3::util::ThreadState::Started)<< "check threads running";
+	ASSERT_TRUE(aThreadPool->getWorkThreadsState() ==
+			glass3::util::ThreadState::Started)<< "check threads running";
 
 	// assert pool name
-	ASSERT_STREQ(aThreadPool->getPoolName().c_str(), poolname.c_str())<<
+	ASSERT_STREQ(aThreadPool->getThreadName().c_str(), poolname.c_str())<<
 	"pool name";
 
 	// assert number of threads
@@ -109,9 +107,6 @@ TEST(ThreadPoolTest, CombinedTest) {
 
 	// assert that check is false
 	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
-
-	// shutdown threadpool.
-	delete (aThreadPool);
 }
 
 // tests to see if thread pool monitoring works
@@ -120,9 +115,7 @@ TEST(ThreadPoolTest, MonitoringTest) {
 
 	// create a threadpool object
 	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool(
-			poolname, NUMTHREADS,
-			SLEEPTIME,
-			CHECKTIME);
+			poolname, NUMTHREADS, SLEEPTIME, CHECKTIME);
 
 	// give time for jobs to be monitored
 	std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -133,20 +126,12 @@ TEST(ThreadPoolTest, MonitoringTest) {
 	// add a bad job
 	aThreadPool->addJob(std::bind(&badjob));
 
-	// give time for jobs to be monitored
-	std::this_thread::sleep_for(std::chrono::seconds(1));
-
-	// assert that check is true
-	ASSERT_TRUE(aThreadPool->healthCheck())<< "ThreadPool check is true";
 
 	// give time for jobs to be monitored
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert that check is false
 	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
-
-	// shutdown threadpool.
-	delete (aThreadPool);
 }
 
 // tests various failure conditions
@@ -156,8 +141,5 @@ TEST(ThreadPoolTest, FailTests) {
 
 	// assert that check is false
 	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
-
-	// shutdown threadpool.
-	delete (aThreadPool);
 }
 

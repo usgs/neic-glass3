@@ -376,7 +376,7 @@ TEST_F(OutputTest, Construction) {
 	ASSERT_TRUE(OutputThread->getConfig() == NULL) << "output config is null";
 
 	// assert class is not running
-	ASSERT_FALSE(OutputThread->getThreadState() ==
+	ASSERT_FALSE(OutputThread->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started) << "output thread is not running";
 
 	// assert no data in class
