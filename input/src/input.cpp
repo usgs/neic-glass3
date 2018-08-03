@@ -101,12 +101,11 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 
 	// default agencyid
 	if (!(config->HasKey("DefaultAgencyID"))) {
-		// agencyid is optional
-		setDefaultAgency("US");
-		glass3::util::log("info",
-							"input::setup(): Defaulting to US as AgencyID.");
+		glass3::util::log("error",
+							"input::setup(): Missing required DefaultAgencyID.");
+		return (false);
 	} else {
-		setDefaultAgency((*config)["DefaultAgencyID"].ToString());
+		setDefaultAgencyId((*config)["DefaultAgencyID"].ToString());
 		glass3::util::log(
 				"info",
 				"input::setup(): Using AgencyID: " + getDefaultAgencyId()
@@ -115,11 +114,10 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 
 	// default author
 	if (!(config->HasKey("DefaultAuthor"))) {
-		// author is optional
-		setDefaultAuthor("glassConverter");
 		glass3::util::log(
-				"info",
-				"input::setup(): Defaulting to glassConverter as Author.");
+				"error",
+				"input::setup(): Missing required DefaultAuthor.");
+		return (false);
 	} else {
 		setDefaultAuthor((*config)["DefaultAuthor"].ToString());
 		glass3::util::log(

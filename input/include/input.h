@@ -119,46 +119,6 @@ class input : public glass3::util::iInput,
 	int getInputDataCount() override;
 
 	/**
-	 * \brief Function to set the name of the default agency id
-	 *
-	 * This function sets the name of the default agency id, this name is used in
-	 * generating input messages
-	 *
-	 * \param id = A std::string containing the agency id to set
-	 */
-	void setDefaultAgency(std::string agency);
-
-	/**
-	 * \brief Function to retrieve the name of the default agency id
-	 *
-	 * This function retrieves the name of default agency id, this name is used
-	 * in generating input messages
-	 *
-	 * \return A std::string containing the agency id
-	 */
-	const std::string getDefaultAgencyId();
-
-	/**
-	 * \brief Function to set the name of the default author
-	 *
-	 * This function sets the name of the default author, this name is used in
-	 * generating input messages
-	 *
-	 * \param author = A std::string containing the author to set
-	 */
-	void setDefaultAuthor(std::string author);
-
-	/**
-	 * \brief Function to retrieve the name of the default author
-	 *
-	 * This function retrieves the name of the default author, this name is used
-	 * in generating input messages
-	 *
-	 * \return A std::string containing the author
-	 */
-	const std::string getDefaultAuthor();
-
-	/**
 	 * \brief Function to set the maximum queue size
 	 *
 	 * This function sets the maximum allowable size of the input data queue
@@ -168,7 +128,7 @@ class input : public glass3::util::iInput,
 	void setQueueMaxSize(int size);
 
 	/**
-	 * \brief Function to retrieve tthe maximum queue size
+	 * \brief Function to retrieve the maximum queue size
 	 *
 	 * This function retrieves the maximum allowable size of the input data
 	 * queue
@@ -254,17 +214,6 @@ class input : public glass3::util::iInput,
 	virtual std::string fetchRawData() = 0;
 
  private:
-	/**
-	 * \brief the std::string configuration value indicating the default agency
-	 * id
-	 */
-	std::string m_sDefaultAgencyID;
-
-	/**
-	 * \brief the std::string configuration value indicating the default author
-	 */
-	std::string m_sDefaultAuthor;
-
 	/**
 	 * \brief the integer configuration value indicating the maximum size of the
 	 * data queue

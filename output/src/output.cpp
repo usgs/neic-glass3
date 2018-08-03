@@ -150,30 +150,29 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 
 	// agencyid
 	if (!(config->HasKey("OutputAgencyID"))) {
-		// agencyid is optional
-		setOutputAgency("US");
 		glass3::util::log(
-				"info", "output::setup(): Defaulting to US as OutputAgencyID.");
+				"error",
+				"output::setup(): Missing required OutputAgencyID.");
+		return (false);
 	} else {
-		setOutputAgency((*config)["OutputAgencyID"].ToString());
+		setDefaultAgencyId((*config)["OutputAgencyID"].ToString());
 		glass3::util::log(
 				"info",
-				"output::setup(): Using AgencyID: " + getOutputAgencyId()
+				"output::setup(): Using AgencyID: " + getDefaultAgencyId()
 						+ " for output.");
 	}
 
 	// author
 	if (!(config->HasKey("OutputAuthor"))) {
-		// agencyid is optional
-		setOutputAuthor("glass3");
 		glass3::util::log(
-				"info",
-				"output::setup(): Defaulting to glass as OutputAuthor.");
+				"error",
+				"output::setup(): Missing required OutputAuthor.");
+		return (false);
 	} else {
-		setOutputAuthor((*config)["OutputAuthor"].ToString());
+		setDefaultAuthor((*config)["OutputAuthor"].ToString());
 		glass3::util::log(
 				"info",
-				"output::setup(): Using Author: " + getOutputAuthor()
+				"output::setup(): Using Author: " + getDefaultAuthor()
 						+ " for output.");
 	}
 
@@ -240,9 +239,6 @@ void output::clear() {
 	clearPubTimes();
 	setSiteListDelay(-1);
 	setStationFile("");
-
-	setOutputAgency("US");
-	setOutputAuthor("glass3");
 
 	// finally do baseclass clear
 	glass3::util::BaseClass::clear();
@@ -914,8 +910,8 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 		ID = (*data)["Pid"].ToString();
 	}
 
-	std::string agency = getOutputAgencyId();
-	std::string author = getOutputAuthor();
+	std::string agency = getDefaultAgencyId();
+	std::string author = getDefaultAuthor();
 
 	if (dataType == "Hypo") {
 		// convert a hypo to a detection
@@ -1197,30 +1193,6 @@ bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	// all pub log entries were greater than 0,
 	// so event was finished
 	return (true);
-}
-
-// ---------------------------------------------------------setOutputAgency
-void output::setOutputAgency(std::string agency) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_sOutputAgencyID = agency;
-}
-
-// ---------------------------------------------------------getOutputAgencyId
-const std::string output::getOutputAgencyId() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_sOutputAgencyID);
-}
-
-// ---------------------------------------------------------setOutputAuthor
-void output::setOutputAuthor(std::string author) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_sOutputAuthor = author;
-}
-
-// ---------------------------------------------------------getOutputAuthor
-const std::string output::getOutputAuthor() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_sOutputAuthor);
 }
 
 // ---------------------------------------------------------setSiteListDelay

@@ -26,7 +26,8 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 		return (NULL);
 	}
 
-	glass3::util::log("trace", "jsonparser::parse: Input String: " + input + ".");
+	glass3::util::log("trace",
+						"jsonparser::parse: Input String: " + input + ".");
 
 	// JSON format
 	// JSON doesn't have a fixed format
@@ -37,9 +38,10 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 
 		// make sure we got valid json
 		if (deserializedvalue.GetType() == json::ValueType::NULLVal) {
-			glass3::util::log("error",
-						"jsonparser::parse: json::Deserialize returned null, "
-						"returning.");
+			glass3::util::log(
+					"error",
+					"jsonparser::parse: json::Deserialize returned null, "
+					"returning.");
 			return (NULL);
 		}
 
@@ -58,9 +60,9 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 
 	// make sure Deserialize gave us something
 	if (newobject == NULL) {
-		glass3::util::log("error",
-					"jsonparser::parse: json::Deserialize returned null, "
-					"returning.");
+		glass3::util::log(
+				"error", "jsonparser::parse: json::Deserialize returned null, "
+				"returning.");
 		return (NULL);
 	}
 
@@ -188,9 +190,9 @@ bool JSONParser::validate(std::shared_ptr<json::Object> &input) {
 			// check information requestor if it's present
 			if (stationObject.informationRequestor.isempty() == false) {
 				if ((stationObject.informationRequestor.agencyid
-						!= getAgencyId())
+						!= getDefaultAgencyId())
 						|| (stationObject.informationRequestor.author
-								!= getAuthor())) {
+								!= getDefaultAuthor())) {
 					glass3::util::log(
 							"debug",
 							"jsonparser::validate: stationInfo is not for this "

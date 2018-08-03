@@ -36,11 +36,12 @@ TEST(ParserTest, Construction) {
 	std::string emptyString = "";
 
 	// assert that agencyid is ok
-	ASSERT_STREQ(Parser->getAgencyId().c_str(), emptyString.c_str())<<
+	ASSERT_STREQ(Parser->getDefaultAgencyId().c_str(), emptyString.c_str())<<
 	"AgencyID check";
 
 	// assert that author is ok
-	ASSERT_STREQ(Parser->getAuthor().c_str(), emptyString.c_str())<< "Author check";
+	ASSERT_STREQ(Parser->getDefaultAuthor().c_str(), emptyString.c_str())<<
+	"Author check";
 
 	ASSERT_TRUE(Parser->parse(emptyString) == NULL)<< "parse returns null";
 
@@ -54,11 +55,12 @@ TEST(ParserTest, Construction) {
 	parserstub * Parser2 = new parserstub(agencyid, author);
 
 	// assert that agencyid is ok
-	ASSERT_STREQ(Parser2->getAgencyId().c_str(), agencyid.c_str())<<
+	ASSERT_STREQ(Parser2->getDefaultAgencyId().c_str(), agencyid.c_str())<<
 	"AgencyID check";
 
 	// assert that author is ok
-	ASSERT_STREQ(Parser2->getAuthor().c_str(), author.c_str())<< "Author check";
+	ASSERT_STREQ(Parser2->getDefaultAuthor().c_str(), author.c_str())<<
+	"Author check";
 
 	// cleanup
 	delete (Parser);

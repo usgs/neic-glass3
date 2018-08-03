@@ -82,7 +82,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 		// build the source object
 		// need to think more about this one
 		// as far as ew logos are concerned....
-		newpick.source.agencyid = getAgencyId();
+		newpick.source.agencyid = getDefaultAgencyId();
 		newpick.source.author = splitgpick[0];
 
 		// phase

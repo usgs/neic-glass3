@@ -43,11 +43,11 @@ class JSONParser : public ::testing::Test {
 // tests to see jsonparser constructs correctly
 TEST_F(JSONParser, Construction) {
 	// assert that agencyid is ok
-	ASSERT_STREQ(Parser->getAgencyId().c_str(), agencyid.c_str())<<
+	ASSERT_STREQ(Parser->getDefaultAgencyId().c_str(), agencyid.c_str())<<
 	"AgencyID check";
 
 	// assert that author is ok
-	ASSERT_STREQ(Parser->getAuthor().c_str(), author.c_str())
+	ASSERT_STREQ(Parser->getDefaultAuthor().c_str(), author.c_str())
 	<< "Author check";
 }
 

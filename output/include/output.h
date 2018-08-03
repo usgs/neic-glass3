@@ -109,46 +109,6 @@ class output : public glass3::util::iOutput,
 	bool healthCheck() override;
 
 	/**
-	 * \brief Function to set the name of the output agency id
-	 *
-	 * This function sets the name of the output agency id, this name is used in
-	 * generating output
-	 *
-	 * \param id = A std::string containing the agency id to set
-	 */
-	void setOutputAgency(std::string agency);
-
-	/**
-	 * \brief Function to retrieve the name of the output agency id
-	 *
-	 * This function retrieves the name of output agency id, this name is used
-	 * in generating output
-	 *
-	 * \return A std::string containing the agency id
-	 */
-	const std::string getOutputAgencyId();
-
-	/**
-	 * \brief Function to set the name of the output author
-	 *
-	 * This function sets the name of the output author, this name is used in
-	 * generating output
-	 *
-	 * \param author = A std::string containing the author to set
-	 */
-	void setOutputAuthor(std::string author);
-
-	/**
-	 * \brief Function to retrieve the name of the output author
-	 *
-	 * This function retrieves the name of the output author, this name is used
-	 * in generating output
-	 *
-	 * \return A std::string containing the author
-	 */
-	const std::string getOutputAuthor();
-
-	/**
 	 * \brief Function to set the delay in requesting the site list
 	 *
 	 * This function sets the delay in seconds before requesting glass core's
@@ -491,18 +451,6 @@ class output : public glass3::util::iOutput,
 	 * glass
 	 */
 	glass3::util::iAssociator* m_Associator;
-
-	/**
-	 * \brief the std::string configuration value defining the
-	 * agency identifier used when generating output files
-	 */
-	std::string m_sOutputAgencyID;
-
-	/**
-	 * \brief the std::string configuration value defining the
-	 * author used when generating output files
-	 */
-	std::string m_sOutputAuthor;
 
 	/**
 	 * \brief the integer configuration value indicating the delay in seconds

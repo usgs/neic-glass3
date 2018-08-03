@@ -80,8 +80,8 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 
 		// build the source object
 		// need to think more about this one
-		newcorrelation.source.agencyid = getAgencyId();
-		newcorrelation.source.author = getAuthor();
+		newcorrelation.source.agencyid = getDefaultAgencyId();
+		newcorrelation.source.author = getDefaultAuthor();
 
 		// phase
 		newcorrelation.phase = splitccpick[11];

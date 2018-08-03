@@ -343,12 +343,12 @@ TEST(Output, Configuration) {
 
 	// check agency id
 	std::string agencyid = std::string(TESTAGENCYID);
-	ASSERT_STREQ(outputObject->getOutputAgencyId().c_str(),
+	ASSERT_STREQ(outputObject->getDefaultAgencyId().c_str(),
 			agencyid.c_str())<< "check agency id";
 
 	// check author
 	std::string author = std::string(TESTAUTHOR);
-	ASSERT_STREQ(outputObject->getOutputAuthor().c_str(),
+	ASSERT_STREQ(outputObject->getDefaultAuthor().c_str(),
 			author.c_str())<< "check author";
 }
 
