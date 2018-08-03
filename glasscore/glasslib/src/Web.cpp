@@ -82,8 +82,7 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
-			int sleepTime, int checkInterval, double aziTap,
-			double maxDep) {
+			int sleepTime, int checkInterval, double aziTap, double maxDep) {
 	// setup threads
 	if (numThreads > 0) {
 		m_bRunProcessLoop = true;
@@ -99,8 +98,7 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 	clear();
 
 	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
-				numCols, numZ, update, firstTrav, secondTrav, aziTap,
-				maxDep);
+				numCols, numZ, update, firstTrav, secondTrav, aziTap, maxDep);
 
 	m_StatusMutex.lock();
 	m_ThreadStatusMap.clear();

@@ -1043,7 +1043,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		snprintf(
 				sLog,
 				sizeof(sLog),
-				"CHypoList::merge: No events returned in ot time frame for merger of %s, Skipping",
+				"CHypoList::merge: No events returned in ot time frame for "
+				"merger of %s, Skipping",
 				hypo->getPid().c_str());
 		glassutil::CLogit::log(sLog);
 		return (false);
@@ -1056,7 +1057,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		snprintf(
 				sLog,
 				sizeof(sLog),
-				"CHypoList::merge: Only event returned in ot time frame for merger of %s was %s, Skipping",
+				"CHypoList::merge: Only event returned in ot time frame for "
+				"merger of %s was %s, Skipping",
 				hypo->getPid().c_str(), thypo->getPid().c_str());
 		glassutil::CLogit::log(sLog);
 		return (false);
@@ -1130,7 +1132,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									> ((hypo2->getLat() + hypo->getLat()) / 2., (hypo2
 											->getLon() + hypo->getLon()) / 2., (hypo2
 											->getZ() + hypo->getZ()) / 2., (hypo2
-											->getTOrg() + hypo->getTOrg()) / 2., glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
+											->getTOrg() + hypo->getTOrg()) / 2.,
+											glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
 											->getThresh(), hypo->getCut(), hypo
 											->getTrv1(), hypo->getTrv2(), pGlass
 											->getTTT(), hypo->getRes(), hypo
@@ -1176,7 +1179,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 							> (std::max(hypo->getBayes(), hypo2->getBayes()))
 									+ (.1
 											* std::min(hypo->getBayes(),
-													   hypo2->getBayes()))) {
+														hypo2->getBayes()))) {
 
 						snprintf(
 								sLog,

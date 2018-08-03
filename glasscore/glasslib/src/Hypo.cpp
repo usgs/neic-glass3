@@ -396,7 +396,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		// remove the pick hypo link
 		std::shared_ptr<CHypo> pickHyp = pick->getHypo();
 		if (pickHyp != NULL) {
-			if(pickHyp->getPid() == getPid()) {
+			if (pickHyp->getPid() == getPid()) {
 				pick->clearHypo();
 			}
 		}
