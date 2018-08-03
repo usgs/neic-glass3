@@ -1019,9 +1019,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	}
 
 	char sLog[1024];  // logging string
-	double distanceCut = 5.0;  // distance difference to try merging events
+	double distanceCut = 3.0;  // distance difference to try merging events
 	// in degrees
-	double timeCut = 60.;  // origin time difference to merge events
+	double timeCut = 30.;  // origin time difference to merge events
 	double delta;  // this holds delta distance
 
 	// this events pick list
@@ -1174,7 +1174,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					// check that the number of picks is sufficient to create new event
 					if (hypo3->getBayes()
 							> (std::max(hypo->getBayes(), hypo2->getBayes()))
-									+ (.15
+									+ (.1
 											* std::min(hypo->getBayes(),
 													   hypo2->getBayes()))) {
 
@@ -1182,8 +1182,8 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 								sLog,
 								sizeof(sLog),
 								"CHypoList::merge: keeping new event %s which"
-								" scavanged %d picks (%lu, %lu picks in old events)\n"
-								"CHypoList::merge:    New Bayes %.3f, old bayes"
+								" scavanged %d picks (%lu, %lu picks in old events), "
+								"New Bayes %.3f, old bayes"
 								"%.3f and %.3f",
 								hypo3->getPid().c_str(), npick, (hVPick.size()),
 								(h2VPick.size()), hypo3->getBayes(),
