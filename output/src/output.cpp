@@ -24,13 +24,8 @@ output::output()
 		: glass3::util::ThreadBaseClass("output", 100) {
 	glass3::util::log("debug", "output::output(): Construction.");
 
-	setEventThreadState(glass3::util::ThreadState::Initialized);
 	std::time(&tLastWorkReport);
 	std::time(&m_tLastSiteRequest);
-
-	// thread will be declared dead
-	// if it doesn't report within this interval
-	setHealthCheckInterval(120);
 
 	// interval to report performance statistics
 	setReportInterval(60);
@@ -52,9 +47,6 @@ output::output()
 	// setup thread pool for output
 	m_ThreadPool = new glass3::util::ThreadPool("outputpool");
 
-	setEventThreadHealth();
-	m_EventThread = NULL;
-
 	setAssociator(NULL);
 
 	// init config to defaults and allocate
@@ -72,18 +64,21 @@ output::~output() {
 	if (m_TrackingCache != NULL) {
 		m_TrackingCache->clear();
 		delete (m_TrackingCache);
+		m_TrackingCache = NULL;
 	}
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_OutputQueue != NULL) {
 		m_OutputQueue->clear();
 		delete (m_OutputQueue);
+		m_OutputQueue = NULL;
 	}
 
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_LookupQueue != NULL) {
 		m_LookupQueue->clear();
 		delete (m_LookupQueue);
+		m_LookupQueue = NULL;
 	}
 }
 
@@ -287,81 +282,25 @@ void output::sendToOutput(std::shared_ptr<json::Object> message) {
 
 // ---------------------------------------------------------start
 bool output::start() {
-	// are we already running
-	if ((getEventThreadState() == glass3::util::ThreadState::Starting)
-			|| (getEventThreadState() == glass3::util::ThreadState::Started)) {
-		glass3::util::log("warning",
-							"output::start(): Event Thread is already starting "
-									"or running. (" + getThreadName() + ")");
+	// first start any base class threads (workLoop in out case)
+	if (ThreadBaseClass::start() == false) {
 		return (false);
 	}
 
-	// nullcheck
-	if (m_EventThread != NULL) {
-		glass3::util::log(
-				"warning",
-				"output::start(): Event Thread is already allocated.");
-		return (false);
+	// now create a thread the for checkEventsLoop loop
+	// and add to threadbaseclass's list of threads, so it can be managed
+	// by threadbaseclass
+	m_WorkThreads.push_back(std::thread(&output::checkEventsLoop, this));
+
+	// add to status map if we're tracking status
+	if (getHealthCheckInterval() > 0) {
+		// insert a new key into the health map for this thread
+		// to track status
+		m_ThreadHealthMap[m_WorkThreads.back().get_id()] = std::time(nullptr);
 	}
 
-	// we're starting
-	setEventThreadState(glass3::util::ThreadState::Starting);
-
-	// start the thread
-	m_EventThread = new std::thread(&output::checkEventsLoop, this);
-
-	// let threadbaseclass handle background worker thread
-	return (ThreadBaseClass::start());
-}
-
-// ---------------------------------------------------------stop
-bool output::stop() {
-	// check if we're running
-	if ((getEventThreadState() == glass3::util::ThreadState::Stopping)
-			|| (getEventThreadState() == glass3::util::ThreadState::Stopped)
-			|| (getEventThreadState() == glass3::util::ThreadState::Initialized)) {
-		glass3::util::log(
-				"warning", "output::stop(): Event Thread is not running, "
-						"or is already stopping. (" + getThreadName() + ")");
-		return (false);
-	}
-
-	// nullcheck
-	if (m_EventThread == NULL) {
-		glass3::util::log("warning",
-							"output::stop(): Event Thread is not allocated. ");
-		return (false);
-	}
-
-	// we're stopping
-	setEventThreadState(glass3::util::ThreadState::Stopping);
-
-	// wait for the thread to finish
-	m_EventThread->join();
-
-	// delete it
-	delete (m_EventThread);
-	m_EventThread = NULL;
-
-	// we're now stopped
-	setEventThreadState(glass3::util::ThreadState::Stopped);
-
-	// let threadbaseclass handle background worker thread
-	return (ThreadBaseClass::stop());
-}
-
-// ---------------------------------------------------------setEventThreadHealth
-void output::setEventThreadHealth(bool health) {
-	if (health == true) {
-		std::time_t tNow;
-		std::time(&tNow);
-		setEventLastHealthy(tNow);
-	} else {
-		setEventLastHealthy(0);
-		glass3::util::log(
-				"warning",
-				"output::setEventThreadHealth(): health set to false");
-	}
+	// done
+	return (true);
 }
 
 // ---------------------------------------------------------healthCheck
@@ -374,37 +313,7 @@ bool output::healthCheck() {
 		}
 	}
 
-	if ((getWorkThreadsState() != glass3::util::ThreadState::Starting)
-			&& (getWorkThreadsState() != glass3::util::ThreadState::Initialized)
-			&& (getHealthCheckInterval() > 0)) {
-		// thread is dead if we're not running
-		if (getEventThreadState() != glass3::util::ThreadState::Started) {
-			glass3::util::log(
-					"error",
-					"output::healthCheck(): Thread is not running. ("
-							+ getThreadName() + ")");
-			return (false);
-		}
-
-		// see if it's time to check
-		time_t tNow;
-		std::time(&tNow);
-		int lastCheckInterval = (tNow - getEventLastHealthy());
-		if (lastCheckInterval > getHealthCheckInterval()) {
-			// if the we've exceeded the health check interval, the thread
-			// is dead
-			glass3::util::log(
-					"error",
-					"output::healthCheck(): lastCheckInterval for thread "
-							+ getThreadName()
-							+ " exceeds health check interval ( "
-							+ std::to_string(lastCheckInterval) + " > "
-							+ std::to_string(getHealthCheckInterval()) + " )");
-			return (false);
-		}
-	}
-
-	// let threadbaseclass handle background worker thread
+	// let threadbaseclass handle other threads
 	return (ThreadBaseClass::healthCheck());
 }
 
@@ -604,78 +513,96 @@ void output::clearTrackingData() {
 
 // ---------------------------------------------------------checkEventsLoop
 void output::checkEventsLoop() {
+	glass3::util::log(
+			"debug",
+			"output::checkEventsLoop():  Check Events Thread Startup. ("
+					+ getThreadName() + ")");
+
 	// we're running
-	setEventThreadState(glass3::util::ThreadState::Started);
+	setWorkThreadsState(glass3::util::ThreadState::Started);
 
 	// run until told to stop
-	while (getEventThreadState() == glass3::util::ThreadState::Started) {
+	while (true) {
 		// signal that we're still running
-		setEventThreadHealth();
+		setThreadHealth();
+
+		// make sure we should still be running
+		if (getWorkThreadsState() != glass3::util::ThreadState::Started) {
+			glass3::util::log(
+					"info",
+					"output::checkEventsLoop(): Non-Starting thread "
+							"status detected ("
+							+ std::to_string(getWorkThreadsState())
+							+ "), stopping thread. (" + getThreadName() + ")");
+			break;
+		}
 
 		// see if there's anything in the tracking cache
 		std::shared_ptr<const json::Object> data = getNextTrackingData();
 
-		// got something
-		if (data != NULL) {
-			// get the id
-			std::string id;
-			if ((*data).HasKey("ID")) {
-				id = (*data)["ID"].ToString();
-			} else if ((*data).HasKey("Pid")) {
-				id = (*data)["Pid"].ToString();
-			} else {
-				glass3::util::log(
-						"warning",
-						"output::checkEventsLoop(): Bad data object received from "
-						"getNextTrackingData(), no ID, skipping data.");
-
-				// remove the message we found from the cache, since it is bad
-				removeTrackingData(data);
-
-				// keep working
-				continue;
-			}
-
-			// get the command
-			std::string command;
-			if ((*data).HasKey("Cmd")) {
-				command = (*data)["Cmd"].ToString();
-			} else {
-				glass3::util::log(
-						"warning",
-						"output::checkEventsLoop(): Bad data object received from "
-						"getNextTrackingData(), no Cmd, skipping data.");
-
-				// remove the value we found from the cache, since it is bad
-				removeTrackingData(data);
-
-				// keep working
-				continue;
-			}
-
-			// process the data based on the tracking message
-			if (command == "Event") {
-				// Request the hypo from associator
-				if (getAssociator() != NULL) {
-					// build the request
-					std::shared_ptr<json::Object> datarequest =
-							std::make_shared<json::Object>(json::Object());
-					(*datarequest)["Cmd"] = "ReqHypo";
-					(*datarequest)["Pid"] = id;
-
-					// send the request
-					getAssociator()->sendToAssociator(datarequest);
-				}
-			}
+		// got something?
+		if (data == NULL) {
+			// no, give up some time and try again
+			std::this_thread::sleep_for(
+					std::chrono::milliseconds(getSleepTime()));
+			continue;
 		}
 
-		// give up some time at the end of the loop
-		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
+		// get the id
+		std::string id;
+		if ((*data).HasKey("ID")) {
+			id = (*data)["ID"].ToString();
+		} else if ((*data).HasKey("Pid")) {
+			id = (*data)["Pid"].ToString();
+		} else {
+			glass3::util::log(
+					"warning",
+					"output::checkEventsLoop(): Bad data object received from "
+					"getNextTrackingData(), no ID, skipping data.");
+
+			// remove the message we found from the cache, since it is bad
+			removeTrackingData(data);
+
+			// keep working
+			continue;
+		}
+
+		// get the command
+		std::string command;
+		if ((*data).HasKey("Cmd")) {
+			command = (*data)["Cmd"].ToString();
+		} else {
+			glass3::util::log(
+					"warning",
+					"output::checkEventsLoop(): Bad data object received from "
+					"getNextTrackingData(), no Cmd, skipping data.");
+
+			// remove the value we found from the cache, since it is bad
+			removeTrackingData(data);
+
+			// keep working
+			continue;
+		}
+
+		// process the data based on the tracking message
+		if (command == "Event") {
+			// Request the hypo from associator
+			if (getAssociator() != NULL) {
+				// build the request
+				std::shared_ptr<json::Object> datarequest = std::make_shared<
+						json::Object>(json::Object());
+				(*datarequest)["Cmd"] = "ReqHypo";
+				(*datarequest)["Pid"] = id;
+
+				// send the request
+				getAssociator()->sendToAssociator(datarequest);
+			}
+		}
 	}
 
 	glass3::util::log("info", "output::checkEventsLoop(): Stopped thread.");
 
-	setEventThreadState(glass3::util::ThreadState::Stopped);
+	setWorkThreadsState(glass3::util::ThreadState::Stopped);
 
 	// done with thread
 	return;
@@ -697,6 +624,9 @@ glass3::util::WorkState output::work() {
 				std::shared_ptr<json::Object> datarequest = std::make_shared<
 						json::Object>(json::Object());
 				(*datarequest)["Cmd"] = "ReqSiteList";
+
+				glass3::util::log("debug",
+									"output::work(): Requesting site list.");
 
 				// send the request
 				getAssociator()->sendToAssociator(datarequest);
@@ -1370,26 +1300,5 @@ void output::clearPubTimes() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_PublicationTimes.clear();
 }
-
-// ---------------------------------------------------------setEventLastHealthy
-void output::setEventLastHealthy(std::time_t now) {
-	m_tEventLastHealthy = now;
-}
-
-// ---------------------------------------------------------getEventLastHealthy
-time_t output::getEventLastHealthy() {
-	return ((std::time_t) m_tEventLastHealthy);
-}
-
-// ---------------------------------------------------------setEventThreadState
-void output::setEventThreadState(glass3::util::ThreadState status) {
-	m_bEventThreadState = status;
-}
-
-// ---------------------------------------------------------getEventThreadState
-glass3::util::ThreadState output::getEventThreadState() {
-	return (m_bEventThreadState);
-}
-
 }  // namespace output
 }  // namespace glass3

@@ -276,7 +276,7 @@ TEST(Output, Construction) {
 	ASSERT_TRUE(outputObject.getConfig() == NULL)<< "output config is null";
 
 	// assert class is not started
-	ASSERT_TRUE(outputObject.getEventThreadState() ==
+	ASSERT_TRUE(outputObject.getWorkThreadsState() ==
 			glass3::util::ThreadState::Initialized)<< "output thread is not started";
 
 	// assert no associator
@@ -373,7 +373,7 @@ TEST(Output, ThreadTests) {
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert class is  started
-	ASSERT_TRUE(outputObject->getEventThreadState() ==
+	ASSERT_TRUE(outputObject->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started)<< "output thread is started";
 
 	// thread status checks
@@ -389,7 +389,7 @@ TEST(Output, ThreadTests) {
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert class is not started
-	ASSERT_FALSE(outputObject->getEventThreadState() ==
+	ASSERT_FALSE(outputObject->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started)<< "output thread is not started";
 
 	// stop output thread again
@@ -872,8 +872,7 @@ TEST(Output, StationRequestTest) {
 }
 
 TEST(Output, StationListTest) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", "debug", std::string(TESTPATH), true);
 
 	OutputStub* outputObject = new OutputStub();
 

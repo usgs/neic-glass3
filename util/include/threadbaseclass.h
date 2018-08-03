@@ -276,6 +276,18 @@ class ThreadBaseClass : public util::BaseClass {
 	 */
 	void setLastHealthy(std::time_t now);
 
+	/**
+	 * \brief the std::vector that contains the work std::thread objects
+	 */
+	std::vector<std::thread> m_WorkThreads;
+
+	/**
+	 * \brief A std::map containing the epoch times as std::atomic<double>> that
+	 * each work thread was last marked as healthy, identified by the
+	 * thread id
+	 */
+	std::map<std::thread::id, std::atomic<double>> m_ThreadHealthMap;
+
  private:
 	/**
 	 * \brief the std::string containing the name of the works thread,
@@ -289,18 +301,6 @@ class ThreadBaseClass : public util::BaseClass {
 	 * status checks
 	 */
 	std::atomic<int> m_iHealthCheckInterval;
-
-	/**
-	 * \brief the std::vector that contains the work std::thread objects
-	 */
-	std::vector<std::thread> m_WorkThreads;
-
-	/**
-	 * \brief A std::map containing the epoch times as std::atomic<double>> that
-	 * each work thread was last marked as healthy, identified by the
-	 * thread id
-	 */
-	std::map<std::thread::id, std::atomic<double>> m_ThreadHealthMap;
 
 	/**
 	 * \brief An integer containing the number of work threads.
