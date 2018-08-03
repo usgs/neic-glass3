@@ -1174,7 +1174,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					// check that the number of picks is sufficient to create new event
 					if (hypo3->getBayes()
 							> (std::max(hypo->getBayes(), hypo2->getBayes()))
-									+ (.25
+									+ (.15
 											* std::min(hypo->getBayes(),
 													   hypo2->getBayes()))) {
 
