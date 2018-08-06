@@ -474,7 +474,7 @@ bool CPick::nucleate() {
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
-			double bayes = hypo->anneal(10000, trigger->getResolution() / 2.,
+			double bayes = hypo->anneal(10000, trigger->getResolution(),
 										trigger->getResolution() / 10.,
 										trigger->getResolution() / 10.0, .1);
 

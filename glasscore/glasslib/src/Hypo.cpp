@@ -53,13 +53,13 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 				std::shared_ptr<traveltime::CTravelTime> firstTrav,
 				std::shared_ptr<traveltime::CTravelTime> secondTrav,
 				std::shared_ptr<traveltime::CTTT> ttt, double resolution,
-				double aziTaper) {
+				double aziTap, double maxDep) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
 
 	if (!initialize(lat, lon, z, time, pid, web, bayes, thresh, cut, firstTrav,
-					secondTrav, ttt, resolution, aziTaper)) {
+					secondTrav, ttt, resolution, aziTap, maxDep)) {
 		clear();
 	}
 }
@@ -95,7 +95,8 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 					trigger->getWeb()->getNucleate(),
 					trigger->getWeb()->getTrv1(), trigger->getWeb()->getTrv2(),
 					ttt, trigger->getResolution(),
-					trigger->getWeb()->getAziTaper())) {
+					trigger->getWeb()->getAziTaper(),
+					trigger->getWeb()->getMaxDepth())) {
 		clear();
 	}
 }
@@ -393,7 +394,12 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 	// for each pick to remove
 	for (auto pick : vkill) {
 		// remove the pick hypo link
-		pick->clearHypo();
+		std::shared_ptr<CHypo> pickHyp = pick->getHypo();
+		if (pickHyp != NULL) {
+			if (pickHyp->getPid() == getPid()) {
+				pick->clearHypo();
+			}
+		}
 
 		// remove the pick from this hypo
 		remPick(pick);
@@ -482,8 +488,8 @@ void CHypo::annealingLocate(int nIter, double dStart, double dStop,
 		}
 
 		// don't let depth exceed maximum
-		if (xz > MAXLOCDEPTH) {
-			xz = MAXLOCDEPTH;
+		if (xz > maxDepth) {
+			xz = dZ;
 		}
 
 		// compute current origin time
@@ -633,8 +639,8 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 		}
 
 		// don't let depth exceed maximum
-		if (xz > MAXLOCDEPTH) {
-			xz = MAXLOCDEPTH;
+		if (xz > maxDepth) {
+			xz = dZ;
 		}
 
 		// compute current origin time
@@ -1017,7 +1023,7 @@ bool CHypo::cancelCheck() {
 	}
 
 	// Whispy (event fragment) check (does the quake have a gap greater than 270
-	// while being shallower than 550)
+	// while being deeper than 550)
 	// NOTE: Hardcoded
 	if ((dZ > 550.0) && (dGap > 270.0)) {
 		// failure
@@ -1290,6 +1296,11 @@ double CHypo::getAziTaper() const {
 	return (aziTaper);
 }
 
+double CHypo::getMaxDepth() const {
+	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
+	return (maxDepth);
+}
+
 double CHypo::getBayes() const {
 	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
 	return (dBayes);
@@ -1486,6 +1497,10 @@ double CHypo::getMed() const {
 double CHypo::getMin() const {
 	std::lock_guard < std::recursive_mutex > hypoGuard(hypoMutex);
 	return (dMin);
+}
+
+std::mutex & CHypo::getProcessingMutex() {
+	return (processingMutex);
 }
 
 const std::string& CHypo::getPid() const {
@@ -1966,7 +1981,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav,
 						std::shared_ptr<traveltime::CTTT> ttt,
-						double resolution, double aziTap) {
+						double resolution, double aziTap, double maxDep) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(hypoMutex);
 
@@ -1981,6 +1996,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	dBayes = bayes;
 	dBayesInitial = bayes;
 	aziTaper = aziTap;
+	maxDepth = maxDep;
 	dThresh = thresh;
 	nCut = cut;
 	dRes = resolution;
@@ -2200,7 +2216,7 @@ double CHypo::localize() {
 
 	glassutil::CTaper taper;
 	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, 30 + 0.0001);
-	double searchR = (dRes / 4. + taper.Val(vPick.size()) * .75 * dRes) / 4.;
+	double searchR = (dRes / 4. + taper.Val(vPick.size()) * .75 * dRes);
 
 	// This should be the default
 	if (pGlass->getMinimizeTtLocator() == false) {

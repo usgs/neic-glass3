@@ -88,13 +88,15 @@ class CWeb {
 	 * seconds between status checks. -1 to disable status checks.  Default 60.
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
+	 * \param maxDepth = A double value containing the maximum allowable depth
+	 * defaults to 800 km.
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, int numRows, int numCols, int numZ, bool update,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			int numThreads = 0, int sleepTime = 100, int checkInterval = 60,
-			double aziTaper = 360.);
+			double aziTaper = 360., double maxDepth = 800.);
 
 	/**
 	 * \brief CWeb destructor
@@ -155,6 +157,8 @@ class CWeb {
 	 * use for travel time lookups.
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
+	 * \param maxDepth = A double value containing the maximum allowable depth
+	 * defaults to 800 km.
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
@@ -162,7 +166,7 @@ class CWeb {
 					int numZ, bool update,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
-					double aziTaper = 360.);
+					double aziTap = 360., double maxDep = 800.);
 
 	/**
 	 * \brief Generate a local detection grid
@@ -345,6 +349,12 @@ class CWeb {
 	 * \return double with the azi taper start
 	 */
 	double getAziTaper() const;
+
+	/**
+	 * \brief max depth for locator getter
+	 * \return double with the maximum allowable depth
+	 */
+	double getMaxDepth() const;
 
 	/**
 	 * \brief CGlass getter
@@ -583,6 +593,11 @@ class CWeb {
 	 * down weighting for azimuthal gap
 	 **/
 	double aziTaper = 360.;
+
+	/**
+	 * \brief A double which describes the maximum allowable event depth
+	 **/
+	double maxDepth = 800.;
 
 	/**
 	 * \brief A boolean flag that stores whether to update this web when a
