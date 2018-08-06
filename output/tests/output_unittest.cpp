@@ -303,7 +303,7 @@ TEST(Output, Configuration) {
 	ASSERT_FALSE(outputObject->setup(NULL));
 	ASSERT_FALSE(
 			outputObject->setup(std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL1))));  // NOLINT
-	ASSERT_TRUE(
+	ASSERT_FALSE(
 			outputObject->setup(std::make_shared<json::Object>(json::Deserialize(EMPTYCONFIG))));  // NOLINT
 
 	// assert config successful
@@ -405,13 +405,13 @@ TEST(Output, TrackingTests) {
 	time_t tNow;
 	std::time(&tNow);
 
-	// setup
-	ASSERT_FALSE(outputThread.setup(NULL));
-	ASSERT_FALSE(
-			outputThread.setup(std::make_shared<json::Object>( json::Object(json::Deserialize(CONFIGFAIL1)))));  // NOLINT
+	// configure output
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			std::string(TESTPATH), std::string(CONFIGFILENAME));
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
-	ASSERT_TRUE(
-			outputThread.setup(std::make_shared<json::Object>( json::Object(json::Deserialize(EMPTYCONFIG)))));  // NOLINT
+	// setup
+	ASSERT_TRUE(outputThread.setup(OutputJSON))<< "output config is successful";
 
 	std::shared_ptr<json::Object> tracking1 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING1)));

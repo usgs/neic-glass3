@@ -145,20 +145,20 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 	if (m_GPickParser != NULL) {
 		delete (m_GPickParser);
 	}
-	m_GPickParser = new glass3::parse::GPickParser(m_sDefaultAgencyID,
-													m_sDefaultAuthor);
+	m_GPickParser = new glass3::parse::GPickParser(getDefaultAgencyId(),
+												   getDefaultAuthor());
 
 	if (m_JSONParser != NULL) {
 		delete (m_JSONParser);
 	}
-	m_JSONParser = new glass3::parse::JSONParser(m_sDefaultAgencyID,
-													m_sDefaultAuthor);
+	m_JSONParser = new glass3::parse::JSONParser(getDefaultAgencyId(),
+												 getDefaultAuthor());
 
 	if (m_CCParser != NULL) {
 		delete (m_CCParser);
 	}
-	m_CCParser = new glass3::parse::CCParser(m_sDefaultAgencyID,
-												m_sDefaultAuthor);
+	m_CCParser = new glass3::parse::CCParser(getDefaultAgencyId(),
+											 getDefaultAuthor());
 
 	if (m_DataQueue != NULL) {
 		delete (m_DataQueue);
@@ -179,7 +179,7 @@ bool input::setup(std::shared_ptr<const json::Object> config) {
 void input::clear() {
 	glass3::util::log("debug", "input::clear(): clearing configuration.");
 
-	setDefaultAgency("");
+	setDefaultAgencyId("");
 	setDefaultAuthor("");
 	setQueueMaxSize(-1);
 
@@ -280,30 +280,6 @@ bool input::validate(std::string type, std::shared_ptr<json::Object> input) {
 		return (m_CCParser->validate(input));
 	else
 		return (false);
-}
-
-// ---------------------------------------------------------setDefaultAgency
-void input::setDefaultAgency(std::string agency) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_sDefaultAgencyID = agency;
-}
-
-// ---------------------------------------------------------getDefaultAgencyId
-const std::string input::getDefaultAgencyId() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_sDefaultAgencyID);
-}
-
-// ---------------------------------------------------------setDefaultAuthor
-void input::setDefaultAuthor(std::string author) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_sDefaultAuthor = author;
-}
-
-// ---------------------------------------------------------getDefaultAuthor
-const std::string input::getDefaultAuthor() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_sDefaultAuthor);
 }
 
 // ---------------------------------------------------------setQueueMaxSize

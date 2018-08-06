@@ -411,12 +411,12 @@ TEST_F(OutputTest, Configuration) {
 
 	// check agency id
 	std::string agencyid = std::string(TESTAGENCYID);
-	ASSERT_STREQ(OutputThread->getOutputAgencyId().c_str(),
+	ASSERT_STREQ(OutputThread->getDefaultAgencyId().c_str(),
 			agencyid.c_str()) << "check agency id";
 
 	// check author
 	std::string author = std::string(TESTAUTHOR);
-	ASSERT_STREQ(OutputThread->getOutputAuthor().c_str(),
+	ASSERT_STREQ(OutputThread->getDefaultAuthor().c_str(),
 			author.c_str()) << "check author";
 }
 /*
