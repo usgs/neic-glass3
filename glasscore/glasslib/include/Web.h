@@ -525,7 +525,7 @@ class CWeb {
 	 * also fills in the distance), and used by genNode() during a Single(),
 	 * Shell(), Grid(), or Global() call
 	 */
-	std::vector<std::pair<double, std::shared_ptr<CSite>>>vSite;
+	std::vector<std::pair<double, std::shared_ptr<CSite>>> vSite;
 
 	/**
 	 * \brief A std::vector containing a std::shared_ptr to each
@@ -691,6 +691,5 @@ class CWeb {
 	 */
 	mutable std::recursive_mutex m_WebMutex;
 };
-}
-  // namespace glasscore
+}  // namespace glasscore
 #endif  // WEB_H

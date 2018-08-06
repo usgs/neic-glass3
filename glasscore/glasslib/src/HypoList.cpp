@@ -99,7 +99,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	}
 
 	// lock for this scope
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// Add hypo to cache (mHypo) and time sorted
 	// index (vHypo). If vHypo has reached its
@@ -196,14 +196,14 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		return (false);
 	}
 
-	std::vector < std::shared_ptr < CHypo >> viper;
+	std::vector<std::shared_ptr<CHypo>> viper;
 
 	// compute the list of hypos to associate with
 	// (a potential hypo must be before the pick we're associating)
 	// use the pick time minus 2400 seconds to compute the starting index
 	// NOTE: Hard coded time delta
-	std::vector < std::weak_ptr < CHypo >> hypoList = getHypos(
-			pk->getTPick() - 2400, pk->getTPick());
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(pk->getTPick() - 2400,
+															pk->getTPick());
 
 	// make sure we got any hypos
 	if (hypoList.size() == 0) {
@@ -329,13 +329,13 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 	}
 
 	bool bass = false;
-	std::vector < std::shared_ptr < CHypo >> viper;
+	std::vector<std::shared_ptr<CHypo>> viper;
 
 	// compute the index range to search for hypos to associate with
 	// (a potential hypo must be before the pick we're associating)
 	// use the correlation time minus correlationMatchingTWindow to compute the
 	// starting index
-	std::vector < std::weak_ptr < CHypo >> hypoList = getHypos(
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
 			corr->getTCorrelation() - pGlass->getCorrelationMatchingTWindow(),
 			corr->getTCorrelation() - pGlass->getCorrelationMatchingTWindow());
 
@@ -428,7 +428,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 
 // ---------------------------------------------------------clear
 void CHypoList::clear() {
-	std::lock_guard < std::recursive_mutex > hypoListGuard(m_HypoListMutex);
+	std::lock_guard<std::recursive_mutex> hypoListGuard(m_HypoListMutex);
 
 	clearHypos();
 	pGlass = NULL;
@@ -436,10 +436,10 @@ void CHypoList::clear() {
 
 // ---------------------------------------------------------clearHypos
 void CHypoList::clearHypos() {
-	std::lock_guard < std::mutex > queueGuard(m_QueueMutex);
+	std::lock_guard<std::mutex> queueGuard(m_QueueMutex);
 	qFifo.clear();
 
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 	vHypo.clear();
 	mHypo.clear();
 
@@ -475,8 +475,7 @@ void CHypoList::darwin() {
 		return;
 	}
 
-	std::lock_guard < std::mutex > hypoGuard(hyp->getProcessingMutex());
-	//hyp->lockForProcessing();
+	std::lock_guard<std::mutex> hypoGuard(hyp->getProcessingMutex());
 
 	try {
 		// log the hypo we're working on
@@ -488,7 +487,6 @@ void CHypoList::darwin() {
 
 		// check to see if this hypo is viable.
 		if (hyp->cancelCheck()) {
-
 			// this hypo is no longer viable
 			// log
 			glassutil::CLogit::log(
@@ -525,17 +523,10 @@ void CHypoList::darwin() {
 		// process this hypocenter
 		evolve(hyp);
 
-		// hyp->unlockAfterProcessing();
-
 		// resort the hypocenter list to maintain
 		// time order
 		sort();
 	} catch (...) {
-		// ensure the hypo is unlocked
-		// if (hyp->isLockedForProcessing()) {
-		//	hyp->unlockAfterProcessing();
-		// }
-
 		throw;
 	}
 }
@@ -816,7 +807,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 
 // ---------------------------------------------------------findHypo
 std::shared_ptr<CHypo> CHypoList::findHypo(double t1, double t2) {
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// don't bother if the list is empty
 	if (vHypo.size() == 0) {
@@ -863,7 +854,7 @@ std::shared_ptr<CHypo> CHypoList::findHypo(double t1, double t2) {
 
 // ---------------------------------------------------------getFifoSize
 int CHypoList::getFifoSize() {
-	std::lock_guard < std::mutex > queueGuard(m_QueueMutex);
+	std::lock_guard<std::mutex> queueGuard(m_QueueMutex);
 
 	// return the current size of the queue
 	int size = qFifo.size();
@@ -871,19 +862,19 @@ int CHypoList::getFifoSize() {
 }
 
 const CGlass* CHypoList::getGlass() const {
-	std::lock_guard < std::recursive_mutex > hypoListGuard(m_HypoListMutex);
+	std::lock_guard<std::recursive_mutex> hypoListGuard(m_HypoListMutex);
 	return (pGlass);
 }
 
 // ---------------------------------------------------------getHypos
 std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
-	std::vector < std::weak_ptr < CHypo >> hypos;
+	std::vector<std::weak_ptr<CHypo>> hypos;
 
 	if (t1 == t2) {
 		return (hypos);
 	}
 
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// don't bother if the list is empty
 	if (vHypo.size() == 0) {
@@ -937,31 +928,31 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 
 // ---------------------------------------------------------getNHypo
 int CHypoList::getNHypo() const {
-	std::lock_guard < std::recursive_mutex > vHypoGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> vHypoGuard(m_vHypoMutex);
 	return (nHypo);
 }
 
 // ---------------------------------------------------------getNHypoMax
 int CHypoList::getNHypoMax() const {
-	std::lock_guard < std::recursive_mutex > hypoListGuard(m_HypoListMutex);
+	std::lock_guard<std::recursive_mutex> hypoListGuard(m_HypoListMutex);
 	return (nHypoMax);
 }
 
 // ---------------------------------------------------------getNHypoTotal
 int CHypoList::getNHypoTotal() const {
-	std::lock_guard < std::recursive_mutex > vHypoGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> vHypoGuard(m_vHypoMutex);
 	return (nHypoTotal);
 }
 
 // ---------------------------------------------------------getVHypoSize
 int CHypoList::getVHypoSize() const {
-	std::lock_guard < std::recursive_mutex > vHypoGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> vHypoGuard(m_vHypoMutex);
 	return (vHypo.size());
 }
 
 // ---------------------------------------------------------indexHypo
 int CHypoList::indexHypo(double tOrg) {
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	// handle empty vector case
 	if (vHypo.size() == 0) {
@@ -1034,18 +1025,16 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	// compute the list of hypos to try merging with with
 	// (a potential hypo must be within time cut to consider)
 	sort();
-	std::vector < std::weak_ptr < CHypo >> hypoList = getHypos(
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
 			hypo->getTOrg() - timeCut, hypo->getTOrg() + timeCut);
 
 	// make sure we got hypos returned
 	if (hypoList.size() == 0) {
 		// print not events to merge message
-		snprintf(
-				sLog,
-				sizeof(sLog),
-				"CHypoList::merge: No events returned in ot time frame for "
-				"merger of %s, Skipping",
-				hypo->getPid().c_str());
+		snprintf(sLog, sizeof(sLog),
+					"CHypoList::merge: No events returned in ot time frame for "
+					"merger of %s, Skipping",
+					hypo->getPid().c_str());
 		glassutil::CLogit::log(sLog);
 		return (false);
 	}
@@ -1055,8 +1044,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 		// print not events to merge message
 		std::shared_ptr<CHypo> thypo = hypoList[0].lock();
 		snprintf(
-				sLog,
-				sizeof(sLog),
+				sLog, sizeof(sLog),
 				"CHypoList::merge: Only event returned in ot time frame for "
 				"merger of %s was %s, Skipping",
 				hypo->getPid().c_str(), thypo->getPid().c_str());
@@ -1068,7 +1056,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	for (int i = 0; i < hypoList.size(); i++) {
 		// make sure hypo is still valid before associating
 		if (std::shared_ptr<CHypo> hypo2 = hypoList[i].lock()) {
-
 			// make sure we're not looking at ourself
 			if (hypo->getPid() == hypo2->getPid()) {
 				continue;
@@ -1079,8 +1066,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-			std::lock_guard < std::mutex
-					> hypoGuard(hypo2->getProcessingMutex());
+			std::lock_guard<std::mutex> hypoGuard(hypo2->getProcessingMutex());
 
 			// check to make sure hypo2 is still good
 			if (hypo2->cancelCheck() == true) {
@@ -1104,7 +1090,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				delta = geo.delta(&geo2) / DEG2RAD;
 
 				if (delta < distanceCut) {
-
 					snprintf(
 							sLog, sizeof(sLog),
 							"CHypoList::merge: Testing merger of %s and %s\n",
@@ -1127,17 +1112,15 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					glassutil::CLogit::log(sLog);
 
 					// create a new merged event hypo3
-					std::shared_ptr<CHypo> hypo3 =
-							std::make_shared < CHypo
-									> ((hypo2->getLat() + hypo->getLat()) / 2., (hypo2
-											->getLon() + hypo->getLon()) / 2., (hypo2
-											->getZ() + hypo->getZ()) / 2., (hypo2
-											->getTOrg() + hypo->getTOrg()) / 2.,
-											glassutil::CPid::pid(), "Merged Hypo", 0.0, hypo
-											->getThresh(), hypo->getCut(), hypo
-											->getTrv1(), hypo->getTrv2(), pGlass
-											->getTTT(), hypo->getRes(), hypo
-											->getAziTaper(), hypo->getMaxDepth());
+					std::shared_ptr<CHypo> hypo3 = std::make_shared<CHypo>(
+							(hypo2->getLat() + hypo->getLat()) / 2.,
+							(hypo2->getLon() + hypo->getLon()) / 2.,
+							(hypo2->getZ() + hypo->getZ()) / 2.,
+							(hypo2->getTOrg() + hypo->getTOrg()) / 2.,
+							glassutil::CPid::pid(), "Merged Hypo", 0.0,
+							hypo->getThresh(), hypo->getCut(), hypo->getTrv1(),
+							hypo->getTrv2(), pGlass->getTTT(), hypo->getRes(),
+							hypo->getAziTaper(), hypo->getMaxDepth());
 
 					// set hypo glass pointer and such
 					hypo3->setGlass(pGlass);
@@ -1180,7 +1163,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 									+ (.1
 											* std::min(hypo->getBayes(),
 														hypo2->getBayes()))) {
-
 						snprintf(
 								sLog,
 								sizeof(sLog),
@@ -1244,7 +1226,7 @@ void CHypoList::jobSleep() {
 
 // ---------------------------------------------------------listPicks
 void CHypoList::listHypos() {
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 	int n = 0;
 	char sLog[1024];
@@ -1379,7 +1361,7 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		return;
 	}
 
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 // get the id
 	std::string pid = hypo->getPid();
@@ -1465,7 +1447,7 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 // get the hypo
 	std::shared_ptr<CHypo> hyp = mHypo[sPid];
@@ -1506,7 +1488,7 @@ bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
 
 // this lock guard exists to avoid a deadlock that occurs
 // when it isn't present
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
 // return whether we've changed the pick set
 	return (hyp->resolve(hyp));
@@ -1514,19 +1496,19 @@ bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
 
 // ---------------------------------------------------------setGlass
 void CHypoList::setGlass(CGlass* glass) {
-	std::lock_guard < std::recursive_mutex > hypoListGuard(m_HypoListMutex);
+	std::lock_guard<std::recursive_mutex> hypoListGuard(m_HypoListMutex);
 	pGlass = glass;
 }
 
 // ---------------------------------------------------------setNHypoMax
 void CHypoList::setNHypoMax(int hypoMax) {
-	std::lock_guard < std::recursive_mutex > hypoListGuard(m_HypoListMutex);
+	std::lock_guard<std::recursive_mutex> hypoListGuard(m_HypoListMutex);
 	nHypoMax = hypoMax;
 }
 
 // ---------------------------------------------------------setStatus
 void CHypoList::setStatus(bool status) {
-	std::lock_guard < std::mutex > statusGuard(m_StatusMutex);
+	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
 // update thread status
 	if (m_ThreadStatusMap.find(std::this_thread::get_id())
 			!= m_ThreadStatusMap.end()) {
@@ -1536,7 +1518,7 @@ void CHypoList::setStatus(bool status) {
 
 // ---------------------------------------------------------sort
 void CHypoList::sort() {
-	std::lock_guard < std::recursive_mutex > listGuard(m_vHypoMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 // sort hypos
 	std::sort(vHypo.begin(), vHypo.end(), sortHypo);
 }
@@ -1561,7 +1543,7 @@ bool CHypoList::statusCheck() {
 	std::time(&tNow);
 	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
 		// get the thread status
-		std::lock_guard < std::mutex > statusGuard(m_StatusMutex);
+		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
 
 		// check all the threads
 		std::map<std::thread::id, bool>::iterator StatusItr;
