@@ -23,10 +23,6 @@ class parserstub : public glass3::parse::Parser {
 	std::shared_ptr<json::Object> parse(const std::string &input) override {
 		return (NULL);
 	}
-
-	bool validate(std::shared_ptr<json::Object> &input) override {
-		return (true);
-	}
 };
 
 // tests to see if parser construts correctly
@@ -44,9 +40,6 @@ TEST(ParserTest, Construction) {
 	"Author check";
 
 	ASSERT_TRUE(Parser->parse(emptyString) == NULL)<< "parse returns null";
-
-	std::shared_ptr<json::Object> nullData;
-	ASSERT_TRUE(Parser->validate(nullData))<< "validate returns true";
 
 	std::string agencyid = std::string(TESTAGENCYID);
 	std::string author = std::string(TESTAUTHOR);

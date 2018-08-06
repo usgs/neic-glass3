@@ -61,17 +61,11 @@ TEST_F(GPickParser, PickParsing) {
 	// parse the origin
 	ASSERT_FALSE(PickObject == NULL)<< "Parsed pick 1 not null.";
 
-	// validate the pick
-	ASSERT_TRUE(Parser->validate(PickObject))<< "Parsed pick 1 is valid";
-
 	// pick 2
 	std::shared_ptr<json::Object> PickObject2 = Parser->parse(pickstring2);
 
 	// parse the origin
 	ASSERT_FALSE(PickObject2 == NULL)<< "Parsed pick 2 not null.";
-
-	// validate the pick
-	ASSERT_TRUE(Parser->validate(PickObject2))<< "Parsed pick 2 is valid";
 
 	// pick 3
 	std::shared_ptr<json::Object> PickObject3 = Parser->parse(pickstring3);
@@ -79,26 +73,17 @@ TEST_F(GPickParser, PickParsing) {
 	// parse the origin
 	ASSERT_FALSE(PickObject3 == NULL)<< "Parsed pick 3 not null.";
 
-	// validate the pick
-	ASSERT_TRUE(Parser->validate(PickObject3))<< "Parsed pick 3 is valid";
-
 	// pick 4
 	std::shared_ptr<json::Object> PickObject4 = Parser->parse(pickstring4);
 
 	// parse the origin
 	ASSERT_FALSE(PickObject4 == NULL)<< "Parsed pick 4 not null.";
 
-	// validate the pick
-	ASSERT_TRUE(Parser->validate(PickObject4))<< "Parsed pick 4 is valid";
-
 	// pick 5
 	std::shared_ptr<json::Object> PickObject5 = Parser->parse(pickstring5);
 
 	// parse the origin
 	ASSERT_FALSE(PickObject5 == NULL)<< "Parsed pick 2 not null.";
-
-	// validate the pick
-	ASSERT_TRUE(Parser->validate(PickObject5))<< "Parsed pick 2 is valid";
 }
 
 // test failure
@@ -111,39 +96,23 @@ TEST_F(GPickParser, FailTest) {
 	std::shared_ptr<json::Object> FailObject = Parser->parse(failstring1);
 
 	// parse the bad data
-	ASSERT_TRUE(FailObject == NULL)<< "Parsed fail string is null.";
-
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed failstring is not valid";
+	ASSERT_TRUE(FailObject == NULL)<< "Parsed fail object is null.";
 
 	// test bad filter
 	FailObject = Parser->parse(failstring2);
 
 	// parse the bad data
-	ASSERT_FALSE(FailObject == NULL)<< "Parsed fail string is not null.";
-
-	// validate the bad data
-	ASSERT_TRUE(Parser->validate(FailObject))<<
-	"Parsed failstring is valid";
+	ASSERT_FALSE(FailObject == NULL)<< "Parsed fail object is not null.";
 
 	// test bad snr
 	FailObject = Parser->parse(failstring3);
 
 	// parse the bad data
-	ASSERT_FALSE(FailObject == NULL)<< "Parsed fail string is not null.";
-
-	// validate the bad data
-	ASSERT_TRUE(Parser->validate(FailObject))<<
-	"Parsed failstring is valid";
+	ASSERT_FALSE(FailObject == NULL)<< "Parsed fail object is not null.";
 
 	// test empty string
 	FailObject = Parser->parse("");
 
 	// parse the empty string
-	ASSERT_TRUE(FailObject == NULL)<< "Parsed empty string is null.";
-
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed empty string is not valid";
+	ASSERT_TRUE(FailObject == NULL)<< "Parsed empty object is null.";
 }

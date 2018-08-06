@@ -47,10 +47,6 @@ TEST_F(CCParser, CorrelationParsing) {
 
 	// parse the origin
 	ASSERT_FALSE(CCObject == NULL)<< "Parsed cross correlation not null.";
-
-	// validate the origin
-	ASSERT_TRUE(Parser->validate(CCObject))<<
-	"Parsed cross correlation is valid";
 }
 
 // test failure
@@ -62,17 +58,9 @@ TEST_F(CCParser, FailTest) {
 	// parse the bad data
 	ASSERT_TRUE(FailObject == NULL)<< "Parsed fail string is null.";
 
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed failstring is not valid";
-
 	// parse empty string
 	FailObject = Parser->parse("");
 
 	// parse the empty string
 	ASSERT_TRUE(FailObject == NULL)<< "Parsed empty string is null.";
-
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed empty string is not valid";
 }

@@ -60,6 +60,11 @@ output::~output() {
 	// stop the input thread
 	stop();
 
+	// clear everything
+	clear();
+
+	// cleanup
+	getMutex().lock();
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_TrackingCache != NULL) {
 		m_TrackingCache->clear();
@@ -80,6 +85,7 @@ output::~output() {
 		delete (m_LookupQueue);
 		m_LookupQueue = NULL;
 	}
+	getMutex().unlock();
 }
 
 // configuration
@@ -151,8 +157,7 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	// agencyid
 	if (!(config->HasKey("OutputAgencyID"))) {
 		glass3::util::log(
-				"error",
-				"output::setup(): Missing required OutputAgencyID.");
+				"error", "output::setup(): Missing required OutputAgencyID.");
 		return (false);
 	} else {
 		setDefaultAgencyId((*config)["OutputAgencyID"].ToString());
@@ -164,9 +169,8 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 
 	// author
 	if (!(config->HasKey("OutputAuthor"))) {
-		glass3::util::log(
-				"error",
-				"output::setup(): Missing required OutputAuthor.");
+		glass3::util::log("error",
+							"output::setup(): Missing required OutputAuthor.");
 		return (false);
 	} else {
 		setDefaultAuthor((*config)["OutputAuthor"].ToString());
@@ -202,6 +206,9 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 						+ ".");
 	}
 
+	// allocation
+	getMutex().lock();
+
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_TrackingCache != NULL) {
 		delete (m_TrackingCache);
@@ -219,6 +226,7 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 		delete (m_LookupQueue);
 	}
 	m_LookupQueue = new glass3::util::Queue();
+	getMutex().unlock();
 
 	glass3::util::log("debug", "output::setup(): Done Setting Up.");
 

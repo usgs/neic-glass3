@@ -55,43 +55,35 @@ TEST_F(JSONParser, Construction) {
 TEST_F(JSONParser, DetectionParsing) {
 	std::string detectionstring = std::string(TESTDETECTIONSTRING);
 
+	// parse the detection
 	std::shared_ptr<json::Object> DetectionObject = Parser->parse(
 			detectionstring);
 
-	// parse the detection
+	// check the detection
 	ASSERT_FALSE(DetectionObject == NULL)<< "Parsed detection not null.";
-
-	// validate the detection
-	ASSERT_TRUE(Parser->validate(DetectionObject))<<
-	"Parsed detection is valid";
 }
 
 // test correlations
 TEST_F(JSONParser, CorrelationParsing) {
 	std::string correlationstring = std::string(TESTCORRELATIONSTRING);
 
+	// parse the corrleation
 	std::shared_ptr<json::Object> CorrelationObject = Parser->parse(
 			correlationstring);
 
-	// parse the corrleation
+	// check the corrleation
 	ASSERT_FALSE(CorrelationObject == NULL)<< "Parsed correlation not null.";
-
-	// validate the corrleation
-	ASSERT_TRUE(Parser->validate(CorrelationObject))<<
-	"Parsed correlation is valid";
 }
 
 // test picks
 TEST_F(JSONParser, PickParsing) {
 	std::string pickstring = std::string(TESTPICKSTRING);
 
+	// parse the pick
 	std::shared_ptr<json::Object> PickObject = Parser->parse(pickstring);
 
-	// parse the pick
+	// check the pick
 	ASSERT_FALSE(PickObject == NULL)<< "Parsed pick not null.";
-
-	// validate the pick
-	ASSERT_TRUE(Parser->validate(PickObject))<< "Parsed pick is valid";
 }
 
 // test station
@@ -99,22 +91,18 @@ TEST_F(JSONParser, StationParsing) {
 	std::string stationstring = std::string(TESTSTATIONSTRING);
 	std::string otherstationstring = std::string(TESTOTHERSTATIONSTRING);
 
+	// parse the station
 	std::shared_ptr<json::Object> StationObject = Parser->parse(stationstring);
 
-	// parse the pick
+	// check the station
 	ASSERT_FALSE(StationObject == NULL)<< "Parsed station not null.";
 
-	// validate the pick
-	ASSERT_TRUE(Parser->validate(StationObject))<< "Parsed station is valid";
-
+	// parse the other station
 	std::shared_ptr<json::Object> OtherStationObject = Parser->parse(
 			otherstationstring);
 
-	// parse the pick
-	ASSERT_FALSE(OtherStationObject == NULL)<< "Parsed station not null.";
-
-	// validate the pick
-	ASSERT_FALSE(Parser->validate(OtherStationObject))<< "Parsed station is not valid";
+	// check the other station
+	ASSERT_TRUE(OtherStationObject == NULL)<< "Parsed other station null.";
 }
 
 // test failure
@@ -129,41 +117,25 @@ TEST_F(JSONParser, FailTests) {
 			detectionfailstring);
 
 	// parse the bad data
-	ASSERT_FALSE(FailObject == NULL)<< "Parsed detection fail object not null.";
-
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed detection fail object is not valid";
+	ASSERT_TRUE(FailObject == NULL)<< "Parsed detection fail object null.";
 
 	// correlation failure
 	FailObject = Parser->parse(correlationfailstring);
 
 	// parse the bad data
-	ASSERT_FALSE(FailObject == NULL)<< "Parsed correlation fail object not null.";
-
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed correlation fail object is not valid";
+	ASSERT_TRUE(FailObject == NULL)<< "Parsed correlation fail object null.";
 
 	// pick failure
 	FailObject = Parser->parse(pickfailstring);
 
 	// parse the bad data
-	ASSERT_FALSE(FailObject == NULL)<< "Parsed pick fail object not null.";
-
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed pick fail object is not valid";
+	ASSERT_TRUE(FailObject == NULL)<< "Parsed pick fail object null.";
 
 	// station
 	FailObject = Parser->parse(stationfailstring);
 
 	// parse the bad data
-	ASSERT_FALSE(FailObject == NULL)<< "Parsed station fail object not null.";
-
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed station fail object is not valid";
+	ASSERT_TRUE(FailObject == NULL)<< "Parsed station fail object null.";
 
 	// parse empty string
 	FailObject = Parser->parse("");
@@ -176,8 +148,4 @@ TEST_F(JSONParser, FailTests) {
 
 	// parse the empty string
 	ASSERT_TRUE(FailObject == NULL)<< "Parsed garbage string is null.";
-
-	// validate the bad data
-	ASSERT_FALSE(Parser->validate(FailObject))<<
-	"Parsed garbage string is not valid";
 }

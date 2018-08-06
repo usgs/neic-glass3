@@ -237,7 +237,7 @@ glass3::util::WorkState input::work() {
 						+ " processing input: " + message);
 	}
 
-	if ((newdata != NULL) && (validate(type, newdata) == true)) {
+	if (newdata != NULL) {
 		m_DataQueue->addDataToQueue(newdata);
 	}
 
@@ -262,24 +262,6 @@ std::shared_ptr<json::Object> input::parse(std::string type,
 		return (m_CCParser->parse(input));
 	else
 		return (NULL);
-}
-
-// ---------------------------------------------------------validate
-bool input::validate(std::string type, std::shared_ptr<json::Object> input) {
-	// choose the validator based on the type
-	// global pick
-	if (((type == GPICK_TYPE) || (type == GPICKS_TYPE))
-			&& (m_GPickParser != NULL))
-		return (m_GPickParser->validate(input));
-	// all json formats share the same validator
-	else if ((type.find(JSON_TYPE) != std::string::npos)
-			&& (m_JSONParser != NULL))
-		return (m_JSONParser->validate(input));
-	// cc data
-	else if ((type == CC_TYPE) && (m_CCParser != NULL))
-		return (m_CCParser->validate(input));
-	else
-		return (false);
 }
 
 // ---------------------------------------------------------setQueueMaxSize

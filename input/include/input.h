@@ -182,18 +182,6 @@ class input : public glass3::util::iInput,
 												std::string input);
 
 	/**
-	 * \brief validate data function
-	 *
-	 * The function that validates input data, based on the given extension
-	 *
-	 * \param type - A std::string containing the type of data to validate
-	 * \param input - A json::Object containing the data to validate
-	 * \return returns true if valid, false otherwise
-	 */
-	virtual bool validate(std::string type,
-							std::shared_ptr<json::Object> input);
-
-	/**
 	 * \brief get input data type
 	 *
 	 * A pure virutal function that determines the input data type

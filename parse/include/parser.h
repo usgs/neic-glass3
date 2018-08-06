@@ -24,10 +24,14 @@ namespace glass3 {
 namespace parse {
 
 /**
- * \brief glass parser class
+ * \brief glass3 parser class
  *
- * The glass parser class is a class encapsulating basic parsing
- * logic and validation.
+ * The glass3 parser class is a class encapsulating basic parsing
+ * logic and validation for neic-glass3.
+ *
+ * This class uses the external SuperEasyJSON library to return parsed messages
+ *
+ * This class extends from glass3::util::BaseClass
  *
  * This class is intended to be extended by derived classes.
  */
@@ -57,28 +61,18 @@ class Parser : public glass3::util::BaseClass {
 	virtual ~Parser();
 
 	/**
-	 * \brief parsing function
+	 * \brief Virtual parsing function to be overridden by deriving classes,
+	 * used to parse input
 	 *
-	 * Virtual parsing function to be overridden by deriving classes, used to
-	 * parse input
+	 * A pure virtual function used to parse a given string (from a file, broker,
+	 * or other source) into a SuperEasyJSON object (the common data interchange
+	 * object) which is returned as a shared_ptr for  use in other neic-glass3
+	 * functions and classes (such as glasscore).
 	 *
 	 * \param input - The std::string to parse
-	 * \return Returns a shared pointer to the json::Object containing
-	 * the data.
+	 * \return Returns a shared_ptr to the json::Object containing the data.
 	 */
 	virtual std::shared_ptr<json::Object> parse(const std::string &input) = 0;
-
-	/**
-	 * \brief validation function
-	 *
-	 * Virtual validation function to be overridden by deriving classes, used
-	 * to validate parsed input
-	 *
-	 * \param input - A shared pointer to a json::Object containing the data to
-	 * validate.
-	 * \return Returns true if valid, false otherwise.
-	 */
-	virtual bool validate(std::shared_ptr<json::Object> &input) = 0;  // NOLINT
 };
 }  // namespace parse
 }  // namespace glass3
