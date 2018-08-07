@@ -9,6 +9,10 @@
 #include <vector>
 #include <memory>
 
+// JSON Keys
+#define TYPE_KEY "Type"
+#define STATIONLIST_KEY "StationList"
+
 namespace glass3 {
 namespace parse {
 
@@ -16,31 +20,44 @@ namespace parse {
 std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor) {
+	/**
+	 * The glasscore cancel message is defined at:
+	 * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/Hypo.md  // NOLINT
+	 *
+	 * The detection formats Detection message is defined at:
+	 * https://github.com/usgs/earthquake-detection-formats/blob/master/format-docs/Detection.md  // NOLINTZ
+	 */
+
+	// nullcheck
 	if (data == NULL) {
-		glass3::util::log("error",
-					"hypoToJSONDetection(): Null json data object passed in.");
+		glass3::util::log(
+				"error",
+				"hypoToJSONDetection(): Null json data object passed in.");
 		return ("");
 	}
 
+	// type check
 	if (!(data->HasKey("Type"))) {
-		glass3::util::log("error",
-					"hypoToJSONDetection(): Bad json data object passed in.");
+		glass3::util::log(
+				"error",
+				"hypoToJSONDetection(): Bad json data object passed in.");
 		return ("");
 	}
-
 	if ((*data)["Type"].ToString() != "Hypo") {
 		return ("");
 	}
 
+	// some messages have IDs, others have Pids
 	std::string ID;
 	if ((*data).HasKey("ID")) {
 		ID = (*data)["ID"].ToString();
 	} else if ((*data).HasKey("Pid")) {
 		ID = (*data)["Pid"].ToString();
 	} else {
-		glass3::util::log("error",
-					"hypoToJSONDetection(): Bad json data object passed in, no "
-					"ID.");
+		glass3::util::log(
+				"error",
+				"hypoToJSONDetection(): Bad json data object passed in, no "
+				"ID.");
 		return ("");
 	}
 
@@ -57,11 +74,14 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 	time_t tNow;
 	std::time(&tNow);
 
-	std::string OutputData = "";
+	std::string outputString = "";
 
 	// build detection message
 	detectionformats::detection detection;
 
+	// since detection formats and glass3 use different json libraries,
+	// need to take the values out of the SuperEasyJSON object and add them
+	// to the detection formats object
 	try {
 		// required values
 		detection.id = ID;
@@ -291,12 +311,12 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 							.ToDouble();
 				}
 
-				// phase
+				// correlation value
 				correlation.correlationvalue = (dataobject)["Correlation"]
 						.ToDouble();
 
 				// optional values
-				// phase
+				// type of event
 				if (dataobject.HasKey("EventType")) {
 					correlation.eventtype =
 							(dataobject)["EventType"].ToString();
@@ -345,6 +365,7 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 					correlation.associationinfo.residual = -1.0;
 					correlation.associationinfo.sigma = -1.0;
 				}
+
 				// handle everything else
 				correlation.associationinfo.distance = (assocobj)["Distance"]
 						.ToDouble();
@@ -373,6 +394,11 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 		// set the vectors
 		detection.pickdata = pickdata;
 		detection.correlationdata = correlationdata;
+
+		// check validity
+		if (detection.isvalid() == false) {
+			return ("");
+		}
 	} catch (const std::exception &e) {
 		glass3::util::log(
 				"warning",
@@ -380,46 +406,58 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 						+ std::string(e.what()));
 	}
 
-	// need to check if detection is valid
-
+	// convert to string
 	rapidjson::Document detectiondocument;
-	OutputData = detectionformats::ToJSONString(
+	outputString = detectionformats::ToJSONString(
 			detection.tojson(detectiondocument,
 								detectiondocument.GetAllocator()));
 
 	// done
-	return (OutputData);
+	return (outputString);
 }
 
 // ---------------------------------------------------------cancelToJSONRetract
 std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 								const std::string &outputAgencyID,
 								const std::string &outputAuthor) {
+	/*
+	 * The glasscore Cancel message is defined at:
+	 * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/Cancel.md  // NOLINT
+	 *
+	 * The detection formats Retract message is defined at:
+	 * https://github.com/usgs/earthquake-detection-formats/blob/master/format-docs/Retract.md  // NOLINT
+	 */
+
+	// nullcheck
 	if (data == NULL) {
-		glass3::util::log("error",
-					"cancelToJSONRetract(): Null json data object passed in.");
+		glass3::util::log(
+				"error",
+				"cancelToJSONRetract(): Null json data object passed in.");
 		return ("");
 	}
 
+	// type check
 	if (!(data->HasKey("Type"))) {
-		glass3::util::log("error",
-					"cancelToJSONRetract(): Bad json data object passed in.");
+		glass3::util::log(
+				"error",
+				"cancelToJSONRetract(): Bad json data object passed in.");
 		return ("");
 	}
-
 	if ((*data)["Type"].ToString() != "Cancel") {
 		return ("");
 	}
 
+	// some messages have IDs, others have Pids
 	std::string ID;
 	if ((*data).HasKey("ID")) {
 		ID = (*data)["ID"].ToString();
 	} else if ((*data).HasKey("Pid")) {
 		ID = (*data)["Pid"].ToString();
 	} else {
-		glass3::util::log("error",
-					"hypoToJSONDetection(): Bad json data object passed in, no "
-					"ID.");
+		glass3::util::log(
+				"error",
+				"hypoToJSONDetection(): Bad json data object passed in, no "
+				"ID.");
 		return ("");
 	}
 
@@ -432,16 +470,22 @@ std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 			"debug",
 			"cancelToJSONRetract(): data = |" + json::Serialize(*data) + "|.");
 
-	std::string OutputData = "";
-
 	// build retract message
 	detectionformats::retract retract;
 
+	// since detection formats and glass3 use different json libraries,
+	// need to take the values out of the SuperEasyJSON object and add them
+	// to the detection formats object
 	try {
 		// required values
 		retract.id = ID;
 		retract.source.agencyid = outputAgencyID;
 		retract.source.author = outputAuthor;
+
+		// check validity
+		if (retract.isvalid() == false) {
+			return ("");
+		}
 	} catch (const std::exception &e) {
 		glass3::util::log(
 				"warning",
@@ -449,16 +493,26 @@ std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 						+ std::string(e.what()));
 	}
 
+	// convert to string
 	rapidjson::Document retractdocument;
-	OutputData = detectionformats::ToJSONString(
+	std::string outputString = detectionformats::ToJSONString(
 			retract.tojson(retractdocument, retractdocument.GetAllocator()));
 
 	// done
-	return (OutputData);
+	return (outputString);
 }
 
 // --------------------------------------------------------siteListToStationList
 std::string siteListToStationList(std::shared_ptr<json::Object> data) {
+	/*
+	 * The glasscore SiteList message is defined at:
+	 * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/SiteList.md  // NOLINT
+	 *
+	 * The detection formats StationInfo message is defined at:
+	 * https://github.com/usgs/earthquake-detection-formats/blob/master/format-docs/StationInfo.md  // NOLINT
+	 */
+
+	// nullcheck
 	if (data == NULL) {
 		glass3::util::log(
 				"error",
@@ -466,12 +520,13 @@ std::string siteListToStationList(std::shared_ptr<json::Object> data) {
 		return ("");
 	}
 
+	// type check
 	if (!(data->HasKey("Cmd"))) {
-		glass3::util::log("error",
-					"siteListToStationList(): Bad json data object passed in.");
+		glass3::util::log(
+				"error",
+				"siteListToStationList(): Bad json data object passed in.");
 		return ("");
 	}
-
 	if ((*data)["Cmd"].ToString() != "SiteList") {
 		glass3::util::log(
 				"error",
@@ -484,90 +539,119 @@ std::string siteListToStationList(std::shared_ptr<json::Object> data) {
 			"siteListToStationList(): data = |" + json::Serialize(*data)
 					+ "|.");
 
-	std::string OutputData = "";
-
-	json::Object stationListObj;
-	stationListObj["Type"] = "StationInfoList";
-
-	// array to hold data
-	json::Array stationListArray;
-
+	// get the site list from the SuperEasyJSON message
+	//
 	json::Array siteListArray = (*data)["SiteList"];
+
+	// Detection formats doesn't have a "StationInfoList" format, but it's
+	// simply an array of StationInfo messages, so build it using rapidJSON
+	rapidjson::Document stationList(rapidjson::kObjectType);
+
+	// must pass an allocator when the object may need to allocate memory
+	rapidjson::Document::AllocatorType& allocator = stationList.GetAllocator();
+
+	// create a rapidjson array
+	rapidjson::Value stationListArray(rapidjson::kArrayType);
+
+	// for each site in the array
 	for (int i = 0; i < siteListArray.size(); i++) {
+		// get the current site
 		json::Object siteObject = siteListArray[i];
 
-		detectionformats::stationInfo stationobject;
+		detectionformats::stationInfo stationObject;
 
-		// build stationInfo object
-		// site subobject
-		stationobject.site.station = (siteObject)["Sta"].ToString();
+		// since detection formats and glass3 use different json libraries,
+		// need to take the values out of the SuperEasyJSON object and add them
+		// to the detection formats object
+		try {
+			// build stationInfo object
+			// first site sub-object
+			// station is required
+			stationObject.site.station = (siteObject)["Sta"].ToString();
 
-		if (siteObject.HasKey("Comp")) {
-			stationobject.site.channel = (siteObject)["Comp"].ToString();
-		}
+			// comp is optional
+			if (siteObject.HasKey("Comp")) {
+				stationObject.site.channel = (siteObject)["Comp"].ToString();
+			}
 
-		stationobject.site.network = (siteObject)["Net"].ToString();
+			// network is required
+			stationObject.site.network = (siteObject)["Net"].ToString();
 
-		if (siteObject.HasKey("Loc")) {
-			stationobject.site.location = (siteObject)["Loc"].ToString();
-		}
+			// lcation is optional
+			if (siteObject.HasKey("Loc")) {
+				stationObject.site.location = (siteObject)["Loc"].ToString();
+			}
 
-		stationobject.latitude = (siteObject)["Lat"].ToDouble();
-		stationobject.longitude = (siteObject)["Lon"].ToDouble();
-		stationobject.elevation = (siteObject)["Z"].ToDouble();
+			// site location
+			stationObject.latitude = (siteObject)["Lat"].ToDouble();
+			stationObject.longitude = (siteObject)["Lon"].ToDouble();
+			stationObject.elevation = (siteObject)["Z"].ToDouble();
 
-		// NOTE: Need to get these from metadata server eventually
-		stationobject.quality = (siteObject)["Qual"].ToDouble();
-		stationobject.enable = (siteObject)["Use"].ToBool();
-		stationobject.useforteleseismic = (siteObject)["UseForTele"].ToBool();
+			// site quality metrics
+			stationObject.quality = (siteObject)["Qual"].ToDouble();
+			stationObject.enable = (siteObject)["Use"].ToBool();
+			stationObject.useforteleseismic =
+					(siteObject)["UseForTele"].ToBool();
 
-		// build json string
-		rapidjson::Document stationdocument;
-		std::string stationjson = detectionformats::ToJSONString(
-				stationobject.tojson(stationdocument,
-										stationdocument.GetAllocator()));
-
-		json::Value deserializedJSON = json::Deserialize(stationjson);
-
-		// make sure we got valid json
-		if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
-			// create the new object
-			json::Object* newStation = new json::Object(
-					deserializedJSON.ToObject());
-			stationListArray.push_back(*newStation);
+			// check for validity
+			if (stationObject.isvalid() == true) {
+				// add to array
+				rapidjson::Document stationJSON(rapidjson::kObjectType);
+				stationObject.tojson(stationJSON, allocator);
+				stationListArray.PushBack(stationJSON, allocator);
+			}
+		} catch (const std::exception &e) {
+			glass3::util::log(
+					"warning",
+					"siteListToStationList: Problem building StationInfo message: "
+							+ std::string(e.what()));
 		}
 	}
 
-	stationListObj["StationList"] = stationListArray;
+	// Add the type and array to the message
+	stationList.AddMember(TYPE_KEY, "StationInfoList", allocator);
+	stationList.AddMember(STATIONLIST_KEY, stationListArray, allocator);
 
-	OutputData = json::Serialize(stationListObj);
+	// convert to a string to return
+	std::string outputString = detectionformats::ToJSONString(stationList);
 
 	// done
-	return (OutputData);
+	return (outputString);
 }
 
 // -----------------------------------------------siteLookupToStationInfoRequest
 std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 											const std::string &outputAgencyID,
 											const std::string &outputAuthor) {
+	/*
+	 * The glasscore SiteLookup message is defined at:
+	 * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/SiteLookup.md  // NOLINT
+	 *
+	 * The detection formats StationInfoRequest message is defined at:
+	 * https://github.com/usgs/earthquake-detection-formats/blob/master/format-docs/StationInfoRequest.md  // NOLINT
+	 */
+	// nullcheck
 	if (data == NULL) {
-		glass3::util::log("error",
-					"siteLookupToStationInfoRequest(): Null json data object "
-					"passed in.");
+		glass3::util::log(
+				"error",
+				"siteLookupToStationInfoRequest(): Null json data object "
+				"passed in.");
 		return ("");
 	}
 
+	// type check
 	if (!(data->HasKey("Type"))) {
-		glass3::util::log("error",
-					"siteLookupToStationInfoRequest(): Bad json data object "
-					"passed in.");
+		glass3::util::log(
+				"error",
+				"siteLookupToStationInfoRequest(): Bad json data object "
+				"passed in.");
 		return ("");
 	}
-
 	if ((*data)["Type"].ToString() != "SiteLookup") {
-		glass3::util::log("error",
-					"siteLookupToStationInfoRequest(): Wrong json data object "
-					"passed in.");
+		glass3::util::log(
+				"error",
+				"siteLookupToStationInfoRequest(): Wrong json data object "
+				"passed in.");
 		return ("");
 	}
 
@@ -576,7 +660,7 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 			"siteLookupToStationInfoRequest(): data = |"
 					+ json::Serialize(*data) + "|.");
 
-	std::string OutputString = "";
+	std::string outputString = "";
 	std::string site = "";
 	std::string comp = "";
 	std::string net = "";
@@ -612,6 +696,9 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 	// build station info request message
 	detectionformats::stationInfoRequest stationInfoRequest;
 
+	// since detection formats and glass3 use different json libraries,
+	// need to take the values out of the SuperEasyJSON object and add them
+	// to the detection formats object
 	try {
 		// required values
 		stationInfoRequest.site.station = site;
@@ -628,28 +715,18 @@ std::string siteLookupToStationInfoRequest(std::shared_ptr<json::Object> data,
 	}
 
 	// check if valid
-	if (stationInfoRequest.isvalid() == true) {
-		// build string
-		rapidjson::Document requestdocument;
-		OutputString = detectionformats::ToJSONString(
-				stationInfoRequest.tojson(requestdocument,
-											requestdocument.GetAllocator()));
-	} else {
-		// get errors
-		std::vector<std::string> errorlist = stationInfoRequest.geterrors();
-		std::string errorstring = "";
-		for (int i = 0; i < errorlist.size(); i++) {
-			errorstring += errorlist[i];
-		}
-
-		glass3::util::log(
-				"error",
-				"siteLookupToStationInfoRequest: Invalid station info request "
-						"message: " + errorstring);
+	if (stationInfoRequest.isvalid() == false) {
+		return ("");
 	}
 
+	// build string
+	rapidjson::Document requestdocument;
+	outputString = detectionformats::ToJSONString(
+			stationInfoRequest.tojson(requestdocument,
+										requestdocument.GetAllocator()));
+
 	// done
-	return (OutputString);
+	return (outputString);
 }
 }  // namespace parse
 }  // namespace glass3
