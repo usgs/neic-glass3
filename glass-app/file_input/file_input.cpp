@@ -169,12 +169,10 @@ void fileInput::clear() {
 	glass3::input::input::clear();
 }
 
-std::string fileInput::getDataType(std::string input) {
-	// the format is the data type
-	return (getFormat());
-}
+std::string fileInput::fetchRawData(std::string* type) {
+	// our type is our format (extension)
+	*type = getFormat();
 
-std::string fileInput::fetchRawData() {
 	// check to see if we've got a file
 	if ((m_InputFile.good() == true) && (m_InputFile.eof() != true)) {
 		std::string line = "";

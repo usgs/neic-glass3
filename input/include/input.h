@@ -30,59 +30,56 @@ namespace glass3 {
 namespace input {
 
 #define GPICK_TYPE "gpick"
-#define GPICKS_TYPE "gpicks"
 #define JSON_TYPE "json"
 #define CC_TYPE "dat"
 
 /**
- * \brief glass input class
+ * \brief glass Input class
  *
- * The glass input class is a thread class encapsulating the data input logic
- * The input class handles reading input data, parsing it, validating  it, and
- * queuing it for later use by the associator class
+ * The glass Input class is a thread class encapsulating the data Input logic
+ * The Input class handles reading Input data, parsing it, validating  it, and
+ * queuing it for later use by the associator class. If the internal queue is
+ * full, the class will pause reading Input data until space is available
  *
- * input inherits from the threadbaseclass class.
- * input implements the ioutput interface.
+ * Input inherits from the glass3::util::ThreadBaseClass class.
+ * Input implements the glass3::util::iInput interface.
  */
-class input : public glass3::util::iInput,
+class Input : public glass3::util::iInput,
 	public glass3::util::ThreadBaseClass {
  public:
 	/**
-	 * \brief input advanced constructor
+	 * \brief Input default constructor
 	 *
-	 * The advanced constructor for the input class.
+	 * The advanced default for the Input class.
 	 * Initializes members to default values.
-	 *
-	 * \param linesleepms - An integer value holding the time to sleep
-	 * between reading input lines from a file, in milliseconds
 	 */
-	input();
+	Input();
 
 	/**
-	 * \brief input advanced constructor
+	 * \brief Input advanced constructor
 	 *
-	 * The advanced constructor for the input class.
-	 * Initializes members to default values.
-	 * Calls setup to configure the class
-	 * Starts the work thread
+	 * The advanced constructor for the Input class. This function calls setup
+	 * to configure the class, initializing members to the configured values,
+	 * and starts the work thread
 	 *
-	 * \param config - A json::Object pointer to the configuration to use
+	 * \param config - A json::Object shared_ptr to the configuration to use
 	 */
-	explicit input(std::shared_ptr<const json::Object> config);
+	explicit Input(std::shared_ptr<const json::Object> config);
 
 	/**
-	 * \brief input destructor
+	 * \brief Input destructor
 	 *
-	 * The destructor for the input class.
+	 * The destructor for the Input class.
 	 * Stops the work thread
 	 */
-	~input();
+	~Input();
 
 	/**
-	 * \brief input configuration function
+	 * \brief Input configuration function
 	 *
-	 * The this function configures the input class, and the tracking cache it
-	 * contains.
+	 * The this function configures the Input class, and the tracking cache it
+	 * contains. setup() can be called multiple times, in order to reload/update
+	 * configuration information.
 	 *
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use
@@ -91,37 +88,41 @@ class input : public glass3::util::iInput,
 	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
-	 * \brief input clear function
+	 * \brief Input clear function
 	 *
-	 * The clear function for the input class.
+	 * The clear function for the Input class.
 	 * Clears all configuration, clears and reallocates the message queue and
 	 * cache
 	 */
 	void clear() override;
 
 	/**
-	 * \brief input data getting function
+	 * \brief Input data getting function
 	 *
-	 * The function (from iinput) used to get input data from the data queue.
+	 * The function (from iinput) used to get Input data from the data queue.
 	 *
-	 * \return Returns a pointer to a json::Object containing the data.
+	 * \return Returns a pointer to a json::Object containing the data, or NULL
+	 * if the Input queue is empty
 	 */
 	std::shared_ptr<json::Object> getInputData() override;
 
 	/**
-	 * \brief input data count function
+	 * \brief Input data count function
 	 *
-	 * The function (from iinput) used to get the count of how much data is in
+	 * The function (from iInput) used to get the count of how much data is in
 	 * the data queue.
 	 *
-	 * \return Returns a integer containing the current data count.
+	 * \return Returns a postitve integer containing the count of data currently
+	 * in the Input queue
 	 */
 	int getInputDataCount() override;
 
 	/**
 	 * \brief Function to set the maximum queue size
 	 *
-	 * This function sets the maximum allowable size of the input data queue
+	 * This function sets the maximum allowable size of the Input data queue.
+	 * Setting this value to -1 indicates that there is no maximum size
+	 * to the Input queue
 	 *
 	 * \param delay = An integer value containing the maximum queue size
 	 */
@@ -130,38 +131,16 @@ class input : public glass3::util::iInput,
 	/**
 	 * \brief Function to retrieve the maximum queue size
 	 *
-	 * This function retrieves the maximum allowable size of the input data
+	 * This function retrieves the maximum allowable size of the Input data
 	 * queue
 	 *
 	 * \return Returns an integer value containing the maximum queue size
 	 */
 	int getQueueMaxSize();
 
-	/**
-	 * \brief Function to set the interval to generate informational reports
-	 *
-	 * This function sets the interval in seconds between logging informational
-	 * reports on output throughput and performance
-	 *
-	 * \param interval = An integer value containing the interval in seconds
-	 */
-	void setReportInterval(int interval);
-
-	/**
-	 * \brief Function to retrieve the interval to generate informational reports
-	 *
-	 * This function retrieves the interval in seconds between logging
-	 * informationalreports on output throughput and performance
-	 *
-	 * \return This function returns glass3::util::WorkState, indicating whether
-	 * the work was successful, encountered an error, or was idle (no work to
-	 * perform
-	 */
-	int getReportInterval();
-
  protected:
 	/**
-	 * \brief input work function
+	 * \brief Input work function
 	 *
 	 * The function (from threadclassbase) used to do work.
 	 * \return returns true if work was successful, false otherwise.
@@ -171,35 +150,26 @@ class input : public glass3::util::iInput,
 	/**
 	 * \brief parse line function
 	 *
-	 * The function that parses an input line, based on the given extension
+	 * The function that parses an Input line, based on the given extension
 	 *
 	 * \param type - A std::string containing the type of data to parse
 	 * \return returns a shared pointer to a json::Object containing the parsed
-	 * \param input - A std::string containing the input line to parse
+	 * \param Input - A std::string containing the Input line to parse
 	 * data
 	 */
 	virtual std::shared_ptr<json::Object> parse(std::string type,
-												std::string input);
+												std::string Input);
 
 	/**
-	 * \brief get input data type
+	 * \brief get Input data string and type
 	 *
-	 * A pure virutal function that determines the input data type
+	 * A pure virtual function that retrieves the next data message and type
+	 * from an Input source
 	 *
-	 * \param input - A json::Object containing the data to validate
-	 * \return returns a std::string containing the input data type
+	 * \param type - A std::string used to pass out the type of the data
+	 * \return returns a std::string containing the Input data message
 	 */
-	virtual std::string getDataType(std::string input) = 0;
-
-	/**
-	 * \brief get input data string
-	 *
-	 * A pure virtual function that retrieves the next data message from an
-	 * input source
-	 *
-	 * \return returns a std::string containing the input data message
-	 */
-	virtual std::string fetchRawData() = 0;
+	virtual std::string fetchRawData(std::string* type) = 0;
 
  private:
 	/**

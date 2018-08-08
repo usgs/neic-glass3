@@ -7,14 +7,17 @@
 #define TESTAGENCYID "US"
 #define TESTAUTHOR "glasstest"
 
+// glass3::parse::Parser is an abstract class and
+// must be derived into a concrete class before use.
 class parserstub : public glass3::parse::Parser {
  public:
 	parserstub()
 			: glass3::parse::Parser() {
 	}
 
-	parserstub(const std::string &newagencyid, const std::string &newauthor)
-			: glass3::parse::Parser(newagencyid, newauthor) {
+	parserstub(const std::string &defaultAgencyId,
+				const std::string &defaultAuthor)
+			: glass3::parse::Parser(defaultAgencyId, defaultAuthor) {
 	}
 
 	~parserstub() {
@@ -25,7 +28,7 @@ class parserstub : public glass3::parse::Parser {
 	}
 };
 
-// tests to see if parser construts correctly
+// tests to see if parser constructs correctly
 TEST(ParserTest, Construction) {
 	// default constructor
 	parserstub * Parser = new parserstub();
@@ -44,7 +47,7 @@ TEST(ParserTest, Construction) {
 	std::string agencyid = std::string(TESTAGENCYID);
 	std::string author = std::string(TESTAUTHOR);
 
-	// advanced constructor
+	// advanced constructor (tests setting agency id and author)
 	parserstub * Parser2 = new parserstub(agencyid, author);
 
 	// assert that agencyid is ok

@@ -141,7 +141,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 					detectionformats::onsetvalues[detectionformats::onsetindex::questionable];  // NOLINT
 		}
 
-		// onset
+		// type
 		if (splitInput[PICKERTYPE_INDEX] == "m") {
 			newPick.picker =
 					detectionformats::pickervalues[detectionformats::pickerindex::manual];  // NOLINT

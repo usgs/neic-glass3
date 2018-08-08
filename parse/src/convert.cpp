@@ -24,8 +24,8 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 	 * The glasscore cancel message is defined at:
 	 * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/Hypo.md  // NOLINT
 	 *
-	 * The detection formats Detection message is defined at:
-	 * https://github.com/usgs/earthquake-detection-formats/blob/master/format-docs/Detection.md  // NOLINTZ
+	 * The glasscore station info list is defined at:
+	 * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/StationInfoList.md  // NOLINT
 	 */
 
 	// nullcheck

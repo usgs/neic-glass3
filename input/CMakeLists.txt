@@ -62,8 +62,8 @@ include(${CMAKE_DIR}/cpplint.cmake)
 # ----- RUN UNIT TESTS ----- #
 file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
 # NOTE: Order libraries are linked matters for G++
-# set(TEST_LIBRARIES ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${util_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
-# include(${CMAKE_DIR}/test.cmake)
+set(TEST_LIBRARIES ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${util_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
+include(${CMAKE_DIR}/test.cmake)
 
 # ----- INSTALL LIBRARY ----- #
 include(${CMAKE_DIR}/install_lib.cmake)

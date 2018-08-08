@@ -71,19 +71,20 @@ std::string cancelToJSONRetract(std::shared_ptr<json::Object> data,
 /**
  * \brief json station list conversion function
  *
- * The function is used to convert a glasscore SiteList message to an array of
- * valid detection formats StationInfo messages
+ * The function is used to convert a glasscore SiteList message to a
+ * StationInfoList messages
  *
  * The glasscore SiteList message is defined at:
  * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/SiteList.md  // NOLINT
  *
- * The detection formats StationInfo message is defined at:
- * https://github.com/usgs/earthquake-detection-formats/blob/master/format-docs/StationInfo.md  // NOLINT
+ * The glasscore station info list is defined at:
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/StationInfoList.md  // NOLINT/ NOLINT
  *
  * \param data - A pointer to a json::Object containing the SiteList to be
  * converted.
  * \return Returns a string containing an array of converted and validated
- * detection formats StationInfo messages, empty string otherwise
+ * detection formats StationInfo objects, as a StationInfoList message, empty
+ * string otherwise
  */
 std::string siteListToStationList(std::shared_ptr<json::Object> data);
 
