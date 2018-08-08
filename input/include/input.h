@@ -37,9 +37,16 @@ namespace input {
  * \brief glass Input class
  *
  * The glass Input class is a thread class encapsulating the data Input logic
- * The Input class handles reading Input data, parsing it, validating  it, and
+ * The Input class handles reading Input data, parsing it, validating it, and
  * queuing it for later use by the associator class. If the internal queue is
- * full, the class will pause reading Input data until space is available
+ * full, the class will pause reading Input data until space is available.
+ *
+ * The input class generates detection format json messages as defined in
+ * https://github.com/usgs/earthquake-detection-formats/tree/master/format-docs
+ * that are then passed to the associator/glasscore via a queue.
+ *
+ * The Input class is intended to be inherited from to define specific input
+ * mechanisms (i.e. file input).
  *
  * Input inherits from the glass3::util::ThreadBaseClass class.
  * Input implements the glass3::util::iInput interface.
@@ -77,9 +84,9 @@ class Input : public glass3::util::iInput,
 	/**
 	 * \brief Input configuration function
 	 *
-	 * The this function configures the Input class, and the tracking cache it
-	 * contains. setup() can be called multiple times, in order to reload/update
-	 * configuration information.
+	 * The this function configures the Input class,
+	 * The setup() function can be called multiple times, in order to reload or
+	 * update configuration information.
 	 *
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use

@@ -30,12 +30,38 @@ namespace output {
 /**
  * \brief glass output class
  *
- * The glass output class is a thread class encapsulating the detection output
- * logic.  The output class handles output messages from from glasscore,
- * and writes the messages out to disk.
+ * The glass3 output class is a class that performs the publication tracking and
+ * translation tasks for neic-glass3.
  *
- * output inherits from the threadbaseclass class.
- * output implements the ioutput interface.
+ * The Output class utilizes the internal glasscore Event, Cancel, and Expire
+ * messages as defined at
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/Event.md  // NOLINT
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/Cancel.md  // NOLINT
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/Expire.md  // NOLINT
+ * for publication tracking. The class uses a configurable set of fixed
+ * publication times to determine when to publish. These messages are passed to
+ * Output via the sendToOutput function from the iOutput interface
+ *
+ * The output class generates the internal formats ReqHypo and ReqSiteList messages
+ * defined at
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/ReqHypo.md  // NOLINT
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/ReqSiteList.md  // NOLINT
+ * to request detailed event detection and site list information from glasscore
+ * via the m_Associator pointer.
+ *
+ * The output class translates the internal glasscore Hypo, SiteList and SiteLookup
+ * messages as  messages as defined at
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/Hypo.md  // NOLINT
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/SiteList.md  // NOLINT
+ * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/SiteLookup.md  // NOLINT
+ * detection formats messages, as defined at
+ * https://github.com/usgs/earthquake-detection-formats/tree/master/format-docs
+ *
+ * The Output class is intended to be inherited from to define specific output
+ * mechanisms (i.e. file output).
+ *
+ * output inherits from the glass3::util::ThreadBaseClass class.
+ * output implements the glass3::util::iOutput interface.
  */
 class output : public glass3::util::iOutput,
 		public glass3::util::ThreadBaseClass {
@@ -59,8 +85,10 @@ class output : public glass3::util::iOutput,
 	/**
 	 * \brief output configuration function
 	 *
-	 * The this function configures the output class, and the tracking cache it
-	 * contains.
+	 * The this function configures the output class.
+	 *
+	 * The setup() function can be called multiple times, in order to reload or
+	 * update configuration information.
 	 *
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use
@@ -109,29 +137,25 @@ class output : public glass3::util::iOutput,
 	bool healthCheck() override;
 
 	/**
-	 * \brief Function to set the delay in requesting the site list
+	 * \brief Function to set the interval for requesting the site list
 	 *
-	 * This function sets the delay in seconds before requesting glass core's
-	 * current sitelist. A negative delay indicates that the site list should
-	 * not be requested
+	 * This function sets the interval in seconds between requesting glass
+	 * core's current sitelist. A negative delay indicates that the site list
+	 * shouldnot be requested
 	 *
 	 * \param delay = An integer value containing the delay in seconds
 	 */
-	void setSiteListDelay(int delay);
+	void setSiteListRequestInterval(int delay);
 
 	/**
-	 * \brief Function to retrieve the delay in requesting the site list
+	 * \brief Function to retrieve the interval for requesting the site list
 	 *
-	 * This function retrieves the delay in seconds before requesting glass
+	 * This function retrieves the interval in seconds between requesting glass
 	 * core's current sitelist
 	 *
 	 * \return Returns an integer value containing the delay in seconds
 	 */
-	int getSiteListDelay();
-
-	void setStationFile(std::string filename);
-
-	const std::string getStationFile();
+	int getSiteListRequestInterval();
 
 	/**
 	 * \brief Function to set the interval to generate informational reports
@@ -213,22 +237,9 @@ class output : public glass3::util::iOutput,
 	std::vector<int> getPubTimes();
 
 	/**
-	 * \brief Function to set the publication times
-	 *
-	 * This function sets the publication times in seconds used to determine when
-	 * to generate detection messages for events. An event will not generate
-	 * a message if it has not changed, and will not generate a message if all
-	 * publication times have passed (unless m_bPubOnExpiration is set to true)
-	 *
-	 * \param pubTimes = A std::vector of integers containing the times in seconds
-	 * since initial report that events should generate detection messages
-	 */
-	void setPubTimes(std::vector<int> pubTimes);
-
-	/**
 	 * \brief Function to add a single publication time to the list
 	 *
-	 * This function adds a single publication times in seconds to the list used
+	 * This function adds a single publication time in seconds to the list used
 	 * to determine when to generate detection messages for events. An event
 	 * will not generate a message if it has not changed, and will not generate
 	 * a message if all publication times have passed (unless m_bPubOnExpiration
@@ -273,10 +284,11 @@ class output : public glass3::util::iOutput,
 	/**
 	 * \brief get data from the output tracking cache
 	 *
-	 * Get the first available detection data from the cache of data pending for
-	 * output that is ready
+	 * Get the first ready tracking data from the cache by starting at the
+	 * beginning of the cache and evaluating each tracking data with
+	 * isDataReady()
 	 *
-	 * \return Returns a pointer to the json::Object containing the detection
+	 * \return Returns a pointer to the json::Object containing the tracking data
 	 * data ready for output, NULL if no data found that is ready.
 	 */
 	std::shared_ptr<const json::Object> getNextTrackingData();
@@ -456,12 +468,7 @@ class output : public glass3::util::iOutput,
 	 * \brief the integer configuration value indicating the delay in seconds
 	 * before requesting glass core's current sitelist
 	 */
-	std::atomic<int> m_iSiteListDelay;
-
-	/**
-	 * \brief the std::string containing the station file name.
-	 */
-	std::string m_sStationFile;
+	std::atomic<int> m_iSiteListRequestInterval;
 
 	/**
 	 * \brief pointer to the glass3::util::cache class used to

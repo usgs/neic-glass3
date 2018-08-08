@@ -29,9 +29,9 @@
 	# optional station lookup topic
 	"StationRequestTopic":"Station-Lookup",
 
-	# The optional delay between requesting a current sitelist from glasscore
+	# The optional interval between requesting a current sitelist from glasscore
 	# for station list creating in seconds
-	"SiteListDelay":7200,
+	"SiteListRequestInterval":7200,
 
 	# The optional file name of the stationlist to create from the sitelist from
 	# glasscore

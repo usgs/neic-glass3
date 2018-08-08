@@ -16,6 +16,14 @@
 #include <memory>
 #include <vector>
 
+// JSON Keys
+#define TYPE_KEY "Type"
+#define CMD_KEY "Cmd"
+#define ID_KEY "ID"
+#define PID_KEY "Pid"
+#define PUBLOG_KEY "PubLog"
+#define VERSION_KEY "Version"
+
 namespace glass3 {
 namespace output {
 
@@ -39,17 +47,17 @@ output::output()
 	m_iLookupCounter = 0;
 	m_iSiteListCounter = 0;
 
-	// init to null, allocated in clear
-	m_TrackingCache = NULL;
-	m_OutputQueue = NULL;
-	m_LookupQueue = NULL;
+	// allocation
+	m_TrackingCache = new glass3::util::Cache();
+	m_OutputQueue = new glass3::util::Queue();
+	m_LookupQueue = new glass3::util::Queue();
 
 	// setup thread pool for output
 	m_ThreadPool = new glass3::util::ThreadPool("outputpool");
 
 	setAssociator(NULL);
 
-	// init config to defaults and allocate
+	// init config to defaults
 	clear();
 }
 
@@ -99,12 +107,13 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	glass3::util::log("debug", "output::setup(): Setting Up.");
 
 	// Cmd
-	if (!(config->HasKey("Cmd"))) {
+	if (!(config->HasKey(CMD_KEY)
+			&& ((*config)[CMD_KEY].GetType() == json::ValueType::StringVal))) {
 		glass3::util::log("error",
 							"output::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
-		std::string configtype = (*config)["Cmd"];
+		std::string configtype = (*config)[CMD_KEY];
 		if (configtype != "GlassOutput") {
 			glass3::util::log(
 					"error", "output::setup(): Wrong configuration provided, "
@@ -114,7 +123,9 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	}
 
 	// publish on expiration
-	if (!(config->HasKey("PublishOnExpiration"))) {
+	if (!(config->HasKey("PublishOnExpiration")
+			&& ((*config)["PublishOnExpiration"].GetType()
+					== json::ValueType::BoolVal))) {
 		// publish on expiration is optional, default to false
 		setPubOnExpiration(false);
 		glass3::util::log(
@@ -131,8 +142,10 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	}
 
 	// publicationTimes
-	if (!(config->HasKey("PublicationTimes"))) {
-		// pubdelay is optional, default to 0
+	if (!(config->HasKey("PublicationTimes")
+			&& ((*config)["PublicationTimes"].GetType()
+					== json::ValueType::ArrayVal))) {
+		// PublicationTimes is optional, default to 0
 		clearPubTimes();
 		addPubTime(0);
 		glass3::util::log(
@@ -155,7 +168,9 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	}
 
 	// agencyid
-	if (!(config->HasKey("OutputAgencyID"))) {
+	if (!(config->HasKey("OutputAgencyID")
+			&& ((*config)["OutputAgencyID"].GetType()
+					== json::ValueType::StringVal))) {
 		glass3::util::log(
 				"error", "output::setup(): Missing required OutputAgencyID.");
 		return (false);
@@ -168,7 +183,9 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	}
 
 	// author
-	if (!(config->HasKey("OutputAuthor"))) {
+	if (!(config->HasKey("OutputAuthor")
+			&& ((*config)["OutputAuthor"].GetType()
+					== json::ValueType::StringVal))) {
 		glass3::util::log("error",
 							"output::setup(): Missing required OutputAuthor.");
 		return (false);
@@ -180,53 +197,23 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 						+ " for output.");
 	}
 
-	// SiteListDelay
-	if (!(config->HasKey("SiteListDelay"))) {
-		glass3::util::log("info",
-							"output::setup(): SiteListDelay not specified.");
+	// SiteListRequestInterval
+	if (!(config->HasKey("SiteListRequestInterval")
+			&& ((*config)["SiteListRequestInterval"].GetType()
+					== json::ValueType::IntVal))) {
+		glass3::util::log(
+				"info",
+				"output::setup(): SiteListRequestInterval not specified.");
+		setSiteListRequestInterval(-1);
 	} else {
-		setSiteListDelay((*config)["SiteListDelay"].ToInt());
+		setSiteListRequestInterval(
+				(*config)["SiteListRequestInterval"].ToInt());
 
 		glass3::util::log(
 				"info",
-				"output::setup(): Using SiteListDelay: "
-						+ std::to_string(getSiteListDelay()) + ".");
+				"output::setup(): Using SiteListRequestInterval: "
+						+ std::to_string(getSiteListRequestInterval()) + ".");
 	}
-
-	// StationFile
-	if (!(config->HasKey("StationFile"))) {
-		glass3::util::log("info",
-							"output::setup(): StationFile not specified.");
-	} else {
-		setStationFile((*config)["StationFile"].ToString());
-
-		glass3::util::log(
-				"info",
-				"output::setup(): Using StationFile: " + getStationFile()
-						+ ".");
-	}
-
-	// allocation
-	getMutex().lock();
-
-	// cppcheck-suppress nullPointerRedundantCheck
-	if (m_TrackingCache != NULL) {
-		delete (m_TrackingCache);
-	}
-	m_TrackingCache = new glass3::util::Cache();
-
-	// cppcheck-suppress nullPointerRedundantCheck
-	if (m_OutputQueue != NULL) {
-		delete (m_OutputQueue);
-	}
-	m_OutputQueue = new glass3::util::Queue();
-
-	// cppcheck-suppress nullPointerRedundantCheck
-	if (m_LookupQueue != NULL) {
-		delete (m_LookupQueue);
-	}
-	m_LookupQueue = new glass3::util::Queue();
-	getMutex().unlock();
 
 	glass3::util::log("debug", "output::setup(): Done Setting Up.");
 
@@ -243,10 +230,8 @@ void output::clear() {
 	glass3::util::log("debug", "output::clear(): clearing configuration.");
 
 	setPubOnExpiration(false);
-
 	clearPubTimes();
-	setSiteListDelay(-1);
-	setStationFile("");
+	setSiteListRequestInterval(-1);
 
 	// finally do baseclass clear
 	glass3::util::BaseClass::clear();
@@ -260,10 +245,10 @@ void output::sendToOutput(std::shared_ptr<json::Object> message) {
 
 	// get the message type
 	std::string messagetype;
-	if (message->HasKey("Cmd")) {
-		messagetype = (*message)["Cmd"].ToString();
-	} else if (message->HasKey("Type")) {
-		messagetype = (*message)["Type"].ToString();
+	if (message->HasKey(CMD_KEY)) {
+		messagetype = (*message)[CMD_KEY].ToString();
+	} else if (message->HasKey(TYPE_KEY)) {
+		messagetype = (*message)[TYPE_KEY].ToString();
 	} else {
 		glass3::util::log(
 				"critical",
@@ -333,10 +318,10 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 
 	// get the id
 	std::string id = "";
-	if ((*data).HasKey("ID")) {
-		id = (*data)["ID"].ToString();
-	} else if ((*data).HasKey("Pid")) {
-		id = (*data)["Pid"].ToString();
+	if ((*data).HasKey(ID_KEY)) {
+		id = (*data)[ID_KEY].ToString();
+	} else if ((*data).HasKey(PID_KEY)) {
+		id = (*data)[PID_KEY].ToString();
 	} else {
 		glass3::util::log(
 				"error", "output::addtrackingdata(): No ID found data json.");
@@ -355,7 +340,7 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 			->getFromCache(id);
 	if (existingdata != NULL) {
 		// it is, copy the pub log for an existing event
-		if (!(*existingdata).HasKey("PubLog")) {
+		if (!(*existingdata).HasKey(PUBLOG_KEY)) {
 			glass3::util::log(
 					"error",
 					"output::addtrackingdata(): existing event missing pub log! :"
@@ -363,8 +348,8 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 
 			return (false);
 		} else {
-			json::Array pubLog = (*existingdata)["PubLog"].ToArray();
-			(*data)["PubLog"] = pubLog;
+			json::Array pubLog = (*existingdata)[PUBLOG_KEY].ToArray();
+			(*data)[PUBLOG_KEY] = pubLog;
 		}
 	} else {
 		// it isn't generate the pub log for a new event
@@ -375,7 +360,7 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 			// generate a pub log entry
 			pubLog.push_back(0);
 		}
-		(*data)["PubLog"] = pubLog;
+		(*data)[PUBLOG_KEY] = pubLog;
 	}
 
 	glass3::util::log(
@@ -383,7 +368,8 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 			"output::addTrackingData(): New tracking data: "
 					+ json::Serialize(*data));
 
-	// add, cache handles updates
+	// addToCache (is really add_or_update_cache), so call it and it will ensure
+	// the data ends up properly in the cache
 	return (m_TrackingCache->addToCache(data, id));
 }
 
@@ -397,10 +383,10 @@ bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 	}
 
 	std::string ID;
-	if ((*data).HasKey("ID")) {
-		ID = (*data)["ID"].ToString();
-	} else if ((*data).HasKey("Pid")) {
-		ID = (*data)["Pid"].ToString();
+	if ((*data).HasKey(ID_KEY)) {
+		ID = (*data)[ID_KEY].ToString();
+	} else if ((*data).HasKey(PID_KEY)) {
+		ID = (*data)[PID_KEY].ToString();
 	} else {
 		glass3::util::log(
 				"error",
@@ -431,41 +417,32 @@ bool output::removeTrackingData(std::string ID) {
 // ---------------------------------------------------------getTrackingData
 std::shared_ptr<const json::Object> output::getTrackingData(std::string id) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
-	std::shared_ptr<json::Object> nullObj;
 	if (id == "") {
 		glass3::util::log(
 				"error", "output::removetrackingdata(): Empty ID passed in.");
-		return (nullObj);
-	} else if (id == "null") {
-		glass3::util::log(
-				"warn", "output::removetrackingdata(): Invalid ID passed in.");
-		return (nullObj);
+		return (NULL);
 	}
 
 	// return the value
-	if (m_TrackingCache->isInCache(id) == true) {
-		return (m_TrackingCache->getFromCache(id));
-	} else {
-		return (nullObj);
-	}
+	return (m_TrackingCache->getFromCache(id));
 }
 
 // ---------------------------------------------------------getNextTrackingData
 std::shared_ptr<const json::Object> output::getNextTrackingData() {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
-	// get the data
+	// get the first tracking data from the cache
 	std::shared_ptr<const json::Object> data =
 			m_TrackingCache->getNextFromCache(true);
 
 	// loop until we hit the end of the list
 	while (data != NULL) {
-		// check to see if we can release the data
+		// check to see if we can release the data we just got
 		if (isDataReady(data) == true) {
 			// return the value
 			return (data);
 		}
 
-		// get the next station
+		// get the next tracking data from the cache
 		data = m_TrackingCache->getNextFromCache(false);
 	}
 
@@ -483,10 +460,10 @@ bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 	}
 
 	std::string ID;
-	if ((*data).HasKey("ID")) {
-		ID = (*data)["ID"].ToString();
-	} else if ((*data).HasKey("Pid")) {
-		ID = (*data)["Pid"].ToString();
+	if ((*data).HasKey(ID_KEY)) {
+		ID = (*data)[ID_KEY].ToString();
+	} else if ((*data).HasKey(PID_KEY)) {
+		ID = (*data)[PID_KEY].ToString();
 	} else {
 		glass3::util::log(
 				"error",
@@ -541,7 +518,7 @@ void output::checkEventsLoop() {
 			break;
 		}
 
-		// see if there's anything in the tracking cache
+		// see if there's anything in the tracking cache ready to publish
 		std::shared_ptr<const json::Object> data = getNextTrackingData();
 
 		// got something?
@@ -554,10 +531,10 @@ void output::checkEventsLoop() {
 
 		// get the id
 		std::string id;
-		if ((*data).HasKey("ID")) {
-			id = (*data)["ID"].ToString();
-		} else if ((*data).HasKey("Pid")) {
-			id = (*data)["Pid"].ToString();
+		if ((*data).HasKey(ID_KEY)) {
+			id = (*data)[ID_KEY].ToString();
+		} else if ((*data).HasKey(PID_KEY)) {
+			id = (*data)[PID_KEY].ToString();
 		} else {
 			glass3::util::log(
 					"warning",
@@ -573,8 +550,8 @@ void output::checkEventsLoop() {
 
 		// get the command
 		std::string command;
-		if ((*data).HasKey("Cmd")) {
-			command = (*data)["Cmd"].ToString();
+		if ((*data).HasKey(CMD_KEY)) {
+			command = (*data)[CMD_KEY].ToString();
 		} else {
 			glass3::util::log(
 					"warning",
@@ -588,17 +565,19 @@ void output::checkEventsLoop() {
 			continue;
 		}
 
-		// process the data based on the tracking message
+		// If it's time to publish an event, then send a message to the
+		// associator asking for the Hypo
 		if (command == "Event") {
 			// Request the hypo from associator
 			if (getAssociator() != NULL) {
-				// build the request
+				// build the ReqHypo Message, which is defined at
+				// https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/StationInfoList.md  // NOLINT
 				std::shared_ptr<json::Object> datarequest = std::make_shared<
 						json::Object>(json::Object());
-				(*datarequest)["Cmd"] = "ReqHypo";
-				(*datarequest)["Pid"] = id;
+				(*datarequest)[CMD_KEY] = "ReqHypo";
+				(*datarequest)[PID_KEY] = id;
 
-				// send the request
+				// send the request to glasscore
 				getAssociator()->sendToAssociator(datarequest);
 			}
 		}
@@ -615,24 +594,26 @@ void output::checkEventsLoop() {
 // ---------------------------------------------------------work
 glass3::util::WorkState output::work() {
 	// request current stationlist
-	if (getSiteListDelay() > 0) {
+	if (getSiteListRequestInterval() > 0) {
 		// what time is it
 		time_t tNowRequest;
 		std::time(&tNowRequest);
 
 		// every interval
-		if ((tNowRequest - m_tLastSiteRequest) >= getSiteListDelay()) {
+		if ((tNowRequest - m_tLastSiteRequest)
+				>= getSiteListRequestInterval()) {
 			// Request the sitelist from associator
 			if (getAssociator() != NULL) {
-				// build the request
+				// build the ReqSiteList Message, which is defined at
+				// https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/ReqSiteList.md  // NOLINT
 				std::shared_ptr<json::Object> datarequest = std::make_shared<
 						json::Object>(json::Object());
-				(*datarequest)["Cmd"] = "ReqSiteList";
+				(*datarequest)[CMD_KEY] = "ReqSiteList";
 
 				glass3::util::log("debug",
 									"output::work(): Requesting site list.");
 
-				// send the request
+				// send the request to glasscore
 				getAssociator()->sendToAssociator(datarequest);
 			}
 
@@ -653,8 +634,6 @@ glass3::util::WorkState output::work() {
 	// first see what we're supposed to do with a new message
 	// see if there's an output in the message queue
 	std::shared_ptr<json::Object> message = m_OutputQueue->getDataFromQueue();
-	// int outputQueueSize = m_OutputQueue->size();
-	// int lookupQueueSize = m_LookupQueue->size();
 
 	// if there's no output, check for a lookup
 	if (message == NULL) {
@@ -665,25 +644,16 @@ glass3::util::WorkState output::work() {
 		return (glass3::util::WorkState::Idle);
 	}
 
-	// if we got something
-	/*glass3::util::log(
-	 "debug",
-	 "associator::dispatch(): got message:"
-	 + json::Serialize(*message)
-	 + " from associator. (outputQueueSize:"
-	 + std::to_string(outputQueueSize) + ", lookupQueueSize:"
-	 + std::to_string(lookupQueueSize) + ")");*/
-
 	// what time is it
 	time_t tNow;
 	std::time(&tNow);
 
 	// get the message type
 	std::string messagetype;
-	if (message->HasKey("Cmd")) {
-		messagetype = (*message)["Cmd"].ToString();
-	} else if (message->HasKey("Type")) {
-		messagetype = (*message)["Type"].ToString();
+	if (message->HasKey(CMD_KEY)) {
+		messagetype = (*message)[CMD_KEY].ToString();
+	} else if (message->HasKey(TYPE_KEY)) {
+		messagetype = (*message)[TYPE_KEY].ToString();
 	} else {
 		glass3::util::log(
 				"critical",
@@ -692,10 +662,10 @@ glass3::util::WorkState output::work() {
 	}
 
 	std::string messageid;
-	if ((*message).HasKey("ID")) {
-		messageid = (*message)["ID"].ToString();
-	} else if ((*message).HasKey("Pid")) {
-		messageid = (*message)["Pid"].ToString();
+	if ((*message).HasKey(ID_KEY)) {
+		messageid = (*message)[ID_KEY].ToString();
+	} else if ((*message).HasKey(PID_KEY)) {
+		messageid = (*message)[PID_KEY].ToString();
 	} else {
 		messageid = "null";
 	}
@@ -765,8 +735,8 @@ glass3::util::WorkState output::work() {
 			bool published = isDataPublished(trackingData, true);
 			if (published == true) {
 				// make sure we have a type
-				if (!((*message).HasKey("Type")))
-					(*message)["Type"] = messagetype;
+				if (!((*message).HasKey(TYPE_KEY)))
+					(*message)[TYPE_KEY] = messagetype;
 
 				glass3::util::log(
 						"debug",
@@ -904,18 +874,18 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 
 	// get the data type
 	std::string dataType = "unknown";
-	if (data->HasKey("Cmd")) {
-		dataType = (*data)["Cmd"].ToString();
-	} else if (data->HasKey("Type")) {
-		dataType = (*data)["Type"].ToString();
+	if (data->HasKey(CMD_KEY)) {
+		dataType = (*data)[CMD_KEY].ToString();
+	} else if (data->HasKey(TYPE_KEY)) {
+		dataType = (*data)[TYPE_KEY].ToString();
 	}
 
 	// get the data id (may or may not have)
 	std::string ID = "null";
-	if ((*data).HasKey("ID")) {
-		ID = (*data)["ID"].ToString();
-	} else if ((*data).HasKey("Pid")) {
-		ID = (*data)["Pid"].ToString();
+	if ((*data).HasKey(ID_KEY)) {
+		ID = (*data)[ID_KEY].ToString();
+	} else if ((*data).HasKey(PID_KEY)) {
+		ID = (*data)[PID_KEY].ToString();
 	}
 
 	std::string agency = getDefaultAgencyId();
@@ -961,13 +931,14 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 		return (false);
 	}
 
-	if (!(data->HasKey("Cmd"))) {
+	if (!(data->HasKey(CMD_KEY))) {
 		glass3::util::log(
 				"error",
 				"output::isdataready(): Bad tracking object passed in, "
 						" missing cmd: " + json::Serialize(*data));
 		return (false);
-	} else if ((!(data->HasKey("PubLog"))) || (!(data->HasKey("Version")))) {
+	} else if ((!(data->HasKey(PUBLOG_KEY)))
+			|| (!(data->HasKey(VERSION_KEY)))) {
 		glass3::util::log(
 				"error",
 				"output::isdataready(): Bad tracking object passed in, "
@@ -977,10 +948,10 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 
 	// get the id
 	std::string id = "";
-	if ((*data).HasKey("ID")) {
-		id = (*data)["ID"].ToString();
-	} else if ((*data).HasKey("Pid")) {
-		id = (*data)["Pid"].ToString();
+	if ((*data).HasKey(ID_KEY)) {
+		id = (*data)[ID_KEY].ToString();
+	} else if ((*data).HasKey(PID_KEY)) {
+		id = (*data)[PID_KEY].ToString();
 	} else {
 		id = "";
 	}
@@ -990,10 +961,10 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	int createTime = glass3::util::convertISO8601ToEpochTime(createTimeString);
 
 	// get the pub log
-	json::Array pubLog = (*data)["PubLog"].ToArray();
+	json::Array pubLog = (*data)[PUBLOG_KEY].ToArray();
 
 	// get the current version
-	int currentVersion = (*data)["Version"].ToInt();
+	int currentVersion = (*data)[VERSION_KEY].ToInt();
 
 	// what time is it now
 	time_t tNow;
@@ -1023,7 +994,7 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 		std::shared_ptr<json::Object> newData = std::make_shared<json::Object>(
 				*data);
 		pubLog[i] = currentVersion;
-		(*newData)["PubLog"] = pubLog;
+		(*newData)[PUBLOG_KEY] = pubLog;
 
 		// update data in cache
 		m_TrackingCache->addToCache(newData, id);
@@ -1076,13 +1047,14 @@ bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 		return (false);
 	}
 
-	if (!(data->HasKey("Cmd"))) {
+	if (!(data->HasKey(CMD_KEY))) {
 		glass3::util::log(
 				"error",
 				"output::isDataChanged(): Bad tracking object passed in, "
 						" missing cmd: " + json::Serialize(*data));
 		return (false);
-	} else if ((!(data->HasKey("PubLog"))) || (!(data->HasKey("Version")))) {
+	} else if ((!(data->HasKey(PUBLOG_KEY)))
+			|| (!(data->HasKey(VERSION_KEY)))) {
 		glass3::util::log(
 				"error",
 				"output::isDataChanged(): Bad tracking object passed in, "
@@ -1091,10 +1063,10 @@ bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 	}
 
 	// get the pub log
-	json::Array pubLog = (*data)["PubLog"].ToArray();
+	json::Array pubLog = (*data)[PUBLOG_KEY].ToArray();
 
 	// get the current version
-	int currentVersion = (*data)["Version"].ToInt();
+	int currentVersion = (*data)[VERSION_KEY].ToInt();
 
 	// for each entry in the pub log
 	for (int i = 0; i < pubLog.size(); i++) {
@@ -1122,8 +1094,8 @@ bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 		return (false);
 	}
 
-	if ((!(data->HasKey("Cmd"))) || (!(data->HasKey("PubLog")))
-			|| (!(data->HasKey("Version")))) {
+	if ((!(data->HasKey(CMD_KEY))) || (!(data->HasKey(PUBLOG_KEY)))
+			|| (!(data->HasKey(VERSION_KEY)))) {
 		glass3::util::log(
 				"error",
 				"output::isDataPublished(): Bad json hypo object passed in "
@@ -1133,8 +1105,8 @@ bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 	}
 
 	// get the pub log
-	json::Array pubLog = (*data)["PubLog"].ToArray();
-	int currentVersion = (*data)["Version"].ToInt();
+	json::Array pubLog = (*data)[PUBLOG_KEY].ToArray();
+	int currentVersion = (*data)[VERSION_KEY].ToInt();
 
 	// for each entry in the pub log
 	for (int i = 0; i < pubLog.size(); i++) {
@@ -1173,8 +1145,8 @@ bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 		return (false);
 	}
 
-	if ((!(data->HasKey("Cmd"))) || (!(data->HasKey("PubLog")))
-			|| (!(data->HasKey("Version")))) {
+	if ((!(data->HasKey(CMD_KEY))) || (!(data->HasKey(PUBLOG_KEY)))
+			|| (!(data->HasKey(VERSION_KEY)))) {
 		glass3::util::log(
 				"error",
 				"output::isDataFinished(): Bad json hypo object passed in "
@@ -1184,7 +1156,7 @@ bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	}
 
 	// get the pub log
-	json::Array pubLog = (*data)["PubLog"].ToArray();
+	json::Array pubLog = (*data)[PUBLOG_KEY].ToArray();
 
 	// for each entry in the pub log
 	for (int i = 0; i < pubLog.size(); i++) {
@@ -1203,26 +1175,14 @@ bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	return (true);
 }
 
-// ---------------------------------------------------------setSiteListDelay
-void output::setSiteListDelay(int delay) {
-	m_iSiteListDelay = delay;
+// ---------------------------------------------------------setSiteListRequestInterval
+void output::setSiteListRequestInterval(int delay) {
+	m_iSiteListRequestInterval = delay;
 }
 
-// ---------------------------------------------------------getSiteListDelay
-int output::getSiteListDelay() {
-	return (m_iSiteListDelay);
-}
-
-// ---------------------------------------------------------setStationFile
-void output::setStationFile(std::string filename) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_sStationFile = filename;
-}
-
-// ---------------------------------------------------------getStationFile
-const std::string output::getStationFile() {
-	std::lock_guard<std::mutex> guard(getMutex());
-	return (m_sStationFile);
+// ---------------------------------------------------------getSiteListRequestInterval
+int output::getSiteListRequestInterval() {
+	return (m_iSiteListRequestInterval);
 }
 
 // ---------------------------------------------------------setReportInterval
@@ -1261,12 +1221,6 @@ int output::getPubOnExpiration() {
 std::vector<int> output::getPubTimes() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_PublicationTimes);
-}
-
-// ---------------------------------------------------------setPubTimes
-void output::setPubTimes(std::vector<int> pubTimes) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_PublicationTimes = pubTimes;
 }
 
 // ---------------------------------------------------------addPubTime

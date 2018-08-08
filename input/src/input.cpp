@@ -85,7 +85,8 @@ bool Input::setup(std::shared_ptr<const json::Object> config) {
 	glass3::util::log("debug", "Input::setup(): Setting Up.");
 
 	// Cmd
-	if (!(config->HasKey("Cmd"))) {
+	if (!(config->HasKey("Cmd")
+			&& ((*config)["Cmd"].GetType() == json::ValueType::StringVal))) {
 		glass3::util::log("error",
 							"Input::setup(): BAD configuration passed in.");
 		return (false);
@@ -101,7 +102,9 @@ bool Input::setup(std::shared_ptr<const json::Object> config) {
 	}
 
 	// default agencyid
-	if (!(config->HasKey("DefaultAgencyID"))) {
+	if (!(config->HasKey("DefaultAgencyID")
+			&& ((*config)["DefaultAgencyID"].GetType()
+					== json::ValueType::StringVal))) {
 		glass3::util::log(
 				"error", "Input::setup(): Missing required DefaultAgencyID.");
 		return (false);
@@ -114,7 +117,9 @@ bool Input::setup(std::shared_ptr<const json::Object> config) {
 	}
 
 	// default author
-	if (!(config->HasKey("DefaultAuthor"))) {
+	if (!(config->HasKey("DefaultAuthor")
+			&& ((*config)["DefaultAuthor"].GetType()
+					== json::ValueType::StringVal))) {
 		glass3::util::log("error",
 							"Input::setup(): Missing required DefaultAuthor.");
 		return (false);
@@ -127,7 +132,8 @@ bool Input::setup(std::shared_ptr<const json::Object> config) {
 	}
 
 	// queue max size
-	if (!(config->HasKey("QueueMaxSize"))) {
+	if (!(config->HasKey("QueueMaxSize")
+			&& ((*config)["QueueMaxSize"].GetType() == json::ValueType::IntVal))) {
 		// queue max size is optional
 		setQueueMaxSize(-1);
 		glass3::util::log(
