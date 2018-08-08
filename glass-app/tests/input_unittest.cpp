@@ -164,7 +164,7 @@ TEST_F(InputTest, Construction) {
 			glass3::util::ThreadState::Started) << "input thread is not running";
 
 	// assert no data in class
-	ASSERT_EQ(InputThread->getInputDataCount(), -1) << "input thread has no data";
+	ASSERT_EQ(InputThread->getInputDataCount(), 0) << "input thread has no data";
 }
 
 TEST_F(InputTest, Configuration) {

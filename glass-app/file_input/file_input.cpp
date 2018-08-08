@@ -17,7 +17,7 @@
 namespace glass {
 // Construction/Destruction
 fileInput::fileInput()
-		: glass3::input::input() {
+		: glass3::input::Input() {
 	glass3::util::log("debug", "fileInput::fileInput(): Construction.");
 
 	// init config to defaults and allocate
@@ -25,7 +25,7 @@ fileInput::fileInput()
 }
 
 fileInput::fileInput(std::shared_ptr<const json::Object> &config)
-		: glass3::input::input() {
+		: glass3::input::Input() {
 	glass3::util::log("debug",
 						"fileInput::fileInput(): Advanced Construction.");
 	// do basic construction
@@ -149,7 +149,7 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
-	glass3::input::input::setup(config);
+	glass3::input::Input::setup(config);
 
 	// we're done
 	return (true);
@@ -166,7 +166,7 @@ void fileInput::clear() {
 	setShutdownWait(60);
 
 	// finally do baseclass clear
-	glass3::input::input::clear();
+	glass3::input::Input::clear();
 }
 
 std::string fileInput::fetchRawData(std::string* type) {

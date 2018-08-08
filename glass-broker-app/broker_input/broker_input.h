@@ -29,7 +29,7 @@ namespace glass {
  * brokerInput inherits from the glass3::brokerInput class.
  * brokerInput implements the ibrokerInput interface.
  */
-class brokerInput : public glass3::input::input {
+class brokerInput : public glass3::input::Input {
  public:
 	/**
 	 * \brief brokerInput constructor

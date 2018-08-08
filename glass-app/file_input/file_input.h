@@ -32,7 +32,7 @@ namespace glass {
  * fileInput inherits from the glass3::input class.
  * fileInput implements the iinput interface.
  */
-class fileInput : public glass3::input::input {
+class fileInput : public glass3::input::Input {
  public:
 	/**
 	 * \brief fileInput constructor

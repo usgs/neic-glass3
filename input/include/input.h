@@ -124,7 +124,7 @@ class Input : public glass3::util::iInput,
 	 * Setting this value to -1 indicates that there is no maximum size
 	 * to the Input queue
 	 *
-	 * \param delay = An integer value containing the maximum queue size
+	 * \param size = An integer value containing the maximum queue size
 	 */
 	void setQueueMaxSize(int size);
 
