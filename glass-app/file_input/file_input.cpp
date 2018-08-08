@@ -56,12 +56,12 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	glass3::util::log("debug", "fileInput::setup(): Setting Up.");
 
 	// Cmd
-	if (!(config->HasKey("Cmd"))) {
+	if (!(config->HasKey("Configuration"))) {
 		glass3::util::log("error",
 							"fileInput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
-		std::string configtype = (*config)["Cmd"].ToString();
+		std::string configtype = (*config)["Configuration"].ToString();
 		if (configtype != "GlassInput") {
 			glass3::util::log(
 					"error",

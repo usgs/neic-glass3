@@ -55,12 +55,12 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	glass3::util::log("debug", "fileOutput::setup(): Setting Up.");
 
 	// Cmd
-	if (!(config->HasKey("Cmd"))) {
+	if (!(config->HasKey("Configuration"))) {
 		glass3::util::log("error",
 					"fileOutput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
-		std::string configtype = (*config)["Cmd"];
+		std::string configtype = (*config)["Configuration"];
 		if (configtype != "GlassOutput") {
 			glass3::util::log("error",
 						"fileOutput::setup(): Wrong configuration provided, "

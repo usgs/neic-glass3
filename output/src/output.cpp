@@ -18,6 +18,7 @@
 
 // JSON Keys
 #define TYPE_KEY "Type"
+#define CONFIG_KEY "Configuration"
 #define CMD_KEY "Cmd"
 #define ID_KEY "ID"
 #define PID_KEY "Pid"
@@ -107,13 +108,13 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	glass3::util::log("debug", "output::setup(): Setting Up.");
 
 	// Cmd
-	if (!(config->HasKey(CMD_KEY)
-			&& ((*config)[CMD_KEY].GetType() == json::ValueType::StringVal))) {
+	if (!(config->HasKey(CONFIG_KEY)
+			&& ((*config)[CONFIG_KEY].GetType() == json::ValueType::StringVal))) {
 		glass3::util::log("error",
 							"output::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
-		std::string configtype = (*config)[CMD_KEY];
+		std::string configtype = (*config)[CONFIG_KEY];
 		if (configtype != "GlassOutput") {
 			glass3::util::log(
 					"error", "output::setup(): Wrong configuration provided, "

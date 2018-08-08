@@ -85,7 +85,7 @@ class output : public glass3::util::iOutput,
 	/**
 	 * \brief output configuration function
 	 *
-	 * The this function configures the output class.
+	 * The function configures the output class.
 	 *
 	 * The setup() function can be called multiple times, in order to reload or
 	 * update configuration information.
@@ -100,39 +100,39 @@ class output : public glass3::util::iOutput,
 	 * \brief output clear function
 	 *
 	 * The clear function for the output class.
-	 * Clears all configuration, clears and reallocates the message queue and
-	 * cache
+	 * Resets memebers to members to default values.
 	 */
 	void clear() override;
 
 	/**
 	 * \brief output message sending function
 	 *
-	 * The function (from ioutput) used to send communication to output.
+	 * The function (from glass3::util::iOutput) used by other libraries to send
+	 * messages to output.
 	 *
-	 * \param message - A json::Object containing the message to send to output.
+	 * \param message - A shared_ptr to a json::Object containing the message to
+	 * send to output.
 	 */
 	void sendToOutput(std::shared_ptr<json::Object> message) override;
 
 	/**
 	 * \brief work thread start function
 	 *
-	 * Overrides ThreadBaseClass::start(). Creates a thread object to run the
-	 * checkEventsLoop() function, and starts it, setting m_bEventThreadStarted to be
-	 * true, then calls ThreadBaseClass::start() to start the ThreadBaseClass
-	 * work thread
+	 * Overrides ThreadBaseClass::start() to create a thread to run the
+	 * checkEventsLoop() function and add the thread to ThreadBaseClass list
+	 * of threads, so it can be managed
 	 *
-	 * \return returns true if successful, false if the thread creation failed
-	 * or if a thread had already been started
+	 * \return returns true if successful, false if ThreadBaseClass::start()
+	 * failed.
 	 */
 	bool start() override;
 
 	/**
 	 * \brief output heath check function
 	 *
-	 * Checks to see if the thread pool is still running, calls
-	 * threadbaseclass::healthCheck for worker thread monitoring.
-	 * \return returns true if thread pool is still running.
+	 * Overrides ThreadBaseClass::healthCheck to add monitoring the thread pool.
+	 * Uses ThreadBaseClass::healthCheck to monitor worker threads
+	 * \return returns true if thread pool and worker threads are still running.
 	 */
 	bool healthCheck() override;
 
@@ -140,8 +140,8 @@ class output : public glass3::util::iOutput,
 	 * \brief Function to set the interval for requesting the site list
 	 *
 	 * This function sets the interval in seconds between requesting glass
-	 * core's current sitelist. A negative delay indicates that the site list
-	 * shouldnot be requested
+	 * core's current site list. A negative delay indicates that the site list
+	 * should not be requested
 	 *
 	 * \param delay = An integer value containing the delay in seconds
 	 */
@@ -181,7 +181,8 @@ class output : public glass3::util::iOutput,
 	 * \brief Function to set the associator interface pointer
 	 *
 	 * This function sets the associator interface pointer used by output to
-	 * communicate with the associator via the sendToAssociator() function
+	 * communicate with the associator via the Associator::sendToAssociator()
+	 * function
 	 *
 	 * \param associator = A pointer to an object that implements the
 	 * glass3::util::iAssociator interface.
@@ -192,7 +193,8 @@ class output : public glass3::util::iOutput,
 	 * \brief Function to get the associator interface pointer
 	 *
 	 * This function gets the associator interface pointer used by output to
-	 * communicate with the associator via the sendToAssociator() function
+	 * communicate with the associator via the Associator::sendToAssociator()
+	 * function
 	 *
 	 * \return Returns a pointer to an object that implements the
 	 * glass3::util::iAssociator interface.
@@ -260,55 +262,62 @@ class output : public glass3::util::iOutput,
 	void clearPubTimes();
 
 	/**
-	 * \brief add data to the output tracking cache
+	 * \brief add tracking information to the output tracking cache
 	 *
-	 * Add the detection data to the cache of data pending for output
+	 * Add the glasscore event message (used for tracking) as defined at
+	 * https://github.com/usg/neic-glass3/blob/code-review/doc/internal-formats/Event.md  // NOLINT
+	 * to the tracking cache as the tracking information
 	 *
-	 * \param data - A pointer to a json::Object containing the detection data.
+	 * \param data - A shared_ptr to a json::Object containing the glasscore
+	 * event message used as the tracking information
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool addTrackingData(std::shared_ptr<json::Object> data);
 
 	/**
-	 * \brief get data from the output tracking cache by id
+	 * \brief get tracking information from the output tracking cache by id
 	 *
-	 * Get the detection data from the cache of data pending for output based
-	 * on a provided id
+	 * Get the tracking information from the cache of tracking information
+	 * pending for output  based on a provided id
 	 *
-	 * \param id - A std::string contaning the id of the detection data to
+	 * \param id - A std::string containing the id of the tracking information to
 	 * retrieve from the cache
-	 * \return Returns the data if found, null otherwise
+	 * \return Returns a shared_ptr to the json object containing the glasscore
+	 * event message used for storing tracking information if found, null
+	 * otherwise
 	 */
 	std::shared_ptr<const json::Object> getTrackingData(std::string id);
 
 	/**
-	 * \brief get data from the output tracking cache
+	 * \brief get tracking information from the output tracking cache
 	 *
 	 * Get the first ready tracking data from the cache by starting at the
 	 * beginning of the cache and evaluating each tracking data with
 	 * isDataReady()
 	 *
-	 * \return Returns a pointer to the json::Object containing the tracking data
-	 * data ready for output, NULL if no data found that is ready.
+	 *\return Returns a shared_ptr to the json object containing the glasscore
+	 * event message used for storing tracking information if found, NULL if no
+	 * information found that is ready to publish.
 	 */
 	std::shared_ptr<const json::Object> getNextTrackingData();
 
 	/**
-	 * \brief check if data is in output tracking cache
+	 * \brief check if tracking information is in output tracking cache
 	 *
-	 * Check to see if given detection data is already in the output tracking
-	 * cache.
+	 * Check to see if given tracking information is already in the output
+	 * tracking cache.
 	 *
-	 * \param data - A pointer to a json::Object containing the detection data.
+	 * \param data - A shared_ptr to a json::Object containing the glasscore
+	 * event message used as the tracking information
 	 * \return Returns true if the data is in the cache, false otherwise
 	 */
 	bool haveTrackingData(std::shared_ptr<json::Object> data);
 
 	/**
-	 * \brief check if data is in output tracking cache by id
+	 * \brief check if information is in output tracking cache by id
 	 *
-	 * Check to see if given detection data is already in the output tracking
-	 * cache by id.
+	 * Check to see if tracking information is already in the output
+	 * tracking cache by the given id.
 	 *
 	 * \param ID - A std::string containing the id of the detection data to check.
 	 * \return Returns true if the data is in the cache, false otherwise
@@ -316,19 +325,21 @@ class output : public glass3::util::iOutput,
 	bool haveTrackingData(std::string ID);
 
 	/**
-	 * \brief remove data from the output tracking cache
+	 * \brief remove tracking information from the output tracking cache
 	 *
-	 * Remove the provided detection data from the output tracking cache.
+	 * Remove the provided tracking information from the output tracking cache.
 	 *
-	 * \param data - A pointer to a json::Object containing the detection data.
+	 * \param data - A shared_ptr to a json::Object containing the glasscore
+	 * event message used as the tracking information to remove
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool removeTrackingData(std::shared_ptr<const json::Object> data);
 
 	/**
-	 * \brief remove data from the output tracking cache by id
+	 * \brief remove tracking information from the output tracking cache by id
 	 *
-	 * Remove the provided detection data from the output tracking cache. by id
+	 * Remove the tracking information from the output tracking cache using the
+	 * given id
 	 *
 	 * \param ID - A std::string containing the id of the detection data to remove.
 	 * \return Returns true if successful, false otherwise
@@ -338,61 +349,69 @@ class output : public glass3::util::iOutput,
 	/**
 	 * \brief clear output tracking cache
 	 *
-	 * Clear all detection data from the output tracking cache.
+	 * Clear all tracking information from the output tracking cache.
 	 */
 	void clearTrackingData();
 
 	/**
-	 * \brief check to see if detection data is ready for output
+	 * \brief check to see if tracking information is ready for output
 	 *
-	 * Check the given detection data to see if it is ready for output
+	 * Check the given tracking information to see if it is ready for output
 	 *
-	 * \param data - A pointer to the json::Object containing the detection
-	 * data to check
-	 * \return Returns true if the data is ready, false if not.
+	 * \param data - A shared_ptr to a json::Object containing the glasscore
+	 * event message used as the tracking information to check
+	 * \return Returns true if the tracking information is ready, false if not.
 	 */
 	bool isDataReady(std::shared_ptr<const json::Object> data);
 
 	/**
 	 * \brief check to see if detection data has changed
 	 *
-	 * Check the given detection data to see if it has been changed
+	 * Check the given dtracking information to see if it has been changed
 	 *
-	 * \param data - A pointer to the json::Object containing the detection
-	 * data to check
-	 * \return Returns true if the data is has been changed, false if not.
+	 * \param data - A shared_ptr to a json::Object containing the glasscore
+	 * event message used as the tracking information to check
+	 * \return Returns true if the tracking information is has been changed,
+	 * false if not.
 	 */
 	bool isDataChanged(std::shared_ptr<const json::Object> data);
 
 	/**
-	 * \brief check to see if detection data has been published before
+	 * \brief check to see if tracking information has been published
 	 *
-	 * Check the given detection data to see if it has been previously published
+	 * Check the given tracking information to see if it has been previously
+	 * published. Optionally ignore the current version when doing the check.
+	 * This is used when whether tracking information has ever been published
+	 * (i.e. generating a retraction message)
 	 *
-	 * \param data - A pointer to the json::Object containing the detection
-	 * data to check
-	 * \return Returns true if the data is has been published, false if not.
+	 * \param data - A shared_ptr to a json::Object containing the glasscore
+	 * event message used as the tracking information to check
+	 * \param ignoreVersion - A boolen flag indicating whether to ignore
+	 * the tracking current information version
+	 * \return Returns true if the tracking information is has been published,
+	 * false if not.
 	 */
 	bool isDataPublished(std::shared_ptr<const json::Object> data,
 							bool ignoreVersion = true);
 	/**
-	 * \brief check to see if detection data is finished
+	 * \brief check to see if tracking information is finished
 	 *
-	 * Check the given detection data to see if is finished (no more
+	 * Check the given tracking information to see if is finished (no more
 	 * publications)
 	 *
-	 * \param data - A pointer to the json::Object containing the detection
-	 * data to check
-	 * \return Returns true if the data is finished, false if not.
+	 * \param data - A shared_ptr to a json::Object containing the glasscore
+	 * event message used as the tracking information to check
+	 * \return Returns true if the tracking information is finished, false if
+	 * not.
 	 */
 	bool isDataFinished(std::shared_ptr<const json::Object> data);
 
 	/**
-	 * \brief output file writing function
+	 * \brief output writing function
 	 *
-	 * The function used output detection data
+	 * The function used to translate and generate output data
 	 *
-	 * \param data - A pointer to a json::Object containing the data to be
+	 * \param data - A shared_ptr to a json::Object containing the data to be
 	 * output.
 	 */
 	void writeOutput(std::shared_ptr<json::Object> data);
@@ -400,8 +419,8 @@ class output : public glass3::util::iOutput,
 	/**
 	 * \brief output background work function
 	 *
-	 * The function (from threadclassbase) used to do background work. It is
-	 * used to  process messages from the associator, and to queue messages to
+	 * The function (from ThreadBaseClass) used to do background work. It is
+	 * used to process messages from the associator, and to queue messages to
 	 * be written out
 	 *
 	 * \return This function returns glass3::util::WorkState, indicating whether
@@ -422,8 +441,9 @@ class output : public glass3::util::iOutput,
 	/**
 	 * \brief Send output data
 	 *
-	 * This pure virtual function is implemented by a class to support writing
-	 * a message, be it to disk, memory, kafka, etc.
+	 * This pure virtual function is used to send output data. It is expected
+	 * that the implementing class will override this function to implement a
+	 * specific output method, i.e. to disk, memory, socket, kafka, etc.
 	 *
 	 * \param type - A std::string containing the type of the message
 	 * \param id - A std::string containing the id of the message
@@ -451,22 +471,23 @@ class output : public glass3::util::iOutput,
 	/**
 	 * \brief Information Report interval
 	 *
-	 * An integer containing the interval (in seconds) between
-	 * logging informational reports.
+	 * An integer containing the interval (in seconds) between logging
+	 * informational reports.
 	 */
 	std::atomic<int> m_iReportInterval;
 
 	/**
 	 * \brief Pointer to Association class
 	 *
-	 * A glass3::util::iassociator pointer to the class that handles association for
-	 * glass
+	 * A glass3::util::iassociator pointer to the class that handles association
+	 * for glass. It is used to request detailed event detection information and
+	 * site lists from glasscore.
 	 */
 	glass3::util::iAssociator* m_Associator;
 
 	/**
 	 * \brief the integer configuration value indicating the delay in seconds
-	 * before requesting glass core's current sitelist
+	 * before requesting a site list from glasscore
 	 */
 	std::atomic<int> m_iSiteListRequestInterval;
 
@@ -475,52 +496,63 @@ class output : public glass3::util::iOutput,
 	 * store output tracking information
 	 */
 	glass3::util::Cache * m_TrackingCache;
+
+	/**
+	 * \brief mutex used to control access to the tracking cache
+	 */
 	std::mutex m_TrackingCacheMutex;
 
 	/**
 	 * \brief pointer to the glass3::util::queue class used to manage
-	 * incoming output messages
+	 * incoming Event, Cancel, Expire, and Hypo messages from glasscore
 	 */
 	glass3::util::Queue* m_OutputQueue;
 
 	/**
 	 * \brief pointer to the glass3::util::queue class used to manage
-	 * incoming lookup messages
+	 * incoming SiteList and SiteLookup messages from glasscore
 	 */
 	glass3::util::Queue* m_LookupQueue;
 
 	/**
-	 * \brief the total messages performance counter
+	 * \brief the performance counter tracking the total count of messages
+	 * received from glasscore since the last informational reports
 	 */
 	int m_iMessageCounter;
 
 	/**
-	 * \brief the new event messages performance counter
+	 * \brief the performance counter tracking the number of Event messages
+	 * received from glasscore since the last informational reports
 	 */
 	int m_iEventCounter;
 
 	/**
-	 * \brief the event cancel messages performance counter
+	 * \brief the performance counter tracking the number of Cancel messages
+	 * received from glasscore since the last informational reports
 	 */
 	int m_iCancelCounter;
 
 	/**
-	 * \brief the event expire messages performance counter
+	 * \brief the performance counter tracking the number of Expire messages
+	 * received from glasscore since the last informational reports
 	 */
 	int m_iExpireCounter;
 
 	/**
-	 * \brief the hypo messages performance counter
+	 * \brief the performance counter tracking the number of Hypo messages
+	 * received from glasscore since the last informational reports
 	 */
 	int m_iHypoCounter;
 
 	/**
-	 * \brief the lookup messages performance counter
+	 * \brief the performance counter tracking the number of SiteLookup messages
+	 * received from glasscore since the last informational reports
 	 */
 	int m_iLookupCounter;
 
 	/**
-	 * \brief the sitelist messages performance counter
+	 * \brief the performance counter tracking the number of SiteList messages
+	 * received from glasscore since the last informational reports
 	 */
 	int m_iSiteListCounter;
 

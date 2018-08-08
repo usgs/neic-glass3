@@ -16,6 +16,9 @@
 #include <memory>
 #include <vector>
 
+// JSON Keys
+#define CONFIG_KEY "Configuration"
+
 namespace glass3 {
 namespace input {
 
@@ -85,13 +88,13 @@ bool Input::setup(std::shared_ptr<const json::Object> config) {
 	glass3::util::log("debug", "Input::setup(): Setting Up.");
 
 	// Cmd
-	if (!(config->HasKey("Cmd")
-			&& ((*config)["Cmd"].GetType() == json::ValueType::StringVal))) {
+	if (!(config->HasKey(CONFIG_KEY)
+			&& ((*config)[CONFIG_KEY].GetType() == json::ValueType::StringVal))) {
 		glass3::util::log("error",
 							"Input::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
-		std::string configtype = (*config)["Cmd"].ToString();
+		std::string configtype = (*config)[CONFIG_KEY].ToString();
 		if (configtype != "GlassInput") {
 			glass3::util::log(
 					"error",

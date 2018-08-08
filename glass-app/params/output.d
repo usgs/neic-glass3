@@ -2,7 +2,7 @@
 # Configuration file for the glass input component
 {
 	# this config is for glass
-	"Cmd":"GlassOutput",
+	"Configuration":"GlassOutput",
 
 	# whether to publish a final update when glass
 	# is done with the event

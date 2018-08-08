@@ -334,12 +334,8 @@ TEST(Output, Configuration) {
 	ASSERT_EQ(outputObject->getPubOnExpiration(), PUBONEXPIRE)<< "pub on expire correct";
 
 	// assert site list delay
-	ASSERT_EQ(outputObject->getSiteListDelay(), SITELISTDELAY)<< "sitelist delay correct";
-
-	// check station file
-	std::string stationfile = std::string(STATIONFILE);
-	ASSERT_STREQ(outputObject->getStationFile().c_str(),
-			stationfile.c_str())<< "check station file";
+	ASSERT_EQ(outputObject->getSiteListRequestInterval(), SITELISTDELAY)<<
+	"sitelist delay correct";
 
 	// check agency id
 	std::string agencyid = std::string(TESTAGENCYID);
@@ -892,8 +888,8 @@ TEST(Output, StationListTest) {
 	// assert config successful
 	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
 
-	// set the site list delay short so it happens during the test
-	outputObject->setSiteListDelay(2);
+	// set the site list request interval short so it happens during the test
+	outputObject->setSiteListRequestInterval(2);
 
 	// start output thread
 	outputObject->start();

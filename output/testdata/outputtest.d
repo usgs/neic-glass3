@@ -2,7 +2,7 @@
 # Configuration file for the glass output unit tests
 {
 	# this config is for glass 
-	"Cmd":"GlassOutput",
+	"Configuration":"GlassOutput",
 
 	# the times in seconds after which to publish event detections, multiple
 	# entries indicate multiple publications.
@@ -13,11 +13,7 @@
 
 	# The optional delay between requesting a current sitelist from glasscore
 	# for station list creating in seconds
-	"SiteListDelay":72,
-
-	# The optional file name of the stationlist to create from the sitelist from
-	# glasscore
-	"StationFile":"./testdata/stationlist.d",
+	"SiteListRequestInterval":72,
 
 	# The  source to use when outputting data
 	"OutputAgencyID":"US",

@@ -2,8 +2,7 @@
 # Configuration file for the glass output component
 {
 	# this configuration is for glass broker output
-	"Configuration":"glass-broker-app-output",
-  "Cmd":"GlassOutput",
+	"Configuration":"GlassOutput",
 
 	# whether to publish a final update when glass
 	# is done with the event

@@ -389,7 +389,7 @@ TEST_F(OutputTest, Configuration) {
 	ASSERT_FALSE(configurefail1())<< "OutputThread->setup returned false 1";
 	ASSERT_FALSE(configurefail2())<< "OutputThread->setup returned false 2";
 	ASSERT_FALSE(configurefail3())<< "OutputThread->setup returned false 3";
-	ASSERT_TRUE(emptyconfig())<< "OutputThread->setup returned true";
+	ASSERT_FALSE(emptyconfig())<< "OutputThread->setup returned true";
 
 	// configure output
 	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";

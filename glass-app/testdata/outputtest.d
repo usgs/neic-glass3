@@ -2,7 +2,7 @@
 # Configuration file for the glass input component
 {
 	# this config is for glass 
-	"Cmd":"GlassOutput",
+	"Configuration":"GlassOutput",
 
 	# the times in seconds to publish events
 	"PublicationTimes":[3, 6],
