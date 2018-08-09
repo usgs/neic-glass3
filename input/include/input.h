@@ -34,19 +34,20 @@ namespace input {
 #define CC_TYPE "dat"
 
 /**
- * \brief glass Input class
+ * \brief neic-glass3 Input class
  *
- * The glass Input class is a thread class encapsulating the data Input logic
- * The Input class handles reading Input data, parsing it, validating it, and
- * queuing it for later use by the associator class. If the internal queue is
- * full, the class will pause reading Input data until space is available.
+ * The neic-glass3 Input class is a thread class encapsulating the data Input
+ * logic for neic-glass3. The Input class handles reading Input data, parsing it,
+ * validating it, and queuing it for later use byglasscore via the Associator
+ * class. If the internal queue isfull, the class will pause reading Input data
+ * until space is available.
  *
  * The input class generates detection format json messages as defined in
  * https://github.com/usgs/earthquake-detection-formats/tree/master/format-docs
  * that are then passed to the associator/glasscore via a queue.
  *
- * The Input class is intended to be inherited from to define specific input
- * mechanisms (i.e. file input).
+ * The Input class is intended to be inherited from to define application
+ * specific input mechanisms (i.e. input from disk files).
  *
  * Input inherits from the glass3::util::ThreadBaseClass class.
  * Input implements the glass3::util::iInput interface.

@@ -19,21 +19,18 @@ include(${CMAKE_DIR}/base.cmake)
 
 # ----- EXTERNAL LIBRARIES ----- #
 # SuperEasyJSON
-find_package(SuperEasyJSON REQUIRED)
-include_directories(${SuperEasyJSON_INCLUDE_DIRS})
+include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 
 # glasscore
 find_package(glasscore CONFIG REQUIRED)
 include_directories(${glasscore_INCLUDE_DIRS})
 
+# ----- GLASS3 LIBRARIES ----- #
 # util
-find_package(util CONFIG REQUIRED)
-include_directories(${util_INCLUDE_DIRS})
-include_directories(${spdlog_INCLUDE_DIRS}/..)
-include_directories(${spdlog_INCLUDE_DIRS})
+include(${CMAKE_DIR}/include_neic-glass3_util.cmake)
 
-# ----- SET INCLUDE DIRECTORIES ----- #
-include_directories ("${PROJECT_BINARY_DIR}")
+# glasscore
+include(${CMAKE_DIR}/include_neic-glass3_glasscore.cmake)
 
 # ----- SET SOURCE FILES ----- #
 set(SRCS "${PROJECT_SOURCE_DIR}/gen-travel-times-app.cpp")
@@ -42,7 +39,7 @@ set(SRCS "${PROJECT_SOURCE_DIR}/gen-travel-times-app.cpp")
 # no headers
 
 # ----- BUILD EXECUTABLE ----- #
-# NOTE: Order libraries are linked matters for G++
+# WARNING: linking order of libraries matters for G++
 set(EXE_LIBRARIES ${SuperEasyJSON_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES})
 include(${CMAKE_DIR}/build_exe.cmake)
 

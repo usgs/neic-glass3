@@ -15,7 +15,7 @@
 namespace glass3 {
 namespace parse {
 /**
- * \brief glass cross correlation messge parser class
+ * \brief glass cross correlation message parser class
  *
  * The CCParser class is a class encapsulating the logic for parsing a cross
  * correlation message and validating the results.

@@ -18,27 +18,17 @@ include(${CMAKE_DIR}/base.cmake)
 
 # ----- EXTERNAL LIBRARIES ----- #
 # SuperEasyJSON
-find_package(SuperEasyJSON CONFIG REQUIRED)
-include_directories(${SuperEasyJSON_INCLUDE_DIRS})
-
-# util
-find_package(util CONFIG REQUIRED)
-include_directories(${util_INCLUDE_DIRS})
-include_directories(${spdlog_INCLUDE_DIRS}/..)
-include_directories(${spdlog_INCLUDE_DIRS})
+include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 
 # detection-formats
-find_package(DetectionFormats CONFIG REQUIRED)
-include_directories(${DetectionFormats_INCLUDE_DIRS})
-include_directories(${RapidJSON_INCLUDE_DIRS})
+include(${CMAKE_DIR}/include_DetectionFormats.cmake)
+
+# ----- GLASS3 LIBRARIES ----- #
+# util
+include(${CMAKE_DIR}/include_neic-glass3_util.cmake)
 
 # parse
-find_package(parse CONFIG REQUIRED)
-include_directories(${parse_INCLUDE_DIRS})
-
-# ----- SET INCLUDE DIRECTORIES ----- #
-include_directories ("${PROJECT_BINARY_DIR}")
-include_directories(${PROJECT_SOURCE_DIR}/include)
+include(${CMAKE_DIR}/include_neic-glass3_parse.cmake)
 
 # ----- SET SOURCE FILES ----- #
 file(GLOB SRCS "${PROJECT_SOURCE_DIR}/src/*.cpp")
@@ -61,7 +51,7 @@ include(${CMAKE_DIR}/cpplint.cmake)
 
 # ----- RUN UNIT TESTS ----- #
 file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
-# NOTE: Order libraries are linked matters for G++
+# WARNING: linking order of libraries matters for G++
 set(TEST_LIBRARIES ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${util_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
 include(${CMAKE_DIR}/test.cmake)
 
