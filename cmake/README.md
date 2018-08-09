@@ -23,8 +23,32 @@ file(s) for a submodule (such as glass-app)
 submodule (such as util)
 * **test.cmake** - a CMake script for running unit tests, generating coverage
 information, and using generate_coverage.sh to create a coverage report
-* **uuid.cmake** - a CMake script that handles uuid on linux distributions
 * **version.cmake** - a CMake script that defines the overall project version.
+
+Library Include Scripts:
+------
+* **include_SuperEasyJSON.cmake** - a CMake script that handles including the
+SuperEasyJSON library into a submodule or executable build
+* **include_DetectionFormats.cmake** - a CMake script that handles including the
+DetectionFormats library into a submodule or executable build
+* **include_HazdevBroker.cmake** - a CMake script that handles including the
+HazdevBroker library into a submodule or executable build
+* **include_librdkafka.cmake** - a CMake script that handles including the
+librdkafka library into a submodule or executable build
+* **uuid.cmake** - a CMake script that handles including the UUID library into a
+submodule or executable build on linux distributions
+* **include_neic-glass3_output.cmake** - a CMake script that handles including the
+Output library into a submodule or executable build
+* **include_neic-glass3_util.cmake** - a CMake script that handles including the
+Util library into a submodule or executable build
+* **include_neic-glass3_glasscore.cmake** - a CMake script that handles including the
+glasscore library into a submodule or executable build
+* **include_neic-glass3_parse.cmake** - a CMake script that handles including the
+Parse library into a submodule or executable build
+* **include_neic-glass3_input.cmake** - a CMake script that handles including the
+Input library into a submodule or executable build
+* **include_neic-glass3_process.cmake** - a CMake script that handles including the
+Process library into a submodule or executable build
 
 CMake configured files:
 ------
