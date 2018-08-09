@@ -76,7 +76,7 @@ class brokerOutput : public glass3::output::output {
 	 */
 	void clear() override;
 
-	void setStationFileName(std::string filename);
+	void setStationFileName(const std::string &filename);
 
 	const std::string getStationFileName();
 

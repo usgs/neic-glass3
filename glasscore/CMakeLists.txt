@@ -23,10 +23,6 @@ include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 # uuid
 include(${CMAKE_DIR}/uuid.cmake)
 
-# ----- GLASS3 LIBRARIES ----- #
-# util
-include(${CMAKE_DIR}/include_neic-glass3_util.cmake)
-
 # ----- SET PROJECT INCLUDE DIRECTORIES ----- #
 include_directories(${PROJECT_SOURCE_DIR}/glassutil/include)
 include_directories(${PROJECT_SOURCE_DIR}/traveltime/include)

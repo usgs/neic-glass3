@@ -330,7 +330,7 @@ void brokerOutput::logProducer(const std::string &message) {
 }
 
 // ---------------------------------------------------------setStationFileName
-void brokerOutput::setStationFileName(std::string filename) {
+void brokerOutput::setStationFileName(const std::string &filename) {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_sStationFileName = filename;
 }
