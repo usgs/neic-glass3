@@ -19,27 +19,20 @@
 #include <ctime>
 #include <memory>
 
+namespace glass3 {
+namespace process {
 /**
- * \namespace glass
- * \brief namespace containing the primary glass classes
+ * \brief glass association l
  *
- * The glass namespace contains the primary classes and components
- * of glass, including the input, output, associator, lookup, parsing, and
- * station information classes.
- */
-namespace glass {
-/**
- * \brief glass association class
- *
- * The glass association class is a thread class encapsulating the glass core
+ * The glass association class is a thread class hosting the glass core
  * association and nucleation engine.  The associator class pulls input data
  * from the input class, and sends it into glasscore.  It also routes any
- * results to the output class, and sends station information requests to the
- * stationlist class.  The class also sends any configuration into glasscore.
+ * results to the output class. The class also sends any configuration into glasscore.
  *
- * associator inherits from the threadbaseclass class.
+ * associator inherits from the glass3::util::ThreadBaseClass class.
  *
- * associator implements the IGlassSend and iassociator interfaces.
+ * associator implements the glasscore::IGlassSend and glass3::util::iAssociator
+ * interfaces.
  */
 class Associator : public glasscore::IGlassSend,
 		public glass3::util::iAssociator, public glass3::util::ThreadBaseClass {
@@ -47,15 +40,7 @@ class Associator : public glasscore::IGlassSend,
 	/**
 	 * \brief associator constructor
 	 *
-	 * The constructor for the associator class.
-	 * Initializes members to default values.
-	 */
-	Associator();
-
-	/**
-	 * \brief associator advanced constructor
-	 *
-	 * The advanced constructor for the associator class.
+	 * Parameterized constructor for the associator class, which:
 	 * Initializes members to default values.
 	 * Sets the interface pointers to other classes
 	 *
@@ -73,15 +58,15 @@ class Associator : public glasscore::IGlassSend,
 	~Associator();
 
 	/**
-	 * \brief basic associator configuration
+	 * \brief Associator configuration function
 	 *
-	 * The this function is inherited from baseclass, but SHOULD NOT BE CALLED
-	 * instead use the advanced setup function.  Function is overridden to
-	 * always return false to avoid the appearance that the associator class is
-	 * configurable via this method.
+	 * The this function configures the Associator class i.e. configures
+	 * glasscore. The setup() function can be called multiple times, in order to
+	 * reload or update configuration information.
 	 *
-	 * \param config - A json::Object containing configuration, ignored
-	 * \return Always returns false.
+	 * \param config - A pointer to a json::Object containing to the
+	 * configuration to use
+	 * \return returns true if successful.
 	 */
 	bool setup(std::shared_ptr<const json::Object> config) override;
 
@@ -98,10 +83,10 @@ class Associator : public glasscore::IGlassSend,
 	 * \brief glasscore message receiver function
 	 *
 	 * The function (from IGlassSend) used to receive communication from
-	 * glasscore.
+	 * the glasscore library.
 	 *
-	 * \param communication - A json::Object containing the message from
-	 * glasscore.
+	 * \param communication - A shared_ptr a to json::Object containing the
+	 * message from glasscore.
 	 */
 	void Send(std::shared_ptr<json::Object> communication) override;
 
@@ -110,69 +95,37 @@ class Associator : public glasscore::IGlassSend,
 	 *
 	 * The function (from iassociator) used to send communication to glasscore.
 	 *
-	 * \param message - A json::Object containing the message to send to
-	 * glasscore.
+	 * \param message - A shared_ptr to a json::Object containing the message
+	 * to send to the glasscore library.
 	 */
 	void sendToAssociator(std::shared_ptr<json::Object> &message) override;
 
 	/**
-	 * \brief thread pool check function
+	 * \brief associator heath check function
 	 *
-	 * Checks to see if glass is running, calls
-	 * threadbaseclass::healthCheck for worker thread monitoring.
-	 * \return returns true if glass is still running.
+	 * Overrides ThreadBaseClass::healthCheck to add monitoring glasscore.
+	 * Uses ThreadBaseClass::healthCheck to monitor worker thread
+	 * \return returns true if glasscore and worker thread are still running.
 	 */
 	bool healthCheck() override;
-
-	/**
-	 * \brief Pointer to Input class
-	 *
-	 * A glass3::util::iinput pointer to the class handles glass input
-	 */
-	glass3::util::iInput* Input;
-
-	/**
-	 * \brief Pointer to Output class
-	 *
-	 * A glass3::util::ioutput pointer to the class that handles output input for glass
-	 */
-	glass3::util::iOutput* Output;
-
-	/**
-	 * \brief Information Report interval
-	 *
-	 * An integer containing the interval (in seconds) between
-	 * logging informational reports.
-	 */
-	int ReportInterval;
 
  protected:
 	/**
 	 * \brief associator work function
 	 *
-	 * The function (from threadclassbase) used to do work.
+	 * The function (from threadclassbase) used to do work. For Associator,
+	 * this includes sending configuration, messages, and input data to the
+	 * glasscore library
 	 *
 	 * \return returns true if work was successful, false otherwise.
 	 */
 	glass3::util::WorkState work() override;
 
 	/**
-	 * \brief glasscore dispatch function
-	 *
-	 * The function the associator class uses to send communication from
-	 * glass to the Output and StationList classes.
-	 *
-	 * \param communication - A json::Object containing the message from
-	 * glasscore.
-	 * \return returns true if the dispatch was successful, false otherwise.
-	 */
-	bool dispatch(std::shared_ptr<json::Object> communication);
-
-	/**
 	 * \brief glasscore logging function
 	 *
-	 * The function the associator class uses to log messages coming out
-	 * of glascore.
+	 * The function the associator class uses accept logging messages coming out
+	 * of glasscore, and write them to the neic-glass3 logger.
 	 *
 	 * \param message - A glasscore::logMessageStruct containing the message to
 	 * log from glasscore.
@@ -181,7 +134,7 @@ class Associator : public glasscore::IGlassSend,
 
  private:
 	/**
-	 * \brief Pointer to CGlass class instance
+	 * \brief Pointer to (glasscore) CGlass class instance
 	 */
 	glasscore::CGlass *m_pGlass;
 
@@ -189,38 +142,64 @@ class Associator : public glasscore::IGlassSend,
 	 * \brief Integer holding the count of input data sent to glasscore since
 	 * the last informational report.
 	 */
-	int m_iWorkCounter;
+	int m_iInputCounter;
 
 	/**
 	 * \brief Integer holding the count of input data sent to glasscore overall
 	 */
-	int m_iTotalWorkCounter;
+	int m_iTotalInputCounter;
 
 	/**
-	 * \brief Integer holding the count of used to compute the running average
-	 * of data per second
+	 * \brief Integer holding the count of times the running average has been
+	 * computed, used to compute the running  average of data per second
 	 */
 	int m_iRunningAverageCounter;
 
 	/**
-	 * \brief Integer holding the the running average of data per second
+	 * \brief Integer holding the the running average of data per second used
+	 * in the information report
 	 */
-	double m_dRunningAverage;
+	double m_dRunningDPSAverage;
 
 	/**
 	 * \brief The duration of time spent sending data to the glasscore.
 	 */
-	std::chrono::duration<double> tGlassDuration;
+	std::chrono::duration<double> tGlasscoreDuration;
 
 	/**
 	 * \brief The time the last informational report was generated.
 	 */
-	time_t tLastWorkReport;
+	time_t tLastPerformanceReport;
+
+	/**
+	 * \brief Information Report interval
+	 *
+	 * An integer containing the interval (in seconds) between
+	 * logging informational reports.
+	 */
+	int m_iReportInterval;
 
 	/**
 	 * \brief The queue of pending messages to send to glasscore
 	 */
 	glass3::util::Queue* m_MessageQueue;
+
+	/**
+	 * \brief Pointer to Input class
+	 *
+	 * A glass3::util::iinput pointer to the class handles neic-glass3 input.
+	 * Used to pull messages from the input queue
+	 */
+	glass3::util::iInput* m_Input;
+
+	/**
+	 * \brief Pointer to Output class
+	 *
+	 * A glass3::util::ioutput pointer to the class that handles neic-glass3
+	 * output. Used to pass messages to output
+	 */
+	glass3::util::iOutput* m_Output;
 };
-}  // namespace glass
+}  // namespace process
+}  // namespace glass3
 #endif  // ASSOCIATOR_H
