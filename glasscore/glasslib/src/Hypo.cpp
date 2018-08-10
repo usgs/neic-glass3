@@ -2216,7 +2216,7 @@ double CHypo::localize() {
 
 	glassutil::CTaper taper;
 	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, 30 + 0.0001);
-	double searchR = (dRes / 4. + taper.Val(vPick.size()) * .75 * dRes);
+	double searchR = (dRes / 4. + taper.Val(vPick.size()) * .75 * dRes) / 2.;
 
 	// This should be the default
 	if (pGlass->getMinimizeTtLocator() == false) {
