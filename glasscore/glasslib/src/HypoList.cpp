@@ -650,6 +650,14 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 		hyp->localize();
 	}
 
+	// Iterate on pruning data
+	if (hyp->prune()) {
+		// we should report this hypo since it has changed
+		breport = true;
+		// relocate the hypo
+		hyp->localize();
+	}
+
 	std::chrono::high_resolution_clock::time_point tPruneEndTime =
 			std::chrono::high_resolution_clock::now();
 	double pruneTime =
