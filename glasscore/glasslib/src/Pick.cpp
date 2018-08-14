@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "Pid.h"
 #include "Web.h"
 #include "Trigger.h"
