@@ -16,7 +16,7 @@
 #define ERRORDIRECTORY "error"
 #define ARCHIVEDIRECTORY "archive"
 
-#define SLEEPTIME 100
+#define SLEEPTIME 1
 #define FILESLEEPTIME 5
 #define QUEUEMAXSIZE 1000
 #define TESTAGENCYID "US"

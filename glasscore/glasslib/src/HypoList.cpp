@@ -627,20 +627,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 			std::chrono::duration<double>>(tScavengeEndTime - tLocalizeEndTime)
 			.count();
 
-	// Remove data that no longer fit hypo's association criteria
-	if (hyp->prune()) {
-		// we should report this hypo since it has changed
-		breport = true;
-		// relocate the hypo
-		hyp->localize();
-	}
-
-	std::chrono::high_resolution_clock::time_point tPruneEndTime =
-			std::chrono::high_resolution_clock::now();
-	double pruneTime =
-			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tPruneEndTime - tScavengeEndTime).count();
-
 	// Ensure all data belong to hypo
 	if (resolve(hyp)) {
 		// we should report this hypo since it has changed
@@ -653,8 +639,30 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	std::chrono::high_resolution_clock::time_point tResolveEndTime =
 			std::chrono::high_resolution_clock::now();
 	double resolveTime = std::chrono::duration_cast<
-			std::chrono::duration<double>>(tResolveEndTime - tPruneEndTime)
+			std::chrono::duration<double>>(tResolveEndTime - tScavengeEndTime)
 			.count();
+
+	// Remove data that no longer fit hypo's association criteria
+	if (hyp->prune()) {
+		// we should report this hypo since it has changed
+		breport = true;
+		// relocate the hypo
+		hyp->localize();
+	}
+
+	// Iterate on pruning data
+	if (hyp->prune()) {
+		// we should report this hypo since it has changed
+		breport = true;
+		// relocate the hypo
+		hyp->localize();
+	}
+
+	std::chrono::high_resolution_clock::time_point tPruneEndTime =
+			std::chrono::high_resolution_clock::now();
+	double pruneTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tPruneEndTime - tResolveEndTime).count();
 
 	// check to see if this hypo is viable.
 	if (hyp->cancelCheck()) {

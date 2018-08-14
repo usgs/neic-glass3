@@ -21,7 +21,7 @@ namespace input {
 
 // ---------------------------------------------------------input
 input::input()
-		: glass3::util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input", 1) {
 	glass3::util::log("debug", "input::input(): Construction.");
 
 	m_GPickParser = NULL;
@@ -33,7 +33,7 @@ input::input()
 }
 
 input::input(std::shared_ptr<const json::Object> config)
-		: glass3::util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input", 1) {
 	m_GPickParser = NULL;
 	m_JSONParser = NULL;
 	m_CCParser = NULL;
