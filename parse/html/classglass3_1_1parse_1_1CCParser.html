@@ -72,7 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -95,7 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>glass cross correlation parser class  
+<p>glass cross correlation message parser class  
  <a href="classglass3_1_1parse_1_1CCParser.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ccparser_8h_source.html">ccparser.h</a>&gt;</code></p>
@@ -104,30 +104,27 @@ Inheritance diagram for glass3::parse::CCParser:</div>
 <div class="dyncontent">
 <div class="center"><img src="classglass3_1_1parse_1_1CCParser__inherit__graph.png" border="0" usemap="#glass3_1_1parse_1_1CCParser_inherit__map" alt="Inheritance graph"/></div>
 <map name="glass3_1_1parse_1_1CCParser_inherit__map" id="glass3_1_1parse_1_1CCParser_inherit__map">
-<area shape="rect" id="node2" href="classglass3_1_1parse_1_1Parser.html" title="glass parser class " alt="" coords="15,131,161,325"/><area shape="rect" id="node3" href="classglass3_1_1util_1_1BaseClass.html" title="{glass3::util::BaseClass\n||}" alt="" coords="9,5,167,83"/></map>
+<area shape="rect" id="node2" href="classglass3_1_1parse_1_1Parser.html" title="glass3 parser class " alt="" coords="15,131,161,253"/><area shape="rect" id="node3" href="classglass3_1_1util_1_1BaseClass.html" title="{glass3::util::BaseClass\n||}" alt="" coords="9,5,167,83"/></map>
 </div>
 <div class="dynheader">
 Collaboration diagram for glass3::parse::CCParser:</div>
 <div class="dyncontent">
 <div class="center"><img src="classglass3_1_1parse_1_1CCParser__coll__graph.png" border="0" usemap="#glass3_1_1parse_1_1CCParser_coll__map" alt="Collaboration graph"/></div>
 <map name="glass3_1_1parse_1_1CCParser_coll__map" id="glass3_1_1parse_1_1CCParser_coll__map">
-<area shape="rect" id="node2" href="classglass3_1_1parse_1_1Parser.html" title="glass parser class " alt="" coords="15,131,161,325"/><area shape="rect" id="node3" href="classglass3_1_1util_1_1BaseClass.html" title="{glass3::util::BaseClass\n||}" alt="" coords="9,5,167,83"/></map>
+<area shape="rect" id="node2" href="classglass3_1_1parse_1_1Parser.html" title="glass3 parser class " alt="" coords="15,131,161,253"/><area shape="rect" id="node3" href="classglass3_1_1util_1_1BaseClass.html" title="{glass3::util::BaseClass\n||}" alt="" coords="9,5,167,83"/></map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a79cf2480a041920df6020a00a1a8496f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1CCParser.html#a79cf2480a041920df6020a00a1a8496f">CCParser</a> (const std::string &amp;newAgencyID, const std::string &amp;newAuthor)</td></tr>
-<tr class="memdesc:a79cf2480a041920df6020a00a1a8496f"><td class="mdescLeft">&#160;</td><td class="mdescRight">ccparser constructor  <a href="#a79cf2480a041920df6020a00a1a8496f">More...</a><br/></td></tr>
-<tr class="separator:a79cf2480a041920df6020a00a1a8496f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa356894f86eebc67a1c032a07c35adcf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1CCParser.html#aa356894f86eebc67a1c032a07c35adcf">CCParser</a> (const std::string &amp;defaultAgencyID, const std::string &amp;defaultAuthor)</td></tr>
+<tr class="memdesc:aa356894f86eebc67a1c032a07c35adcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">ccparser constructor  <a href="#aa356894f86eebc67a1c032a07c35adcf">More...</a><br/></td></tr>
+<tr class="separator:aa356894f86eebc67a1c032a07c35adcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af24878c2fd6e9ac7b43b53d07d8c5705"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1CCParser.html#af24878c2fd6e9ac7b43b53d07d8c5705">~CCParser</a> ()</td></tr>
 <tr class="memdesc:af24878c2fd6e9ac7b43b53d07d8c5705"><td class="mdescLeft">&#160;</td><td class="mdescRight">ccparser destructor  <a href="#af24878c2fd6e9ac7b43b53d07d8c5705">More...</a><br/></td></tr>
 <tr class="separator:af24878c2fd6e9ac7b43b53d07d8c5705"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa129be9994e712d93ce16f71eec4f719"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1CCParser.html#aa129be9994e712d93ce16f71eec4f719">parse</a> (const std::string &amp;input) override</td></tr>
 <tr class="memdesc:aa129be9994e712d93ce16f71eec4f719"><td class="mdescLeft">&#160;</td><td class="mdescRight">cross correlation parsing function  <a href="#aa129be9994e712d93ce16f71eec4f719">More...</a><br/></td></tr>
 <tr class="separator:aa129be9994e712d93ce16f71eec4f719"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ec55c081a9376e18f05cf917e3c3585"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1CCParser.html#a5ec55c081a9376e18f05cf917e3c3585">validate</a> (std::shared_ptr&lt; json::Object &gt; &amp;input) override</td></tr>
-<tr class="memdesc:a5ec55c081a9376e18f05cf917e3c3585"><td class="mdescLeft">&#160;</td><td class="mdescRight">cross correlation validation function  <a href="#a5ec55c081a9376e18f05cf917e3c3585">More...</a><br/></td></tr>
-<tr class="separator:a5ec55c081a9376e18f05cf917e3c3585"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classglass3_1_1parse_1_1Parser"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classglass3_1_1parse_1_1Parser')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a></td></tr>
 <tr class="memitem:a15ab2d4f9ff89ec5c7b10a33275f2f1c inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1Parser.html#a15ab2d4f9ff89ec5c7b10a33275f2f1c">Parser</a> ()</td></tr>
 <tr class="separator:a15ab2d4f9ff89ec5c7b10a33275f2f1c inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -137,25 +134,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9830aad938fd14b35f997de69a235d0b inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1Parser.html#a9830aad938fd14b35f997de69a235d0b">~Parser</a> ()</td></tr>
 <tr class="memdesc:a9830aad938fd14b35f997de69a235d0b inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="mdescLeft">&#160;</td><td class="mdescRight">parser destructor  <a href="#a9830aad938fd14b35f997de69a235d0b">More...</a><br/></td></tr>
 <tr class="separator:a9830aad938fd14b35f997de69a235d0b inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac10e465eba3e3643d783dcd7a84692b3 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1Parser.html#ac10e465eba3e3643d783dcd7a84692b3">getAgencyId</a> ()</td></tr>
-<tr class="memdesc:ac10e465eba3e3643d783dcd7a84692b3 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to retrieve the name of the default agency id.  <a href="#ac10e465eba3e3643d783dcd7a84692b3">More...</a><br/></td></tr>
-<tr class="separator:ac10e465eba3e3643d783dcd7a84692b3 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae76569b83b55ea7e427435b50282b41c inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1Parser.html#ae76569b83b55ea7e427435b50282b41c">setAgencyId</a> (std::string id)</td></tr>
-<tr class="memdesc:ae76569b83b55ea7e427435b50282b41c inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to set the name of the default agency id.  <a href="#ae76569b83b55ea7e427435b50282b41c">More...</a><br/></td></tr>
-<tr class="separator:ae76569b83b55ea7e427435b50282b41c inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec3241bf1c76c40b339532c01fdf13b9 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1Parser.html#aec3241bf1c76c40b339532c01fdf13b9">getAuthor</a> ()</td></tr>
-<tr class="memdesc:aec3241bf1c76c40b339532c01fdf13b9 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to retrieve the name of the default author.  <a href="#aec3241bf1c76c40b339532c01fdf13b9">More...</a><br/></td></tr>
-<tr class="separator:aec3241bf1c76c40b339532c01fdf13b9 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d474df09cf4b849218a66315f132a40 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1parse_1_1Parser.html#a9d474df09cf4b849218a66315f132a40">setAuthor</a> (std::string author)</td></tr>
-<tr class="memdesc:a9d474df09cf4b849218a66315f132a40 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to set the name of the default author.  <a href="#a9d474df09cf4b849218a66315f132a40">More...</a><br/></td></tr>
-<tr class="separator:a9d474df09cf4b849218a66315f132a40 inherit pub_methods_classglass3_1_1parse_1_1Parser"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>glass cross correlation parser class </p>
-<p>The glass cross correlation parser class is a class encapsulating the logic for parsing a cross correlation message and validating the results.</p>
-<p>This class inherits from the parser class </p>
+<div class="textblock"><p>glass cross correlation message parser class </p>
+<p>The <a class="el" href="classglass3_1_1parse_1_1CCParser.html" title="glass cross correlation message parser class ">CCParser</a> class is a class encapsulating the logic for parsing a cross correlation message and validating the results.</p>
+<p>The correlation message is space delimited and has the following format: 2015/03/23 07:36:32.880 36.769 -98.019 5.0 2.6136482 mblg GS OK032 HHZ 00 P 2015/03/23 07:36:36.100 0.6581729 0.65 // NOLINT</p>
+<p>Where: index 0 is the origin date index 1 is the origin time index 2 is the latitude index 3 is the longitude index 4 is the depth index 5 is the magnitude index 6 is the magnitude type index 7 is the network code index 8 is the station code index 9 is the channel code index 10 is the location code index 11 is the phase type index 12 is the arrival date index 13 is the arrival time index 14 is the correlation value index 15 is the correlation threshold</p>
+<p>Since the correlation format does not include any source information, the default author and default agency ID will be used to provide source attribution</p>
+<p>This class depends on the external earthquake detection formats library to format message strings.</p>
+<p>This class uses the external SuperEasyJSON library to return parsed messages</p>
+<p>This class inherits from the <a class="el" href="classglass3_1_1parse_1_1Parser.html" title="glass3 parser class ">glass3::parse::Parser</a> class </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a79cf2480a041920df6020a00a1a8496f"></a>
+<a class="anchor" id="aa356894f86eebc67a1c032a07c35adcf"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -163,13 +153,13 @@ Public Member Functions</h2></td></tr>
           <td class="memname">glass3::parse::CCParser::CCParser </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>newAgencyID</em>, </td>
+          <td class="paramname"><em>defaultAgencyID</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>newAuthor</em>&#160;</td>
+          <td class="paramname"><em>defaultAuthor</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -183,8 +173,8 @@ Public Member Functions</h2></td></tr>
 <p>The constructor for the ccparser class. Initializes members to provided values.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">newAgencyID</td><td>- A std::string containing the agency id to use if one is not provided. </td></tr>
-    <tr><td class="paramname">newAuthor</td><td>- A std::string containing the author to use if one is not provided. </td></tr>
+    <tr><td class="paramname">defaultAgencyID</td><td>- A std::string containing the agency id to use if one is not provided. </td></tr>
+    <tr><td class="paramname">defaultAuthor</td><td>- A std::string containing the author to use if one is not provided. </td></tr>
   </table>
   </dd>
 </dl>
@@ -233,52 +223,16 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>cross correlation parsing function </p>
-<p>Parsing function that parses cross correlation formatted strings into json::Objects</p>
+<p>An overridden function (from <a class="el" href="classglass3_1_1parse_1_1Parser.html" title="glass3 parser class ">Parser</a>) used to parse a given cross correlation string (from a file, broker, or other source) into a SuperEasyJSON object (the common data interchange object) which is returned as a shared_ptr for use in other neic-glass3 functions and classes (such as glasscore).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">input</td><td>- The cross correlation formatted std::string to parse </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the json::Object containing the data. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a shared_ptr to the json::Object containing the data. </dd></dl>
 
 <p>Implements <a class="el" href="classglass3_1_1parse_1_1Parser.html#afe81cb4e6daa37c834425f4db8df55c5">glass3::parse::Parser</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a5ec55c081a9376e18f05cf917e3c3585"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glass3::parse::CCParser::validate </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; json::Object &gt; &amp;&#160;</td>
-          <td class="paramname"><em>input</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>cross correlation validation function </p>
-<p>Validates a cross correlation object</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">input</td><td>- A pointer to a json::Object containing the data to validate. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if valid, false otherwise. </dd></dl>
-
-<p>Implements <a class="el" href="classglass3_1_1parse_1_1Parser.html#a11675f59fcc9121aaa5d7d442734efcc">glass3::parse::Parser</a>.</p>
 
 </div>
 </div>
@@ -289,7 +243,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 14 2018 14:11:38 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Aug 15 2018 18:43:06 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['healthcheck',['healthCheck',['../classglass_1_1Associator.html#aa4b5ffdff59585541fcb94755f297df2',1,'glass::Associator']]]
+  ['logglass',['logGlass',['../classglass3_1_1process_1_1Associator.html#a259e022fc6db7e82e7864122515190d9',1,'glass3::process::Associator']]]
 ];

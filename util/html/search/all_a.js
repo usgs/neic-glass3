@@ -1,14 +1,13 @@
 var searchData=
 [
-  ['log',['log',['../namespaceglass3_1_1util.html#ae8206bd779cffa0b0b29f1c4548025a0',1,'glass3::util']]],
-  ['log_5finit',['log_init',['../namespaceglass3_1_1util.html#a3de2ab3f72c87808d8b2c6074fba2b2c',1,'glass3::util']]],
-  ['log_5fupdate_5flevel',['log_update_level',['../namespaceglass3_1_1util.html#afd90ac0dafa8b4046832ee84c0fb6f10',1,'glass3::util::log_update_level(spdlog::level::level_enum loglevel)'],['../namespaceglass3_1_1util.html#aa5e545343af2f2cc7eb8f5b1236a619b',1,'glass3::util::log_update_level(const std::string &amp;levelString)']]],
-  ['logcriticalerror',['logCriticalError',['../namespaceglass3_1_1util.html#a06c09a51f68668c86b5d3456f6360a3b',1,'glass3::util']]],
-  ['logdebug',['logDebug',['../namespaceglass3_1_1util.html#ab032261890b590a6c608d185f762d775',1,'glass3::util']]],
-  ['logerror',['logError',['../namespaceglass3_1_1util.html#a6653c4ddbb7d8d0ba8d658c1ee183b7f',1,'glass3::util']]],
-  ['logger_2ecpp',['logger.cpp',['../logger_8cpp.html',1,'']]],
-  ['logger_2eh',['logger.h',['../logger_8h.html',1,'']]],
-  ['loginfo',['logInfo',['../namespaceglass3_1_1util.html#a953f2b5f7ad11f88dc2c276a687c5a51',1,'glass3::util']]],
-  ['logtrace',['logTrace',['../namespaceglass3_1_1util.html#a33fa4e2696319bc5a4c418c19d9a177e',1,'glass3::util']]],
-  ['logwarning',['logWarning',['../namespaceglass3_1_1util.html#a48e6ecaea2421a8b6a04c684b21d656a',1,'glass3::util']]]
+  ['m_5fbissetup',['m_bIsSetup',['../classglass3_1_1util_1_1BaseClass.html#a19284aede73c9a184469b713580e5666',1,'glass3::util::BaseClass']]],
+  ['m_5fconfig',['m_Config',['../classglass3_1_1util_1_1BaseClass.html#a45ab2cb10dd7789b67ca8914b1ab26cf',1,'glass3::util::BaseClass']]],
+  ['m_5fdefaultagencyid',['m_DefaultAgencyID',['../classglass3_1_1util_1_1BaseClass.html#aba95a7b9cbb6eb4ed53b51e21803c56a',1,'glass3::util::BaseClass']]],
+  ['m_5fdefaultauthor',['m_DefaultAuthor',['../classglass3_1_1util_1_1BaseClass.html#ae94c5bf42491aaec3609b6e49d1e69e6',1,'glass3::util::BaseClass']]],
+  ['m_5fmutex',['m_Mutex',['../classglass3_1_1util_1_1BaseClass.html#ae3628e61dcd4f9a310eeabee5824c15c',1,'glass3::util::BaseClass']]],
+  ['m_5fthreadhealthmap',['m_ThreadHealthMap',['../classglass3_1_1util_1_1ThreadBaseClass.html#a256c7be085beccec3f5c7950bc9fce61',1,'glass3::util::ThreadBaseClass']]],
+  ['m_5fworkthreads',['m_WorkThreads',['../classglass3_1_1util_1_1ThreadBaseClass.html#af73874b9b5665ef2b6efdfd6892b4896',1,'glass3::util::ThreadBaseClass']]],
+  ['maxenv',['MAXENV',['../timeutil_8cpp.html#a36949d3fe06982ccfe4f775105f88fa9',1,'timeutil.cpp']]],
+  ['moveerrorextension',['MOVEERROREXTENSION',['../fileutil_8cpp.html#a8f2228cc325c0bb655b3e79fbf935896',1,'fileutil.cpp']]],
+  ['movefileto',['moveFileTo',['../namespaceglass3_1_1util.html#ae1321cbdbcb2f05c38ae3e77e0bd1f0d',1,'glass3::util']]]
 ];

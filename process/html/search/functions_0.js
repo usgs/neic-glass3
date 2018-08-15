@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['associator',['Associator',['../classglass_1_1Associator.html#a1e454d5962794cb02b05906d61f3417f',1,'glass::Associator::Associator()'],['../classglass_1_1Associator.html#ac39c40bea90eebe5601090003bea842a',1,'glass::Associator::Associator(glass3::util::iInput *inputint, glass3::util::iOutput *outputint)']]]
+  ['associator',['Associator',['../classglass3_1_1process_1_1Associator.html#ac9ebc38a23e12e74a8e9bb22c0b26621',1,'glass3::process::Associator']]]
 ];

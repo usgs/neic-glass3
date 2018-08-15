@@ -1,11 +1,14 @@
 var searchData=
 [
-  ['getagencyid',['getAgencyId',['../classglass3_1_1parse_1_1Parser.html#ac10e465eba3e3643d783dcd7a84692b3',1,'glass3::parse::Parser']]],
-  ['getauthor',['getAuthor',['../classglass3_1_1parse_1_1Parser.html#aec3241bf1c76c40b339532c01fdf13b9',1,'glass3::parse::Parser']]],
-  ['glass3',['glass3',['../namespaceglass3.html',1,'']]],
-  ['gpickparser',['GPickParser',['../classglass3_1_1parse_1_1GPickParser.html',1,'glass3::parse']]],
-  ['gpickparser',['GPickParser',['../classglass3_1_1parse_1_1GPickParser.html#a2b1e99962f0a958122fc73640b81bd00',1,'glass3::parse::GPickParser']]],
-  ['gpickparser_2ecpp',['gpickparser.cpp',['../gpickparser_8cpp.html',1,'']]],
-  ['gpickparser_2eh',['gpickparser.h',['../gpickparser_8h.html',1,'']]],
-  ['parse',['parse',['../namespaceglass3_1_1parse.html',1,'glass3']]]
+  ['canceltojsonretract',['cancelToJSONRetract',['../namespaceglass3_1_1parse.html#ac5e3519d99888e05ffc0a5c82f908ad4',1,'glass3::parse']]],
+  ['cc_5fmsg_5fmax_5findex',['CC_MSG_MAX_INDEX',['../ccparser_8cpp.html#ace12999bc4d937c9e17ce7e88a15c4d4',1,'ccparser.cpp']]],
+  ['ccparser',['CCParser',['../classglass3_1_1parse_1_1CCParser.html',1,'glass3::parse']]],
+  ['ccparser',['CCParser',['../classglass3_1_1parse_1_1CCParser.html#aa356894f86eebc67a1c032a07c35adcf',1,'glass3::parse::CCParser']]],
+  ['ccparser_2ecpp',['ccparser.cpp',['../ccparser_8cpp.html',1,'']]],
+  ['ccparser_2eh',['ccparser.h',['../ccparser_8h.html',1,'']]],
+  ['channel_5findex',['CHANNEL_INDEX',['../ccparser_8cpp.html#a61b87e499a3ab3f6c0ebf4f6d57e1b3a',1,'CHANNEL_INDEX():&#160;ccparser.cpp'],['../gpickparser_8cpp.html#a61b87e499a3ab3f6c0ebf4f6d57e1b3a',1,'CHANNEL_INDEX():&#160;gpickparser.cpp']]],
+  ['convert_2ecpp',['convert.cpp',['../convert_8cpp.html',1,'']]],
+  ['convert_2eh',['convert.h',['../convert_8h.html',1,'']]],
+  ['correlation_5findex',['CORRELATION_INDEX',['../ccparser_8cpp.html#acb51ccede679c8aa0b0ec638ad3caa65',1,'ccparser.cpp']]],
+  ['correlationthreshold_5findex',['CORRELATIONTHRESHOLD_INDEX',['../ccparser_8cpp.html#a78a3610cffc9db97c9f15a07db2de70b',1,'ccparser.cpp']]]
 ];

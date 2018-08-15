@@ -2,7 +2,6 @@ var searchData=
 [
   ['getarchivedir',['getArchiveDir',['../classglass_1_1fileInput.html#a9c039fdf7311b989b4e0398a72e6c235',1,'glass::fileInput']]],
   ['getbtimestampfilename',['getBTimestampFileName',['../classglass_1_1fileOutput.html#a46a7a030ab41535c3e1b0168454d3afd',1,'glass::fileOutput']]],
-  ['getdatatype',['getDataType',['../classglass_1_1fileInput.html#a5c7f991c82e626fe4ea8d7b5c3a65887',1,'glass::fileInput']]],
   ['getformat',['getFormat',['../classglass_1_1fileInput.html#acb343e20eda4dc98c0fa1036d105ebb3',1,'glass::fileInput']]],
   ['getinputdir',['getInputDir',['../classglass_1_1fileInput.html#a0d178e6e341e97038ca1b1e983c76f34',1,'glass::fileInput']]],
   ['getshutdownwait',['getShutdownWait',['../classglass_1_1fileInput.html#a66ab42a3476dc96c5f04fe5014fec5a1',1,'glass::fileInput']]],

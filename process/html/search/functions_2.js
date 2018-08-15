@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dispatch',['dispatch',['../classglass_1_1Associator.html#a9cb7f5544a043aeab86d9886a2f0b1d0',1,'glass::Associator']]]
+  ['healthcheck',['healthCheck',['../classglass3_1_1process_1_1Associator.html#aa4657c056e69ad57955f6157973f1572',1,'glass3::process::Associator']]]
 ];

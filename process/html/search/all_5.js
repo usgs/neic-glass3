@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['input',['Input',['../classglass_1_1Associator.html#a643e624656d40751c40995710aa0ac6d',1,'glass::Associator']]]
+  ['logglass',['logGlass',['../classglass3_1_1process_1_1Associator.html#a259e022fc6db7e82e7864122515190d9',1,'glass3::process::Associator']]]
 ];

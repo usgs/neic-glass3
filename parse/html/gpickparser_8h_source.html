@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -69,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -104,30 +105,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span>glass3 {</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">namespace </span>parse {</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classglass3_1_1parse_1_1GPickParser.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1parse_1_1GPickParser.html">GPickParser</a> : <span class="keyword">public</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a> {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1GPickParser.html#a2b1e99962f0a958122fc73640b81bd00">GPickParser</a>(<span class="keyword">const</span> std::string &amp;newAgencyID, <span class="keyword">const</span> std::string &amp;newAuthor);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1GPickParser.html#ae9fabe4c1790ce7996667784ffc24953">~GPickParser</a>();</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass3_1_1parse_1_1GPickParser.html#aed71e9e33c71ad87ffaec840628ed1dc">parse</a>(<span class="keyword">const</span> std::string &amp;input) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1parse_1_1GPickParser.html#a9203505c058aad3e0223a7d9089acc97">validate</a>(std::shared_ptr&lt;json::Object&gt; &amp;input) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;};</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}  <span class="comment">// namespace parse</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;}  <span class="comment">// namespace glass3</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif  // GPICKPARSER_H</span></div>
-<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html_a9203505c058aad3e0223a7d9089acc97"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html#a9203505c058aad3e0223a7d9089acc97">glass3::parse::GPickParser::validate</a></div><div class="ttdeci">bool validate(std::shared_ptr&lt; json::Object &gt; &amp;input) override</div><div class="ttdoc">pick validation function </div><div class="ttdef"><b>Definition:</b> gpickparser.cpp:203</div></div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classglass3_1_1parse_1_1GPickParser.html">   59</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1parse_1_1GPickParser.html">GPickParser</a> : <span class="keyword">public</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a> {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1GPickParser.html#a4bae6a628f9044e07fef5f77297401bb">GPickParser</a>(<span class="keyword">const</span> std::string &amp;defaultAgencyID,</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                <span class="keyword">const</span> std::string &amp;defaultAuthor);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1GPickParser.html#ae9fabe4c1790ce7996667784ffc24953">~GPickParser</a>();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass3_1_1parse_1_1GPickParser.html#aed71e9e33c71ad87ffaec840628ed1dc">parse</a>(<span class="keyword">const</span> std::string &amp;input) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;};</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}  <span class="comment">// namespace parse</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#endif  // GPICKPARSER_H</span></div>
+<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html_a4bae6a628f9044e07fef5f77297401bb"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html#a4bae6a628f9044e07fef5f77297401bb">glass3::parse::GPickParser::GPickParser</a></div><div class="ttdeci">GPickParser(const std::string &amp;defaultAgencyID, const std::string &amp;defaultAuthor)</div><div class="ttdoc">gpickparser constructor </div><div class="ttdef"><b>Definition:</b> gpickparser.cpp:66</div></div>
 <div class="ttc" id="parser_8h_html"><div class="ttname"><a href="parser_8h.html">parser.h</a></div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html_ae9fabe4c1790ce7996667784ffc24953"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html#ae9fabe4c1790ce7996667784ffc24953">glass3::parse::GPickParser::~GPickParser</a></div><div class="ttdeci">~GPickParser()</div><div class="ttdoc">gpickparser destructor </div><div class="ttdef"><b>Definition:</b> gpickparser.cpp:20</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a></div><div class="ttdoc">glass parser class </div><div class="ttdef"><b>Definition:</b> parser.h:34</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html">glass3::parse::GPickParser</a></div><div class="ttdoc">glass global pick parser class </div><div class="ttdef"><b>Definition:</b> gpickparser.h:25</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html_a2b1e99962f0a958122fc73640b81bd00"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html#a2b1e99962f0a958122fc73640b81bd00">glass3::parse::GPickParser::GPickParser</a></div><div class="ttdeci">GPickParser(const std::string &amp;newAgencyID, const std::string &amp;newAuthor)</div><div class="ttdoc">gpickparser constructor </div><div class="ttdef"><b>Definition:</b> gpickparser.cpp:14</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html_aed71e9e33c71ad87ffaec840628ed1dc"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html#aed71e9e33c71ad87ffaec840628ed1dc">glass3::parse::GPickParser::parse</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; parse(const std::string &amp;input) override</div><div class="ttdoc">global pick parsing function </div><div class="ttdef"><b>Definition:</b> gpickparser.cpp:24</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html_ae9fabe4c1790ce7996667784ffc24953"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html#ae9fabe4c1790ce7996667784ffc24953">glass3::parse::GPickParser::~GPickParser</a></div><div class="ttdeci">~GPickParser()</div><div class="ttdoc">gpickparser destructor </div><div class="ttdef"><b>Definition:</b> gpickparser.cpp:72</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1Parser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a></div><div class="ttdoc">glass3 parser class </div><div class="ttdef"><b>Definition:</b> parser.h:38</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html">glass3::parse::GPickParser</a></div><div class="ttdoc">glass global pick parser class </div><div class="ttdef"><b>Definition:</b> gpickparser.h:59</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1GPickParser_html_aed71e9e33c71ad87ffaec840628ed1dc"><div class="ttname"><a href="classglass3_1_1parse_1_1GPickParser.html#aed71e9e33c71ad87ffaec840628ed1dc">glass3::parse::GPickParser::parse</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; parse(const std::string &amp;input) override</div><div class="ttdoc">global pick parsing function </div><div class="ttdef"><b>Definition:</b> gpickparser.cpp:76</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 14 2018 14:11:38 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Aug 15 2018 18:43:06 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

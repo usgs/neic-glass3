@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -69,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -86,6 +87,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">convert.cpp File Reference</div>  </div>
@@ -116,25 +118,57 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceglass3_1_1parse"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html">glass3::parse</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ab41ae0319e008c5fa8048a4f4ba7b061"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8cpp.html#ab41ae0319e008c5fa8048a4f4ba7b061">TYPE_KEY</a>&#160;&#160;&#160;&quot;Type&quot;</td></tr>
+<tr class="separator:ab41ae0319e008c5fa8048a4f4ba7b061"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad66631188c7e8ee39f79adb1c8760cd8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="convert_8cpp.html#ad66631188c7e8ee39f79adb1c8760cd8">STATIONLIST_KEY</a>&#160;&#160;&#160;&quot;StationList&quot;</td></tr>
+<tr class="separator:ad66631188c7e8ee39f79adb1c8760cd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a88dd6af073a52f8ea58d97cb42503760"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html#a88dd6af073a52f8ea58d97cb42503760">glass3::parse::hypoToJSONDetection</a> (std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
-<tr class="memdesc:a88dd6af073a52f8ea58d97cb42503760"><td class="mdescLeft">&#160;</td><td class="mdescRight">json hypo conversion function  <a href="#a88dd6af073a52f8ea58d97cb42503760">More...</a><br/></td></tr>
-<tr class="separator:a88dd6af073a52f8ea58d97cb42503760"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dae4f07c0ec21ced9e8c8f4b290c301"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html#a6dae4f07c0ec21ced9e8c8f4b290c301">glass3::parse::cancelToJSONRetract</a> (std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
-<tr class="memdesc:a6dae4f07c0ec21ced9e8c8f4b290c301"><td class="mdescLeft">&#160;</td><td class="mdescRight">json cancel conversion function  <a href="#a6dae4f07c0ec21ced9e8c8f4b290c301">More...</a><br/></td></tr>
-<tr class="separator:a6dae4f07c0ec21ced9e8c8f4b290c301"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0bd68c94fb036f8792fb2d636bc8b1f3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html#a0bd68c94fb036f8792fb2d636bc8b1f3">glass3::parse::siteListToStationList</a> (std::shared_ptr&lt; json::Object &gt;)</td></tr>
-<tr class="memdesc:a0bd68c94fb036f8792fb2d636bc8b1f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">json station list conversion function  <a href="#a0bd68c94fb036f8792fb2d636bc8b1f3">More...</a><br/></td></tr>
-<tr class="separator:a0bd68c94fb036f8792fb2d636bc8b1f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c456c0c82b4f1412b37c77bf60decdb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html#a8c456c0c82b4f1412b37c77bf60decdb">glass3::parse::siteLookupToStationInfoRequest</a> (std::shared_ptr&lt; json::Object &gt;, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
-<tr class="memdesc:a8c456c0c82b4f1412b37c77bf60decdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">json station list conversion function  <a href="#a8c456c0c82b4f1412b37c77bf60decdb">More...</a><br/></td></tr>
-<tr class="separator:a8c456c0c82b4f1412b37c77bf60decdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb3bb1ed0ba1e0478c980d3e570baea5"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html#abb3bb1ed0ba1e0478c980d3e570baea5">glass3::parse::hypoToJSONDetection</a> (std::shared_ptr&lt; json::Object &gt; data, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
+<tr class="memdesc:abb3bb1ed0ba1e0478c980d3e570baea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">json hypo conversion function  <a href="#abb3bb1ed0ba1e0478c980d3e570baea5">More...</a><br/></td></tr>
+<tr class="separator:abb3bb1ed0ba1e0478c980d3e570baea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5e3519d99888e05ffc0a5c82f908ad4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html#ac5e3519d99888e05ffc0a5c82f908ad4">glass3::parse::cancelToJSONRetract</a> (std::shared_ptr&lt; json::Object &gt; data, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
+<tr class="memdesc:ac5e3519d99888e05ffc0a5c82f908ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">json cancel conversion function  <a href="#ac5e3519d99888e05ffc0a5c82f908ad4">More...</a><br/></td></tr>
+<tr class="separator:ac5e3519d99888e05ffc0a5c82f908ad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9775f48242154960b584a140275c8589"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html#a9775f48242154960b584a140275c8589">glass3::parse::siteListToStationList</a> (std::shared_ptr&lt; json::Object &gt; data)</td></tr>
+<tr class="memdesc:a9775f48242154960b584a140275c8589"><td class="mdescLeft">&#160;</td><td class="mdescRight">json station list conversion function  <a href="#a9775f48242154960b584a140275c8589">More...</a><br/></td></tr>
+<tr class="separator:a9775f48242154960b584a140275c8589"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4225f34f4e390a10cb8d70f38a978523"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html#a4225f34f4e390a10cb8d70f38a978523">glass3::parse::siteLookupToStationInfoRequest</a> (std::shared_ptr&lt; json::Object &gt; data, const std::string &amp;outputAgencyID, const std::string &amp;outputAuthor)</td></tr>
+<tr class="memdesc:a4225f34f4e390a10cb8d70f38a978523"><td class="mdescLeft">&#160;</td><td class="mdescRight">json station list conversion function  <a href="#a4225f34f4e390a10cb8d70f38a978523">More...</a><br/></td></tr>
+<tr class="separator:a4225f34f4e390a10cb8d70f38a978523"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="ad66631188c7e8ee39f79adb1c8760cd8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define STATIONLIST_KEY&#160;&#160;&#160;&quot;StationList&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ab41ae0319e008c5fa8048a4f4ba7b061"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TYPE_KEY&#160;&#160;&#160;&quot;Type&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 14 2018 14:11:38 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Aug 15 2018 18:43:06 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

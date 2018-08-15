@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -69,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -104,30 +105,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
 <div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="namespaceglass3.html">   15</a></span>&#160;<span class="keyword">namespace </span>glass3 {</div>
 <div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="namespaceglass3_1_1parse.html">   16</a></span>&#160;<span class="keyword">namespace </span>parse {</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classglass3_1_1parse_1_1CCParser.html">   25</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1parse_1_1CCParser.html">CCParser</a> : <span class="keyword">public</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a> {</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1CCParser.html#a79cf2480a041920df6020a00a1a8496f">CCParser</a>(<span class="keyword">const</span> std::string &amp;newAgencyID, <span class="keyword">const</span> std::string &amp;newAuthor);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1CCParser.html#af24878c2fd6e9ac7b43b53d07d8c5705">~CCParser</a>();</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass3_1_1parse_1_1CCParser.html#aa129be9994e712d93ce16f71eec4f719">parse</a>(<span class="keyword">const</span> std::string &amp;input) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1parse_1_1CCParser.html#a5ec55c081a9376e18f05cf917e3c3585">validate</a>(std::shared_ptr&lt;json::Object&gt; &amp;input) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;};</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}  <span class="comment">// namespace parse</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;}  <span class="comment">// namespace glass3</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif  // CCPARSER_H</span></div>
-<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html_af24878c2fd6e9ac7b43b53d07d8c5705"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html#af24878c2fd6e9ac7b43b53d07d8c5705">glass3::parse::CCParser::~CCParser</a></div><div class="ttdeci">~CCParser()</div><div class="ttdoc">ccparser destructor </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:19</div></div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classglass3_1_1parse_1_1CCParser.html">   55</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1parse_1_1CCParser.html">CCParser</a> : <span class="keyword">public</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a> {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1CCParser.html#aa356894f86eebc67a1c032a07c35adcf">CCParser</a>(<span class="keyword">const</span> std::string &amp;defaultAgencyID,</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                <span class="keyword">const</span> std::string &amp;defaultAuthor);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1CCParser.html#af24878c2fd6e9ac7b43b53d07d8c5705">~CCParser</a>();</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass3_1_1parse_1_1CCParser.html#aa129be9994e712d93ce16f71eec4f719">parse</a>(<span class="keyword">const</span> std::string &amp;input) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;};</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}  <span class="comment">// namespace parse</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#endif  // CCPARSER_H</span></div>
+<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html_af24878c2fd6e9ac7b43b53d07d8c5705"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html#af24878c2fd6e9ac7b43b53d07d8c5705">glass3::parse::CCParser::~CCParser</a></div><div class="ttdeci">~CCParser()</div><div class="ttdoc">ccparser destructor </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:63</div></div>
 <div class="ttc" id="parser_8h_html"><div class="ttname"><a href="parser_8h.html">parser.h</a></div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a></div><div class="ttdoc">glass parser class </div><div class="ttdef"><b>Definition:</b> parser.h:34</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html_a79cf2480a041920df6020a00a1a8496f"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html#a79cf2480a041920df6020a00a1a8496f">glass3::parse::CCParser::CCParser</a></div><div class="ttdeci">CCParser(const std::string &amp;newAgencyID, const std::string &amp;newAuthor)</div><div class="ttdoc">ccparser constructor </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:14</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html_aa129be9994e712d93ce16f71eec4f719"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html#aa129be9994e712d93ce16f71eec4f719">glass3::parse::CCParser::parse</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; parse(const std::string &amp;input) override</div><div class="ttdoc">cross correlation parsing function </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:23</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html">glass3::parse::CCParser</a></div><div class="ttdoc">glass cross correlation parser class </div><div class="ttdef"><b>Definition:</b> ccparser.h:25</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html_a5ec55c081a9376e18f05cf917e3c3585"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html#a5ec55c081a9376e18f05cf917e3c3585">glass3::parse::CCParser::validate</a></div><div class="ttdeci">bool validate(std::shared_ptr&lt; json::Object &gt; &amp;input) override</div><div class="ttdoc">cross correlation validation function </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:147</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1Parser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a></div><div class="ttdoc">glass3 parser class </div><div class="ttdef"><b>Definition:</b> parser.h:38</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html_aa129be9994e712d93ce16f71eec4f719"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html#aa129be9994e712d93ce16f71eec4f719">glass3::parse::CCParser::parse</a></div><div class="ttdeci">std::shared_ptr&lt; json::Object &gt; parse(const std::string &amp;input) override</div><div class="ttdoc">cross correlation parsing function </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:67</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html">glass3::parse::CCParser</a></div><div class="ttdoc">glass cross correlation message parser class </div><div class="ttdef"><b>Definition:</b> ccparser.h:55</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1CCParser_html_aa356894f86eebc67a1c032a07c35adcf"><div class="ttname"><a href="classglass3_1_1parse_1_1CCParser.html#aa356894f86eebc67a1c032a07c35adcf">glass3::parse::CCParser::CCParser</a></div><div class="ttdeci">CCParser(const std::string &amp;defaultAgencyID, const std::string &amp;defaultAuthor)</div><div class="ttdoc">ccparser constructor </div><div class="ttdef"><b>Definition:</b> ccparser.cpp:57</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 14 2018 14:11:38 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Aug 15 2018 18:43:06 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

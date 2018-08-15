@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -69,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -85,7 +86,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#define-members">Macros</a>  </div>
   <div class="headertitle">
 <div class="title">ccparser.cpp File Reference</div>  </div>
 </div><!--header-->
@@ -113,11 +115,253 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceglass3_1_1parse"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1parse.html">glass3::parse</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a23070d6630a49b80a36e204945641373"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a23070d6630a49b80a36e204945641373">ORIGINDATE_INDEX</a>&#160;&#160;&#160;0</td></tr>
+<tr class="separator:a23070d6630a49b80a36e204945641373"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc02f9a32e66d416cac96644282a91c8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#acc02f9a32e66d416cac96644282a91c8">ORIGINTIME_INDEX</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:acc02f9a32e66d416cac96644282a91c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a591c1b71991c2ea686cdb63234e4a23b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a591c1b71991c2ea686cdb63234e4a23b">LATITUDE_INDEX</a>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:a591c1b71991c2ea686cdb63234e4a23b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa2d59a247fc75a92e777ca2541203f3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#afa2d59a247fc75a92e777ca2541203f3">LONGITUDE_INDEX</a>&#160;&#160;&#160;3</td></tr>
+<tr class="separator:afa2d59a247fc75a92e777ca2541203f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16a31ffcac5efc56d16908b13c320108"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a16a31ffcac5efc56d16908b13c320108">DEPTH_INDEX</a>&#160;&#160;&#160;4</td></tr>
+<tr class="separator:a16a31ffcac5efc56d16908b13c320108"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5a853f9de514a73ef22cd7ad53d29d9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#ac5a853f9de514a73ef22cd7ad53d29d9">MAGNITUDE_INDEX</a>&#160;&#160;&#160;5</td></tr>
+<tr class="separator:ac5a853f9de514a73ef22cd7ad53d29d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a546c084064e90fd53003a2a9d74c001c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a546c084064e90fd53003a2a9d74c001c">MAGNITUDETYPE_INDEX</a>&#160;&#160;&#160;6</td></tr>
+<tr class="separator:a546c084064e90fd53003a2a9d74c001c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd1ae4f8c1546a4086848c7e5fb799ce"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#acd1ae4f8c1546a4086848c7e5fb799ce">NETWORK_INDEX</a>&#160;&#160;&#160;7</td></tr>
+<tr class="separator:acd1ae4f8c1546a4086848c7e5fb799ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2098a78a22aad74fc4912a1f0ffd375d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a2098a78a22aad74fc4912a1f0ffd375d">STATION_INDEX</a>&#160;&#160;&#160;8</td></tr>
+<tr class="separator:a2098a78a22aad74fc4912a1f0ffd375d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61b87e499a3ab3f6c0ebf4f6d57e1b3a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a61b87e499a3ab3f6c0ebf4f6d57e1b3a">CHANNEL_INDEX</a>&#160;&#160;&#160;9</td></tr>
+<tr class="separator:a61b87e499a3ab3f6c0ebf4f6d57e1b3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5084cb8b5935a3f6f770eac0cb4a644d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a5084cb8b5935a3f6f770eac0cb4a644d">LOCATION_INDEX</a>&#160;&#160;&#160;10</td></tr>
+<tr class="separator:a5084cb8b5935a3f6f770eac0cb4a644d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcc16915f65a45043455e23f9ef4f12b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#afcc16915f65a45043455e23f9ef4f12b">PHASETYPE_INDEX</a>&#160;&#160;&#160;11</td></tr>
+<tr class="separator:afcc16915f65a45043455e23f9ef4f12b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad457733d72980759476d2be86b1475ab"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#ad457733d72980759476d2be86b1475ab">ARRIVALDATE_INDEX</a>&#160;&#160;&#160;12</td></tr>
+<tr class="separator:ad457733d72980759476d2be86b1475ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5aa47a15e28d7a6bbb16ebf0d9b83fb5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a5aa47a15e28d7a6bbb16ebf0d9b83fb5">ARRIVALTIME_INDEX</a>&#160;&#160;&#160;13</td></tr>
+<tr class="separator:a5aa47a15e28d7a6bbb16ebf0d9b83fb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb51ccede679c8aa0b0ec638ad3caa65"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#acb51ccede679c8aa0b0ec638ad3caa65">CORRELATION_INDEX</a>&#160;&#160;&#160;14</td></tr>
+<tr class="separator:acb51ccede679c8aa0b0ec638ad3caa65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78a3610cffc9db97c9f15a07db2de70b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#a78a3610cffc9db97c9f15a07db2de70b">CORRELATIONTHRESHOLD_INDEX</a>&#160;&#160;&#160;15</td></tr>
+<tr class="separator:a78a3610cffc9db97c9f15a07db2de70b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace12999bc4d937c9e17ce7e88a15c4d4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ccparser_8cpp.html#ace12999bc4d937c9e17ce7e88a15c4d4">CC_MSG_MAX_INDEX</a>&#160;&#160;&#160;15</td></tr>
+<tr class="separator:ace12999bc4d937c9e17ce7e88a15c4d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="ad457733d72980759476d2be86b1475ab"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ARRIVALDATE_INDEX&#160;&#160;&#160;12</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a5aa47a15e28d7a6bbb16ebf0d9b83fb5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ARRIVALTIME_INDEX&#160;&#160;&#160;13</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ace12999bc4d937c9e17ce7e88a15c4d4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CC_MSG_MAX_INDEX&#160;&#160;&#160;15</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a61b87e499a3ab3f6c0ebf4f6d57e1b3a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CHANNEL_INDEX&#160;&#160;&#160;9</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="acb51ccede679c8aa0b0ec638ad3caa65"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CORRELATION_INDEX&#160;&#160;&#160;14</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a78a3610cffc9db97c9f15a07db2de70b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CORRELATIONTHRESHOLD_INDEX&#160;&#160;&#160;15</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a16a31ffcac5efc56d16908b13c320108"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define DEPTH_INDEX&#160;&#160;&#160;4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a591c1b71991c2ea686cdb63234e4a23b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LATITUDE_INDEX&#160;&#160;&#160;2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a5084cb8b5935a3f6f770eac0cb4a644d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LOCATION_INDEX&#160;&#160;&#160;10</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="afa2d59a247fc75a92e777ca2541203f3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LONGITUDE_INDEX&#160;&#160;&#160;3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ac5a853f9de514a73ef22cd7ad53d29d9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAGNITUDE_INDEX&#160;&#160;&#160;5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a546c084064e90fd53003a2a9d74c001c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define MAGNITUDETYPE_INDEX&#160;&#160;&#160;6</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="acd1ae4f8c1546a4086848c7e5fb799ce"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define NETWORK_INDEX&#160;&#160;&#160;7</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a23070d6630a49b80a36e204945641373"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ORIGINDATE_INDEX&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="acc02f9a32e66d416cac96644282a91c8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ORIGINTIME_INDEX&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="afcc16915f65a45043455e23f9ef4f12b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define PHASETYPE_INDEX&#160;&#160;&#160;11</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a2098a78a22aad74fc4912a1f0ffd375d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define STATION_INDEX&#160;&#160;&#160;8</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 14 2018 14:11:38 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Aug 15 2018 18:43:06 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

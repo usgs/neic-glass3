@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -69,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -106,49 +107,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span>parse {</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classglass3_1_1parse_1_1Parser.html">   34</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1parse_1_1Parser.html">Parser</a> : <span class="keyword">public</span> <a class="code" href="classglass3_1_1util_1_1BaseClass.html">glass3::util::BaseClass</a> {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1Parser.html#a15ab2d4f9ff89ec5c7b10a33275f2f1c">Parser</a>();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1Parser.html#a15ab2d4f9ff89ec5c7b10a33275f2f1c">Parser</a>(<span class="keyword">const</span> std::string &amp;defaultAgencyID,</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            <span class="keyword">const</span> std::string &amp;defaultAuthor);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html#a9830aad938fd14b35f997de69a235d0b">~Parser</a>();</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">virtual</span> std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass3_1_1parse_1_1Parser.html#afe81cb4e6daa37c834425f4db8df55c5">parse</a>(<span class="keyword">const</span> std::string &amp;input) = 0;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html#a11675f59fcc9121aaa5d7d442734efcc">validate</a>(std::shared_ptr&lt;json::Object&gt; &amp;input) = 0;  <span class="comment">// NOLINT</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keyword">const</span> std::string&amp; <a class="code" href="classglass3_1_1parse_1_1Parser.html#ac10e465eba3e3643d783dcd7a84692b3">getAgencyId</a>();</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html#ae76569b83b55ea7e427435b50282b41c">setAgencyId</a>(std::string <span class="keywordtype">id</span>);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <span class="keyword">const</span> std::string&amp; <a class="code" href="classglass3_1_1parse_1_1Parser.html#aec3241bf1c76c40b339532c01fdf13b9">getAuthor</a>();</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html#a9d474df09cf4b849218a66315f132a40">setAuthor</a>(std::string author);</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    std::string m_AgencyID;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    std::string m_Author;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;};</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;}  <span class="comment">// namespace parse</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;}  <span class="comment">// namespace glass3</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="preprocessor">#endif  // PARSER_H</span></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_a9d474df09cf4b849218a66315f132a40"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#a9d474df09cf4b849218a66315f132a40">glass3::parse::Parser::setAuthor</a></div><div class="ttdeci">void setAuthor(std::string author)</div><div class="ttdoc">Function to set the name of the default author. </div><div class="ttdef"><b>Definition:</b> parser.cpp:44</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_afe81cb4e6daa37c834425f4db8df55c5"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#afe81cb4e6daa37c834425f4db8df55c5">glass3::parse::Parser::parse</a></div><div class="ttdeci">virtual std::shared_ptr&lt; json::Object &gt; parse(const std::string &amp;input)=0</div><div class="ttdoc">parsing function </div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_a11675f59fcc9121aaa5d7d442734efcc"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#a11675f59fcc9121aaa5d7d442734efcc">glass3::parse::Parser::validate</a></div><div class="ttdeci">virtual bool validate(std::shared_ptr&lt; json::Object &gt; &amp;input)=0</div><div class="ttdoc">validation function </div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_ae76569b83b55ea7e427435b50282b41c"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#ae76569b83b55ea7e427435b50282b41c">glass3::parse::Parser::setAgencyId</a></div><div class="ttdeci">void setAgencyId(std::string id)</div><div class="ttdoc">Function to set the name of the default agency id. </div><div class="ttdef"><b>Definition:</b> parser.cpp:32</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a></div><div class="ttdoc">glass parser class </div><div class="ttdef"><b>Definition:</b> parser.h:34</div></div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="classglass3_1_1parse_1_1Parser.html">   38</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1parse_1_1Parser.html">Parser</a> : <span class="keyword">public</span> <a class="code" href="classglass3_1_1util_1_1BaseClass.html">glass3::util::BaseClass</a> {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1Parser.html#a15ab2d4f9ff89ec5c7b10a33275f2f1c">Parser</a>();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="classglass3_1_1parse_1_1Parser.html#a15ab2d4f9ff89ec5c7b10a33275f2f1c">Parser</a>(<span class="keyword">const</span> std::string &amp;defaultAgencyID,</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <span class="keyword">const</span> std::string &amp;defaultAuthor);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classglass3_1_1parse_1_1Parser.html#a9830aad938fd14b35f997de69a235d0b">~Parser</a>();</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">virtual</span> std::shared_ptr&lt;json::Object&gt; <a class="code" href="classglass3_1_1parse_1_1Parser.html#afe81cb4e6daa37c834425f4db8df55c5">parse</a>(<span class="keyword">const</span> std::string &amp;input) = 0;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;};</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;}  <span class="comment">// namespace parse</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#endif  // PARSER_H</span></div>
+<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_afe81cb4e6daa37c834425f4db8df55c5"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#afe81cb4e6daa37c834425f4db8df55c5">glass3::parse::Parser::parse</a></div><div class="ttdeci">virtual std::shared_ptr&lt; json::Object &gt; parse(const std::string &amp;input)=0</div><div class="ttdoc">Virtual parsing function to be overridden by deriving classes, used to parse input. </div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1Parser_html"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html">glass3::parse::Parser</a></div><div class="ttdoc">glass3 parser class </div><div class="ttdef"><b>Definition:</b> parser.h:38</div></div>
 <div class="ttc" id="classglass3_1_1util_1_1BaseClass_html"><div class="ttname"><a href="classglass3_1_1util_1_1BaseClass.html">BaseClass</a></div></div>
 <div class="ttc" id="classglass3_1_1parse_1_1Parser_html_a15ab2d4f9ff89ec5c7b10a33275f2f1c"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#a15ab2d4f9ff89ec5c7b10a33275f2f1c">glass3::parse::Parser::Parser</a></div><div class="ttdeci">Parser()</div><div class="ttdef"><b>Definition:</b> parser.cpp:8</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_aec3241bf1c76c40b339532c01fdf13b9"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#aec3241bf1c76c40b339532c01fdf13b9">glass3::parse::Parser::getAuthor</a></div><div class="ttdeci">const std::string &amp; getAuthor()</div><div class="ttdoc">Function to retrieve the name of the default author. </div><div class="ttdef"><b>Definition:</b> parser.cpp:38</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_a9830aad938fd14b35f997de69a235d0b"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#a9830aad938fd14b35f997de69a235d0b">glass3::parse::Parser::~Parser</a></div><div class="ttdeci">virtual ~Parser()</div><div class="ttdoc">parser destructor </div><div class="ttdef"><b>Definition:</b> parser.cpp:23</div></div>
-<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_ac10e465eba3e3643d783dcd7a84692b3"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#ac10e465eba3e3643d783dcd7a84692b3">glass3::parse::Parser::getAgencyId</a></div><div class="ttdeci">const std::string &amp; getAgencyId()</div><div class="ttdoc">Function to retrieve the name of the default agency id. </div><div class="ttdef"><b>Definition:</b> parser.cpp:27</div></div>
+<div class="ttc" id="classglass3_1_1parse_1_1Parser_html_a9830aad938fd14b35f997de69a235d0b"><div class="ttname"><a href="classglass3_1_1parse_1_1Parser.html#a9830aad938fd14b35f997de69a235d0b">glass3::parse::Parser::~Parser</a></div><div class="ttdeci">virtual ~Parser()</div><div class="ttdoc">parser destructor </div><div class="ttdef"><b>Definition:</b> parser.cpp:21</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 14 2018 14:11:38 for parse by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Aug 15 2018 18:43:06 for parse by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

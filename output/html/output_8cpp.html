@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -69,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -85,7 +86,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#define-members">Macros</a>  </div>
   <div class="headertitle">
 <div class="title">output.cpp File Reference</div>  </div>
 </div><!--header-->
@@ -120,11 +122,113 @@ Namespaces</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:namespaceglass3_1_1output"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1output.html">glass3::output</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ab41ae0319e008c5fa8048a4f4ba7b061"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="output_8cpp.html#ab41ae0319e008c5fa8048a4f4ba7b061">TYPE_KEY</a>&#160;&#160;&#160;&quot;Type&quot;</td></tr>
+<tr class="separator:ab41ae0319e008c5fa8048a4f4ba7b061"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84947280f79bbb991457a192013aabd5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="output_8cpp.html#a84947280f79bbb991457a192013aabd5">CONFIG_KEY</a>&#160;&#160;&#160;&quot;Configuration&quot;</td></tr>
+<tr class="separator:a84947280f79bbb991457a192013aabd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6a18e5e0a2544135c757a16b751b4c3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="output_8cpp.html#ad6a18e5e0a2544135c757a16b751b4c3">CMD_KEY</a>&#160;&#160;&#160;&quot;Cmd&quot;</td></tr>
+<tr class="separator:ad6a18e5e0a2544135c757a16b751b4c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa215b9f2435fd7b0eb9fc378bd4807fa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="output_8cpp.html#aa215b9f2435fd7b0eb9fc378bd4807fa">ID_KEY</a>&#160;&#160;&#160;&quot;ID&quot;</td></tr>
+<tr class="separator:aa215b9f2435fd7b0eb9fc378bd4807fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d9778cb8ee811cba74af8387f9b551b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="output_8cpp.html#a9d9778cb8ee811cba74af8387f9b551b">PID_KEY</a>&#160;&#160;&#160;&quot;Pid&quot;</td></tr>
+<tr class="separator:a9d9778cb8ee811cba74af8387f9b551b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe2c07a6b0f2d86ab3361bba6921b52d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="output_8cpp.html#abe2c07a6b0f2d86ab3361bba6921b52d">PUBLOG_KEY</a>&#160;&#160;&#160;&quot;PubLog&quot;</td></tr>
+<tr class="separator:abe2c07a6b0f2d86ab3361bba6921b52d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a138276b7ce80f63d7ac005a4485bce40"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="output_8cpp.html#a138276b7ce80f63d7ac005a4485bce40">VERSION_KEY</a>&#160;&#160;&#160;&quot;Version&quot;</td></tr>
+<tr class="separator:a138276b7ce80f63d7ac005a4485bce40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="ad6a18e5e0a2544135c757a16b751b4c3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CMD_KEY&#160;&#160;&#160;&quot;Cmd&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a84947280f79bbb991457a192013aabd5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CONFIG_KEY&#160;&#160;&#160;&quot;Configuration&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aa215b9f2435fd7b0eb9fc378bd4807fa"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ID_KEY&#160;&#160;&#160;&quot;ID&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a9d9778cb8ee811cba74af8387f9b551b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define PID_KEY&#160;&#160;&#160;&quot;Pid&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="abe2c07a6b0f2d86ab3361bba6921b52d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define PUBLOG_KEY&#160;&#160;&#160;&quot;PubLog&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ab41ae0319e008c5fa8048a4f4ba7b061"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define TYPE_KEY&#160;&#160;&#160;&quot;Type&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a138276b7ce80f63d7ac005a4485bce40"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define VERSION_KEY&#160;&#160;&#160;&quot;Version&quot;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Aug 14 2018 14:12:17 for output by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Aug 15 2018 18:43:51 for output by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
