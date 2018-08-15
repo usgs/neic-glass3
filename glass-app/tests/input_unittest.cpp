@@ -186,7 +186,7 @@ TEST_F(InputTest, Configuration) {
 			archivedirectory.c_str()) << "check input thread archive directory";
 
 	// check queue max size
-	ASSERT_EQ(InputThread->getQueueMaxSize(), QUEUEMAXSIZE)
+	ASSERT_EQ(InputThread->getInputDataMaxSize(), QUEUEMAXSIZE)
 	<< "check queue max size";
 
 	// check agency id

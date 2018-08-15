@@ -30,7 +30,7 @@ namespace output {
 
 // ---------------------------------------------------------output
 output::output()
-		: glass3::util::ThreadBaseClass("output", 100) {
+		: glass3::util::ThreadBaseClass("output") {
 	glass3::util::log("debug", "output::output(): Construction.");
 
 	std::time(&tLastWorkReport);
@@ -66,7 +66,7 @@ output::output()
 output::~output() {
 	glass3::util::log("debug", "output::~output(): Destruction.");
 
-	// stop the input thread
+	// stop the output threads
 	stop();
 
 	// clear everything
@@ -277,9 +277,9 @@ bool output::start() {
 		return (false);
 	}
 
-	// now create a thread the for checkEventsLoop loop
-	// and add to threadbaseclass's list of threads, so it can be managed
-	// by threadbaseclass
+	// now create a thread for the checkEventsLoop loop
+	// and add it to ThreadBaseClass list of threads, so that ThreadBaseClass
+	// can monitor and manage it
 	m_WorkThreads.push_back(std::thread(&output::checkEventsLoop, this));
 
 	// add to status map if we're tracking status
@@ -674,11 +674,11 @@ glass3::util::WorkState output::work() {
 	// count the message
 	m_iMessageCounter++;
 
-	// glass has a hypo it wants us to send
+	// glass has sent us a hypo that we requested
 	if (messagetype == "Hypo") {
+		// check to see if we know about this hypo
 		std::shared_ptr<const json::Object> trackingData = getTrackingData(
 				messageid);
-
 		if (trackingData == NULL) {
 			glass3::util::log("critical",
 								"output::work(): NULL tracking data for Hypo.");

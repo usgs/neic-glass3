@@ -24,7 +24,7 @@ namespace input {
 
 // ---------------------------------------------------------Input
 Input::Input()
-		: glass3::util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input") {
 	glass3::util::log("debug", "Input::Input(): Construction.");
 
 	m_GPickParser = NULL;
@@ -37,7 +37,7 @@ Input::Input()
 
 // ---------------------------------------------------------Input
 Input::Input(std::shared_ptr<const json::Object> config)
-		: glass3::util::ThreadBaseClass("input", 100) {
+		: glass3::util::ThreadBaseClass("input") {
 	m_GPickParser = NULL;
 	m_JSONParser = NULL;
 	m_CCParser = NULL;
@@ -138,17 +138,17 @@ bool Input::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("QueueMaxSize")
 			&& ((*config)["QueueMaxSize"].GetType() == json::ValueType::IntVal))) {
 		// queue max size is optional
-		setQueueMaxSize(-1);
+		setInputDataMaxSize(-1);
 		glass3::util::log(
 				"info",
 				"Input::setup(): Defaulting to -1 for QueueMaxSize (no maximum "
 				"queue size).");
 	} else {
-		setQueueMaxSize((*config)["QueueMaxSize"].ToInt());
+		setInputDataMaxSize((*config)["QueueMaxSize"].ToInt());
 		glass3::util::log(
 				"info",
 				"Input::setup(): Using QueueMaxSize: "
-						+ std::to_string(getQueueMaxSize()) + ".");
+						+ std::to_string(getInputDataMaxSize()) + ".");
 	}
 
 	// need to (re)create the parsers to use the agency id / author
@@ -186,7 +186,7 @@ void Input::clear() {
 
 	setDefaultAgencyId("");
 	setDefaultAuthor("");
-	setQueueMaxSize(-1);
+	setInputDataMaxSize(-1);
 
 	if (m_DataQueue != NULL)
 		m_DataQueue->clear();
@@ -217,8 +217,8 @@ int Input::getInputDataCount() {
 // ---------------------------------------------------------work
 glass3::util::WorkState Input::work() {
 	// check to see if we have room
-	if ((getQueueMaxSize() != -1)
-			&& (getInputDataCount() >= getQueueMaxSize())) {
+	if ((getInputDataMaxSize() != -1)
+			&& (getInputDataCount() >= getInputDataMaxSize())) {
 		// we don't, yet
 		return (glass3::util::WorkState::Idle);
 	}
@@ -250,33 +250,34 @@ glass3::util::WorkState Input::work() {
 }
 
 // ---------------------------------------------------------parse
-std::shared_ptr<json::Object> Input::parse(std::string type,
-											std::string Input) {
+std::shared_ptr<json::Object> Input::parse(std::string inputType,
+											std::string inputMessage) {
 	// choose the parser based on the type
-	if ((type.find(GPICK_TYPE) != std::string::npos)
+	if ((inputType.find(GPICK_TYPE) != std::string::npos)
 			&& (m_GPickParser != NULL)) {
 		// global pick
-		return (m_GPickParser->parse(Input));
-	} else if ((type.find(JSON_TYPE) != std::string::npos)
+		return (m_GPickParser->parse(inputMessage));
+	} else if ((inputType.find(JSON_TYPE) != std::string::npos)
 			&& (m_JSONParser != NULL)) {
 		// all json formats share the same parser
-		return (m_JSONParser->parse(Input));
-	} else if ((type == CC_TYPE) && (m_CCParser != NULL)) {
+		return (m_JSONParser->parse(inputMessage));
+	} else if ((inputType == CC_TYPE) && (m_CCParser != NULL)) {
 		// cc data
-		return (m_CCParser->parse(Input));
+		return (m_CCParser->parse(inputMessage));
 	} else {
-		glass3::util::log("warning", "Input::parse(): Unknown type " + type);
+		glass3::util::log("warning",
+							"Input::parse(): Unknown type " + inputType);
 		return (NULL);
 	}
 }
 
-// ---------------------------------------------------------setQueueMaxSize
-void Input::setQueueMaxSize(int size) {
+// ---------------------------------------------------------setInputDataMaxSize
+void Input::setInputDataMaxSize(int size) {
 	m_QueueMaxSize = size;
 }
 
-// ---------------------------------------------------------getQueueMaxSize
-int Input::getQueueMaxSize() {
+// ---------------------------------------------------------getInputDataMaxSize
+int Input::getInputDataMaxSize() {
 	return (m_QueueMaxSize);
 }
 

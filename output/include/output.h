@@ -57,8 +57,8 @@ namespace output {
  * detection formats messages, as defined at
  * https://github.com/usgs/earthquake-detection-formats/tree/master/format-docs
  *
- * The Output class is intended to be inherited from to define specific output
- * mechanisms (i.e. file output).
+ * The Output class is designed to be extended in order to define application
+ * specific output mechanisms (i.e. file output).
  *
  * output inherits from the glass3::util::ThreadBaseClass class.
  * output implements the glass3::util::iOutput interface.
@@ -100,7 +100,7 @@ class output : public glass3::util::iOutput,
 	 * \brief output clear function
 	 *
 	 * The clear function for the output class.
-	 * Resets memebers to members to default values.
+	 * Resets members to default values.
 	 */
 	void clear() override;
 
@@ -381,8 +381,8 @@ class output : public glass3::util::iOutput,
 	 *
 	 * Check the given tracking information to see if it has been previously
 	 * published. Optionally ignore the current version when doing the check.
-	 * This is used when whether tracking information has ever been published
-	 * (i.e. generating a retraction message)
+	 * This is used when determining whether tracking information has ever been
+	 * published (i.e. when generating a retraction message)
 	 *
 	 * \param data - A shared_ptr to a json::Object containing the glasscore
 	 * event message used as the tracking information to check

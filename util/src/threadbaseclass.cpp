@@ -9,17 +9,20 @@
 namespace glass3 {
 namespace util {
 
+#define DEFAULT_HEALTHCHECK_INTERVAL 30
+#define DEFAULT_SLEEP_TIME 100
+
 // ---------------------------------------------------------ThreadBaseClass
 ThreadBaseClass::ThreadBaseClass()
 		: util::BaseClass() {
 	setThreadName("unknown");
 	setWorkThreadsState(glass3::util::ThreadState::Initialized);
-	setHealthCheckInterval(30);
+	setHealthCheckInterval(DEFAULT_HEALTHCHECK_INTERVAL);
 	setNumThreads(1);
 	setThreadHealth();
 
 	// set to default inter-loop sleep
-	setSleepTime(100);
+	setSleepTime(DEFAULT_SLEEP_TIME);
 
 	m_WorkThreads.clear();
 }
@@ -289,7 +292,7 @@ std::time_t ThreadBaseClass::getAllLastHealthy() {
 	// go through all work threads
 	// I don't think we need a mutex here because the only function that
 	// can modify the size of a map is start()
-	std::map<std::thread::id, std::atomic<double>>::iterator StatusItr;
+	std::map<std::thread::id, std::atomic<int>>::iterator StatusItr;
 	for (StatusItr = m_ThreadHealthMap.begin();
 			StatusItr != m_ThreadHealthMap.end(); ++StatusItr) {
 		// get the thread status

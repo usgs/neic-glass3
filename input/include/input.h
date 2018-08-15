@@ -58,7 +58,7 @@ class Input : public glass3::util::iInput,
 	/**
 	 * \brief Input default constructor
 	 *
-	 * The advanced default for the Input class.
+	 * The default constructor for the Input class.
 	 * Initializes members to default values.
 	 */
 	Input();
@@ -134,7 +134,7 @@ class Input : public glass3::util::iInput,
 	 *
 	 * \param size = An integer value containing the maximum queue size
 	 */
-	void setQueueMaxSize(int size);
+	void setInputDataMaxSize(int size);
 
 	/**
 	 * \brief Function to retrieve the maximum queue size
@@ -144,7 +144,7 @@ class Input : public glass3::util::iInput,
 	 *
 	 * \return Returns an integer value containing the maximum queue size
 	 */
-	int getQueueMaxSize();
+	int getInputDataMaxSize();
 
  protected:
 	/**
@@ -160,13 +160,13 @@ class Input : public glass3::util::iInput,
 	 *
 	 * The function that parses an Input line, based on the given extension
 	 *
-	 * \param type - A std::string containing the type of data to parse
+	 * \param inputType - A std::string containing the type of data to parse
 	 * \return returns a shared pointer to a json::Object containing the parsed
-	 * \param Input - A std::string containing the Input line to parse
-	 * data
+	 * \param inputMessage - A std::string containing the input message line to
+	 * parse
 	 */
-	virtual std::shared_ptr<json::Object> parse(std::string type,
-												std::string Input);
+	virtual std::shared_ptr<json::Object> parse(std::string inputType,
+												std::string inputMessage);
 
 	/**
 	 * \brief get Input data string and type
@@ -174,10 +174,11 @@ class Input : public glass3::util::iInput,
 	 * A pure virtual function that retrieves the next data message and type
 	 * from an Input source
 	 *
-	 * \param type - A std::string used to pass out the type of the data
+	 * \param pOutType - A pointer to a std::string used to pass out the type of
+	 * the data
 	 * \return returns a std::string containing the Input data message
 	 */
-	virtual std::string fetchRawData(std::string* type) = 0;
+	virtual std::string fetchRawData(std::string* pOutType) = 0;
 
  private:
 	/**

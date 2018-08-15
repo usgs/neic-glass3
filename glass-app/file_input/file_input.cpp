@@ -169,9 +169,9 @@ void fileInput::clear() {
 	glass3::input::Input::clear();
 }
 
-std::string fileInput::fetchRawData(std::string* type) {
-	// our type is our format (extension)
-	*type = getFormat();
+std::string fileInput::fetchRawData(std::string* pOutType) {
+	// our pOutType is our format (extension)
+	*pOutType = getFormat();
 
 	// check to see if we've got a file
 	if ((m_InputFile.good() == true) && (m_InputFile.eof() != true)) {
@@ -211,7 +211,7 @@ std::string fileInput::fetchRawData(std::string* type) {
 			double tAverageTime = tFileProcDuration.count() / m_iDataCount;
 
 			glass3::util::log(
-					"debug",
+					"info",
 					"fileInput::fetchRawData(): Processed "
 							+ std::to_string(m_iDataCount) + " data from file: "
 							+ m_sFileName + " in "
@@ -239,6 +239,11 @@ std::string fileInput::fetchRawData(std::string* type) {
 			// open the file
 			// next time we'll start reading from the file
 			m_InputFile.open(m_sFileName, std::ios::in);
+
+			glass3::util::log(
+					"info",
+					"fileInput::fetchRawData(): Opened file: "
+							+ m_sFileName);
 
 			// reset performance counters
 			m_tFileStartTime = std::chrono::high_resolution_clock::now();

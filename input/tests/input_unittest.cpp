@@ -83,7 +83,7 @@ TEST(InputTest, Construction) {
 	ASSERT_STREQ(TestInput.getDefaultAuthor().c_str(), "")<< "Author check";
 
 	// assert queue max size is -1
-	ASSERT_EQ(TestInput.getQueueMaxSize(), -1)<< "queue max size check";
+	ASSERT_EQ(TestInput.getInputDataMaxSize(), -1)<< "queue max size check";
 }
 
 // tests to see if the input can be configured
@@ -110,7 +110,7 @@ TEST(InputTest, Configuration) {
 			std::string(TESTAUTHOR).c_str())<< "Author check";
 
 	// assert queue max size is -1
-	ASSERT_EQ(TestInput.getQueueMaxSize(), QUEUESIZE)<< "queue max size check";
+	ASSERT_EQ(TestInput.getInputDataMaxSize(), QUEUESIZE)<< "queue max size check";
 }
 
 // tests to see if input can process gicks

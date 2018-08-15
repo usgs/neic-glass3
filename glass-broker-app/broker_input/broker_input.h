@@ -87,10 +87,11 @@ class brokerInput : public glass3::input::Input {
 	 * A function (overridden from glass3::input) that that retrieves the next
 	 * data message and type from an input source
 	 *
-	 * \param type - A std::string used to pass out the type of the data
+	 * \param pOutType - A pointer to a std::string used to pass out the type of
+	 * the data
 	 * \return returns a std::string containing the input data message
 	 */
-	virtual std::string fetchRawData(std::string* type) override;
+	virtual std::string fetchRawData(std::string* pOutType) override;
 
 	/**
 	 * \brief the function for consumer logging

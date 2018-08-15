@@ -49,6 +49,7 @@
 #define ARRIVALTIME_INDEX 13
 #define CORRELATION_INDEX 14
 #define CORRELATIONTHRESHOLD_INDEX 15
+#define CC_MSG_MAX_INDEX 15
 
 namespace glass3 {
 namespace parse {
@@ -78,7 +79,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		// make sure we split the response into at
 		// least as many elements as we need (16 since the pick is on the
 		// end of the message)
-		if (splitInput.size() < 15) {
+		if (splitInput.size() < CC_MSG_MAX_INDEX) {
 			glass3::util::log(
 					"error",
 					"ccparser::parse: ccpick did not split into at least 15 "

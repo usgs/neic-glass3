@@ -52,14 +52,15 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \param threadName - A std::string containing the desired
 	 * name of the work thread.
 	 * \param sleepTimeMS - An integer value containing the amount of
-	 * time to sleep between work() calls in the work thread
+	 * time to sleep between work() calls in the work thread in milliseconds,
+	 * default 100ms
 	 * \param numThreads - An integer containing the number of
 	 * work threads.  Default 1
 	 * \param checkInterval - An integer containing the amount of time in
 	 * seconds between status checks. -1 to disable status checks.  Default 30.
 	 */
-	ThreadBaseClass(std::string threadName, int sleepTimeMS, int numThreads = 1,
-					int checkInterval = 30);
+	ThreadBaseClass(std::string threadName, int sleepTimeMS = 100,
+					int numThreads = 1, int checkInterval = 30);
 
 	/**
 	 * \brief ThreadBaseClass destructor
@@ -245,7 +246,9 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \brief Function to set threads state
 	 *
 	 * This function signifies the threads state by setting m_WorkThreadsState
-	 * to the provided value.
+	 * to the provided value. This function is called by start(), stop(), and
+	 * workLoop() to indicate various thread states during the thread startup
+	 * and shutdown processes
 	 *
 	 * \param state = A glass3::util::ThreadState enumeration value indicating
 	 * the new thread state
@@ -257,12 +260,12 @@ class ThreadBaseClass : public util::BaseClass {
 	 *
 	 * This function is the thread work loop function. It runs in a loop while
 	 * m_WorkThreadsState is glass3::util::ThreadState::Started, calls work()
-	 * every m_iSleepTimeMS milliseconds, to do a unit of work, sets thread
+	 * every m_iSleepTimeMS milliseconds, to do a unit of work, sets thread(s)
 	 * health via setThreadHealth(). Setting
 	 * m_WorkThreadsState to not equal glass3::util::ThreadState::Started via
 	 * setWorkThreadsState, or a glass3::util::WorkState::Error return from
 	 * work() will cause the loop to exit, and the function to return (ending
-	 * the thread)
+	 * the thread(s))
 	 */
 	void workLoop();
 
@@ -286,7 +289,7 @@ class ThreadBaseClass : public util::BaseClass {
 	 * each work thread was last marked as healthy, identified by the
 	 * thread id
 	 */
-	std::map<std::thread::id, std::atomic<double>> m_ThreadHealthMap;
+	std::map<std::thread::id, std::atomic<int>> m_ThreadHealthMap;
 
  private:
 	/**

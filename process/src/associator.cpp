@@ -14,7 +14,7 @@ namespace process {
 // ---------------------------------------------------------Associator
 Associator::Associator(glass3::util::iInput* inputint,
 						glass3::util::iOutput* outputint)
-		: glass3::util::ThreadBaseClass("Associator", 5) {
+		: glass3::util::ThreadBaseClass("Associator") {
 	glass3::util::log("debug",
 						"associator::associator(...): Advanced Construction.");
 

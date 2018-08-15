@@ -58,6 +58,7 @@
 #define SNR_INDEX 17
 #define AMPLITUDE_INDEX 18
 #define PERIOD_INDEX 19
+#define GPICK_MSG_MAX_INDEX 20
 
 namespace glass3 {
 namespace parse {
@@ -86,7 +87,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 
 		// make sure we split the response into at
 		// least as many elements as we need
-		if (splitInput.size() < 20) {
+		if (splitInput.size() < GPICK_MSG_MAX_INDEX) {
 			glass3::util::log(
 					"error",
 					"gpickparser::parse: Provided input did not split into at "

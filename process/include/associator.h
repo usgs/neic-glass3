@@ -124,8 +124,8 @@ class Associator : public glasscore::IGlassSend,
 	/**
 	 * \brief glasscore logging function
 	 *
-	 * The function the associator class uses accept logging messages coming out
-	 * of glasscore, and write them to the neic-glass3 logger.
+	 * The function the associator class uses to accept logging messages coming
+	 * out of glasscore, and write those messages to the neic-glass3 logger.
 	 *
 	 * \param message - A glasscore::logMessageStruct containing the message to
 	 * log from glasscore.

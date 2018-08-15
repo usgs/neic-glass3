@@ -160,9 +160,9 @@ void brokerInput::clear() {
 	glass3::input::Input::clear();
 }
 
-std::string brokerInput::fetchRawData(std::string* type) {
+std::string brokerInput::fetchRawData(std::string* pOutType) {
 	// we only expect json messages from the broker
-	*type = std::string(JSON_TYPE);
+	*pOutType = std::string(JSON_TYPE);
 
 	// make sure we have a consumer
 	if (m_Consumer == NULL)
