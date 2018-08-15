@@ -64,8 +64,8 @@ class Associator : public glasscore::IGlassSend,
 	 * glasscore. The setup() function can be called multiple times, in order to
 	 * reload or update configuration information.
 	 *
-	 * \param config - A pointer to a json::Object containing to the
-	 * configuration to use
+	 * \param config - A shared_ptr to a json::Object containing to the
+	 * configuration to pass to glasscore.
 	 * \return returns true if successful.
 	 */
 	bool setup(std::shared_ptr<const json::Object> config) override;
