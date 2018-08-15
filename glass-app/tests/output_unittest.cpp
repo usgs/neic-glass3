@@ -376,7 +376,7 @@ TEST_F(OutputTest, Construction) {
 	ASSERT_TRUE(OutputThread->getConfig() == NULL) << "output config is null";
 
 	// assert class is not running
-	ASSERT_FALSE(OutputThread->getThreadState() ==
+	ASSERT_FALSE(OutputThread->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started) << "output thread is not running";
 
 	// assert no data in class
@@ -389,7 +389,7 @@ TEST_F(OutputTest, Configuration) {
 	ASSERT_FALSE(configurefail1())<< "OutputThread->setup returned false 1";
 	ASSERT_FALSE(configurefail2())<< "OutputThread->setup returned false 2";
 	ASSERT_FALSE(configurefail3())<< "OutputThread->setup returned false 3";
-	ASSERT_TRUE(emptyconfig())<< "OutputThread->setup returned true";
+	ASSERT_FALSE(emptyconfig())<< "OutputThread->setup returned true";
 
 	// configure output
 	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
@@ -411,12 +411,12 @@ TEST_F(OutputTest, Configuration) {
 
 	// check agency id
 	std::string agencyid = std::string(TESTAGENCYID);
-	ASSERT_STREQ(OutputThread->getOutputAgencyId().c_str(),
+	ASSERT_STREQ(OutputThread->getDefaultAgencyId().c_str(),
 			agencyid.c_str()) << "check agency id";
 
 	// check author
 	std::string author = std::string(TESTAUTHOR);
-	ASSERT_STREQ(OutputThread->getOutputAuthor().c_str(),
+	ASSERT_STREQ(OutputThread->getDefaultAuthor().c_str(),
 			author.c_str()) << "check author";
 }
 /*

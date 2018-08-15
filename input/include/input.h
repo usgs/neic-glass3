@@ -30,59 +30,64 @@ namespace glass3 {
 namespace input {
 
 #define GPICK_TYPE "gpick"
-#define GPICKS_TYPE "gpicks"
 #define JSON_TYPE "json"
 #define CC_TYPE "dat"
 
 /**
- * \brief glass input class
+ * \brief neic-glass3 Input class
  *
- * The glass input class is a thread class encapsulating the data input logic
- * The input class handles reading input data, parsing it, validating  it, and
- * queuing it for later use by the associator class
+ * The neic-glass3 Input class is a thread class encapsulating the data Input
+ * logic for neic-glass3. The Input class handles reading Input data, parsing it,
+ * validating it, and queuing it for later use byglasscore via the Associator
+ * class. If the internal queue isfull, the class will pause reading Input data
+ * until space is available.
  *
- * input inherits from the threadbaseclass class.
- * input implements the ioutput interface.
+ * The input class generates detection format json messages as defined in
+ * https://github.com/usgs/earthquake-detection-formats/tree/master/format-docs
+ * that are then passed to the associator/glasscore via a queue.
+ *
+ * The Input class is intended to be inherited from to define application
+ * specific input mechanisms (i.e. input from disk files).
+ *
+ * Input inherits from the glass3::util::ThreadBaseClass class.
+ * Input implements the glass3::util::iInput interface.
  */
-class input
-		: public glass3::util::iInput, public glass3::util::ThreadBaseClass {
+class Input : public glass3::util::iInput,
+	public glass3::util::ThreadBaseClass {
  public:
 	/**
-	 * \brief input advanced constructor
+	 * \brief Input default constructor
 	 *
-	 * The advanced constructor for the input class.
+	 * The default constructor for the Input class.
 	 * Initializes members to default values.
-	 *
-	 * \param linesleepms - An integer value holding the time to sleep
-	 * between reading input lines from a file, in milliseconds
 	 */
-	input();
+	Input();
 
 	/**
-	 * \brief input advanced constructor
+	 * \brief Input advanced constructor
 	 *
-	 * The advanced constructor for the input class.
-	 * Initializes members to default values.
-	 * Calls setup to configure the class
-	 * Starts the work thread
+	 * The advanced constructor for the Input class. This function calls setup
+	 * to configure the class, initializing members to the configured values,
+	 * and starts the work thread
 	 *
-	 * \param config - A json::Object pointer to the configuration to use
+	 * \param config - A json::Object shared_ptr to the configuration to use
 	 */
-	explicit input(std::shared_ptr<const json::Object> config);
+	explicit Input(std::shared_ptr<const json::Object> config);
 
 	/**
-	 * \brief input destructor
+	 * \brief Input destructor
 	 *
-	 * The destructor for the input class.
+	 * The destructor for the Input class.
 	 * Stops the work thread
 	 */
-	~input();
+	~Input();
 
 	/**
-	 * \brief input configuration function
+	 * \brief Input configuration function
 	 *
-	 * The this function configures the input class, and the tracking cache it
-	 * contains.
+	 * The this function configures the Input class,
+	 * The setup() function can be called multiple times, in order to reload or
+	 * update configuration information.
 	 *
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use
@@ -91,178 +96,91 @@ class input
 	bool setup(std::shared_ptr<const json::Object> config) override;
 
 	/**
-	 * \brief input clear function
+	 * \brief Input clear function
 	 *
-	 * The clear function for the input class.
+	 * The clear function for the Input class.
 	 * Clears all configuration, clears and reallocates the message queue and
 	 * cache
 	 */
 	void clear() override;
 
 	/**
-	 * \brief input data getting function
+	 * \brief Input data getting function
 	 *
-	 * The function (from iinput) used to get input data from the data queue.
+	 * The function (from iinput) used to get Input data from the data queue.
 	 *
-	 * \return Returns a pointer to a json::Object containing the data.
+	 * \return Returns a pointer to a json::Object containing the data, or NULL
+	 * if the Input queue is empty
 	 */
 	std::shared_ptr<json::Object> getInputData() override;
 
 	/**
-	 * \brief input data count function
+	 * \brief Input data count function
 	 *
-	 * The function (from iinput) used to get the count of how much data is in
+	 * The function (from iInput) used to get the count of how much data is in
 	 * the data queue.
 	 *
-	 * \return Returns a integer containing the current data count.
+	 * \return Returns a postitve integer containing the count of data currently
+	 * in the Input queue
 	 */
 	int getInputDataCount() override;
 
 	/**
-	 * \brief Function to set the name of the default agency id
-	 *
-	 * This function sets the name of the default agency id, this name is used in
-	 * generating input messages
-	 *
-	 * \param id = A std::string containing the agency id to set
-	 */
-	void setDefaultAgency(std::string agency);
-
-	/**
-	 * \brief Function to retrieve the name of the default agency id
-	 *
-	 * This function retrieves the name of default agency id, this name is used
-	 * in generating input messages
-	 *
-	 * \return A std::string containing the agency id
-	 */
-	const std::string getDefaultAgencyId();
-
-	/**
-	 * \brief Function to set the name of the default author
-	 *
-	 * This function sets the name of the default author, this name is used in
-	 * generating input messages
-	 *
-	 * \param author = A std::string containing the author to set
-	 */
-	void setDefaultAuthor(std::string author);
-
-	/**
-	 * \brief Function to retrieve the name of the default author
-	 *
-	 * This function retrieves the name of the default author, this name is used
-	 * in generating input messages
-	 *
-	 * \return A std::string containing the author
-	 */
-	const std::string getDefaultAuthor();
-
-	/**
 	 * \brief Function to set the maximum queue size
 	 *
-	 * This function sets the maximum allowable size of the input data queue
+	 * This function sets the maximum allowable size of the Input data queue.
+	 * Setting this value to -1 indicates that there is no maximum size
+	 * to the Input queue
 	 *
-	 * \param delay = An integer value containing the maximum queue size
+	 * \param size = An integer value containing the maximum queue size
 	 */
-	void setQueueMaxSize(int size);
+	void setInputDataMaxSize(int size);
 
 	/**
-	 * \brief Function to retrieve tthe maximum queue size
+	 * \brief Function to retrieve the maximum queue size
 	 *
-	 * This function retrieves the maximum allowable size of the input data
+	 * This function retrieves the maximum allowable size of the Input data
 	 * queue
 	 *
 	 * \return Returns an integer value containing the maximum queue size
 	 */
-	int getQueueMaxSize();
-
-	/**
-	 * \brief Function to set the interval to generate informational reports
-	 *
-	 * This function sets the interval in seconds between logging informational
-	 * reports on output throughput and performance
-	 *
-	 * \param interval = An integer value containing the interval in seconds
-	 */
-	void setReportInterval(int interval);
-
-	/**
-	 * \brief Function to retrieve the interval to generate informational reports
-	 *
-	 * This function retrieves the interval in seconds between logging
-	 * informationalreports on output throughput and performance
-	 *
-	 * \return Returns an integer value containing the interval in seconds
-	 */
-	int getReportInterval();
+	int getInputDataMaxSize();
 
  protected:
 	/**
-	 * \brief input work function
+	 * \brief Input work function
 	 *
 	 * The function (from threadclassbase) used to do work.
 	 * \return returns true if work was successful, false otherwise.
 	 */
-	bool work() override;
+	glass3::util::WorkState work() override;
 
 	/**
 	 * \brief parse line function
 	 *
-	 * The function that parses an input line, based on the given extension
+	 * The function that parses an Input line, based on the given extension
 	 *
-	 * \param type - A std::string containing the type of data to parse
+	 * \param inputType - A std::string containing the type of data to parse
 	 * \return returns a shared pointer to a json::Object containing the parsed
-	 * \param input - A std::string containing the input line to parse
-	 * data
+	 * \param inputMessage - A std::string containing the input message line to
+	 * parse
 	 */
-	virtual std::shared_ptr<json::Object> parse(std::string type,
-												std::string input);
+	virtual std::shared_ptr<json::Object> parse(std::string inputType,
+												std::string inputMessage);
 
 	/**
-	 * \brief validate data function
+	 * \brief get Input data string and type
 	 *
-	 * The function that validates input data, based on the given extension
+	 * A pure virtual function that retrieves the next data message and type
+	 * from an Input source
 	 *
-	 * \param type - A std::string containing the type of data to validate
-	 * \param input - A json::Object containing the data to validate
-	 * \return returns true if valid, false otherwise
+	 * \param pOutType - A pointer to a std::string used to pass out the type of
+	 * the data
+	 * \return returns a std::string containing the Input data message
 	 */
-	virtual bool validate(std::string type,
-							std::shared_ptr<json::Object> input);
-
-	/**
-	 * \brief get input data type
-	 *
-	 * A pure virutal function that determines the input data type
-	 *
-	 * \param input - A json::Object containing the data to validate
-	 * \return returns a std::string containing the input data type
-	 */
-	virtual std::string getDataType(std::string input) = 0;
-
-	/**
-	 * \brief get input data string
-	 *
-	 * A pure virtual function that retrieves the next data message from an
-	 * input source
-	 *
-	 * \return returns a std::string containing the input data message
-	 */
-	virtual std::string fetchRawData() = 0;
+	virtual std::string fetchRawData(std::string* pOutType) = 0;
 
  private:
-	/**
-	 * \brief the std::string configuration value indicating the default agency
-	 * id
-	 */
-	std::string m_sDefaultAgencyID;
-
-	/**
-	 * \brief the std::string configuration value indicating the default author
-	 */
-	std::string m_sDefaultAuthor;
-
 	/**
 	 * \brief the integer configuration value indicating the maximum size of the
 	 * data queue

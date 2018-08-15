@@ -16,7 +16,7 @@
 #define ERRORDIRECTORY "error"
 #define ARCHIVEDIRECTORY "archive"
 
-#define SLEEPTIME 1
+#define SLEEPTIME 100
 #define FILESLEEPTIME 5
 #define QUEUEMAXSIZE 1000
 #define TESTAGENCYID "US"
@@ -160,11 +160,11 @@ TEST_F(InputTest, Construction) {
 	ASSERT_TRUE(InputThread->getConfig() == NULL) << "input config is null";
 
 	// assert class is not running
-	ASSERT_FALSE(InputThread->getThreadState() ==
+	ASSERT_FALSE(InputThread->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started) << "input thread is not running";
 
 	// assert no data in class
-	ASSERT_EQ(InputThread->getInputDataCount(), -1) << "input thread has no data";
+	ASSERT_EQ(InputThread->getInputDataCount(), 0) << "input thread has no data";
 }
 
 TEST_F(InputTest, Configuration) {
@@ -186,7 +186,7 @@ TEST_F(InputTest, Configuration) {
 			archivedirectory.c_str()) << "check input thread archive directory";
 
 	// check queue max size
-	ASSERT_EQ(InputThread->getQueueMaxSize(), QUEUEMAXSIZE)
+	ASSERT_EQ(InputThread->getInputDataMaxSize(), QUEUEMAXSIZE)
 	<< "check queue max size";
 
 	// check agency id

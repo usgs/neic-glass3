@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <threadbaseclass.h>
+#include <logger.h>
 #include <string>
 
 #define TESTTHREADNAME "threadbasestub"
@@ -44,15 +45,15 @@ class threadbasestub : public glass3::util::ThreadBaseClass {
 	// function to expose protected setThreadState() function from
 	// ThreadBaseClass
 	void testSetThreadState(glass3::util::ThreadState state) {
-		setThreadState(state);
+		setWorkThreadsState(state);
 	}
 
  protected:
 	// work function for tests
-	bool work() override {
+	glass3::util::WorkState work() override {
 		// check for shutdown
 		if (kill) {
-			return (false);
+			return (glass3::util::WorkState::Error);
 		}
 
 		// keep running until count
@@ -63,12 +64,12 @@ class threadbasestub : public glass3::util::ThreadBaseClass {
 
 			// work successful
 			setThreadHealth();
-			return (true);
+			return (glass3::util::WorkState::OK);
 		}
 
 		// still alive
 		setThreadHealth();
-		return (true);
+		return (glass3::util::WorkState::Idle);
 	}
 };
 
@@ -81,7 +82,8 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	TESTSLEEPTIME);
 
 	// assert that class not started
-	ASSERT_TRUE(TestThreadBaseStub->getThreadState() == glass3::util::ThreadState::Initialized)<<
+	ASSERT_TRUE(TestThreadBaseStub->getWorkThreadsState() ==
+			glass3::util::ThreadState::Initialized)<<
 	"TestThreadBaseStub not started";
 
 	// assert that healthCheck is true
@@ -111,7 +113,7 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	std::this_thread::sleep_for(std::chrono::seconds(WAITTIME / 2));
 
 	// assert that class running
-	ASSERT_TRUE(TestThreadBaseStub->getThreadState() ==
+	ASSERT_TRUE(TestThreadBaseStub->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started)<< "TestThreadBaseStub running";
 
 	// assert that healthCheck is true
@@ -135,10 +137,10 @@ TEST(ThreadBaseClassTest, CombinedTest) {
 	ASSERT_TRUE(TestThreadBaseStub->stop())<< "stop was successful";
 
 	// wait a little while
-		std::this_thread::sleep_for(std::chrono::seconds(WAITTIME / 2));
+	std::this_thread::sleep_for(std::chrono::seconds(WAITTIME / 2));
 
 	// assert that class not started
-	ASSERT_TRUE(TestThreadBaseStub->getThreadState() ==
+	ASSERT_TRUE(TestThreadBaseStub->getWorkThreadsState() ==
 			glass3::util::ThreadState::Stopped)<< "TestThreadBaseStub not started";
 
 	// assert that healthCheck is false
@@ -155,7 +157,7 @@ TEST(ThreadBaseClassTest, KillTest) {
 
 	// create a threadbasestub
 	threadbasestub * TestThreadBaseStub = new threadbasestub(name,
-			TESTSLEEPTIME);
+	TESTSLEEPTIME);
 
 	// start the thread
 	ASSERT_TRUE(TestThreadBaseStub->start())<< "start was successful";
@@ -176,13 +178,12 @@ TEST(ThreadBaseClassTest, KillTest) {
 	// assert that healthCheck is false
 	ASSERT_FALSE(TestThreadBaseStub->healthCheck())<<
 	"TestThreadBaseStub healthCheck is false";
-
-	// cleanup
-	delete (TestThreadBaseStub);
 }
 
 // tests various failure conditions
 TEST(ThreadBaseClassTest, FailTests) {
+	// glass3::util::log_init("ThreadBaseClassTest", "debug", ".", true);
+
 	// create a threadbasestub
 	threadbasestub * TestThreadBaseStub = new threadbasestub();
 
@@ -198,7 +199,7 @@ TEST(ThreadBaseClassTest, FailTests) {
 	// allocation test
 	TestThreadBaseStub->testSetThreadState(glass3::util::ThreadState::Stopped);
 	ASSERT_FALSE(TestThreadBaseStub->start())<<
-	"second start was not successful";
+	"second start (allocation) was not successful";
 
 	// kill it
 	TestThreadBaseStub->kill = true;

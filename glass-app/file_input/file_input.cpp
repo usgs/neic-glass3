@@ -17,7 +17,7 @@
 namespace glass {
 // Construction/Destruction
 fileInput::fileInput()
-		: glass3::input::input() {
+		: glass3::input::Input() {
 	glass3::util::log("debug", "fileInput::fileInput(): Construction.");
 
 	// init config to defaults and allocate
@@ -25,8 +25,9 @@ fileInput::fileInput()
 }
 
 fileInput::fileInput(std::shared_ptr<const json::Object> &config)
-		: glass3::input::input() {
-	glass3::util::log("debug", "fileInput::fileInput(): Advanced Construction.");
+		: glass3::input::Input() {
+	glass3::util::log("debug",
+						"fileInput::fileInput(): Advanced Construction.");
 	// do basic construction
 	clear();
 
@@ -47,20 +48,20 @@ fileInput::~fileInput() {
 // configuration
 bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		glass3::util::log("error",
-					"fileInput::setup(): NULL configuration passed in.");
+		glass3::util::log(
+				"error", "fileInput::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
 	glass3::util::log("debug", "fileInput::setup(): Setting Up.");
 
 	// Cmd
-	if (!(config->HasKey("Cmd"))) {
+	if (!(config->HasKey("Configuration"))) {
 		glass3::util::log("error",
-					"fileInput::setup(): BAD configuration passed in.");
+							"fileInput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
-		std::string configtype = (*config)["Cmd"].ToString();
+		std::string configtype = (*config)["Configuration"].ToString();
 		if (configtype != "GlassInput") {
 			glass3::util::log(
 					"error",
@@ -91,7 +92,8 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("ArchiveDirectory"))) {
 		// archive is optional
 		setArchiveDir("");
-		glass3::util::log("info", "fileInput::setup(): Not Archiving fileInput.");
+		glass3::util::log("info",
+							"fileInput::setup(): Not Archiving fileInput.");
 	} else {
 		setArchiveDir((*config)["ArchiveDirectory"].ToString());
 		glass3::util::log(
@@ -110,8 +112,9 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 				"defaulting to gpick.");
 	} else {
 		setFormat((*config)["Format"].ToString());
-		glass3::util::log("info",
-					"fileInput::setup(): Using Format: " + getFormat() + ".");
+		glass3::util::log(
+				"info",
+				"fileInput::setup(): Using Format: " + getFormat() + ".");
 	}
 
 	// shutdown when no data
@@ -133,8 +136,9 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("ShutdownWait"))) {
 		// m_iShutdownWait is optional
 		setShutdownWait(60);
-		glass3::util::log("info",
-					"fileInput::setup(): Defaulting to 60 for ShutdownWait");
+		glass3::util::log(
+				"info",
+				"fileInput::setup(): Defaulting to 60 for ShutdownWait");
 	} else {
 		setShutdownWait((*config)["ShutdownWait"].ToInt());
 		glass3::util::log(
@@ -145,7 +149,7 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
-	glass3::input::input::setup(config);
+	glass3::input::Input::setup(config);
 
 	// we're done
 	return (true);
@@ -162,15 +166,13 @@ void fileInput::clear() {
 	setShutdownWait(60);
 
 	// finally do baseclass clear
-	glass3::input::input::clear();
+	glass3::input::Input::clear();
 }
 
-std::string fileInput::getDataType(std::string input) {
-	// the format is the data type
-	return (getFormat());
-}
+std::string fileInput::fetchRawData(std::string* pOutType) {
+	// our pOutType is our format (extension)
+	*pOutType = getFormat();
 
-std::string fileInput::fetchRawData() {
 	// check to see if we've got a file
 	if ((m_InputFile.good() == true) && (m_InputFile.eof() != true)) {
 		std::string line = "";
@@ -178,17 +180,19 @@ std::string fileInput::fetchRawData() {
 		// we're processing an input file, get the next line
 		std::getline(m_InputFile, line);
 
-		// skip an empty line
-		if (line.length() == 0) {
-			return ("");
+		// skip empty lines
+		while ((line.length() == 0) && (m_InputFile.eof() != true)) {
+			// get the next line
+			std::getline(m_InputFile, line);
 		}
 
 		// skip a timestamp line (gpick format)
 		// timestamp format: 1425340828\n
 		// so a line with less than or equal to 11 characters is a timestamp
 		// (with newline)
-		if (line.length() <= 11) {
-			return ("");
+		while ((line.length() <= 11) && (m_InputFile.eof() != true)) {
+			// get the next line
+			std::getline(m_InputFile, line);
 		}
 
 		// otherwise, return the line
@@ -207,7 +211,7 @@ std::string fileInput::fetchRawData() {
 			double tAverageTime = tFileProcDuration.count() / m_iDataCount;
 
 			glass3::util::log(
-					"debug",
+					"info",
 					"fileInput::fetchRawData(): Processed "
 							+ std::to_string(m_iDataCount) + " data from file: "
 							+ m_sFileName + " in "
@@ -236,6 +240,11 @@ std::string fileInput::fetchRawData() {
 			// next time we'll start reading from the file
 			m_InputFile.open(m_sFileName, std::ios::in);
 
+			glass3::util::log(
+					"info",
+					"fileInput::fetchRawData(): Opened file: "
+							+ m_sFileName);
+
 			// reset performance counters
 			m_tFileStartTime = std::chrono::high_resolution_clock::now();
 			m_iDataCount = 0;
@@ -263,7 +272,7 @@ std::string fileInput::fetchRawData() {
 				}
 
 				// shut it down
-				setThreadState(glass3::util::ThreadState::Stopping);
+				setWorkThreadsState(glass3::util::ThreadState::Stopping);
 			}
 		}
 	}

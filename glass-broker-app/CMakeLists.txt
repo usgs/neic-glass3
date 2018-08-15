@@ -19,80 +19,46 @@ include(${CMAKE_DIR}/base.cmake)
 
 # ----- EXTERNAL LIBRARIES ----- #
 # SuperEasyJSON
-find_package(SuperEasyJSON REQUIRED)
-include_directories(${SuperEasyJSON_INCLUDE_DIRS})
-
-# glasscore
-find_package(glasscore CONFIG REQUIRED)
-include_directories(${glasscore_INCLUDE_DIRS})
-
-# util
-find_package(util CONFIG REQUIRED)
-include_directories(${util_INCLUDE_DIRS})
-include_directories(${spdlog_INCLUDE_DIRS}/..)
-include_directories(${spdlog_INCLUDE_DIRS})
+include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 
 # detection-formats
-find_package(DetectionFormats CONFIG REQUIRED)
-include_directories(${DetectionFormats_INCLUDE_DIRS})
-include_directories(${RapidJSON_INCLUDE_DIRS})
-
-# parse
-find_package(parse CONFIG REQUIRED)
-include_directories(${parse_INCLUDE_DIRS})
-
-# process
-find_package(process CONFIG REQUIRED)
-include_directories(${process_INCLUDE_DIRS})
-
-# output
-find_package(output CONFIG REQUIRED)
-include_directories(${output_INCLUDE_DIRS})
-
-# input
-find_package(input CONFIG REQUIRED)
-include_directories(${input_INCLUDE_DIRS})
-
-# HazdevBroker
-find_package(HazdevBroker CONFIG REQUIRED)
-include_directories(${HazdevBroker_INCLUDE_DIRS})
-
-# librdkafka
-set(LIBRDKAFKA_PATH "${CURRENT_SOURCE_DIR}/../../rdkafka/" CACHE PATH "Path to the rdkafka library")
-# look for the c lib
-find_library(LIBRDKAFKA_C_LIB
-    ${LIBRDKAFKA_PATH}/win32/x64/Release/${CMAKE_SHARED_LIBRARY_PREFIX}rdkafka${CMAKE_SHARED_LIBRARY_SUFFIX}
-    HINTS "${LIBRDKAFKA_PATH}/lib"
-)
-include_directories(${LIBRDKAFKA_PATH})
-
-# check to see if we found it
-if (LIBRDKAFKA_C_LIB STREQUAL "LIBRDKAFKA_C_LIB-NOTFOUND")
-    message (FATAL_ERROR "Couldn't find the librdkafka c library")
-endif ()
-include_directories(${LIBRDKAFKA_PATH}/src)
-
-# look for the cpp lib
-find_library(LIBRDKAFKA_CPP_LIB
-    ${LIBRDKAFKA_PATH}/win32/x64/Release/${CMAKE_SHARED_LIBRARY_PREFIX}rdkafka++${CMAKE_SHARED_LIBRARY_SUFFIX}
-    HINTS "${LIBRDKAFKA_PATH}/lib"
-)
-
-# check to see if we found it
-if (LIBRDKAFKA_CPP_LIB STREQUAL "LIBRDKAFKA_CPP_LIB-NOTFOUND")
-    message (FATAL_ERROR "Couldn't find the librdkafka cpp library")
-endif ()
-include_directories(${LIBRDKAFKA_PATH}/src-cpp)
+include(${CMAKE_DIR}/include_DetectionFormats.cmake)
 
 # uuid
 include(${CMAKE_DIR}/uuid.cmake)
 
-# ----- SET INCLUDE DIRECTORIES ----- #
-include_directories ("${PROJECT_BINARY_DIR}")
+# ----- GLASS3 LIBRARIES ----- #
+# util
+include(${CMAKE_DIR}/include_neic-glass3_util.cmake)
+
+# parse
+include(${CMAKE_DIR}/include_neic-glass3_parse.cmake)
+
+# glasscore
+include(${CMAKE_DIR}/include_neic-glass3_glasscore.cmake)
+
+# process
+include(${CMAKE_DIR}/include_neic-glass3_process.cmake)
+
+# output
+include(${CMAKE_DIR}/include_neic-glass3_output.cmake)
+
+# input
+include(${CMAKE_DIR}/include_neic-glass3_input.cmake)
+
+# ----- BROKER LIBRARIES ----- #
+# for some reason needs to be after input/output
+# HazdevBroker
+include(${CMAKE_DIR}/include_HazdevBroker.cmake)
+
+# librdkafka
+include(${CMAKE_DIR}/include_librdkafka.cmake)
+
+# ----- SET PROJECT INCLUDE DIRECTORIES ----- #
 include_directories(${PROJECT_SOURCE_DIR}/broker_input)
 include_directories(${PROJECT_SOURCE_DIR}/broker_output)
 
-# ----- LIBRARIES ----- #
+# ----- APPLICATION LIBRARIES ----- #
 # input
 add_library (broker_input STATIC ${PROJECT_SOURCE_DIR}/broker_input/broker_input.cpp ${PROJECT_SOURCE_DIR}/broker_input/broker_input.h)
 
@@ -106,7 +72,7 @@ set(SRCS "${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
 # no headers
 
 # ----- BUILD EXECUTABLE ----- #
-# NOTE: Order libraries are linked matters for G++
+# WARNING: linking order of libraries matters for G++
 set(EXE_LIBRARIES broker_input ${input_LIBRARIES} broker_output ${HazdevBroker_LIBRARIES} ${LIBRDKAFKA_CPP_LIB} ${LIBRDKAFKA_C_LIB} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
 if (UNIX AND NOT APPLE)
     set(ZLIB -lz)

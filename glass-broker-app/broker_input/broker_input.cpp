@@ -15,7 +15,7 @@
 namespace glass {
 
 brokerInput::brokerInput()
-		: glass3::input::input() {
+		: glass3::input::Input() {
 	glass3::util::log("debug", "brokerInput::brokerInput(): Construction.");
 
 	m_Consumer = NULL;
@@ -24,7 +24,7 @@ brokerInput::brokerInput()
 }
 
 brokerInput::brokerInput(std::shared_ptr<const json::Object> &config)
-		: glass3::input::input() {
+		: glass3::input::Input() {
 	m_Consumer = NULL;
 
 	// do basic construction
@@ -147,7 +147,7 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
-	glass3::input::input::setup(config);
+	glass3::input::Input::setup(config);
 
 	// we're done
 	return (true);
@@ -157,15 +157,13 @@ void brokerInput::clear() {
 	glass3::util::log("debug", "brokerInput::clear(): clearing configuration.");
 
 	// finally do baseclass clear
-	glass3::util::BaseClass::clear();
+	glass3::input::Input::clear();
 }
 
-std::string brokerInput::getDataType(std::string input) {
+std::string brokerInput::fetchRawData(std::string* pOutType) {
 	// we only expect json messages from the broker
-	return (std::string(JSON_TYPE));
-}
+	*pOutType = std::string(JSON_TYPE);
 
-std::string brokerInput::fetchRawData() {
 	// make sure we have a consumer
 	if (m_Consumer == NULL)
 		return ("");

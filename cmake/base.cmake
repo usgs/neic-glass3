@@ -55,3 +55,7 @@ configure_file (
     "${CMAKE_CURRENT_LIST_DIR}/project_version.h.in"
     "${PROJECT_BINARY_DIR}/project_version.h"
 )
+
+# ----- DEFAULT INCLUDE DIRECTORIES ----- #
+include_directories ("${PROJECT_BINARY_DIR}")
+include_directories(${PROJECT_SOURCE_DIR}/include)

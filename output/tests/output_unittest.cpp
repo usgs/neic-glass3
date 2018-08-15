@@ -276,7 +276,7 @@ TEST(Output, Construction) {
 	ASSERT_TRUE(outputObject.getConfig() == NULL)<< "output config is null";
 
 	// assert class is not started
-	ASSERT_TRUE(outputObject.getEventThreadState() ==
+	ASSERT_TRUE(outputObject.getWorkThreadsState() ==
 			glass3::util::ThreadState::Initialized)<< "output thread is not started";
 
 	// assert no associator
@@ -303,7 +303,7 @@ TEST(Output, Configuration) {
 	ASSERT_FALSE(outputObject->setup(NULL));
 	ASSERT_FALSE(
 			outputObject->setup(std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL1))));  // NOLINT
-	ASSERT_TRUE(
+	ASSERT_FALSE(
 			outputObject->setup(std::make_shared<json::Object>(json::Deserialize(EMPTYCONFIG))));  // NOLINT
 
 	// assert config successful
@@ -334,21 +334,17 @@ TEST(Output, Configuration) {
 	ASSERT_EQ(outputObject->getPubOnExpiration(), PUBONEXPIRE)<< "pub on expire correct";
 
 	// assert site list delay
-	ASSERT_EQ(outputObject->getSiteListDelay(), SITELISTDELAY)<< "sitelist delay correct";
-
-	// check station file
-	std::string stationfile = std::string(STATIONFILE);
-	ASSERT_STREQ(outputObject->getStationFile().c_str(),
-			stationfile.c_str())<< "check station file";
+	ASSERT_EQ(outputObject->getSiteListRequestInterval(), SITELISTDELAY)<<
+	"sitelist delay correct";
 
 	// check agency id
 	std::string agencyid = std::string(TESTAGENCYID);
-	ASSERT_STREQ(outputObject->getOutputAgencyId().c_str(),
+	ASSERT_STREQ(outputObject->getDefaultAgencyId().c_str(),
 			agencyid.c_str())<< "check agency id";
 
 	// check author
 	std::string author = std::string(TESTAUTHOR);
-	ASSERT_STREQ(outputObject->getOutputAuthor().c_str(),
+	ASSERT_STREQ(outputObject->getDefaultAuthor().c_str(),
 			author.c_str())<< "check author";
 }
 
@@ -373,7 +369,7 @@ TEST(Output, ThreadTests) {
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert class is  started
-	ASSERT_TRUE(outputObject->getEventThreadState() ==
+	ASSERT_TRUE(outputObject->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started)<< "output thread is started";
 
 	// thread status checks
@@ -389,7 +385,7 @@ TEST(Output, ThreadTests) {
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// assert class is not started
-	ASSERT_FALSE(outputObject->getEventThreadState() ==
+	ASSERT_FALSE(outputObject->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started)<< "output thread is not started";
 
 	// stop output thread again
@@ -405,13 +401,13 @@ TEST(Output, TrackingTests) {
 	time_t tNow;
 	std::time(&tNow);
 
-	// setup
-	ASSERT_FALSE(outputThread.setup(NULL));
-	ASSERT_FALSE(
-			outputThread.setup(std::make_shared<json::Object>( json::Object(json::Deserialize(CONFIGFAIL1)))));  // NOLINT
+	// configure output
+	glass3::util::Config * OutputConfig = new glass3::util::Config(
+			std::string(TESTPATH), std::string(CONFIGFILENAME));
+	std::shared_ptr<const json::Object> OutputJSON = OutputConfig->getJSON();
 
-	ASSERT_TRUE(
-			outputThread.setup(std::make_shared<json::Object>( json::Object(json::Deserialize(EMPTYCONFIG)))));  // NOLINT
+	// setup
+	ASSERT_TRUE(outputThread.setup(OutputJSON))<< "output config is successful";
 
 	std::shared_ptr<json::Object> tracking1 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING1)));
@@ -872,8 +868,7 @@ TEST(Output, StationRequestTest) {
 }
 
 TEST(Output, StationListTest) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", "debug", std::string(TESTPATH), true);
 
 	OutputStub* outputObject = new OutputStub();
 
@@ -893,8 +888,8 @@ TEST(Output, StationListTest) {
 	// assert config successful
 	ASSERT_TRUE(outputObject->setup(OutputJSON))<< "output config is successful";
 
-	// set the site list delay short so it happens during the test
-	outputObject->setSiteListDelay(2);
+	// set the site list request interval short so it happens during the test
+	outputObject->setSiteListRequestInterval(2);
 
 	// start output thread
 	outputObject->start();

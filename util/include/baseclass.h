@@ -11,6 +11,7 @@
 #include <mutex>
 #include <atomic>
 #include <memory>
+#include <string>
 
 namespace glass3 {
 namespace util {
@@ -80,6 +81,46 @@ class BaseClass {
 	 */
 	bool getSetup();
 
+	/**
+	 * \brief Function to retrieve the name of the default agency id
+	 *
+	 * This function retrieves the name of default agency id, this name is used
+	 * by many of the  derived classes
+	 *
+	 * \return A std::string containing the  agency id
+	 */
+	const std::string& getDefaultAgencyId();
+
+	/**
+	 * \brief Function to set the name of the default agency id
+	 *
+	 * This function sets the name of the default agency id, this name is used
+	 * by many of the  derived classes
+	 *
+	 * \param id = A std::string containing the default agency id to set
+	 */
+	void setDefaultAgencyId(const std::string &id);
+
+	/**
+	 * \brief Function to retrieve the name of the default author
+	 *
+	 * This function retrieves the name of the default author, this name is used
+	 * by many of the  derived classes
+	 *
+	 * \return A std::string containing the author
+	 */
+	const std::string& getDefaultAuthor();
+
+	/**
+	 * \brief Function to set the name of the default author
+	 *
+	 * This function sets the name of the default author, this name is used
+	 * by many of the  derived classes
+	 *
+	 * \param author = A std::string containing the default author to set
+	 */
+	void setDefaultAuthor(const std::string &author);
+
  protected:
 	/**
 	 * \brief Retrieves a reference to the class member containing the mutex
@@ -97,6 +138,18 @@ class BaseClass {
 	 * setup, set to true if setup was successful.
 	 */
 	std::atomic<bool> m_bIsSetup;
+
+	/**
+	 * \brief A std::string containing the default agency id to
+	 * use in parsing if one is not provided.
+	 */
+	std::string m_DefaultAgencyID;
+
+	/**
+	 * \brief A std::string containing the default author to
+	 * use in parsing if one is not provided.
+	 */
+	std::string m_DefaultAuthor;
 
 	/**
 	 * \brief A mutex to control access to BaseClass members

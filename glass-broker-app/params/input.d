@@ -2,7 +2,7 @@
 # Configuration file for the glass input component
 {
 	# this configuration is for glass broker input
-	"Configuration":"glass-broker-app-input",
+	"Configuration":"GlassInput",
 
 	# the broker to use
 	"HazdevBrokerConfig": {

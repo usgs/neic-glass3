@@ -76,6 +76,10 @@ class brokerOutput : public glass3::output::output {
 	 */
 	void clear() override;
 
+	void setStationFileName(const std::string &filename);
+
+	const std::string getStationFileName();
+
  protected:
 	/**
 	 * \brief output file writing function
@@ -106,6 +110,11 @@ class brokerOutput : public glass3::output::output {
 
 	RdKafka::Topic * m_OutputTopic;
 	RdKafka::Topic * m_StationRequestTopic;
+
+	/**
+	 * \brief the std::string containing the station file name.
+	 */
+	std::string m_sStationFileName;
 
 	/**
 	 * \brief the mutex for configuration

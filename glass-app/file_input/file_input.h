@@ -32,7 +32,7 @@ namespace glass {
  * fileInput inherits from the glass3::input class.
  * fileInput implements the iinput interface.
  */
-class fileInput : public glass3::input::input {
+class fileInput : public glass3::input::Input {
  public:
 	/**
 	 * \brief fileInput constructor
@@ -179,25 +179,16 @@ class fileInput : public glass3::input::input {
 
  protected:
 	/**
-	 * \brief get input data type
+	 * \brief get input data string and type
 	 *
-	 * A function (overridden from glass3::input) that determines the input data
-	 * type
+	 * A function (overridden from glass3::input) that that retrieves the next
+	 * data message and type from an input source
 	 *
-	 * \param input - A json::Object containing the data to validate
-	 * \return returns a std::string containing the input data type
-	 */
-	virtual std::string getDataType(std::string input) override;
-
-	/**
-	 * \brief get input data string
-	 *
-	 * A function (overridden from glass3::input)that retrieves the next data
-	 * message (line) from an input file on disk
-	 *
+	 * \param pOutType - A pointer to a std::string used to pass out the type of
+	 * the data
 	 * \return returns a std::string containing the input data message
 	 */
-	virtual std::string fetchRawData() override;
+	virtual std::string fetchRawData(std::string* pOutType) override;
 
 	/**
 	 * \brief cleanup file function

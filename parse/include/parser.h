@@ -24,10 +24,14 @@ namespace glass3 {
 namespace parse {
 
 /**
- * \brief glass parser class
+ * \brief glass3 parser class
  *
- * The glass parser class is a class encapsulating basic parsing
- * logic and validation.
+ * The glass3 parser class is a class encapsulating basic parsing
+ * logic and validation for neic-glass3.
+ *
+ * This class uses the external SuperEasyJSON library to return parsed messages
+ *
+ * This class extends from glass3::util::BaseClass
  *
  * This class is intended to be extended by derived classes.
  */
@@ -57,81 +61,18 @@ class Parser : public glass3::util::BaseClass {
 	virtual ~Parser();
 
 	/**
-	 * \brief parsing function
+	 * \brief Virtual parsing function to be overridden by deriving classes,
+	 * used to parse input
 	 *
-	 * Virtual parsing function to be overridden by deriving classes, used to
-	 * parse input
+	 * A pure virtual function used to parse a given string (from a file, broker,
+	 * or other source) into a SuperEasyJSON object (the common data interchange
+	 * object) which is returned as a shared_ptr for  use in other neic-glass3
+	 * functions and classes (such as glasscore).
 	 *
 	 * \param input - The std::string to parse
-	 * \return Returns a shared pointer to the json::Object containing
-	 * the data.
+	 * \return Returns a shared_ptr to the json::Object containing the data.
 	 */
 	virtual std::shared_ptr<json::Object> parse(const std::string &input) = 0;
-
-	/**
-	 * \brief validation function
-	 *
-	 * Virtual validation function to be overridden by deriving classes, used
-	 * to validate parsed input
-	 *
-	 * \param input - A shared pointer to a json::Object containing the data to
-	 * validate.
-	 * \return Returns true if valid, false otherwise.
-	 */
-	virtual bool validate(std::shared_ptr<json::Object> &input) = 0;  // NOLINT
-
-	/**
-	 * \brief Function to retrieve the name of the default agency id
-	 *
-	 * This function retrieves the name of default agency id, this name is used
-	 * in parsing
-	 *
-	 * \return A std::string containing the  agency id
-	 */
-	const std::string& getAgencyId();
-
-	/**
-	 * \brief Function to set the name of the default agency id
-	 *
-	 * This function sets the name of the default agency id, this name is used
-	 * in parsing
-	 *
-	 * \param id = A std::string containing the default agency id to set
-	 */
-	void setAgencyId(std::string id);
-
-	/**
-	 * \brief Function to retrieve the name of the default author
-	 *
-	 * This function retrieves the name of the default author, this name is used
-	 * in parsing
-	 *
-	 * \return A std::string containing the author
-	 */
-	const std::string& getAuthor();
-
-	/**
-	 * \brief Function to set the name of the default author
-	 *
-	 * This function sets the name of the default author, this name is used in
-	 * parsing
-	 *
-	 * \param author = A std::string containing the default author to set
-	 */
-	void setAuthor(std::string author);
-
- private:
-	/**
-	 * \brief A std::string containing the default agency id to
-	 * use in parsing if one is not provided.
-	 */
-	std::string m_AgencyID;
-
-	/**
-	 * \brief A std::string containing the default author to
-	 * use in parsing if one is not provided.
-	 */
-	std::string m_Author;
 };
 }  // namespace parse
 }  // namespace glass3

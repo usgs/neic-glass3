@@ -8,11 +8,55 @@
 #include <vector>
 #include <memory>
 
+/* The correlation  message is space delimited and has the following format:
+ * 2015/03/23 07:36:32.880 36.769 -98.019 5.0 2.6136482 mblg GS OK032 HHZ 00 P 2015/03/23 07:36:36.100 0.6581729 0.65  // NOLINT
+ *
+ * Where:
+ *  index 0 is the origin date
+ *  index 1 is the origin time
+ *  index 2 is the latitude
+ *  index 3 is the longitude
+ *  index 4 is the depth
+ *  index 5 is the magnitude
+ *  index 6 is the magnitude type
+ *  index 7 is the network code
+ *  index 8 is the station code
+ *  index 9 is the channel code
+ *  index 10 is the location code
+ *  index 11 is the phase type
+ *  index 12 is the arrival date
+ *  index 13 is the arrival time
+ *  index 14 is the correlation value
+ *  index 15 is the correlation threshold
+ *
+ * Since the correlation format does not include any source information, the
+ * default author and default agency ID will be used to provide source
+ * attribution
+ */
+#define ORIGINDATE_INDEX 0
+#define ORIGINTIME_INDEX 1
+#define LATITUDE_INDEX 2
+#define LONGITUDE_INDEX 3
+#define DEPTH_INDEX 4
+#define MAGNITUDE_INDEX 5
+#define MAGNITUDETYPE_INDEX 6
+#define NETWORK_INDEX 7
+#define STATION_INDEX 8
+#define CHANNEL_INDEX 9
+#define LOCATION_INDEX 10
+#define PHASETYPE_INDEX 11
+#define ARRIVALDATE_INDEX 12
+#define ARRIVALTIME_INDEX 13
+#define CORRELATION_INDEX 14
+#define CORRELATIONTHRESHOLD_INDEX 15
+#define CC_MSG_MAX_INDEX 15
+
 namespace glass3 {
 namespace parse {
 // ---------------------------------------------------------------------CCParser
-CCParser::CCParser(const std::string &newAgencyID, const std::string &newAuthor)
-		: glass3::parse::Parser::Parser(newAgencyID, newAuthor) {
+CCParser::CCParser(const std::string &defaultAgencyID,
+					const std::string &defaultAuthor)
+		: glass3::parse::Parser::Parser(defaultAgencyID, defaultAuthor) {
 }
 
 // --------------------------------------------------------------------~CCParser
@@ -22,33 +66,20 @@ CCParser::~CCParser() {
 // -----------------------------------------------------------------------parse
 std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 	// make sure we got something
-	if (input.length() == 0)
+	if (input.length() == 0) {
 		return (NULL);
+	}
 
 	glass3::util::log("trace", "ccparser::parse: Input String: " + input + ".");
 
-	// cc pick  format
-	// 2015/03/23 07:36:32.880 36.769 -98.019 5.0 2.6136482 mblg GS OK032 HHZ 00 P 2015/03/23 07:36:36.100 0.6581729 0.65 // NOLINT
-	//
-	// indexes 0-1 is the origin time, need
-	// index 2 is the lat, need
-	// index 3 is the lon, need
-	// index 4 is the depth, need
-	// indexes 5-6 is the magnitude, need
-	// indexes 7-10 is the NSCL, need
-	// index 11 is the phase, need
-	// indexes 12-13 is the arrival time, need
-	// index 14 is the correlation value, need
-	// index 15, ignore
-
 	try {
-		// split the ccpick, the gpick is space delimited
-		std::vector<std::string> splitccpick = glass3::util::split(input, ' ');
+		// split the ccpick, the format is space delimited
+		std::vector<std::string> splitInput = glass3::util::split(input, ' ');
 
 		// make sure we split the response into at
 		// least as many elements as we need (16 since the pick is on the
 		// end of the message)
-		if (splitccpick.size() < 15) {
+		if (splitInput.size() < CC_MSG_MAX_INDEX) {
 			glass3::util::log(
 					"error",
 					"ccparser::parse: ccpick did not split into at least 15 "
@@ -56,76 +87,92 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 			return (NULL);
 		}
 
-		// parse out the phase date and time first
-		std::string phasedate = glass3::util::removeChars(splitccpick[12], "/");
-		std::string phasetime = glass3::util::removeChars(splitccpick[13], ":");
-
 		// create the new correlation
 		// build the json correlation object
-		detectionformats::correlation newcorrelation;
+		detectionformats::correlation newCorrelation;
 
 		// Make up a PID based on the type of pick (cc) + SCNL + the pick time.
 		// I *think* this is unique enough...
-		newcorrelation.id = "CC" + splitccpick[8] + splitccpick[9]
-				+ splitccpick[7] + splitccpick[10]
-				+ glass3::util::removeChars(splitccpick[12], "/")
+		newCorrelation.id = "CC" + splitInput[STATION_INDEX]
+				+ splitInput[CHANNEL_INDEX] + splitInput[NETWORK_INDEX]
+				+ splitInput[LOCATION_INDEX]
+				+ glass3::util::removeChars(splitInput[ARRIVALDATE_INDEX], "/")
 				+ glass3::util::removeChars(
-						glass3::util::removeChars(splitccpick[13], ":"), ".");
+						glass3::util::removeChars(splitInput[ARRIVALTIME_INDEX],
+													":"),
+						".");
 
 		// build the site object
-		newcorrelation.site.station = splitccpick[8];
-		newcorrelation.site.channel = splitccpick[9];
-		newcorrelation.site.network = splitccpick[7];
-		newcorrelation.site.location = splitccpick[10];
+		newCorrelation.site.station = splitInput[STATION_INDEX];
+		newCorrelation.site.channel = splitInput[CHANNEL_INDEX];
+		newCorrelation.site.network = splitInput[NETWORK_INDEX];
+		newCorrelation.site.location = splitInput[LOCATION_INDEX];
 
 		// build the source object
-		// need to think more about this one
-		newcorrelation.source.agencyid = getAgencyId();
-		newcorrelation.source.author = getAuthor();
+		// NOTE: Since the format does not provide this information,
+		// use the defaults
+		newCorrelation.source.agencyid = getDefaultAgencyId();
+		newCorrelation.source.author = getDefaultAuthor();
 
 		// phase
-		newcorrelation.phase = splitccpick[11];
+		newCorrelation.phase = splitInput[PHASETYPE_INDEX];
 
 		// convert the phase time into epoch time
 		// if you remove the spaces, '/', and ':' you get "DateTime"
-		newcorrelation.time = glass3::util::convertDateTimeToEpochTime(
-				phasedate + phasetime);
+		newCorrelation.time = glass3::util::convertDateTimeToEpochTime(
+				glass3::util::removeChars(splitInput[ARRIVALDATE_INDEX], "/")
+						+ glass3::util::removeChars(
+								splitInput[ARRIVALTIME_INDEX], ":"));
 
 		// correlation
-		newcorrelation.correlationvalue = std::stod(splitccpick[14]);
+		newCorrelation.correlationvalue = std::stod(
+				splitInput[CORRELATION_INDEX]);
 
 		// latitude
-		newcorrelation.hypocenter.latitude = std::stod(splitccpick[2]);
+		newCorrelation.hypocenter.latitude = std::stod(
+				splitInput[LATITUDE_INDEX]);
 
 		// longitude
-		newcorrelation.hypocenter.longitude = std::stod(splitccpick[3]);
+		newCorrelation.hypocenter.longitude = std::stod(
+				splitInput[LONGITUDE_INDEX]);
 
 		// convert the origin time into epoch time
 		// if you remove the spaces, '/', and ':' you get "DateTime"
-		newcorrelation.hypocenter.time =
+		newCorrelation.hypocenter.time =
 				glass3::util::convertDateTimeToEpochTime(
-						glass3::util::removeChars(splitccpick[0], "/")
-								+ glass3::util::removeChars(splitccpick[1],
-															":"));
+						glass3::util::removeChars(splitInput[ORIGINDATE_INDEX],
+													"/")
+								+ glass3::util::removeChars(
+										splitInput[ORIGINTIME_INDEX], ":"));
 
 		// depth
-		newcorrelation.hypocenter.depth = std::stod(splitccpick[4]);
+		newCorrelation.hypocenter.depth = std::stod(splitInput[DEPTH_INDEX]);
 
 		// event type is not specified, default to earthquake
-		newcorrelation.eventtype = "earthquake";
+		newCorrelation.eventtype = "earthquake";
 
 		// magnitude
-		newcorrelation.magnitude = std::stod(splitccpick[5]);
+		newCorrelation.magnitude = std::stod(splitInput[MAGNITUDE_INDEX]);
+
+		// validate
+		if (newCorrelation.isvalid() == false) {
+			glass3::util::log("warning",
+								"ccparser::parse: Correlation invalid.");
+			return (NULL);
+		}
 
 		// convert to our json implementation.
 		rapidjson::Document correlationdocument;
 		std::string correlationstring = detectionformats::ToJSONString(
-				newcorrelation.tojson(correlationdocument,
+				newCorrelation.tojson(correlationdocument,
 										correlationdocument.GetAllocator()));
+
+		// and then back into a SuperEasyJSON value object
 		json::Value deserializedJSON = json::Deserialize(correlationstring);
 
-		// make sure we got valid json
+		// make sure we got a valid json value object
 		if (deserializedJSON.GetType() != json::ValueType::NULLVal) {
+			// create a shared pointer to the JSON object
 			std::shared_ptr<json::Object> newjsoncorrelation = std::make_shared<
 					json::Object>(json::Object(deserializedJSON.ToObject()));
 
@@ -137,28 +184,12 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 			return (newjsoncorrelation);
 		}
 	} catch (const std::exception &) {
-		glass3::util::log("warning", "ccparser::parse: Problem parsing cc pick.");
+		glass3::util::log(
+				"warning",
+				"ccparser::parse: exception parsing correlation data.");
 	}
 
 	return (NULL);
-}
-
-// ---------------------------------------------------------------------validate
-bool CCParser::validate(std::shared_ptr<json::Object> &input) {
-	// nullcheck
-	if (input == NULL) {
-		return (false);
-	}
-
-	// convert to detectionformats::correlation
-	std::string correlationstring = json::Serialize(*input);
-	rapidjson::Document correlationdocument;
-	detectionformats::correlation correlationobject(
-			detectionformats::FromJSONString(correlationstring,
-												correlationdocument));
-
-	// let detection formats validate
-	return (correlationobject.isvalid());
 }
 }  // namespace parse
 }  // namespace glass3

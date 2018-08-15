@@ -20,7 +20,15 @@ namespace parse {
  * The glass json parser class is a class encapsulating the logic for
  * converting a string to a json message and validating the results.
  *
- * This class inherits from the parser class
+ * JSON messages don't have a single format. Any of the valid detection-formats
+ * messages are accepted by this parser.
+ *
+ * This class depends on the earthquake detection formats library to parse and
+ * format message strings.
+ *
+ * This class uses the external SuperEasyJSON library to return parsed messages
+ *
+ * This class inherits from the glass3::parse::Parser class
  */
 class JSONParser : public glass3::parse::Parser {
  public:
@@ -30,12 +38,13 @@ class JSONParser : public glass3::parse::Parser {
 	 * The constructor for the jsonparser class.
 	 * Initializes members to provided values.
 	 *
-	 * \param newAgencyID - A std::string containing the agency id to
+	 * \param defaultAgencyID - A std::string containing the agency id to
 	 * use if one is not provided.
-	 * \param newAuthor - A std::string containing the author to
+	 * \param defaultAuthor - A std::string containing the author to
 	 * use if one is not provided.
 	 */
-	JSONParser(const std::string &newAgencyID, const std::string &newAuthor);
+	JSONParser(const std::string &defaultAgencyID,
+				const std::string &defaultAuthor);
 
 	/**
 	 * \brief jsonparser destructor
@@ -47,25 +56,17 @@ class JSONParser : public glass3::parse::Parser {
 	/**
 	 * \brief json parsing function
 	 *
-	 * Parsing function that parses json formatted strings
-	 * into json::Objects
+	 * An overridden function (from Parser) used to parse a given json
+	 * formatted string (from a file, broker, or other source) into a
+	 * SuperEasyJSON object (the common data interchange object) which is
+	 * returned as a shared_ptr for  use in other neic-glass3 functions and
+	 * classes (such as glasscore).
 	 *
-	 * \param input - The global pick formatted std::string to parse
-	 * \return Returns a pointer to the json::Object containing
+	 * \param input - The json formatted std::string to parse
+	 * \return Returns a shared_ptr to the json::Object containing
 	 * the data.
 	 */
-	std::shared_ptr<json::Object> parse(const std::string &input) override; // NOLINT
-
-	/**
-	 * \brief json validation function
-	 *
-	 * Validates a json object
-	 *
-	 * \param input - A pointer to a json::Object containing the data to
-	 * validate.
-	 * \return Returns true if valid, false otherwise.
-	 */
-	bool validate(std::shared_ptr<json::Object> &input) override;
+	std::shared_ptr<json::Object> parse(const std::string &input) override;  // NOLINT
 };
 }  // namespace parse
 }  // namespace glass3

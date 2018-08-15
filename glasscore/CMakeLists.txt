@@ -18,14 +18,12 @@ include(${CMAKE_DIR}/base.cmake)
 
 # ----- EXTERNAL LIBRARIES ----- #
 # SuperEasyJSON
-find_package(SuperEasyJSON CONFIG REQUIRED)
-include_directories(${SuperEasyJSON_INCLUDE_DIRS})
+include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 
 # uuid
 include(${CMAKE_DIR}/uuid.cmake)
 
-# ----- SET INCLUDE DIRECTORIES ----- #
-include_directories("${PROJECT_BINARY_DIR}")
+# ----- SET PROJECT INCLUDE DIRECTORIES ----- #
 include_directories(${PROJECT_SOURCE_DIR}/glassutil/include)
 include_directories(${PROJECT_SOURCE_DIR}/traveltime/include)
 include_directories(${PROJECT_SOURCE_DIR}/glasslib/include)
@@ -55,7 +53,7 @@ include(${CMAKE_DIR}/cpplint.cmake)
 
 # ----- RUN UNIT TESTS ----- #
 file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
-# NOTE: Order libraries are linked matters for G++
+# WARNING: linking order of libraries matters for G++
 set(TEST_LIBRARIES ${SuperEasyJSON_LIBRARIES})
 if (UNIX AND NOT APPLE)
     set(TEST_LIBRARIES ${TEST_LIBRARIES} ${LIBUUID_LIBRARY})

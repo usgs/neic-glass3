@@ -2,7 +2,7 @@
 # Configuration file for the glass input component
 {
 	# this config is for glass
-	"Cmd":"GlassInput",
+	"Configuration":"GlassInput",
 
 	# the directory to read input from
 	"InputDirectory":"./testdata/inputtests",

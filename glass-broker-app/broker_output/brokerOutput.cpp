@@ -29,11 +29,10 @@ brokerOutput::brokerOutput()
 	clear();
 }
 
-
 brokerOutput::brokerOutput(std::shared_ptr<json::Object> &config)
 		: glass3::output::output() {
 	glass3::util::log("debug",
-				"brokerOutput::brokerOutput(): Advanced Construction.");
+						"brokerOutput::brokerOutput(): Advanced Construction.");
 
 	m_OutputProducer = NULL;
 	m_StationRequestProducer = NULL;
@@ -60,8 +59,9 @@ brokerOutput::~brokerOutput() {
 // configuration
 bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		glass3::util::log("error",
-					"brokerOutput::setup(): NULL configuration passed in.");
+		glass3::util::log(
+				"error",
+				"brokerOutput::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
@@ -69,15 +69,16 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 
 	// Configuration
 	if (!(config->HasKey("Configuration"))) {
-		glass3::util::log("error",
-					"brokerOutput::setup(): BAD configuration passed in.");
+		glass3::util::log(
+				"error", "brokerOutput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Configuration"];
 		if (configtype != "GlassOutput") {
-			glass3::util::log("error",
-						"brokerOutput::setup(): Wrong configuration provided, "
-								"configuration is for: " + configtype + ".");
+			glass3::util::log(
+					"error",
+					"brokerOutput::setup(): Wrong configuration provided, "
+							"configuration is for: " + configtype + ".");
 			return (false);
 		}
 	}
@@ -86,14 +87,30 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	// this mutex may be pointless
 	m_BrokerOutputConfigMutex.lock();
 
+	// StationFileName
+	if (!(config->HasKey("StationFileName")
+			&& ((*config)["StationFileName"].GetType()
+					== json::ValueType::StringVal))) {
+		glass3::util::log(
+				"info",
+				"brokerOutput::setup(): StationFileName not specified.");
+		setStationFileName("");
+	} else {
+		setStationFileName((*config)["StationFileName"].ToString());
+
+		glass3::util::log(
+				"info",
+				"brokerOutput::setup(): Using StationFileName: "
+						+ getStationFileName() + ".");
+	}
+
 	// producer config
 	std::string producerConfig = "";
 	if (!(config->HasKey("HazdevBrokerConfig"))) {
 		// consumer config is required
 		producerConfig = "";
 		glass3::util::log(
-				"error",
-				"brokerOutput::setup(): Required configuration value "
+				"error", "brokerOutput::setup(): Required configuration value "
 				"HazdevBrokerConfig not specified.");
 		return (false);
 	} else {
@@ -220,7 +237,10 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 }
 
 void brokerOutput::clear() {
-	glass3::util::log("debug", "brokerOutput::clear(): clearing configuration.");
+	glass3::util::log("debug",
+						"brokerOutput::clear(): clearing configuration.");
+
+	setStationFileName("");
 
 	// finally do baseclass clear
 	glass3::output::output::clear();
@@ -230,18 +250,20 @@ void brokerOutput::clear() {
 void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 								const std::string &message) {
 	if (type == "") {
-		glass3::util::log("error", "fileOutput::sendOutput(): empty type passed in.");
+		glass3::util::log("error",
+							"fileOutput::sendOutput(): empty type passed in.");
 		return;
 	}
 
 	if (id == "") {
-		glass3::util::log("error", "fileOutput::sendOutput(): empty id passed in.");
+		glass3::util::log("error",
+							"fileOutput::sendOutput(): empty id passed in.");
 		return;
 	}
 
 	if (message == "") {
-		glass3::util::log("error",
-					"fileOutput::sendOutput(): empty message passed in.");
+		glass3::util::log(
+				"error", "fileOutput::sendOutput(): empty message passed in.");
 		return;
 	}
 
@@ -260,7 +282,7 @@ void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 													message);
 		}
 	} else if (type == "StationList") {
-		std::string filename = getStationFile();
+		std::string filename = getStationFileName();
 
 		if (filename != "") {
 			// write to disk
@@ -305,5 +327,17 @@ void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 
 void brokerOutput::logProducer(const std::string &message) {
 	glass3::util::log("debug", "brokerOutput::logProducer(): " + message);
+}
+
+// ---------------------------------------------------------setStationFileName
+void brokerOutput::setStationFileName(const std::string &filename) {
+	std::lock_guard<std::mutex> guard(getMutex());
+	m_sStationFileName = filename;
+}
+
+// ---------------------------------------------------------getStationFileName
+const std::string brokerOutput::getStationFileName() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sStationFileName);
 }
 }  // namespace glass

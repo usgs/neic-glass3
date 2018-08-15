@@ -244,7 +244,8 @@ int main(int argc, char* argv[]) {
 	// create our objects
 	glass::brokerInput * InputThread = new glass::brokerInput();
 	glass::brokerOutput * OutputThread = new glass::brokerOutput();
-	glass::Associator * AssocThread = new glass::Associator();
+	glass3::process::Associator * AssocThread =
+			new glass3::process::Associator(InputThread, OutputThread);
 
 	// setup input thread
 	std::shared_ptr<const json::Object> input_config_json =
@@ -285,10 +286,6 @@ int main(int argc, char* argv[]) {
 	// output needs to know about the associator thread to request
 	// information
 	OutputThread->setAssociator(AssocThread);
-
-	// assoc thread needs to know about the input and output threads
-	AssocThread->Input = InputThread;
-	AssocThread->Output = OutputThread;
 
 	// configure assoc thread (glass)
 	// first send in initialize
