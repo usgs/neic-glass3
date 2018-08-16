@@ -346,6 +346,11 @@ class CHypoList {
 	 */
 	bool statusCheck();
 
+	/**
+	 * \brief m_iNumThreads Getter
+	 */
+	int getNThreads();
+
  private:
 	/**
 	 * \brief the job sleep

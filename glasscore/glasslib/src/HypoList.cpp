@@ -958,6 +958,12 @@ int CHypoList::getVHypoSize() const {
 	return (vHypo.size());
 }
 
+// ---------------------------------------------------------getVHypoSize
+int CHypoList::getNThreads() {
+	std::lock_guard<std::recursive_mutex> vHypoGuard(m_vHypoMutex);
+	return(m_iNumThreads);
+}
+
 // ---------------------------------------------------------indexHypo
 int CHypoList::indexHypo(double tOrg) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);

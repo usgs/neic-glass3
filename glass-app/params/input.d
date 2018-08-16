@@ -13,10 +13,10 @@
 	# the directory to archive input
 	"ArchiveDirectory":"./archive",
 
-	# the formats glass will accept
+	# the format glass will accept
 	# glass currently understands the gpick, jsonpick,
 	# jsonhypo, and ccdata (dat) formats
-	"Formats":["gpick","gpicks","jsonpick","jsonhypo","jsoncorrelation","dat"],
+	"Format":"gpick",
 
 	# the maximum size of the input queue
 	"QueueMaxSize":1000,

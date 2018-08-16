@@ -20,6 +20,8 @@
 #include "HypoList.h"
 #include "Logit.h"
 
+#define MAX_QUEUE_FACTOR 3
+
 namespace glasscore {
 
 // pick sort function
@@ -319,7 +321,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// we don't want to build up a huge queue of unprocessed
 	// picks
 	if ((pGlass) && (pGlass->getHypoList())) {
-		while (queueSize >= (m_iNumThreads)) {
+		while (queueSize >= (m_iNumThreads * MAX_QUEUE_FACTOR)) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 			// check to see if the queue has changed size
@@ -668,6 +670,18 @@ void CPickList::processPick() {
 		}
 		if (pGlass->getHypoList() == NULL) {
 			// give up some time at the end of the loop
+			if (m_bRunProcessLoop == true) {
+				jobSleep();
+			}
+
+			// on to the next loop
+			continue;
+		}
+
+		// check to see that we've not run to far ahead of the hypo processing
+		if (pGlass->getHypoList()->getFifoSize()
+				> (pGlass->getHypoList()->getNThreads() * MAX_QUEUE_FACTOR)) {
+			// give up some time
 			if (m_bRunProcessLoop == true) {
 				jobSleep();
 			}
