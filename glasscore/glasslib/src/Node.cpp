@@ -6,6 +6,7 @@
 #include <mutex>
 #include <algorithm>
 #include <vector>
+#include <cmath>
 #include "Node.h"
 #include "Glass.h"
 #include "Web.h"
