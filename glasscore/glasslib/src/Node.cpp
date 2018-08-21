@@ -419,7 +419,7 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 	double tRes1 = -1;
 	if (travelTime1 > 0) {
 		// calculate time residual
-		tRes1 = tObservedTT - travelTime1;
+		tRes1 = std::abs(tObservedTT - travelTime1);
 
 		// calculate distance residual
 		// NOTE:  dT/dKm is hard coded
@@ -428,7 +428,7 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 	double tRes2 = -1;
 	if (travelTime2 > 0) {
 		// calculate time residual
-		tRes2 = tObservedTT - travelTime2;
+		tRes2 = std::abs(tObservedTT - travelTime2);
 
 		// calculate distance residual
 		// NOTE:  dT/dKm is hard coded
