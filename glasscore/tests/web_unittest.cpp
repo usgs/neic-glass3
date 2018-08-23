@@ -245,8 +245,6 @@ TEST(WebTest, Initialize) {
 	"net filter list empty";
 	ASSERT_EQ(expectedSize, (int)testWeb.getVSitesFilterSize())<<
 	"site filter list empty";
-
-	ASSERT_TRUE(testWeb.statusCheck())<< "status check";
 }
 
 // test constructing a global grid

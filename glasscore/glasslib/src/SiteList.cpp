@@ -16,33 +16,20 @@
 namespace glasscore {
 
 // ---------------------------------------------------------CSiteList
-CSiteList::CSiteList(int sleepTime, int checkInterval) {
-	// setup thread
-	m_iSleepTimeMS = sleepTime;
-	m_iStatusCheckInterval = checkInterval;
-	std::time(&tLastStatusCheck);
-
-	m_bRunBackgroundLoop = true;
-	m_BackgroundThread = new std::thread(&CSiteList::backgroundLoop, this);
-	m_bThreadStatus = true;
-
+CSiteList::CSiteList(int sleepTime, int checkInterval)
+		: glass3::util::ThreadBaseClass("SiteList", sleepTime, 1, checkInterval) {
 	clear();
+
+	// start up the thread
+	start();
 }
 
 // ---------------------------------------------------------~CSiteList
 CSiteList::~CSiteList() {
+	// stop the threads
+	stop();
+
 	clear();
-
-	// stop the thread
-	m_bRunBackgroundLoop = false;
-
-	// wait for the thread to finish
-	m_BackgroundThread->join();
-
-	// delete it
-	delete (m_BackgroundThread);
-
-	m_BackgroundThread = NULL;
 }
 
 // ---------------------------------------------------------clear
@@ -57,6 +44,9 @@ void CSiteList::clear() {
 	iHoursWithoutPicking = -1;
 	iHoursBeforeLookingUp = -1;
 	m_iMaxPicksPerHour = -1;
+
+	// clear baseclass
+	BaseClass::clear();
 }
 
 // ---------------------------------------------------------clearSites
@@ -508,87 +498,15 @@ int CSiteList::getVSiteSize() const {
 	return (vSite.size());
 }
 
-void CSiteList::backgroundLoop() {
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CSiteList::backgroundLoop: startup");
-
-	while (m_bRunBackgroundLoop == true) {
-		// make sure we're still running
-		if (m_bRunBackgroundLoop == false)
-			break;
-
-		// update thread status
-		setStatus(true);
-
-		// check the sites
-		checkSites();
-
-		// give up some time at the end of the loop
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
-	}
-
-	setStatus(false);
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CSiteList::backgroundLoop: thread exit");
-}
-
-void CSiteList::setStatus(bool status) {
-	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
-	// update thread status
-	m_bThreadStatus = status;
-}
-
-bool CSiteList::statusCheck() {
-	// if we have a negative check interval,
-	// we shouldn't worry about thread status checks.
-	if (m_iStatusCheckInterval < 0) {
-		return (true);
-	}
-
-	// thread is dead if we're not running
-	if (m_bRunBackgroundLoop == false) {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
-				"CSiteList::statusCheck(): m_bRunBackgroundLoop is false.");
-		return (false);
-	}
-
-	// see if it's time to check
-	time_t tNow;
-	std::time(&tNow);
-	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
-		// get the thread status
-		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
-
-		// The thread is dead
-		if (m_bThreadStatus != true) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CSiteList::statusCheck(): Thread"
-							" did not respond in the last"
-							+ std::to_string(m_iStatusCheckInterval)
-							+ "seconds.");
-
-			return (false);
-		}
-
-		// mark check as false until next time
-		// if the thread is alive, it'll mark it
-		// as true again.
-		m_bThreadStatus = false;
-
-		// remember the last time we checked
-		tLastStatusCheck = tNow;
-	}
-
-	// everything is awesome
-	return (true);
-}
-
-void CSiteList::checkSites() {
+glass3::util::WorkState CSiteList::work() {
 	// don't bother if we're not configured to check sites
-	if ((iHoursWithoutPicking < 0) && (m_iMaxPicksPerHour < 0)) {
-		return;
+	if ((getHoursWithoutPicking() < 0) && (getHoursBeforeLookingUp() < 0)
+			 && (getMaxPicksPerHour() < 0)) {
+		return (glass3::util::WorkState::Idle);
+	}
+
+	if (getVSiteSize() <= 0) {
+		return (glass3::util::WorkState::Idle);
 	}
 
 	// what time is it
@@ -600,7 +518,7 @@ void CSiteList::checkSites() {
 	// didn't seem like a parameter that would be changed
 	if ((tNow - m_tLastChecked) < (60 * 60)) {
 		// no
-		return;
+		return (glass3::util::WorkState::Idle);
 	}
 
 	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
@@ -676,7 +594,7 @@ void CSiteList::checkSites() {
 		}
 
 		// update thread status
-		setStatus(true);
+		setThreadHealth();
 	}
 
 	// for each unused site in the site list
@@ -744,8 +662,10 @@ void CSiteList::checkSites() {
 		}
 
 		// update thread status
-		setStatus(true);
+		setThreadHealth();
 	}
+
+	return (glass3::util::WorkState::OK);
 }
 
 void CSiteList::setHoursWithoutPicking(int hoursWithoutPicking) {

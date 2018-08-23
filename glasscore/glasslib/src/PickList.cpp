@@ -34,48 +34,23 @@ bool sortFunc(const std::pair<double, int> &lhs,
 }
 
 // ---------------------------------------------------------CPickList
-CPickList::CPickList(int numThreads, int sleepTime, int checkInterval) {
+CPickList::CPickList(int numThreads, int sleepTime, int checkInterval)
+		: glass3::util::ThreadBaseClass("PickList", sleepTime, numThreads,
+										checkInterval) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
 
-	// setup threads
-	m_bRunProcessLoop = true;
-	m_iNumThreads = numThreads;
-	m_iSleepTimeMS = sleepTime;
-	m_iStatusCheckInterval = checkInterval;
-	std::time(&tLastStatusCheck);
-
 	clear();
 
-	// create threads
-	for (int i = 0; i < m_iNumThreads; i++) {
-		// create thread
-		vProcessThreads.push_back(std::thread(&CPickList::processPick, this));
-
-		// add to status map if we're tracking status
-		if (m_iStatusCheckInterval > 0) {
-			m_StatusMutex.lock();
-			m_ThreadStatusMap[vProcessThreads[i].get_id()] = true;
-			m_StatusMutex.unlock();
-		}
-	}
+	// start up the threads
+	start();
 }
 
 // ---------------------------------------------------------~CPickList
 CPickList::~CPickList() {
-	// disable status checking
-	m_StatusMutex.lock();
-	m_ThreadStatusMap.clear();
-	m_StatusMutex.unlock();
-
-	// signal threads to finish
-	m_bRunProcessLoop = false;
-
-	// wait for threads to finish
-	for (int i = 0; i < vProcessThreads.size(); i++) {
-		vProcessThreads[i].join();
-	}
+	// stop the threads
+	stop();
 
 	// clean up everything else
 	clear();
@@ -90,6 +65,9 @@ void CPickList::clear() {
 
 	// clear picks
 	clearPicks();
+
+	// clear baseclass
+	BaseClass::clear();
 }
 
 // ---------------------------------------------------------~clear
@@ -321,7 +299,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// we don't want to build up a huge queue of unprocessed
 	// picks
 	if ((pGlass) && (pGlass->getHypoList())) {
-		while (queueSize >= (m_iNumThreads * MAX_QUEUE_FACTOR)) {
+		while (queueSize >= (getNumThreads() * MAX_QUEUE_FACTOR)) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 			// check to see if the queue has changed size
@@ -653,173 +631,60 @@ std::vector<std::shared_ptr<CPick>> CPickList::rogues(std::string pidHyp,
 	return (vRogue);
 }
 
-void CPickList::processPick() {
-	while (m_bRunProcessLoop == true) {
-		// update thread status
-		setStatus(true);
+// ---------------------------------------------------------work
+glass3::util::WorkState CPickList::work() {
+	// make sure we have a pGlass and pGlass->pHypoList
+	if (pGlass == NULL) {
+		// on to the next loop
+		return (glass3::util::WorkState::Idle);
+	}
+	if (pGlass->getHypoList() == NULL) {
+		// on to the next loop
+		return (glass3::util::WorkState::Idle);
+	}
 
-		// make sure we have a pGlass and pGlass->pHypoList
-		if (pGlass == NULL) {
-			// give up some time at the end of the loop
-			if (m_bRunProcessLoop == true) {
-				jobSleep();
-			}
+	// check to see that we've not run to far ahead of the hypo processing
+	if (pGlass->getHypoList()->getFifoSize()
+			> (pGlass->getHypoList()->getNumThreads() * MAX_QUEUE_FACTOR)) {
+		// on to the next loop
+		return (glass3::util::WorkState::Idle);
+	}
 
-			// on to the next loop
-			continue;
-		}
-		if (pGlass->getHypoList() == NULL) {
-			// give up some time at the end of the loop
-			if (m_bRunProcessLoop == true) {
-				jobSleep();
-			}
+	// lock for queue access
+	m_qProcessMutex.lock();
 
-			// on to the next loop
-			continue;
-		}
-
-		// check to see that we've not run to far ahead of the hypo processing
-		if (pGlass->getHypoList()->getFifoSize()
-				> (pGlass->getHypoList()->getNThreads() * MAX_QUEUE_FACTOR)) {
-			// give up some time
-			if (m_bRunProcessLoop == true) {
-				jobSleep();
-			}
-
-			// on to the next loop
-			continue;
-		}
-
-		// lock for queue access
-		m_qProcessMutex.lock();
-
-		// are there any jobs
-		if (qProcessList.empty() == true) {
-			// unlock and skip until next time
-			m_qProcessMutex.unlock();
-
-			// give up some time at the end of the loop
-			if (m_bRunProcessLoop == true) {
-				jobSleep();
-			}
-
-			// on to the next loop
-			continue;
-		}
-
-		// get the next pick
-		std::shared_ptr<CPick> pck = qProcessList.front();
-		qProcessList.pop();
-
-		// done with queue
+	// are there any jobs
+	if (qProcessList.empty() == true) {
+		// unlock and skip until next time
 		m_qProcessMutex.unlock();
 
-		if (pck == NULL) {
-			// give up some time at the end of the loop
-			if (m_bRunProcessLoop == true) {
-				jobSleep();
-			}
-
-			// on to the next loop
-			continue;
-		}
-
-		// Attempt both association and nucleation of the new pick.
-		// If both succeed, the mess is sorted out in darwin/evolve
-		// associate
-		pGlass->getHypoList()->associate(pck);
-
-		// nucleate
-		pck->nucleate();
-
-		// give up some time at the end of the loop
-		if (m_bRunProcessLoop == true) {
-			jobSleep();
-		}
+		// on to the next loop
+		return (glass3::util::WorkState::Idle);
 	}
 
-	setStatus(false);
-	glassutil::CLogit::log(glassutil::log_level::info,
-							"CPickList::processPick(): Thread Exit.)");
-}
+	// get the next pick
+	std::shared_ptr<CPick> pck = qProcessList.front();
+	qProcessList.pop();
 
-// ---------------------------------------------------------setStatus
-void CPickList::jobSleep() {
-	// if we're processing jobs
-	if (m_bRunProcessLoop == true) {
-		// sleep for a random amount of time, to better distribute
-		// the load across all job threads.
-		std::uniform_int_distribution<> distribution(m_iSleepTimeMS / 4,
-														m_iSleepTimeMS);
-		int sleeptime = distribution(m_RandomGenerator);
-		std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
-	}
-}
+	// done with queue
+	m_qProcessMutex.unlock();
 
-// ---------------------------------------------------------setStatus
-void CPickList::setStatus(bool status) {
-	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
-
-	// update thread status
-	if (m_ThreadStatusMap.find(std::this_thread::get_id())
-			!= m_ThreadStatusMap.end()) {
-		m_ThreadStatusMap[std::this_thread::get_id()] = status;
-	}
-}
-
-// ---------------------------------------------------------statusCheck
-bool CPickList::statusCheck() {
-	// if we have a negative check interval,
-	// we shouldn't worry about thread status checks.
-	if (m_iStatusCheckInterval < 0)
-		return (true);
-
-	// thread is dead if we're not running
-	if (m_bRunProcessLoop == false) {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
-				"CPickList::statusCheck(): m_bRunProcessLoop is false.");
-		return (false);
+	// check the pick
+	if (pck == NULL) {
+		// on to the next loop
+		return (glass3::util::WorkState::Idle);
 	}
 
-	// see if it's time to check
-	time_t tNow;
-	std::time(&tNow);
-	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
-		// get the thread status
-		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
+	// Attempt both association and nucleation of the new pick.
+	// If both succeed, the mess is sorted out in darwin/evolve
+	// associate
+	pGlass->getHypoList()->associate(pck);
 
-		// check all the threads
-		std::map<std::thread::id, bool>::iterator StatusItr;
-		for (StatusItr = m_ThreadStatusMap.begin();
-				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
-			// get the thread status
-			bool status = static_cast<bool>(StatusItr->second);
+	// nucleate
+	pck->nucleate();
 
-			// at least one thread did not respond
-			if (status != true) {
-				glassutil::CLogit::log(
-						glassutil::log_level::error,
-						"CPickList::statusCheck(): At least one thread"
-								" did not respond in the last"
-								+ std::to_string(m_iStatusCheckInterval)
-								+ "seconds.");
-
-				return (false);
-			}
-
-			// mark check as false until next time
-			// if the thread is alive, it'll mark it
-			// as true again.
-			StatusItr->second = false;
-		}
-
-		// remember the last time we checked
-		tLastStatusCheck = tNow;
-	}
-
-	// everything is awesome
-	return (true);
+	// give up some time at the end of the loop
+	return (glass3::util::WorkState::OK);
 }
 
 const CSiteList* CPickList::getSiteList() const {

@@ -239,7 +239,7 @@ bool CWebList::hasSite(std::shared_ptr<CSite> site) {
 }
 
 // ---------------------------------------------------------statusCheck
-bool CWebList::statusCheck() {
+bool CWebList::healthCheck() {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
 	// Don't bother if there is no webs
@@ -252,7 +252,7 @@ bool CWebList::statusCheck() {
 		// for each web
 		for (auto web : vWeb) {
 			// check if it's alive
-			if (web->statusCheck() == false) {
+			if (web->healthCheck() == false) {
 				return (false);
 			}
 		}

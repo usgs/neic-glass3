@@ -129,7 +129,7 @@ class CWebList {
 	 *
 	 * Checks each web thread to see if it is still responsive.
 	 */
-	bool statusCheck();
+	bool healthCheck();
 
 	/**
 	 * \brief CGlass getter

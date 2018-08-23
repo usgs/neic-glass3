@@ -140,6 +140,6 @@ TEST(ThreadPoolTest, FailTests) {
 	aThreadPool->setNumThreads(0);
 
 	// assert that check is false
-	ASSERT_FALSE(aThreadPool->healthCheck())<< "ThreadPool check is false";
+	ASSERT_TRUE(aThreadPool->healthCheck())<< "ThreadPool check is true";
 }
 

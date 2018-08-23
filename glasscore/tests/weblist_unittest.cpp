@@ -34,8 +34,6 @@ TEST(WebListTest, Construction) {
 	// pointers
 	ASSERT_EQ(NULL, testWebList->getGlass())<< "getGlass() null";
 
-	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
-
 	delete (testWebList);
 }
 
@@ -83,8 +81,6 @@ TEST(WebListTest, AddWeb) {
 
 	// web list
 	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
-
-	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
 
 	delete (testSiteList);
 	delete (testWebList);
@@ -230,8 +226,6 @@ TEST(WebListTest, SiteOperations) {
 
 	// check to see if this site is in grid
 	ASSERT_FALSE(testWebList->hasSite(sharedRemoveSite))<< "site removed";
-
-	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
 
 	delete (testSiteList);
 	delete (testWebList);

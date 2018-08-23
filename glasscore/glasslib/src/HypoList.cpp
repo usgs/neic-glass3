@@ -33,48 +33,23 @@ bool sortHypo(const std::pair<double, std::string> &lhs,
 }
 
 // ---------------------------------------------------------CHypoList
-CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval) {
+CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval)
+		: glass3::util::ThreadBaseClass("HypoList", sleepTime, numThreads,
+										checkInterval) {
 	// seed the random number generator
 	std::random_device randomDevice;
 	m_RandomGenerator.seed(randomDevice());
 
-	// setup threads
-	m_bRunProcessLoop = true;
-	m_iNumThreads = numThreads;
-	m_iSleepTimeMS = sleepTime;
-	m_iStatusCheckInterval = checkInterval;
-	std::time(&tLastStatusCheck);
-
 	clear();
 
-	// create threads
-	for (int i = 0; i < m_iNumThreads; i++) {
-		// create thread
-		vProcessThreads.push_back(std::thread(&CHypoList::processHypos, this));
-
-		// add to status map if we're tracking status
-		if (m_iStatusCheckInterval > 0) {
-			m_StatusMutex.lock();
-			m_ThreadStatusMap[vProcessThreads[i].get_id()] = true;
-			m_StatusMutex.unlock();
-		}
-	}
+	// start up the threads
+	start();
 }
 
 // ---------------------------------------------------------~CHypoList
 CHypoList::~CHypoList() {
-	// disable status checking
-	m_StatusMutex.lock();
-	m_ThreadStatusMap.clear();
-	m_StatusMutex.unlock();
-
-	// signal threads to finish
-	m_bRunProcessLoop = false;
-
-	// wait for threads to finish
-	for (int i = 0; i < vProcessThreads.size(); i++) {
-		vProcessThreads[i].join();
-	}
+	// stop the threads
+	stop();
 
 	// clean up everything else
 	clear();
@@ -432,6 +407,9 @@ void CHypoList::clear() {
 
 	clearHypos();
 	pGlass = NULL;
+
+	// clear baseclass
+	BaseClass::clear();
 }
 
 // ---------------------------------------------------------clearHypos
@@ -449,22 +427,22 @@ void CHypoList::clearHypos() {
 	nHypoMax = 100;
 }
 
-// ---------------------------------------------------------darwin
-void CHypoList::darwin() {
+// ---------------------------------------------------------work
+glass3::util::WorkState CHypoList::work() {
+	// make sure we have a pGlass
 	if (pGlass == NULL) {
-		return;
+		// on to the next loop
+		return (glass3::util::WorkState::Idle);
 	}
 
 	// don't bother if there's nothing to do
 	if (getFifoSize() < 1) {
-		return;
+		// on to the next loop
+		return (glass3::util::WorkState::Idle);
 	}
 
 	// log the cycle count and queue size
 	char sLog[1024];
-
-	// update thread status
-	setStatus(true);
 
 	// get the next hypo to process
 	std::shared_ptr<CHypo> hyp = popFifo();
@@ -472,7 +450,8 @@ void CHypoList::darwin() {
 	// check to see if we got a valid hypo
 	if (!hyp) {
 		// nothing to process, move on
-		return;
+		// on to the next loop
+		return (glass3::util::WorkState::Idle);
 	}
 
 	std::lock_guard<std::mutex> hypoGuard(hyp->getProcessingMutex());
@@ -496,18 +475,16 @@ void CHypoList::darwin() {
 							+ std::to_string(hyp->getProcessCount()));
 
 			// remove hypo from the hypo list
-			// hyp->unlockAfterProcessing();
 			remHypo(hyp);
 			sort();
 
 			// done with processing
-			return;
+			return (glass3::util::WorkState::OK);
 		}
 
 		// check to see if we've hit the iCycle Limit for this
 		// hypo
 		if (hyp->getCycle() >= pGlass->getCycleLimit()) {
-			// hyp->unlockAfterProcessing();
 			// log
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
@@ -517,7 +494,7 @@ void CHypoList::darwin() {
 							+ +" processCount:"
 							+ std::to_string(hyp->getProcessCount()));
 
-			return;
+			return(glass3::util::WorkState::OK);
 		}
 
 		// process this hypocenter
@@ -526,9 +503,16 @@ void CHypoList::darwin() {
 		// resort the hypocenter list to maintain
 		// time order
 		sort();
-	} catch (...) {
-		throw;
+	} catch (const std::exception &e) {
+		glassutil::CLogit::log(
+							glassutil::log_level::error,
+							"CHypoList::processHypos: Exception during work(): "
+									+ std::string(e.what()));
+		return(glass3::util::WorkState::Error);
 	}
+
+	// done with processing
+	return (glass3::util::WorkState::OK);
 }
 
 // ---------------------------------------------------------Dispatch
@@ -958,12 +942,6 @@ int CHypoList::getVHypoSize() const {
 	return (vHypo.size());
 }
 
-// ---------------------------------------------------------getVHypoSize
-int CHypoList::getNThreads() {
-	std::lock_guard<std::recursive_mutex> vHypoGuard(m_vHypoMutex);
-	return(m_iNumThreads);
-}
-
 // ---------------------------------------------------------indexHypo
 int CHypoList::indexHypo(double tOrg) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
@@ -1226,18 +1204,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	return (false);
 }
 
-void CHypoList::jobSleep() {
-	// if we're processing jobs
-	if (m_bRunProcessLoop == true) {
-		// sleep for a random amount of time, to better distribute
-		// the load across all job threads.
-		std::uniform_int_distribution<> distribution(m_iSleepTimeMS / 4,
-														m_iSleepTimeMS);
-		int sleeptime = distribution(m_RandomGenerator);
-		std::this_thread::sleep_for(std::chrono::milliseconds(sleeptime));
-	}
-}
-
 // ---------------------------------------------------------listPicks
 void CHypoList::listHypos() {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
@@ -1300,74 +1266,43 @@ int CHypoList::pushFifo(std::shared_ptr<CHypo> hyp) {
 
 // ---------------------------------------------------------popFifo
 std::shared_ptr<CHypo> CHypoList::popFifo() {
-// don't use a lock guard for queue mutex and hypomutex,
-// to avoid a deadlock when both mutexes are locked
+	// don't use a lock guard for queue mutex and hypomutex,
+	// to avoid a deadlock when both mutexes are locked
 	m_QueueMutex.lock();
 
-// Pop first hypocenter off processing fifo
-// is there anything on the queue?
+	// Pop first hypocenter off processing fifo
+	// is there anything on the queue?
 	if (qFifo.size() < 1) {
 		// nope
 		m_QueueMutex.unlock();
 		return (NULL);
 	}
 
-// get the first id on the queue
+	// get the first id on the queue
 	std::string pid = qFifo.front();
 
-// remove the first id from the queue now that we have it
-// Does not throw unless an exception is thrown by the assignment operator
-// of T.
+	// remove the first id from the queue now that we have it
+	// Does not throw unless an exception is thrown by the assignment operator
+	// of T.
 	qFifo.erase(qFifo.begin());
 
 	m_QueueMutex.unlock();
 
 	m_vHypoMutex.lock();
 
-// use the map to get the hypo based on the id
+	// use the map to get the hypo based on the id
 	std::shared_ptr<CHypo> hyp = mHypo[pid];
 
 	m_vHypoMutex.unlock();
 
-// return the hypo
+	// return the hypo
 	return (hyp);
-}
-
-// ---------------------------------------------------------processHypos
-void CHypoList::processHypos() {
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CHypoList::processHypos: startup");
-
-	while (m_bRunProcessLoop == true) {
-		// update thread status
-		setStatus(true);
-
-		// run the job
-		try {
-			darwin();
-		} catch (const std::exception &e) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CHypoList::processHypos: Exception during darwin(): "
-							+ std::string(e.what()));
-			break;
-		}
-
-		// give up some time at the end of the loop
-		if (m_bRunProcessLoop == true) {
-			jobSleep();
-		}
-	}
-
-	setStatus(false);
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CHypoList::processHypos: Thread Exit.");
 }
 
 // ---------------------------------------------------------remHypo
 // Remove and unmap Hypocenter from vector, map, and pick
 void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
-// nullcheck
+	// nullcheck
 	if (hypo == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypoList::remHypo: NULL hypo provided.");
@@ -1377,15 +1312,15 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
-// get the id
+	// get the id
 	std::string pid = hypo->getPid();
 
-// unlink all the hypo's data
+	// unlink all the hypo's data
 	hypo->clearPicks();
 	hypo->clearCorrelations();
 
-// erase this hypo from the vector
-// search through all hypos
+	// erase this hypo from the vector
+	// search through all hypos
 	for (int iq = 0; iq < vHypo.size(); iq++) {
 		// get current hypo
 		auto q = vHypo[iq];
@@ -1409,20 +1344,20 @@ void CHypoList::remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		}
 	}
 
-// erase this hypo from the map
+	// erase this hypo from the map
 	mHypo.erase(pid);
 }
 
 // ---------------------------------------------------------ReqHypo
 bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
-// null check json
+	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypoList::reqHypo: NULL json communication.");
 		return (false);
 	}
 
-// check cmd
+	// check cmd
 	if (com->HasKey("Cmd")
 			&& ((*com)["Cmd"].GetType() == json::ValueType::StringVal)) {
 		std::string cmd = (*com)["Cmd"].ToString();
@@ -1450,7 +1385,7 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
-// pid
+	// pid
 	std::string sPid;
 	if (com->HasKey("Pid")
 			&& ((*com)["Pid"].GetType() == json::ValueType::StringVal)) {
@@ -1463,10 +1398,10 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
-// get the hypo
+	// get the hypo
 	std::shared_ptr<CHypo> hyp = mHypo[sPid];
 
-// check the hypo
+	// check the hypo
 	if (!hyp) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
@@ -1477,16 +1412,16 @@ bool CHypoList::reqHypo(std::shared_ptr<json::Object> com) {
 		return (true);
 	}
 
-// generate the hypo message
+	// generate the hypo message
 	hyp->hypo();
 
-// done
+	// done
 	return (true);
 }
 
 // ---------------------------------------------------------resolve
 bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
-// null checks
+	// null checks
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CHypoList::resolve: NULL hypo provided.");
@@ -1500,11 +1435,11 @@ bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
 		return (false);
 	}
 
-// this lock guard exists to avoid a deadlock that occurs
-// when it isn't present
+	// this lock guard exists to avoid a deadlock that occurs
+	// when it isn't present
 	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
 
-// return whether we've changed the pick set
+	// return whether we've changed the pick set
 	return (hyp->resolve(hyp));
 }
 
@@ -1520,75 +1455,10 @@ void CHypoList::setNHypoMax(int hypoMax) {
 	nHypoMax = hypoMax;
 }
 
-// ---------------------------------------------------------setStatus
-void CHypoList::setStatus(bool status) {
-	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
-// update thread status
-	if (m_ThreadStatusMap.find(std::this_thread::get_id())
-			!= m_ThreadStatusMap.end()) {
-		m_ThreadStatusMap[std::this_thread::get_id()] = status;
-	}
-}
-
 // ---------------------------------------------------------sort
 void CHypoList::sort() {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vHypoMutex);
-// sort hypos
+	// sort hypos
 	std::sort(vHypo.begin(), vHypo.end(), sortHypo);
-}
-
-// ---------------------------------------------------------statusCheck
-bool CHypoList::statusCheck() {
-// if we have a negative check interval,
-// we shouldn't worry about thread status checks.
-	if (m_iStatusCheckInterval < 0)
-		return (true);
-
-// thread is dead if we're not running
-	if (m_bRunProcessLoop == false) {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
-				"CHypoList::statusCheck(): m_bRunProcessLoop is false.");
-		return (false);
-	}
-
-// see if it's time to check
-	time_t tNow;
-	std::time(&tNow);
-	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
-		// get the thread status
-		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
-
-		// check all the threads
-		std::map<std::thread::id, bool>::iterator StatusItr;
-		for (StatusItr = m_ThreadStatusMap.begin();
-				StatusItr != m_ThreadStatusMap.end(); ++StatusItr) {
-			// get the thread status
-			bool status = static_cast<bool>(StatusItr->second);
-
-			// at least one thread did not respond
-			if (status != true) {
-				glassutil::CLogit::log(
-						glassutil::log_level::error,
-						"CHypoList::statusCheck(): At least one thread"
-								" did not respond in the last"
-								+ std::to_string(m_iStatusCheckInterval)
-								+ "seconds.");
-
-				return (false);
-			}
-
-			// mark check as false until next time
-			// if the thread is alive, it'll mark it
-			// as true again.
-			StatusItr->second = false;
-		}
-
-		// remember the last time we checked
-		tLastStatusCheck = tNow;
-	}
-
-// everything is awesome
-	return (true);
 }
 }  // namespace glasscore

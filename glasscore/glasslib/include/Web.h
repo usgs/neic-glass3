@@ -7,6 +7,8 @@
 #ifndef WEB_H
 #define WEB_H
 
+#include <threadbaseclass.h>
+
 #include <json.h>
 #include <utility>
 #include <string>
@@ -36,15 +38,14 @@ class CPick;
  *
  * CWeb uses smart pointers (std::shared_ptr).
  */
-class CWeb {
+class CWeb : public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief CWeb constructor
 	 *
 	 * The constructor for the CWeb class.
 	 * \param numThreads - An integer containing the desired number of background
-	 * threads to process web updates, if set to 0, glass will
-	 * halt until the web update is completed. Default 0.
+	 * threads to process web updates.
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 10
 	 * \param checkInterval - An integer containing the amount of time in
@@ -110,7 +111,7 @@ class CWeb {
 	 *
 	 * The clear function for the CWeb class.
 	 */
-	void clear();
+	void clear() override;
 
 	/**
 	 * \brief CWeb communication recieveing function
@@ -323,18 +324,6 @@ class CWeb {
 	bool isSiteAllowed(std::shared_ptr<CSite> site);
 
 	/**
-	 * \brief Background thread work loop for this web
-	 */
-	void workLoop();
-
-	/**
-	 * \brief check to see if the thread is still functional
-	 *
-	 * Checks the thread to see if it is still responsive.
-	 */
-	bool statusCheck();
-
-	/**
 	 * \brief add a job
 	 *
 	 * Adds a job to the queue of jobs to be run by the background
@@ -470,22 +459,16 @@ class CWeb {
 	 */
 	int getVNodeSize() const;
 
+	/**
+	 * \brief Web work function
+	 *
+	 * Update a web in the background
+	 * \return returns glass3::util::WorkState::OK if work was successful,
+	 * glass3::util::WorkState::Error if not.
+	 */
+	glass3::util::WorkState work() override;
+
  private:
-	/**
-	 * \brief the job sleep
-	 *
-	 * The function that performs the sleep between jobs
-	 */
-	void jobSleep();
-
-	/**
-	 * \brief thread status update function
-	 *
-	 * Updates the status for the thread
-	 * \param status - A boolean flag containing the status to set
-	 */
-	void setStatus(bool status);
-
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
 	 * get default values, encode/decode time, and get debug flags
@@ -636,51 +619,6 @@ class CWeb {
 	 * \brief the std::mutex for m_QueueMutex
 	 */
 	std::mutex m_QueueMutex;
-
-	/**
-	 * \brief the std::vector of std::threads
-	 */
-	std::vector<std::thread> vProcessThreads;
-
-	/**
-	 * \brief An integer containing the number of
-	 * threads in the pool.
-	 */
-	int m_iNumThreads;
-
-	/**
-	 * \brief A std::map containing the status of each thread
-	 */
-	std::map<std::thread::id, bool> m_ThreadStatusMap;
-
-	/**
-	 * \brief An integer containing the amount of
-	 * time to sleep in milliseconds between picks.
-	 */
-	int m_iSleepTimeMS;
-
-	/**
-	 * \brief the std::mutex for m_ThreadStatusMap
-	 */
-	std::mutex m_StatusMutex;
-
-	/**
-	 * \brief the integer interval in seconds after which the work thread
-	 * will be considered dead. A negative check interval disables thread
-	 * status checks
-	 */
-	int m_iStatusCheckInterval;
-
-	/**
-	 * \brief the time_t holding the last time the thread status was checked
-	 */
-	time_t tLastStatusCheck;
-
-	/**
-	 * \brief the boolean flags indicating that the process threads
-	 * should keep running.
-	 */
-	bool m_bRunProcessLoop;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CWeb.

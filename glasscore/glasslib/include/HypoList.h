@@ -7,6 +7,8 @@
 #ifndef HYPOLIST_H
 #define HYPOLIST_H
 
+#include <threadbaseclass.h>
+
 #include <json.h>
 #include <vector>
 #include <queue>
@@ -45,7 +47,7 @@ class CCorrelation;
  *
  * CHypoList uses smart pointers (std::shared_ptr).
  */
-class CHypoList {
+class CHypoList : public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief CHypoList constructor
@@ -115,7 +117,7 @@ class CHypoList {
 	/**
 	 * \brief CHypoList clear function
 	 */
-	void clear();
+	void clear() override;
 
 	/**
 	 * \brief Remove all hypos from hypo list
@@ -123,27 +125,6 @@ class CHypoList {
 	 * Clears all hypo from the vector, map, and queue
 	 */
 	void clearHypos();
-
-	/**
-	 * \brief Process all hypocenters in the queue
-	 *
-	 * Refine any/all hypocenters in the list that are on the
-	 * processing queue.  Typically hypocenters are added to the
-	 * processing queue because they are either new, or have
-	 * been modified by another part of glasscore.  This function effectively
-	 * calls itself recursively as a result of calling CHypoList::evolve or
-	 * CPickList::resolve as part of the resolution of data associations which
-	 * adds hypocenters to the processing queue.
-	 *
-	 * A cycle count is set when a hypocenter is first scheduled (by addHypo()
-	 * or associate()). Hypocenters are only processed through the entire
-	 * cycle once each cycle, any additional processing is restricted
-	 * to localization and culling.
-	 *
-	 * Note that glasscore will not accept input data until all hypocenters
-	 * in the list have been refined, including the recursively scheduled calls
-	 */
-	void darwin();
 
 	/**
 	 * \brief CHypoList communication receiving function
@@ -340,40 +321,27 @@ class CHypoList {
 	void setNHypoMax(int hypoMax);
 
 	/**
-	 * \brief check to see if each thread is still functional
+	 * \brief Hypolist work function
 	 *
-	 * Checks each thread to see if it is still responsive.
+	 * Refine any/all hypocenters in the list that are on the
+	 * processing queue.  Typically hypocenters are added to the
+	 * processing queue because they are either new, or have
+	 * been modified by another part of glasscore.  This function effectively
+	 * calls itself recursively as a result of calling CHypoList::evolve or
+	 * CPickList::resolve as part of the resolution of data associations which
+	 * adds hypocenters to the processing queue.
+	 *
+	 * A cycle count is set when a hypocenter is first scheduled (by addHypo()
+	 * or associate()). Hypocenters are only processed through the entire
+	 * cycle once each cycle, any additional processing is restricted
+	 * to localization and culling.
+	 *
+	 * \return returns glass3::util::WorkState::OK if work was successful,
+	 * glass3::util::WorkState::Error if not.
 	 */
-	bool statusCheck();
-
-	/**
-	 * \brief m_iNumThreads Getter
-	 */
-	int getNThreads();
+	glass3::util::WorkState work() override;
 
  private:
-	/**
-	 * \brief the job sleep
-	 *
-	 * The function that performs the sleep between jobs
-	 */
-	void jobSleep();
-
-	/**
-	 * \brief Process the next pick on the queue
-	 *
-	 * Attempts to run evolve for every pending hypo.
-	 */
-	void processHypos();
-
-	/**
-	 * \brief thread status update function
-	 *
-	 * Updates the status for the current thread
-	 * \param status - A boolean flag containing the status to set
-	 */
-	void setStatus(bool status);
-
 	/**
 	 * \brief HypoList sort function
 	 */
@@ -446,51 +414,6 @@ class CHypoList {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_HypoListMutex;
-
-	/**
-	 * \brief the std::vector of std::threads
-	 */
-	std::vector<std::thread> vProcessThreads;
-
-	/**
-	 * \brief An integer containing the number of
-	 * threads in the pool.
-	 */
-	int m_iNumThreads;
-
-	/**
-	 * \brief A std::map containing the status of each thread
-	 */
-	std::map<std::thread::id, bool> m_ThreadStatusMap;
-
-	/**
-	 * \brief An integer containing the amount of
-	 * time to sleep in milliseconds between picks.
-	 */
-	int m_iSleepTimeMS;
-
-	/**
-	 * \brief the std::mutex for m_ThreadStatusMap
-	 */
-	std::mutex m_StatusMutex;
-
-	/**
-	 * \brief the integer interval in seconds after which the work thread
-	 * will be considered dead. A negative check interval disables thread
-	 * status checks
-	 */
-	int m_iStatusCheckInterval;
-
-	/**
-	 * \brief the time_t holding the last time the thread status was checked
-	 */
-	time_t tLastStatusCheck;
-
-	/**
-	 * \brief the boolean flags indicating that the process threads
-	 * should keep running.
-	 */
-	bool m_bRunProcessLoop;
 
 	/**
 	 * \brief A random engine used to generate random numbers

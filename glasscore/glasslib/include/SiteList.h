@@ -7,6 +7,8 @@
 #ifndef SITELIST_H
 #define SITELIST_H
 
+#include <threadbaseclass.h>
+
 #include <json.h>
 #include <string>
 #include <vector>
@@ -35,7 +37,7 @@ class CGlass;
  *
  * CSiteList uses smart pointers (std::shared_ptr).
  */
-class CSiteList {
+class CSiteList : public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief CSiteList constructor
@@ -56,7 +58,7 @@ class CSiteList {
 	 * \brief CSiteList clear function
 	 *
 	 */
-	void clear();
+	void clear() override;
 
 	/**
 	 * \brief CSiteList vector and map clear function
@@ -185,13 +187,6 @@ class CSiteList {
 	 */
 	int getVSiteSize() const;
 
-	/**
-	 * \brief check to see if the thread is still functional
-	 *
-	 * Checks the thread to see if it is still responsive.
-	 */
-	bool statusCheck();
-
 	void setHoursWithoutPicking(int hoursWithoutPicking);
 	int getHoursWithoutPicking() const;
 
@@ -201,22 +196,16 @@ class CSiteList {
 	void setMaxPicksPerHour(int maxPicksPerHour);
 	int getMaxPicksPerHour() const;
 
- private:
-	void checkSites();
-
 	/**
-	 * \brief Background thread work loop for this web
-	 */
-	void backgroundLoop();
-
-	/**
-	 * \brief thread status update function
+	 * \brief SiteList work function
 	 *
-	 * Updates the status for the thread
-	 * \param status - A boolean flag containing the status to set
+	 * checks sites
+	 * \return returns glass3::util::WorkState::OK if work was successful,
+	 * glass3::util::WorkState::Error if not.
 	 */
-	void setStatus(bool status);
+	glass3::util::WorkState work() override;
 
+ private:
 	/**
 	 * \brief A pointer to the main CGlass class, used to pass this information
 	 * to sites added to CSiteList
@@ -253,45 +242,6 @@ class CSiteList {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_SiteListMutex;
-
-	/**
-	 * \brief the boolean flags indicating that the jobloop threads
-	 * should keep running.
-	 */
-	bool m_bRunBackgroundLoop;
-
-	/**
-	 * \brief the std::thread pointer to the background thread
-	 */
-	std::thread * m_BackgroundThread;
-
-	/**
-	 * \brief boolean flag used to check thread status
-	 */
-	bool m_bThreadStatus;
-
-	/**
-	 * \brief An integer containing the amount of
-	 * time to sleep in milliseconds between picks.
-	 */
-	int m_iSleepTimeMS;
-
-	/**
-	 * \brief the integer interval in seconds after which the work thread
-	 * will be considered dead. A negative check interval disables thread
-	 * status checks
-	 */
-	int m_iStatusCheckInterval;
-
-	/**
-	 * \brief the time_t holding the last time the thread status was checked
-	 */
-	time_t tLastStatusCheck;
-
-	/**
-	 * \brief the std::mutex for thread status
-	 */
-	std::mutex m_StatusMutex;
 
 	time_t m_tLastChecked;
 

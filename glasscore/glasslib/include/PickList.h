@@ -7,6 +7,8 @@
 #ifndef PICKLIST_H
 #define PICKLIST_H
 
+#include <threadbaseclass.h>
+
 #include <json.h>
 #include <vector>
 #include <map>
@@ -42,7 +44,7 @@ class CHypo;
  *
  * CPickList uses smart pointers (std::shared_ptr).
  */
-class CPickList {
+class CPickList : public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief CPickList constructor
@@ -68,7 +70,7 @@ class CPickList {
 	/**
 	 * \brief CPickList clear function
 	 */
-	void clear();
+	void clear() override;
 
 	/**
 	 * \brief Remove all picks from pick list
@@ -198,8 +200,7 @@ class CPickList {
 	 *
 	 * Checks each thread to see if it is still responsive.
 	 */
-	bool statusCheck();
-
+	// bool statusCheck();
 	/**
 	 * \brief CGlass getter
 	 * \return the CGlass pointer
@@ -253,29 +254,16 @@ class CPickList {
 	 */
 	int getVPickSize() const;
 
- private:
 	/**
-	 * \brief Process the next pick on the queue
+	 * \brief PickList work function
 	 *
 	 * Attempts to associate and nuclate the next pick on the queue.
+	 * \return returns glass3::util::WorkState::OK if work was successful,
+	 * glass3::util::WorkState::Error if not.
 	 */
-	void processPick();
+	glass3::util::WorkState work() override;
 
-	/**
-	 * \brief the job sleep
-	 *
-	 * The function that performs the sleep between jobs
-	 */
-	void jobSleep();
-
-	/**
-	 * \brief thread status update function
-	 *
-	 * Updates the status for the current thread
-	 * \param status - A boolean flag containing the status to set
-	 */
-	void setStatus(bool status);
-
+ private:
 	/**
 	 * \brief A pointer to the parent CGlass class, used to look up site
 	 * information, configuration values, call association functions, and debug
@@ -331,51 +319,6 @@ class CPickList {
 	 * \brief the std::mutex for qProcessList
 	 */
 	std::mutex m_qProcessMutex;
-
-	/**
-	 * \brief the std::vector of std::threads
-	 */
-	std::vector<std::thread> vProcessThreads;
-
-	/**
-	 * \brief An integer containing the number of
-	 * threads in the pool.
-	 */
-	int m_iNumThreads;
-
-	/**
-	 * \brief A std::map containing the status of each thread
-	 */
-	std::map<std::thread::id, bool> m_ThreadStatusMap;
-
-	/**
-	 * \brief An integer containing the amount of
-	 * time to sleep in milliseconds between picks.
-	 */
-	int m_iSleepTimeMS;
-
-	/**
-	 * \brief the std::mutex for m_ThreadStatusMap
-	 */
-	std::mutex m_StatusMutex;
-
-	/**
-	 * \brief the integer interval in seconds after which the work thread
-	 * will be considered dead. A negative check interval disables thread
-	 * status checks
-	 */
-	int m_iStatusCheckInterval;
-
-	/**
-	 * \brief the time_t holding the last time the thread status was checked
-	 */
-	time_t tLastStatusCheck;
-
-	/**
-	 * \brief the boolean flags indicating that the process threads
-	 * should keep running.
-	 */
-	bool m_bRunProcessLoop;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to vPick.

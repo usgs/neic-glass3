@@ -1213,22 +1213,22 @@ bool CGlass::statusCheck() {
 	}
 
 	// check pick list
-	if (pPickList->statusCheck() == false) {
+	if (pPickList->healthCheck() == false) {
 		return (false);
 	}
 
 	// hypo list
-	if (pHypoList->statusCheck() == false) {
+	if (pHypoList->healthCheck() == false) {
 		return (false);
 	}
 
 	// site list
-	if (pSiteList->statusCheck() == false) {
+	if (pSiteList->healthCheck() == false) {
 		return (false);
 	}
 
 	// webs
-	if (pWebList->statusCheck() == false) {
+	if (pWebList->healthCheck() == false) {
 		return (false);
 	}
 
