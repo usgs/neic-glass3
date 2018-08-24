@@ -14,6 +14,7 @@
 #include <vector>
 #include <mutex>
 #include <random>
+#include <atomic>
 
 namespace glasscore {
 

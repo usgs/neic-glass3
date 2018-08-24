@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <mutex>
+#include <atomic>
 
 namespace glasscore {
 

@@ -14,6 +14,8 @@
 #include <utility>
 #include <tuple>
 #include <mutex>
+#include <atomic>
+
 #include "Geo.h"
 #include "Link.h"
 

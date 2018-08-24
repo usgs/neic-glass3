@@ -13,6 +13,8 @@
 #include <utility>
 #include <mutex>
 #include <tuple>
+#include <atomic>
+
 #include "Geo.h"
 #include "Link.h"
 
