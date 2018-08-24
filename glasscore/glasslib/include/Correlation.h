@@ -311,45 +311,45 @@ class CCorrelation {
 	/**
 	 * \brief An integer value containing the numeric id of the correlation
 	 */
-	int idCorrelation;
+	std::atomic<int> idCorrelation;
 
 	/**
 	 * \brief A double value containing the arrival time of the correlation
 	 */
-	double tCorrelation;
+	std::atomic<double> tCorrelation;
 
 	/**
 	 * \brief A double value containing this correlation's origin time in julian
 	 * seconds
 	 */
-	double tOrg;
+	std::atomic<double> tOrg;
 
 	/**
 	 * \brief A double value containing this correlation's latitude in degrees
 	 */
-	double dLat;
+	std::atomic<double> dLat;
 
 	/**
 	 * \brief A double value containing this correlation's longitude in degrees
 	 */
-	double dLon;
+	std::atomic<double> dLon;
 
 	/**
 	 * \brief A double value containing this correlation's depth
 	 * in kilometers.
 	 */
-	double dZ;
+	std::atomic<double> dZ;
 
 	/**
 	 * \brief A double value containing this correlation's correlation value
 	 */
-	double dCorrelation;
+	std::atomic<double> dCorrelation;
 
 	/**
 	 * \brief A double value containing the creation time of the correlation in
 	 * glass
 	 */
-	double tGlassCreate;
+	std::atomic<double> tGlassCreate;
 
 	/**
 	 * \brief A std::shared_ptr to a json object

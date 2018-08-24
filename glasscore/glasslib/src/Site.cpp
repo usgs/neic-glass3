@@ -681,42 +681,34 @@ int CSite::getNodeLinksCount() const {
 }
 
 bool CSite::getEnable() const {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	return (bEnable);
 }
 
 void CSite::setEnable(bool enable) {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	bEnable = enable;
 }
 
 bool CSite::getUse() const {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	return (bUse && bEnable);
 }
 
 void CSite::setUse(bool use) {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	bUse = use;
 }
 
 bool CSite::getUseForTele() const {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	return (bUseForTele);
 }
 
 void CSite::setUseForTele(bool useForTele) {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	bUseForTele = useForTele;
 }
 
 double CSite::getQual() const {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	return (dQual);
 }
 
 void CSite::setQual(double qual) {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
 	dQual = qual;
 }
 
@@ -763,12 +755,10 @@ time_t CSite::getTLastPickAdded() const {
 }
 
 void CSite::setPicksSinceCheck(int count) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(siteMutex);
 	nPicksSinceCheck = count;
 }
 
 int CSite::getPicksSinceCheck() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(siteMutex);
 	return(nPicksSinceCheck);
 }
 

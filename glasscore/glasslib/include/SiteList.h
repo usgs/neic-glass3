@@ -45,7 +45,8 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * The constructor for the CSiteList class.
 	 * Initializes members to default values.
 	 */
-	explicit CSiteList(int sleepTime = 100, int checkInterval = 60);
+	explicit CSiteList(int numThreads = 1, int sleepTime = 100,
+						int checkInterval = 60);
 
 	/**
 	 * \brief CSiteList destructor

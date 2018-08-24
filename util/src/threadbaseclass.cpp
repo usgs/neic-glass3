@@ -111,7 +111,10 @@ bool ThreadBaseClass::start() {
 bool ThreadBaseClass::stop() {
 	// don't bother if we've not got any threads
 	if (getNumThreads() <= 0) {
-		return(true);
+		return(false);
+	}
+	if (m_WorkThreads.size() <= 0) {
+		return(false);
 	}
 
 	// check if we're running

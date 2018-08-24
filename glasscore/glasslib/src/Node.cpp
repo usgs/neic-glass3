@@ -533,12 +533,10 @@ int CNode::getSiteLinksCount() const {
 }
 
 bool CNode::getEnabled() const {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	return (bEnabled);
 }
 
 void CNode::setEnabled(bool enabled) {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
 	bEnabled = enabled;
 }
 

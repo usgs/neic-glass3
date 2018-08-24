@@ -295,29 +295,29 @@ class CNode {
 	/**
 	 * \brief A double value containing this node's latitude in degrees.
 	 */
-	double dLat;
+	std::atomic<double> dLat;
 
 	/**
 	 * \brief A double value containing this node's longitude in degrees.
 	 */
-	double dLon;
+	std::atomic<double> dLon;
 
 	/**
 	 * \brief A double value containing this node's depth in kilometers.
 	 */
-	double dZ;
+	std::atomic<double> dZ;
 
 	/**
 	 * \brief A double value containing this node's spatial resolution
 	 * (to other nodes) in kilometers.
 	 */
-	double dResolution;
+	std::atomic<double> dResolution;
 
 	/**
 	 * \brief A boolean flag indicating whether this node is enabled for
 	 * nucleation
 	 */
-	bool bEnabled;
+	std::atomic<bool> bEnabled;
 
 	/**
 	 * \brief A std::vector of tuples linking node to site

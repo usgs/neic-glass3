@@ -40,6 +40,8 @@
 #define NUMZ 1
 #define UPDATE true
 #define NOUPDATE false
+#define NUMTHREADS 1
+#define NOTHREADS 0
 
 #define GLOBALNAME "TestGlobal"
 #define GLOBALTHRESH 2.5
@@ -78,7 +80,7 @@ TEST(WebTest, Construction) {
 	glassutil::CLogit::disable();
 
 	// default constructor
-	glasscore::CWeb aWeb(NOUPDATE, 10, 10);
+	glasscore::CWeb aWeb(NOTHREADS, 10, 10);
 
 	// construct a web
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -194,11 +196,15 @@ TEST(WebTest, Construction) {
 TEST(WebTest, Initialize) {
 	glassutil::CLogit::disable();
 
+	printf("[ startup  ]\n");
+
 	// default constructor
-	glasscore::CWeb testWeb(UPDATE, 10, 10);
+	glasscore::CWeb * testWeb = new glasscore::CWeb(NUMTHREADS, 10, 10);
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
 
-	testWeb.initialize(std::string(NAME),
+	printf("[ construct]\n");
+
+	testWeb->initialize(std::string(NAME),
 	THRESH,
 						NUMDETECT,
 						NUMNUCLEATE,
@@ -208,43 +214,47 @@ TEST(WebTest, Initialize) {
 						UPDATE,
 						nullTrav, nullTrav, AZIGAP);
 
+	printf("[ init     ]\n");
+
 	// name
-	ASSERT_STREQ(std::string(NAME).c_str(), testWeb.getName().c_str())<<
+	ASSERT_STREQ(std::string(NAME).c_str(), testWeb->getName().c_str())<<
 	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(THRESH, testWeb.getThresh())<< "Web getThresh() Check";
+	ASSERT_EQ(THRESH, testWeb->getThresh())<< "Web getThresh() Check";
 
 	// getDetect()
-	ASSERT_EQ(NUMDETECT, testWeb.getDetect())<< "Web getDetect() Check";
+	ASSERT_EQ(NUMDETECT, testWeb->getDetect())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb.getNucleate())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleate())<< "Web getNucleate() Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testWeb.getResolution())<< "Web resolution Check";
+	ASSERT_EQ(RESOLUTION, testWeb->getResolution())<< "Web resolution Check";
 
 	// getRow()
-	ASSERT_EQ(NUMROWS, testWeb.getRow())<< "Web getRow() Check";
+	ASSERT_EQ(NUMROWS, testWeb->getRow())<< "Web getRow() Check";
 
 	// getCol()
-	ASSERT_EQ(NUMCOLS, testWeb.getCol())<< "Web getCol() Check";
+	ASSERT_EQ(NUMCOLS, testWeb->getCol())<< "Web getCol() Check";
 
 	// getZ()
-	ASSERT_EQ(NUMZ, testWeb.getZ())<< "Web getZ() Check";
+	ASSERT_EQ(NUMZ, testWeb->getZ())<< "Web getZ() Check";
 
 	// getUpdate()
-	ASSERT_EQ(UPDATE, testWeb.getUpdate())<< "Web getUpdate() Check";
+	ASSERT_EQ(UPDATE, testWeb->getUpdate())<< "Web getUpdate() Check";
 
 	// lists
 	int expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testWeb.getVNodeSize())<< "node list empty";
-	ASSERT_EQ(false, testWeb.getUseOnlyTeleseismicStations())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getVNodeSize())<< "node list empty";
+	ASSERT_EQ(false, testWeb->getUseOnlyTeleseismicStations())<<
 	"bUseOnlyTeleseismicStations false";
-	ASSERT_EQ(expectedSize, (int)testWeb.getVNetFilterSize())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getVNetFilterSize())<<
 	"net filter list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb.getVSitesFilterSize())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
 	"site filter list empty";
+
+	printf("[ shutdown ]\n");
 }
 
 // test constructing a global grid
@@ -283,7 +293,7 @@ TEST(WebTest, GlobalTest) {
 	testSiteList->dispatch(siteList);
 
 	// construct a web
-	glasscore::CWeb testGlobalWeb(UPDATE);
+	glasscore::CWeb testGlobalWeb(NUMTHREADS);
 	testGlobalWeb.setSiteList(testSiteList);
 	testGlobalWeb.dispatch(globalConfig);
 
@@ -381,7 +391,7 @@ TEST(WebTest, GridTest) {
 	testSiteList->dispatch(siteList);
 
 	// construct a web
-	glasscore::CWeb testGridWeb(UPDATE);
+	glasscore::CWeb testGridWeb(NUMTHREADS);
 	testGridWeb.setSiteList(testSiteList);
 	testGridWeb.dispatch(gridConfig);
 
@@ -475,7 +485,7 @@ TEST(WebTest, GridExplicitTest) {
 	testSiteList->dispatch(siteList);
 
 	// construct a web
-	glasscore::CWeb testGridWeb(UPDATE);
+	glasscore::CWeb testGridWeb(NUMTHREADS);
 	testGridWeb.setSiteList(testSiteList);
 	testGridWeb.dispatch(gridConfig);
 
@@ -565,7 +575,7 @@ TEST(WebTest, AddTest) {
 	testSiteList->dispatch(siteList);
 
 	// construct a web
-	glasscore::CWeb testGridWeb(UPDATE);
+	glasscore::CWeb testGridWeb(NUMTHREADS);
 	testGridWeb.setSiteList(testSiteList);
 	testGridWeb.dispatch(gridConfig);
 
@@ -624,7 +634,7 @@ TEST(WebTest, RemoveTest) {
 	testSiteList->dispatch(siteList);
 
 	// construct a web
-	glasscore::CWeb testGridWeb(UPDATE);
+	glasscore::CWeb testGridWeb(NUMTHREADS);
 	testGridWeb.setSiteList(testSiteList);
 	testGridWeb.dispatch(gridConfig);
 
@@ -663,7 +673,7 @@ TEST(WebTest, FailTests) {
 							NUMROWS,
 							NUMCOLS, NUMZ,
 							NOUPDATE,
-							nullTrav, nullTrav, false, 10, 10);
+							nullTrav, nullTrav, NOTHREADS, 10, 10);
 
 	// Nulls
 	ASSERT_FALSE(aWeb.dispatch(NULL))<< "Null dispatch false";

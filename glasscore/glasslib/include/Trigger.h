@@ -161,40 +161,40 @@ class CTrigger {
 	/**
 	 * \brief A double value containing latitude of this triggerin degrees.
 	 */
-	double dLat;
+	std::atomic<double> dLat;
 
 	/**
 	 * \brief A double value containing longitude of this triggerin degrees.
 	 */
-	double dLon;
+	std::atomic<double> dLon;
 
 	/**
 	 * \brief A double value containing the depth of this trigger in kilometers.
 	 */
-	double dZ;
+	std::atomic<double> dZ;
 
 	/**
 	 * \brief A double value with the origin time of this trigger in seconds
 	 */
-	double tOrg;
+	std::atomic<double> tOrg;
 
 	/**
 	 * \brief A double value containing the spatial resolution
 	 * (between nodes) in kilometers.
 	 */
-	double dResolution;
+	std::atomic<double> dResolution;
 
 	/**
 	 * \brief A double value that accumulates the Bayesian
 	 * sum of this trigger
 	 */
-	double dSum;
+	std::atomic<double> dSum;
 
 	/**
 	 * \brief A integer value that tallies the number of sites
 	 * that are included in this trigger
 	 */
-	int nCount;
+	std::atomic<int> nCount;
 
 	/**
 	 * \brief A std::vector of std::shared_ptr's to CPick objects

@@ -49,9 +49,6 @@ TEST(PickListTest, Construction) {
 	// pointers
 	ASSERT_EQ(NULL, testPickList->getGlass())<< "pGlass null";
 	ASSERT_EQ(NULL, testPickList->getSiteList())<< "pSiteList null";
-
-	// cleanup
-	delete (testPickList);
 }
 
 // test various pick operations
@@ -143,8 +140,4 @@ TEST(PickListTest, PickOperations) {
 	testPickList->clearPicks();
 	expectedSize = 0;
 	ASSERT_EQ(expectedSize, testPickList->getNPick())<< "Cleared Picks";
-
-	// cleanup
-	delete (testPickList);
-	delete (testSiteList);
 }

@@ -280,22 +280,22 @@ class CPick {
 	/**
 	 * \brief A double value containing the back azimuth of the pick
 	 */
-	double dBackAzimuth;
+	std::atomic<double> dBackAzimuth;
 
 	/**
 	 * \brief A double value containing the slowness of the pick
 	 */
-	double dSlowness;
+	std::atomic<double>  dSlowness;
 
 	/**
 	 * \brief A double value containing the arrival time of the pick
 	 */
-	double tPick;
+	std::atomic<double>  tPick;
 
 	/**
 	 * \brief An integer value containing the numeric id of the pick
 	 */
-	int idPick;
+	std::atomic<int>  idPick;
 
 	/**
 	 * \brief A std::shared_ptr to a json object

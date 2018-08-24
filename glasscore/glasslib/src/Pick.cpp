@@ -554,19 +554,8 @@ bool CPick::nucleate() {
 	return (true);
 }
 
-double CPick::getBackAzimuth() const {
-	return (dBackAzimuth);
-}
-
-double CPick::getSlowness() const {
-	return (dSlowness);
-}
-
-int CPick::getIdPick() const {
-	return (idPick);
-}
-
 const std::shared_ptr<json::Object>& CPick::getJPick() const {
+	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
 	return (jPick);
 }
 
@@ -605,11 +594,25 @@ const std::string& CPick::getAss() const {
 }
 
 const std::string& CPick::getPhs() const {
+	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
 	return (sPhs);
 }
 
 const std::string& CPick::getPid() const {
+	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
 	return (sPid);
+}
+
+double CPick::getBackAzimuth() const {
+	return (dBackAzimuth);
+}
+
+double CPick::getSlowness() const {
+	return (dSlowness);
+}
+
+int CPick::getIdPick() const {
+	return (idPick);
 }
 
 double CPick::getTPick() const {

@@ -325,7 +325,6 @@ class CSite {
 
 	double * getVec(double * vec);
 
-
 	void setPicksSinceCheck(int count);
 
 	int getPicksSinceCheck() const;
@@ -391,35 +390,35 @@ class CSite {
 	 * to glass. This is different than bUse, which is managed by glass
 	 * processes.
 	 */
-	bool bEnable;
+	std::atomic<bool> bEnable;
 
 	/**
 	 * \brief A boolean flag indicating whether to use this site in calculations.
 	 */
-	bool bUse;
+	std::atomic<bool> bUse;
 
 	/**
 	 * \brief A boolean flag indicating whether to use this site for teleseismic
 	 * calculations.
 	 */
-	bool bUseForTele;
+	std::atomic<bool> bUseForTele;
 
 	/**
 	 * \brief A double value containing the quality estimate of the station.
 	 */
-	double dQual;
+	std::atomic<double> dQual;
 
 	/**
 	 * \brief An integer containing the maximum number of picks stored by
 	 * the vector in this site
 	 */
-	int nSitePickMax;
+	std::atomic<int> nSitePickMax;
 
 	/**
 	 * \brief An integer containing the number of picks made at this site since
 	 * the last check
 	 */
-	int nPicksSinceCheck;
+	std::atomic<int> nPicksSinceCheck;
 
 	/**
 	 * \brief A mutex to control threading access to vNode.

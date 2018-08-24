@@ -15,8 +15,12 @@
 TEST(SiteListTest, Construction) {
 	glassutil::CLogit::disable();
 
+	printf("[ startup  ]\n");
+
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
+
+	printf("[ construct]\n");
 
 	// assert default values
 	// lists
@@ -25,8 +29,7 @@ TEST(SiteListTest, Construction) {
 	// pointers
 	ASSERT_EQ(NULL, testSiteList->getGlass())<< "pGlass null";
 
-	// cleanup
-	delete (testSiteList);
+	printf("[ shutdown ]\n");
 }
 
 // test various site operations
@@ -69,7 +72,4 @@ TEST(SiteListTest, SiteOperations) {
 	std::shared_ptr<glasscore::CSite> updatedSite = testSiteList->getSite(
 			sharedTestSite4->getScnl());
 	ASSERT_FALSE(updatedSite->getUse())<< "Updated site";
-
-	// cleanup
-	delete (testSiteList);
 }

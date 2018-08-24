@@ -41,9 +41,6 @@ TEST(HypoListTest, Construction) {
 
 	// pointers
 	ASSERT_EQ(NULL, testHypoList->getGlass())<< "pGlass null";
-
-	// cleanup
-	delete (testHypoList);
 }
 
 // test various hypo operations
@@ -141,7 +138,4 @@ TEST(HypoListTest, HypoOperations) {
 	testHypoList->clearHypos();
 	expectedSize = 0;
 	ASSERT_EQ(expectedSize, (int)testHypoList->getNHypo())<< "Cleared Hypos";
-
-	// cleanup
-	delete (testHypoList);
 }

@@ -71,9 +71,6 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 
 // ---------------------------------------------------------~CWeb
 CWeb::~CWeb() {
-	// stop the threads
-	stop();
-
 	clear();
 }
 
@@ -126,9 +123,6 @@ void CWeb::clear() {
 
 	pTrv1 = NULL;
 	pTrv2 = NULL;
-
-	// clear baseclass
-	BaseClass::clear();
 }
 
 // ---------------------------------------------------------Initialize

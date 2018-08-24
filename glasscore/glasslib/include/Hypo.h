@@ -343,25 +343,6 @@ class CHypo {
 	std::shared_ptr<json::Object> expire(bool send = true);
 
 	/**
-	 * \brief Print basic hypocenter values to screen
-	 *
-	 * Causes CHypo to print the current hypocenter values
-	 * (latitude, longitude, depth, etc.) to the console
-	 */
-	void summary();
-
-	/**
-	 * \brief Print advanced hypocenter values to screen
-	 *
-	 * Causes CHypo to print all the current hypocenter values,
-	 * statistics, and pick information to the console
-	 *
-	 * \param src - A std::string indicating a context / reason
-	 * for printing hypocenter values.
-	 */
-	void list(std::string src);
-
-	/**
 	 * \brief Check to see if pick could be associated
 	 *
 	 * Check to see if a given pick could be associated to this
@@ -610,16 +591,6 @@ class CHypo {
 	void graphicsOutput();
 
 	/**
-	 * \brief Calculate station weights
-	 *
-	 * Calculate the weight of each station for each pick in this
-	 * hypo from the hypocentral distance and distance to nearby stations
-	 * to reduce biases induced by network density differences
-	 * \return Returns false if all weights are zero
-	 */
-	bool weights();
-
-	/**
 	 * \brief Ensure all picks in the hypo belong to hypo
 	 *
 	 * Search through all picks in the given hypocenter's pick list, using the
@@ -722,6 +693,12 @@ class CHypo {
 	 * \return the intial bayes value
 	 */
 	double getBayesInitial() const;
+
+	/**
+	 * \brief dCut  getter
+	 * \return the dcut value
+	 */
+	double getDCut() const;
 
 	/**
 	 * \brief Cut factor getter
@@ -948,13 +925,13 @@ class CHypo {
 	 * \brief An integer containing the number of stations needed to maintain
 	 * association during the nucleation process
 	 */
-	int nCut;
+	std::atomic<int> nCut;
 
 	/**
 	 * \brief A double containing the subnet specific Bayesian stack threshold
 	 * used during the nucleation process
 	 */
-	double dThresh;
+	std::atomic<double> dThresh;
 
 	/**
 	 * \brief Holds the shifts for the grid search
@@ -964,108 +941,108 @@ class CHypo {
 	/**
 	 * \brief where to taper bayesVal from azi gap
 	 */
-	double aziTaper;
+	std::atomic<double> aziTaper;
 
 	/**
 	 * \brief maximum allowable event depth
 	 */
-	double maxDepth;
+	std::atomic<double> maxDepth;
 
 	/**
 	 * \brief An integer value containing this hypo's processing cycle count
 	 */
-	int iCycle;
+	std::atomic<int> iCycle;
 
 	/**
 	 * \brief A double value containing this hypo's origin time in julian
 	 * seconds
 	 */
-	double tOrg;
+	std::atomic<double> tOrg;
 
 	/**
 	 * \brief A double value containing this hypo's latitude in degrees
 	 */
-	double dLat;
+	std::atomic<double> dLat;
 
 	/**
 	 * \brief A double value containing this hypo's longitude in degrees
 	 */
-	double dLon;
+	std::atomic<double> dLon;
 
 	/**
 	 * \brief A double value containing this hypo's depth in kilometers
 	 */
-	double dZ;
+	std::atomic<double> dZ;
 
 	/**
 	 * \brief A boolean indicating if an Event message was sent for this hypo.
 	 */
-	bool bEvent;
+	std::atomic<bool> bEvent;
 
 	/**
 	 * \brief A double value containing this hypo's Bayes statistic
 	 */
-	double dBayes;
+	std::atomic<double> dBayes;
 
 	/**
 	 * \brief A double value containing this hypo's initial Bayes statistic
 	 */
-	double dBayesInitial;
+	std::atomic<double> dBayesInitial;
 
 	/**
 	 * \brief A double value containing this hypo's minimum distance in degrees
 	 */
-	double dMin;
+	std::atomic<double> dMin;
 
 	/**
 	 * \brief A double value containing this hypo's median distance in degrees
 	 */
-	double dMed;
+	std::atomic<double> dMed;
 
 	/**
 	 * \brief A double value containing this hypo's maximum azimuthal gap in
 	 * degrees
 	 */
-	double dGap;
+	std::atomic<double> dGap;
 
 	/**
 	 * \brief A double value containing this hypo's distance standard deviation
 	 */
-	double dSig;
+	std::atomic<double> dSig;
 
 	/**
 	 * \brief A double value the resolution of the triggering web
 	 */
-	double dRes;
+	std::atomic<double> dRes;
 
 	/**
 	 * \brief A double value containing this hypo's distance sample excess
 	 * kurtosis value
 	 */
-	double dKrt;
+	std::atomic<double> dKrt;
 
 	/**
 	 * \brief A double value containing the factor used to calculate this hypo's
 	 * distance cutoff
 	 */
-	double dCutFactor;
+	std::atomic<double> dCutFactor;
 
 	/**
 	 * \brief A double value containing the percentage used to calculate this
 	 *  hypo's distance cutoff
 	 */
-	double dCutPercentage;
+	std::atomic<double> dCutPercentage;
 
 	/**
 	 * \brief A double value containing the minimum distance cutoff
 	 */
-	double dCutMin;
+	std::atomic<double> dCutMin;
 
 	/**
 	 * \brief A double value containing this hypo's distance cutoff (2.0 * 80
 	 * percentile)  in degrees
 	 */
-	double dCut;
+	std::atomic<double> dCut;
 
 	/**
 	 * \brief A std::string containing this hypo's unique identifier
@@ -1075,7 +1052,7 @@ class CHypo {
 	/**
 	 * \brief A boolean indicating if this hypo is fixed (not allowed to change)
 	 */
-	bool bFixed;
+	std::atomic<bool> bFixed;
 
 	/**
 	 * \brief A double value containing this hypo's ephemeral latitude in
@@ -1108,40 +1085,28 @@ class CHypo {
 	double xOrg;
 
 	/**
-	 * \brief An integer value containing the count of station weight values
-	 * as of the last call to weights()
-	 */
-	int nWts;
-
-	/**
 	 * \brief A boolean indicating if a correlation was recently added to this
 	 *  hypo.
 	 */
-	bool bCorrAdded;
+	std::atomic<double> bCorrAdded;
 
 	/**
 	 * \brief An integer containing the number of times this hypo has been
 	 * processed.
 	 */
-	int processCount;
+	std::atomic<int>  processCount;
 
 	/**
 	 * \brief An integer containing the number of times this hypo has been
 	 * reported.
 	 */
-	int reportCount;
+	std::atomic<int>  reportCount;
 
 	/**
 	 * \brief A double value containing this hypo's creation time in julian
 	 * seconds
 	 */
-	double tCreate;
-
-	/**
-	 * \brief A vector of double values representing the weight of each pick
-	 * used by this hypo as of the last call to weights()
-	 */
-	std::vector<double> vWts;
+	std::atomic<double> tCreate;
 
 	/**
 	 * \brief A vector of shared_ptr's to the pick data that supports this hypo.

@@ -48,9 +48,6 @@ CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------~CHypoList
 CHypoList::~CHypoList() {
-	// stop the threads
-	stop();
-
 	// clean up everything else
 	clear();
 }
@@ -407,9 +404,6 @@ void CHypoList::clear() {
 
 	clearHypos();
 	pGlass = NULL;
-
-	// clear baseclass
-	BaseClass::clear();
 }
 
 // ---------------------------------------------------------clearHypos

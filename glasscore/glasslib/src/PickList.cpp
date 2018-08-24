@@ -49,9 +49,6 @@ CPickList::CPickList(int numThreads, int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------~CPickList
 CPickList::~CPickList() {
-	// stop the threads
-	stop();
-
 	// clean up everything else
 	clear();
 }
@@ -65,9 +62,6 @@ void CPickList::clear() {
 
 	// clear picks
 	clearPicks();
-
-	// clear baseclass
-	BaseClass::clear();
 }
 
 // ---------------------------------------------------------~clear

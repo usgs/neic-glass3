@@ -16,8 +16,11 @@
 namespace glasscore {
 
 // ---------------------------------------------------------CSiteList
-CSiteList::CSiteList(int sleepTime, int checkInterval)
-		: glass3::util::ThreadBaseClass("SiteList", sleepTime, 1, checkInterval) {
+CSiteList::CSiteList(int numThreads, int sleepTime, int checkInterval)
+		: glass3::util::ThreadBaseClass("SiteList", sleepTime, numThreads,
+										checkInterval) {
+	pGlass = NULL;
+
 	clear();
 
 	// start up the thread
@@ -26,27 +29,19 @@ CSiteList::CSiteList(int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------~CSiteList
 CSiteList::~CSiteList() {
-	// stop the threads
-	stop();
-
 	clear();
 }
 
 // ---------------------------------------------------------clear
 void CSiteList::clear() {
 	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	pGlass = NULL;
 
 	// clear sites
 	clearSites();
 
-	std::time(&m_tLastChecked);
 	iHoursWithoutPicking = -1;
 	iHoursBeforeLookingUp = -1;
 	m_iMaxPicksPerHour = -1;
-
-	// clear baseclass
-	BaseClass::clear();
 }
 
 // ---------------------------------------------------------clearSites
@@ -501,7 +496,7 @@ int CSiteList::getVSiteSize() const {
 glass3::util::WorkState CSiteList::work() {
 	// don't bother if we're not configured to check sites
 	if ((getHoursWithoutPicking() < 0) && (getHoursBeforeLookingUp() < 0)
-			 && (getMaxPicksPerHour() < 0)) {
+			&& (getMaxPicksPerHour() < 0)) {
 		return (glass3::util::WorkState::Idle);
 	}
 
@@ -526,9 +521,8 @@ glass3::util::WorkState CSiteList::work() {
 	// remember when we last checked
 	m_tLastChecked = tNow;
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CSiteList::checkSites: checking for sites not picking");
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CSiteList::work: checking for sites not picking");
 
 	// for each used site in the site list
 	for (auto aSite : vSite) {
@@ -552,7 +546,7 @@ glass3::util::WorkState CSiteList::work() {
 			if ((tNow - tLastPickAdded) > (60 * 60 * iHoursWithoutPicking)) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
-						"CSiteList::checkSites: Removing " + aSite->getScnl()
+						"CSiteList::work: Removing " + aSite->getScnl()
 								+ " for not picking in "
 								+ std::to_string(tNow - tLastPickAdded)
 								+ " seconds ");
@@ -569,7 +563,7 @@ glass3::util::WorkState CSiteList::work() {
 			if (picksSinceCheck > m_iMaxPicksPerHour) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
-						"CSiteList::checkSites: Removing " + aSite->getScnl()
+						"CSiteList::work: Removing " + aSite->getScnl()
 								+ " for picking more than "
 								+ std::to_string(m_iMaxPicksPerHour)
 								+ " in the last hour ("
@@ -619,7 +613,7 @@ glass3::util::WorkState CSiteList::work() {
 			if ((tNow - tLastPickAdded) < (60 * 60 * iHoursWithoutPicking)) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
-						"CSiteList::checkSites: Added " + aSite->getScnl()
+						"CSiteList::work: Added " + aSite->getScnl()
 								+ " because it has picked within "
 								+ std::to_string(tNow - tLastPickAdded)
 								+ " seconds ");
@@ -637,7 +631,7 @@ glass3::util::WorkState CSiteList::work() {
 			if (picksSinceCheck < m_iMaxPicksPerHour) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
-						"CSiteList::checkSites: Added " + aSite->getScnl()
+						"CSiteList::work: Added " + aSite->getScnl()
 								+ " for picking less than "
 								+ std::to_string(m_iMaxPicksPerHour)
 								+ " in the last hour ("
