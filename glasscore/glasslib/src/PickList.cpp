@@ -191,7 +191,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// check if pick is duplicate, if pGlass exists
 	if (pGlass) {
 		bool duplicate = checkDuplicate(newPick,
-										pGlass->getPickDuplicateWindow());
+										pGlass->getPickDuplicateTimeWindow());
 
 		// it is a duplicate, log and don't add pick
 		if (duplicate) {
@@ -224,7 +224,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// get maximum number of picks
 	// use max picks from pGlass if we have it
 	if (pGlass) {
-		nPickMax = pGlass->getPickMax();
+		nPickMax = pGlass->getMaxNumPicks();
 	}
 
 	// create pair for insertion
@@ -480,16 +480,16 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	char sLog[1024];
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CPickList::scavenge. " + hyp->getPid());
+							"CPickList::scavenge. " + hyp->getID());
 
 	// Calculate range for possible associations
-	double sdassoc = pGlass->getSdAssociate();
+	double sdassoc = pGlass->getAssociationSDCutoff();
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
 
 	// get the index of the pick to start with
 	// based on the hypo origin time
-	int it1 = indexPick(hyp->getTOrg());
+	int it1 = indexPick(hyp->getTOrigin());
 
 	// index can't be negative
 	// Primarily occurs if origin time is before first pick
@@ -499,7 +499,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	// get the index of the pick to end with by using the hypo
 	// origin time plus the provided duration
-	int it2 = indexPick(hyp->getTOrg() + tDuration);
+	int it2 = indexPick(hyp->getTOrigin() + tDuration);
 
 	// don't bother if there's no picks
 	if (it1 == it2) {
@@ -554,7 +554,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CPickList::scavenge " + hyp->getPid() + " added:"
+			"CPickList::scavenge " + hyp->getID() + " added:"
 					+ std::to_string(addCount));
 
 	// return whether we've associated at least one pick
@@ -611,7 +611,7 @@ std::vector<std::shared_ptr<CPick>> CPickList::rogues(std::string pidHyp,
 		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
 
 		// if the current pick is associated to this event
-		if ((pickHyp != NULL) && (pickHyp->getPid() == pidHyp)) {
+		if ((pickHyp != NULL) && (pickHyp->getID() == pidHyp)) {
 			// skip to next pick
 			continue;
 		}

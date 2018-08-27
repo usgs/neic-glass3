@@ -235,7 +235,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, int pickId,
 		return;
 	}
 
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// remember input json for hypo message generation
 	// note, move to init?
@@ -249,7 +249,7 @@ CPick::~CPick() {
 
 // ---------------------------------------------------------~clear
 void CPick::clear() {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	wpSite.reset();
 	wpHypo.reset();
@@ -267,7 +267,7 @@ void CPick::clear() {
 bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 						int pickId, std::string pickIdString,
 						double backAzimuth, double slowness) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	clear();
 
@@ -295,7 +295,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 
 // ---------------------------------------------------------addHypo
 void CPick::addHypo(std::shared_ptr<CHypo> hyp, std::string ass, bool force) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -323,16 +323,16 @@ void CPick::remHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
-	remHypo(hyp->getPid());
+	remHypo(hyp->getID());
 }
 
 void CPick::remHypo(std::string pid) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	// is the pointer still valid
 	if (auto pHypo = wpHypo.lock()) {
 		// Remove hypo reference from this pick
-		if (pHypo->getPid() == pid) {
+		if (pHypo->getID() == pid) {
 			clearHypo();
 		}
 	} else {
@@ -342,12 +342,12 @@ void CPick::remHypo(std::string pid) {
 }
 
 void CPick::clearHypo() {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 	wpHypo.reset();
 }
 
 void CPick::setAss(std::string ass) {
-	std::lock_guard < std::recursive_mutex > guard(pickMutex);
+	std::lock_guard<std::recursive_mutex> guard(pickMutex);
 
 	sAss = ass;
 }
@@ -375,7 +375,8 @@ bool CPick::nucleate() {
 		// get the hypo and compute ratio
 		std::shared_ptr<CHypo> pHypo = wpHypo.lock();
 		if (pHypo != NULL) {
-			double adBayesRatio = (pHypo->getBayes()) / (pHypo->getThresh());
+			double adBayesRatio = (pHypo->getBayesValue())
+					/ (pHypo->getNucleationStackThreshold());
 
 			// check to see if the ratio is high enough to not
 			// bother
@@ -387,7 +388,7 @@ bool CPick::nucleate() {
 								+ pickSite->getScnl() + "; tPick:" + pt
 								+ "; idPick:" + std::to_string(idPick)
 								+ " associated with an event with stack twice threshold ("
-								+ std::to_string(pHypo->getBayes()) + ")");
+								+ std::to_string(pHypo->getBayesValue()) + ")");
 				return (false);
 			}
 		}
@@ -397,8 +398,7 @@ bool CPick::nucleate() {
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
-	std::vector < std::shared_ptr < CTrigger >> vTrigger = pickSite->nucleate(
-			tPick);
+	std::vector<std::shared_ptr<CTrigger>> vTrigger = pickSite->nucleate(tPick);
 
 	// if there were no triggers, we're done
 	if (vTrigger.size() == 0) {
@@ -443,18 +443,18 @@ bool CPick::nucleate() {
 		}
 
 		// create the hypo using the node
-		std::shared_ptr<CHypo> hypo = std::make_shared < CHypo
-				> (trigger, pGlass->getTTT());
+		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
+				trigger, pGlass->getAssociationTravelTimes());
 
 		// set hypo glass pointer and such
 		hypo->setGlass(pGlass);
-		hypo->setCutFactor(pGlass->getCutFactor());
-		hypo->setCutPercentage(pGlass->getCutPercentage());
-		hypo->setCutMin(pGlass->getCutMin());
+		hypo->setDistanceCutoffFactor(pGlass->getDistanceCutoffFactor());
+		hypo->setDistanceCutoffPercentage(
+				pGlass->getDistanceCutoffPercentage());
+		hypo->setMinDistanceCutoff(pGlass->getMinDistanceCutoff());
 
 		// add links to all the picks that support the hypo
-		std::vector < std::shared_ptr < CPick >> vTriggerPicks = trigger
-				->getVPick();
+		std::vector<std::shared_ptr<CPick>> vTriggerPicks = trigger->getVPick();
 
 		for (auto pick : vTriggerPicks) {
 			// they're not associated yet, just potentially
@@ -464,8 +464,8 @@ bool CPick::nucleate() {
 
 		// use the hypo's nucleation threshold, which is really the
 		// web's nucleation threshold
-		int ncut = hypo->getCut();
-		double thresh = hypo->getThresh();
+		int ncut = hypo->getNucleationDataThreshold();
+		double thresh = hypo->getNucleationStackThreshold();
 		bool bad = false;
 
 		// First localization attempt after nucleation
@@ -483,12 +483,12 @@ bool CPick::nucleate() {
 					std::max(trigger->getResolution() / 10.0, 5.0), .1);
 
 			// get the number of picks we have now
-			int npick = hypo->getVPickSize();
+			int npick = hypo->getPickDataSize();
 
 			snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass:%d; nPick:%d"
 						"/nCut:%d; bayes:%f/thresh:%f; %s",
 						ipass, npick, ncut, bayes, thresh,
-						hypo->getPid().c_str());
+						hypo->getID().c_str());
 			glassutil::CLogit::log(sLog);
 
 			// check to see if we still have a high enough bayes value for this
@@ -499,7 +499,7 @@ bool CPick::nucleate() {
 							"CPick::nucleate: -- Abandoning solution %s "
 							"due to low bayes value "
 							"(bayes:%f/thresh:%f)",
-							hypo->getPid().c_str(), bayes, thresh);
+							hypo->getID().c_str(), bayes, thresh);
 				glassutil::CLogit::log(sLog);
 
 				// don't bother making additional passes
@@ -518,7 +518,7 @@ bool CPick::nucleate() {
 							"CPick::nucleate: -- Abandoning solution %s "
 							"due to lack of picks "
 							"(npick:%d/ncut:%d)",
-							hypo->getPid().c_str(), npick, ncut);
+							hypo->getID().c_str(), npick, ncut);
 				glassutil::CLogit::log(sLog);
 
 				// don't bother making additional passes
@@ -534,16 +534,16 @@ bool CPick::nucleate() {
 		}
 
 		// log the hypo
-		std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrg());
+		std::string st = glassutil::CDate::encodeDateTime(hypo->getTOrigin());
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CPick::nucleate: TRG site:" + pickSite->getScnl() + "; tPick:"
 						+ pt + "; idPick:" + std::to_string(idPick) + "; sPid:"
 						+ sPid + " => web:" + hypo->getWebName() + "; hyp: "
-						+ hypo->getPid() + "; lat:"
-						+ std::to_string(hypo->getLat()) + "; lon:"
-						+ std::to_string(hypo->getLon()) + "; z:"
-						+ std::to_string(hypo->getZ()) + "; tOrg:" + st);
+						+ hypo->getID() + "; lat:"
+						+ std::to_string(hypo->getLatitude()) + "; lon:"
+						+ std::to_string(hypo->getLongitude()) + "; z:"
+						+ std::to_string(hypo->getDepth()) + "; tOrg:" + st);
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit adding it to the hypo list
@@ -555,17 +555,17 @@ bool CPick::nucleate() {
 }
 
 const std::shared_ptr<json::Object>& CPick::getJPick() const {
-	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (jPick);
 }
 
 const std::shared_ptr<CHypo> CPick::getHypo() const {
-	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (wpHypo.lock());
 }
 
 const std::string CPick::getHypoPid() const {
-	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	std::string hypoPid = "";
 
 	// make sure we have a hypo,
@@ -577,29 +577,29 @@ const std::string CPick::getHypoPid() const {
 	std::shared_ptr<CHypo> pHypo = getHypo();
 	if (pHypo != NULL) {
 		// get the hypo pid
-		hypoPid = pHypo->getPid();
+		hypoPid = pHypo->getID();
 	}
 
 	return (hypoPid);
 }
 
 const std::shared_ptr<CSite> CPick::getSite() const {
-	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (wpSite.lock());
 }
 
 const std::string& CPick::getAss() const {
-	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (sAss);
 }
 
 const std::string& CPick::getPhs() const {
-	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (sPhs);
 }
 
 const std::string& CPick::getPid() const {
-	std::lock_guard < std::recursive_mutex > pickGuard(pickMutex);
+	std::lock_guard<std::recursive_mutex> pickGuard(pickMutex);
 	return (sPid);
 }
 

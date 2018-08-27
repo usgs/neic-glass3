@@ -41,11 +41,11 @@ TEST(CorrelationListTest, Construction) {
 			new glasscore::CCorrelationList();
 
 	// assert default values
-	ASSERT_EQ(0, testCorrelationList->getNCorrelationTotal())<<
+	ASSERT_EQ(0, testCorrelationList->getCorrelationTotal())<<
 	"nCorrelationTotal is 0";
 
 	// lists
-	ASSERT_EQ(0, testCorrelationList->getVCorrelationSize())<<
+	ASSERT_EQ(0, testCorrelationList->size())<<
 	"vCorrelation.size() is 0";
 
 	// pointers
@@ -99,17 +99,17 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	glasscore::CCorrelationList * testCorrelationList =
 			new glasscore::CCorrelationList();
 	testCorrelationList->setSiteList(testSiteList);
-	testCorrelationList->setNCorrelationMax(MAXNCORRELATION);
+	testCorrelationList->setCorrelationMax(MAXNCORRELATION);
 
 	// test indexcorrelation when empty
-	ASSERT_EQ(-2, testCorrelationList->indexCorrelation(0))<<
+	ASSERT_EQ(-2, testCorrelationList->getInsertionIndex(0))<<
 	"test indexcorrelation when empty";
 
 	// test adding correlations by addCorrelation and dispatch
-	testCorrelationList->addCorrelation(correlationJSON);
+	testCorrelationList->addCorrelationFromJSON(correlationJSON);
 	testCorrelationList->dispatch(correlation3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testCorrelationList->getNCorrelationTotal())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getCorrelationTotal())<<
 	"Added Correlations";
 
 	// test getting a correlation (first correlation, id 1)
@@ -124,22 +124,22 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	"testCorrelation has right scnl";
 
 	// test indexcorrelation
-	ASSERT_EQ(-1, testCorrelationList->indexCorrelation(TCORRELATION))<<
+	ASSERT_EQ(-1, testCorrelationList->getInsertionIndex(TCORRELATION))<<
 	"test indexcorrelation with time before";
-	ASSERT_EQ(1, testCorrelationList->indexCorrelation(TCORRELATION2))<<
+	ASSERT_EQ(1, testCorrelationList->getInsertionIndex(TCORRELATION2))<<
 	"test indexcorrelation with time after";
-	ASSERT_EQ(0, testCorrelationList->indexCorrelation(TCORRELATION3))<<
+	ASSERT_EQ(0, testCorrelationList->getInsertionIndex(TCORRELATION3))<<
 	"test indexcorrelation with time within";
 
 	// add more correlations
-	testCorrelationList->addCorrelation(correlation2JSON);
-	testCorrelationList->addCorrelation(correlation4JSON);
-	testCorrelationList->addCorrelation(correlation5JSON);
-	testCorrelationList->addCorrelation(correlation6JSON);
+	testCorrelationList->addCorrelationFromJSON(correlation2JSON);
+	testCorrelationList->addCorrelationFromJSON(correlation4JSON);
+	testCorrelationList->addCorrelationFromJSON(correlation5JSON);
+	testCorrelationList->addCorrelationFromJSON(correlation6JSON);
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNCORRELATION;
-	ASSERT_EQ(expectedSize, testCorrelationList->getVCorrelationSize())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->size())<<
 	"testCorrelationList not larger than max";
 
 	// get first correlation, which is now id 2
@@ -155,7 +155,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	// test clearing correlations
 	testCorrelationList->clearCorrelations();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testCorrelationList->getNCorrelationTotal())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getCorrelationTotal())<<
 	"Cleared Correlations";
 
 	// cleanup

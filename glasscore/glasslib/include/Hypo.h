@@ -204,7 +204,7 @@ class CHypo {
 	 *
 	 * \param pck - A std::shared_ptr to the CPick object to remove.
 	 */
-	void remPick(std::shared_ptr<CPick> pck);
+	void removePick(std::shared_ptr<CPick> pck);
 
 	/**
 	 * \brief Check if hypo has pick reference
@@ -256,7 +256,7 @@ class CHypo {
 	 *
 	 * \param corr - A std::shared_ptr to the CCorrelation object to remove.
 	 */
-	void remCorrelation(std::shared_ptr<CCorrelation> corr);
+	void removeCorrelation(std::shared_ptr<CCorrelation> corr);
 
 	/**
 	 * \brief Check if hypo has correlation reference
@@ -490,7 +490,7 @@ class CHypo {
 	 *
 	 * NOTE: Need more detailed description from Will
 	 */
-	void grid_search();
+	void gridSearch();
 
 	/**
 	 * \brief perform the grid search
@@ -615,7 +615,7 @@ class CHypo {
 	 * \brief aziTaper
 	 * \return the aziTaper
 	 */
-	double getAziTaper() const;
+	double getAzimuthTaper() const;
 
 	/**
 	 * \brief maxDepth
@@ -627,19 +627,19 @@ class CHypo {
 	 * \brief Latitude getter
 	 * \return the latitude
 	 */
-	double getLat() const;
+	double getLatitude() const;
 
 	/**
 	 * \brief Longitude getter
 	 * \return the longitude
 	 */
-	double getLon() const;
+	double getLongitude() const;
 
 	/**
 	 * \brief Depth getter
 	 * \return the depth
 	 */
-	double getZ() const;
+	double getDepth() const;
 
 	/**
 	 * \brief CGeo getter
@@ -651,31 +651,31 @@ class CHypo {
 	 * \brief Origin time getter
 	 * \return the origin time
 	 */
-	double getTOrg() const;
+	double getTOrigin() const;
 
 	/**
 	 * \brief Bayes value getter
 	 * \return the bayes value
 	 */
-	double getBayes() const;
+	double getBayesValue() const;
 
 	/**
 	 * \brief Correlation added flag getter
 	 * \return the correlation added flag
 	 */
-	bool getCorrAdded() const;
+	bool getCorrelationAdded() const;
 
 	/**
 	 * \brief Correlation added flag setter
 	 * \param corrAdded - the correlation added flag
 	 */
-	void setCorrAdded(bool corrAdded);
+	void setCorrelationAdded(bool corrAdded);
 
 	/**
 	 * \brief Event reported flag getter
 	 * \return the event reported flag
 	 */
-	bool getEvent() const;
+	bool getEventSent() const;
 
 	/**
 	 * \brief Fixed flag getter
@@ -693,73 +693,73 @@ class CHypo {
 	 * \brief Bayes initial value getter
 	 * \return the intial bayes value
 	 */
-	double getBayesInitial() const;
+	double getInitialBayesValue() const;
 
 	/**
 	 * \brief dCut  getter
 	 * \return the dcut value
 	 */
-	double getDCut() const;
+	double getDistanceCutoff() const;
 
 	/**
 	 * \brief Cut factor getter
 	 * \return the cut factor value
 	 */
-	double getCutFactor() const;
+	double getDistanceCutoffFactor() const;
 
 	/**
 	 * \brief Cut factor setter
 	 * \param cutFactor -  the cut factor
 	 */
-	void setCutFactor(double cutFactor);
+	void setDistanceCutoffFactor(double cutFactor);
 
 	/**
 	 * \brief Cut min getter
 	 * \return the cut min value
 	 */
-	double getCutMin() const;
+	double getMinDistanceCutoff() const;
 
 	/**
 	 * \brief Cut min setter
 	 * \param cutMin - the cut min value
 	 */
-	void setCutMin(double cutMin);
+	void setMinDistanceCutoff(double cutMin);
 
 	/**
 	 * \brief Cut percentage getter
 	 * \return the cut percentage value
 	 */
-	double getCutPercentage() const;
+	double getDistanceCutoffPercentage() const;
 
 	/**
 	 * \brief Cut factor setter
 	 * \param cutPercentage - the cut percentage value
 	 */
-	void setCutPercentage(double cutPercentage);
+	void setDistanceCutoffPercentage(double cutPercentage);
 
 	/**
 	 * \brief Cut getter
 	 * \return the cut value
 	 */
-	int getCut() const;
+	int getNucleationDataThreshold() const;
 
 	/**
 	 * \brief Cut setter
 	 * \param cut - the cut value
 	 */
-	void setCut(double cut);
+	void setNucleationDataThreshold(int cut);
 
 	/**
 	 * \brief Thresh getter
 	 * \return the thresh value
 	 */
-	double getThresh() const;
+	double getNucleationStackThreshold() const;
 
 	/**
 	 * \brief Thresh setter
 	 * \param thresh - the thresh value
 	 */
-	void setThresh(double thresh);
+	void setNucleationStackThreshold(double thresh);
 
 	/**
 	 * \brief Gap getter
@@ -771,19 +771,19 @@ class CHypo {
 	 * \brief Kurtosis getter
 	 * \return the kurtosis value
 	 */
-	double getKrt() const;
+	double getKurtosisValue() const;
 
 	/**
 	 * \brief Med distance getter
 	 * \return the med distance value
 	 */
-	double getMed() const;
+	double getMedianDistance() const;
 
 	/**
 	 * \brief Min distance getter
 	 * \return the min distance value
 	 */
-	double getMin() const;
+	double getMinDistance() const;
 
 	/**
 	 * \brief Mutex getter
@@ -792,28 +792,28 @@ class CHypo {
 	std::mutex & getProcessingMutex();
 
 	/**
-	 * \brief Residual getter
-	 * \return the residual value
+	 * \brief Web Resolution getter
+	 * \return the web resolution value
 	 */
-	double getRes() const;
+	double getWebResolution() const;
 
 	/**
 	 * \brief Sig getter
 	 * \return the sig value
 	 */
-	double getSig() const;
+	double getDistanceSD() const;
 
 	/**
 	 * \brief Cycle getter
 	 * \return the cycle value
 	 */
-	int getCycle() const;
+	int getCycleCount() const;
 
 	/**
 	 * \brief Cycle setter
 	 * \param newCycle - the cycle value
 	 */
-	int setCycle(int newCycle);
+	int setCycleCount(int newCycle);
 
 	/**
 	 * \brief Process count getter
@@ -843,7 +843,7 @@ class CHypo {
 	 * \brief Pid getter
 	 * \return the Pid
 	 */
-	const std::string& getPid() const;
+	const std::string& getID() const;
 
 	/**
 	 * \brief Web Name getter
@@ -855,19 +855,19 @@ class CHypo {
 	 * \brief Pick vector size getter
 	 * \return the pick vector size
 	 */
-	int getVPickSize() const;
+	int getPickDataSize() const;
 
 	/**
 	 * \brief Pick vector getter
 	 * \return the pick vector
 	 */
-	std::vector<std::shared_ptr<CPick>> getVPick() const;
+	std::vector<std::shared_ptr<CPick>> getPickData() const;
 
 	/**
 	 * \brief Correlation vector size getter
 	 * \return the correlation vector size
 	 */
-	int getVCorrSize() const;
+	int getCorrelationDataSize() const;
 
 	/**
 	 * \brief Creation time getter
@@ -879,19 +879,19 @@ class CHypo {
 	 * \brief get pTrv1
 	 * \return pTrv1
 	 */
-	std::shared_ptr<traveltime::CTravelTime> getTrv1() const;
+	std::shared_ptr<traveltime::CTravelTime> getNucleationTravelTime1() const;
 
 	/**
 	 * \brief get pTrv2
 	 * \return pTrv2
 	 */
-	std::shared_ptr<traveltime::CTravelTime> getTrv2() const;
+	std::shared_ptr<traveltime::CTravelTime> getNucleationTravelTime2() const;
 
 	/**
 	 * \brief get TTT
 	 * \return pTTT
 	 */
-	std::shared_ptr<traveltime::CTTT> getTTT() const;
+	std::shared_ptr<traveltime::CTTT> getTravelTimeTables() const;
 
 	/**
 	 * \brief Report count getter
@@ -903,10 +903,10 @@ class CHypo {
 	void lockForProcessing();
 	void unlockAfterProcessing();
 
-	void setLat(double lat);
-	void setLon(double lon);
-	void setZ(double z);
-	void setTOrg(double newTOrg);
+	void setLatitude(double lat);
+	void setLongitude(double lon);
+	void setDepth(double z);
+	void setTOrigin(double newTOrg);
 
  private:
 	/**
@@ -914,229 +914,229 @@ class CHypo {
 	 * look up travel times, encode/decode time, and call significance
 	 * function.
 	 */
-	CGlass *pGlass;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief  A std::string with the name of the initiating subnet trigger
 	 * used during the nucleation process
 	 */
-	std::string sWebName;
+	std::string m_sWebName;
 
 	/**
 	 * \brief An integer containing the number of stations needed to maintain
 	 * association during the nucleation process
 	 */
-	std::atomic<int> nCut;
+	std::atomic<int> m_iNucleationDataThreshold;
 
 	/**
 	 * \brief A double containing the subnet specific Bayesian stack threshold
 	 * used during the nucleation process
 	 */
-	std::atomic<double> dThresh;
+	std::atomic<double> m_dNucleationStackThreshold;
 
 	/**
 	 * \brief Holds the shifts for the grid search
 	 */
-	double searchVals[5];
+	double m_daSearchVals[5];
 
 	/**
 	 * \brief where to taper bayesVal from azi gap
 	 */
-	std::atomic<double> aziTaper;
+	std::atomic<double> m_dAzimuthTaper;
 
 	/**
 	 * \brief maximum allowable event depth
 	 */
-	std::atomic<double> maxDepth;
+	std::atomic<double> m_dMaxDepth;
 
 	/**
 	 * \brief An integer value containing this hypo's processing cycle count
 	 */
-	std::atomic<int> iCycle;
+	std::atomic<int> m_iCycleCount;
 
 	/**
 	 * \brief A double value containing this hypo's origin time in julian
 	 * seconds
 	 */
-	std::atomic<double> tOrg;
+	std::atomic<double> m_tOrigin;
 
 	/**
 	 * \brief A double value containing this hypo's latitude in degrees
 	 */
-	std::atomic<double> dLat;
+	std::atomic<double> m_dLatitude;
 
 	/**
 	 * \brief A double value containing this hypo's longitude in degrees
 	 */
-	std::atomic<double> dLon;
+	std::atomic<double> m_dLongitude;
 
 	/**
 	 * \brief A double value containing this hypo's depth in kilometers
 	 */
-	std::atomic<double> dZ;
+	std::atomic<double> m_dDepth;
 
 	/**
 	 * \brief A boolean indicating if an Event message was sent for this hypo.
 	 */
-	std::atomic<bool> bEvent;
+	std::atomic<bool> m_bEventSent;
 
 	/**
 	 * \brief A double value containing this hypo's Bayes statistic
 	 */
-	std::atomic<double> dBayes;
+	std::atomic<double> m_dBayesValue;
 
 	/**
 	 * \brief A double value containing this hypo's initial Bayes statistic
 	 */
-	std::atomic<double> dBayesInitial;
+	std::atomic<double> m_dInitialBayesValue;
 
 	/**
 	 * \brief A double value containing this hypo's minimum distance in degrees
 	 */
-	std::atomic<double> dMin;
+	std::atomic<double> m_dMinDistance;
 
 	/**
 	 * \brief A double value containing this hypo's median distance in degrees
 	 */
-	std::atomic<double> dMed;
+	std::atomic<double> m_dMedianDistance;
 
 	/**
 	 * \brief A double value containing this hypo's maximum azimuthal gap in
 	 * degrees
 	 */
-	std::atomic<double> dGap;
+	std::atomic<double> m_dGap;
 
 	/**
 	 * \brief A double value containing this hypo's distance standard deviation
 	 */
-	std::atomic<double> dSig;
+	std::atomic<double> m_dDistanceSD;
 
 	/**
 	 * \brief A double value the resolution of the triggering web
 	 */
-	std::atomic<double> dRes;
+	std::atomic<double> m_dWebResolution;
 
 	/**
 	 * \brief A double value containing this hypo's distance sample excess
 	 * kurtosis value
 	 */
-	std::atomic<double> dKrt;
+	std::atomic<double> m_dKurtosisValue;
 
 	/**
 	 * \brief A double value containing the factor used to calculate this hypo's
 	 * distance cutoff
 	 */
-	std::atomic<double> dCutFactor;
+	std::atomic<double> m_dDistanceCutoffFactor;
 
 	/**
 	 * \brief A double value containing the percentage used to calculate this
 	 *  hypo's distance cutoff
 	 */
-	std::atomic<double> dCutPercentage;
+	std::atomic<double> m_dDistanceCutoffPercentage;
 
 	/**
 	 * \brief A double value containing the minimum distance cutoff
 	 */
-	std::atomic<double> dCutMin;
+	std::atomic<double> m_dMinDistanceCutoff;
 
 	/**
 	 * \brief A double value containing this hypo's distance cutoff (2.0 * 80
 	 * percentile)  in degrees
 	 */
-	std::atomic<double> dCut;
+	std::atomic<double> m_dDistanceCutoff;
 
 	/**
 	 * \brief A std::string containing this hypo's unique identifier
 	 */
-	std::string sPid;
+	std::string m_sID;
 
 	/**
 	 * \brief A boolean indicating if this hypo is fixed (not allowed to change)
 	 */
-	std::atomic<bool> bFixed;
+	std::atomic<bool> m_bFixed;
 
 	/**
 	 * \brief A double value containing this hypo's ephemeral latitude in
 	 * degrees during bayes maximization iterations
 	 */
-	double xLat;
+	double m_dXLatitude;
 
 	/**
 	 * \brief A double value containing this hypo's ephemeral longitude in
 	 * degrees during bayes maximization iterations
 	 */
-	double xLon;
+	double m_dXLongitude;
 
 	/**
 	 * \brief A double value containing this hypo's ephemeral depth in
 	 * kilometers during bayes maximization iterations
 	 */
-	double xZ;
+	double m_dXDepth;
 
 	/**
 	 * \brief A double value containing this hypo's ephemeral Bayes statistic
 	 * during bayes maximization iterations
 	 */
-	double xBayes;
+	double m_dXBayes;
 
 	/**
 	 * \brief A double value containing this hypo's ephemeral origin time in
 	 * julian seconds during bayes maximization iterations
 	 */
-	double xOrg;
+	double m_tXOrigin;
 
 	/**
 	 * \brief A boolean indicating if a correlation was recently added to this
 	 *  hypo.
 	 */
-	std::atomic<double> bCorrAdded;
+	std::atomic<double> m_bCorrelationAdded;
 
 	/**
 	 * \brief An integer containing the number of times this hypo has been
 	 * processed.
 	 */
-	std::atomic<int> processCount;
+	std::atomic<int> m_iProcessCount;
 
 	/**
 	 * \brief An integer containing the number of times this hypo has been
 	 * reported.
 	 */
-	std::atomic<int> reportCount;
+	std::atomic<int> m_iReportCount;
 
 	/**
 	 * \brief A double value containing this hypo's creation time in julian
 	 * seconds
 	 */
-	std::atomic<double> tCreate;
+	std::atomic<double> m_tCreate;
 
 	/**
 	 * \brief A vector of shared_ptr's to the pick data that supports this hypo.
 	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
+	std::vector<std::shared_ptr<CPick>> m_vPickData;
 
 	/**
 	 * \brief A vector of shared pointers to correlation data that support
 	 * this hypo.
 	 */
-	std::vector<std::shared_ptr<CCorrelation>> vCorr;
+	std::vector<std::shared_ptr<CCorrelation>> m_vCorrelationData;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
 	 * travel times for the first phase used to nucleate this hypo
 	 */
-	std::shared_ptr<traveltime::CTravelTime> pTrv1;
+	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime1;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
 	 * travel times for the second phase used to nucleate this hypo
 	 */
-	std::shared_ptr<traveltime::CTravelTime> pTrv2;
+	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime2;
 
 	/**
 	 * \brief A pointer to a CTTT object containing the travel
 	 * time phases and branches used for association and location
 	 */
-	std::shared_ptr<traveltime::CTTT> pTTT;
+	std::shared_ptr<traveltime::CTTT> m_pTravelTimeTables;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypo.
@@ -1145,12 +1145,12 @@ class CHypo {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	mutable std::recursive_mutex hypoMutex;
+	mutable std::recursive_mutex m_HypoMutex;
 
 	/**
 	 * \brief A mutex to control processing access to CHypo.
 	 */
-	std::mutex processingMutex;
+	std::mutex m_ProcessingMutex;
 
 	/**
 	 * \brief A random engine used to generate random numbers

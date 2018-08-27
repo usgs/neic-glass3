@@ -105,7 +105,7 @@ class CCorrelationList {
 	 * \return Returns true if the correlation was usable and added by
 	 * CCorrelationList, false otherwise
 	 */
-	bool addCorrelation(std::shared_ptr<json::Object> com);
+	bool addCorrelationFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CCorrelationList get correlation function
@@ -133,29 +133,29 @@ class CCorrelationList {
 	 * the id of the last element is returned, if the vector is empty,
 	 * -2 is returned.
 	 */
-	int indexCorrelation(double tCorrelation);
+	int getInsertionIndex(double tCorrelation);
 
 	/**
-	 * \brief Checks if picks is duplicate
+	 * \brief Checks if correlation is duplicate
 	 *
-	 * Takes a new pick and compares with list of picks.
+	 * Takes a new correlation and compares with list of correlations.
 	 *
 	 * \param newCorrelation - A shared pointer to the correlation to check
 	 * \param tWindow - A double containing the allowable matching time window
 	 * in seconds
 	 * \param xWindow - A double containing the allowable matching distance
 	 * window in degrees
-	 * True if pick is a duplicate
+	 * returns true if correlation is a duplicate, false otherwise
 	 */
 	bool checkDuplicate(CCorrelation * newCorrelation, double tWindow,
 						double xWindow);
 
 	/**
-	 * \brief Search for any associable picks that match hypo
+	 * \brief Search for any associable correlations that match hypo
 	 *
-	 * Search through all picks within a provided number seconds from the origin
-	 * time of the given hypocenter, adding any picks that meet association
-	 * criteria to the given hypocenter.
+	 * Search through all correlations within a provided number seconds from the
+	 * origin time of the given hypocenter, adding any correlations that meet
+	 * association criteria to the given hypocenter.
 	 *
 	 * \param hyp - A shared_ptr to a CHypo object containing the hypocenter
 	 * to attempt to associate to.
@@ -165,24 +165,6 @@ class CCorrelationList {
 	 * false otherwise.
 	 */
 	bool scavenge(std::shared_ptr<CHypo> hyp, double tDuration = 2.5);
-
-	/**
-	 * \brief Generate rogue list for tuning process
-	 *
-	 * Search through all picks within a provided number of seconds from the
-	 * given origin time, creating a vector of all picks that could be
-	 * associated with given hypocenter ID, but are actually either unassociated
-	 * or associated with another hypocenter
-	 *
-	 * \param pidHyp - A std::string containing the id of the hypocenter to use
-	 * \param tOrg - A double value containing the origin time in julian seconds
-	 * of the hypocenter to use.
-	 * \param tDuration - A double value containing the duration to search picks
-	 * from origin time in seconds, defaults to 2.5
-	 */
-	std::vector<std::shared_ptr<CCorrelation>> rogues(std::string pidHyp,
-														double tOrg,
-														double tDuration = 2.5);
 
 	/**
 	 * \brief CGlass getter
@@ -212,24 +194,24 @@ class CCorrelationList {
 	 * \brief nCorrelationMax getter
 	 * \return the nCorrelationMax
 	 */
-	int getNCorrelationMax() const;
+	int getCorrelationMax() const;
 
 	/**
 	 * \brief nCorrelationMax Setter
 	 * \param correlationMax - the nCorrelationMax
 	 */
-	void setNCorrelationMax(int correlationMax);
+	void setCorrelationMax(int correlationMax);
 
 	/**
 	 * \brief nCorrelationTotal getter
 	 * \return the nCorrelationTotal
 	 */
-	int getNCorrelationTotal() const;
+	int getCorrelationTotal() const;
 
 	/**
 	 * \brief Get the current size of the correlation list
 	 */
-	int getVCorrelationSize() const;
+	int size() const;
 
  private:
 	/**
@@ -237,26 +219,26 @@ class CCorrelationList {
 	 * look up site information, encode/decode time, get configuration values,
 	 * call association functions, and debug flags
 	 */
-	CGlass *pGlass;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites for
 	 * lookups
 	 */
-	CSiteList *pSiteList;
+	CSiteList * m_pSiteList;
 
 	/**
 	 * \brief An integer containing the maximum number of correlations allowed in
 	 * CCorrelationList. This value is overridden by pGlass->nPickMax if provided.
 	 * Defaults to 10000.
 	 */
-	std::atomic<int> nCorrelationMax;
+	std::atomic<int> m_iCorrelationMax;
 
 	/**
 	 * \brief An integer containing the total number of correlations ever added
 	 * to CCorrelationList
 	 */
-	std::atomic<int> nCorrelationTotal;
+	std::atomic<int> m_iCorrelationTotal;
 
 	/**
 	 * \brief A std::vector mapping the arrival time of each correlation in
@@ -264,13 +246,13 @@ class CCorrelationList {
 	 * vector object are inserted in a manner to keep it in sequential time
 	 * order from oldest to youngest.
 	 */
-	std::vector<std::pair<double, int>> vCorrelation;
+	std::vector<std::pair<double, int>> m_vCorrelation;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each correlation in
 	 * CCorrelationList indexed by the integer correlation id.
 	 */
-	std::map<int, std::shared_ptr<CCorrelation>> mCorrelation;
+	std::map<int, std::shared_ptr<CCorrelation>> m_mCorrelation;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to vCorrelation.

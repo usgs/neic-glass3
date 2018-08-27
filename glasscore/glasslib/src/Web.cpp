@@ -210,9 +210,9 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 
 	// check pGlass
 	if (pGlass != NULL) {
-		detect = pGlass->getDetect();
-		nucleate = pGlass->getNucleate();
-		thresh = pGlass->getThresh();
+		detect = pGlass->getNumStationsPerNode();
+		nucleate = pGlass->getNucleationDataThreshold();
+		thresh = pGlass->getNucleationStackThreshold();
 	}
 
 	double resol = 100;
@@ -469,9 +469,9 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 
 	// check pGlass
 	if (pGlass != NULL) {
-		detect = pGlass->getDetect();
-		nucleate = pGlass->getNucleate();
-		thresh = pGlass->getThresh();
+		detect = pGlass->getNumStationsPerNode();
+		nucleate = pGlass->getNucleationDataThreshold();
+		thresh = pGlass->getNucleationStackThreshold();
 	}
 
 	double resol = 0;
@@ -788,9 +788,9 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 
 	// check pGlass
 	if (pGlass != NULL) {
-		detect = pGlass->getDetect();
-		nucleate = pGlass->getNucleate();
-		thresh = pGlass->getThresh();
+		detect = pGlass->getNumStationsPerNode();
+		nucleate = pGlass->getNucleationDataThreshold();
+		thresh = pGlass->getNucleationStackThreshold();
 	}
 
 	int nN = 0;
@@ -1030,8 +1030,8 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		pTrv1.reset();
 
 		// use overall glass default if available
-		if ((pGlass != NULL) && (pGlass->getTrvDefault() != NULL)) {
-			pTrv1 = pGlass->getTrvDefault();
+		if ((pGlass != NULL) && (pGlass->getDefaultNucleationTravelTime() != NULL)) {
+			pTrv1 = pGlass->getDefaultNucleationTravelTime();
 		} else {
 			// create new traveltime
 			pTrv1 = std::make_shared<traveltime::CTravelTime>();
@@ -1096,8 +1096,8 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		pTrv1.reset();
 
 		// use overall glass default if available
-		if (pGlass->getTrvDefault() != NULL) {
-			pTrv1 = pGlass->getTrvDefault();
+		if (pGlass->getDefaultNucleationTravelTime() != NULL) {
+			pTrv1 = pGlass->getDefaultNucleationTravelTime();
 		} else {
 			// create new traveltime
 			pTrv1 = std::make_shared<traveltime::CTravelTime>();

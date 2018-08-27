@@ -286,7 +286,7 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	pGlass = glassPtr;
 
 	if (pGlass) {
-		nSitePickMax = pGlass->getSitePickMax();
+		nSitePickMax = pGlass->getMaxNumPicksPerSite();
 	}
 
 	return (true);

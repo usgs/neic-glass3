@@ -34,24 +34,24 @@ CCorrelationList::~CCorrelationList() {
 void CCorrelationList::clear() {
 	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
 
-	pGlass = NULL;
-	pSiteList = NULL;
+	m_pGlass = NULL;
+	m_pSiteList = NULL;
 
 	// clear correlations
 	clearCorrelations();
 }
 
-// ---------------------------------------------------------~clear
+// ---------------------------------------------------------clearCorrelations
 void CCorrelationList::clearCorrelations() {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
 
 	// clear the vector and map
-	vCorrelation.clear();
-	mCorrelation.clear();
+	m_vCorrelation.clear();
+	m_mCorrelation.clear();
 
 	// reset nCorrelation
-	nCorrelationTotal = 0;
-	nCorrelationMax = 10000;
+	m_iCorrelationTotal = 0;
+	m_iCorrelationMax = 10000;
 }
 
 // ---------------------------------------------------------dispatch
@@ -87,7 +87,7 @@ bool CCorrelationList::dispatch(std::shared_ptr<json::Object> com) {
 
 		// add a detection
 		if (v == "Correlation") {
-			return (addCorrelation(com));
+			return (addCorrelationFromJSON(com));
 		}
 	}
 
@@ -95,8 +95,8 @@ bool CCorrelationList::dispatch(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
-// ---------------------------------------------------------addCorrelation
-bool CCorrelationList::addCorrelation(
+// -------------------------------------------------------addCorrelationFromJSON
+bool CCorrelationList::addCorrelationFromJSON(
 		std::shared_ptr<json::Object> correlation) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
 
@@ -109,7 +109,7 @@ bool CCorrelationList::addCorrelation(
 	}
 
 	// null check pSiteList
-	if (pSiteList == NULL) {
+	if (m_pSiteList == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelationList::addCorrelation: NULL pSiteList.");
@@ -138,13 +138,13 @@ bool CCorrelationList::addCorrelation(
 
 	// create new correlation from json message
 	CCorrelation * newCorrelation = new CCorrelation(correlation,
-														nCorrelationTotal + 1,
-														pSiteList);
+														m_iCorrelationTotal + 1,
+														m_pSiteList);
 
 	// check to see if we got a valid correlation
 	if ((newCorrelation->getSite() == NULL)
 			|| (newCorrelation->getTCorrelation() == 0)
-			|| (newCorrelation->getPid() == "")) {
+			|| (newCorrelation->getID() == "")) {
 		// cleanup
 		delete (newCorrelation);
 		// message was processed
@@ -152,10 +152,10 @@ bool CCorrelationList::addCorrelation(
 	}
 
 	// check if correlation is duplicate, if pGlass exists
-	if (pGlass) {
+	if (m_pGlass) {
 		bool duplicate = checkDuplicate(
-				newCorrelation, pGlass->getCorrelationMatchingTWindow(),
-				pGlass->getCorrelationMatchingXWindow());
+				newCorrelation, m_pGlass->getCorrelationMatchingTimeWindow(),
+				m_pGlass->getCorrelationMatchingDistanceWindow());
 
 		// it is a duplicate, log and don't add correlation
 		if (duplicate) {
@@ -182,66 +182,66 @@ bool CCorrelationList::addCorrelation(
 	// of an active event, the actual correlation will not
 	// be removed until either it is pruned from the
 	// event or the event is completed and retired.
-	nCorrelationTotal++;
+	m_iCorrelationTotal++;
 
 	// get maximum number of correlations
 	// use max correlations from pGlass if we have it
-	if (pGlass) {
-		nCorrelationMax = pGlass->getCorrelationMax();
+	if (m_pGlass) {
+		m_iCorrelationMax = m_pGlass->getMaxNumCorrelations();
 	}
 
 	// create pair for insertion
-	std::pair<double, int> p(corr->getTCorrelation(), nCorrelationTotal);
+	std::pair<double, int> p(corr->getTCorrelation(), m_iCorrelationTotal);
 
 	// check to see if we're at the correlation limit
-	if (vCorrelation.size() == nCorrelationMax) {
+	if (m_vCorrelation.size() == m_iCorrelationMax) {
 		// find first correlation in vector
 		std::pair<double, int> pdx;
-		pdx = vCorrelation[0];
-		auto pos = mCorrelation.find(pdx.second);
+		pdx = m_vCorrelation[0];
+		auto pos = m_mCorrelation.find(pdx.second);
 
 		// erase from map
-		mCorrelation.erase(pos);
+		m_mCorrelation.erase(pos);
 
 		// erase from vector
-		vCorrelation.erase(vCorrelation.begin());
+		m_vCorrelation.erase(m_vCorrelation.begin());
 	}
 
 	// Insert new correlation in proper time sequence into correlation vector
 	// get the index of the new correlation
-	int iCorrelation = indexCorrelation(corr->getTCorrelation());
+	int iCorrelation = getInsertionIndex(corr->getTCorrelation());
 	switch (iCorrelation) {
 		case -2:
 			// Empty vector, just add it
-			vCorrelation.push_back(p);
+			m_vCorrelation.push_back(p);
 			break;
 		case -1:
 			// Pick is before any others, insert at beginning
-			vCorrelation.insert(vCorrelation.begin(), p);
+			m_vCorrelation.insert(m_vCorrelation.begin(), p);
 			break;
 		default:
 			// correlation is somewhere in vector
-			if (iCorrelation == vCorrelation.size() - 1) {
+			if (iCorrelation == m_vCorrelation.size() - 1) {
 				// correlation is after all correlations, add to end
-				vCorrelation.push_back(p);
+				m_vCorrelation.push_back(p);
 			} else {
 				// find where the correlation should be inserted
-				auto it = std::next(vCorrelation.begin(), iCorrelation + 1);
+				auto it = std::next(m_vCorrelation.begin(), iCorrelation + 1);
 
 				// insert at that location
-				vCorrelation.insert(it, p);
+				m_vCorrelation.insert(it, p);
 			}
 			break;
 	}
 
 	// add to correlation map
-	mCorrelation[nCorrelationTotal] = corr;
+	m_mCorrelation[m_iCorrelationTotal] = corr;
 
 	// make sure we have a pGlass and pGlass->pHypoList
-	if ((pGlass) && (pGlass->getHypoList())) {
+	if ((m_pGlass) && (m_pGlass->getHypoList())) {
 		// Attempt association of the new correlation.  If that fails create a
 		// new hypo from the correlation
-		if (!pGlass->getHypoList()->associate(corr)) {
+		if (!m_pGlass->getHypoList()->associate(corr)) {
 			// not associated, we need to create a new hypo
 			// NOTE: maybe move below to CCorrelation function to match pick?
 
@@ -250,16 +250,16 @@ bool CCorrelationList::addCorrelation(
 
 			// create new hypo
 			std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
-					corr, pGlass->getTrvDefault(), nullTrav,
-					pGlass->getTTT());
+					corr, m_pGlass->getDefaultNucleationTravelTime(), nullTrav,
+					m_pGlass->getAssociationTravelTimes());
 
 			// set hypo glass pointer and such
-			hypo->setGlass(pGlass);
-			hypo->setCutFactor(pGlass->getCutFactor());
-			hypo->setCutPercentage(pGlass->getCutPercentage());
-			hypo->setCutMin(pGlass->getCutMin());
-			hypo->setCut(pGlass->getNucleate());
-			hypo->setThresh(pGlass->getThresh());
+			hypo->setGlass(m_pGlass);
+			hypo->setDistanceCutoffFactor(m_pGlass->getDistanceCutoffFactor());
+			hypo->setDistanceCutoffPercentage(m_pGlass->getDistanceCutoffPercentage());
+			hypo->setMinDistanceCutoff(m_pGlass->getMinDistanceCutoff());
+			hypo->setNucleationDataThreshold(m_pGlass->getNucleationDataThreshold());
+			hypo->setNucleationStackThreshold(m_pGlass->getNucleationStackThreshold());
 
 			// add correlation to hypo
 			hypo->addCorrelation(corr);
@@ -271,7 +271,7 @@ bool CCorrelationList::addCorrelation(
 			// Search for any associable picks that match hypo in the pick list
 			// choosing to not localize after because we trust the correlation
 			// location for this step
-			pGlass->getPickList()->scavenge(hypo);
+			m_pGlass->getPickList()->scavenge(hypo);
 
 			// search for any associable correlations that match hypo in the
 			// correlation list choosing to not localize after because we trust
@@ -280,13 +280,13 @@ bool CCorrelationList::addCorrelation(
 
 			// ensure all data scavanged belong to hypo choosing to not localize
 			// after because we trust  the correlation location for this step
-			pGlass->getHypoList()->resolve(hypo);
+			m_pGlass->getHypoList()->resolve(hypo);
 
 			// add hypo to hypo list
-			pGlass->getHypoList()->addHypo(hypo);
+			m_pGlass->getHypoList()->addHypo(hypo);
 
 			// schedule it for processing
-			pGlass->getHypoList()->pushFifo(hypo);
+			m_pGlass->getHypoList()->pushFifo(hypo);
 		}
 	}
 
@@ -294,18 +294,18 @@ bool CCorrelationList::addCorrelation(
 	return (true);
 }
 
-// ---------------------------------------------------------indexCorrelation
-int CCorrelationList::indexCorrelation(double tCorrelation) {
+// ---------------------------------------------------------getInsertionIndex
+int CCorrelationList::getInsertionIndex(double tCorrelation) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
 
 	// handle empty vector case
-	if (vCorrelation.size() == 0) {
+	if (m_vCorrelation.size() == 0) {
 		// return -2 to indicate empty vector
 		return (-2);
 	}
 
 	// get the time of the first correlation in the list
-	double tFirstCorrelation = vCorrelation[0].first;
+	double tFirstCorrelation = m_vCorrelation[0].first;
 
 	// handle correlation earlier than first element case
 	// time is earlier than first correlation
@@ -316,8 +316,8 @@ int CCorrelationList::indexCorrelation(double tCorrelation) {
 
 	// handle case that the correlation is later than last element
 	int i1 = 0;
-	int i2 = vCorrelation.size() - 1;
-	double tLastCorrelation = vCorrelation[i2].first;
+	int i2 = m_vCorrelation.size() - 1;
+	double tLastCorrelation = m_vCorrelation[i2].first;
 
 	// time is after last correlation
 	if (tCorrelation >= tLastCorrelation) {
@@ -333,7 +333,7 @@ int CCorrelationList::indexCorrelation(double tCorrelation) {
 		int ix = (i1 + i2) / 2;
 
 		// get current correlation time
-		double tCurrentCorrelation = vCorrelation[ix].first;
+		double tCurrentCorrelation = m_vCorrelation[ix].first;
 
 		// if time is before current correlation
 		if (tCurrentCorrelation > tCorrelation) {
@@ -350,16 +350,16 @@ int CCorrelationList::indexCorrelation(double tCorrelation) {
 	return (i1);
 }
 
-// ---------------------------------------------------------getPick
+// ---------------------------------------------------------getCorrelation
 std::shared_ptr<CCorrelation> CCorrelationList::getCorrelation(
 		int idCorrelation) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
 
 	// try to find that id in map
-	auto pos = mCorrelation.find(idCorrelation);
+	auto pos = m_mCorrelation.find(idCorrelation);
 
 	// make sure that we found something
-	if (pos != mCorrelation.end()) {
+	if (pos != m_mCorrelation.end()) {
 		// return the correlation
 		return (pos->second);
 	}
@@ -368,7 +368,7 @@ std::shared_ptr<CCorrelation> CCorrelationList::getCorrelation(
 	return (NULL);
 }
 
-// -----------------------------------------------------checkDuplicate
+// -----------------------------------------------------getCorrelation
 bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 										double tWindow, double xWindow) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
@@ -385,10 +385,10 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 	}
 
 	// get the index of the earliest possible match
-	int it1 = indexCorrelation(newCorrelation->getTCorrelation() - tWindow);
+	int it1 = getInsertionIndex(newCorrelation->getTCorrelation() - tWindow);
 
 	// get index of the latest possible correlation
-	int it2 = indexCorrelation(newCorrelation->getTCorrelation() + tWindow);
+	int it2 = getInsertionIndex(newCorrelation->getTCorrelation() + tWindow);
 
 	// index can't be negative, it1/2 negative if correlation before first in
 	// list
@@ -406,8 +406,8 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 
 	// loop through possible matching correlations
 	for (int it = it1; it <= it2; it++) {
-		auto q = vCorrelation[it];
-		std::shared_ptr<CCorrelation> cor = mCorrelation[q.second];
+		auto q = m_vCorrelation[it];
+		std::shared_ptr<CCorrelation> cor = m_mCorrelation[q.second];
 
 		// check if time difference is within window
 		if (std::abs(newCorrelation->getTCorrelation() - cor->getTCorrelation())
@@ -416,11 +416,12 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 			if (newCorrelation->getSite()->getScnl()
 					== cor->getSite()->getScnl()) {
 				glassutil::CGeo geo1;
-				geo1.setGeographic(newCorrelation->getLat(),
-									newCorrelation->getLon(),
-									newCorrelation->getZ());
+				geo1.setGeographic(newCorrelation->getLatitude(),
+									newCorrelation->getLongitude(),
+									newCorrelation->getDepth());
 				glassutil::CGeo geo2;
-				geo2.setGeographic(cor->getLat(), cor->getLon(), cor->getZ());
+				geo2.setGeographic(cor->getLatitude(), cor->getLongitude(),
+									cor->getDepth());
 				double delta = RAD2DEG * geo1.delta(&geo2);
 
 				// check if distance difference is within window
@@ -464,7 +465,7 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	}
 
 	// check pGlass
-	if (pGlass == NULL) {
+	if (m_pGlass == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CCorrelationList::scavenge: NULL glass pointer.");
@@ -472,15 +473,15 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	}
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CCorrelationList::scavenge. " + hyp->getPid());
+							"CCorrelationList::scavenge. " + hyp->getID());
 
 	// get the index of the correlation to start with
 	// based on the hypo origin time
-	int it1 = indexCorrelation(hyp->getTOrg() - tDuration);
+	int it1 = getInsertionIndex(hyp->getTOrigin() - tDuration);
 
 	// get the index of the correlation to end with by using the hypo
 	// origin time plus the provided duration
-	int it2 = indexCorrelation(hyp->getTOrg() + tDuration);
+	int it2 = getInsertionIndex(hyp->getTOrigin() + tDuration);
 
 	// index can't be negative
 	// Primarily occurs if origin time is before first correlation
@@ -500,8 +501,8 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	bool bAss = false;
 	for (int it = it1; it < it2; it++) {
 		// get the correlation from the vector
-		auto q = vCorrelation[it];
-		std::shared_ptr<CCorrelation> corr = mCorrelation[q.second];
+		auto q = m_vCorrelation[it];
+		std::shared_ptr<CCorrelation> corr = m_mCorrelation[q.second];
 		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
 
 		// check to see if this correlation is already in this hypo
@@ -511,8 +512,8 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 		}
 
 		// check to see if this correlation can be associated with this hypo
-		if (!hyp->associate(corr, pGlass->getCorrelationMatchingTWindow(),
-							pGlass->getCorrelationMatchingXWindow())) {
+		if (!hyp->associate(corr, m_pGlass->getCorrelationMatchingTimeWindow(),
+							m_pGlass->getCorrelationMatchingDistanceWindow())) {
 			// it can't, skip it
 			continue;
 		}
@@ -521,7 +522,7 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 		if (corrHyp == NULL) {
 			// unassociated with any existing hypo
 			// link correlation to the hypo we're working on
-			corr->addHypo(hyp, "W", true);
+			corr->addHypo(hyp, true);
 
 			// add correlation to this hypo
 			hyp->addCorrelation(corr);
@@ -543,105 +544,50 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	return (bAss);
 }
 
-// ---------------------------------------------------------rogues
-std::vector<std::shared_ptr<CCorrelation>> CCorrelationList::rogues(
-		std::string pidHyp, double tOrg, double tDuration) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
-
-	std::vector<std::shared_ptr<CCorrelation>> vRogue;
-
-	// Generate rogue list (all correlations that are not associated
-	// with given event, but could be)
-	// null checks
-	if (pidHyp == "") {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CPickList::rogues: Empty pidHyp provided.");
-		return (vRogue);
-	}
-
-	if (tOrg <= 0) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CPickList::rogues: Invalid tOrg provided.");
-		return (vRogue);
-	}
-
-	if (tDuration <= 0) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CPickList::rogues: Invalid tDuration provided.");
-		return (vRogue);
-	}
-
-	// get the index of the pick to start with
-	// based on the provided origin time
-	int it1 = indexCorrelation(tOrg);
-
-	// index can't be negative
-	// Primarily occurs if origin time is before first pick
-	if (it1 < 0) {
-		it1 = 0;
-	}
-
-	// get the index of the pick to end with by using the provided
-	// origin time plus the provided duration
-	int it2 = indexCorrelation(tOrg + tDuration);
-
-	// for each pick index between it1 and it2
-	for (int it = it1; it < it2; it++) {
-		// get the current pick from the vector
-		auto q = vCorrelation[it];
-		std::shared_ptr<CCorrelation> corr = mCorrelation[q.second];
-		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
-
-		// if the current pick is associated to this event
-		if ((corrHyp != NULL) && (corrHyp->getPid() == pidHyp)) {
-			// skip to next pick
-			continue;
-		}
-
-		// Add current pick to rogues list
-		vRogue.push_back(corr);
-	}
-
-	return (vRogue);
-}
-
+// ---------------------------------------------------------getSiteList
 const CSiteList* CCorrelationList::getSiteList() const {
 	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
-	return (pSiteList);
+	return (m_pSiteList);
 }
 
+// ---------------------------------------------------------setSiteList
 void CCorrelationList::setSiteList(CSiteList* siteList) {
 	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
-	pSiteList = siteList;
+	m_pSiteList = siteList;
 }
 
+// ---------------------------------------------------------getGlass
 const CGlass* CCorrelationList::getGlass() const {
 	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
-	return (pGlass);
+	return (m_pGlass);
 }
 
+// ---------------------------------------------------------setGlass
 void CCorrelationList::setGlass(CGlass* glass) {
 	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
-	pGlass = glass;
+	m_pGlass = glass;
 }
 
-int CCorrelationList::getNCorrelationMax() const {
-	return (nCorrelationMax);
+// ---------------------------------------------------------getCorrelationMax
+int CCorrelationList::getCorrelationMax() const {
+	return (m_iCorrelationMax);
 }
 
-void CCorrelationList::setNCorrelationMax(int correlationMax) {
-	nCorrelationMax = correlationMax;
+// ---------------------------------------------------------setCorrelationMax
+void CCorrelationList::setCorrelationMax(int correlationMax) {
+	m_iCorrelationMax = correlationMax;
 }
 
-int CCorrelationList::getNCorrelationTotal() const {
-	return (nCorrelationTotal);
+// ---------------------------------------------------------getCorrelationTotal
+int CCorrelationList::getCorrelationTotal() const {
+	return (m_iCorrelationTotal);
 }
 
-int CCorrelationList::getVCorrelationSize() const {
+// ---------------------------------------------------------size
+int CCorrelationList::size() const {
 	std::lock_guard<std::recursive_mutex> vCorrelationGuard(
 			m_vCorrelationMutex);
-	return (vCorrelation.size());
+	return (m_vCorrelation.size());
 }
 
 }  // namespace glasscore

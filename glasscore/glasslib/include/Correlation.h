@@ -139,11 +139,10 @@ class CCorrelation {
 	 *
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to link.
-	 * \param ass - A std::string containing a note about the association reason
 	 * \param force - A boolean flag indicating whether to force the association,
 	 * defaults to false.
 	 */
-	void addHypo(std::shared_ptr<CHypo> hyp, std::string ass = "", bool force =
+	void addHypo(std::shared_ptr<CHypo> hyp, bool force =
 							false);
 
 	/**
@@ -159,7 +158,7 @@ class CCorrelation {
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to unlink.
 	 */
-	void remHypo(std::shared_ptr<CHypo> hyp);
+	void removeHypo(std::shared_ptr<CHypo> hyp);
 
 	/**
 	 * \brief Remove hypo specific reference to this correlation
@@ -173,7 +172,7 @@ class CCorrelation {
 	 *
 	 * \param pid - A std::string identifying the the hypocenter to unlink.
 	 */
-	void remHypo(std::string pid);
+	void removeHypo(std::string pid);
 
 	/**
 	 * \brief Remove hypo reference to this correlation
@@ -193,37 +192,37 @@ class CCorrelation {
 	 * \brief Latitude getter
 	 * \return the latitude
 	 */
-	double getLat() const;
+	double getLatitude() const;
 
 	/**
 	 * \brief Longitude getter
 	 * \return the longitude
 	 */
-	double getLon() const;
+	double getLongitude() const;
 
 	/**
 	 * \brief Depth getter
 	 * \return the depth
 	 */
-	double getZ() const;
+	double getDepth() const;
 
 	/**
 	 * \brief Origin time getter
 	 * \return the origin time
 	 */
-	double getTOrg() const;
+	double getTOrigin() const;
 
 	/**
 	 * \brief Correlation id getter
 	 * \return the correlation id
 	 */
-	int getIdCorrelation() const;
+	int getCorrelationID() const;
 
 	/**
 	 * \brief Json correlation getter
 	 * \return the json correlation
 	 */
-	const std::shared_ptr<json::Object>& getJCorrelation() const;
+	const std::shared_ptr<json::Object>& getJSONCorrelation() const;
 
 	/**
 	 * \brief Hypo getter
@@ -235,7 +234,7 @@ class CCorrelation {
 	 * \brief Pid getter
 	 * \return the pid
 	 */
-	const std::string getHypoPid() const;
+	const std::string getHypoID() const;
 
 	/**
 	 * \brief Site getter
@@ -244,28 +243,16 @@ class CCorrelation {
 	const std::shared_ptr<CSite>& getSite() const;
 
 	/**
-	 * \brief Association string getter
-	 * \return the association string
-	 */
-	const std::string& getAss() const;
-
-	/**
-	 * \brief Association string setter
-	 * \param ass - the association string
-	 */
-	void setAss(std::string ass);
-
-	/**
 	 * \brief Phase getter
 	 * \return the phase
 	 */
-	const std::string& getPhs() const;
+	const std::string& getPhaseName() const;
 
 	/**
 	 * \brief Pid getter
 	 * \return the pid
 	 */
-	const std::string& getPid() const;
+	const std::string& getID() const;
 
 	/**
 	 * \brief Correlation time getter
@@ -277,7 +264,7 @@ class CCorrelation {
 	 * \brief Creation time getter
 	 * \return the creation time
 	 */
-	double getTGlassCreate() const;
+	double getTCreate() const;
 
  private:
 	/**
@@ -285,79 +272,73 @@ class CCorrelation {
 	 * representing the link between this correlation and the site it was
 	 * correlated at
 	 */
-	std::shared_ptr<CSite> pSite;
+	std::shared_ptr<CSite> m_pSite;
 
 	/**
 	 * \brief A std::weak_ptr to a CHypo object
 	 * representing the links between this correlation and associated hypocenter
 	 */
-	std::weak_ptr<CHypo> wpHypo;
-
-	/**
-	 * \brief A std::string containing a character representing the action
-	 * that caused this correlation to be associated
-	 */
-	std::string sAss;
+	std::weak_ptr<CHypo> m_wpHypo;
 
 	/**
 	 * \brief A std::string containing the phase name of this correlation
 	 */
-	std::string sPhs;
+	std::string m_sPhaseName;
 
 	/**
 	 * \brief A std::string containing the string unique id of this correlation
 	 */
-	std::string sPid;
+	std::string m_sID;
 
 	/**
 	 * \brief An integer value containing the numeric id of the correlation
 	 */
-	std::atomic<int> idCorrelation;
+	std::atomic<int> m_iCorrelationID;
 
 	/**
 	 * \brief A double value containing the arrival time of the correlation
 	 */
-	std::atomic<double> tCorrelation;
+	std::atomic<double> m_tCorrelation;
 
 	/**
 	 * \brief A double value containing this correlation's origin time in julian
 	 * seconds
 	 */
-	std::atomic<double> tOrg;
+	std::atomic<double> m_tOrigin;
 
 	/**
 	 * \brief A double value containing this correlation's latitude in degrees
 	 */
-	std::atomic<double> dLat;
+	std::atomic<double> m_dLatitude;
 
 	/**
 	 * \brief A double value containing this correlation's longitude in degrees
 	 */
-	std::atomic<double> dLon;
+	std::atomic<double> m_dLongitude;
 
 	/**
 	 * \brief A double value containing this correlation's depth
 	 * in kilometers.
 	 */
-	std::atomic<double> dZ;
+	std::atomic<double> m_dDepth;
 
 	/**
 	 * \brief A double value containing this correlation's correlation value
 	 */
-	std::atomic<double> dCorrelation;
+	std::atomic<double> m_dCorrelation;
 
 	/**
 	 * \brief A double value containing the creation time of the correlation in
 	 * glass
 	 */
-	std::atomic<double> tGlassCreate;
+	std::atomic<double> m_tCreate;
 
 	/**
 	 * \brief A std::shared_ptr to a json object
 	 * representing the original correlation input, used in accessing
 	 * information not relevant to glass that are needed for generating outputs.
 	 */
-	std::shared_ptr<json::Object> jCorrelation;
+	std::shared_ptr<json::Object> m_JSONCorrelation;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CCorrelation.
@@ -366,7 +347,7 @@ class CCorrelation {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	mutable std::recursive_mutex correlationMutex;
+	mutable std::recursive_mutex m_CorrelationMutex;
 };
 }  // namespace glasscore
 #endif  // CORRELATION_H

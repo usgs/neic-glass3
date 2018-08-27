@@ -74,7 +74,7 @@ class CDetection {
 	/**
 	 * \brief Process detection message
 	 *
-	 * Receives an incomding 'Detection' type message and does on of two things.
+	 * Receives an incoming 'Detection' type message and does on of two things.
 	 * First it checks to see if there is another hypocenter that is near enough
 	 * in space and time to be considered to be the same event. If so, it
 	 * schedules the existing hypocenter for processing. If no existing
@@ -104,7 +104,7 @@ class CDetection {
 	 * look up site information, encode/decode time, get configuration
 	 * values, call association functions, and debug flags
 	 */
-	CGlass *pGlass;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CDetection.
@@ -113,7 +113,7 @@ class CDetection {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	mutable std::recursive_mutex detectionMutex;
+	mutable std::recursive_mutex m_DetectionMutex;
 };
 }  // namespace glasscore
 #endif  // DETECTION_H

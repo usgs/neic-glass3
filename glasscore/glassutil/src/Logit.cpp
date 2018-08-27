@@ -1,13 +1,11 @@
 // Seed.cpp
+#include <logger.h>
+
 #include <cstdio>
 #include <string>
 #include "Logit.h"
 
 namespace glassutil {
-
-#ifndef _WIN32
-std::function<void(logMessageStruct)> CLogit::m_logCallback = NULL;
-#endif
 
 bool CLogit::bDisable = false;
 // ---------------------------------------------------------CLogit
@@ -16,13 +14,6 @@ CLogit::CLogit() {
 
 // ---------------------------------------------------------~CLogit
 CLogit::~CLogit() {
-}
-
-// ---------------------------------------------------------setLogCallback
-void CLogit::setLogCallback(std::function<void(logMessageStruct)> callback) {
-#ifndef _WIN32
-	m_logCallback = callback;
-#endif
 }
 
 // ---------------------------------------------------------disable
@@ -62,19 +53,14 @@ void CLogit::log(log_level logLevel, std::string logMessage) {
 		return;
 	}
 
-#ifndef _WIN32
-	// use the callback if it's available
-	if (m_logCallback) {
-		logMessageStruct newMessage;
-		newMessage.level = logLevel;
-		newMessage.message = logMessage;
-
-		m_logCallback(newMessage);
-	} else {
-		printf("%s\n", logMessage.c_str());
+	if (logLevel == glassutil::log_level::info) {
+		glass3::util::log("info", "glasscore: " + logMessage);
+	} else if (logLevel == glassutil::log_level::debug) {
+		glass3::util::log("debug", "glasscore: " + logMessage);
+	} else if (logLevel == glassutil::log_level::warn) {
+		glass3::util::log("warning", "glasscore: " + logMessage);
+	} else if (logLevel == glassutil::log_level::error) {
+		glass3::util::log("error", "glasscore: " + logMessage);
 	}
-#else
-	printf("%s\n", logMessage.c_str());
-#endif
 }
 }  // namespace glassutil

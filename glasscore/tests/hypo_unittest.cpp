@@ -35,27 +35,27 @@
 // check site data for validity
 void checkdata(glasscore::CHypo *hypoobject, const std::string &testinfo) {
 	// check lat
-	double latitude = hypoobject->getLat();
+	double latitude = hypoobject->getLatitude();
 	double expectedLatitude = LATITUDE;
 	ASSERT_NEAR(latitude, expectedLatitude, 0.0001);
 
 	// check lon
-	double longitude = hypoobject->getLon();
+	double longitude = hypoobject->getLongitude();
 	double expectedLongitude = LONGITUDE;
 	ASSERT_NEAR(longitude, expectedLongitude, 0.0001);
 
 	// check depth
-	double depth = hypoobject->getZ();
+	double depth = hypoobject->getDepth();
 	double expectedDepth = DEPTH;
 	ASSERT_NEAR(depth, expectedDepth, 0.0001);
 
 	// check time
-	double time = hypoobject->getTOrg();
+	double time = hypoobject->getTOrigin();
 	double expectedTime = TIME;
 	ASSERT_NEAR(time, expectedTime, 0.0001);
 
 	// check id
-	std::string id = hypoobject->getPid();
+	std::string id = hypoobject->getID();
 	std::string expectedId = ID;
 	ASSERT_STREQ(id.c_str(), expectedId.c_str());
 
@@ -65,17 +65,17 @@ void checkdata(glasscore::CHypo *hypoobject, const std::string &testinfo) {
 	ASSERT_STREQ(web.c_str(), expectedWeb.c_str());
 
 	// check bayes
-	double bayes = hypoobject->getBayes();
+	double bayes = hypoobject->getBayesValue();
 	double expectedBayes = BAYES;
 	ASSERT_NEAR(bayes, expectedBayes, 0.0001);
 
 	// check bayes
-	double thresh = hypoobject->getThresh();
+	double thresh = hypoobject->getNucleationStackThreshold();
 	double expectedThresh = THRESH;
 	ASSERT_NEAR(thresh, expectedThresh, 0.0001);
 
 	// check cut
-	int cut = hypoobject->getCut();
+	int cut = hypoobject->getNucleationDataThreshold();
 	int expectedCut = CUT;
 	ASSERT_EQ(cut, expectedCut);
 }
@@ -88,25 +88,25 @@ TEST(HypoTest, Construction) {
 	glasscore::CHypo * testHypo = new glasscore::CHypo();
 
 	// assert default values
-	ASSERT_EQ(0, testHypo->getLat())<< "dLat is zero";
-	ASSERT_EQ(0, testHypo->getLon())<< "dLon is zero";
-	ASSERT_EQ(0, testHypo->getZ())<< "dZ is zero";
-	ASSERT_EQ(0, testHypo->getTOrg())<< "tOrg is zero";
-	ASSERT_STREQ("", testHypo->getPid().c_str())<< "sPid is empty";
+	ASSERT_EQ(0, testHypo->getLatitude())<< "dLat is zero";
+	ASSERT_EQ(0, testHypo->getLongitude())<< "dLon is zero";
+	ASSERT_EQ(0, testHypo->getDepth())<< "dZ is zero";
+	ASSERT_EQ(0, testHypo->getTOrigin())<< "tOrg is zero";
+	ASSERT_STREQ("", testHypo->getID().c_str())<< "sPid is empty";
 	ASSERT_STREQ("", testHypo->getWebName().c_str())<< "sWeb is empty";
-	ASSERT_EQ(0, testHypo->getBayes())<< "dBayes is zero";
-	ASSERT_EQ(0, testHypo->getThresh())<< "dThresh is zero";
-	ASSERT_EQ(0, testHypo->getCut())<< "nCut is zero";
-	ASSERT_EQ(0, testHypo->getCycle())<< "iCycle is zero";
-	ASSERT_EQ(0, testHypo->getMed())<< "dMed is zero";
-	ASSERT_EQ(0, testHypo->getMin())<< "dMin is zero";
+	ASSERT_EQ(0, testHypo->getBayesValue())<< "dBayes is zero";
+	ASSERT_EQ(0, testHypo->getNucleationStackThreshold())<< "dThresh is zero";
+	ASSERT_EQ(0, testHypo->getDistanceCutoff())<< "nCut is zero";
+	ASSERT_EQ(0, testHypo->getCycleCount())<< "iCycle is zero";
+	ASSERT_EQ(0, testHypo->getMedianDistance())<< "dMed is zero";
+	ASSERT_EQ(0, testHypo->getMinDistance())<< "dMin is zero";
 	ASSERT_EQ(0, testHypo->getGap())<< "dGap is zero";
-	ASSERT_EQ(0, testHypo->getSig())<< "dSig is zero";
-	ASSERT_EQ(0, testHypo->getKrt())<< "dKrt is zero";
+	ASSERT_EQ(0, testHypo->getDistanceSD())<< "dSig is zero";
+	ASSERT_EQ(0, testHypo->getKurtosisValue())<< "dKrt is zero";
 	ASSERT_FALSE(testHypo->getFixed())<< "bFixed is false";
-	ASSERT_FALSE(testHypo->getEvent())<< "bEvent is false";
+	ASSERT_FALSE(testHypo->getEventSent())<< "bEvent is false";
 
-	ASSERT_EQ(0, testHypo->getVPickSize())<< "vPick size is zero";
+	ASSERT_EQ(0, testHypo->getPickDataSize())<< "vPick size is zero";
 
 	// pointers
 	ASSERT_TRUE(testHypo->getGlass() == NULL)<< "pGlass null";
@@ -180,14 +180,14 @@ TEST(HypoTest, PickOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	int expectedSize = MAXNPICK;
-	ASSERT_EQ(expectedSize, testHypo->getVPickSize())<<
+	ASSERT_EQ(expectedSize, testHypo->getPickDataSize())<<
 	"hypo vPick not larger than max";
 
 	// remove picks from hypo
-	testHypo->remPick(sharedPick);
-	testHypo->remPick(sharedPick2);
+	testHypo->removePick(sharedPick);
+	testHypo->removePick(sharedPick2);
 
 	// check to see that only one pick remains
 	expectedSize = 1;
-	ASSERT_EQ(expectedSize, testHypo->getVPickSize())<< "hypo has only one pick";
+	ASSERT_EQ(expectedSize, testHypo->getPickDataSize())<< "hypo has only one pick";
 }

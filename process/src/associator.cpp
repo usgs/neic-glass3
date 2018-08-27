@@ -34,10 +34,6 @@ Associator::Associator(glass3::util::iInput* inputint,
 	// hook up glass communication with Associator class
 	m_pGlass->piSend = dynamic_cast<glasscore::IGlassSend *>(this);
 
-	// set up glass to use our logging
-	glassutil::CLogit::setLogCallback(
-			std::bind(&Associator::logGlass, this, std::placeholders::_1));
-
 	setHealthCheckInterval(600);
 
 	tGlasscoreDuration = std::chrono::duration<double>::zero();
@@ -102,19 +98,6 @@ void Associator::clear() {
 
 	// finally do baseclass clear
 	glass3::util::ThreadBaseClass::clear();
-}
-
-// ---------------------------------------------------------logGlass
-void Associator::logGlass(glassutil::logMessageStruct message) {
-	if (message.level == glassutil::log_level::info) {
-		glass3::util::log("info", "glasscore: " + message.message);
-	} else if (message.level == glassutil::log_level::debug) {
-		glass3::util::log("debug", "glasscore: " + message.message);
-	} else if (message.level == glassutil::log_level::warn) {
-		glass3::util::log("warning", "glasscore: " + message.message);
-	} else if (message.level == glassutil::log_level::error) {
-		glass3::util::log("error", "glasscore: " + message.message);
-	}
 }
 
 // ---------------------------------------------------------Send
@@ -279,7 +262,7 @@ bool Associator::healthCheck() {
 	if (m_pGlass != NULL) {
 		// check glass
 		// check glass thread status
-		if (m_pGlass->statusCheck() == false) {
+		if (m_pGlass->healthCheck() == false) {
 			glass3::util::log(
 					"error",
 					"Associator::statusCheck(): GlassLib statusCheck() returned false!.");

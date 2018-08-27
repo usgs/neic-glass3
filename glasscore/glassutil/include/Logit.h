@@ -12,8 +12,6 @@
 
 namespace glassutil {
 
-// static char sLog[1024];
-
 // logging levels
 #define LOG_INFO 0
 #define LOG_DEBUG 1
@@ -31,24 +29,6 @@ typedef enum {
 	warn = 2,
 	error = 3
 } log_level;
-
-/**
- * \brief glassutil logging structure
- *
- * The logMessageStruct encapsulates both a log message, and the
- * desired logging level.
- */
-struct logMessageStruct {
-	/**
-	 * \brief An log_level enum containing the level of the log message
-	 */
-	log_level level;
-
-	/**
-	 * \brief A std::string containing the log message
-	 */
-	std::string message;
-};
 
 /**
  * \brief glassutil logging class
@@ -81,14 +61,6 @@ class CLogit {
 	 * \brief CLogit enable logging function
 	 */
 	static void enable();
-
-	/**
-	 * \brief optional logging callback setup function
-	 *
-	 * \param callback - A std::function<void(std::string)> containing the
-	 * callback function
-	 */
-	static void setLogCallback(std::function<void(logMessageStruct)> callback);
 
 	/**
 	 * \brief Write log message
@@ -139,14 +111,6 @@ class CLogit {
 	 * \param logMessage - A std::string containing the logging message
 	 */
 	static void log(log_level logLevel, std::string logMessage);
-
-#ifndef _WIN32
-	/**
-	 * \brief A std::function<void(logMessageStruct)> containing the optional
-	 * logging callback.
-	 */
-	static std::function<void(logMessageStruct)> m_logCallback;
-#endif  // _WIN32
 
 	/**
 	 * \brief A boolean flag to disable all logging

@@ -121,17 +121,6 @@ class Associator : public glasscore::IGlassSend,
 	 */
 	glass3::util::WorkState work() override;
 
-	/**
-	 * \brief glasscore logging function
-	 *
-	 * The function the associator class uses to accept logging messages coming
-	 * out of glasscore, and write those messages to the neic-glass3 logger.
-	 *
-	 * \param message - A glasscore::logMessageStruct containing the message to
-	 * log from glasscore.
-	 */
-	void logGlass(glassutil::logMessageStruct message);
-
  private:
 	/**
 	 * \brief Pointer to (glasscore) CGlass class instance
