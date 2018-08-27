@@ -88,6 +88,8 @@ void CWeb::clear() {
 	pGlass = NULL;
 	pSiteList = NULL;
 	bUpdate = false;
+	aziTaper = 360.0;
+	maxDepth = 800.0;
 
 	// clear out all the nodes in the web
 	try {
@@ -436,8 +438,8 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 			"CWeb::global sName:%s Phase(s):%s; nZ:%d; resol:%.2f; nDetect:%d;"
 			" nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
 			" vSitesFilter:%d; bUseOnlyTeleseismicStations:%d; iNodeCount:%d;",
-			sName.c_str(), phases.c_str(), nZ, dResolution, nDetect, nNucleate,
-			dThresh, static_cast<int>(vNetFilter.size()),
+			sName.c_str(), phases.c_str(), getZ(), getResolution(), getDetect(),
+			getNucleate(), getThresh(), static_cast<int>(vNetFilter.size()),
 			static_cast<int>(vSitesFilter.size()),
 			static_cast<int>(bUseOnlyTeleseismicStations), iNodeCount);
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
@@ -752,8 +754,8 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 				" iNodeCount:%d;",
 				sName.c_str(), phases.c_str(), lat0,
 				lat0 - (nRow - 1) * latDistance, lon0,
-				lon0 + (nCol - 1) * lonDistance, nRow, nCol, nZ, dResolution,
-				nDetect, nNucleate, dThresh,
+				lon0 + (nCol - 1) * lonDistance, getRow(), getCol(), getZ(),
+				getResolution(), getDetect(), getNucleate(), getThresh(),
 				static_cast<int>(vNetFilter.size()),
 				static_cast<int>(vSitesFilter.size()),
 				static_cast<int>(bUseOnlyTeleseismicStations), iNodeCount);
@@ -1004,8 +1006,8 @@ bool CWeb::grid_explicit(std::shared_ptr<json::Object> com) {
 			"CWeb::grid_explicit sName:%s Phase(s):%s; nDetect:%d; nNucleate:%d;"
 			" dThresh:%.2f; vNetFilter:%d; bUseOnlyTeleseismicStations:%d;"
 			" vSitesFilter:%d; iNodeCount:%d;",
-			sName.c_str(), phases.c_str(), nDetect, nNucleate, dThresh,
-			static_cast<int>(vNetFilter.size()),
+			sName.c_str(), phases.c_str(), getDetect(), getNucleate(),
+			getThresh(), static_cast<int>(vNetFilter.size()),
 			static_cast<int>(vSitesFilter.size()),
 			static_cast<int>(bUseOnlyTeleseismicStations), iNodeCount);
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);

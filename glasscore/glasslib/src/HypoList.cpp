@@ -79,7 +79,6 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	// first hypo in the vector is removed and the
 	// corresponding entry in the cache is erased.
 	nHypoTotal++;
-	nHypo++;
 
 	// get maximum number of hypos
 	// use max picks from pGlass if we have it
@@ -415,9 +414,8 @@ void CHypoList::clearHypos() {
 	vHypo.clear();
 	mHypo.clear();
 
-	// reset nHypo
-	nHypo = 0;
-	nHypoTotal = -1;
+	// reset
+	nHypoTotal = 0;
 	nHypoMax = 100;
 }
 
@@ -912,21 +910,13 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 	return (hypos);
 }
 
-// ---------------------------------------------------------getNHypo
-int CHypoList::getNHypo() const {
-	std::lock_guard<std::recursive_mutex> vHypoGuard(m_vHypoMutex);
-	return (nHypo);
-}
-
 // ---------------------------------------------------------getNHypoMax
 int CHypoList::getNHypoMax() const {
-	std::lock_guard<std::recursive_mutex> hypoListGuard(m_HypoListMutex);
 	return (nHypoMax);
 }
 
 // ---------------------------------------------------------getNHypoTotal
 int CHypoList::getNHypoTotal() const {
-	std::lock_guard<std::recursive_mutex> vHypoGuard(m_vHypoMutex);
 	return (nHypoTotal);
 }
 

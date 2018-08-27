@@ -195,12 +195,6 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	std::vector<std::weak_ptr<CHypo>> getHypos(double t1, double t2);
 
 	/**
-	 * \brief nHypo getter
-	 * \return the nHypo
-	 */
-	int getNHypo() const;
-
-	/**
 	 * \brief nHypoMax getter
 	 * \return the nHypoMax
 	 */
@@ -357,19 +351,13 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \brief An integer containing the total number of hypocenters
 	 * ever added to CHypoList
 	 */
-	int nHypoTotal;
+	std::atomic<int> nHypoTotal;
 
 	/**
 	 * \brief An integer containing the maximum number of hypocenters stored by
 	 * CHypoList
 	 */
-	int nHypoMax;
-
-	/**
-	 * \brief Also an integer containing the total number of hypocenters
-	 * ever added to CHypoList, but one larger
-	 */
-	int nHypo;
+	std::atomic<int> nHypoMax;
 
 	/**
 	 * \brief A std::vector containing the queue of hypocenters that need

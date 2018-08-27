@@ -663,32 +663,26 @@ glass3::util::WorkState CSiteList::work() {
 }
 
 void CSiteList::setHoursWithoutPicking(int hoursWithoutPicking) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	iHoursWithoutPicking = hoursWithoutPicking;
 }
 
 int CSiteList::getHoursWithoutPicking() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	return (iHoursWithoutPicking);
 }
 
 void CSiteList::setHoursBeforeLookingUp(int hoursBeforeLookingUp) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	iHoursBeforeLookingUp = hoursBeforeLookingUp;
 }
 
 int CSiteList::getHoursBeforeLookingUp() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	return (iHoursBeforeLookingUp);
 }
 
 void CSiteList::setMaxPicksPerHour(int maxPicksPerHour) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	m_iMaxPicksPerHour = maxPicksPerHour;
 }
 
 int CSiteList::getMaxPicksPerHour() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	return (m_iMaxPicksPerHour);
 }
 

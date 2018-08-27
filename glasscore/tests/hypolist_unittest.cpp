@@ -32,8 +32,7 @@ TEST(HypoListTest, Construction) {
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
 
 	// assert default values
-	ASSERT_EQ(-1, testHypoList->getNHypoTotal())<< "nPickTotal is 0";
-	ASSERT_EQ(0, testHypoList->getNHypo())<< "nHypo is 0";
+	ASSERT_EQ(0, testHypoList->getNHypoTotal())<< "nHypoTotal is 0";
 
 	// lists
 	ASSERT_EQ(0, testHypoList->getVHypoSize())<< "vHypo.size() is 0";
@@ -93,7 +92,7 @@ TEST(HypoListTest, HypoOperations) {
 	testHypoList->addHypo(hypo1, false);
 	testHypoList->addHypo(hypo2, false);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testHypoList->getNHypo())<< "Added Hypos";
+	ASSERT_EQ(expectedSize, testHypoList->getNHypoTotal())<< "Added Hypos";
 
 	// test indexHypo
 	ASSERT_EQ(-1, testHypoList->indexHypo(TORG))<<
@@ -137,5 +136,5 @@ TEST(HypoListTest, HypoOperations) {
 	// test clearing hypos
 	testHypoList->clearHypos();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testHypoList->getNHypo())<< "Cleared Hypos";
+	ASSERT_EQ(expectedSize, (int)testHypoList->getNHypoTotal())<< "Cleared Hypos";
 }

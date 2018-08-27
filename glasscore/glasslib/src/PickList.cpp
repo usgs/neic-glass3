@@ -79,8 +79,7 @@ void CPickList::clearPicks() {
 	m_qProcessMutex.unlock();
 
 	// reset nPick
-	nPick = 0;
-	nPickTotal = -1;
+	nPickTotal = 0;
 	nPickMax = 10000;
 }
 
@@ -178,7 +177,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// create new pick from json message
-	CPick * newPick = new CPick(pick, nPick + 1, pSiteList);
+	CPick * newPick = new CPick(pick, nPickTotal + 1, pSiteList);
 
 	// check to see if we got a valid pick
 	if ((newPick->getSite() == NULL) || (newPick->getTPick() == 0)
@@ -221,7 +220,6 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// be removed until either it is pruned from the
 	// event or the event is completed and retired.
 	nPickTotal++;
-	nPick++;
 
 	// get maximum number of picks
 	// use max picks from pGlass if we have it
@@ -230,7 +228,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// create pair for insertion
-	std::pair<double, int> p(pck->getTPick(), nPick);
+	std::pair<double, int> p(pck->getTPick(), nPickTotal);
 
 	// check to see if we're at the pick limit
 	if (vPick.size() == nPickMax) {
@@ -277,7 +275,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// add to pick map
-	mPick[nPick] = pck;
+	mPick[nPickTotal] = pck;
 
 	// add to site specific pick list
 	pck->getSite()->addPick(pck);
@@ -701,23 +699,15 @@ void CPickList::setGlass(CGlass* glass) {
 	pGlass = glass;
 }
 
-int CPickList::getNPick() const {
-	std::lock_guard<std::recursive_mutex> vPickGuard(m_vPickMutex);
-	return (nPick);
-}
-
 int CPickList::getNPickMax() const {
-	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 	return (nPickMax);
 }
 
 void CPickList::setNPickMax(int picknMax) {
-	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 	nPickMax = picknMax;
 }
 
 int CPickList::getNPickTotal() const {
-	std::lock_guard<std::recursive_mutex> vPickGuard(m_vPickMutex);
 	return (nPickTotal);
 }
 

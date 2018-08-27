@@ -1095,13 +1095,13 @@ class CHypo {
 	 * \brief An integer containing the number of times this hypo has been
 	 * processed.
 	 */
-	std::atomic<int>  processCount;
+	std::atomic<int> processCount;
 
 	/**
 	 * \brief An integer containing the number of times this hypo has been
 	 * reported.
 	 */
-	std::atomic<int>  reportCount;
+	std::atomic<int> reportCount;
 
 	/**
 	 * \brief A double value containing this hypo's creation time in julian

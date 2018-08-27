@@ -13,6 +13,7 @@
 #include <vector>
 #include <map>
 #include <utility>
+#include <atomic>
 
 namespace glasscore {
 
@@ -208,12 +209,6 @@ class CCorrelationList {
 	void setSiteList(CSiteList* siteList);
 
 	/**
-	 * \brief nCorrelation getter
-	 * \return the nCorrelation
-	 */
-	int getNCorrelation() const;
-
-	/**
 	 * \brief nCorrelationMax getter
 	 * \return the nCorrelationMax
 	 */
@@ -255,19 +250,13 @@ class CCorrelationList {
 	 * CCorrelationList. This value is overridden by pGlass->nPickMax if provided.
 	 * Defaults to 10000.
 	 */
-	int nCorrelationMax;
-
-	/**
-	 * \brief An integer containing the current number of correlations in
-	 * CCorrelationList. Used to generate the correlation id.
-	 */
-	int nCorrelation;
+	std::atomic<int> nCorrelationMax;
 
 	/**
 	 * \brief An integer containing the total number of correlations ever added
 	 * to CCorrelationList
 	 */
-	int nCorrelationTotal;
+	std::atomic<int> nCorrelationTotal;
 
 	/**
 	 * \brief A std::vector mapping the arrival time of each correlation in

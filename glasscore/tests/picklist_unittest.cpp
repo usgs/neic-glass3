@@ -40,8 +40,7 @@ TEST(PickListTest, Construction) {
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
 
 	// assert default values
-	ASSERT_EQ(-1, testPickList->getNPickTotal())<< "nPickTotal is 0";
-	ASSERT_EQ(0, testPickList->getNPick())<< "nPick is 0";
+	ASSERT_EQ(0, testPickList->getNPickTotal())<< "nPickTotal is 0";
 
 	// lists
 	ASSERT_EQ(0, testPickList->getVPickSize())<< "getVPickSize() is 0";
@@ -96,7 +95,7 @@ TEST(PickListTest, PickOperations) {
 	testPickList->addPick(pickJSON);
 	testPickList->dispatch(pick3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testPickList->getNPick())<< "Added Picks";
+	ASSERT_EQ(expectedSize, testPickList->getNPickTotal())<< "Added Picks";
 
 	// test getting a pick (first pick, id 1)
 	std::shared_ptr<glasscore::CPick> testPick = testPickList->getPick(1);
@@ -139,5 +138,5 @@ TEST(PickListTest, PickOperations) {
 	// test clearing picks
 	testPickList->clearPicks();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testPickList->getNPick())<< "Cleared Picks";
+	ASSERT_EQ(expectedSize, testPickList->getNPickTotal())<< "Cleared Picks";
 }

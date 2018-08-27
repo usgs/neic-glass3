@@ -19,6 +19,7 @@
 #include <thread>
 #include <queue>
 #include <random>
+#include <atomic>
 #include "Glass.h"
 
 namespace glasscore {
@@ -226,12 +227,6 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	void setSiteList(CSiteList* siteList);
 
 	/**
-	 * \brief nPick getter
-	 * \return the nPick
-	 */
-	int getNPick() const;
-
-	/**
 	 * \brief nPickMax getter
 	 * \return the nPickMax
 	 */
@@ -289,12 +284,6 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * Defaults to 10000.
 	 */
 	int nPickMax;
-
-	/**
-	 * \brief An integer containing the current number of picks in CPickList.
-	 * Used to generate the pick id.
-	 */
-	int nPick;
 
 	/**
 	 * \brief A std::vector mapping the arrival time of each pick in CPickList

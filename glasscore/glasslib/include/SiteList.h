@@ -16,6 +16,7 @@
 #include <map>
 #include <mutex>
 #include <thread>
+#include <atomic>
 
 namespace glasscore {
 
@@ -246,11 +247,11 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 
 	time_t m_tLastChecked;
 
-	int iHoursWithoutPicking;
+	std::atomic<int> iHoursWithoutPicking;
 
-	int iHoursBeforeLookingUp;
+	std::atomic<int> iHoursBeforeLookingUp;
 
-	int m_iMaxPicksPerHour;
+	std::atomic<int> m_iMaxPicksPerHour;
 };
 }  // namespace glasscore
 #endif  // SITELIST_H

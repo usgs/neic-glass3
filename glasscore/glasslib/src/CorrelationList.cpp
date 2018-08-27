@@ -50,8 +50,7 @@ void CCorrelationList::clearCorrelations() {
 	mCorrelation.clear();
 
 	// reset nCorrelation
-	nCorrelation = 0;
-	nCorrelationTotal = -1;
+	nCorrelationTotal = 0;
 	nCorrelationMax = 10000;
 }
 
@@ -139,7 +138,7 @@ bool CCorrelationList::addCorrelation(
 
 	// create new correlation from json message
 	CCorrelation * newCorrelation = new CCorrelation(correlation,
-														nCorrelation + 1,
+														nCorrelationTotal + 1,
 														pSiteList);
 
 	// check to see if we got a valid correlation
@@ -184,7 +183,6 @@ bool CCorrelationList::addCorrelation(
 	// be removed until either it is pruned from the
 	// event or the event is completed and retired.
 	nCorrelationTotal++;
-	nCorrelation++;
 
 	// get maximum number of correlations
 	// use max correlations from pGlass if we have it
@@ -193,7 +191,7 @@ bool CCorrelationList::addCorrelation(
 	}
 
 	// create pair for insertion
-	std::pair<double, int> p(corr->getTCorrelation(), nCorrelation);
+	std::pair<double, int> p(corr->getTCorrelation(), nCorrelationTotal);
 
 	// check to see if we're at the correlation limit
 	if (vCorrelation.size() == nCorrelationMax) {
@@ -237,7 +235,7 @@ bool CCorrelationList::addCorrelation(
 	}
 
 	// add to correlation map
-	mCorrelation[nCorrelation] = corr;
+	mCorrelation[nCorrelationTotal] = corr;
 
 	// make sure we have a pGlass and pGlass->pHypoList
 	if ((pGlass) && (pGlass->getHypoList())) {
@@ -628,25 +626,15 @@ void CCorrelationList::setGlass(CGlass* glass) {
 	pGlass = glass;
 }
 
-int CCorrelationList::getNCorrelation() const {
-	std::lock_guard<std::recursive_mutex> vCorrelationGuard(
-			m_vCorrelationMutex);
-	return (nCorrelation);
-}
-
 int CCorrelationList::getNCorrelationMax() const {
-	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
 	return (nCorrelationMax);
 }
 
 void CCorrelationList::setNCorrelationMax(int correlationMax) {
-	std::lock_guard<std::recursive_mutex> corrListGuard(m_CorrelationListMutex);
 	nCorrelationMax = correlationMax;
 }
 
 int CCorrelationList::getNCorrelationTotal() const {
-	std::lock_guard<std::recursive_mutex> vCorrelationGuard(
-			m_vCorrelationMutex);
 	return (nCorrelationTotal);
 }
 

@@ -286,17 +286,17 @@ class CPick {
 	/**
 	 * \brief A double value containing the slowness of the pick
 	 */
-	std::atomic<double>  dSlowness;
+	std::atomic<double> dSlowness;
 
 	/**
 	 * \brief A double value containing the arrival time of the pick
 	 */
-	std::atomic<double>  tPick;
+	std::atomic<double> tPick;
 
 	/**
 	 * \brief An integer value containing the numeric id of the pick
 	 */
-	std::atomic<int>  idPick;
+	std::atomic<int> idPick;
 
 	/**
 	 * \brief A std::shared_ptr to a json object
