@@ -406,7 +406,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 
 				// write node to grid file
 				if (saveGrid) {
-					outfile << sName << "," << node->getPid() << ","
+					outfile << sName << "," << node->getID() << ","
 							<< std::to_string(aLat) << ","
 							<< std::to_string(aLon) << "," << std::to_string(z)
 							<< "\n";
@@ -719,7 +719,7 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 
 				// write node to grid file
 				if (saveGrid) {
-					outfile << sName << "," << node->getPid() << ","
+					outfile << sName << "," << node->getID() << ","
 							<< std::to_string(latrow) << ","
 							<< std::to_string(loncol) << ","
 							<< std::to_string(z) << "\n";
@@ -1030,7 +1030,8 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 		pTrv1.reset();
 
 		// use overall glass default if available
-		if ((pGlass != NULL) && (pGlass->getDefaultNucleationTravelTime() != NULL)) {
+		if ((pGlass != NULL)
+				&& (pGlass->getDefaultNucleationTravelTime() != NULL)) {
 			pTrv1 = pGlass->getDefaultNucleationTravelTime();
 		} else {
 			// create new traveltime
@@ -1271,14 +1272,14 @@ bool CWeb::isSiteAllowed(std::shared_ptr<CSite> site) {
 
 	// if we have a network filter, make sure network is allowed before adding
 	if ((vNetFilter.size() > 0)
-			&& (find(vNetFilter.begin(), vNetFilter.end(), site->getNet())
+			&& (find(vNetFilter.begin(), vNetFilter.end(), site->getNetwork())
 					!= vNetFilter.end())) {
 		returnFlag = true;
 	}
 
 	// if we have a site filter, make sure site is allowed before adding
 	if ((vSitesFilter.size() > 0)
-			&& (find(vSitesFilter.begin(), vSitesFilter.end(), site->getScnl())
+			&& (find(vSitesFilter.begin(), vSitesFilter.end(), site->getSCNL())
 					!= vSitesFilter.end())) {
 		returnFlag = true;
 	}
@@ -1287,7 +1288,7 @@ bool CWeb::isSiteAllowed(std::shared_ptr<CSite> site) {
 	// before adding
 	if (bUseOnlyTeleseismicStations == true) {
 		// is this site used for teleseismic
-		if (site->getUseForTele() == true) {
+		if (site->getUseForTeleseismic() == true) {
 			returnFlag = true;
 		} else {
 			returnFlag = false;
@@ -1308,7 +1309,7 @@ bool CWeb::genSiteList() {
 	}
 
 	// get the total number sites in glass's site list
-	int nsite = pSiteList->getSiteCount();
+	int nsite = pSiteList->size();
 
 	// don't bother continuing if we have no sites
 	if (nsite <= 0) {
@@ -1460,10 +1461,12 @@ std::shared_ptr<CNode> CWeb::genNodeSites(std::shared_ptr<CNode> node) {
 
 	// setup traveltimes for this node
 	if (pTrv1 != NULL) {
-		pTrv1->setOrigin(node->getLat(), node->getLon(), node->getZ());
+		pTrv1->setOrigin(node->getLatitude(), node->getLongitude(),
+							node->getDepth());
 	}
 	if (pTrv2 != NULL) {
-		pTrv2->setOrigin(node->getLat(), node->getLon(), node->getZ());
+		pTrv2->setOrigin(node->getLatitude(), node->getLongitude(),
+							node->getDepth());
 	}
 
 	// clear node of any existing sites
@@ -1524,14 +1527,14 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CWeb::addSite: New potential station " + site->getScnl()
+			"CWeb::addSite: New potential station " + site->getSCNL()
 					+ " for web: " + sName + ".");
 
 	// don't bother if this site isn't allowed
 	if (isSiteAllowed(site) == false) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CWeb::addSite: Station " + site->getScnl()
+				"CWeb::addSite: Station " + site->getSCNL()
 						+ " not allowed in web " + sName + ".");
 		return;
 	}
@@ -1551,7 +1554,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		if (nodeCount % 1000 == 0) {
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
-					"CWeb::addSite: Station " + site->getScnl() + " processed "
+					"CWeb::addSite: Station " + site->getSCNL() + " processed "
 							+ std::to_string(nodeCount) + " out of "
 							+ std::to_string(totalNodes) + " nodes in web: "
 							+ sName + ". Modified "
@@ -1559,7 +1562,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		}
 
 		// check to see if we have this site
-		std::shared_ptr<CSite> foundSite = node->getSite(site->getScnl());
+		std::shared_ptr<CSite> foundSite = node->getSite(site->getSCNL());
 
 		// update?
 		if (foundSite != NULL) {
@@ -1572,7 +1575,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		// set to node geographic location
 		// NOTE: node depth is ignored here
 		glassutil::CGeo geo;
-		geo.setGeographic(node->getLat(), node->getLon(), 6371.0);
+		geo.setGeographic(node->getLatitude(), node->getLongitude(), 6371.0);
 
 		// compute delta distance between site and node
 		double newDistance = RAD2DEG * site->getGeo().delta(&geo);
@@ -1594,10 +1597,12 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 
 		// setup traveltimes for this node
 		if (pTrv1 != NULL) {
-			pTrv1->setOrigin(node->getLat(), node->getLon(), node->getZ());
+			pTrv1->setOrigin(node->getLatitude(), node->getLongitude(),
+								node->getDepth());
 		}
 		if (pTrv2 != NULL) {
-			pTrv2->setOrigin(node->getLat(), node->getLon(), node->getZ());
+			pTrv2->setOrigin(node->getLatitude(), node->getLongitude(),
+								node->getDepth());
 		}
 
 		// compute traveltimes between site and node
@@ -1639,12 +1644,12 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		char sLog[1024];
 		snprintf(sLog, sizeof(sLog), "CWeb::addSite: Added site: %s to %d "
 					"node(s) in web: %s",
-					site->getScnl().c_str(), nodeModCount, sName.c_str());
+					site->getSCNL().c_str(), nodeModCount, sName.c_str());
 		glassutil::CLogit::log(glassutil::log_level::info, sLog);
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CWeb::addSite: Station " + site->getScnl()
+				"CWeb::addSite: Station " + site->getSCNL()
 						+ " not added to any "
 								"nodes in web: " + sName + ".");
 	}
@@ -1666,14 +1671,14 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 	if (isSiteAllowed(site) == false) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CWeb::remSite: Station " + site->getScnl()
+				"CWeb::remSite: Station " + site->getSCNL()
 						+ " not allowed in web " + sName + ".");
 		return;
 	}
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CWeb::remSite: Trying to remove station " + site->getScnl()
+			"CWeb::remSite: Trying to remove station " + site->getSCNL()
 					+ " from web " + sName + ".");
 
 	// init flag to check to see if we've generated a site list for this web
@@ -1690,7 +1695,7 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		setThreadHealth(true);
 
 		// search through each site linked to this node, see if we have it
-		std::shared_ptr<CSite> foundSite = node->getSite(site->getScnl());
+		std::shared_ptr<CSite> foundSite = node->getSite(site->getSCNL());
 
 		// don't bother if this node doesn't have this site
 		if (foundSite == NULL) {
@@ -1702,7 +1707,7 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		if (nodeCount % 1000 == 0) {
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
-					"CWeb::remSite: Station " + site->getScnl() + " processed "
+					"CWeb::remSite: Station " + site->getSCNL() + " processed "
 							+ std::to_string(nodeCount) + " out of "
 							+ std::to_string(totalNodes) + " nodes in web: "
 							+ sName + ". Modified "
@@ -1727,7 +1732,7 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		}
 
 		// sort overall list of sites for this node
-		sortSiteList(node->getLat(), node->getLon());
+		sortSiteList(node->getLatitude(), node->getLongitude());
 
 		// remove site link
 		if (node->unlinkSite(foundSite) == true) {
@@ -1754,7 +1759,7 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 				glassutil::CLogit::log(
 						glassutil::log_level::error,
 						"CWeb::remSite: Failed to add station "
-								+ newSite->getScnl() + " to web " + sName
+								+ newSite->getSCNL() + " to web " + sName
 								+ ".");
 			}
 
@@ -1766,7 +1771,7 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::error,
-					"CWeb::remSite: Failed to remove station " + site->getScnl()
+					"CWeb::remSite: Failed to remove station " + site->getSCNL()
 							+ " from web " + sName + ".");
 		}
 
@@ -1779,12 +1784,12 @@ void CWeb::remSite(std::shared_ptr<CSite> site) {
 		snprintf(
 				sLog, sizeof(sLog),
 				"CWeb::remSite: Removed site: %s from %d node(s) in web: %s",
-				site->getScnl().c_str(), nodeModCount, sName.c_str());
+				site->getSCNL().c_str(), nodeModCount, sName.c_str());
 		glassutil::CLogit::log(glassutil::log_level::info, sLog);
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CWeb::remSite: Station " + site->getScnl()
+				"CWeb::remSite: Station " + site->getSCNL()
 						+ " not removed from any nodes in web: " + sName + ".");
 	}
 }
@@ -1858,7 +1863,7 @@ bool CWeb::hasSite(std::shared_ptr<CSite> site) {
 	// for each node in web
 	for (auto &node : vNode) {
 		// check to see if we have this site
-		if (node->getSite(site->getScnl()) != NULL) {
+		if (node->getSite(site->getSCNL()) != NULL) {
 			return (true);
 		}
 	}

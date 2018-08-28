@@ -180,7 +180,7 @@ class CSite {
 	 *
 	 * \param pck - A shared_ptr to a CPick object containing the pick to remove
 	 */
-	void remPick(std::shared_ptr<CPick> pck);
+	void removePick(std::shared_ptr<CPick> pck);
 
 	/**
 	 * \brief Add node to this site
@@ -202,7 +202,7 @@ class CSite {
 	 *
 	 * \param nodeID - A string with the id of the node to remove
 	 */
-	void remNode(std::string nodeID);
+	void removeNode(std::string nodeID);
 
 	/**
 	 * \brief Try to nucleate a new event at nodes linked to site
@@ -249,25 +249,25 @@ class CSite {
 	 * \brief Use for teleseismic flag getter
 	 * \return the use for teleseismic flag
 	 */
-	bool getUseForTele() const;
+	bool getUseForTeleseismic() const;
 
 	/**
 	 * \brief Use for teleseismic flag setter
 	 * \param useForTele - the use for teleseismic flag
 	 */
-	void setUseForTele(bool useForTele);
+	void setUseForTeleseismic(bool useForTele);
 
 	/**
 	 * \brief Quality getter
 	 * \return the quality
 	 */
-	double getQual() const;
+	double getQuality() const;
 
 	/**
 	 * \brief Quality setter
 	 * \param qual - the quality
 	 */
-	void setQual(double qual);
+	void setQuality(double qual);
 
 	/**
 	 * \brief CGeo getter
@@ -279,7 +279,7 @@ class CSite {
 	 * \brief Max picks for site getter
 	 * \return the max picks for site
 	 */
-	int getSitePickMax() const;
+	int getPickMax() const;
 
 	/**
 	 * \brief CGlass getter
@@ -291,7 +291,7 @@ class CSite {
 	 * \brief SCNL getter
 	 * \return the SCNL
 	 */
-	const std::string& getScnl() const;
+	const std::string& getSCNL() const;
 
 	/**
 	 * \brief Site getter
@@ -303,19 +303,19 @@ class CSite {
 	 * \brief Comp getter
 	 * \return the comp
 	 */
-	const std::string& getComp() const;
+	const std::string& getComponent() const;
 
 	/**
 	 * \brief Net getter
 	 * \return the net
 	 */
-	const std::string& getNet() const;
+	const std::string& getNetwork() const;
 
 	/**
 	 * \brief Loc getter
 	 * \return the loc
 	 */
-	const std::string& getLoc() const;
+	const std::string& getLocation() const;
 
 	/**
 	 * \brief vPick getter
@@ -325,11 +325,11 @@ class CSite {
 
 	time_t getTLastPickAdded() const;
 
-	double * getVec(double * vec);
+	double * getUnitVectors(double * vec);
 
-	void setPicksSinceCheck(int count);
+	void setPickCountSinceCheck(int count);
 
-	int getPicksSinceCheck() const;
+	int getPickCountSinceCheck() const;
 
  private:
 	/**
@@ -342,96 +342,96 @@ class CSite {
 	 * CSite. A shared_ptr is used here instead of a weak_ptr (to prevent a
 	 * cyclical reference between CPick and CSite) to improve performance
 	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
+	std::vector<std::shared_ptr<CPick>> m_vPick;
 
 	/**
 	 * \brief A pointer to the main CGlass class used encode/decode time and
 	 * get debugging flags
 	 */
-	CGlass *pGlass;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief A std::string containing the SCNL (Site, Component, Network,
 	 * Location) for this site.
 	 */
-	std::string sScnl;
+	std::string m_sSCNL;
 
 	/**
 	 * \brief A std::string containing the Site (station) name for this site.
 	 */
-	std::string sSite;
+	std::string m_sSite;
 
 	/**
 	 * \brief A std::string containing the Component name for this site.
 	 */
-	std::string sComp;
+	std::string m_sComponent;
 
 	/**
 	 * \brief A std::string containing the Network name for this site.
 	 */
-	std::string sNet;
+	std::string m_sNetwork;
 
 	/**
 	 * \brief A std::string containing the Location code for this site.
 	 */
-	std::string sLoc;
+	std::string m_sLocation;
 
 	/**
 	 * \brief A CGeo object containing the geographic location of this site
 	 */
-	glassutil::CGeo geo;
+	glassutil::CGeo m_Geo;
 
 	/**
 	 * \brief A unit vector in Cartesian earth coordinates used to do a quick
 	 * and dirty distance calculation during detection grid formation
 	 */
-	double dVec[3];
+	double m_daUnitVectors[3];
 
 	/**
 	 * \brief A boolean flag indicating whether this site is disabled external
 	 * to glass. This is different than bUse, which is managed by glass
 	 * processes.
 	 */
-	std::atomic<bool> bEnable;
+	std::atomic<bool> m_bEnable;
 
 	/**
 	 * \brief A boolean flag indicating whether to use this site in calculations.
 	 */
-	std::atomic<bool> bUse;
+	std::atomic<bool> m_bUse;
 
 	/**
 	 * \brief A boolean flag indicating whether to use this site for teleseismic
 	 * calculations.
 	 */
-	std::atomic<bool> bUseForTele;
+	std::atomic<bool> m_bUseForTeleseismic;
 
 	/**
 	 * \brief A double value containing the quality estimate of the station.
 	 */
-	std::atomic<double> dQual;
+	std::atomic<double> m_dQuality;
 
 	/**
 	 * \brief An integer containing the maximum number of picks stored by
 	 * the vector in this site
 	 */
-	std::atomic<int> nSitePickMax;
+	std::atomic<int> m_iPickMax;
 
 	/**
 	 * \brief An integer containing the number of picks made at this site since
 	 * the last check
 	 */
-	std::atomic<int> nPicksSinceCheck;
+	std::atomic<int> m_iPickCountSinceCheck;
 
 	/**
 	 * \brief A mutex to control threading access to vNode.
 	 */
-	mutable std::mutex vNodeMutex;
+	mutable std::mutex m_vNodeMutex;
 
 	/**
 	 * \brief A std::vector of tuples linking site to node
 	 * {shared node pointer, travel-time 1, travel-time 2}
 	 */
-	std::vector<NodeLink> vNode;
+	std::vector<NodeLink> m_vNode;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CSite.
@@ -440,9 +440,13 @@ class CSite {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	mutable std::recursive_mutex siteMutex;
+	mutable std::recursive_mutex m_SiteMutex;
 
-	time_t tLastPickAdded;
+	/**
+	 * \brief A double value containing the last time a pick was added to this
+	 * site in epoch seconds
+	 */
+	std::atomic<double> m_tLastPickAdded;
 };
 }  // namespace glasscore
 #endif  // SITE_H

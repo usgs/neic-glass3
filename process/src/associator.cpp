@@ -202,10 +202,10 @@ glass3::util::WorkState Associator::work() {
 			int hypoListSize = 0;
 			int pickListSize = 0;
 			if (m_pGlass->getHypoList()) {
-				hypoListSize = m_pGlass->getHypoList()->getVHypoSize();
+				hypoListSize = m_pGlass->getHypoList()->size();
 			}
 			if (m_pGlass->getPickList()) {
-				pickListSize = m_pGlass->getPickList()->getVPickSize();
+				pickListSize = m_pGlass->getPickList()->size();
 			}
 
 			// update the total input count with the input count

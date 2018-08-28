@@ -180,29 +180,6 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	bool scavenge(std::shared_ptr<CHypo> hyp, double tDuration = 2400.0);
 
 	/**
-	 * \brief Generate rogue list for tuning process
-	 *
-	 * Search through all picks within a provided number of seconds from the
-	 * given origin time, creating a vector of all picks that could be
-	 * associated with given hypocenter ID, but are actually either unassociated
-	 * or associated with another hypocenter
-	 *
-	 * \param pidHyp - A std::string containing the id of the hypocenter to use
-	 * \param tOrg - A double value containing the origin time in julian seconds
-	 * of the hypocenter to use.
-	 * \param tDuration - A double value containing the duration to search picks
-	 * from origin time in seconds, defaults to 2400.0
-	 */
-	std::vector<std::shared_ptr<CPick>> rogues(std::string pidHyp, double tOrg,
-												double tDuration = 2400.0);
-
-	/**
-	 * \brief check to see if each thread is still functional
-	 *
-	 * Checks each thread to see if it is still responsive.
-	 */
-	// bool statusCheck();
-	/**
 	 * \brief CGlass getter
 	 * \return the CGlass pointer
 	 */
@@ -230,24 +207,24 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * \brief nPickMax getter
 	 * \return the nPickMax
 	 */
-	int getNPickMax() const;
+	int getPickMax() const;
 
 	/**
 	 * \brief nPickMax Setter
 	 * \param picknMax - the nPickMax
 	 */
-	void setNPickMax(int picknMax);
+	void setPickMax(int picknMax);
 
 	/**
 	 * \brief nPickTotal getter
 	 * \return the nPickTotal
 	 */
-	int getNPickTotal() const;
+	int getPickTotal() const;
 
 	/**
 	 * \brief Get the current size of the pick list
 	 */
-	int getVPickSize() const;
+	int size() const;
 
 	/**
 	 * \brief PickList work function
@@ -264,59 +241,50 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * information, configuration values, call association functions, and debug
 	 * flags
 	 */
-	CGlass *pGlass;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites for
 	 * lookups
 	 */
-	CSiteList *pSiteList;
+	CSiteList * m_pSiteList;
 
 	/**
 	 * \brief An integer containing the total number of picks ever added to
 	 * CPickList
 	 */
-	int nPickTotal;
+	int m_iPickTotal;
 
 	/**
 	 * \brief An integer containing the maximum number of picks allowed in
 	 * CPickList. This value is overridden by pGlass->nPickMax if provided.
 	 * Defaults to 10000.
 	 */
-	int nPickMax;
+	int m_iPickMax;
 
 	/**
 	 * \brief A std::vector mapping the arrival time of each pick in CPickList
 	 * to it's integer pick id. The elements in this vector object are inserted
 	 * in a manner to keep it in sequential time order from oldest to youngest.
 	 */
-	std::vector<std::pair<double, int>> vPick;
+	std::vector<std::pair<double, int>> m_vPick;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each pick in CPickList
 	 * indexed by the integer pick id.
 	 */
-	std::map<int, std::shared_ptr<CPick>> mPick;
+	std::map<int, std::shared_ptr<CPick>> m_mPick;
 
 	/**
 	 * \brief A std::queue containing a std::shared_ptr to each pick in that
 	 * needs to be processed
 	 */
-	std::queue<std::shared_ptr<CPick>> qProcessList;
+	std::queue<std::shared_ptr<CPick>> m_qPicksToProcess;
 
 	/**
 	 * \brief the std::mutex for qProcessList
 	 */
-	std::mutex m_qProcessMutex;
-
-	/**
-	 * \brief A recursive_mutex to control threading access to vPick.
-	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
-	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
-	 * However a recursive_mutex allows us to maintain the original class
-	 * design as delivered by the contractor.
-	 */
-	mutable std::recursive_mutex m_vPickMutex;
+	std::mutex m_PicksToProcessMutex;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CPickList.
@@ -326,11 +294,6 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_PickListMutex;
-
-	/**
-	 * \brief A random engine used to generate random numbers
-	 */
-	std::default_random_engine m_RandomGenerator;
 };
 }  // namespace glasscore
 #endif  // PICKLIST_H

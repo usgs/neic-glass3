@@ -159,22 +159,9 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	bool evolve(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Find CHypo in given time range
-	 *
-	 * Use a binary search to find a hypocenter in
-	 * vHypo with origin time within given range
-	 *
-	 * \param t1 - Starting time of selection range in gregorian seconds
-	 * \param t2 - Ending time of selection range in gregorian seconds
-	 * \return First CHypo in vHypo withing range,
-	 * or NULL if none fit in the time range.
-	 */
-	std::shared_ptr<CHypo> findHypo(double t1, double t2);
-
-	/**
 	 * \brief Get the current size of the hypocenter processing queue
 	 */
-	int getFifoSize();
+	int getHyposToProcessSize();
 
 	/**
 	 * \brief CGlass getter
@@ -198,18 +185,18 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \brief nHypoMax getter
 	 * \return the nHypoMax
 	 */
-	int getNHypoMax() const;
+	int getHypoMax() const;
 
 	/**
 	 * \brief nHypoTotal getter
 	 * \return the nHypoTotal
 	 */
-	int getNHypoTotal() const;
+	int getHypoTotal() const;
 
 	/**
 	 * \brief Get the current size of the hypocenter list
 	 */
-	int getVHypoSize() const;
+	int size() const;
 
 	/**
 	 * \brief Get insertion index for hypo
@@ -226,14 +213,6 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * -2 is returned.
 	 */
 	int indexHypo(double tOrg);
-
-	/**
-	 * \brief Print basic values to screen for hypocenter list
-	 *
-	 * Causes CHypoList to print basic values to the console for
-	 * each hypocenter in the list
-	 */
-	void listHypos();
 
 	/** \brief Try to merge events close in space time
 	 *
@@ -253,7 +232,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \param hyp - A std::shared_ptr to the hypocenter to add
 	 * \return Returns the current size of the processing queue
 	 */
-	int pushFifo(std::shared_ptr<CHypo> hyp);
+	int addHypoToProcess(std::shared_ptr<CHypo> hyp);
 
 	/**
 	 * \brief Get hypo from processing queue
@@ -263,7 +242,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \return Returns a std::shared_ptr to the hypocenter retrieved
 	 * from the queue.
 	 */
-	std::shared_ptr<CHypo> popFifo();
+	std::shared_ptr<CHypo> getHypoToProcess();
 
 	/**
 	 * \brief Remove hypo from list
@@ -276,7 +255,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * cancel message when the hypo is removed
 	 * \return void.
 	 */
-	void remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel = true);
+	void removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel = true);
 
 	/**
 	 * \brief Cause CHypoList to generate a Hypo message for a hypocenter
@@ -288,7 +267,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \param com - A pointer to a json::object containing the id of the
 	 * hypocenter to use
 	 */
-	bool reqHypo(std::shared_ptr<json::Object> com);
+	bool requestHypo(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Ensure all picks in the hypo belong to hypo
@@ -312,7 +291,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \brief nHypoMax Setter
 	 * \param hypoMax - the nHypoMax
 	 */
-	void setNHypoMax(int hypoMax);
+	void setHypoMax(int hypoMax);
 
 	/**
 	 * \brief Hypolist work function
@@ -345,30 +324,30 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \brief A pointer to the parent CGlass class, used to send output,
 	 * encode/decode time, get configuration values, and debug flags
 	 */
-	CGlass *pGlass;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief An integer containing the total number of hypocenters
 	 * ever added to CHypoList
 	 */
-	std::atomic<int> nHypoTotal;
+	std::atomic<int> m_iHypoTotal;
 
 	/**
 	 * \brief An integer containing the maximum number of hypocenters stored by
 	 * CHypoList
 	 */
-	std::atomic<int> nHypoMax;
+	std::atomic<int> m_iHypoMax;
 
 	/**
 	 * \brief A std::vector containing the queue of hypocenters that need
 	 * to be processed
 	 */
-	std::vector<std::string> qFifo;
+	std::vector<std::string> m_vHyposToProcess;
 
 	/**
-	 * \brief the std::mutex for qFifo
+	 * \brief the std::mutex for m_vHyposToProcess
 	 */
-	std::mutex m_QueueMutex;
+	std::mutex m_vHyposToProcessMutex;
 
 	/**
 	 * \brief A std::vector mapping the origin time of each hypocenter
@@ -377,22 +356,13 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * Note that the origin time is never updated after the hypocenter is
 	 * first added to CHypoList
 	 */
-	std::vector<std::pair<double, std::string>> vHypo;
+	std::vector<std::pair<double, std::string>> m_vHypo;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each hypocenter
 	 * in CHypoList indexed by the std::string hypo id.
 	 */
-	std::map<std::string, std::shared_ptr<CHypo>> mHypo;
-
-	/**
-	 * \brief A recursive_mutex to control threading access to vHypo.
-	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
-	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
-	 * However a recursive_mutex allows us to maintain the original class
-	 * design as delivered by the contractor.
-	 */
-	mutable std::recursive_mutex m_vHypoMutex;
+	std::map<std::string, std::shared_ptr<CHypo>> m_mHypo;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypoList.
@@ -402,11 +372,6 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_HypoListMutex;
-
-	/**
-	 * \brief A random engine used to generate random numbers
-	 */
-	std::default_random_engine m_RandomGenerator;
 };
 }  // namespace glasscore
 #endif  // HYPOLIST_H

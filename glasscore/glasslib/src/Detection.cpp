@@ -1,6 +1,8 @@
 #include <json.h>
 #include <string>
 #include <memory>
+#include <vector>
+
 #include "Date.h"
 #include "Pid.h"
 #include "Web.h"
@@ -176,48 +178,61 @@ bool CDetection::process(std::shared_ptr<json::Object> com) {
 	double t1 = torg - 90.0;
 	double t2 = torg + 90.0;
 
+	std::shared_ptr<CHypo> hypo = NULL;
+	bool match = false;
+
 	// search for the first hypocenter in the window
-	std::shared_ptr<CHypo> hypo = m_pGlass->getHypoList()->findHypo(t1, t2);
+	// std::shared_ptr<CHypo> hypo = m_pGlass->getHypoList()->findHypo(t1, t2);
+	std::vector<std::weak_ptr<CHypo>> hypos = m_pGlass->getHypoList()->getHypos(
+			t1, t2);
 
 	// check to see if we found a hypo
-	if (hypo != NULL) {
-		// found a hypo
-		// calculate distance
-		glassutil::CGeo geo1;
-		geo1.setGeographic(lat, lon, z);
-		glassutil::CGeo geo2;
-		geo2.setGeographic(hypo->getLatitude(), hypo->getLongitude(),
-							hypo->getDepth());
-		double delta = RAD2DEG * geo1.delta(&geo2);
+	if (hypos.size() > 0) {
+		std::shared_ptr<CHypo> hypo = hypos[0].lock();
 
-		// if the detection is more than 5 degrees away, it isn't a match
-		// NOTE: Hard coded.
-		if (delta > 5.0) {
-			// detections don't have a second travel time
-			std::shared_ptr<traveltime::CTravelTime> nullTrav;
+		if (hypo != NULL) {
+			// found a hypo
+			// calculate distance
+			glassutil::CGeo geo1;
+			geo1.setGeographic(lat, lon, z);
+			glassutil::CGeo geo2;
+			geo2.setGeographic(hypo->getLatitude(), hypo->getLongitude(),
+								hypo->getDepth());
+			double delta = RAD2DEG * geo1.delta(&geo2);
 
-			// create new hypo
-			hypo = std::make_shared<CHypo>(
-					lat, lon, z, torg, glassutil::CPid::pid(), "Detection", 0.0,
-					0.0, 0, m_pGlass->getDefaultNucleationTravelTime(),
-					nullTrav, m_pGlass->getAssociationTravelTimes());
-
-			// set hypo glass pointer and such
-			hypo->setGlass(m_pGlass);
-			hypo->setDistanceCutoffFactor(m_pGlass->getDistanceCutoffFactor());
-			hypo->setDistanceCutoffPercentage(
-					m_pGlass->getDistanceCutoffPercentage());
-			hypo->setMinDistanceCutoff(m_pGlass->getMinDistanceCutoff());
-
-			// process hypo using evolve
-			if (m_pGlass->getHypoList()->evolve(hypo)) {
-				// add to hypo list
-				m_pGlass->getHypoList()->addHypo(hypo);
+			// if the detection is more than 5 degrees away, it isn't a match
+			// NOTE: Hard coded.
+			if (delta < 5.0) {
+				match = true;
 			}
-		} else {
-			// existing hypo, now hwat?
-			// schedule hypo for processing?
-			m_pGlass->getHypoList()->pushFifo(hypo);
+		}
+	}
+
+	if ((hypo != NULL) && (match == true)) {
+		// existing hypo, now hwat?
+		// schedule hypo for processing?
+		m_pGlass->getHypoList()->addHypoToProcess(hypo);
+	} else {
+		// detections don't have a second travel time
+		std::shared_ptr<traveltime::CTravelTime> nullTrav;
+
+		// create new hypo
+		hypo = std::make_shared<CHypo>(
+				lat, lon, z, torg, glassutil::CPid::pid(), "Detection", 0.0,
+				0.0, 0, m_pGlass->getDefaultNucleationTravelTime(), nullTrav,
+				m_pGlass->getAssociationTravelTimes());
+
+		// set hypo glass pointer and such
+		hypo->setGlass(m_pGlass);
+		hypo->setDistanceCutoffFactor(m_pGlass->getDistanceCutoffFactor());
+		hypo->setDistanceCutoffPercentage(
+				m_pGlass->getDistanceCutoffPercentage());
+		hypo->setMinDistanceCutoff(m_pGlass->getMinDistanceCutoff());
+
+		// process hypo using evolve
+		if (m_pGlass->getHypoList()->evolve(hypo)) {
+			// add to hypo list
+			m_pGlass->getHypoList()->addHypo(hypo);
 		}
 	}
 

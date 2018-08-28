@@ -73,25 +73,25 @@ TEST(TriggerTest, Construction) {
 	glasscore::CTrigger * testTrigger = new glasscore::CTrigger();
 
 	// latitude
-	ASSERT_EQ(0, testTrigger->getLat())<< "Trigger Latitude 0";
+	ASSERT_EQ(0, testTrigger->getLatitude())<< "Trigger Latitude 0";
 
 	// longitude
-	ASSERT_EQ(0, testTrigger->getLon())<< "Trigger Longitude 0";
+	ASSERT_EQ(0, testTrigger->getLongitude())<< "Trigger Longitude 0";
 
 	// depth
-	ASSERT_EQ(0, testTrigger->getZ())<< "Trigger Depth 0";
+	ASSERT_EQ(0, testTrigger->getDepth())<< "Trigger Depth 0";
 
 	// time
-	ASSERT_EQ(0, testTrigger->getTOrg())<< "Trigger Time 0";
+	ASSERT_EQ(0, testTrigger->getTOrigin())<< "Trigger Time 0";
 
 	// resolution
 	ASSERT_EQ(0, testTrigger->getResolution())<< "Trigger Resolution 0";
 
 	// Sum
-	ASSERT_EQ(0, testTrigger->getSum())<< "Trigger Sum 0";
+	ASSERT_EQ(0, testTrigger->getBayesValue())<< "Trigger Sum 0";
 
 	// Count
-	ASSERT_EQ(0, testTrigger->getCount())<< "Trigger Count 0";
+	ASSERT_EQ(0, testTrigger->getPickCount())<< "Trigger Count 0";
 
 	// web
 	ASSERT_TRUE(testTrigger->getWeb() == NULL)<< "PWeb null";
@@ -109,26 +109,26 @@ TEST(TriggerTest, Construction) {
 							COUNT, picks, testWeb);
 
 	// latitude
-	ASSERT_EQ(LATITUDE, testTrigger->getLat())<< "Trigger Latitude Check";
+	ASSERT_EQ(LATITUDE, testTrigger->getLatitude())<< "Trigger Latitude Check";
 
 	// longitude
-	ASSERT_EQ(LONGITUDE, testTrigger->getLon())<< "Trigger Longitude Check";
+	ASSERT_EQ(LONGITUDE, testTrigger->getLongitude())<< "Trigger Longitude Check";
 
 	// depth
-	ASSERT_EQ(DEPTH, testTrigger->getZ())<< "Trigger Depth Check";
+	ASSERT_EQ(DEPTH, testTrigger->getDepth())<< "Trigger Depth Check";
 
 	// time
-	ASSERT_EQ(TIME, testTrigger->getTOrg())<< "Trigger Time Check";
+	ASSERT_EQ(TIME, testTrigger->getTOrigin())<< "Trigger Time Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testTrigger->getResolution())<< "Trigger Resolution "
 	"Check";
 
 	// Sum
-	ASSERT_EQ(SUM, testTrigger->getSum())<< "Trigger Sum Check";
+	ASSERT_EQ(SUM, testTrigger->getBayesValue())<< "Trigger Sum Check";
 
 	// Count
-	ASSERT_EQ(COUNT, testTrigger->getCount())<< "Trigger Count Check";
+	ASSERT_EQ(COUNT, testTrigger->getPickCount())<< "Trigger Count Check";
 
 	// web
 	ASSERT_STREQ(std::string(NAME).c_str(),
@@ -143,25 +143,25 @@ TEST(TriggerTest, Construction) {
 	testTrigger->clear();
 
 	// latitude
-	ASSERT_EQ(0, testTrigger->getLat())<< "Trigger Latitude 0";
+	ASSERT_EQ(0, testTrigger->getLatitude())<< "Trigger Latitude 0";
 
 	// longitude
-	ASSERT_EQ(0, testTrigger->getLon())<< "Trigger Longitude 0";
+	ASSERT_EQ(0, testTrigger->getLongitude())<< "Trigger Longitude 0";
 
 	// depth
-	ASSERT_EQ(0, testTrigger->getZ())<< "Trigger Depth 0";
+	ASSERT_EQ(0, testTrigger->getDepth())<< "Trigger Depth 0";
 
 	// time
-	ASSERT_EQ(0, testTrigger->getTOrg())<< "Trigger Time 0";
+	ASSERT_EQ(0, testTrigger->getTOrigin())<< "Trigger Time 0";
 
 	// resolution
 	ASSERT_EQ(0, testTrigger->getResolution())<< "Trigger Resolution 0";
 
 	// Sum
-	ASSERT_EQ(0, testTrigger->getSum())<< "Trigger Sum 0";
+	ASSERT_EQ(0, testTrigger->getBayesValue())<< "Trigger Sum 0";
 
 	// Count
-	ASSERT_EQ(0, testTrigger->getCount())<< "Trigger Count 0";
+	ASSERT_EQ(0, testTrigger->getPickCount())<< "Trigger Count 0";
 
 	// web
 	ASSERT_TRUE(testTrigger->getWeb() == NULL)<< "PWeb null";

@@ -15,7 +15,7 @@ CTrigger::CTrigger() {
 	clear();
 }
 
-// ---------------------------------------------------------CNode
+// ---------------------------------------------------------CTrigger
 CTrigger::CTrigger(double lat, double lon, double z, double ot,
 					double resolution, double sum, int count,
 					std::vector<std::shared_ptr<CPick>> picks, CWeb *web) {
@@ -31,39 +31,40 @@ CTrigger::~CTrigger() {
 
 // ---------------------------------------------------------clear
 void CTrigger::clear() {
-	std::lock_guard<std::recursive_mutex> guard(triggerMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_TriggerMutex);
 
-	dLat = 0;
-	dLon = 0;
-	dZ = 0;
-	tOrg = 0;
-	dResolution = 0;
-	dSum = 0;
-	nCount = 0;
-	pWeb = NULL;
+	m_dLatitude = 0;
+	m_dLongitude = 0;
+	m_dDepth = 0;
+	m_tOrigin = 0;
+	m_dResolution = 0;
+	m_dBayesValue = 0;
+	m_iPickCount = 0;
+	m_pWeb = NULL;
 
-	vPick.clear();
+	m_vPick.clear();
 }
 
+// ---------------------------------------------------------initialize
 bool CTrigger::initialize(double lat, double lon, double z, double ot,
 							double resolution, double sum, int count,
 							std::vector<std::shared_ptr<CPick>> picks,
 							CWeb *web) {
 	clear();
 
-	std::lock_guard<std::recursive_mutex> guard(triggerMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_TriggerMutex);
 
-	dLat = lat;
-	dLon = lon;
-	dZ = z;
-	tOrg = ot;
-	dResolution = resolution;
-	dSum = sum;
-	nCount = count;
-	pWeb = web;
+	m_dLatitude = lat;
+	m_dLongitude = lon;
+	m_dDepth = z;
+	m_tOrigin = ot;
+	m_dResolution = resolution;
+	m_dBayesValue = sum;
+	m_iPickCount = count;
+	m_pWeb = web;
 
 	for (auto aPick : picks) {
-		vPick.push_back(aPick);
+		m_vPick.push_back(aPick);
 	}
 
 /*	glassutil::CLogit::log(
@@ -79,47 +80,57 @@ bool CTrigger::initialize(double lat, double lon, double z, double ot,
 	return (true);
 }
 
-double CTrigger::getLat() const {
-	return (dLat);
+// ---------------------------------------------------------getLatitude
+double CTrigger::getLatitude() const {
+	return (m_dLatitude);
 }
 
-double CTrigger::getLon() const {
-	return (dLon);
+// ---------------------------------------------------------getLongitude
+double CTrigger::getLongitude() const {
+	return (m_dLongitude);
 }
 
-double CTrigger::getZ() const {
-	return (dZ);
+// ---------------------------------------------------------getDepth
+double CTrigger::getDepth() const {
+	return (m_dDepth);
 }
 
-double CTrigger::getTOrg() const {
-	return (tOrg);
+// ---------------------------------------------------------getTOrigin
+double CTrigger::getTOrigin() const {
+	return (m_tOrigin);
 }
 
+// ---------------------------------------------------------getGeo
 glassutil::CGeo CTrigger::getGeo() const {
 	glassutil::CGeo geoTrigger;
-	geoTrigger.setGeographic(dLat, dLon, 6371.0 - dZ);
+	geoTrigger.setGeographic(m_dLatitude, m_dLongitude, 6371.0 - m_dDepth);
 	return(geoTrigger);
 }
 
+// ---------------------------------------------------------getResolution
 double CTrigger::getResolution() const {
-	return (dResolution);
+	return (m_dResolution);
 }
 
-double CTrigger::getSum() const {
-	return (dSum);
+// ---------------------------------------------------------getBayesValue
+double CTrigger::getBayesValue() const {
+	return (m_dBayesValue);
 }
 
-int CTrigger::getCount() const {
-	return (nCount);
+// ---------------------------------------------------------getPickCount
+int CTrigger::getPickCount() const {
+	return (m_iPickCount);
 }
 
+// ---------------------------------------------------------getWeb
 const CWeb* CTrigger::getWeb() const {
-	return (pWeb);
+	return (m_pWeb);
 }
 
+// ---------------------------------------------------------getVPick
 const std::vector<std::shared_ptr<CPick> > CTrigger::getVPick() const {
-	std::lock_guard<std::recursive_mutex> guard(triggerMutex);
-	return (vPick);
+	std::lock_guard<std::recursive_mutex> guard(m_TriggerMutex);
+	return (m_vPick);
 }
 
 }  // namespace glasscore

@@ -28,7 +28,7 @@
 // check site data for validity
 void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 	// check scnl
-	std::string sitescnl = pickobject->getSite()->getScnl();
+	std::string sitescnl = pickobject->getSite()->getSCNL();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str());
 
@@ -38,17 +38,17 @@ void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 	ASSERT_STREQ(sitesite.c_str(), expectedsite.c_str());
 
 	// check comp
-	std::string sitecomp = pickobject->getSite()->getComp();
+	std::string sitecomp = pickobject->getSite()->getComponent();
 	std::string expectedcomp = std::string(COMP);
 	ASSERT_STREQ(sitecomp.c_str(), expectedcomp.c_str());
 
 	// check net
-	std::string sitenet = pickobject->getSite()->getNet();
+	std::string sitenet = pickobject->getSite()->getNetwork();
 	std::string expectednet = std::string(NET);
 	ASSERT_STREQ(sitenet.c_str(), expectednet.c_str());
 
 	// check loc
-	std::string siteloc = pickobject->getSite()->getLoc();
+	std::string siteloc = pickobject->getSite()->getLocation();
 	std::string expectedloc = std::string(LOC);
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 
@@ -68,12 +68,12 @@ void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 	ASSERT_EQ(beamslowness, expectedslowness);
 
 	// check id
-	int pickid = pickobject->getIdPick();
+	int pickid = pickobject->getPickID();
 	double expectedpickid = PICKID;
 	ASSERT_EQ(pickid, expectedpickid);
 
 	// check string id
-	std::string pickstringid = pickobject->getPid();
+	std::string pickstringid = pickobject->getID();
 	std::string expectedstringid = std::string(PICKIDSTRING);
 	ASSERT_STREQ(pickstringid.c_str(), expectedstringid.c_str());
 }
@@ -89,15 +89,14 @@ TEST(PickTest, Construction) {
 	ASSERT_EQ(0, testPick->getTPick())<< "time is zero";
 	ASSERT_EQ(-1, testPick->getBackAzimuth())<< "backazimuth is -1";
 	ASSERT_EQ(-1, testPick->getSlowness())<< "slowness is -1";
-	ASSERT_EQ(0, testPick->getIdPick())<< "id is zero";
-	ASSERT_STREQ("", testPick->getAss().c_str());
-	ASSERT_STREQ("", testPick->getPhs().c_str());
-	ASSERT_STREQ("", testPick->getPid().c_str());
+	ASSERT_EQ(0, testPick->getPickID())<< "id is zero";
+	ASSERT_STREQ("", testPick->getPhaseName().c_str());
+	ASSERT_STREQ("", testPick->getID().c_str());
 
 	// pointers
 	ASSERT_TRUE(testPick->getSite() == NULL)<< "pSite null";
 	ASSERT_TRUE(testPick->getHypo() == NULL)<< "pHypo null";
-	ASSERT_TRUE(testPick->getJPick() == NULL)<< "jPick null";
+	ASSERT_TRUE(testPick->getJSONPick() == NULL)<< "jPick null";
 
 	// create  shared pointer to the site
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -174,7 +173,7 @@ TEST(PickTest, HypoOperations) {
 	ASSERT_TRUE(testPick->getHypo() != NULL)<< "pHypo  not null";
 
 	// remove hypo from pick
-	testPick->remHypo(sharedHypo);
+	testPick->removeHypo(sharedHypo);
 
 	// check hypo
 	ASSERT_TRUE(testPick->getHypo() == NULL)<< "pHypo null";

@@ -43,7 +43,7 @@ void CCorrelationList::clear() {
 
 // ---------------------------------------------------------clearCorrelations
 void CCorrelationList::clearCorrelations() {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
 
 	// clear the vector and map
 	m_vCorrelation.clear();
@@ -98,7 +98,7 @@ bool CCorrelationList::dispatch(std::shared_ptr<json::Object> com) {
 // -------------------------------------------------------addCorrelationFromJSON
 bool CCorrelationList::addCorrelationFromJSON(
 		std::shared_ptr<json::Object> correlation) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
 
 	// null check json
 	if (correlation == NULL) {
@@ -286,7 +286,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 			m_pGlass->getHypoList()->addHypo(hypo);
 
 			// schedule it for processing
-			m_pGlass->getHypoList()->pushFifo(hypo);
+			m_pGlass->getHypoList()->addHypoToProcess(hypo);
 		}
 	}
 
@@ -296,7 +296,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 
 // ---------------------------------------------------------getInsertionIndex
 int CCorrelationList::getInsertionIndex(double tCorrelation) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
 
 	// handle empty vector case
 	if (m_vCorrelation.size() == 0) {
@@ -353,7 +353,7 @@ int CCorrelationList::getInsertionIndex(double tCorrelation) {
 // ---------------------------------------------------------getCorrelation
 std::shared_ptr<CCorrelation> CCorrelationList::getCorrelation(
 		int idCorrelation) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
 
 	// try to find that id in map
 	auto pos = m_mCorrelation.find(idCorrelation);
@@ -371,7 +371,7 @@ std::shared_ptr<CCorrelation> CCorrelationList::getCorrelation(
 // -----------------------------------------------------getCorrelation
 bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 										double tWindow, double xWindow) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
 
 	// null checks
 	if (newCorrelation == NULL) {
@@ -413,8 +413,8 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 		if (std::abs(newCorrelation->getTCorrelation() - cor->getTCorrelation())
 				< tWindow) {
 			// check if sites match
-			if (newCorrelation->getSite()->getScnl()
-					== cor->getSite()->getScnl()) {
+			if (newCorrelation->getSite()->getSCNL()
+					== cor->getSite()->getSCNL()) {
 				glassutil::CGeo geo1;
 				geo1.setGeographic(newCorrelation->getLatitude(),
 									newCorrelation->getLongitude(),
@@ -432,11 +432,11 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 							"CCorrelationList::checkDuplicate: Duplicate "
 									"(tWindow = " + std::to_string(tWindow)
 									+ ", xWindow = " + std::to_string(xWindow)
-									+ ") : old:" + cor->getSite()->getScnl()
+									+ ") : old:" + cor->getSite()->getSCNL()
 									+ " "
 									+ std::to_string(cor->getTCorrelation())
 									+ " new(del):"
-									+ newCorrelation->getSite()->getScnl() + " "
+									+ newCorrelation->getSite()->getSCNL() + " "
 									+ std::to_string(
 											newCorrelation->getTCorrelation()));
 					return (true);
@@ -451,7 +451,7 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 
 // ---------------------------------------------------------scavenge
 bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vCorrelationMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
 
 	// Scan all correlations within specified time range, adding any
 	// that meet association criteria to hypo object provided.
@@ -586,7 +586,7 @@ int CCorrelationList::getCorrelationTotal() const {
 // ---------------------------------------------------------size
 int CCorrelationList::size() const {
 	std::lock_guard<std::recursive_mutex> vCorrelationGuard(
-			m_vCorrelationMutex);
+			m_CorrelationListMutex);
 	return (m_vCorrelation.size());
 }
 

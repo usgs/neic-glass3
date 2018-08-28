@@ -37,10 +37,6 @@ bool sortFunc(const std::pair<double, int> &lhs,
 CPickList::CPickList(int numThreads, int sleepTime, int checkInterval)
 		: glass3::util::ThreadBaseClass("PickList", sleepTime, numThreads,
 										checkInterval) {
-	// seed the random number generator
-	std::random_device randomDevice;
-	m_RandomGenerator.seed(randomDevice());
-
 	clear();
 
 	// start up the threads
@@ -57,8 +53,8 @@ CPickList::~CPickList() {
 void CPickList::clear() {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 
-	pGlass = NULL;
-	pSiteList = NULL;
+	m_pGlass = NULL;
+	m_pSiteList = NULL;
 
 	// clear picks
 	clearPicks();
@@ -66,21 +62,21 @@ void CPickList::clear() {
 
 // ---------------------------------------------------------~clear
 void CPickList::clearPicks() {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	// clear the vector and map
-	vPick.clear();
-	mPick.clear();
+	m_vPick.clear();
+	m_mPick.clear();
 
-	m_qProcessMutex.lock();
-	while (qProcessList.empty() == false) {
-		qProcessList.pop();
+	m_PicksToProcessMutex.lock();
+	while (m_qPicksToProcess.empty() == false) {
+		m_qPicksToProcess.pop();
 	}
-	m_qProcessMutex.unlock();
+	m_PicksToProcessMutex.unlock();
 
 	// reset nPick
-	nPickTotal = 0;
-	nPickMax = 10000;
+	m_iPickTotal = 0;
+	m_iPickMax = 10000;
 }
 
 // ---------------------------------------------------------Dispatch
@@ -141,7 +137,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// null check pSiteList
-	if (pSiteList == NULL) {
+	if (m_pSiteList == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CPickList::addPick: NULL pSiteList.");
 		return (false);
@@ -177,11 +173,11 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// create new pick from json message
-	CPick * newPick = new CPick(pick, nPickTotal + 1, pSiteList);
+	CPick * newPick = new CPick(pick, m_iPickTotal + 1, m_pSiteList);
 
 	// check to see if we got a valid pick
 	if ((newPick->getSite() == NULL) || (newPick->getTPick() == 0)
-			|| (newPick->getPid() == "")) {
+			|| (newPick->getID() == "")) {
 		// cleanup
 		delete (newPick);
 		// message was processed
@@ -189,9 +185,9 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// check if pick is duplicate, if pGlass exists
-	if (pGlass) {
+	if (m_pGlass) {
 		bool duplicate = checkDuplicate(newPick,
-										pGlass->getPickDuplicateTimeWindow());
+										m_pGlass->getPickDuplicateTimeWindow());
 
 		// it is a duplicate, log and don't add pick
 		if (duplicate) {
@@ -204,7 +200,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		}
 	}
 
-	m_vPickMutex.lock();
+	m_PickListMutex.lock();
 
 	// create new shared pointer to this pick
 	std::shared_ptr<CPick> pck(newPick);
@@ -219,32 +215,32 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// of an active event, the actual pick will not
 	// be removed until either it is pruned from the
 	// event or the event is completed and retired.
-	nPickTotal++;
+	m_iPickTotal++;
 
 	// get maximum number of picks
 	// use max picks from pGlass if we have it
-	if (pGlass) {
-		nPickMax = pGlass->getMaxNumPicks();
+	if (m_pGlass) {
+		m_iPickMax = m_pGlass->getMaxNumPicks();
 	}
 
 	// create pair for insertion
-	std::pair<double, int> p(pck->getTPick(), nPickTotal);
+	std::pair<double, int> p(pck->getTPick(), m_iPickTotal);
 
 	// check to see if we're at the pick limit
-	if (vPick.size() == nPickMax) {
+	if (m_vPick.size() == m_iPickMax) {
 		// find first pick in vector
 		std::pair<double, int> pdx;
-		pdx = vPick[0];
-		auto pos = mPick.find(pdx.second);
+		pdx = m_vPick[0];
+		auto pos = m_mPick.find(pdx.second);
 
 		// remove pick from per site pick list
-		pos->second->getSite()->remPick(pos->second);
+		pos->second->getSite()->removePick(pos->second);
 
 		// erase from map
-		mPick.erase(pos);
+		m_mPick.erase(pos);
 
 		// erase from vector
-		vPick.erase(vPick.begin());
+		m_vPick.erase(m_vPick.begin());
 	}
 
 	// Insert new pick in proper time sequence into pick vector
@@ -253,57 +249,57 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	switch (iPick) {
 		case -2:
 			// Empty vector, just add it
-			vPick.push_back(p);
+			m_vPick.push_back(p);
 			break;
 		case -1:
 			// Pick is before any others, insert at beginning
-			vPick.insert(vPick.begin(), p);
+			m_vPick.insert(m_vPick.begin(), p);
 			break;
 		default:
 			// pick is somewhere in vector
-			if (iPick == vPick.size() - 1) {
+			if (iPick == m_vPick.size() - 1) {
 				// pick is after all picks, add to end
-				vPick.push_back(p);
+				m_vPick.push_back(p);
 			} else {
 				// find where the pick should be inserted
-				auto it = std::next(vPick.begin(), iPick + 1);
+				auto it = std::next(m_vPick.begin(), iPick + 1);
 
 				// insert at that location
-				vPick.insert(it, p);
+				m_vPick.insert(it, p);
 			}
 			break;
 	}
 
 	// add to pick map
-	mPick[nPickTotal] = pck;
+	m_mPick[m_iPickTotal] = pck;
 
 	// add to site specific pick list
 	pck->getSite()->addPick(pck);
 
-	m_vPickMutex.unlock();
+	m_PickListMutex.unlock();
 
 	// get the current size of the queue
-	m_qProcessMutex.lock();
-	int queueSize = qProcessList.size();
-	m_qProcessMutex.unlock();
+	m_PicksToProcessMutex.lock();
+	int queueSize = m_qPicksToProcess.size();
+	m_PicksToProcessMutex.unlock();
 
 	// wait until there's space in the queue
 	// we don't want to build up a huge queue of unprocessed
 	// picks
-	if ((pGlass) && (pGlass->getHypoList())) {
+	if ((m_pGlass) && (m_pGlass->getHypoList())) {
 		while (queueSize >= (getNumThreads() * MAX_QUEUE_FACTOR)) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 			// check to see if the queue has changed size
-			m_qProcessMutex.lock();
-			queueSize = qProcessList.size();
-			m_qProcessMutex.unlock();
+			m_PicksToProcessMutex.lock();
+			queueSize = m_qPicksToProcess.size();
+			m_PicksToProcessMutex.unlock();
 		}
 
 		// add pick to processing list
-		m_qProcessMutex.lock();
-		qProcessList.push(pck);
-		m_qProcessMutex.unlock();
+		m_PicksToProcessMutex.lock();
+		m_qPicksToProcess.push(pck);
+		m_PicksToProcessMutex.unlock();
 	}
 
 	// we're done, message was processed
@@ -312,15 +308,15 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 
 // ---------------------------------------------------------indexPixk
 int CPickList::indexPick(double tPick) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	// handle empty vector case
-	if (vPick.size() == 0) {
+	if (m_vPick.size() == 0) {
 		// return -2 to indicate empty vector
 		return (-2);
 	}
 
-	double tFirstPick = vPick[0].first;
+	double tFirstPick = m_vPick[0].first;
 
 	// handle pick earlier than first element case
 	// time is earlier than first pick
@@ -331,8 +327,8 @@ int CPickList::indexPick(double tPick) {
 
 	// handle case that the pick is later than last element
 	int i1 = 0;
-	int i2 = vPick.size() - 1;
-	double tLastPick = vPick[i2].first;
+	int i2 = m_vPick.size() - 1;
+	double tLastPick = m_vPick[i2].first;
 
 	// time is after last pick
 	if (tPick >= tLastPick) {
@@ -347,7 +343,7 @@ int CPickList::indexPick(double tPick) {
 		// compute current pick index
 		int ix = (i1 + i2) / 2;
 
-		double tCurrentPick = vPick[ix].first;
+		double tCurrentPick = m_vPick[ix].first;
 
 		// if time is before current pick
 		if (tCurrentPick > tPick) {
@@ -366,13 +362,13 @@ int CPickList::indexPick(double tPick) {
 
 // ---------------------------------------------------------getPick
 std::shared_ptr<CPick> CPickList::getPick(int idPick) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	// try to find that id in map
-	auto pos = mPick.find(idPick);
+	auto pos = m_mPick.find(idPick);
 
 	// make sure that we found something
-	if (pos != mPick.end()) {
+	if (pos != m_mPick.end()) {
 		// return the pick
 		return (pos->second);
 	}
@@ -383,13 +379,13 @@ std::shared_ptr<CPick> CPickList::getPick(int idPick) {
 
 // ---------------------------------------------------------listPicks
 void CPickList::listPicks() {
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	int n = 0;
 	char sLog[1024];
 
 	// for each pick
-	for (auto p : vPick) {
+	for (auto p : m_vPick) {
 		// list it
 		snprintf(sLog, sizeof(sLog), "%d: %.2f %d", n++, p.first, p.second);
 		glassutil::CLogit::Out(sLog);
@@ -409,7 +405,7 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 	// set default return to no match
 	bool matched = false;
 
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	// get the index of the earliest possible match
 	int it1 = indexPick(newPick->getTPick() - window);
@@ -432,22 +428,22 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 
 	// loop through possible matching picks
 	for (int it = it1; it <= it2; it++) {
-		auto q = vPick[it];
-		std::shared_ptr<CPick> pck = mPick[q.second];
+		auto q = m_vPick[it];
+		std::shared_ptr<CPick> pck = m_mPick[q.second];
 
 		// check if time difference is within window
 		if (std::abs(newPick->getTPick() - pck->getTPick()) < window) {
 			// check if sites match
-			if (newPick->getSite()->getScnl() == pck->getSite()->getScnl()) {
+			if (newPick->getSite()->getSCNL() == pck->getSite()->getSCNL()) {
 				// if match is found, set to true, log, and break out of loop
 				matched = true;
 				glassutil::CLogit::log(
 						glassutil::log_level::warn,
 						"CPickList::checkDuplicat: Duplicate (window = "
 								+ std::to_string(window) + ") : old:"
-								+ pck->getSite()->getScnl() + " "
+								+ pck->getSite()->getSCNL() + " "
 								+ std::to_string(pck->getTPick()) + " new(del):"
-								+ newPick->getSite()->getScnl() + " "
+								+ newPick->getSite()->getSCNL() + " "
 								+ std::to_string(newPick->getTPick()));
 				break;
 			}
@@ -471,7 +467,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	}
 
 	// check pGlass
-	if (pGlass == NULL) {
+	if (m_pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CPickList::scavenge: NULL glass pointer.");
 		return (false);
@@ -483,9 +479,9 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 							"CPickList::scavenge. " + hyp->getID());
 
 	// Calculate range for possible associations
-	double sdassoc = pGlass->getAssociationSDCutoff();
+	double sdassoc = m_pGlass->getAssociationSDCutoff();
 
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	// get the index of the pick to start with
 	// based on the hypo origin time
@@ -512,8 +508,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	bool bAss = false;
 	for (int it = it1; it < it2; it++) {
 		// get the pick from the vector
-		auto q = vPick[it];
-		std::shared_ptr<CPick> pck = mPick[q.second];
+		auto q = m_vPick[it];
+		std::shared_ptr<CPick> pck = m_mPick[q.second];
 		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
 
 		// check to see if this pick is already in this hypo
@@ -532,7 +528,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 		if (pickHyp == NULL) {
 			// unassociated with any existing hypo
 			// link pick to the hypo we're working on
-			pck->addHypo(hyp, "W", true);
+			pck->addHypo(hyp, true);
 
 			// add pick to this hypo
 			hyp->addPick(pck);
@@ -561,105 +557,43 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	return (bAss);
 }
 
-// ---------------------------------------------------------rogues
-std::vector<std::shared_ptr<CPick>> CPickList::rogues(std::string pidHyp,
-														double tOrg,
-														double tDuration) {
-	// Generate rogue list (all picks that are not associated
-	// with given event, but could be)
-	std::vector<std::shared_ptr<CPick>> vRogue;
-
-	// null checks
-	if (pidHyp == "") {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CPickList::rogues: Empty pidHyp provided.");
-		return (vRogue);
-	}
-	if (tOrg <= 0) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CPickList::rogues: Invalid tOrg provided.");
-		return (vRogue);;
-	}
-	if (tDuration <= 0) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CPickList::rogues: Invalid tDuration provided.");
-		return (vRogue);
-	}
-
-	std::lock_guard<std::recursive_mutex> listGuard(m_vPickMutex);
-
-	// get the index of the pick to start with
-	// based on the provided origin time
-	int it1 = indexPick(tOrg);
-
-	// index can't be negative
-	// Primarily occurs if origin time is before first pick
-	if (it1 < 0) {
-		it1 = 0;
-	}
-
-	// get the index of the pick to end with by using the provided
-	// origin time plus the provided duration
-	int it2 = indexPick(tOrg + tDuration);
-
-	// for each pick index between it1 and it2
-	for (int it = it1; it < it2; it++) {
-		// get the current pick from the vector
-		auto q = vPick[it];
-		std::shared_ptr<CPick> pck = mPick[q.second];
-		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
-
-		// if the current pick is associated to this event
-		if ((pickHyp != NULL) && (pickHyp->getID() == pidHyp)) {
-			// skip to next pick
-			continue;
-		}
-
-		// Add current pick to rogues list
-		vRogue.push_back(pck);
-	}
-
-	return (vRogue);
-}
-
 // ---------------------------------------------------------work
 glass3::util::WorkState CPickList::work() {
 	// make sure we have a pGlass and pGlass->pHypoList
-	if (pGlass == NULL) {
+	if (m_pGlass == NULL) {
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}
-	if (pGlass->getHypoList() == NULL) {
+	if (m_pGlass->getHypoList() == NULL) {
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}
 
 	// check to see that we've not run to far ahead of the hypo processing
-	if (pGlass->getHypoList()->getFifoSize()
-			> (pGlass->getHypoList()->getNumThreads() * MAX_QUEUE_FACTOR)) {
+	if (m_pGlass->getHypoList()->getHyposToProcessSize()
+			> (m_pGlass->getHypoList()->getNumThreads() * MAX_QUEUE_FACTOR)) {
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}
 
 	// lock for queue access
-	m_qProcessMutex.lock();
+	m_PicksToProcessMutex.lock();
 
 	// are there any jobs
-	if (qProcessList.empty() == true) {
+	if (m_qPicksToProcess.empty() == true) {
 		// unlock and skip until next time
-		m_qProcessMutex.unlock();
+		m_PicksToProcessMutex.unlock();
 
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}
 
 	// get the next pick
-	std::shared_ptr<CPick> pck = qProcessList.front();
-	qProcessList.pop();
+	std::shared_ptr<CPick> pck = m_qPicksToProcess.front();
+	m_qPicksToProcess.pop();
 
 	// done with queue
-	m_qProcessMutex.unlock();
+	m_PicksToProcessMutex.unlock();
 
 	// check the pick
 	if (pck == NULL) {
@@ -670,7 +604,7 @@ glass3::util::WorkState CPickList::work() {
 	// Attempt both association and nucleation of the new pick.
 	// If both succeed, the mess is sorted out in darwin/evolve
 	// associate
-	pGlass->getHypoList()->associate(pck);
+	m_pGlass->getHypoList()->associate(pck);
 
 	// nucleate
 	pck->nucleate();
@@ -681,39 +615,39 @@ glass3::util::WorkState CPickList::work() {
 
 const CSiteList* CPickList::getSiteList() const {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
-	return (pSiteList);
+	return (m_pSiteList);
 }
 
 void CPickList::setSiteList(CSiteList* siteList) {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
-	pSiteList = siteList;
+	m_pSiteList = siteList;
 }
 
 const CGlass* CPickList::getGlass() const {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
-	return (pGlass);
+	return (m_pGlass);
 }
 
 void CPickList::setGlass(CGlass* glass) {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
-	pGlass = glass;
+	m_pGlass = glass;
 }
 
-int CPickList::getNPickMax() const {
-	return (nPickMax);
+int CPickList::getPickMax() const {
+	return (m_iPickMax);
 }
 
-void CPickList::setNPickMax(int picknMax) {
-	nPickMax = picknMax;
+void CPickList::setPickMax(int picknMax) {
+	m_iPickMax = picknMax;
 }
 
-int CPickList::getNPickTotal() const {
-	return (nPickTotal);
+int CPickList::getPickTotal() const {
+	return (m_iPickTotal);
 }
 
-int CPickList::getVPickSize() const {
-	std::lock_guard<std::recursive_mutex> vPickGuard(m_vPickMutex);
-	return (vPick.size());
+int CPickList::size() const {
+	std::lock_guard<std::recursive_mutex> vPickGuard(m_PickListMutex);
+	return (m_vPick.size());
 }
 
 }  // namespace glasscore

@@ -87,10 +87,10 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 		return;
 	}
 
-	if (!initialize(trigger->getLat(), trigger->getLon(), trigger->getZ(),
-					trigger->getTOrg(), glassutil::CPid::pid(),
-					trigger->getWeb()->getName(), trigger->getSum(),
-					trigger->getWeb()->getThresh(),
+	if (!initialize(trigger->getLatitude(), trigger->getLongitude(),
+					trigger->getDepth(), trigger->getTOrigin(),
+					glassutil::CPid::pid(), trigger->getWeb()->getName(),
+					trigger->getBayesValue(), trigger->getWeb()->getThresh(),
 					trigger->getWeb()->getNucleate(),
 					trigger->getWeb()->getTrv1(), trigger->getWeb()->getTrv2(),
 					ttt, trigger->getResolution(),
@@ -154,7 +154,7 @@ void CHypo::addCorrelation(std::shared_ptr<CCorrelation> corr) {
 			char sLog[1024];
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::addCorrelation: ** Duplicate correlation %s",
-						corr->getSite()->getScnl().c_str());
+						corr->getSite()->getSCNL().c_str());
 			glassutil::CLogit::log(sLog);
 
 			return;
@@ -181,7 +181,7 @@ void CHypo::addPick(std::shared_ptr<CPick> pck) {
 	// for each pick in the vector
 	for (auto q : m_vPickData) {
 		// see if we have this same pick
-		if (q->getPid() == pck->getPid()) {
+		if (q->getID() == pck->getID()) {
 			// Don't add this duplicate pick
 			return;
 		}
@@ -862,7 +862,7 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 					m_sID.c_str(),
 					glassutil::CDate::encodeDateTime(corr->getTCorrelation())
 							.c_str(),
-					corr->getSite()->getScnl().c_str(), corr->getID().c_str(),
+					corr->getSite()->getSCNL().c_str(), corr->getID().c_str(),
 					tDist, tWindow, xDist, xWindow);
 			glassutil::CLogit::log(sLog);
 
@@ -878,7 +878,7 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 				" tDist:%.2f>tWindow:%.2f",
 				m_sID.c_str(),
 				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->getScnl().c_str(), corr->getID().c_str(),
+				corr->getSite()->getSCNL().c_str(), corr->getID().c_str(),
 				tDist, tWindow);
 	} else {
 		snprintf(
@@ -888,7 +888,7 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 				" tDist:%.2f<tWindow:%.2f xDist:%.2f>xWindow:%.2f)",
 				m_sID.c_str(),
 				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->getScnl().c_str(), corr->getID().c_str(),
+				corr->getSite()->getSCNL().c_str(), corr->getID().c_str(),
 				tDist, tWindow, xDist, xWindow);
 	}
 	glassutil::CLogit::log(sLog);
@@ -1129,7 +1129,7 @@ void CHypo::clearPicks() {
 		// remove the hypo from the pick
 		// note only removes hypo if pick
 		// is linked
-		pck->remHypo(m_sID);
+		pck->removeHypo(m_sID);
 	}
 
 	// remove all pick links to this hypo
@@ -1531,12 +1531,12 @@ double CHypo::getNucleationStackThreshold() const {
 	return (m_dNucleationStackThreshold);
 }
 
-std::shared_ptr<traveltime::CTravelTime> CHypo::getNucleationTravelTime1() const { // NOLINT
+std::shared_ptr<traveltime::CTravelTime> CHypo::getNucleationTravelTime1() const {  // NOLINT
 	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
 	return (m_pNucleationTravelTime1);
 }
 
-std::shared_ptr<traveltime::CTravelTime> CHypo::getNucleationTravelTime2() const { // NOLINT
+std::shared_ptr<traveltime::CTravelTime> CHypo::getNucleationTravelTime2() const {  // NOLINT
 	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
 	return (m_pNucleationTravelTime2);
 }
@@ -1773,7 +1773,7 @@ bool CHypo::hasPick(std::shared_ptr<CPick> pck) {
 	// for each pick in the vector
 	for (const auto &q : m_vPickData) {
 		// is this pick a match?
-		if (q->getPid() == pck->getPid()) {
+		if (q->getID() == pck->getID()) {
 			return (true);
 		}
 	}
@@ -1871,7 +1871,7 @@ std::shared_ptr<json::Object> CHypo::hypo(bool send) {
 
 		// if we have it, use the shared pointer
 		json::Object pickObj;
-		std::shared_ptr<json::Object> jPick = pick->getJPick();
+		std::shared_ptr<json::Object> jPick = pick->getJSONPick();
 		if (jPick) {
 			// start with a copy of json pick
 			// which has the site, source, time, etc
@@ -1887,8 +1887,8 @@ std::shared_ptr<json::Object> CHypo::hypo(bool send) {
 			pickObj["AssociationInfo"] = assocobj;
 		} else {
 			// we don't have a jpick, so fill in what we know
-			pickObj["Site"] = site->getScnl();
-			pickObj["Pid"] = pick->getPid();
+			pickObj["Site"] = site->getSCNL();
+			pickObj["Pid"] = pick->getID();
 			pickObj["T"] = glassutil::CDate::encodeDateTime(pick->getTPick());
 			pickObj["Time"] = glassutil::CDate::encodeISO8601Time(
 					pick->getTPick());
@@ -1930,7 +1930,7 @@ std::shared_ptr<json::Object> CHypo::hypo(bool send) {
 			correlationObj["AssociationInfo"] = assocobj;
 		} else {
 			// we don't have a jCorrelation, so fill in what we know
-			correlationObj["Site"] = site->getScnl();
+			correlationObj["Site"] = site->getSCNL();
 			correlationObj["Pid"] = correlation->getID();
 			correlationObj["Time"] = glassutil::CDate::encodeISO8601Time(
 					correlation->getTCorrelation());
@@ -2165,7 +2165,7 @@ bool CHypo::prune() {
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f)",
 					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->getScnl().c_str(), sdprune);
+					pck->getSite()->getSCNL().c_str(), sdprune);
 			glassutil::CLogit::log(sLog);
 
 			// on to the next pick
@@ -2181,7 +2181,7 @@ bool CHypo::prune() {
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f > %.2f)",
 					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->getScnl().c_str(), delta,
+					pck->getSite()->getSCNL().c_str(), delta,
 					getDistanceCutoff());
 			glassutil::CLogit::log(sLog);
 
@@ -2224,7 +2224,7 @@ bool CHypo::prune() {
 					"CHypo::prune: C-CUL %s %s",
 					glassutil::CDate::encodeDateTime(cor->getTCorrelation())
 							.c_str(),
-					cor->getSite()->getScnl().c_str());
+					cor->getSite()->getSCNL().c_str());
 			glassutil::CLogit::log(sLog);
 
 			// on to the next correlation
@@ -2299,7 +2299,7 @@ void CHypo::removePick(std::shared_ptr<CPick> pck) {
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
 	// get the pick id
-	std::string pid = pck->getPid();
+	std::string pid = pck->getID();
 
 	// for each pick in the vector
 	for (int i = 0; i < m_vPickData.size(); i++) {
@@ -2307,7 +2307,7 @@ void CHypo::removePick(std::shared_ptr<CPick> pck) {
 		auto pick = m_vPickData[i];
 
 		// is this pick a match?
-		if (pick->getPid() == pid) {
+		if (pick->getID() == pid) {
 			// remove pick from vector
 			m_vPickData.erase(m_vPickData.cbegin() + i);
 
@@ -2437,7 +2437,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 					"CHypo::resolve: SCV COMPARE %s %s %s %s (%.2f, %.2f)",
 					m_sID.c_str(), sOtherPid.c_str(),
 					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->getScnl().c_str(), aff1, aff2);
+					pck->getSite()->getSCNL().c_str(), aff1, aff2);
 		glassutil::CLogit::log(sLog);
 
 		// check which affinity is better
@@ -2447,7 +2447,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			pickHyp->removePick(pck);
 
 			// link pick to the provided hypo
-			pck->addHypo(hyp, "S", true);
+			pck->addHypo(hyp, true);
 
 			// add provided hypo to the processing queue
 			// NOTE: this puts provided hypo before original hypo in FIFO,
@@ -2455,10 +2455,10 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			// just stealing it back, which is why we do it here
 			// NOTE: why add it at all? we're gonna locate before we finish
 			// is it to see if we can get more next time
-			m_pGlass->getHypoList()->pushFifo(hyp);
+			m_pGlass->getHypoList()->addHypoToProcess(hyp);
 
 			// add the original hypo the pick was linked to the processing queue
-			m_pGlass->getHypoList()->pushFifo(pickHyp);
+			m_pGlass->getHypoList()->addHypoToProcess(pickHyp);
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;
@@ -2517,7 +2517,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 				m_sID.c_str(),
 				sOtherPid.c_str(),
 				glassutil::CDate::encodeDateTime(corr->getTCorrelation()).c_str(),
-				corr->getSite()->getScnl().c_str(), aff1, aff2);
+				corr->getSite()->getSCNL().c_str(), aff1, aff2);
 		glassutil::CLogit::log(sLog);
 
 		// check which affinity is better
@@ -2533,10 +2533,10 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 			// NOTE: this puts provided hypo before original hypo in FIFO,
 			// we want this hypo to keep this pick, rather than the original
 			// just stealing it back, which is why we do it here
-			m_pGlass->getHypoList()->pushFifo(hyp);
+			m_pGlass->getHypoList()->addHypoToProcess(hyp);
 
 			// add the original hypo the pick was linked to the processing queue
-			m_pGlass->getHypoList()->pushFifo(corrHyp);
+			m_pGlass->getHypoList()->addHypoToProcess(corrHyp);
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;
@@ -2679,7 +2679,7 @@ void CHypo::trap() {
 			// bad hypo pointer
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::trap: sPid %s Pick %s has no back link to hypo",
-						m_sID.c_str(), q->getPid().c_str());
+						m_sID.c_str(), q->getID().c_str());
 			glassutil::CLogit::log(glassutil::log_level::warn, sLog);
 
 			continue;
@@ -2691,7 +2691,7 @@ void CHypo::trap() {
 			snprintf(
 					sLog, sizeof(sLog),
 					"CHypo::trap: sPid %s Pick: %s linked to another hypo: %s",
-					m_sID.c_str(), q->getPid().c_str(), hyp->getID().c_str());
+					m_sID.c_str(), q->getID().c_str(), hyp->getID().c_str());
 			glassutil::CLogit::log(glassutil::log_level::warn, sLog);
 		}
 	}

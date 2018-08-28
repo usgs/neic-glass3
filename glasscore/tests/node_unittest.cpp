@@ -36,19 +36,19 @@ TEST(NodeTest, Construction) {
 			"Node Name Matches";
 
 	// latitude
-	ASSERT_EQ(LATITUDE, testNode->getLat())<< "Node Latitude Check";
+	ASSERT_EQ(LATITUDE, testNode->getLatitude())<< "Node Latitude Check";
 
 	// longitude
-	ASSERT_EQ(LONGITUDE, testNode->getLon())<< "Node Longitude Check";
+	ASSERT_EQ(LONGITUDE, testNode->getLongitude())<< "Node Longitude Check";
 
 	// depth
-	ASSERT_EQ(DEPTH, testNode->getZ())<< "Node Depth Check";
+	ASSERT_EQ(DEPTH, testNode->getDepth())<< "Node Depth Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testNode->getResolution())<< "Node Resolution Check";
 
 	// id
-	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->getPid().c_str())<<
+	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->getID().c_str())<<
 			"Node ID Matches";
 
 	// site list

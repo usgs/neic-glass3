@@ -33,7 +33,7 @@
 // check site data for validity
 void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	// check scnl
-	std::string sitescnl = siteobject->getScnl();
+	std::string sitescnl = siteobject->getSCNL();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str());
 
@@ -43,17 +43,17 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	ASSERT_STREQ(sitesite.c_str(), expectedsite.c_str());
 
 	// check comp
-	std::string sitecomp = siteobject->getComp();
+	std::string sitecomp = siteobject->getComponent();
 	std::string expectedcomp = std::string(COMP);
 	ASSERT_STREQ(sitecomp.c_str(), expectedcomp.c_str());
 
 	// check net
-	std::string sitenet = siteobject->getNet();
+	std::string sitenet = siteobject->getNetwork();
 	std::string expectednet = std::string(NET);
 	ASSERT_STREQ(sitenet.c_str(), expectednet.c_str());
 
 	// check loc
-	std::string siteloc = siteobject->getLoc();
+	std::string siteloc = siteobject->getLocation();
 	std::string expectedloc = std::string(LOC);
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 
@@ -82,12 +82,12 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	ASSERT_EQ(siteuse, expecteduse);
 
 	// check useforTele
-	bool siteusefortele = siteobject->getUseForTele();
+	bool siteusefortele = siteobject->getUseForTeleseismic();
 	bool expectedusefortele = USEFORTELE;
 	ASSERT_EQ(siteusefortele, expectedusefortele);
 
 	// check qual
-	double sitequal = siteobject->getQual();
+	double sitequal = siteobject->getQuality();
 	double expectedqual = QUALITY;
 	ASSERT_NEAR(sitequal, expectedqual, 0.000001);
 }
@@ -101,15 +101,15 @@ TEST(SiteTest, Construction) {
 
 	// assert default values
 	// scnl
-	ASSERT_STREQ("", testSite->getScnl().c_str())<< "sScnl Empty";
+	ASSERT_STREQ("", testSite->getSCNL().c_str())<< "sScnl Empty";
 	ASSERT_STREQ("", testSite->getSite().c_str())<< "sSite Empty";
-	ASSERT_STREQ("", testSite->getComp().c_str())<< "sComp Empty";
-	ASSERT_STREQ("", testSite->getNet().c_str())<< "sNet Empty";
-	ASSERT_STREQ("", testSite->getLoc().c_str())<< "sLoc Empty";
+	ASSERT_STREQ("", testSite->getComponent().c_str())<< "sComp Empty";
+	ASSERT_STREQ("", testSite->getNetwork().c_str())<< "sNet Empty";
+	ASSERT_STREQ("", testSite->getLocation().c_str())<< "sLoc Empty";
 
 	ASSERT_EQ(true, testSite->getUse())<< "bUse false";
-	ASSERT_EQ(true, testSite->getUseForTele())<< "bUseForTele false";
-	ASSERT_EQ(1, testSite->getQual())<< "dQual one";
+	ASSERT_EQ(true, testSite->getUseForTeleseismic())<< "bUseForTele false";
+	ASSERT_EQ(1, testSite->getQuality())<< "dQual one";
 
 	// pointers
 	ASSERT_EQ(NULL, testSite->getGlass())<< "pGlass null";
@@ -220,7 +220,7 @@ TEST(SiteTest, PickOperations) {
 	"Added pick from different station";
 
 	// test removing pick
-	testSite->remPick(sharedTestPick);
+	testSite->removePick(sharedTestPick);
 	expectedSize = 0;
 	ASSERT_EQ(expectedSize, testSite->getVPick().size())<< "Removed pick";
 }
@@ -253,7 +253,7 @@ TEST(SiteTest, NodeOperations) {
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Added Nodes";
 
 	// test removing nodes from site
-	testSite->remNode(testNode->getPid());
+	testSite->removeNode(testNode->getID());
 	expectedSize = 1;
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Removed Node";
 }

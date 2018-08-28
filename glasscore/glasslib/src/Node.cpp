@@ -60,55 +60,58 @@ CNode::~CNode() {
 
 // ---------------------------------------------------------clear
 void CNode::clear() {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
+	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
 
 	clearSiteLinks();
 
-	sName = "Nemo";
-	pWeb = NULL;
-	dLat = 0;
-	dLon = 0;
-	dZ = 0;
-	dResolution = 0;
-	sPid = "";
-	bEnabled = false;
+	m_sName = "Nemo";
+	m_pWeb = NULL;
+	m_dLatitude = 0;
+	m_dLongitude = 0;
+	m_dDepth = 0;
+	m_dResolution = 0;
+	m_sID = "";
+	m_bEnabled = false;
 }
 
+// ---------------------------------------------------------clearSiteLinks
 void CNode::clearSiteLinks() {
-	if (vSite.size() == 0) {
+	if (m_vSiteLinkList.size() == 0) {
 		return;
 	}
 
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 
 	// remove any links that sites have TO this node
-	for (auto &link : vSite) {
+	for (auto &link : m_vSiteLinkList) {
 		std::shared_ptr<CSite> aSite = std::get< LINK_PTR>(link);
-		aSite->remNode(sPid);
+		aSite->removeNode(m_sID);
 	}
 
 	// remove all the links from this node to sites
-	vSite.clear();
+	m_vSiteLinkList.clear();
 }
 
+// ---------------------------------------------------------initialize
 bool CNode::initialize(std::string name, double lat, double lon, double z,
 						double resolution, std::string nodeID) {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
+	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
 
 	clear();
 
-	sName = name;
-	dLat = lat;
-	dLon = lon;
-	dZ = z;
-	dResolution = resolution;
-	sPid = nodeID;
-	bEnabled = true;
+	m_sName = name;
+	m_dLatitude = lat;
+	m_dLongitude = lon;
+	m_dDepth = z;
+	m_dResolution = resolution;
+	m_sID = nodeID;
+	m_bEnabled = true;
 
 	return (true);
 }
 
+// ---------------------------------------------------------linkSite
 bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 						double travelTime1, double travelTime2) {
 	// nullchecks
@@ -126,12 +129,12 @@ bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 	}
 
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 
 	// Link node to site using traveltime
 	// NOTE: No validation on travel times
 	SiteLink link = std::make_tuple(site, travelTime1, travelTime2);
-	vSite.push_back(link);
+	m_vSiteLinkList.push_back(link);
 
 	// link site to node, again using the traveltime
 	// NOTE: this used to be site->addNode(shared_ptr<CNode>(this), tt);
@@ -142,6 +145,7 @@ bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 	return (true);
 }
 
+// ---------------------------------------------------------unlinkSite
 bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 	// nullchecks
 	// check site
@@ -152,19 +156,19 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 	}
 
 	// lock while searching / modifing vSite
-	vSiteMutex.lock();
+	m_SiteLinkListMutex.lock();
 
 	// search through each site linked to this node
 	bool found = false;
 	SiteLink foundLink;
 	std::shared_ptr<CSite> foundSite;
-	for (const auto &link : vSite) {
+	for (const auto &link : m_vSiteLinkList) {
 		// get the site
 		std::shared_ptr<CSite> currentSite = std::get< LINK_PTR>(link);
 
 		// if the new station would be before
 		// the current station
-		if (currentSite->getScnl() == site->getScnl()) {
+		if (currentSite->getSCNL() == site->getSCNL()) {
 			found = true;
 			foundLink = link;
 			foundSite = currentSite;
@@ -176,28 +180,30 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 
 	if (found == true) {
 		// find site iterator to remove
-		auto it = std::find(vSite.begin(), vSite.end(), foundLink);
-		if (it != vSite.end()) {
+		auto it = std::find(m_vSiteLinkList.begin(), m_vSiteLinkList.end(),
+							foundLink);
+		if (it != m_vSiteLinkList.end()) {
 			// remove site
 			// unlink site from node
-			vSite.erase(it);
+			m_vSiteLinkList.erase(it);
 
 			// done modifying vSite
-			vSiteMutex.unlock();
+			m_SiteLinkListMutex.unlock();
 
 			// unlink node from site
 			// done after unlock to avoid node-site deadlocks
-			foundSite->remNode(sPid);
+			foundSite->removeNode(m_sID);
 
 			return (true);
 		}
 	}
 
 	// unlock before returning
-	vSiteMutex.unlock();
+	m_SiteLinkListMutex.unlock();
 	return (false);
 }
 
+// ---------------------------------------------------------unlinkLastSite
 bool CNode::unlinkLastSite() {
 	// get the last site in the list
 	std::shared_ptr<CSite> lastSite = getLastSite();
@@ -209,47 +215,47 @@ bool CNode::unlinkLastSite() {
 	// unlink node from last site
 	// done before lock guard to prevent
 	// deadlock between node and site list mutexes.
-	lastSite->remNode(sPid);
+	lastSite->removeNode(m_sID);
 
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 
 	// unlink last site from node
-	vSite.pop_back();
+	m_vSiteLinkList.pop_back();
 
 	// enable node
-	bEnabled = true;
+	m_bEnabled = true;
 
 	return (true);
 }
 
-// ---------------------------------------------------------Nucleate
+// ---------------------------------------------------------nucleate
 std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
+	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
 
 	// nullchecks
 	// check web
-	if (pWeb == NULL) {
+	if (m_pWeb == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CNode::nucleate: NULL web pointer.");
 		return (NULL);
 	}
 	// check web pGlass
-	if (pWeb->getGlass() == NULL) {
+	if (m_pWeb->getGlass() == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CNode::nucleate: NULL web glass pointer.");
 		return (NULL);
 	}
 	// don't nucleate if this node is disabled
-	if (bEnabled == false) {
+	if (m_bEnabled == false) {
 		return (NULL);
 	}
 
 	// get the cut and threshold from our
 	// parent web
-	int nCut = pWeb->getNucleate();
-	double dThresh = pWeb->getThresh();
-	double dAzimuthRange = pWeb->getGlass()->getBeamMatchingAzimuthWindow();
+	int nCut = m_pWeb->getNucleate();
+	double dThresh = m_pWeb->getThresh();
+	double dAzimuthRange = m_pWeb->getGlass()->getBeamMatchingAzimuthWindow();
 	// commented out because slowness matching of beams is not yet implemented
 	// but is scheduled to be soon
 	// double dDistanceRange = pWeb->pGlass->getBeamMatchingDistanceWindow();
@@ -262,13 +268,13 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	std::vector<std::shared_ptr<CPick>> vPick;
 
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 
 	// the best nucleating pick
 	std::shared_ptr<CPick> pickBest;
 
 	// search through each site linked to this node
-	for (const auto &link : vSite) {
+	for (const auto &link : m_vSiteLinkList) {
 		// init sigbest
 		double dSigBest = -1.0;
 
@@ -312,7 +318,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			if (backAzimuth > 0) {
 				// set up a geo for distance calculations
 				glassutil::CGeo nodeGeo;
-				nodeGeo.setGeographic(dLat, dLon, 6371.0 - dZ);
+				nodeGeo.setGeographic(m_dLatitude, m_dLongitude,
+										6371.0 - m_dDepth);
 
 				// compute azimith from the site to the node
 				double siteAzimuth = pick->getSite()->getGeo().azimuth(
@@ -350,7 +357,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 			// get the best significance from the observed time and the
 			// link
-			double dSig = getBestSig(tObs, link);
+			double dSig = getBestSignificance(tObs, link);
 
 			// only count if this pick is significant (better than
 			// previous)
@@ -401,14 +408,15 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 	// create trigger
 	std::shared_ptr<CTrigger> trigger(
-			new CTrigger(dLat, dLon, dZ, tOrigin, dResolution, dSum, nCount,
-							vPick, pWeb));
+			new CTrigger(m_dLatitude, m_dLongitude, m_dDepth, tOrigin,
+							m_dResolution, dSum, nCount, vPick, m_pWeb));
 
 	// the node nucleated an event
 	return (trigger);
 }
 
-double CNode::getBestSig(double tObservedTT, SiteLink link) {
+// ---------------------------------------------------------getBestSignificance
+double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
 	// get traveltime1 to site
 	double travelTime1 = std::get< LINK_TT1>(link);
 
@@ -440,11 +448,11 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 	// should trigger be a looser cutoff than location cutoff
 	double dSig1 = 0;
 	if (tRes1 > 0) {
-		dSig1 = pWeb->getGlass()->sig(tRes1, dResolution);
+		dSig1 = m_pWeb->getGlass()->sig(tRes1, m_dResolution);
 	}
 	double dSig2 = 0;
 	if (tRes2 > 0) {
-		dSig2 = pWeb->getGlass()->sig(tRes2, dResolution);
+		dSig2 = m_pWeb->getGlass()->sig(tRes2, m_dResolution);
 	}
 	// printf("getBestSig %.2f, %.2f, %.2f, %.2f, %.2f\n", tRes1, dSig1, tRes2,
 	//	   dSig2, dResolution);
@@ -456,22 +464,23 @@ double CNode::getBestSig(double tObservedTT, SiteLink link) {
 	}
 }
 
+// ---------------------------------------------------------getSite
 std::shared_ptr<CSite> CNode::getSite(std::string sScnl) {
 	if (sScnl == "") {
 		return (NULL);
 	}
 
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 
 	// NOTE: could be made more efficient (faster)
 	// if we had a std::map
 	// for all sites
-	for (const auto &link : vSite) {
+	for (const auto &link : m_vSiteLinkList) {
 		// get the site
 		auto aSite = std::get< LINK_PTR>(link);
 
-		if (aSite->getScnl() == sScnl) {
+		if (aSite->getSCNL() == sScnl) {
 			// found
 			return (aSite);
 		}
@@ -481,102 +490,116 @@ std::shared_ptr<CSite> CNode::getSite(std::string sScnl) {
 	return (NULL);
 }
 
+// ---------------------------------------------------------getLastSite
 std::shared_ptr<CSite> CNode::getLastSite() {
 	if (getSiteLinksCount() == 0) {
 		return (NULL);
 	}
 
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 
-	SiteLink lastLink = vSite[vSite.size() - 1];
+	SiteLink lastLink = m_vSiteLinkList[m_vSiteLinkList.size() - 1];
 	std::shared_ptr<CSite> lastSite = std::get< LINK_PTR>(lastLink);
 
 	// found
 	return (lastSite);
 }
 
+// ---------------------------------------------------------sortSiteLinks
 void CNode::sortSiteLinks() {
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 
 	// sort sites
-	sort(vSite.begin(), vSite.end(), sortSiteLink);
+	sort(m_vSiteLinkList.begin(), m_vSiteLinkList.end(), sortSiteLink);
 }
 
+// ---------------------------------------------------------getSitesString
 std::string CNode::getSitesString() {
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 	std::string siteString = "";
 
 	// write to station file
-	for (const auto &link : vSite) {
+	for (const auto &link : m_vSiteLinkList) {
 		// get the site
 		std::shared_ptr<CSite> currentSite = std::get< LINK_PTR>(link);
 		double lat, lon, r;
 
 		currentSite->getGeo().getGeographic(&lat, &lon, &r);
 
-		siteString += sPid + "," + currentSite->getScnl() + ","
-				+ std::to_string(lat) + ";"
-				+ std::to_string(lon) + ";"
+		siteString += m_sID + "," + currentSite->getSCNL() + ","
+				+ std::to_string(lat) + ";" + std::to_string(lon) + ";"
 				+ std::to_string(r) + "\n";
 	}
 
 	return (siteString);
 }
 
+// ---------------------------------------------------------getSiteLinksCount
 int CNode::getSiteLinksCount() const {
 	// lock mutex for this scope
-	std::lock_guard<std::mutex> guard(vSiteMutex);
-	return (vSite.size());
+	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
+	return (m_vSiteLinkList.size());
 }
 
+// ---------------------------------------------------------getEnabled
 bool CNode::getEnabled() const {
-	return (bEnabled);
+	return (m_bEnabled);
 }
 
+// ---------------------------------------------------------setEnabled
 void CNode::setEnabled(bool enabled) {
-	bEnabled = enabled;
+	m_bEnabled = enabled;
 }
 
-double CNode::getLat() const {
-	return (dLat);
+// ---------------------------------------------------------getLatitude
+double CNode::getLatitude() const {
+	return (m_dLatitude);
 }
 
-double CNode::getLon() const {
-	return (dLon);
+// ---------------------------------------------------------getLongitude
+double CNode::getLongitude() const {
+	return (m_dLongitude);
 }
 
+// ---------------------------------------------------------getResolution
 double CNode::getResolution() const {
-	return (dResolution);
+	return (m_dResolution);
 }
 
-double CNode::getZ() const {
-	return (dZ);
+// ---------------------------------------------------------getDepth
+double CNode::getDepth() const {
+	return (m_dDepth);
 }
 
+// ---------------------------------------------------------getGeo
 glassutil::CGeo CNode::getGeo() const {
 	glassutil::CGeo geoNode;
-	geoNode.setGeographic(dLat, dLon, 6371.0 - dZ);
-	return(geoNode);
+	geoNode.setGeographic(m_dLatitude, m_dLongitude, 6371.0 - m_dDepth);
+	return (geoNode);
 }
 
+// ---------------------------------------------------------getWeb
 CWeb* CNode::getWeb() const {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
-	return (pWeb);
+	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
+	return (m_pWeb);
 }
 
+// ---------------------------------------------------------setWeb
 void CNode::setWeb(CWeb* web) {
-	std::lock_guard<std::recursive_mutex> nodeGuard(nodeMutex);
-	pWeb = web;
+	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
+	m_pWeb = web;
 }
 
+// ---------------------------------------------------------getName
 const std::string& CNode::getName() const {
-	return (sName);
+	return (m_sName);
 }
 
-const std::string& CNode::getPid() const {
-	return (sPid);
+// ---------------------------------------------------------getID
+const std::string& CNode::getID() const {
+	return (m_sID);
 }
 }  // namespace glasscore

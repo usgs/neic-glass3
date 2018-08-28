@@ -176,7 +176,7 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CWebList::addSite: Adding station " + site->getScnl() + ".");
+			"CWebList::addSite: Adding station " + site->getSCNL() + ".");
 
 	// Update all web node site lists that might be changed
 	// by the addition of this site
@@ -200,7 +200,7 @@ void CWebList::remSite(std::shared_ptr<CSite> site) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CWebList::remSite: Removing station " + site->getScnl() + ".");
+			"CWebList::remSite: Removing station " + site->getSCNL() + ".");
 
 	// Remove site from all web nodes that link to it and restructure
 	// node site lists

@@ -225,21 +225,21 @@ CSite::CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr) {
 				elevation, quality, enable, useForTelesiesmic, glassPtr);
 }
 
-// ---------------------------------------------------------CSite
+// --------------------------------------------------------initialize
 bool CSite::initialize(std::string sta, std::string comp, std::string net,
 						std::string loc, double lat, double lon, double elv,
 						double qual, bool enable, bool useTele,
 						CGlass *glassPtr) {
 	clear();
 
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
 
 	// generate scnl
-	sScnl = "";
+	m_sSCNL = "";
 
 	// station, required
 	if (sta != "") {
-		sScnl += sta;
+		m_sSCNL += sta;
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::initialize: missing sSite.");
@@ -248,12 +248,12 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 
 	// component, optional
 	if (comp != "") {
-		sScnl += "." + comp;
+		m_sSCNL += "." + comp;
 	}
 
 	// network, required
 	if (net != "") {
-		sScnl += "." + net;
+		m_sSCNL += "." + net;
 	} else {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CSite::initialize: missing sNet.");
@@ -262,31 +262,31 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 
 	// location, optional
 	if (loc != "") {
-		sScnl += "." + loc;
+		m_sSCNL += "." + loc;
 	}
 
 	// fill in site/net/etc
-	sSite = sta;
-	sNet = net;
-	sComp = comp;
-	sLoc = loc;
+	m_sSite = sta;
+	m_sNetwork = net;
+	m_sComponent = comp;
+	m_sLocation = loc;
 
 	// set geographic location
 	setLocation(lat, lon, -0.001 * elv);
 
 	// quality
-	dQual = qual;
+	m_dQuality = qual;
 
 	// copy use
-	bEnable = enable;
-	bUse = true;
-	bUseForTele = useTele;
+	m_bEnable = enable;
+	m_bUse = true;
+	m_bUseForTeleseismic = useTele;
 
 	// pointer to main glass class
-	pGlass = glassPtr;
+	m_pGlass = glassPtr;
 
-	if (pGlass) {
-		nSitePickMax = pGlass->getMaxNumPicksPerSite();
+	if (m_pGlass) {
+		m_iPickMax = m_pGlass->getMaxNumPicksPerSite();
 	}
 
 	return (true);
@@ -297,101 +297,105 @@ CSite::~CSite() {
 	clear();
 }
 
+// --------------------------------------------------------clear
 void CSite::clear() {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
 	// clear scnl
-	sScnl = "";
-	sSite = "";
-	sComp = "";
-	sNet = "";
-	sLoc = "";
+	m_sSCNL = "";
+	m_sSite = "";
+	m_sComponent = "";
+	m_sNetwork = "";
+	m_sLocation = "";
 
-	bUse = true;
-	bEnable = true;
-	bUseForTele = true;
-	dQual = 1.0;
+	m_bUse = true;
+	m_bEnable = true;
+	m_bUseForTeleseismic = true;
+	m_dQuality = 1.0;
 
-	pGlass = NULL;
+	m_pGlass = NULL;
 
 	// clear geographic
-	geo = glassutil::CGeo();
-	dVec[0] = 0;
-	dVec[1] = 0;
-	dVec[2] = 0;
+	m_Geo = glassutil::CGeo();
+	m_daUnitVectors[0] = 0;
+	m_daUnitVectors[1] = 0;
+	m_daUnitVectors[2] = 0;
 
 	// clear lists
-	vNodeMutex.lock();
-	vNode.clear();
-	vNodeMutex.unlock();
+	m_vNodeMutex.lock();
+	m_vNode.clear();
+	m_vNodeMutex.unlock();
 
 	clearVPick();
 
 	// reset max picks
-	nSitePickMax = 200;
+	m_iPickMax = 200;
 
 	// reset last pick added time
-	std::time(&tLastPickAdded);
+	m_tLastPickAdded = std::time(NULL);
 
 	// reset picks since last check
-	setPicksSinceCheck(0);
+	setPickCountSinceCheck(0);
 }
 
+// --------------------------------------------------------clearVPick
 void CSite::clearVPick() {
 	vPickMutex.lock();
-	vPick.clear();
+	m_vPick.clear();
 	vPickMutex.unlock();
 }
 
+// --------------------------------------------------------update
 void CSite::update(CSite *aSite) {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
 	// scnl check
-	if (sScnl != aSite->getScnl()) {
+	if (m_sSCNL != aSite->getSCNL()) {
 		return;
 	}
 
 	// update station quality metrics
-	bEnable = aSite->getEnable();
-	bUseForTele = aSite->getUseForTele();
-	dQual = aSite->getQual();
+	m_bEnable = aSite->getEnable();
+	m_bUseForTeleseismic = aSite->getUseForTeleseismic();
+	m_dQuality = aSite->getQuality();
 
 	// update location
-	geo = glassutil::CGeo(aSite->getGeo());
+	m_Geo = glassutil::CGeo(aSite->getGeo());
 	double vec[3];
-	aSite->getVec(vec);
+	aSite->getUnitVectors(vec);
 
-	dVec[0] = vec[0];
-	dVec[1] = vec[1];
-	dVec[2] = vec[2];
+	m_daUnitVectors[0] = vec[0];
+	m_daUnitVectors[1] = vec[1];
+	m_daUnitVectors[2] = vec[2];
 
 	// copy statistics
-	tLastPickAdded = aSite->getTLastPickAdded();
+	m_tLastPickAdded = aSite->getTLastPickAdded();
 
 	// leave lists, and pointers alone
 }
 
-double * CSite::getVec(double * vec) {
+// --------------------------------------------------------getUnitVectors
+double * CSite::getUnitVectors(double * vec) {
 	if (vec == NULL) {
 		return(NULL);
 	}
 
-	vec[0] = dVec[0];
-	vec[1] = dVec[1];
-	vec[2] = dVec[2];
+	vec[0] = m_daUnitVectors[0];
+	vec[1] = m_daUnitVectors[1];
+	vec[2] = m_daUnitVectors[2];
 
 	return(vec);
 }
 
 // ---------------------------------------------------------setLocation
 void CSite::setLocation(double lat, double lon, double z) {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
 	// construct unit vector in cartesian earth coordinates
 	double rxy = cos(DEG2RAD * lat);
-	dVec[0] = rxy * cos(DEG2RAD * lon);
-	dVec[1] = rxy * sin(DEG2RAD * lon);
-	dVec[2] = sin(DEG2RAD * lat);
+	m_daUnitVectors[0] = rxy * cos(DEG2RAD * lon);
+	m_daUnitVectors[1] = rxy * sin(DEG2RAD * lon);
+	m_daUnitVectors[2] = sin(DEG2RAD * lat);
 
 	// set geographic object
-	geo.setGeographic(lat, lon, 6371.0 - z);
+	m_Geo.setGeographic(lat, lon, 6371.0 - z);
 }
 
 // ---------------------------------------------------------getDelta
@@ -404,7 +408,7 @@ double CSite::getDelta(glassutil::CGeo *geo2) {
 	}
 
 	// use CGeo to calculate distance in radians
-	return (geo.delta(geo2));
+	return (m_Geo.delta(geo2));
 }
 
 // ---------------------------------------------------------getDistance
@@ -412,7 +416,7 @@ double CSite::getDistance(std::shared_ptr<CSite> site) {
 	// nullcheck
 	if (site == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CSite::getDelta: NULL CSite provided.");
+								"CSite::getDistance: NULL CSite provided.");
 		return (0);
 	}
 
@@ -421,7 +425,7 @@ double CSite::getDistance(std::shared_ptr<CSite> site) {
 	double dot = 0;
 	double dkm;
 	for (int i = 0; i < 3; i++) {
-		dot += dVec[i] * site->dVec[i];
+		dot += m_daUnitVectors[i] * site->m_daUnitVectors[i];
 	}
 	dkm = 6366.2 * acos(dot);
 
@@ -442,50 +446,50 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 	}
 
 	// ensure this pick is for this site
-	if (pck->getSite()->sScnl != sScnl) {
+	if (pck->getSite()->m_sSCNL != m_sSCNL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::warn,
-				"CSite::addPick: CPick for different site: (" + sScnl + "!="
-						+ pck->getSite()->sScnl + ")");
+				"CSite::addPick: CPick for different site: (" + m_sSCNL + "!="
+						+ pck->getSite()->m_sSCNL + ")");
 		return;
 	}
 
 	// check to see if we're at the pick limit
-	if (vPick.size() == nSitePickMax) {
+	if (m_vPick.size() == m_iPickMax) {
 		// erase first pick from vector
-		vPick.erase(vPick.begin());
+		m_vPick.erase(m_vPick.begin());
 	}
 
 	// add pick to site pick vector
 	// NOTE: Need to add duplicate pick protection
-	vPick.push_back(pck);
+	m_vPick.push_back(pck);
 
 	// remember the time the last pick was added
-	std::time(&tLastPickAdded);
+	m_tLastPickAdded = std::time(NULL);
 
 	// keep track of how many picks
-	setPicksSinceCheck(getPicksSinceCheck() + 1);
+	setPickCountSinceCheck(getPickCountSinceCheck() + 1);
 }
 
-// ---------------------------------------------------------remPick
-void CSite::remPick(std::shared_ptr<CPick> pck) {
+// ---------------------------------------------------------removePick
+void CSite::removePick(std::shared_ptr<CPick> pck) {
 	// lock for editing
 	std::lock_guard<std::mutex> guard(vPickMutex);
 
 	// nullcheck
 	if (pck == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CSite::remPick: NULL CPick provided.");
+								"CSite::removePick: NULL CPick provided.");
 		return;
 	}
 
 	// remove pick from site pick vector
-	for (auto it = vPick.begin(); it != vPick.end();) {
+	for (auto it = m_vPick.begin(); it != m_vPick.end();) {
 		auto aPck = (*it);
 
 		// erase target pick
-		if (aPck->getPid() == pck->getPid()) {
-			it = vPick.erase(it);
+		if (aPck->getID() == pck->getID()) {
+			it = m_vPick.erase(it);
 		} else {
 			++it;
 		}
@@ -496,7 +500,7 @@ void CSite::remPick(std::shared_ptr<CPick> pck) {
 void CSite::addNode(std::shared_ptr<CNode> node, double travelTime1,
 					double travelTime2) {
 	// lock for editing
-	std::lock_guard<std::mutex> guard(vNodeMutex);
+	std::lock_guard<std::mutex> guard(m_vNodeMutex);
 
 	// nullcheck
 	if (node == NULL) {
@@ -517,35 +521,35 @@ void CSite::addNode(std::shared_ptr<CNode> node, double travelTime1,
 	// NOTE: no duplication check, but multiple nodes from the
 	// same web can exist at the same site (travel times would be different)
 	NodeLink link = std::make_tuple(node, travelTime1, travelTime2);
-	vNode.push_back(link);
+	m_vNode.push_back(link);
 }
 
-// ---------------------------------------------------------remNode
-void CSite::remNode(std::string nodeID) {
+// ---------------------------------------------------------removeNode
+void CSite::removeNode(std::string nodeID) {
 	// lock for editing
-	std::lock_guard<std::mutex> guard(vNodeMutex);
+	std::lock_guard<std::mutex> guard(m_vNodeMutex);
 
 	// nullcheck
 	if (nodeID == "") {
 		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CSite::remNode: empty web name provided.");
+								"CSite::removeNode: empty web name provided.");
 		return;
 	}
 
 	// clean up expired pointers
-	for (auto it = vNode.begin(); it != vNode.end();) {
+	for (auto it = m_vNode.begin(); it != m_vNode.end();) {
 		if (std::get<LINK_PTR>(*it).expired() == true) {
-			it = vNode.erase(it);
+			it = m_vNode.erase(it);
 		} else {
 			++it;
 		}
 	}
 
-	for (auto it = vNode.begin(); it != vNode.end();) {
+	for (auto it = m_vNode.begin(); it != m_vNode.end();) {
 		if (auto aNode = std::get<LINK_PTR>(*it).lock()) {
 			// erase target pick
-			if (aNode->getPid() == nodeID) {
-				it = vNode.erase(it);
+			if (aNode->getID() == nodeID) {
+				it = m_vNode.erase(it);
 				return;
 			} else {
 				++it;
@@ -556,24 +560,24 @@ void CSite::remNode(std::string nodeID) {
 	}
 }
 
-// ---------------------------------------------------------Nucleate
+// ---------------------------------------------------------nucleate
 std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
-	std::lock_guard<std::mutex> guard(vNodeMutex);
+	std::lock_guard<std::mutex> guard(m_vNodeMutex);
 
 	// create trigger vector
 	std::vector<std::shared_ptr<CTrigger>> vTrigger;
 
 	// are we enabled?
-	siteMutex.lock();
-	if (bUse == false) {
-		siteMutex.unlock();
+	m_SiteMutex.lock();
+	if (m_bUse == false) {
+		m_SiteMutex.unlock();
 		return (vTrigger);
 	}
-	siteMutex.unlock();
+	m_SiteMutex.unlock();
 
 	// for each node linked to this site
-	for (const auto &link : vNode) {
-		// compute potential origin time from tpick and traveltime to node
+	for (const auto &link : m_vNode) {
+		// compute potential origin time from tPick and travel time to node
 		// first get traveltime1 to node
 		double travelTime1 = std::get< LINK_TT1>(link);
 
@@ -630,7 +634,7 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 		if ((tOrigin1 < 0) && (tOrigin2 < 0)) {
 			glassutil::CLogit::log(
 					glassutil::log_level::warn,
-					"CSite::nucleate: " + sScnl + " No valid travel times. ("
+					"CSite::nucleate: " + m_sSCNL + " No valid travel times. ("
 							+ std::to_string(travelTime1) + ", "
 							+ std::to_string(travelTime2) + ") web: "
 							+ node->getWeb()->getName());
@@ -657,7 +661,7 @@ void CSite::addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
 		// if current trigger is part of latest trigger's web
 		if (trigger->getWeb()->getName() == aTrigger->getWeb()->getName()) {
 			// if current trigger's sum is less than latest trigger's sum
-			if (trigger->getSum() > aTrigger->getSum()) {
+			if (trigger->getBayesValue() > aTrigger->getBayesValue()) {
 				it = vTrigger->erase(it);
 				it = vTrigger->insert(it, trigger);
 			}
@@ -673,93 +677,113 @@ void CSite::addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
 	vTrigger->push_back(trigger);
 }
 
+// ---------------------------------------------------------getNodeLinksCount
 int CSite::getNodeLinksCount() const {
-	std::lock_guard<std::mutex> guard(vNodeMutex);
-	int size = vNode.size();
+	std::lock_guard<std::mutex> guard(m_vNodeMutex);
+	int size = m_vNode.size();
 
 	return (size);
 }
 
+// ---------------------------------------------------------getEnable
 bool CSite::getEnable() const {
-	return (bEnable);
+	return (m_bEnable);
 }
 
+// ---------------------------------------------------------setEnable
 void CSite::setEnable(bool enable) {
-	bEnable = enable;
+	m_bEnable = enable;
 }
 
+// ---------------------------------------------------------getUse
 bool CSite::getUse() const {
-	return (bUse && bEnable);
+	return (m_bUse && m_bEnable);
 }
 
+// ---------------------------------------------------------setUse
 void CSite::setUse(bool use) {
-	bUse = use;
+	m_bUse = use;
 }
 
-bool CSite::getUseForTele() const {
-	return (bUseForTele);
+// ---------------------------------------------------------getUseForTeleseismic
+bool CSite::getUseForTeleseismic() const {
+	return (m_bUseForTeleseismic);
 }
 
-void CSite::setUseForTele(bool useForTele) {
-	bUseForTele = useForTele;
+// ---------------------------------------------------------setUseForTeleseismic
+void CSite::setUseForTeleseismic(bool useForTele) {
+	m_bUseForTeleseismic = useForTele;
 }
 
-double CSite::getQual() const {
-	return (dQual);
+// ---------------------------------------------------------getQuality
+double CSite::getQuality() const {
+	return (m_dQuality);
 }
 
-void CSite::setQual(double qual) {
-	dQual = qual;
+// ---------------------------------------------------------setQuality
+void CSite::setQuality(double qual) {
+	m_dQuality = qual;
 }
 
+// ---------------------------------------------------------getGeo
 glassutil::CGeo &CSite::getGeo() {
-	return (geo);
+	return (m_Geo);
 }
 
-int CSite::getSitePickMax() const {
-	return (nSitePickMax);
+// ---------------------------------------------------------getPickMax
+int CSite::getPickMax() const {
+	return (m_iPickMax);
 }
 
+// ---------------------------------------------------------getGlass
 CGlass* CSite::getGlass() const {
-	return (pGlass);
+	return (m_pGlass);
 }
 
-const std::string& CSite::getComp() const {
-	return (sComp);
+// ---------------------------------------------------------getComponent
+const std::string& CSite::getComponent() const {
+	return (m_sComponent);
 }
 
-const std::string& CSite::getLoc() const {
-	return (sLoc);
+// ---------------------------------------------------------getLocation
+const std::string& CSite::getLocation() const {
+	return (m_sLocation);
 }
 
-const std::string& CSite::getNet() const {
-	return (sNet);
+// ---------------------------------------------------------getNetwork
+const std::string& CSite::getNetwork() const {
+	return (m_sNetwork);
 }
 
-const std::string& CSite::getScnl() const {
-	return (sScnl);
+// ---------------------------------------------------------getSCNL
+const std::string& CSite::getSCNL() const {
+	return (m_sSCNL);
 }
 
+// ---------------------------------------------------------getSite
 const std::string& CSite::getSite() const {
-	return (sSite);
+	return (m_sSite);
 }
 
+// ---------------------------------------------------------getVPick
 const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
 	std::lock_guard<std::mutex> guard(vPickMutex);
-	return (vPick);
+	return (m_vPick);
 }
 
+// ---------------------------------------------------------getTLastPickAdded
 time_t CSite::getTLastPickAdded() const {
-	std::lock_guard<std::recursive_mutex> guard(siteMutex);
-	return (tLastPickAdded);
+	return (m_tLastPickAdded);
 }
 
-void CSite::setPicksSinceCheck(int count) {
-	nPicksSinceCheck = count;
+// ------------------------------------------------------setPickCountSinceCheck
+void CSite::setPickCountSinceCheck(int count) {
+	m_iPickCountSinceCheck = count;
 }
 
-int CSite::getPicksSinceCheck() const {
-	return(nPicksSinceCheck);
+// ------------------------------------------------------getPickCountSinceCheck
+int CSite::getPickCountSinceCheck() const {
+	return(m_iPickCountSinceCheck);
 }
 
 }  // namespace glasscore

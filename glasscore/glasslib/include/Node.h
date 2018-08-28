@@ -167,7 +167,7 @@ class CNode {
 	 * \return Returns best significance if there is at least one valid travel
 	 * time, -1.0 otherwise
 	 */
-	double getBestSig(double tObservedTT, SiteLink link);
+	double getBestSignificance(double tObservedTT, SiteLink link);
 
 	/**
 	 * \brief CNode get site function
@@ -225,19 +225,19 @@ class CNode {
 	 * \brief Latitude getter
 	 * \return the latitude
 	 */
-	double getLat() const;
+	double getLatitude() const;
 
 	/**
 	 * \brief Longitude getter
 	 * \return the longitude
 	 */
-	double getLon() const;
+	double getLongitude() const;
 
 	/**
 	 * \brief Depth getter
 	 * \return the Depth
 	 */
-	double getZ() const;
+	double getDepth() const;
 
 	/**
 	 * \brief CGeo getter
@@ -273,64 +273,64 @@ class CNode {
 	 * \brief Pid getter
 	 * \return the pid
 	 */
-	const std::string& getPid() const;
+	const std::string& getID() const;
 
  private:
 	/**
 	 * \brief A pointer to the parent CWeb class, used get configuration,
 	 * values, perform significance calculations, and debug flags
 	 */
-	CWeb *pWeb;
+	CWeb * m_pWeb;
 
 	/**
 	 * \brief Name of the web subnet that this node is associated with.
 	 * This attribute is used for web level tracking and dynamics such
 	 * as removing a named subnet with the 'RemoveWeb' command.
 	 */
-	std::string sName;
+	std::string m_sName;
 
 	/**
 	 * \brief A std::string containing the string unique id of this node
 	 */
-	std::string sPid;
+	std::string m_sID;
 
 	/**
 	 * \brief A double value containing this node's latitude in degrees.
 	 */
-	std::atomic<double> dLat;
+	std::atomic<double> m_dLatitude;
 
 	/**
 	 * \brief A double value containing this node's longitude in degrees.
 	 */
-	std::atomic<double> dLon;
+	std::atomic<double> m_dLongitude;
 
 	/**
 	 * \brief A double value containing this node's depth in kilometers.
 	 */
-	std::atomic<double> dZ;
+	std::atomic<double> m_dDepth;
 
 	/**
 	 * \brief A double value containing this node's spatial resolution
 	 * (to other nodes) in kilometers.
 	 */
-	std::atomic<double> dResolution;
+	std::atomic<double> m_dResolution;
 
 	/**
 	 * \brief A boolean flag indicating whether this node is enabled for
 	 * nucleation
 	 */
-	std::atomic<bool> bEnabled;
+	std::atomic<bool> m_bEnabled;
 
 	/**
 	 * \brief A std::vector of tuples linking node to site
 	 * {shared site pointer, travel time 1, travel time 2}
 	 */
-	std::vector<SiteLink> vSite;
+	std::vector<SiteLink> m_vSiteLinkList;
 
 	/**
 	 * \brief A mutex to control threading access to vSite.
 	 */
-	mutable std::mutex vSiteMutex;
+	mutable std::mutex m_SiteLinkListMutex;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CNode.
@@ -339,7 +339,7 @@ class CNode {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	mutable std::recursive_mutex nodeMutex;
+	mutable std::recursive_mutex m_NodeMutex;
 };
 }  // namespace glasscore
 #endif  // NODE_H

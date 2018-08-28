@@ -127,7 +127,7 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * \return Returns an integer variable containing the number of sites in
 	 * CSiteList
 	 */
-	int getSiteCount();
+	int size();
 
 	/**
 	 * \brief Get site by index
@@ -170,7 +170,7 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * \brief CSiteList get site list function
 	 * \return Returns true if successful, false otherwise
 	 */
-	bool reqSiteList();
+	bool requestSiteList();
 
 	/**
 	 * \brief CGlass getter
@@ -212,29 +212,24 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * \brief A pointer to the main CGlass class, used to pass this information
 	 * to sites added to CSiteList
 	 */
-	CGlass *pGlass;
-
-	/**
-	 * \brief A mutex to control threading access to vSite.
-	 */
-	mutable std::mutex vSiteMutex;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief A std::vector of all the sites in CSiteList.
 	 */
-	std::vector<std::shared_ptr<CSite>> vSite;
+	std::vector<std::shared_ptr<CSite>> m_vSite;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each site
 	 * in CSiteList indexed by the std::string scnl id.
 	 */
-	std::map<std::string, std::shared_ptr<CSite>> mSite;
+	std::map<std::string, std::shared_ptr<CSite>> m_mSite;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each site
 	 * in CSiteList indexed by the std::string scnl id.
 	 */
-	std::map<std::string, int> mLookup;
+	std::map<std::string, int> m_mLookup;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CSiteList.
@@ -245,11 +240,11 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 */
 	mutable std::recursive_mutex m_SiteListMutex;
 
-	time_t m_tLastChecked;
+	std::atomic<double> m_tLastChecked;
 
-	std::atomic<int> iHoursWithoutPicking;
+	std::atomic<int> m_iHoursWithoutPicking;
 
-	std::atomic<int> iHoursBeforeLookingUp;
+	std::atomic<int> m_iHoursBeforeLookingUp;
 
 	std::atomic<int> m_iMaxPicksPerHour;
 };

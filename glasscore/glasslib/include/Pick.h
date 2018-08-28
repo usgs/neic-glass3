@@ -119,12 +119,10 @@ class CPick {
 	 *
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to link.
-	 * \param ass - A std::string containing a note about the association reason
 	 * \param force - A boolean flag indicating whether to force the association,
 	 * defaults to false.
 	 */
-	void addHypo(std::shared_ptr<CHypo> hyp, std::string ass = "", bool force =
-							false);
+	void addHypo(std::shared_ptr<CHypo> hyp, bool force = false);
 
 	/**
 	 * \brief Remove hypo reference to this pick
@@ -138,7 +136,7 @@ class CPick {
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to unlink.
 	 */
-	void remHypo(std::shared_ptr<CHypo> hyp);
+	void removeHypo(std::shared_ptr<CHypo> hyp);
 
 	/**
 	 * \brief Remove hypo specific reference to this pick
@@ -151,7 +149,7 @@ class CPick {
 	 *
 	 * \param pid - A std::string identifying the the hypocenter to unlink.
 	 */
-	void remHypo(std::string pid);
+	void removeHypo(std::string pid);
 
 	/**
 	 * \brief Remove hypo reference to this pick
@@ -188,13 +186,13 @@ class CPick {
 	 * \brief Pick id getter
 	 * \return the pick id
 	 */
-	int getIdPick() const;
+	int getPickID() const;
 
 	/**
 	 * \brief Json pick getter
 	 * \return the json pick
 	 */
-	const std::shared_ptr<json::Object>& getJPick() const;
+	const std::shared_ptr<json::Object>& getJSONPick() const;
 
 	/**
 	 * \brief Hypo getter
@@ -206,7 +204,7 @@ class CPick {
 	 * \brief Pid getter
 	 * \return the pid
 	 */
-	const std::string getHypoPid() const;
+	const std::string getHypoID() const;
 
 	/**
 	 * \brief Site getter
@@ -215,28 +213,16 @@ class CPick {
 	const std::shared_ptr<CSite> getSite() const;
 
 	/**
-	 * \brief Association string getter
-	 * \return the association string
-	 */
-	const std::string& getAss() const;
-
-	/**
-	 * \brief Association string setter
-	 * \param ass - the association string
-	 */
-	void setAss(std::string ass);
-
-	/**
 	 * \brief Phase getter
 	 * \return the phase
 	 */
-	const std::string& getPhs() const;
+	const std::string& getPhaseName() const;
 
 	/**
 	 * \brief Pid getter
 	 * \return the pid
 	 */
-	const std::string& getPid() const;
+	const std::string& getID() const;
 
 	/**
 	 * \brief Pick time getter
@@ -252,7 +238,7 @@ class CPick {
 	 * a cyclical reference between CPick and CSite. The weak_ptr is here
 	 * instead of in site due to performance reasons.
 	 */
-	std::weak_ptr<CSite> wpSite;
+	std::weak_ptr<CSite> m_wpSite;
 
 	/**
 	 * \brief A std::weak_ptr to a CHypo object
@@ -260,50 +246,44 @@ class CPick {
 	 * A weak_ptr is used here instead of a shared_ptr to prevent a cyclical
 	 * reference between CPick and CHypo.
 	 */
-	std::weak_ptr<CHypo> wpHypo;
-
-	/**
-	 * \brief A std::string containing a character representing the action
-	 * that caused this pick to be associated
-	 */
-	std::string sAss;
+	std::weak_ptr<CHypo> m_wpHypo;
 
 	/**
 	 * \brief A std::string containing the phase name of this pick
 	 */
-	std::string sPhs;
+	std::string m_sPhaseName;
 
 	/**
 	 * \brief A std::string containing the string unique id of this pick
 	 */
-	std::string sPid;
+	std::string m_sID;
 
 	/**
 	 * \brief A double value containing the back azimuth of the pick
 	 */
-	std::atomic<double> dBackAzimuth;
+	std::atomic<double> m_dBackAzimuth;
 
 	/**
 	 * \brief A double value containing the slowness of the pick
 	 */
-	std::atomic<double> dSlowness;
+	std::atomic<double> m_dSlowness;
 
 	/**
 	 * \brief A double value containing the arrival time of the pick
 	 */
-	std::atomic<double> tPick;
+	std::atomic<double> m_tPick;
 
 	/**
 	 * \brief An integer value containing the numeric id of the pick
 	 */
-	std::atomic<int> idPick;
+	std::atomic<int> m_iPickID;
 
 	/**
 	 * \brief A std::shared_ptr to a json object
 	 * representing the original pick input, used in accessing information
 	 * not relevant to glass that are needed for generating outputs.
 	 */
-	std::shared_ptr<json::Object> jPick;
+	std::shared_ptr<json::Object> m_JSONPick;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CPick.
@@ -312,7 +292,7 @@ class CPick {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	mutable std::recursive_mutex pickMutex;
+	mutable std::recursive_mutex m_PickMutex;
 };
 }  // namespace glasscore
 #endif  // PICK_H

@@ -29,7 +29,7 @@
 void checkdata(glasscore::CCorrelation * corrleationobject,
 				const std::string &testinfo) {
 	// check scnl
-	std::string sitescnl = corrleationobject->getSite()->getScnl();
+	std::string sitescnl = corrleationobject->getSite()->getSCNL();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str());
 
@@ -39,17 +39,17 @@ void checkdata(glasscore::CCorrelation * corrleationobject,
 	ASSERT_STREQ(sitesite.c_str(), expectedsite.c_str());
 
 	// check comp
-	std::string sitecomp = corrleationobject->getSite()->getComp();
+	std::string sitecomp = corrleationobject->getSite()->getComponent();
 	std::string expectedcomp = std::string(COMP);
 	ASSERT_STREQ(sitecomp.c_str(), expectedcomp.c_str());
 
 	// check net
-	std::string sitenet = corrleationobject->getSite()->getNet();
+	std::string sitenet = corrleationobject->getSite()->getNetwork();
 	std::string expectednet = std::string(NET);
 	ASSERT_STREQ(sitenet.c_str(), expectednet.c_str());
 
 	// check loc
-	std::string siteloc = corrleationobject->getSite()->getLoc();
+	std::string siteloc = corrleationobject->getSite()->getLocation();
 	std::string expectedloc = std::string(LOC);
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 

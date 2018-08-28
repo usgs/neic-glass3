@@ -64,12 +64,12 @@ TEST(SiteListTest, SiteOperations) {
 	testSiteList->addSite(site2JSON);
 	testSiteList->dispatch(site3JSON);
 	int expectedSize = 3;
-	ASSERT_EQ(expectedSize, testSiteList->getSiteCount())<< "Added Sites";
+	ASSERT_EQ(expectedSize, testSiteList->size())<< "Added Sites";
 
 
 	// test updating a site, and get site
 	testSiteList->addSite(sharedTestSite4);
 	std::shared_ptr<glasscore::CSite> updatedSite = testSiteList->getSite(
-			sharedTestSite4->getScnl());
+			sharedTestSite4->getSCNL());
 	ASSERT_FALSE(updatedSite->getUse())<< "Updated site";
 }

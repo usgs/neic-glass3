@@ -255,15 +255,6 @@ class CCorrelationList {
 	std::map<int, std::shared_ptr<CCorrelation>> m_mCorrelation;
 
 	/**
-	 * \brief A recursive_mutex to control threading access to vCorrelation.
-	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
-	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
-	 * However a recursive_mutex allows us to maintain the original class
-	 * design as delivered by the contractor.
-	 */
-	mutable std::recursive_mutex m_vCorrelationMutex;
-
-	/**
 	 * \brief A recursive_mutex to control threading access to CCorrelationList.
 	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
 	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/

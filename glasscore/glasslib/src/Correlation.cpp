@@ -374,7 +374,7 @@ bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CCorrelation::initialize: pSite:" + m_pSite->getScnl()
+			"CCorrelation::initialize: pSite:" + m_pSite->getSCNL()
 					+ "; tCorrelation:" + std::to_string(m_tCorrelation)
 					+ "; idCorrelation:" + std::to_string(m_iCorrelationID)
 					+ "; sPid:" + m_sID + "; sPhs:" + m_sPhaseName + "; tOrg:"

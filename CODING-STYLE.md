@@ -9,6 +9,8 @@ following modifications:
 2. This project does not use the google style copyright messages
 3. This project does not use the google style header guard formatting
 4. This project does not use the google style function size limit.
+5. This project uses CamelCase for naming functions and variables.
+6. This project identifies class members with a "m_" prefix.
 
 The source code for this project should be annotated such that Doxygen can be
 used to generate documentation files.

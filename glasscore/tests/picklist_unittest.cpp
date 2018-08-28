@@ -40,10 +40,10 @@ TEST(PickListTest, Construction) {
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
 
 	// assert default values
-	ASSERT_EQ(0, testPickList->getNPickTotal())<< "nPickTotal is 0";
+	ASSERT_EQ(0, testPickList->getPickTotal())<< "nPickTotal is 0";
 
 	// lists
-	ASSERT_EQ(0, testPickList->getVPickSize())<< "getVPickSize() is 0";
+	ASSERT_EQ(0, testPickList->size())<< "getVPickSize() is 0";
 
 	// pointers
 	ASSERT_EQ(NULL, testPickList->getGlass())<< "pGlass null";
@@ -86,7 +86,7 @@ TEST(PickListTest, PickOperations) {
 	// construct a picklist
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
 	testPickList->setSiteList(testSiteList);
-	testPickList->setNPickMax(MAXNPICK);
+	testPickList->setPickMax(MAXNPICK);
 
 	// test indexpick when empty
 	ASSERT_EQ(-2, testPickList->indexPick(0))<< "test indexpick when empty";
@@ -95,14 +95,14 @@ TEST(PickListTest, PickOperations) {
 	testPickList->addPick(pickJSON);
 	testPickList->dispatch(pick3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testPickList->getNPickTotal())<< "Added Picks";
+	ASSERT_EQ(expectedSize, testPickList->getPickTotal())<< "Added Picks";
 
 	// test getting a pick (first pick, id 1)
 	std::shared_ptr<glasscore::CPick> testPick = testPickList->getPick(1);
 	// check testpick
 	ASSERT_TRUE(testPick != NULL)<< "testPick not null";
 	// check scnl
-	std::string sitescnl = testPick->getSite()->getScnl();
+	std::string sitescnl = testPick->getSite()->getSCNL();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
 	"testPick has right scnl";
@@ -123,14 +123,14 @@ TEST(PickListTest, PickOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNPICK;
-	ASSERT_EQ(expectedSize, testPickList->getVPickSize())<<
+	ASSERT_EQ(expectedSize, testPickList->size())<<
 	"testPickList not larger than max";
 
 	// get first pick, which is now id 2
 	std::shared_ptr<glasscore::CPick> test2Pick = testPickList->getPick(2);
 
 	// check scnl
-	sitescnl = test2Pick->getSite()->getScnl();
+	sitescnl = test2Pick->getSite()->getSCNL();
 	expectedscnl = std::string(SCNL2);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
 	"test2Pick has right scnl";
@@ -138,5 +138,5 @@ TEST(PickListTest, PickOperations) {
 	// test clearing picks
 	testPickList->clearPicks();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testPickList->getNPickTotal())<< "Cleared Picks";
+	ASSERT_EQ(expectedSize, testPickList->getPickTotal())<< "Cleared Picks";
 }
