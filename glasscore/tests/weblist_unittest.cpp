@@ -29,7 +29,7 @@ TEST(WebListTest, Construction) {
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
 
 	// lists
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testWebList->getGlass())<< "getGlass() null";
@@ -72,13 +72,13 @@ TEST(WebListTest, AddWeb) {
 	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list empty";
 
 	// add a web
 	testWebList->dispatch(gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
+	ASSERT_EQ(1, (int)testWebList->size())<< "web list added";
 }
 
 // tests removing a web from the web list
@@ -118,13 +118,13 @@ TEST(WebListTest, RemWeb) {
 	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list empty";
 
 	// add a web
 	testWebList->dispatch(gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
+	ASSERT_EQ(1, (int)testWebList->size())<< "web list added";
 
 	std::shared_ptr<json::Object> remGridConfig =
 			std::make_shared<json::Object>(
@@ -134,7 +134,7 @@ TEST(WebListTest, RemWeb) {
 	testWebList->dispatch(remGridConfig);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list removed";
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list removed";
 }
 
 // test various site operations (add, remove) with the web list
@@ -174,13 +174,13 @@ TEST(WebListTest, SiteOperations) {
 	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list empty";
 
 	// add a web
 	testWebList->dispatch(gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
+	ASSERT_EQ(1, (int)testWebList->size())<< "web list added";
 
 	// create site to add
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -211,7 +211,7 @@ TEST(WebListTest, SiteOperations) {
 	ASSERT_TRUE(testWebList->hasSite(sharedRemoveSite))<< "site in weblist";
 
 	// remove
-	testWebList->remSite(sharedRemoveSite);
+	testWebList->removeSite(sharedRemoveSite);
 
 	// give time for site to remove
 	std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -230,6 +230,6 @@ TEST(WebListTest, FailTests) {
 	ASSERT_FALSE(testWebList->dispatch(NULL))<< "Null dispatch false";
 	ASSERT_FALSE(testWebList->addWeb(NULL))<< "Null addWeb false";
 	ASSERT_FALSE(testWebList->removeWeb(NULL))<< "Null removeWeb false";
-	testWebList->remSite(NULL);
+	testWebList->removeSite(NULL);
 	testWebList->addSite(NULL);
 }

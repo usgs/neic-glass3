@@ -113,7 +113,7 @@ class CWebList {
 	 *
 	 * \param site - A shared_ptr to a CSite object containing the site to remove
 	 */
-	void remSite(std::shared_ptr<CSite> site);
+	void removeSite(std::shared_ptr<CSite> site);
 
 	/**
 	 * \brief Check if the webs have a site
@@ -158,25 +158,25 @@ class CWebList {
 	/**
 	 * \brief Get the current size of the web list
 	 */
-	int getVWebSize() const;
+	int size() const;
 
  private:
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
 	 * get sites (stations), encode/decode time, and get debug flags
 	 */
-	CGlass *pGlass;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief A pointer to the CSiteList class, used get sites (stations)
 	 */
-	CSiteList *pSiteList;
+	CSiteList * m_pSiteList;
 
 	/**
 	 * \brief A vector of shared pointers to all currently defined
 	 * web detection arrays.
 	 */
-	std::vector<std::shared_ptr<CWeb>> vWeb;
+	std::vector<std::shared_ptr<CWeb>> m_vWebs;
 
 	/**
 	 * \brief An integer indicating how many threads each web should have

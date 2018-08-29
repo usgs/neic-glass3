@@ -583,7 +583,7 @@ glass3::util::WorkState CSiteList::work() {
 			// remove site from webs
 			if (m_pGlass) {
 				if (m_pGlass->getWebList()) {
-					m_pGlass->getWebList()->remSite(aSite);
+					m_pGlass->getWebList()->removeSite(aSite);
 				}
 			}
 		}

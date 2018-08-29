@@ -90,11 +90,13 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 	if (!initialize(trigger->getLatitude(), trigger->getLongitude(),
 					trigger->getDepth(), trigger->getTOrigin(),
 					glassutil::CPid::pid(), trigger->getWeb()->getName(),
-					trigger->getBayesValue(), trigger->getWeb()->getThresh(),
-					trigger->getWeb()->getNucleate(),
-					trigger->getWeb()->getTrv1(), trigger->getWeb()->getTrv2(),
-					ttt, trigger->getResolution(),
-					trigger->getWeb()->getAziTaper(),
+					trigger->getBayesValue(),
+					trigger->getWeb()->getNucleationStackThreshold(),
+					trigger->getWeb()->getNucleationDataThreshold(),
+					trigger->getWeb()->getNucleationTravelTime1(),
+					trigger->getWeb()->getNucleationTravelTime2(), ttt,
+					trigger->getResolution(),
+					trigger->getWeb()->getAzimuthTaper(),
 					trigger->getWeb()->getMaxDepth())) {
 		clear();
 	}

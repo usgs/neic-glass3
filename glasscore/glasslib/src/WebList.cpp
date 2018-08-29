@@ -27,17 +27,17 @@ CWebList::~CWebList() {
 void CWebList::clear() {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
-	pGlass = NULL;
-	pSiteList = NULL;
+	m_pGlass = NULL;
+	m_pSiteList = NULL;
 
 	// clear out all the  webs
-	for (auto &web : vWeb) {
+	for (auto &web : m_vWebs) {
 		web->clear();
 	}
-	vWeb.clear();
+	m_vWebs.clear();
 }
 
-// ---------------------------------------------------------Dispatch
+// ---------------------------------------------------------dispatch
 bool CWebList::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
@@ -67,7 +67,7 @@ bool CWebList::dispatch(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
-// ---------------------------------------------------------AddWeb
+// ---------------------------------------------------------addWeb
 bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
@@ -87,8 +87,8 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
 	// check to see if we have a web with this name already
-	for (int i = 0; i < vWeb.size(); i++) {
-		std::shared_ptr<CWeb> web = vWeb[i];
+	for (int i = 0; i < m_vWebs.size(); i++) {
+		std::shared_ptr<CWeb> web = m_vWebs[i];
 
 		// look for name match
 		if (web->getName() == name) {
@@ -102,17 +102,17 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 
 	// Create a new web object
 	std::shared_ptr<CWeb> web(new CWeb(m_iNumThreads));
-	if (pGlass != NULL) {
-		web->setGlass(pGlass);
+	if (m_pGlass != NULL) {
+		web->setGlass(m_pGlass);
 	}
-	if (pSiteList != NULL) {
-		web->setSiteList(pSiteList);
+	if (m_pSiteList != NULL) {
+		web->setSiteList(m_pSiteList);
 	}
 
 	// send the config to web so that it can generate itself
 	if (web->dispatch(com)) {
 		// add the web to the list if it was successfully created
-		vWeb.push_back(web);
+		m_vWebs.push_back(web);
 
 		return (true);
 	}
@@ -121,7 +121,7 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
-// ---------------------------------------------------------RemoveWeb
+// ---------------------------------------------------------removeWeb
 bool CWebList::removeWeb(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
@@ -150,13 +150,13 @@ bool CWebList::removeWeb(std::shared_ptr<json::Object> com) {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
 	// look for a web with that name
-	for (int i = 0; i < vWeb.size(); i++) {
-		std::shared_ptr<CWeb> web = vWeb[i];
+	for (int i = 0; i < m_vWebs.size(); i++) {
+		std::shared_ptr<CWeb> web = m_vWebs[i];
 
 		if (web->getName() == name) {
 			// clear the web and remove it
 			web->clear();
-			vWeb.erase(vWeb.begin() + i);
+			m_vWebs.erase(m_vWebs.begin() + i);
 
 			// removed
 			return (true);
@@ -170,7 +170,7 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
 	// Don't process adds before web definitions
-	if (vWeb.size() < 1) {
+	if (m_vWebs.size() < 1) {
 		return;
 	}
 
@@ -180,7 +180,7 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 
 	// Update all web node site lists that might be changed
 	// by the addition of this site
-	for (auto &web : vWeb) {
+	for (auto &web : m_vWebs) {
 		if (web->getUpdate() == true) {
 			if (web->isSiteAllowed(site) == true) {
 				web->addJob(std::bind(&CWeb::addSite, web, site));
@@ -189,12 +189,12 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 	}
 }
 
-// ---------------------------------------------------------remSite
-void CWebList::remSite(std::shared_ptr<CSite> site) {
+// ---------------------------------------------------------removeSite
+void CWebList::removeSite(std::shared_ptr<CSite> site) {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
 	// Don't process removes before web definitions
-	if (vWeb.size() < 1) {
+	if (m_vWebs.size() < 1) {
 		return;
 	}
 
@@ -204,10 +204,10 @@ void CWebList::remSite(std::shared_ptr<CSite> site) {
 
 	// Remove site from all web nodes that link to it and restructure
 	// node site lists
-	for (auto &web : vWeb) {
+	for (auto &web : m_vWebs) {
 		if (web->getUpdate() == true) {
 			if (web->isSiteAllowed(site) == true) {
-				web->addJob(std::bind(&CWeb::remSite, web, site));
+				web->addJob(std::bind(&CWeb::removeSite, web, site));
 			}
 		}
 	}
@@ -222,12 +222,12 @@ bool CWebList::hasSite(std::shared_ptr<CSite> site) {
 
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
-	if (vWeb.size() < 1) {
+	if (m_vWebs.size() < 1) {
 		return(false);
 	}
 
 	// for each node in web
-	for (auto &web : vWeb) {
+	for (auto &web : m_vWebs) {
 		// check to see if we have this site
 		if (web->hasSite(site) == true) {
 			return(true);
@@ -238,19 +238,19 @@ bool CWebList::hasSite(std::shared_ptr<CSite> site) {
 	return(false);
 }
 
-// ---------------------------------------------------------statusCheck
+// ---------------------------------------------------------healthCheck
 bool CWebList::healthCheck() {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
 	// Don't bother if there is no webs
-	if (vWeb.size() < 1) {
+	if (m_vWebs.size() < 1) {
 		return (true);
 	}
 
 	// if we're updating in background
 	if (m_iNumThreads > 0) {
 		// for each web
-		for (auto web : vWeb) {
+		for (auto web : m_vWebs) {
 			// check if it's alive
 			if (web->healthCheck() == false) {
 				return (false);
@@ -262,28 +262,33 @@ bool CWebList::healthCheck() {
 	return (true);
 }
 
+// ---------------------------------------------------------getSiteList
 const CSiteList* CWebList::getSiteList() const {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-	return (pSiteList);
+	return (m_pSiteList);
 }
 
+// ---------------------------------------------------------setSiteList
 void CWebList::setSiteList(CSiteList* siteList) {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-	pSiteList = siteList;
+	m_pSiteList = siteList;
 }
 
+// ---------------------------------------------------------getGlass
 const CGlass* CWebList::getGlass() const {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-	return (pGlass);
+	return (m_pGlass);
 }
 
+// ---------------------------------------------------------setGlass
 void CWebList::setGlass(CGlass* glass) {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-	pGlass = glass;
+	m_pGlass = glass;
 }
 
-int CWebList::getVWebSize() const {
+// ---------------------------------------------------------size
+int CWebList::size() const {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-	return(vWeb.size());
+	return(m_vWebs.size());
 }
 }  // namespace glasscore

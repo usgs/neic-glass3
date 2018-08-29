@@ -100,37 +100,37 @@ TEST(WebTest, Construction) {
 	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(THRESH, testWeb->getThresh())<< "Web getThresh() Check";
+	ASSERT_EQ(THRESH, testWeb->getNucleationStackThreshold())<< "Web getThresh() Check";
 
 	// getDetect()
-	ASSERT_EQ(NUMDETECT, testWeb->getDetect())<< "Web getDetect() Check";
+	ASSERT_EQ(NUMDETECT, testWeb->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleate())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb->getResolution())<< "Web resolution Check";
 
 	// getRow()
-	ASSERT_EQ(NUMROWS, testWeb->getRow())<< "Web getRow() Check";
+	ASSERT_EQ(NUMROWS, testWeb->getNumRows())<< "Web getRow() Check";
 
 	// getCol()
-	ASSERT_EQ(NUMCOLS, testWeb->getCol())<< "Web getCol() Check";
+	ASSERT_EQ(NUMCOLS, testWeb->getNumColumns())<< "Web getCol() Check";
 
 	// getZ()
-	ASSERT_EQ(NUMZ, testWeb->getZ())<< "Web getZ() Check";
+	ASSERT_EQ(NUMZ, testWeb->getNumDepths())<< "Web getZ() Check";
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testWeb->getUpdate())<< "Web getUpdate() Check";
 
 	// lists
 	int expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testWeb->getVNodeSize())<< "node list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb->size())<< "node list empty";
 	ASSERT_EQ(false, testWeb->getUseOnlyTeleseismicStations())<<
 	"bUseOnlyTeleseismicStations false";
-	ASSERT_EQ(expectedSize, (int)testWeb->getVNetFilterSize())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getNetworksFilterSize())<<
 	"net filter list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getSitesFilterSize())<<
 	"site filter list empty";
 
 	// pointers
@@ -153,36 +153,36 @@ TEST(WebTest, Construction) {
 	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(THRESH, testWeb2->getThresh())<< "Web getThresh() Check";
+	ASSERT_EQ(THRESH, testWeb2->getNucleationStackThreshold())<< "Web getThresh() Check";
 
 	// getDetect()
-	ASSERT_EQ(NUMDETECT, testWeb2->getDetect())<< "Web getDetect() Check";
+	ASSERT_EQ(NUMDETECT, testWeb2->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb2->getNucleate())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb2->getNucleationDataThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb2->getResolution())<< "Web resolution Check";
 
 	// getRow()
-	ASSERT_EQ(NUMROWS, testWeb2->getRow())<< "Web getRow() Check";
+	ASSERT_EQ(NUMROWS, testWeb2->getNumRows())<< "Web getRow() Check";
 
 	// getCol()
-	ASSERT_EQ(NUMCOLS, testWeb2->getCol())<< "Web getCol() Check";
+	ASSERT_EQ(NUMCOLS, testWeb2->getNumColumns())<< "Web getCol() Check";
 
 	// getZ()
-	ASSERT_EQ(NUMZ, testWeb2->getZ())<< "Web getZ() Check";
+	ASSERT_EQ(NUMZ, testWeb2->getNumDepths())<< "Web getZ() Check";
 
 	// getUpdate()
 	ASSERT_EQ(NOUPDATE, testWeb2->getUpdate())<< "Web getUpdate() Check";
 
 	// lists
-	ASSERT_EQ(expectedSize, (int)testWeb2->getVNodeSize())<< "node list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb2->size())<< "node list empty";
 	ASSERT_EQ(false, testWeb->getUseOnlyTeleseismicStations())<<
 	"bUseOnlyTeleseismicStations false";
-	ASSERT_EQ(expectedSize, (int)testWeb2->getVNetFilterSize())<<
+	ASSERT_EQ(expectedSize, (int)testWeb2->getNetworksFilterSize())<<
 	"net filter list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getSitesFilterSize())<<
 	"site filter list empty";
 
 	// pointers
@@ -221,37 +221,37 @@ TEST(WebTest, Initialize) {
 	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(THRESH, testWeb->getThresh())<< "Web getThresh() Check";
+	ASSERT_EQ(THRESH, testWeb->getNucleationStackThreshold())<< "Web getThresh() Check";
 
 	// getDetect()
-	ASSERT_EQ(NUMDETECT, testWeb->getDetect())<< "Web getDetect() Check";
+	ASSERT_EQ(NUMDETECT, testWeb->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleate())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb->getResolution())<< "Web resolution Check";
 
 	// getRow()
-	ASSERT_EQ(NUMROWS, testWeb->getRow())<< "Web getRow() Check";
+	ASSERT_EQ(NUMROWS, testWeb->getNumRows())<< "Web getRow() Check";
 
 	// getCol()
-	ASSERT_EQ(NUMCOLS, testWeb->getCol())<< "Web getCol() Check";
+	ASSERT_EQ(NUMCOLS, testWeb->getNumColumns())<< "Web getCol() Check";
 
 	// getZ()
-	ASSERT_EQ(NUMZ, testWeb->getZ())<< "Web getZ() Check";
+	ASSERT_EQ(NUMZ, testWeb->getNumDepths())<< "Web getZ() Check";
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testWeb->getUpdate())<< "Web getUpdate() Check";
 
 	// lists
 	int expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testWeb->getVNodeSize())<< "node list empty";
+	ASSERT_EQ(expectedSize, (int)testWeb->size())<< "node list empty";
 	ASSERT_EQ(false, testWeb->getUseOnlyTeleseismicStations())<<
 	"bUseOnlyTeleseismicStations false";
-	ASSERT_EQ(expectedSize, (int)testWeb->getVNetFilterSize())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getNetworksFilterSize())<<
 	"net filter list empty";
-	ASSERT_EQ(expectedSize, (int)testWeb->getVSitesFilterSize())<<
+	ASSERT_EQ(expectedSize, (int)testWeb->getSitesFilterSize())<<
 	"site filter list empty";
 
 	printf("[ shutdown ]\n");
@@ -303,15 +303,15 @@ TEST(WebTest, GlobalTest) {
 	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(GLOBALTHRESH, testGlobalWeb.getThresh())<<
+	ASSERT_EQ(GLOBALTHRESH, testGlobalWeb.getNucleationStackThreshold())<<
 	"Web getThresh() Check";
 
 	// getDetect()
-	ASSERT_EQ(GLOBALNUMDETECT, testGlobalWeb.getDetect())<<
+	ASSERT_EQ(GLOBALNUMDETECT, testGlobalWeb.getNumStationsPerNode())<<
 	"Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.getNucleate())<<
+	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.getNucleationDataThreshold())<<
 	"Web getNucleate() Check";
 
 	// getResolution()
@@ -319,36 +319,36 @@ TEST(WebTest, GlobalTest) {
 	"Web getResolution() Check";
 
 	// getRow()
-	ASSERT_EQ(0, testGlobalWeb.getRow())<< "Web getRow() Check";
+	ASSERT_EQ(0, testGlobalWeb.getNumRows())<< "Web getRow() Check";
 
 	// getCol()
-	ASSERT_EQ(0, testGlobalWeb.getCol())<< "Web getCol() Check";
+	ASSERT_EQ(0, testGlobalWeb.getNumColumns())<< "Web getCol() Check";
 
 	// getCol()
-	ASSERT_EQ(GLOBALNUMZ, testGlobalWeb.getZ())<< "Web getZ() Check";
+	ASSERT_EQ(GLOBALNUMZ, testGlobalWeb.getNumDepths())<< "Web getZ() Check";
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testGlobalWeb.getUpdate())<< "Web getUpdate() Check";
 
 	// lists
-	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.getVNodeSize())<< "node list";
+	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.size())<< "node list";
 	ASSERT_EQ(false, testGlobalWeb.getUseOnlyTeleseismicStations())<<
 	"bUseOnlyTeleseismicStations false";
-	ASSERT_EQ(GLOBALNUMNETEXLUDE, (int)testGlobalWeb.getVNetFilterSize())<<
+	ASSERT_EQ(GLOBALNUMNETEXLUDE, (int)testGlobalWeb.getNetworksFilterSize())<<
 	"net filter list empty";
-	ASSERT_EQ(0, (int)testGlobalWeb.getVSitesFilterSize())<<
+	ASSERT_EQ(0, (int)testGlobalWeb.getSitesFilterSize())<<
 	"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGlobalWeb.getGlass())<< "getGlass() null";
-	ASSERT_TRUE(NULL != testGlobalWeb.getTrv1())<< "getTrv1() not null";
-	ASSERT_TRUE(NULL != testGlobalWeb.getTrv2())<< "getTrv2() not null";
+	ASSERT_TRUE(NULL != testGlobalWeb.getNucleationTravelTime1())<< "getTrv1() not null";
+	ASSERT_TRUE(NULL != testGlobalWeb.getNucleationTravelTime2())<< "getTrv2() not null";
 
 	// phase name
-	ASSERT_STREQ(testGlobalWeb.getTrv1()->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime1()->sPhase.c_str(), phasename1.c_str());
 
 	// phase name
-	ASSERT_STREQ(testGlobalWeb.getTrv2()->sPhase.c_str(), phasename2.c_str());
+	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime2()->sPhase.c_str(), phasename2.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -400,13 +400,13 @@ TEST(WebTest, GridTest) {
 	"Web getName() Matches";
 
 	// threshold
-	ASSERT_EQ(GRIDTHRESH, testGridWeb.getThresh())<< "Web getThresh() Check";
+	ASSERT_EQ(GRIDTHRESH, testGridWeb.getNucleationStackThreshold())<< "Web getThresh() Check";
 
 	// getDetect()
-	ASSERT_EQ(GRIDNUMDETECT, testGridWeb.getDetect())<< "Web getDetect() Check";
+	ASSERT_EQ(GRIDNUMDETECT, testGridWeb.getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.getNucleate())<<
+	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.getNucleationDataThreshold())<<
 	"Web getNucleate() Check";
 
 	// getResolution()
@@ -414,36 +414,36 @@ TEST(WebTest, GridTest) {
 	"Web getResolution() Check";
 
 	// getRow()
-	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getRow())<< "Web getRow() Check";
+	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getNumRows())<< "Web getRow() Check";
 
 	// getCol()
-	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getCol())<< "Web getCol() Check";
+	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getNumColumns())<< "Web getCol() Check";
 
 	// getCol()
-	ASSERT_EQ(GRIDNUMZ, testGridWeb.getZ())<< "Web getZ() Check";
+	ASSERT_EQ(GRIDNUMZ, testGridWeb.getNumDepths())<< "Web getZ() Check";
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
 
 	// lists
-	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
+	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.size())<< "node list";
 	ASSERT_EQ(false, testGridWeb.getUseOnlyTeleseismicStations())<<
 	"bUseOnlyTeleseismicStations false";
-	ASSERT_EQ(0, (int)testGridWeb.getVNetFilterSize())<<
+	ASSERT_EQ(0, (int)testGridWeb.getNetworksFilterSize())<<
 	"net filter list empty";
-	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
+	ASSERT_EQ(0, (int)testGridWeb.getSitesFilterSize())<<
 	"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
-	ASSERT_TRUE(NULL != testGridWeb.getTrv1())<< "getTrv1() not null";
-	ASSERT_TRUE(NULL != testGridWeb.getTrv2())<< "getTrv2() not null";
+	ASSERT_TRUE(NULL != testGridWeb.getNucleationTravelTime1())<< "getTrv1() not null";
+	ASSERT_TRUE(NULL != testGridWeb.getNucleationTravelTime2())<< "getTrv2() not null";
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getTrv1()->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->sPhase.c_str(), phasename1.c_str());
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getTrv2()->sPhase.c_str(), phasename2.c_str());
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime2()->sPhase.c_str(), phasename2.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -495,48 +495,48 @@ TEST(WebTest, GridExplicitTest) {
 
 	// threshold
 	ASSERT_EQ(GRIDEXPLICITTHRESH,
-			testGridWeb.getThresh())<< "Web getThresh() Check";
+			testGridWeb.getNucleationStackThreshold())<< "Web getThresh() Check";
 
 	// getDetect()
 	ASSERT_EQ(GRIDEXPLICITNUMDETECT,
-			testGridWeb.getDetect())<< "Web getDetect() Check";
+			testGridWeb.getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
 	ASSERT_EQ(GRIDEXPLICITNUMNUCLEATE,
-			testGridWeb.getNucleate())<< "Web getNucleate() Check";
+			testGridWeb.getNucleationDataThreshold())<< "Web getNucleate() Check";
 
 	// getResolution()
 	ASSERT_EQ(GRIDEXPLICITRESOLUTION,
 			testGridWeb.getResolution())<< "Web getResolution() Check";
 
 	// getRow()
-	ASSERT_EQ(0, testGridWeb.getRow())<< "Web getRow() Check";
+	ASSERT_EQ(0, testGridWeb.getNumRows())<< "Web getRow() Check";
 
 	// getCol()
-	ASSERT_EQ(0, testGridWeb.getCol())<< "Web getCol() Check";
+	ASSERT_EQ(0, testGridWeb.getNumColumns())<< "Web getCol() Check";
 
 	// getCol()
-	ASSERT_EQ(0, testGridWeb.getZ())<< "Web getZ() Check";
+	ASSERT_EQ(0, testGridWeb.getNumDepths())<< "Web getZ() Check";
 
 	// getUpdate()
 	ASSERT_EQ(NOUPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
 
 	// lists
-	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.getVNodeSize())<< "node list";
+	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.size())<< "node list";
 	ASSERT_EQ(false, testGridWeb.getUseOnlyTeleseismicStations())<<
 	"bUseOnlyTeleseismicStations false";
-	ASSERT_EQ(0, (int)testGridWeb.getVNetFilterSize())<<
+	ASSERT_EQ(0, (int)testGridWeb.getNetworksFilterSize())<<
 	"net filter list empty";
-	ASSERT_EQ(0, (int)testGridWeb.getVSitesFilterSize())<<
+	ASSERT_EQ(0, (int)testGridWeb.getSitesFilterSize())<<
 	"site filter list empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
-	ASSERT_TRUE(NULL != testGridWeb.getTrv1())<< "getTrv1() not null";
-	ASSERT_TRUE(NULL == testGridWeb.getTrv2())<< "getTrv2() null";
+	ASSERT_TRUE(NULL != testGridWeb.getNucleationTravelTime1())<< "getTrv1() not null";
+	ASSERT_TRUE(NULL == testGridWeb.getNucleationTravelTime2())<< "getTrv2() null";
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getTrv1()->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->sPhase.c_str(), phasename1.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -651,7 +651,7 @@ TEST(WebTest, RemoveTest) {
 	ASSERT_TRUE(testGridWeb.hasSite(sharedRemoveSite))<< "site in grid";
 
 	// remove from grid
-	testGridWeb.remSite(sharedRemoveSite);
+	testGridWeb.removeSite(sharedRemoveSite);
 
 	// check to see if this site is in grid
 	ASSERT_FALSE(testGridWeb.hasSite(sharedRemoveSite))<< "site removed";
@@ -679,7 +679,7 @@ TEST(WebTest, FailTests) {
 	ASSERT_FALSE(aWeb.dispatch(NULL))<< "Null dispatch false";
 	ASSERT_FALSE(aWeb.global(NULL))<< "Null global false";
 	ASSERT_FALSE(aWeb.grid(NULL))<< "Null grid false";
-	ASSERT_FALSE(aWeb.grid_explicit(NULL))<< "Null grid_explicit false";
+	ASSERT_FALSE(aWeb.gridExplicit(NULL))<< "Null grid_explicit false";
 
 	// grid fails
 	std::ifstream badGridFile;

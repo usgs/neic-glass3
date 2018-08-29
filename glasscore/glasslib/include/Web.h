@@ -192,7 +192,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * configuration
 	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool grid_explicit(std::shared_ptr<json::Object> com);
+	bool gridExplicit(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Generate a global detection grid
@@ -225,7 +225,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \param com - A pointer to a json::object containing the web configuration
 	 * \return Returns true if successful, false otherwise.
 	 */
-	bool genSiteFilters(std::shared_ptr<json::Object> com);
+	bool generateSiteFilters(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Generate node site list
@@ -235,7 +235,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 *
 	 * \return Always returns true
 	 */
-	bool genSiteList();
+	bool generateNodeSiteList();
 
 	/**
 	 * \brief Sort site list
@@ -248,7 +248,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \param lat - A double varible containing the latitude to use
 	 * \param lon - A double varible containing the longitude to use
 	 */
-	void sortSiteList(double lat, double lon);
+	void sortNodeSiteList(double lat, double lon);
 
 	/**
 	 * \brief Create new node
@@ -263,7 +263,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \param resol - A double varible containing the spatial resolution to use
 	 * \return Returns a std::shared_ptr to the newly created node.
 	 */
-	std::shared_ptr<CNode> genNode(double lat, double lon, double z,
+	std::shared_ptr<CNode> generateNode(double lat, double lon, double z,
 									double resol);
 
 	/**
@@ -285,7 +285,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \param node - A std::shared_ptr to the node to link sites to
 	 * \return Returns a std::shared_ptr to the updated node.
 	 */
-	std::shared_ptr<CNode> genNodeSites(std::shared_ptr<CNode> node);
+	std::shared_ptr<CNode> generateNodeSites(std::shared_ptr<CNode> node);
 
 	/**
 	 * \brief Add site to this web
@@ -304,7 +304,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * remove
 	 */
-	void remSite(std::shared_ptr<CSite> site);
+	void removeSite(std::shared_ptr<CSite> site);
 
 	/**
 	 * \brief Check if this web has a site
@@ -339,7 +339,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief aziTapre Getter
 	 * \return double with the azi taper start
 	 */
-	double getAziTaper() const;
+	double getAzimuthTaper() const;
 
 	/**
 	 * \brief max depth for locator getter
@@ -387,37 +387,37 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief Nucleation threshold getter
 	 * \return the nucleation viability threshold
 	 */
-	double getThresh() const;
-
-	/**
-	 * \brief Col getter
-	 * \return the number of columns
-	 */
-	int getCol() const;
+	double getNucleationStackThreshold() const;
 
 	/**
 	 * \brief Default number of detection stations getter
 	 * \return the default number of detections used in a node
 	 */
-	int getDetect() const;
+	int getNumStationsPerNode() const;
 
 	/**
 	 * \brief Default number of picks for nucleation getter
 	 * \return the default number of nucleations used in for a detection
 	 */
-	int getNucleate() const;
+	int getNucleationDataThreshold() const;
 
 	/**
 	 * \brief Row getter
 	 * \return the number of rows
 	 */
-	int getRow() const;
+	int getNumRows() const;
+
+	/**
+	 * \brief Col getter
+	 * \return the number of columns
+	 */
+	int getNumColumns() const;
 
 	/**
 	 * \brief Z getter
 	 * \return the number of depths
 	 */
-	int getZ() const;
+	int getNumDepths() const;
 
 	/**
 	 * \brief Name getter
@@ -429,25 +429,25 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief Primary nucleation travel time  etter
 	 * \return the primary nucleation travel time
 	 */
-	const std::shared_ptr<traveltime::CTravelTime>& getTrv1() const;
+	const std::shared_ptr<traveltime::CTravelTime>& getNucleationTravelTime1() const; // NOLINT
 
 	/**
 	 * \brief Secondary nucleation travel time  etter
 	 * \return the secondary nucleation travel time
 	 */
-	const std::shared_ptr<traveltime::CTravelTime>& getTrv2() const;
+	const std::shared_ptr<traveltime::CTravelTime>& getNucleationTravelTime2() const; // NOLINT
 
 	/**
 	 * \brief Net Filter Size getter
 	 * \return the number network filters
 	 */
-	int getVNetFilterSize() const;
+	int getNetworksFilterSize() const;
 
 	/**
 	 * \brief Site Filter Size getter
 	 * \return the number site filters
 	 */
-	int getVSitesFilterSize() const;
+	int getSitesFilterSize() const;
 
 	/**
 	 * \brief Use only teleseismic stations flag getter
@@ -459,7 +459,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief Node size getter
 	 * \return the number of nodes
 	 */
-	int getVNodeSize() const;
+	int size() const;
 
 	/**
 	 * \brief Web work function
@@ -475,33 +475,33 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief A pointer to the main CGlass class, used to send output,
 	 * get default values, encode/decode time, and get debug flags
 	 */
-	CGlass *pGlass;
+	CGlass * m_pGlass;
 
 	/**
 	 * \brief A pointer to the CSiteList class, used get sites (stations)
 	 */
-	CSiteList *pSiteList;
+	CSiteList * m_pSiteList;
 
 	/**
 	 * \brief A std::vector containing the network names to be included
 	 * in this web. This needs to be saved to support dynamic addition
 	 * and removal of sites as their usage status is changed.
 	 */
-	std::vector<std::string> vNetFilter;
+	std::vector<std::string> m_vNetworksFilter;
 
 	/**
 	 * \brief A std::vector containing the SCNL names to be included
 	 * in this web. This needs to be saved to support dynamic addition
 	 * and removal of sites as their usage status is changed.
 	 */
-	std::vector<std::string> vSitesFilter;
+	std::vector<std::string> m_vSitesFilter;
 
 	/**
 	 * \brief A boolean flag indicating whether to only use sites marked
 	 * "UseForTeleseismic" This needs to be saved to support dynamic addition
 	 * and removal of sites as their usage status is changed.
 	 */
-	std::atomic<bool> bUseOnlyTeleseismicStations;
+	std::atomic<bool> m_bUseOnlyTeleseismicStations;
 
 	/**
 	 * \brief A std::vector containing a std::pair for each the sites to use
@@ -510,107 +510,107 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * also fills in the distance), and used by genNode() during a Single(),
 	 * Shell(), Grid(), or Global() call
 	 */
-	std::vector<std::pair<double, std::shared_ptr<CSite>>> vSite;
+	std::vector<std::pair<double, std::shared_ptr<CSite>>> m_vNodeSites;
 
 	/**
 	 * \brief A std::vector containing a std::shared_ptr to each
 	 * node in the detection graph database
 	 */
-	std::vector<std::shared_ptr<CNode>> vNode;
+	std::vector<std::shared_ptr<CNode>> m_vNode;
 
 	/**
-	 * \brief the std::mutex for m_QueueMutex
+	 * \brief the std::mutex for m_vNode
 	 */
 	mutable std::mutex m_vNodeMutex;
 
 	/**
 	 * \brief String name of web used in tuning
 	 */
-	std::string sName;
+	std::string m_sName;
 
 	/**
 	 * \brief A integer containing the number of rows in a detection grid
 	 * generated by the Grid() command
 	 */
-	std::atomic<int> nRow;
+	std::atomic<int> m_iNumRows;
 
 	/**
 	 * \brief A integer containing the number of columns in a detection grid
 	 * generated by the Grid() command
 	 */
-	std::atomic<int> nCol;
+	std::atomic<int> m_iNumColumns;
 
 	/**
 	 * \brief A integer containing the number of depths in a detection grid
 	 * generated by the Grid() command
 	 */
-	std::atomic<int> nZ;
+	std::atomic<int> m_iNumDepths;
 
 	/**
 	 * \brief A double value containing the number of closest stations to use
 	 * when generating a node for this detection array. This number overrides
 	 * the default Glass parameter if it is provided
 	 */
-	std::atomic<int> nDetect;
+	std::atomic<int> m_iNumStationsPerNode;
 
 	/**
 	 * \brief A double value containing the number picks of that need to be
 	 * gathered to trigger the nucleation of an event. This number overrides the
 	 * default Glass parameter if it is provided
 	 */
-	std::atomic<int> nNucleate;
+	std::atomic<int> m_iNucleationDataThreshold;
 
 	/**
 	 * \brief A double value containing the viability threshold needed to
 	 * exceed for a nucleation to be successful. This value overrides the
 	 * default Glass parameter if it is provided
 	 */
-	std::atomic<double> dThresh;
+	std::atomic<double> m_dNucleationStackThreshold;
 
 	/**
 	 * \brief A double value containing the inter-node resolution for this
 	 * detection array
 	 */
-	std::atomic<double> dResolution;
+	std::atomic<double> m_dResolution;
 
 	/**
 	 * \brief A double which describes where the locator should start
 	 * down weighting for azimuthal gap
 	 **/
-	std::atomic<double> aziTaper;
+	std::atomic<double> m_dAzimuthTaper;
 
 	/**
 	 * \brief A double which describes the maximum allowable event depth
 	 **/
-	std::atomic<double> maxDepth;
+	std::atomic<double> m_dMaxDepth;
 
 	/**
 	 * \brief A boolean flag that stores whether to update this web when a
 	 * station has changed.
 	 */
-	std::atomic<bool> bUpdate;
+	std::atomic<bool> m_bUpdate;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
 	 * travel times for the first phase used by this web for nucleation
 	 */
-	std::shared_ptr<traveltime::CTravelTime> pTrv1;
+	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime1;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
 	 * travel times for the second phase used by this web for nucleation
 	 */
-	std::shared_ptr<traveltime::CTravelTime> pTrv2;
+	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime2;
 
 	/**
 	 * \brief the std::mutex for traveltimes
 	 */
-	mutable std::mutex m_TrvMutex;
+	mutable std::mutex m_TravelTimeMutex;
 
 	/**
 	 * \brief A mutex to control threading access to vSite.
 	 */
-	std::mutex vSiteMutex;
+	std::mutex m_vSiteMutex;
 
 	/**
 	 * \brief the std::queue of std::function<void() jobs

@@ -253,8 +253,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 	// get the cut and threshold from our
 	// parent web
-	int nCut = m_pWeb->getNucleate();
-	double dThresh = m_pWeb->getThresh();
+	int nCut = m_pWeb->getNucleationDataThreshold();
+	double dThresh = m_pWeb->getNucleationStackThreshold();
 	double dAzimuthRange = m_pWeb->getGlass()->getBeamMatchingAzimuthWindow();
 	// commented out because slowness matching of beams is not yet implemented
 	// but is scheduled to be soon
