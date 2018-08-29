@@ -141,7 +141,7 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * Takes a new pick and compares with list of picks.
 	 * True if pick is a duplicate
 	 */
-	bool checkDuplicate(CPick *newPick, double window);
+	bool checkDuplicate(double newTPick, std::string newSCNL, double window);
 
 	/**
 	 * \brief Search for any associable picks that match hypo

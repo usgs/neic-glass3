@@ -175,7 +175,8 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 
 	// check if pick is duplicate, if pGlass exists
 	if (m_pGlass) {
-		bool duplicate = checkDuplicate(newPick,
+		bool duplicate = checkDuplicate(newPick->getTPick(),
+										newPick->getSite()->getSCNL(),
 										m_pGlass->getPickDuplicateTimeWindow());
 
 		// it is a duplicate, log and don't add pick
@@ -256,30 +257,31 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 }
 
 // -----------------------------------------------------checkDuplicate
-bool CPickList::checkDuplicate(CPick *newPick, double tWindow) {
+bool CPickList::checkDuplicate(double newTPick, std::string newSCNL,
+								double tWindow) {
+	// lock while we're searching the list
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
+
 	// null checks
-	if (newPick == NULL) {
+	if (newTPick < 0) {
+		return (false);
+	}
+	if (newSCNL == "") {
 		return (false);
 	}
 	if (tWindow == 0.0) {
 		return (false);
 	}
 
-	// set default return to no match
-	bool matched = false;
-
 	// construct the lower bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
 	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>();
-	lowerValue->initialize(NULL, (newPick->getTPick() - tWindow), 0, "", 0, 0);
+	lowerValue->initialize(NULL, (newTPick - tWindow), 0, "", 0, 0);
 
 	// construct the upper bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
 	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>();
-	upperValue->initialize(NULL, (newPick->getTPick() + tWindow), 0, "", 0, 0);
-
-	// lock while we're searching the list
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
+	upperValue->initialize(NULL, (newTPick + tWindow), 0, "", 0, 0);
 
 	if (m_msPickList.size() == 0) {
 		return (false);
@@ -300,29 +302,39 @@ bool CPickList::checkDuplicate(CPick *newPick, double tWindow) {
 
 	// loop through possible matching picks
 	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
-			it != upper; ++it) {
-		std::shared_ptr<CPick> pck = *it;
+			((it != upper) && (it != m_msPickList.end())); ++it) {
+		std::shared_ptr<CPick> currentPick = *it;
+
+		// nullcheck
+		if (currentPick == NULL) {
+			continue;
+		}
+		if (currentPick->getSite() == NULL) {
+			continue;
+		}
+
+		// get the values we care about
+		double currentTPick = currentPick->getTPick();
+		std::string currentSCNL = currentPick->getSite()->getSCNL();
 
 		// check if time difference is within window
-		if (std::abs(newPick->getTPick() - pck->getTPick()) < tWindow) {
+		if (std::abs(newTPick - currentTPick) < tWindow) {
 			// check if sites match
-			if (newPick->getSite()->getSCNL() == pck->getSite()->getSCNL()) {
-				// if match is found, set to true, log, and break out of loop
-				matched = true;
+			if (newSCNL == currentSCNL) {
+				// if match is found, log and return true
 				glassutil::CLogit::log(
 						glassutil::log_level::warn,
-						"CPickList::checkDuplicat: Duplicate (window = "
+						"CPickList::checkDuplicate: Duplicate (window = "
 								+ std::to_string(tWindow) + ") : old:"
-								+ pck->getSite()->getSCNL() + " "
-								+ std::to_string(pck->getTPick()) + " new(del):"
-								+ newPick->getSite()->getSCNL() + " "
-								+ std::to_string(newPick->getTPick()));
-				break;
+								+ currentSCNL + " "
+								+ std::to_string(currentTPick) + " new(del):"
+								+ newSCNL + " " + std::to_string(newTPick));
+				return (true);
 			}
 		}
 	}
 
-	return (matched);
+	return (false);
 }
 
 // ---------------------------------------------------------scavenge
@@ -330,6 +342,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 	// Scan all picks within specified time range, adding any
 	// that meet association criteria to hypo object provided.
 	// Returns true if any associated.
+	// lock while we're searching the list
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	// null check
 	if (hyp == NULL) {
@@ -365,9 +379,6 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>();
 	upperValue->initialize(NULL, (hyp->getTOrigin() + tWindow), 0, "", 0, 0);
 
-	// lock while we're searching the list
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
 	if (m_msPickList.size() == 0) {
 		return (false);
 	}
@@ -387,8 +398,14 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 
 	// loop through possible matching picks
 	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
-			it != upper; ++it) {
+			((it != upper) && (it != m_msPickList.end())); ++it) {
 		std::shared_ptr<CPick> pck = *it;
+
+		// nullcheck
+		if (pck == NULL) {
+			continue;
+		}
+
 		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
 
 		// check to see if this pick is already in this hypo
@@ -451,6 +468,9 @@ glass3::util::WorkState CPickList::work() {
 	// check to see that we've not run to far ahead of the hypo processing
 	if (m_pGlass->getHypoList()->getHyposToProcessSize()
 			> (m_pGlass->getHypoList()->getNumThreads() * MAX_QUEUE_FACTOR)) {
+		glassutil::CLogit::log(glassutil::log_level::debug,
+								"CPickList::work. Delaying work due to "
+								"HypoList process queue size.");
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}

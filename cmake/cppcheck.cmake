@@ -29,6 +29,7 @@ if(RUN_CPPCHECK)
       --std=c++11
       --template="[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)"
       --verbose
+      --inline-suppr
       --suppress=nullPointerRedundantCheck
       --error-exitcode=1
       ${SRCS} ${HDRS}
