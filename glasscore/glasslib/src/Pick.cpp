@@ -271,24 +271,18 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 
 	clear();
 
-	// nullcheck
-	if (pickSite == NULL) {
-		return (false);
-	}
-
-	m_wpSite = pickSite;
 	m_tPick = pickTime;
 	m_iPickID = pickId;
 	m_sID = pickIdString;
 	m_dBackAzimuth = backAzimuth;
 	m_dSlowness = slowness;
 
-	/* glassutil::CLogit::log(
-	 glassutil::log_level::debug,
-	 "CPick::initialize: site:" + pickSite->getScnl() + "; tPick:"
-	 + std::to_string(tPick) + "; idPick:"
-	 + std::to_string(idPick) + "; sPid:" + sPid);
-	 */
+	// nullcheck
+	if (pickSite == NULL) {
+		return (false);
+	} else {
+		m_wpSite = pickSite;
+	}
 
 	return (true);
 }
@@ -391,15 +385,16 @@ bool CPick::nucleate() {
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
-	std::vector<std::shared_ptr<CTrigger>> vTrigger = pickSite->nucleate(m_tPick);
+	std::vector<std::shared_ptr<CTrigger>> vTrigger = pickSite->nucleate(
+			m_tPick);
 
 	// if there were no triggers, we're done
 	if (vTrigger.size() == 0) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CPick::nucleate: NOTRG site:" + pickSite->getSCNL()
-						+ "; tPick:" + pt + "; idPick:" + std::to_string(m_iPickID)
-						+ "; sPid:" + m_sID);
+						+ "; tPick:" + pt + "; idPick:"
+						+ std::to_string(m_iPickID) + "; sPid:" + m_sID);
 
 		return (false);
 	}
@@ -530,9 +525,9 @@ bool CPick::nucleate() {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CPick::nucleate: TRG site:" + pickSite->getSCNL() + "; tPick:"
-						+ pt + "; idPick:" + std::to_string(m_iPickID) + "; sPid:"
-						+ m_sID + " => web:" + hypo->getWebName() + "; hyp: "
-						+ hypo->getID() + "; lat:"
+						+ pt + "; idPick:" + std::to_string(m_iPickID)
+						+ "; sPid:" + m_sID + " => web:" + hypo->getWebName()
+						+ "; hyp: " + hypo->getID() + "; lat:"
 						+ std::to_string(hypo->getLatitude()) + "; lon:"
 						+ std::to_string(hypo->getLongitude()) + "; z:"
 						+ std::to_string(hypo->getDepth()) + "; tOrg:" + st);

@@ -88,32 +88,11 @@ TEST(PickListTest, PickOperations) {
 	testPickList->setSiteList(testSiteList);
 	testPickList->setPickMax(MAXNPICK);
 
-	// test indexpick when empty
-	ASSERT_EQ(-2, testPickList->indexPick(0))<< "test indexpick when empty";
-
 	// test adding picks by addPick and dispatch
 	testPickList->addPick(pickJSON);
 	testPickList->dispatch(pick3JSON);
 	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testPickList->getPickTotal())<< "Added Picks";
-
-	// test getting a pick (first pick, id 1)
-	std::shared_ptr<glasscore::CPick> testPick = testPickList->getPick(1);
-	// check testpick
-	ASSERT_TRUE(testPick != NULL)<< "testPick not null";
-	// check scnl
-	std::string sitescnl = testPick->getSite()->getSCNL();
-	std::string expectedscnl = std::string(SCNL);
-	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-	"testPick has right scnl";
-
-	// test indexpick
-	ASSERT_EQ(-1, testPickList->indexPick(TPICK))<<
-	"test indexpick with time before";
-	ASSERT_EQ(1, testPickList->indexPick(TPICK2))<<
-	"test indexpick with time after";
-	ASSERT_EQ(0, testPickList->indexPick(TPICK3))<<
-	"test indexpick with time within";
 
 	// add more picks
 	testPickList->addPick(pick2JSON);
@@ -125,15 +104,6 @@ TEST(PickListTest, PickOperations) {
 	expectedSize = MAXNPICK;
 	ASSERT_EQ(expectedSize, testPickList->size())<<
 	"testPickList not larger than max";
-
-	// get first pick, which is now id 2
-	std::shared_ptr<glasscore::CPick> test2Pick = testPickList->getPick(2);
-
-	// check scnl
-	sitescnl = test2Pick->getSite()->getSCNL();
-	expectedscnl = std::string(SCNL2);
-	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-	"test2Pick has right scnl";
 
 	// test clearing picks
 	testPickList->clearPicks();

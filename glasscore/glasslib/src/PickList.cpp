@@ -4,8 +4,7 @@
 #include <memory>
 #include <algorithm>
 #include <cmath>
-#include <map>
-#include <vector>
+#include <set>
 #include <ctime>
 #include <random>
 #include "Date.h"
@@ -23,15 +22,6 @@
 #define MAX_QUEUE_FACTOR 3
 
 namespace glasscore {
-
-// pick sort function
-bool sortFunc(const std::pair<double, int> &lhs,
-				const std::pair<double, int> &rhs) {
-	if (lhs.first < rhs.first) {
-		return (true);
-	}
-	return (false);
-}
 
 // ---------------------------------------------------------CPickList
 CPickList::CPickList(int numThreads, int sleepTime, int checkInterval)
@@ -64,9 +54,8 @@ void CPickList::clear() {
 void CPickList::clearPicks() {
 	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
-	// clear the vector and map
-	m_vPick.clear();
-	m_mPick.clear();
+	// clear the multiset
+	m_msPickList.clear();
 
 	m_PicksToProcessMutex.lock();
 	while (m_qPicksToProcess.empty() == false) {
@@ -200,21 +189,9 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		}
 	}
 
-	m_PickListMutex.lock();
-
 	// create new shared pointer to this pick
 	std::shared_ptr<CPick> pck(newPick);
 
-	// Add pick to cache (mPick) and time sorted
-	// index (vPick). If vPick has reached its
-	// maximum capacity (nPickMax), then the
-	// first pick in the vector is removed and the
-	// corresponding entry in the cache is erased.
-	// It should be noted, that since what is cached
-	// is a smart pointer, if it is currently part
-	// of an active event, the actual pick will not
-	// be removed until either it is pruned from the
-	// event or the event is completed and retired.
 	m_iPickTotal++;
 
 	// get maximum number of picks
@@ -223,59 +200,31 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		m_iPickMax = m_pGlass->getMaxNumPicks();
 	}
 
-	// create pair for insertion
-	std::pair<double, int> p(pck->getTPick(), m_iPickTotal);
+	// lock while we're modifying the multiset
+	m_PickListMutex.lock();
 
 	// check to see if we're at the pick limit
-	if (m_vPick.size() == m_iPickMax) {
-		// find first pick in vector
-		std::pair<double, int> pdx;
-		pdx = m_vPick[0];
-		auto pos = m_mPick.find(pdx.second);
+	if (m_msPickList.size() == m_iPickMax) {
+		std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator oldest =
+				m_msPickList.begin();
 
-		// remove pick from per site pick list
-		pos->second->getSite()->removePick(pos->second);
+		// find first pick in multiset
+		std::shared_ptr<CPick> oldestPick = *oldest;
 
-		// erase from map
-		m_mPick.erase(pos);
+		// remove from site specific pick list
+		oldestPick->getSite()->removePick(oldestPick);
 
-		// erase from vector
-		m_vPick.erase(m_vPick.begin());
+		// remove from from multiset
+		m_msPickList.erase(oldest);
 	}
-
-	// Insert new pick in proper time sequence into pick vector
-	// get the index of the new pick
-	int iPick = indexPick(pck->getTPick());
-	switch (iPick) {
-		case -2:
-			// Empty vector, just add it
-			m_vPick.push_back(p);
-			break;
-		case -1:
-			// Pick is before any others, insert at beginning
-			m_vPick.insert(m_vPick.begin(), p);
-			break;
-		default:
-			// pick is somewhere in vector
-			if (iPick == m_vPick.size() - 1) {
-				// pick is after all picks, add to end
-				m_vPick.push_back(p);
-			} else {
-				// find where the pick should be inserted
-				auto it = std::next(m_vPick.begin(), iPick + 1);
-
-				// insert at that location
-				m_vPick.insert(it, p);
-			}
-			break;
-	}
-
-	// add to pick map
-	m_mPick[m_iPickTotal] = pck;
 
 	// add to site specific pick list
 	pck->getSite()->addPick(pck);
 
+	// add to multiset
+	m_msPickList.insert(pck);
+
+	// done modifying the multiset
 	m_PickListMutex.unlock();
 
 	// get the current size of the queue
@@ -306,133 +255,56 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	return (true);
 }
 
-// ---------------------------------------------------------indexPixk
-int CPickList::indexPick(double tPick) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
-	// handle empty vector case
-	if (m_vPick.size() == 0) {
-		// return -2 to indicate empty vector
-		return (-2);
-	}
-
-	double tFirstPick = m_vPick[0].first;
-
-	// handle pick earlier than first element case
-	// time is earlier than first pick
-	if (tPick < tFirstPick) {
-		// return -1 to indicate earlier than first element
-		return (-1);
-	}
-
-	// handle case that the pick is later than last element
-	int i1 = 0;
-	int i2 = m_vPick.size() - 1;
-	double tLastPick = m_vPick[i2].first;
-
-	// time is after last pick
-	if (tPick >= tLastPick) {
-		// return index of last element
-		return (i2);
-	}
-
-	// search for insertion point within vector
-	// using a binary search
-	// while upper minus lower bounds is greater than one
-	while ((i2 - i1) > 1) {
-		// compute current pick index
-		int ix = (i1 + i2) / 2;
-
-		double tCurrentPick = m_vPick[ix].first;
-
-		// if time is before current pick
-		if (tCurrentPick > tPick) {
-			// new upper bound is this index
-			i2 = ix;
-		} else {  // if (tCurrentPick <= tPick)
-			// if time is after or equal to current pick
-			// new lower bound is this index
-			i1 = ix;
-		}
-	}
-
-	// return the last lower bound as the insertion point
-	return (i1);
-}
-
-// ---------------------------------------------------------getPick
-std::shared_ptr<CPick> CPickList::getPick(int idPick) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
-	// try to find that id in map
-	auto pos = m_mPick.find(idPick);
-
-	// make sure that we found something
-	if (pos != m_mPick.end()) {
-		// return the pick
-		return (pos->second);
-	}
-
-	// found nothing
-	return (NULL);
-}
-
-// ---------------------------------------------------------listPicks
-void CPickList::listPicks() {
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
-	int n = 0;
-	char sLog[1024];
-
-	// for each pick
-	for (auto p : m_vPick) {
-		// list it
-		snprintf(sLog, sizeof(sLog), "%d: %.2f %d", n++, p.first, p.second);
-		glassutil::CLogit::Out(sLog);
-	}
-}
-
 // -----------------------------------------------------checkDuplicate
-bool CPickList::checkDuplicate(CPick *newPick, double window) {
+bool CPickList::checkDuplicate(CPick *newPick, double tWindow) {
 	// null checks
 	if (newPick == NULL) {
 		return (false);
 	}
-	if (window == 0.0) {
+	if (tWindow == 0.0) {
 		return (false);
 	}
 
 	// set default return to no match
 	bool matched = false;
 
+	// construct the lower bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>();
+	lowerValue->initialize(NULL, (newPick->getTPick() - tWindow), 0, "", 0, 0);
+
+	// construct the upper bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>();
+	upperValue->initialize(NULL, (newPick->getTPick() + tWindow), 0, "", 0, 0);
+
+	// lock while we're searching the list
 	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
-	// get the index of the earliest possible match
-	int it1 = indexPick(newPick->getTPick() - window);
-
-	// get index of the latest possible pick
-	int it2 = indexPick(newPick->getTPick() + window);
-
-	// index can't be negative, it1/2 negative if pick before first in list
-	if (it1 < 0) {
-		it1 = 0;
-	}
-	if (it2 < 0) {
-		it2 = 0;
+	if (m_msPickList.size() == 0) {
+		return (false);
 	}
 
-	// don't bother if there's no picks
-	if (it1 == it2) {
+	// get the bounds for this window
+	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator lower =
+			std::lower_bound(m_msPickList.begin(), m_msPickList.end(),
+								lowerValue);
+	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator upper =
+			std::upper_bound(m_msPickList.begin(), m_msPickList.end(),
+								upperValue);
+
+	// don't bother if there's no picks in the window
+	if (lower == upper) {
 		return (false);
 	}
 
 	// loop through possible matching picks
-	for (int it = it1; it <= it2; it++) {
-		auto q = m_vPick[it];
-		std::shared_ptr<CPick> pck = m_mPick[q.second];
+	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
+			it != upper; ++it) {
+		std::shared_ptr<CPick> pck = *it;
 
 		// check if time difference is within window
-		if (std::abs(newPick->getTPick() - pck->getTPick()) < window) {
+		if (std::abs(newPick->getTPick() - pck->getTPick()) < tWindow) {
 			// check if sites match
 			if (newPick->getSite()->getSCNL() == pck->getSite()->getSCNL()) {
 				// if match is found, set to true, log, and break out of loop
@@ -440,7 +312,7 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 				glassutil::CLogit::log(
 						glassutil::log_level::warn,
 						"CPickList::checkDuplicat: Duplicate (window = "
-								+ std::to_string(window) + ") : old:"
+								+ std::to_string(tWindow) + ") : old:"
 								+ pck->getSite()->getSCNL() + " "
 								+ std::to_string(pck->getTPick()) + " new(del):"
 								+ newPick->getSite()->getSCNL() + " "
@@ -454,7 +326,7 @@ bool CPickList::checkDuplicate(CPick *newPick, double window) {
 }
 
 // ---------------------------------------------------------scavenge
-bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
+bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 	// Scan all picks within specified time range, adding any
 	// that meet association criteria to hypo object provided.
 	// Returns true if any associated.
@@ -480,36 +352,43 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	// Calculate range for possible associations
 	double sdassoc = m_pGlass->getAssociationSDCutoff();
+	int addCount = 0;
+	bool associated = false;
 
+	// construct the lower bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>();
+	lowerValue->initialize(NULL, (hyp->getTOrigin() - tWindow), 0, "", 0, 0);
+
+	// construct the upper bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>();
+	upperValue->initialize(NULL, (hyp->getTOrigin() + tWindow), 0, "", 0, 0);
+
+	// lock while we're searching the list
 	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
-	// get the index of the pick to start with
-	// based on the hypo origin time
-	int it1 = indexPick(hyp->getTOrigin());
-
-	// index can't be negative
-	// Primarily occurs if origin time is before first pick
-	if (it1 < 0) {
-		it1 = 0;
-	}
-
-	// get the index of the pick to end with by using the hypo
-	// origin time plus the provided duration
-	int it2 = indexPick(hyp->getTOrigin() + tDuration);
-
-	// don't bother if there's no picks
-	if (it1 == it2) {
+	if (m_msPickList.size() == 0) {
 		return (false);
 	}
 
-	int addCount = 0;
+	// get the bounds for this window
+	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator lower =
+			std::lower_bound(m_msPickList.begin(), m_msPickList.end(),
+								lowerValue);
+	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator upper =
+			std::upper_bound(m_msPickList.begin(), m_msPickList.end(),
+								upperValue);
 
-	// for each pick index between it1 and it2
-	bool bAss = false;
-	for (int it = it1; it < it2; it++) {
-		// get the pick from the vector
-		auto q = m_vPick[it];
-		std::shared_ptr<CPick> pck = m_mPick[q.second];
+	// don't bother if there's no picks in the window
+	if (lower == upper) {
+		return (false);
+	}
+
+	// loop through possible matching picks
+	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
+			it != upper; ++it) {
+		std::shared_ptr<CPick> pck = *it;
 		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
 
 		// check to see if this pick is already in this hypo
@@ -534,7 +413,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 			hyp->addPick(pck);
 
 			// we've associated a pick
-			bAss = true;
+			associated = true;
 			addCount++;
 		} else {
 			// associated with an existing hypo
@@ -543,7 +422,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 			hyp->addPick(pck);
 
 			// we've associated a pick
-			bAss = true;
+			associated = true;
 			addCount++;
 		}
 	}
@@ -554,7 +433,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 					+ std::to_string(addCount));
 
 	// return whether we've associated at least one pick
-	return (bAss);
+	return (associated);
 }
 
 // ---------------------------------------------------------work
@@ -647,7 +526,7 @@ int CPickList::getPickTotal() const {
 
 int CPickList::size() const {
 	std::lock_guard<std::recursive_mutex> vPickGuard(m_PickListMutex);
-	return (m_vPick.size());
+	return (m_msPickList.size());
 }
 
 }  // namespace glasscore

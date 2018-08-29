@@ -10,8 +10,7 @@
 #include <threadbaseclass.h>
 
 #include <json.h>
-#include <vector>
-#include <map>
+#include <set>
 #include <memory>
 #include <string>
 #include <utility>
@@ -21,6 +20,7 @@
 #include <random>
 #include <atomic>
 #include "Glass.h"
+#include "Pick.h"
 
 namespace glasscore {
 
@@ -28,8 +28,23 @@ namespace glasscore {
 class CGlass;
 class CSite;
 class CSiteList;
-class CPick;
 class CHypo;
+
+/**
+ * \brief CPickList comparison function
+ *
+ * PickCompare contains the comparison function used by std::multiset when
+ * inserting, sorting, and retrieving picks.
+ */
+struct PickCompare {
+    bool operator()(const std::shared_ptr<CPick> &lhs,
+                    const std::shared_ptr<CPick> &rhs) const {
+    	if (lhs->getTPick() < rhs->getTPick()) {
+    		return(true);
+    	}
+        return (false);
+    }
+};
 
 /**
  * \brief glasscore pick list class
@@ -121,41 +136,6 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	bool addPick(std::shared_ptr<json::Object> pick);
 
 	/**
-	 * \brief CPickList get pick function
-	 *
-	 * Given the integer id of a pick get a shared_ptr to that pick.
-	 *
-	 * \param idPick - An integer value containing the id of the pick to get
-	 * \return Returns a shared_ptr to the found CPick, or null if no pick
-	 * found.
-	 */
-	std::shared_ptr<CPick> getPick(int idPick);
-
-	/**
-	 * \brief Get insertion index for pick
-	 *
-	 * This function looks up the proper insertion index for the vector given an
-	 * arrival time using a binary search to identify the index element
-	 * is less than the time provided, and the next element is greater.
-	 *
-	 * \param tPick - A double value containing the arrival time to use, in
-	 * julian seconds of the pick to add.
-	 * \return Returns the insertion index, if the insertion is before
-	 * the beginning, -1 is returned, if insertion is after the last element,
-	 * the id of the last element is returned, if the vector is empty,
-	 * -2 is returned.
-	 */
-	int indexPick(double tPick);
-
-	/**
-	 * \brief Print basic values to screen for pick list
-	 *
-	 * Causes CPickList to print basic values to the console for
-	 * each pick in the list
-	 */
-	void listPicks();
-
-	/**
 	 * \brief Checks if picks is duplicate
 	 *
 	 * Takes a new pick and compares with list of picks.
@@ -172,12 +152,12 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 *
 	 * \param hyp - A shared_ptr to a CHypo object containing the hypocenter
 	 * to attempt to associate to.
-	 * \param tDuration - A double value containing the duration to search picks
+	 * \param tWindow - A double value containing the window to search picks
 	 * from origin time in seconds, defaults to 2400.0
 	 * \return Returns true if any picks were associated to the hypocenter,
 	 * false otherwise.
 	 */
-	bool scavenge(std::shared_ptr<CHypo> hyp, double tDuration = 2400.0);
+	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2400.0);
 
 	/**
 	 * \brief CGlass getter
@@ -263,17 +243,10 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	int m_iPickMax;
 
 	/**
-	 * \brief A std::vector mapping the arrival time of each pick in CPickList
-	 * to it's integer pick id. The elements in this vector object are inserted
-	 * in a manner to keep it in sequential time order from oldest to youngest.
+	 * \brief A std::multiset containing each pick in the list in sequential
+	 * time order from oldest to youngest.
 	 */
-	std::vector<std::pair<double, int>> m_vPick;
-
-	/**
-	 * \brief A std::map containing a std::shared_ptr to each pick in CPickList
-	 * indexed by the integer pick id.
-	 */
-	std::map<int, std::shared_ptr<CPick>> m_mPick;
+	std::multiset<std::shared_ptr<CPick>, PickCompare> m_msPickList;
 
 	/**
 	 * \brief A std::queue containing a std::shared_ptr to each pick in that
