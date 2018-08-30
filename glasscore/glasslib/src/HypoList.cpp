@@ -76,11 +76,11 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	// remove oldest hypo if this new one
 	// pushes us over the limit
 	if (m_msHypoList.size() == m_iHypoMax) {
-		std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator oldest =
+		std::multiset<std::pair<double, std::shared_ptr<CHypo>>, HypoCompare>::iterator oldest = // NOLINT
 				m_msHypoList.begin();
 
 		// find first hypo in multiset
-		std::shared_ptr<CHypo> oldestHypo = *oldest;
+		std::shared_ptr<CHypo> oldestHypo = (*oldest).second;
 
 		// send expiration message
 		oldestHypo->expire();
@@ -90,7 +90,9 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	}
 
 	// add to multiset
-	m_msHypoList.insert(hypo);
+	m_msHypoList.insert(
+			std::pair<double, std::shared_ptr<CHypo>>(hypo->getTOrigin(),
+														hypo));
 
 	// add to hypo map
 	m_mHypo[hypo->getID()] = hypo;
@@ -395,7 +397,9 @@ glass3::util::WorkState CHypoList::work() {
 	char sLog[1024];
 
 	// get the next hypo to process
-	std::shared_ptr<CHypo> hyp = getHypoToProcess();
+	std::pair<double, std::shared_ptr<CHypo>> hypeToProcess =
+			getHypoToProcess();
+	std::shared_ptr<CHypo> hyp = hypeToProcess.second;
 
 	// check to see if we got a valid hypo
 	if (!hyp) {
@@ -452,7 +456,7 @@ glass3::util::WorkState CHypoList::work() {
 
 		// reposition the hypo in the list to maintain
 		// time order
-		// updatePosition(hyp);
+		updatePosition(hypeToProcess);
 	} catch (const std::exception &e) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -776,24 +780,17 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 		t1 = temp;
 	}
 
-	std::shared_ptr<traveltime::CTravelTime> nullTrav;
-	std::shared_ptr<traveltime::CTTT> nullTTT;
+	std::shared_ptr<CHypo> nullHypo;
 
 	// construct the lower bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CHypo>
-	std::shared_ptr<CHypo> lowerValue = std::make_shared<CHypo>(0, 0, 0, t1, "",
-																"", 0, 0, 0,
-																nullTrav,
-																nullTrav,
-																nullTTT);
+	std::pair<double, std::shared_ptr<CHypo>> lowerValue = std::pair<double,
+			std::shared_ptr<CHypo>>(t1, nullHypo);
 
 	// construct the upper bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CHypo>
-	std::shared_ptr<CHypo> upperValue = std::make_shared<CHypo>(0, 0, 0, t2, "",
-																"", 0, 0, 0,
-																nullTrav,
-																nullTrav,
-																nullTTT);
+	std::pair<double, std::shared_ptr<CHypo>> upperValue = std::pair<double,
+			std::shared_ptr<CHypo>>(t2, nullHypo);
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 
@@ -803,9 +800,9 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 	}
 
 	// get the bounds for this window
-	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator lower =
+	std::multiset<std::pair<double, std::shared_ptr<CHypo>>, HypoCompare>::iterator lower =  // NOLINT
 			m_msHypoList.lower_bound(lowerValue);
-	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator upper =
+	std::multiset<std::pair<double, std::shared_ptr<CHypo>>, HypoCompare>::iterator upper =  // NOLINT
 			m_msHypoList.upper_bound(upperValue);
 
 	// found nothing
@@ -814,12 +811,12 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 	}
 
 	// loop through hypos
-	for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it = lower;
-			((it != upper) && (it != m_msHypoList.end())); ++it) {
-		std::shared_ptr<CHypo> aHypo = *it;
+	for (std::multiset<std::pair<double, std::shared_ptr<CHypo>>, HypoCompare>::iterator it =  // NOLINT
+			lower; ((it != upper) && (it != m_msHypoList.end())); ++it) {
+		std::shared_ptr<CHypo> aHypo = (*it).second;
 
 		if (aHypo != NULL) {
-			std::weak_ptr<CHypo> awHypo = *it;
+			std::weak_ptr<CHypo> awHypo = aHypo;
 
 			// add to the list of hypos
 			hypos.push_back(awHypo);
@@ -1114,7 +1111,8 @@ int CHypoList::addHypoToProcess(std::shared_ptr<CHypo> hyp) {
 }
 
 // ---------------------------------------------------------getHypoToProcess
-std::shared_ptr<CHypo> CHypoList::getHypoToProcess() {
+std::pair<double, std::shared_ptr<CHypo>> CHypoList::getHypoToProcess() {
+	std::pair<double, std::shared_ptr<CHypo>> hyp(0, NULL);
 	// don't use a lock guard for queue mutex and hypomutex,
 	// to avoid a deadlock when both mutexes are locked
 	m_vHyposToProcessMutex.lock();
@@ -1124,7 +1122,7 @@ std::shared_ptr<CHypo> CHypoList::getHypoToProcess() {
 	if (m_vHyposToProcess.size() < 1) {
 		// nope
 		m_vHyposToProcessMutex.unlock();
-		return (NULL);
+		return (hyp);
 	}
 
 	// get the first id on the queue
@@ -1140,7 +1138,20 @@ std::shared_ptr<CHypo> CHypoList::getHypoToProcess() {
 	m_HypoListMutex.lock();
 
 	// use the map to get the hypo based on the id
-	std::shared_ptr<CHypo> hyp = m_mHypo[pid];
+	std::shared_ptr<CHypo> procHyp = m_mHypo[pid];
+
+	hyp = std::pair<double, std::shared_ptr<CHypo>>(procHyp->getTOrigin(),
+													procHyp);
+
+	/*if (procHyp != NULL) {
+	 std::pair<double, std::shared_ptr<CHypo>> value(procHyp->getTOrigin(),
+	 procHyp);
+	 std::multiset<std::pair<double, std::shared_ptr<CHypo>>, HypoCompare>::iterator found =  // NOLINT
+	 m_msHypoList.find(value);
+	 if (found != m_msHypoList.end()) {
+	 hyp = *found;
+	 }
+	 }*/
 
 	m_HypoListMutex.unlock();
 
@@ -1177,13 +1188,17 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	}
 
 	// remove from from multiset
-	m_msHypoList.erase(hypo);
-/*	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
-			m_msHypoList.find(hypo);
-	if (it != m_msHypoList.end()) {
-		m_msHypoList.erase(it);
-	}
-*/
+	std::pair<double, std::shared_ptr<CHypo>> value(hypo->getTOrigin(), hypo);
+	m_msHypoList.erase(value);
+
+	/*
+	 std::multiset<std::pair<double, std::shared_ptr<CHypo>>, HypoCompare>::iterator found =  // NOLINT
+	 m_msHypoList.find(value);
+	 if (found != m_msHypoList.end()) {
+	 m_msHypoList.erase(*found);
+	 }
+	 */
+
 	// erase this hypo from the map
 	m_mHypo.erase(pid);
 }
@@ -1298,7 +1313,7 @@ void CHypoList::setHypoMax(int hypoMax) {
 }
 
 // ---------------------------------------------------------updatePosition
-void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
+void CHypoList::updatePosition(std::pair<double, std::shared_ptr<CHypo>> hyp) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 	// from my research, the best way to "update" the position of an item
 	// in a multiset when the key value has changed (in this case, the hypo
@@ -1306,6 +1321,8 @@ void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
 	// complexity for updating one item, which is better than a full sort
 	// (which I'm not really sure how to do on a multiset)
 	m_msHypoList.erase(hyp);
-	m_msHypoList.insert(hyp);
+	m_msHypoList.insert(
+			std::pair<double, std::shared_ptr<CHypo>>(hyp.second->getTOrigin(),
+														hyp.second));
 }
 }  // namespace glasscore
