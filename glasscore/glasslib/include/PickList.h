@@ -11,6 +11,7 @@
 
 #include <json.h>
 #include <set>
+#include <vector>
 #include <memory>
 #include <string>
 #include <utility>
@@ -214,6 +215,8 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * glass3::util::WorkState::Error if not.
 	 */
 	glass3::util::WorkState work() override;
+
+	std::vector<std::weak_ptr<CPick>> getPicks(double t1, double t2);
 
  private:
 	/**

@@ -4,6 +4,7 @@
 #include <memory>
 #include <cmath>
 #include <set>
+#include <vector>
 #include <algorithm>
 #include "Date.h"
 #include "Pid.h"
@@ -185,7 +186,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 
 	// check to see if we're at the correlation limit
 	if (m_msCorrelationList.size() == m_iCorrelationMax) {
-		std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator oldest = // NOLINT
+		std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator oldest =  // NOLINT
 				m_msCorrelationList.begin();
 
 		// find first pick in multiset
@@ -258,6 +259,67 @@ bool CCorrelationList::addCorrelationFromJSON(
 	return (true);
 }
 
+// -----------------------------------------------------getCorrelations
+std::vector<std::weak_ptr<CCorrelation>> CCorrelationList::getCorrelations(
+		double t1, double t2) {
+	std::vector<std::weak_ptr<CCorrelation>> correlations;
+
+	if (t1 == t2) {
+		return (correlations);
+	}
+	if (t1 > t2) {
+		double temp = t2;
+		t2 = t1;
+		t1 = temp;
+	}
+
+	std::shared_ptr<CSite> nullSite;
+
+	// construct the lower bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CCorrelation> lowerValue = std::make_shared<CCorrelation>(
+			nullSite, t1, 0, "", "", 0, 0, 0, 0, 0);
+
+	// construct the upper bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CCorrelation> upperValue = std::make_shared<CCorrelation>(
+			nullSite, t2, 0, "", "", 0, 0, 0, 0, 0);
+
+	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
+
+	// don't bother if the list is empty
+	if (m_msCorrelationList.size() == 0) {
+		return (correlations);
+	}
+
+	// get the bounds for this window
+	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator lower = // NOLINT
+			m_msCorrelationList.lower_bound(lowerValue);
+	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator upper = // NOLINT
+			m_msCorrelationList.upper_bound(upperValue);
+
+	// found nothing
+	if (lower == m_msCorrelationList.end()) {
+		return (correlations);
+	}
+
+	// loop through found picks
+	for (std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator it = // NOLINT
+			lower; ((it != upper) && (it != m_msCorrelationList.end())); ++it) {
+		std::shared_ptr<CCorrelation> aCorrelation = *it;
+
+		if (aCorrelation != NULL) {
+			std::weak_ptr<CCorrelation> awCorrelation = *it;
+
+			// add to the list of hypos
+			correlations.push_back(awCorrelation);
+		}
+	}
+
+	// return the list of picks we found
+	return (correlations);
+}
+
 // -----------------------------------------------------getCorrelation
 bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 										double tWindow, double xWindow) {
@@ -272,75 +334,58 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 		return (false);
 	}
 
-	std::shared_ptr<CSite> nullSite;
+	std::vector<std::weak_ptr<CCorrelation>> correlations = getCorrelations(
+			newCorrelation->getTCorrelation() - tWindow,
+			newCorrelation->getTCorrelation() + tWindow);
 
-	// construct the lower bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CCorrelation>
-	std::shared_ptr<CCorrelation> lowerValue = std::make_shared<CCorrelation>(
-			nullSite, (newCorrelation->getTCorrelation() - tWindow), 0, "", "", 0,
-			0, 0, 0, 0);
-
-	// construct the upper bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CCorrelation>
-	std::shared_ptr<CCorrelation> upperValue = std::make_shared<CCorrelation>(
-			nullSite, (newCorrelation->getTCorrelation() + tWindow), 0, "", "", 0,
-			0, 0, 0, 0);
-
-	// lock while we're searching the list
-	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
-
-	if (m_msCorrelationList.size() == 0) {
+	if (correlations.size() == 0) {
 		return (false);
 	}
 
-	// get the bounds for this window
-	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator lower = // NOLINT
-			std::lower_bound(m_msCorrelationList.begin(),
-								m_msCorrelationList.end(), lowerValue);
-	std::multiset<std::shared_ptr<CCorrelation>, PickCompare>::iterator upper =
-			std::upper_bound(m_msCorrelationList.begin(),
-								m_msCorrelationList.end(), upperValue);
+	// loop through possible matching correlations
+	for (int i = 0; i < correlations.size(); i++) {
+		// make sure pick is still valid before checking
+		if (std::shared_ptr<CCorrelation> currentCorrelation = correlations[i]
+				.lock()) {
+			// check if time difference is within window
+			if (std::abs(
+					newCorrelation->getTCorrelation()
+							- currentCorrelation->getTCorrelation())
+					< tWindow) {
+				// check if sites match
+				if (newCorrelation->getSite()->getSCNL()
+						== currentCorrelation->getSite()->getSCNL()) {
+					glassutil::CGeo geo1;
+					geo1.setGeographic(newCorrelation->getLatitude(),
+										newCorrelation->getLongitude(),
+										newCorrelation->getDepth());
+					glassutil::CGeo geo2;
+					geo2.setGeographic(currentCorrelation->getLatitude(),
+										currentCorrelation->getLongitude(),
+										currentCorrelation->getDepth());
+					double delta = RAD2DEG * geo1.delta(&geo2);
 
-	// don't bother if there's no picks in the window
-	if (lower == upper) {
-		return (false);
-	}
-
-	// loop through possible matching picks
-	for (std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator it = // NOLINT
-			lower; ((it != upper) && (it != m_msCorrelationList.end())); ++it) {
-		std::shared_ptr<CCorrelation> cor = *it;
-		// check if time difference is within window
-		if (std::abs(newCorrelation->getTCorrelation() - cor->getTCorrelation())
-				< tWindow) {
-			// check if sites match
-			if (newCorrelation->getSite()->getSCNL()
-					== cor->getSite()->getSCNL()) {
-				glassutil::CGeo geo1;
-				geo1.setGeographic(newCorrelation->getLatitude(),
-									newCorrelation->getLongitude(),
-									newCorrelation->getDepth());
-				glassutil::CGeo geo2;
-				geo2.setGeographic(cor->getLatitude(), cor->getLongitude(),
-									cor->getDepth());
-				double delta = RAD2DEG * geo1.delta(&geo2);
-
-				// check if distance difference is within window
-				if (delta < xWindow) {
-					// if match is found, log, and return
-					glassutil::CLogit::log(
-							glassutil::log_level::warn,
-							"CCorrelationList::checkDuplicate: Duplicate "
-									"(tWindow = " + std::to_string(tWindow)
-									+ ", xWindow = " + std::to_string(xWindow)
-									+ ") : old:" + cor->getSite()->getSCNL()
-									+ " "
-									+ std::to_string(cor->getTCorrelation())
-									+ " new(del):"
-									+ newCorrelation->getSite()->getSCNL() + " "
-									+ std::to_string(
-											newCorrelation->getTCorrelation()));
-					return (true);
+					// check if distance difference is within window
+					if (delta < xWindow) {
+						// if match is found, log, and return
+						glassutil::CLogit::log(
+								glassutil::log_level::warn,
+								"CCorrelationList::checkDuplicate: Duplicate "
+										"(tWindow = " + std::to_string(tWindow)
+										+ ", xWindow = "
+										+ std::to_string(xWindow) + ") : old:"
+										+ currentCorrelation->getSite()->getSCNL()
+										+ " "
+										+ std::to_string(
+												currentCorrelation
+														->getTCorrelation())
+										+ " new(del):"
+										+ newCorrelation->getSite()->getSCNL()
+										+ " "
+										+ std::to_string(
+												newCorrelation->getTCorrelation()));
+						return (true);
+					}
 				}
 			}
 		}
@@ -370,81 +415,61 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 				"CCorrelationList::scavenge: NULL glass pointer.");
 		return (false);
 	}
-	bool associated = false;
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
 							"CCorrelationList::scavenge. " + hyp->getID());
 
-	std::shared_ptr<CSite> nullSite;
+	bool associated = false;
 
-	// construct the lower bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CCorrelation>
-	std::shared_ptr<CCorrelation> lowerValue = std::make_shared<CCorrelation>(
-			nullSite, (hyp->getTOrigin() - tWindow), 0, "", "", 0, 0, 0, 0, 0);
+	std::vector<std::weak_ptr<CCorrelation>> correlations = getCorrelations(
+			hyp->getTOrigin() - tWindow, hyp->getTOrigin() + tWindow);
 
-	// construct the upper bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CCorrelation>
-	std::shared_ptr<CCorrelation> upperValue = std::make_shared<CCorrelation>(
-			nullSite, (hyp->getTOrigin() + tWindow), 0, "", "", 0, 0, 0, 0, 0);
-
-	// lock while we're searching the list
-	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
-
-	if (m_msCorrelationList.size() == 0) {
+	if (correlations.size() == 0) {
 		return (false);
 	}
 
-	// get the bounds for this window
-	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator lower = // NOLINT
-			std::lower_bound(m_msCorrelationList.begin(),
-								m_msCorrelationList.end(), lowerValue);
-	std::multiset<std::shared_ptr<CCorrelation>, PickCompare>::iterator upper =
-			std::upper_bound(m_msCorrelationList.begin(),
-								m_msCorrelationList.end(), upperValue);
+	// loop through possible matching correlations
+	for (int i = 0; i < correlations.size(); i++) {
+		// make sure pick is still valid before checking
+		if (std::shared_ptr<CCorrelation> currentCorrelation = correlations[i]
+				.lock()) {
+			std::shared_ptr<CHypo> corrHyp = currentCorrelation->getHypo();
 
-	// don't bother if there's no picks in the window
-	if (lower == upper) {
-		return (false);
-	}
+			// check to see if this correlation is already in this hypo
+			if (hyp->hasCorrelation(currentCorrelation)) {
+				// it is, skip it
+				continue;
+			}
 
-	// loop through possible matching picks
-	for (std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator it = // NOLINT
-			lower; ((it != upper) && (it != m_msCorrelationList.end())); ++it) {
-		std::shared_ptr<CCorrelation> corr = *it;
-		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
+			// check to see if this correlation can be associated with this hypo
+			if (!hyp->associate(
+					currentCorrelation,
+					m_pGlass->getCorrelationMatchingTimeWindow(),
+					m_pGlass->getCorrelationMatchingDistanceWindow())) {
+				// it can't, skip it
+				continue;
+			}
 
-		// check to see if this correlation is already in this hypo
-		if (hyp->hasCorrelation(corr)) {
-			// it is, skip it
-			continue;
-		}
+			// check to see if this correlation is part of ANY hypo
+			if (corrHyp == NULL) {
+				// unassociated with any existing hypo
+				// link correlation to the hypo we're working on
+				currentCorrelation->addHypo(hyp, true);
 
-		// check to see if this correlation can be associated with this hypo
-		if (!hyp->associate(corr, m_pGlass->getCorrelationMatchingTimeWindow(),
-							m_pGlass->getCorrelationMatchingDistanceWindow())) {
-			// it can't, skip it
-			continue;
-		}
+				// add correlation to this hypo
+				hyp->addCorrelation(currentCorrelation);
 
-		// check to see if this correlation is part of ANY hypo
-		if (corrHyp == NULL) {
-			// unassociated with any existing hypo
-			// link correlation to the hypo we're working on
-			corr->addHypo(hyp, true);
+				// we've associated a correlation
+				associated = true;
+			} else {
+				// associated with an existing hypo
+				// Add it to this hypo, but don't change the correlation's hypo link
+				// Let resolve() sort out which hypo the correlation fits best with
+				hyp->addCorrelation(currentCorrelation);
 
-			// add correlation to this hypo
-			hyp->addCorrelation(corr);
-
-			// we've associated a correlation
-			associated = true;
-		} else {
-			// associated with an existing hypo
-			// Add it to this hypo, but don't change the correlation's hypo link
-			// Let resolve() sort out which hypo the correlation fits best with
-			hyp->addCorrelation(corr);
-
-			// we've associated a correlation
-			associated = true;
+				// we've associated a correlation
+				associated = true;
+			}
 		}
 	}
 

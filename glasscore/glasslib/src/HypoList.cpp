@@ -780,7 +780,7 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 	std::shared_ptr<traveltime::CTTT> nullTTT;
 
 	// construct the lower bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CPick>
+	// that this be in the form of a std::shared_ptr<CHypo>
 	std::shared_ptr<CHypo> lowerValue = std::make_shared<CHypo>(0, 0, 0, t1, "",
 																"", 0, 0, 0,
 																nullTrav,
@@ -788,7 +788,7 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 																nullTTT);
 
 	// construct the upper bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CPick>
+	// that this be in the form of a std::shared_ptr<CHypo>
 	std::shared_ptr<CHypo> upperValue = std::make_shared<CHypo>(0, 0, 0, t2, "",
 																"", 0, 0, 0,
 																nullTrav,

@@ -1999,17 +1999,6 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 		m_dWebResolution = 100.;
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CHypo::initialize: lat:" + std::to_string(m_dLatitude) + "; lon:"
-					+ std::to_string(m_dLongitude) + "; z:"
-					+ std::to_string(m_dDepth) + "; t:"
-					+ std::to_string(m_tOrigin) + "; sPid:" + m_sID + "; web:"
-					+ m_sWebName + "; bayes:" + std::to_string(m_dBayesValue)
-					+ "; thresh:" + std::to_string(m_dNucleationStackThreshold)
-					+ "; cut:" + std::to_string(m_iNucleationDataThreshold)
-					+ "; resolution:" + std::to_string(m_dWebResolution));
-
 	// make local copies of the travel times so that we don't
 	// have cross-thread contention for them between hypos
 	if (firstTrav != NULL) {

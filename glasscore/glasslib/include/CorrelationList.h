@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <set>
+#include <vector>
 #include <utility>
 #include <atomic>
 #include "Correlation.h"
@@ -200,6 +201,9 @@ class CCorrelationList {
 	 */
 	int size() const;
 
+	std::vector<std::weak_ptr<CCorrelation>> getCorrelations(double t1,
+																double t2);
+
  private:
 	/**
 	 * \brief A pointer to the parent CGlass class, used to send output,
@@ -231,7 +235,7 @@ class CCorrelationList {
 	 * \brief A std::multiset containing each correlation in the list in sequential
 	 * time order from oldest to youngest.
 	 */
-	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare> m_msCorrelationList; // NOLINT
+	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare> m_msCorrelationList;  // NOLINT
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CCorrelationList.

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cmath>
 #include <set>
+#include <vector>
 #include <ctime>
 #include <random>
 #include "Date.h"
@@ -256,6 +257,66 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	return (true);
 }
 
+// -----------------------------------------------------getPicks
+std::vector<std::weak_ptr<CPick>> CPickList::getPicks(double t1, double t2) {
+	std::vector<std::weak_ptr<CPick>> picks;
+
+	if (t1 == t2) {
+		return (picks);
+	}
+	if (t1 > t2) {
+		double temp = t2;
+		t2 = t1;
+		t1 = temp;
+	}
+
+	std::shared_ptr<CSite> nullSite;
+
+	// construct the lower bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(nullSite, t1, 0,
+																"", 0, 0);
+
+	// construct the upper bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(nullSite, t2, 0,
+																"", 0, 0);
+
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
+
+	// don't bother if the list is empty
+	if (m_msPickList.size() == 0) {
+		return (picks);
+	}
+
+	// get the bounds for this window
+	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator lower =
+			m_msPickList.lower_bound(lowerValue);
+	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator upper =
+			m_msPickList.upper_bound(upperValue);
+
+	// found nothing
+	if (lower == m_msPickList.end()) {
+		return (picks);
+	}
+
+	// loop through found picks
+	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
+			((it != upper) && (it != m_msPickList.end())); ++it) {
+		std::shared_ptr<CPick> aPick = *it;
+
+		if (aPick != NULL) {
+			std::weak_ptr<CPick> awPick = *it;
+
+			// add to the list of hypos
+			picks.push_back(awPick);
+		}
+	}
+
+	// return the list of picks we found
+	return (picks);
+}
+
 // -----------------------------------------------------checkDuplicate
 bool CPickList::checkDuplicate(double newTPick, std::string newSCNL,
 								double tWindow) {
@@ -270,68 +331,41 @@ bool CPickList::checkDuplicate(double newTPick, std::string newSCNL,
 		return (false);
 	}
 
-	std::shared_ptr<CSite> nullSite;
+	std::vector<std::weak_ptr<CPick>> picks = getPicks(newTPick - tWindow,
+														newTPick + tWindow);
 
-	// construct the lower bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(
-			nullSite, (newTPick - tWindow), 0, "", 0, 0);
-
-	// construct the upper bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(
-			nullSite, (newTPick + tWindow), 0, "", 0, 0);
-
-	// lock while we're searching the list
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
-	if (m_msPickList.size() == 0) {
-		return (false);
-	}
-
-	// get the bounds for this window
-	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator lower =
-			std::lower_bound(m_msPickList.begin(), m_msPickList.end(),
-								lowerValue);
-	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator upper =
-			std::upper_bound(m_msPickList.begin(), m_msPickList.end(),
-								upperValue);
-
-	// don't bother if there's no picks in the window
-	if (lower == upper) {
+	if (picks.size() == 0) {
 		return (false);
 	}
 
 	// loop through possible matching picks
-	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
-			((it != upper) && (it != m_msPickList.end())); ++it) {
-		std::shared_ptr<CPick> currentPick = *it;
+	for (int i = 0; i < picks.size(); i++) {
+		// make sure pick is still valid before checking
+		if (std::shared_ptr<CPick> currentPick = picks[i].lock()) {
+			// check site
+			if (currentPick->getSite() == NULL) {
+				continue;
+			}
 
-		// nullcheck
-		if (currentPick == NULL) {
-			continue;
-		}
-		if (currentPick->getSite() == NULL) {
-			continue;
-		}
+			// get the values we care about
+			double currentTPick = currentPick->getTPick();
+			std::string currentSCNL = currentPick->getSite()->getSCNL();
 
-		// get the values we care about
-		double currentTPick = currentPick->getTPick();
-		std::string currentSCNL = currentPick->getSite()->getSCNL();
-
-		// check if time difference is within window
-		if (std::abs(newTPick - currentTPick) < tWindow) {
-			// check if sites match
-			if (newSCNL == currentSCNL) {
-				// if match is found, log and return true
-				glassutil::CLogit::log(
-						glassutil::log_level::warn,
-						"CPickList::checkDuplicate: Duplicate (window = "
-								+ std::to_string(tWindow) + ") : old:"
-								+ currentSCNL + " "
-								+ std::to_string(currentTPick) + " new(del):"
-								+ newSCNL + " " + std::to_string(newTPick));
-				return (true);
+			// check if time difference is within window
+			if (std::abs(newTPick - currentTPick) < tWindow) {
+				// check if sites match
+				if (newSCNL == currentSCNL) {
+					// if match is found, log and return true
+					glassutil::CLogit::log(
+							glassutil::log_level::warn,
+							"CPickList::checkDuplicate: Duplicate (window = "
+									+ std::to_string(tWindow) + ") : old:"
+									+ currentSCNL + " "
+									+ std::to_string(currentTPick)
+									+ " new(del):" + newSCNL + " "
+									+ std::to_string(newTPick));
+					return (true);
+				}
 			}
 		}
 	}
@@ -369,83 +403,58 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 	int addCount = 0;
 	bool associated = false;
 
-	std::shared_ptr<CSite> nullSite;
+	std::vector<std::weak_ptr<CPick>> picks = getPicks(
+			hyp->getTOrigin() - tWindow, hyp->getTOrigin() + tWindow);
 
-	// construct the lower bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(
-			nullSite, (hyp->getTOrigin() - tWindow), 0, "", 0, 0);
-
-	// construct the upper bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(
-			nullSite, (hyp->getTOrigin() + tWindow), 0, "", 0, 0);
-
-	// lock while we're searching the list
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
-	if (m_msPickList.size() == 0) {
-		return (false);
-	}
-
-	// get the bounds for this window
-	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator lower =
-			std::lower_bound(m_msPickList.begin(), m_msPickList.end(),
-								lowerValue);
-	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator upper =
-			std::upper_bound(m_msPickList.begin(), m_msPickList.end(),
-								upperValue);
-
-	// don't bother if there's no picks in the window
-	if (lower == upper) {
+	if (picks.size() == 0) {
 		return (false);
 	}
 
 	// loop through possible matching picks
-	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
-			((it != upper) && (it != m_msPickList.end())); ++it) {
-		std::shared_ptr<CPick> pck = *it;
+	for (int i = 0; i < picks.size(); i++) {
+		// make sure pick is still valid before checking
+		if (std::shared_ptr<CPick> currentPick = picks[i].lock()) {
+			// nullcheck
+			if (currentPick == NULL) {
+				continue;
+			}
 
-		// nullcheck
-		if (pck == NULL) {
-			continue;
-		}
+			std::shared_ptr<CHypo> pickHyp = currentPick->getHypo();
 
-		std::shared_ptr<CHypo> pickHyp = pck->getHypo();
+			// check to see if this pick is already in this hypo
+			if (hyp->hasPick(currentPick)) {
+				// it is, skip it
+				continue;
+			}
 
-		// check to see if this pick is already in this hypo
-		if (hyp->hasPick(pck)) {
-			// it is, skip it
-			continue;
-		}
+			// check to see if this pick can be associated with this hypo
+			if (!hyp->associate(currentPick, 1.0, sdassoc)) {
+				// it can't, skip it
+				continue;
+			}
 
-		// check to see if this pick can be associated with this hypo
-		if (!hyp->associate(pck, 1.0, sdassoc)) {
-			// it can't, skip it
-			continue;
-		}
+			// check to see if this pick is part of ANY hypo
+			if (pickHyp == NULL) {
+				// unassociated with any existing hypo
+				// link pick to the hypo we're working on
+				currentPick->addHypo(hyp, true);
 
-		// check to see if this pick is part of ANY hypo
-		if (pickHyp == NULL) {
-			// unassociated with any existing hypo
-			// link pick to the hypo we're working on
-			pck->addHypo(hyp, true);
+				// add pick to this hypo
+				hyp->addPick(currentPick);
 
-			// add pick to this hypo
-			hyp->addPick(pck);
+				// we've associated a pick
+				associated = true;
+				addCount++;
+			} else {
+				// associated with an existing hypo
+				// Add it to this hypo, but don't change the pick's hypo link
+				// Let resolve() sort out which hypo the pick fits best with
+				hyp->addPick(currentPick);
 
-			// we've associated a pick
-			associated = true;
-			addCount++;
-		} else {
-			// associated with an existing hypo
-			// Add it to this hypo, but don't change the pick's hypo link
-			// Let resolve() sort out which hypo the pick fits best with
-			hyp->addPick(pck);
-
-			// we've associated a pick
-			associated = true;
-			addCount++;
+				// we've associated a pick
+				associated = true;
+				addCount++;
+			}
 		}
 	}
 
