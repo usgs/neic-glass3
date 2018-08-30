@@ -908,6 +908,9 @@ class CHypo {
 	void setDepth(double z);
 	void setTOrigin(double newTOrg);
 
+	void setTSort(double newTSort);
+	double getTSort() const;
+
  private:
 	/**
 	 * \brief A pointer to the main CGlass class, used to send output,
@@ -1108,6 +1111,12 @@ class CHypo {
 	 * seconds
 	 */
 	std::atomic<double> m_tCreate;
+
+	/**
+	 * \brief A double value containing this hypo's sort time in julian
+	 * seconds
+	 */
+	std::atomic<double> m_tSort;
 
 	/**
 	 * \brief A vector of shared_ptr's to the pick data that supports this hypo.

@@ -38,11 +38,10 @@ class CCorrelation;
  * inserting, sorting, and retrieving hypos.
  */
 struct HypoCompare {
-	bool operator()(
-			const std::pair<double, std::shared_ptr<CHypo>> &lhs,
-			const std::pair<double, std::shared_ptr<CHypo>> &rhs) const {
-		// sort by torigin
-		if (lhs.first < rhs.first) {
+	bool operator()(const std::shared_ptr<CHypo> &lhs,
+					const std::shared_ptr<CHypo> &rhs) const {
+		// sort by tSort
+		if (lhs->getTSort() < rhs->getTSort()) {
 			return (true);
 		}
 		return (false);
@@ -245,7 +244,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \return Returns a std::shared_ptr to the hypocenter retrieved
 	 * from the queue.
 	 */
-	std::pair<double, std::shared_ptr<CHypo>> getHypoToProcess();
+	std::shared_ptr<CHypo> getHypoToProcess();
 
 	/**
 	 * \brief Remove hypo from list
@@ -321,7 +320,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	/**
 	 * \brief HypoList position update function
 	 */
-	void updatePosition(std::pair<double, std::shared_ptr<CHypo>> hyp);
+	void updatePosition(std::shared_ptr<CHypo> hyp);
 
 	/**
 	 * \brief A pointer to the parent CGlass class, used to send output,
@@ -356,7 +355,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \brief A std::multiset containing each pick in the list in sequential
 	 * time order from oldest to youngest.
 	 */
-	std::multiset<std::pair<double, std::shared_ptr<CHypo>>, HypoCompare> m_msHypoList;  // NOLINT
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare> m_msHypoList;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each hypocenter

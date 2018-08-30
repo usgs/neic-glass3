@@ -1637,6 +1637,10 @@ double CHypo::getTOrigin() const {
 	return (m_tOrigin);
 }
 
+double CHypo::getTSort() const {
+	return(m_tSort);
+}
+
 // ---------------------------------------------------------getWeightedResidual
 double CHypo::getWeightedResidual(std::string sPhase, double tObs,
 									double tCal) {
@@ -1986,6 +1990,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	setLongitude(lon);
 	setDepth(z);
 	setTOrigin(time);
+	setTSort(time);
 	m_sID = pid;
 	m_sWebName = web;
 	m_dBayesValue = bayes;
@@ -2745,6 +2750,10 @@ void CHypo::setDepth(double z) {
 
 void CHypo::setTOrigin(double newTOrg) {
 	m_tOrigin = newTOrg;
+}
+
+void CHypo::setTSort(double newTSort) {
+	m_tSort = newTSort;
 }
 
 void CHypo::setNucleationStackThreshold(double thresh) {
