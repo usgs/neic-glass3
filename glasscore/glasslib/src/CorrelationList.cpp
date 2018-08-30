@@ -185,7 +185,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 	std::pair<double, int> p(corr->getTCorrelation(), m_iCorrelationTotal);
 
 	// check to see if we're at the correlation limit
-	if (m_msCorrelationList.size() == m_iCorrelationMax) {
+	while (m_msCorrelationList.size() >= m_iCorrelationMax) {
 		std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator oldest =  // NOLINT
 				m_msCorrelationList.begin();
 
