@@ -259,9 +259,6 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 // -----------------------------------------------------checkDuplicate
 bool CPickList::checkDuplicate(double newTPick, std::string newSCNL,
 								double tWindow) {
-	// lock while we're searching the list
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
 	// null checks
 	if (newTPick < 0) {
 		return (false);
@@ -282,6 +279,9 @@ bool CPickList::checkDuplicate(double newTPick, std::string newSCNL,
 	// that this be in the form of a std::shared_ptr<CPick>
 	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>();
 	upperValue->initialize(NULL, (newTPick + tWindow), 0, "", 0, 0);
+
+	// lock while we're searching the list
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	if (m_msPickList.size() == 0) {
 		return (false);
@@ -342,8 +342,6 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 	// Scan all picks within specified time range, adding any
 	// that meet association criteria to hypo object provided.
 	// Returns true if any associated.
-	// lock while we're searching the list
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	// null check
 	if (hyp == NULL) {
@@ -378,6 +376,10 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 	// that this be in the form of a std::shared_ptr<CPick>
 	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>();
 	upperValue->initialize(NULL, (hyp->getTOrigin() + tWindow), 0, "", 0, 0);
+
+	// lock while we're searching the list
+	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
+
 
 	if (m_msPickList.size() == 0) {
 		return (false);
@@ -512,38 +514,46 @@ glass3::util::WorkState CPickList::work() {
 	return (glass3::util::WorkState::OK);
 }
 
+// ---------------------------------------------------------getSiteList
 const CSiteList* CPickList::getSiteList() const {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 	return (m_pSiteList);
 }
 
+// ---------------------------------------------------------setSiteList
 void CPickList::setSiteList(CSiteList* siteList) {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 	m_pSiteList = siteList;
 }
 
+// ---------------------------------------------------------getGlass
 const CGlass* CPickList::getGlass() const {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 	return (m_pGlass);
 }
 
+// ---------------------------------------------------------setGlass
 void CPickList::setGlass(CGlass* glass) {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 	m_pGlass = glass;
 }
 
+// ---------------------------------------------------------getPickMax
 int CPickList::getPickMax() const {
 	return (m_iPickMax);
 }
 
+// ---------------------------------------------------------setPickMax
 void CPickList::setPickMax(int picknMax) {
 	m_iPickMax = picknMax;
 }
 
+// ---------------------------------------------------------getPickTotal
 int CPickList::getPickTotal() const {
 	return (m_iPickTotal);
 }
 
+// ---------------------------------------------------------size
 int CPickList::size() const {
 	std::lock_guard<std::recursive_mutex> vPickGuard(m_PickListMutex);
 	return (m_msPickList.size());
