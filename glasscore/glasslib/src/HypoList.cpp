@@ -1177,8 +1177,13 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	}
 
 	// remove from from multiset
-	m_msHypoList.erase(m_msHypoList.find(hypo));
-
+	m_msHypoList.erase(hypo);
+/*	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
+			m_msHypoList.find(hypo);
+	if (it != m_msHypoList.end()) {
+		m_msHypoList.erase(it);
+	}
+*/
 	// erase this hypo from the map
 	m_mHypo.erase(pid);
 }
