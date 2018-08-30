@@ -452,7 +452,7 @@ glass3::util::WorkState CHypoList::work() {
 
 		// reposition the hypo in the list to maintain
 		// time order
-		updatePosition(hyp);
+		// updatePosition(hyp);
 	} catch (const std::exception &e) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
