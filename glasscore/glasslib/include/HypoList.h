@@ -13,6 +13,7 @@
 #include <vector>
 #include <queue>
 #include <map>
+#include <set>
 #include <memory>
 #include <utility>
 #include <string>
@@ -20,15 +21,31 @@
 #include <thread>
 #include <random>
 #include "Glass.h"
+#include "Hypo.h"
 
 namespace glasscore {
 
 // forward declarations
 class CGlass;
 class CSite;
-class CHypo;
 class CPick;
 class CCorrelation;
+
+/**
+ * \brief CHypoList comparison function
+ *
+ * HypoCompare contains the comparison function used by std::multiset when
+ * inserting, sorting, and retrieving hypos.
+ */
+struct HypoCompare {
+	bool operator()(const std::shared_ptr<CHypo> &lhs,
+					const std::shared_ptr<CHypo> &rhs) const {
+		if (lhs->getTOrigin() < rhs->getTOrigin()) {
+			return (true);
+		}
+		return (false);
+	}
+};
 
 /**
  * \brief glasscore hypocenter list class
@@ -198,22 +215,6 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 */
 	int size() const;
 
-	/**
-	 * \brief Get insertion index for hypo
-	 *
-	 * This function looks up the proper insertion index for the vector given an
-	 * origin time using a binary search to identify the index element
-	 * is less than the time provided, and the next element is greater.
-	 *
-	 * \param tOrg - A double value containing the origin time to use, in
-	 * julian seconds of the hypo to add.
-	 * \return Returns the insertion index, if the insertion is before
-	 * the beginning, -1 is returned, if insertion is after the last element,
-	 * the index of the last element is returned, if the vector is empty,
-	 * -2 is returned.
-	 */
-	int indexHypo(double tOrg);
-
 	/** \brief Try to merge events close in space time
 	 *
 	 * 	Tries to created a new event from picks of two nearby events
@@ -316,9 +317,9 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 
  private:
 	/**
-	 * \brief HypoList sort function
+	 * \brief HypoList position update function
 	 */
-	void sort();
+	void updatePosition(std::shared_ptr<CHypo> hyp);
 
 	/**
 	 * \brief A pointer to the parent CGlass class, used to send output,
@@ -350,13 +351,10 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	std::mutex m_vHyposToProcessMutex;
 
 	/**
-	 * \brief A std::vector mapping the origin time of each hypocenter
-	 * in CHypoList to it's std::string hypo id.
-	 *
-	 * Note that the origin time is never updated after the hypocenter is
-	 * first added to CHypoList
+	 * \brief A std::multiset containing each pick in the list in sequential
+	 * time order from oldest to youngest.
 	 */
-	std::vector<std::pair<double, std::string>> m_vHypo;
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare> m_msHypoList;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each hypocenter

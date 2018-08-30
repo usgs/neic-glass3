@@ -30,11 +30,6 @@ CCorrelation::CCorrelation(std::shared_ptr<CSite> correlationSite,
 							double orgZ, double corrVal) {
 	clear();
 
-	// nullcheck
-	if (correlationSite == NULL) {
-		return;
-	}
-
 	initialize(correlationSite, correlationTime, correlationId,
 				correlationIdString, phase, orgTime, orgLat, orgLon, orgZ,
 				corrVal);
@@ -351,11 +346,6 @@ bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
 								double corrVal) {
 	clear();
 
-	// nullcheck
-	if (correlationSite == NULL) {
-		return (false);
-	}
-
 	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
 	m_pSite = correlationSite;
@@ -371,6 +361,11 @@ bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
 	m_dDepth = orgZ;
 
 	m_dCorrelation = corrVal;
+
+	// nullcheck
+	if (correlationSite == NULL) {
+		return (false);
+	}
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,

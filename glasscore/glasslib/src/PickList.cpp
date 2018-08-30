@@ -270,15 +270,17 @@ bool CPickList::checkDuplicate(double newTPick, std::string newSCNL,
 		return (false);
 	}
 
+	std::shared_ptr<CSite> nullSite;
+
 	// construct the lower bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>();
-	lowerValue->initialize(NULL, (newTPick - tWindow), 0, "", 0, 0);
+	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(
+			nullSite, (newTPick - tWindow), 0, "", 0, 0);
 
 	// construct the upper bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>();
-	upperValue->initialize(NULL, (newTPick + tWindow), 0, "", 0, 0);
+	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(
+			nullSite, (newTPick + tWindow), 0, "", 0, 0);
 
 	// lock while we're searching the list
 	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
@@ -367,19 +369,20 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 	int addCount = 0;
 	bool associated = false;
 
+	std::shared_ptr<CSite> nullSite;
+
 	// construct the lower bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>();
-	lowerValue->initialize(NULL, (hyp->getTOrigin() - tWindow), 0, "", 0, 0);
+	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(
+			nullSite, (hyp->getTOrigin() - tWindow), 0, "", 0, 0);
 
 	// construct the upper bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>();
-	upperValue->initialize(NULL, (hyp->getTOrigin() + tWindow), 0, "", 0, 0);
+	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(
+			nullSite, (hyp->getTOrigin() + tWindow), 0, "", 0, 0);
 
 	// lock while we're searching the list
 	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
 
 	if (m_msPickList.size() == 0) {
 		return (false);

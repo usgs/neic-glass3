@@ -10,19 +10,34 @@
 #include <json.h>
 #include <memory>
 #include <string>
-#include <vector>
-#include <map>
+#include <set>
 #include <utility>
 #include <atomic>
+#include "Correlation.h"
 
 namespace glasscore {
 
 // forward declarations
 class CSite;
 class CSiteList;
-class CCorrelation;
 class CHypo;
 class CGlass;
+
+/**
+ * \brief CPickList comparison function
+ *
+ * PickCompare contains the comparison function used by std::multiset when
+ * inserting, sorting, and retrieving picks.
+ */
+struct CorrelationCompare {
+	bool operator()(const std::shared_ptr<CCorrelation> &lhs,
+					const std::shared_ptr<CCorrelation> &rhs) const {
+		if (lhs->getTCorrelation() < rhs->getTCorrelation()) {
+			return (true);
+		}
+		return (false);
+	}
+};
 
 /**
  * \brief glasscore correlation list class
@@ -108,34 +123,6 @@ class CCorrelationList {
 	bool addCorrelationFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
-	 * \brief CCorrelationList get correlation function
-	 *
-	 * Given the integer id of a correlation get a shared_ptr to that correlation.
-	 *
-	 * \param idCorrelation - An integer value containing the id of the
-	 * correlation to get
-	 * \return Returns a shared_ptr to the found CCorrelation, or null if no
-	 * correlation found.
-	 */
-	std::shared_ptr<CCorrelation> getCorrelation(int idCorrelation);
-
-	/**
-	 * \brief Get insertion index for correlation
-	 *
-	 * This function looks up the proper insertion index for the vector given an
-	 * arrival time using a binary search to identify the index element
-	 * is less than the time provided, and the next element is greater.
-	 *
-	 * \param tCorrelation - A double value containing the arrival time to use, in
-	 * julian seconds of the correlation to add.
-	 * \return Returns the insertion index, if the insertion is before
-	 * the beginning, -1 is returned, if insertion is after the last element,
-	 * the id of the last element is returned, if the vector is empty,
-	 * -2 is returned.
-	 */
-	int getInsertionIndex(double tCorrelation);
-
-	/**
 	 * \brief Checks if correlation is duplicate
 	 *
 	 * Takes a new correlation and compares with list of correlations.
@@ -159,12 +146,12 @@ class CCorrelationList {
 	 *
 	 * \param hyp - A shared_ptr to a CHypo object containing the hypocenter
 	 * to attempt to associate to.
-	 * \param tDuration - A double value containing the duration to search picks
+	 * \param tWindow - A double value containing the window to search picks
 	 * from origin time in seconds, defaults to 2.5
 	 * \return Returns true if any picks were associated to the hypocenter,
 	 * false otherwise.
 	 */
-	bool scavenge(std::shared_ptr<CHypo> hyp, double tDuration = 2.5);
+	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2.5);
 
 	/**
 	 * \brief CGlass getter
@@ -241,18 +228,10 @@ class CCorrelationList {
 	std::atomic<int> m_iCorrelationTotal;
 
 	/**
-	 * \brief A std::vector mapping the arrival time of each correlation in
-	 * CCorrelationListto it's integer correlation id. The elements in this
-	 * vector object are inserted in a manner to keep it in sequential time
-	 * order from oldest to youngest.
+	 * \brief A std::multiset containing each correlation in the list in sequential
+	 * time order from oldest to youngest.
 	 */
-	std::vector<std::pair<double, int>> m_vCorrelation;
-
-	/**
-	 * \brief A std::map containing a std::shared_ptr to each correlation in
-	 * CCorrelationList indexed by the integer correlation id.
-	 */
-	std::map<int, std::shared_ptr<CCorrelation>> m_mCorrelation;
+	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare> m_msCorrelationList; // NOLINT
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CCorrelationList.

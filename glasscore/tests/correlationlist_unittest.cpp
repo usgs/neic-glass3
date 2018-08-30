@@ -101,35 +101,12 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	testCorrelationList->setSiteList(testSiteList);
 	testCorrelationList->setCorrelationMax(MAXNCORRELATION);
 
-	// test indexcorrelation when empty
-	ASSERT_EQ(-2, testCorrelationList->getInsertionIndex(0))<<
-	"test indexcorrelation when empty";
-
 	// test adding correlations by addCorrelation and dispatch
 	testCorrelationList->addCorrelationFromJSON(correlationJSON);
 	testCorrelationList->dispatch(correlation3JSON);
 	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testCorrelationList->getCorrelationTotal())<<
 	"Added Correlations";
-
-	// test getting a correlation (first correlation, id 1)
-	std::shared_ptr<glasscore::CCorrelation> testCorrelation =
-			testCorrelationList->getCorrelation(1);
-	// check testcorrelation
-	ASSERT_TRUE(testCorrelation != NULL)<< "testCorrelation not null";
-	// check scnl
-	std::string sitescnl = testCorrelation->getSite()->getSCNL();
-	std::string expectedscnl = std::string(SCNL);
-	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-	"testCorrelation has right scnl";
-
-	// test indexcorrelation
-	ASSERT_EQ(-1, testCorrelationList->getInsertionIndex(TCORRELATION))<<
-	"test indexcorrelation with time before";
-	ASSERT_EQ(1, testCorrelationList->getInsertionIndex(TCORRELATION2))<<
-	"test indexcorrelation with time after";
-	ASSERT_EQ(0, testCorrelationList->getInsertionIndex(TCORRELATION3))<<
-	"test indexcorrelation with time within";
 
 	// add more correlations
 	testCorrelationList->addCorrelationFromJSON(correlation2JSON);
@@ -141,16 +118,6 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	expectedSize = MAXNCORRELATION;
 	ASSERT_EQ(expectedSize, testCorrelationList->size())<<
 	"testCorrelationList not larger than max";
-
-	// get first correlation, which is now id 2
-	std::shared_ptr<glasscore::CCorrelation> test2Correlation =
-			testCorrelationList->getCorrelation(2);
-
-	// check scnl
-	sitescnl = test2Correlation->getSite()->getSCNL();
-	expectedscnl = std::string(SCNL2);
-	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-	"test2Correlation has right scnl";
 
 	// test clearing correlations
 	testCorrelationList->clearCorrelations();

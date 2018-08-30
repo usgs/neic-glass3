@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include <map>
+#include <set>
 #include <ctime>
 #include <random>
 #include "Date.h"
@@ -22,15 +23,6 @@
 #include "Pid.h"
 
 namespace glasscore {
-
-// sort functions
-bool sortHypo(const std::pair<double, std::string> &lhs,
-				const std::pair<double, std::string> &rhs) {
-	if (lhs.first < rhs.first)
-		return (true);
-
-	return (false);
-}
 
 // ---------------------------------------------------------CHypoList
 CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval)
@@ -70,11 +62,6 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	// lock for this scope
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 
-	// Add hypo to cache (mHypo) and time sorted
-	// index (vHypo). If vHypo has reached its
-	// maximum capacity (nHypoMax), then the
-	// first hypo in the vector is removed and the
-	// corresponding entry in the cache is erased.
 	m_iHypoTotal++;
 
 	// get maximum number of hypos
@@ -88,52 +75,23 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 
 	// remove oldest hypo if this new one
 	// pushes us over the limit
-	if (m_vHypo.size() == m_iHypoMax) {
-		// get first hypo in vector
-		std::pair<double, std::string> pdx;
-		pdx = m_vHypo[0];
-		std::shared_ptr<CHypo> firstHypo = m_mHypo[pdx.second];
+	if (m_msHypoList.size() == m_iHypoMax) {
+		std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator oldest =
+				m_msHypoList.begin();
+
+		// find first hypo in multiset
+		std::shared_ptr<CHypo> oldestHypo = *oldest;
 
 		// send expiration message
-		firstHypo->expire();
+		oldestHypo->expire();
 
 		// remove it
-		removeHypo(firstHypo, false);
-
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
-				"CHypoList::addHypo: Current: "
-						+ std::to_string(static_cast<int>(m_vHypo.size()))
-						+ " Max: " + std::to_string(m_iHypoMax)
-						+ " Removing Hypo: " + pdx.second);
+		removeHypo(oldestHypo, false);
 	}
 
-	// Insert new hypo in proper time sequence into hypo vector
-	// get the index of the new hypo
-	int ihypo = indexHypo(hypo->getTOrigin());
-	switch (ihypo) {
-		case -2:
-			// Empty vector, just add it
-			m_vHypo.push_back(p);
-			break;
-		case -1:
-			// hypo is before any others, insert at beginning
-			m_vHypo.insert(m_vHypo.begin(), p);
-			break;
-		default:
-			// hypo is somewhere in vector
-			if (ihypo == m_vHypo.size() - 1) {
-				// hypo is after all other hypos, add to end
-				m_vHypo.push_back(p);
-			} else {
-				// find where the hypo should be inserted
-				auto it = std::next(m_vHypo.begin(), ihypo + 1);
+	// add to multiset
+	m_msHypoList.insert(hypo);
 
-				// insert at that location
-				m_vHypo.insert(it, p);
-			}
-			break;
-	}
 	// add to hypo map
 	m_mHypo[hypo->getID()] = hypo;
 
@@ -411,7 +369,7 @@ void CHypoList::clearHypos() {
 	m_vHyposToProcess.clear();
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
-	m_vHypo.clear();
+	m_msHypoList.clear();
 	m_mHypo.clear();
 
 	// reset
@@ -469,7 +427,6 @@ glass3::util::WorkState CHypoList::work() {
 
 			// remove hypo from the hypo list
 			removeHypo(hyp);
-			sort();
 
 			// done with processing
 			return (glass3::util::WorkState::OK);
@@ -493,9 +450,9 @@ glass3::util::WorkState CHypoList::work() {
 		// process this hypocenter
 		evolve(hyp);
 
-		// resort the hypocenter list to maintain
+		// reposition the hypo in the list to maintain
 		// time order
-		sort();
+		updatePosition(hyp);
 	} catch (const std::exception &e) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -650,7 +607,6 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 				.count();
 
 		removeHypo(hyp);
-		sort();
 
 		std::chrono::high_resolution_clock::time_point tRemoveEndTime =
 				std::chrono::high_resolution_clock::now();
@@ -814,49 +770,56 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 	if (t1 == t2) {
 		return (hypos);
 	}
+	if (t1 > t2) {
+		double temp = t2;
+		t2 = t1;
+		t1 = temp;
+	}
+
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+	std::shared_ptr<traveltime::CTTT> nullTTT;
+
+	// construct the lower bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CHypo> lowerValue = std::make_shared<CHypo>(0, 0, 0, t1, "",
+																"", 0, 0, 0,
+																nullTrav,
+																nullTrav,
+																nullTTT);
+
+	// construct the upper bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CHypo> upperValue = std::make_shared<CHypo>(0, 0, 0, t2, "",
+																"", 0, 0, 0,
+																nullTrav,
+																nullTrav,
+																nullTTT);
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 
 	// don't bother if the list is empty
-	if (m_vHypo.size() == 0) {
+	if (m_msHypoList.size() == 0) {
 		return (hypos);
 	}
 
-	// get the index of the starting time of the selection range
-	int ix1 = indexHypo(t1);
+	// get the bounds for this window
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator lower =
+			m_msHypoList.lower_bound(lowerValue);
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator upper =
+			m_msHypoList.upper_bound(upperValue);
 
-	// check starting index
-	if (ix1 < 0) {
-		// start time is before start of list, set to first index
-		ix1 = 0;
-	}
-
-	if (ix1 >= m_vHypo.size()) {
-		// starting index is greater than or equal to the size of the list,
-		// no hypos to find
+	// found nothing
+	if (lower == m_msHypoList.end()) {
 		return (hypos);
 	}
 
-	// get the index of the ending time of the selection range
-	int ix2 = indexHypo(t2);
-
-	// check ending index
-	if (ix2 < 0) {
-		// end time is before the start of the list
-		// no hypos to find
-		return (hypos);
-	}
-
-	// for each hypo in the list within the
-	// time range
-	for (int it = ix1; it <= ix2; it++) {
-		// get this hypo id
-		std::string pid = m_vHypo[it].second;
-
-		std::shared_ptr<CHypo> aHypo = m_mHypo[pid];
+	// loop through hypos
+	for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it = lower;
+			((it != upper) && (it != m_msHypoList.end())); ++it) {
+		std::shared_ptr<CHypo> aHypo = *it;
 
 		if (aHypo != NULL) {
-			std::weak_ptr<CHypo> awHypo = m_mHypo[pid];
+			std::weak_ptr<CHypo> awHypo = *it;
 
 			// add to the list of hypos
 			hypos.push_back(awHypo);
@@ -880,58 +843,7 @@ int CHypoList::getHypoTotal() const {
 // ---------------------------------------------------------size
 int CHypoList::size() const {
 	std::lock_guard<std::recursive_mutex> vHypoGuard(m_HypoListMutex);
-	return (m_vHypo.size());
-}
-
-// ---------------------------------------------------------indexHypo
-int CHypoList::indexHypo(double tOrg) {
-	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
-
-	// handle empty vector case
-	if (m_vHypo.size() == 0) {
-		// return -2 to indicate empty vector
-		return (-2);
-	}
-
-	double tFirstOrg = m_vHypo[0].first;
-
-	// handle origin earlier than first element case
-	// time is earlier than first origin
-	if (tOrg < tFirstOrg) {
-		// return -1 to indicate earlier than first element
-		return (-1);
-	}
-
-	// handle case that the origin is later than last element
-	int i1 = 0;
-	int i2 = m_vHypo.size() - 1;
-	double tLastOrg = m_vHypo[i2].first;
-	// time is after last origin
-	if (tOrg >= tLastOrg) {
-		return (i2);
-	}
-
-	// search for insertion point within vector
-	// using a binary search
-	// while upper minus lower bounds is greater than one
-	while ((i2 - i1) > 1) {
-		// compute current origin index
-		int ix = (i1 + i2) / 2;
-		double tCurrentOrg = m_vHypo[ix].first;
-
-		// if time is before current origin
-		if (tCurrentOrg > tOrg) {
-			// new upper bound is this index
-			i2 = ix;
-		} else {  // if (tCurrentOrg <= tOrg)
-			// if time is after or equal to current origin
-			// new lower bound is this index
-			i1 = ix;
-		}
-	}
-
-	// return the last lower bound as the insertion point
-	return (i1);
+	return (m_msHypoList.size());
 }
 
 // ---------------------------------------------------------mergeCloseEvents
@@ -957,7 +869,6 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 	// compute the list of hypos to try merging with with
 	// (a potential hypo must be within time cut to consider)
-	sort();
 	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
 			hypo->getTOrigin() - timeCut, hypo->getTOrigin() + timeCut);
 
@@ -1158,7 +1069,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 // ---------------------------------------------------------addHypoToProcess
 int CHypoList::addHypoToProcess(std::shared_ptr<CHypo> hyp) {
-	// don't use a lock guard for queue mutex and vhypo mutex,
+	// don't use a lock guard for queue mutex and vhypolist mutex,
 	// to avoid a deadlock when both mutexes are locked
 	m_vHyposToProcessMutex.lock();
 	int size = m_vHyposToProcess.size();
@@ -1256,30 +1167,17 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	hypo->clearPicks();
 	hypo->clearCorrelations();
 
-	// erase this hypo from the vector
-	// search through all hypos
-	for (int iq = 0; iq < m_vHypo.size(); iq++) {
-		// get current hypo
-		auto q = m_vHypo[iq];
-
-		// if the current hypo matches the id of the
-		// hypo to delete
-		if (q.second == pid) {
-			// erase this hypo
-			m_vHypo.erase(m_vHypo.begin() + iq);
-
-			// Send cancellation message for this hypo
-			if (reportCancel == true) {
-				// only if we've sent an event message
-				if (hypo->getEventSent()) {
-					// create cancellation message
-					hypo->cancel();
-				}
-			}
-			// done
-			break;
+	// Send cancellation message for this hypo
+	if (reportCancel == true) {
+		// only if we've sent an event message
+		if (hypo->getEventSent()) {
+			// create cancellation message
+			hypo->cancel();
 		}
 	}
+
+	// remove from from multiset
+	m_msHypoList.erase(hypo);
 
 	// erase this hypo from the map
 	m_mHypo.erase(pid);
@@ -1394,10 +1292,15 @@ void CHypoList::setHypoMax(int hypoMax) {
 	m_iHypoMax = hypoMax;
 }
 
-// ---------------------------------------------------------sort
-void CHypoList::sort() {
+// ---------------------------------------------------------updatePosition
+void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
-	// sort hypos
-	std::sort(m_vHypo.begin(), m_vHypo.end(), sortHypo);
+	// from my research, the best way to "update" the position of an item
+	// in a multiset when the key value has changed (in this case, the hypo
+	// origin time) is to remove and re-add the item. This will give us O(log n)
+	// complexity for updating one item, which is better than a full sort
+	// (which I'm not really sure how to do on a multiset)
+	m_msHypoList.erase(hyp);
+	m_msHypoList.insert(hyp);
 }
 }  // namespace glasscore

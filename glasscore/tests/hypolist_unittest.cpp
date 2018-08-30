@@ -8,7 +8,7 @@
 #include "Pick.h"
 #include "Logit.h"
 
-#define TESTHYPOID "6"
+#define TESTHYPOID "3"
 
 #define TSTART 3648585220.50
 #define TEND 3648585240.00
@@ -85,22 +85,11 @@ TEST(HypoListTest, HypoOperations) {
 
 	testHypoList->setHypoMax(MAXNHYPO);
 
-	// test indexpick when empty
-	ASSERT_EQ(-2, testHypoList->indexHypo(0))<< "test indexHypo when empty";
-
 	// test adding hypos by addHypo
 	testHypoList->addHypo(hypo1, false);
 	testHypoList->addHypo(hypo2, false);
 	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testHypoList->getHypoTotal())<< "Added Hypos";
-
-	// test indexHypo
-	ASSERT_EQ(-1, testHypoList->indexHypo(TORG))<<
-	"test indexHypo with time before";
-	ASSERT_EQ(1, testHypoList->indexHypo(TORG2))<<
-	"test indexHypo with time after";
-	ASSERT_EQ(0, testHypoList->indexHypo(TORG3))<<
-	"test indexHypo with time within";
 
 	// add more hypos
 	testHypoList->addHypo(hypo3);
