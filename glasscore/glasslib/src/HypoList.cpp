@@ -75,7 +75,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 
 	// remove oldest hypo if this new one
 	// pushes us over the limit
-	while (m_msHypoList.size() >= m_iHypoMax) {
+	if (m_msHypoList.size() == m_iHypoMax) {
 		std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator oldest =
 				m_msHypoList.begin();
 

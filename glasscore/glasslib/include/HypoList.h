@@ -41,7 +41,7 @@ struct HypoCompare {
 	bool operator()(const std::shared_ptr<CHypo> &lhs,
 					const std::shared_ptr<CHypo> &rhs) const {
 		// handle duplicates by ID, since tOrigin can change as the hypo is
-		// relocated
+		// relocated, which makes removing touchy
 		// Two elements of a multiset are considered equivalent if HypoCompare
 		// returns false reflexively (i.e., no matter the order in which the
 		// elements are passed as arguments).
