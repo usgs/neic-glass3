@@ -293,9 +293,9 @@ std::vector<std::weak_ptr<CCorrelation>> CCorrelationList::getCorrelations(
 	}
 
 	// get the bounds for this window
-	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator lower = // NOLINT
+	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator lower =  // NOLINT
 			m_msCorrelationList.lower_bound(lowerValue);
-	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator upper = // NOLINT
+	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator upper =  // NOLINT
 			m_msCorrelationList.upper_bound(upperValue);
 
 	// found nothing
@@ -303,8 +303,21 @@ std::vector<std::weak_ptr<CCorrelation>> CCorrelationList::getCorrelations(
 		return (correlations);
 	}
 
+	// found one
+	if ((lower == upper) && (lower != m_msCorrelationList.end())) {
+		std::shared_ptr<CCorrelation> aCorrelation = *lower;
+
+		if (aCorrelation != NULL) {
+			std::weak_ptr<CCorrelation> awCorrelation = aCorrelation;
+
+			// add to the list of corrleations
+			correlations.push_back(awCorrelation);
+		}
+		return (correlations);
+	}
+
 	// loop through found picks
-	for (std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator it = // NOLINT
+	for (std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator it =  // NOLINT
 			lower; ((it != upper) && (it != m_msCorrelationList.end())); ++it) {
 		std::shared_ptr<CCorrelation> aCorrelation = *it;
 

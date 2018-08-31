@@ -300,13 +300,26 @@ std::vector<std::weak_ptr<CPick>> CPickList::getPicks(double t1, double t2) {
 		return (picks);
 	}
 
+	// found one
+	if ((lower == upper) && (lower != m_msPickList.end())) {
+		std::shared_ptr<CPick> aPick = *lower;
+
+		if (aPick != NULL) {
+			std::weak_ptr<CPick> awPick = aPick;
+
+			// add to the list of picks
+			picks.push_back(awPick);
+		}
+		return (picks);
+	}
+
 	// loop through found picks
 	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
 			((it != upper) && (it != m_msPickList.end())); ++it) {
 		std::shared_ptr<CPick> aPick = *it;
 
 		if (aPick != NULL) {
-			std::weak_ptr<CPick> awPick = *it;
+			std::weak_ptr<CPick> awPick = aPick;
 
 			// add to the list of hypos
 			picks.push_back(awPick);

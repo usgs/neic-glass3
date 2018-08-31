@@ -813,13 +813,26 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 		return (hypos);
 	}
 
+	// found one
+	if ((lower == upper) && (lower != m_msHypoList.end())) {
+		std::shared_ptr<CHypo> aHypo = *lower;
+
+		if (aHypo != NULL) {
+			std::weak_ptr<CHypo> awHypo = aHypo;
+
+			// add to the list of hypos
+			hypos.push_back(awHypo);
+		}
+		return (hypos);
+	}
+
 	// loop through hypos
 	for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it = lower;
 			((it != upper) && (it != m_msHypoList.end())); ++it) {
 		std::shared_ptr<CHypo> aHypo = *it;
 
 		if (aHypo != NULL) {
-			std::weak_ptr<CHypo> awHypo = *it;
+			std::weak_ptr<CHypo> awHypo = aHypo;
 
 			// add to the list of hypos
 			hypos.push_back(awHypo);
@@ -1338,21 +1351,26 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 			std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator> range =
 			m_msHypoList.equal_range(hyp);
 
-	// did we find anything
-	// if (range.first != m_msHypoList.end()) {
+	// only one found
+	if ((range.first == range.second) && (range.first != m_msHypoList.end())) {
+		m_msHypoList.erase(range.first);
+		return;
+	}
+
+	// found more than one
 	// loop through found hypos
 	for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it = range
 			.first; ((it != range.second) && (it != m_msHypoList.end()));
 			++it) {
+		// only erase the correct one
 		if ((*it)->getID() == hyp->getID()) {
 			m_msHypoList.erase(it);
 			return;
 		}
 	}
-	// }
 
 	glassutil::CLogit::log(
 			glassutil::log_level::error,
-			"CHypoList::updatePosition: did not erase hypo from multiset.");
+			"CHypoList::updatePosition: did find hypo in multiset.");
 }
 }  // namespace glasscore
