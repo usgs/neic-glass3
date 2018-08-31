@@ -304,8 +304,6 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 	// This is essentially a faster algorithmic implementation of iterate
 	// nullcheck
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::anneal: NULL pGlass.");
 		return (0);
 	}
 
@@ -700,8 +698,6 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 		return (false);
 	}
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::associate: NULL pGlass.");
 		return (false);
 	}
 	if (m_pTravelTimeTables == NULL) {
@@ -823,8 +819,6 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 		return (false);
 	}
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::associate: NULL pGlass.");
 		return (false);
 	}
 
@@ -921,8 +915,6 @@ bool CHypo::cancelCheck() {
 
 	// nullcheck
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::cancel: NULL pGlass.");
 		return (false);
 	}
 
@@ -1785,8 +1777,6 @@ std::shared_ptr<json::Object> CHypo::hypo(bool send) {
 
 	// null check
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::Hypo: NULL pGlass.");
 		return (hypo);
 	}
 	if (m_pTravelTimeTables == NULL) {
@@ -2030,8 +2020,6 @@ double CHypo::localize() {
 	// Localize this hypo
 	// nullcheck
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::localize: NULL pGlass.");
 		return (0);
 	}
 	char sLog[1024];
@@ -2119,8 +2107,6 @@ void CHypo::lockForProcessing() {
 bool CHypo::prune() {
 	// nullcheck
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::prune: NULL pGlass.");
 		return (false);
 	}
 
@@ -2307,8 +2293,6 @@ void CHypo::removePick(std::shared_ptr<CPick> pck) {
 bool CHypo::reportCheck() {
 	// nullcheck
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::cancel: NULL pGlass.");
 		return (false);
 	}
 
@@ -2364,13 +2348,9 @@ bool CHypo::reportCheck() {
 bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 	// nullchecks
 	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::resolve: NULL pGlass.");
 		return (false);
 	}
 	if (m_pGlass->getHypoList() == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypo::resolve: NULL pGlass pHypoList.");
 		return (false);
 	}
 
