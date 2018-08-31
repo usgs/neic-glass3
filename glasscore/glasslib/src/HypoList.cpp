@@ -1339,17 +1339,17 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 			m_msHypoList.equal_range(hyp);
 
 	// did we find anything
-	if (range.first != m_msHypoList.end()) {
-		// loop through found hypos
-		for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
-				range.first;
-				((it != range.second) && (it != m_msHypoList.end())); ++it) {
-			if ((*it)->getID() == hyp->getID()) {
-				m_msHypoList.erase(it);
-				return;
-			}
+	// if (range.first != m_msHypoList.end()) {
+	// loop through found hypos
+	for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it = range
+			.first; ((it != range.second) && (it != m_msHypoList.end()));
+			++it) {
+		if ((*it)->getID() == hyp->getID()) {
+			m_msHypoList.erase(it);
+			return;
 		}
 	}
+	// }
 
 	glassutil::CLogit::log(
 			glassutil::log_level::error,

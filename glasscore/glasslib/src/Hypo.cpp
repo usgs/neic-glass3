@@ -27,17 +27,6 @@ namespace glasscore {
 
 #define MAXLOCDEPTH 800.0  // The maximum allowed locator depth
 
-/**
- * \brief Pick sorting function used by CHypo, sorts by pick time
- */
-static bool sortPick(std::shared_ptr<CPick> pck1, std::shared_ptr<CPick> pck2) {
-	if (pck2->getTPick() > pck1->getTPick()) {
-		return (true);
-	}
-
-	return (false);
-}
-
 // ---------------------------------------------------------CHypo
 CHypo::CHypo() {
 	// seed the random number generator
@@ -1991,7 +1980,6 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	setLongitude(lon);
 	setDepth(z);
 	setTOrigin(time);
-	printf("init: time %f\n", time);
 	setTSort(time);
 	m_sID = pid;
 	m_sWebName = web;
