@@ -1050,6 +1050,7 @@ void CHypo::clear() {
 	setLongitude(0.0);
 	setDepth(0.0);
 	setTOrigin(0.0);
+	// note that we intentionally do not clear tSort...
 	m_sID = "";
 	m_iNucleationDataThreshold = 0;
 	m_dNucleationStackThreshold = 0.0;

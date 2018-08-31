@@ -1163,22 +1163,15 @@ std::shared_ptr<CHypo> CHypoList::getHypoToProcess() {
 
 // ---------------------------------------------------------removeHypo
 void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
-	// nullcheck
+	// nullchecks
 	if (hypo == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypoList::removeHypo: NULL hypo provided.");
-
 		return;
 	}
-
-	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
-
-	// get the id
-	std::string pid = hypo->getID();
-
-	// unlink all the hypo's data
-	hypo->clearPicks();
-	hypo->clearCorrelations();
+	if (hypo->getID() == "") {
+		return;
+	}
 
 	// Send cancellation message for this hypo
 	if (reportCancel == true) {
@@ -1193,7 +1186,15 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	eraseFromMultiset(hypo);
 
 	// erase this hypo from the map
-	m_mHypo.erase(pid);
+	m_HypoListMutex.lock();
+	m_mHypo.erase(hypo->getID());
+	m_HypoListMutex.unlock();
+
+	// clear all other hypo data
+	// we do this to signify that we've deleted this hypo (to prevent
+	// double remove attempts) and to unlink all the hypo's data so
+	// it can be used by others
+	hypo->clear();
 }
 
 // ---------------------------------------------------------requestHypo
@@ -1307,7 +1308,16 @@ void CHypoList::setHypoMax(int hypoMax) {
 
 // ---------------------------------------------------------updatePosition
 void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
+	// nullchecks
+	if (hyp == NULL) {
+		return;
+	}
+	if (hyp->getID() == "") {
+		return;
+	}
+
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
+
 	// from my research, the best way to "update" the position of an item
 	// in a multiset when the key value has changed (in this case, the hypo
 	// origin time) is to remove and re-add the item. This will give us O(log n)
@@ -1321,36 +1331,55 @@ void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
 
 	// insert
 	m_msHypoList.insert(hyp);
-
-	/*std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
-	 m_msHypoList.find(hyp);
-	 if (it != m_msHypoList.end()) {
-	 m_msHypoList.erase(it);
-
-	 // update tSort
-	 hyp->setTSort(hyp->getTOrigin());
-
-	 // insert
-	 m_msHypoList.insert(hyp);
-	 } else {
-	 glassutil::CLogit::log(
-	 glassutil::log_level::error,
-	 "CHypoList::updatePosition: Could not find hypo in list.");
-	 }*/
 }
 
 // ---------------------------------------------------------updatePosition
 void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
+	// nullchecks
+	if (hyp == NULL) {
+		return;
+	}
+	if (hyp->getID() == "") {
+		return;
+	}
+
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
+
 	if (m_msHypoList.size() == 0) {
 		return;
 	}
 
-	// loop through found hypos, I know this is brute force, but
-	// more elaborate methods don't seem to work, and the hypo list
-	// is relativly small
-	for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
-			m_msHypoList.begin(); (it != m_msHypoList.end()); ++it) {
+	// first, try to delete the hypo the efficient way
+	// we need to be careful, because multiple hypos in the mulitset
+	// can have the same tSort, and a simple erase would delete
+	// them all, which would be BAD, so we need to confirm the id
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator lower =
+			m_msHypoList.lower_bound(hyp);
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator upper =
+			m_msHypoList.upper_bound(hyp);
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it;
+
+	// for all matching (tSort range) hypos
+	for (it = lower; ((it != upper) && (it != m_msHypoList.end())); ++it) {
+		std::shared_ptr<CHypo> aHyp = *it;
+
+		// only erase the correct one
+		if (aHyp->getID() == hyp->getID()) {
+			m_msHypoList.erase(it);
+			return;
+		}
+	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::warn,
+			"CHypoList::eraseFromMultiset: efficient delete for hypo "
+					+ hyp->getID() + " didn't work.");
+
+	// if we didn't delete it efficently, loop through all hypos, I know this is
+	// brute force, but the efficient delete didn't work, and the hypo list is
+	// relativly small and we want to be sure
+	// note: this may just be me being paranoid
+	for (it = m_msHypoList.begin(); (it != m_msHypoList.end()); ++it) {
 		std::shared_ptr<CHypo> aHyp = *it;
 
 		// only erase the correct one
@@ -1363,6 +1392,6 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 	glassutil::CLogit::log(
 			glassutil::log_level::error,
 			"CHypoList::eraseFromMultiset: did not delete hypo " + hyp->getID()
-					+ " in multiset.");
+					+ " in multiset, id not found.");
 }
 }  // namespace glasscore
