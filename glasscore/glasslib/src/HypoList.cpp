@@ -1177,13 +1177,17 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	}
 
 	// remove from from multiset
-	m_msHypoList.erase(hypo);
-/*	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
+	// m_msHypoList.erase(hypo);
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
 			m_msHypoList.find(hypo);
 	if (it != m_msHypoList.end()) {
 		m_msHypoList.erase(it);
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CHypoList::removeHypo: Could not find hypo in list.");
 	}
-*/
+
 	// erase this hypo from the map
 	m_mHypo.erase(pid);
 }
@@ -1306,12 +1310,21 @@ void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
 	// complexity for updating one item, which is better than a full sort
 	// (which I'm not really sure how to do on a multiset)
 	// erase
-	m_msHypoList.erase(hyp);
+	// m_msHypoList.erase(hyp);
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
+			m_msHypoList.find(hyp);
+	if (it != m_msHypoList.end()) {
+		m_msHypoList.erase(it);
 
-	// update tSort
-	hyp->setTSort(hyp->getTOrigin());
+		// update tSort
+		hyp->setTSort(hyp->getTOrigin());
 
-	// insert
-	m_msHypoList.insert(hyp);
+		// insert
+		m_msHypoList.insert(hyp);
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CHypoList::updatePosition: Could not find hypo in list.");
+	}
 }
 }  // namespace glasscore
