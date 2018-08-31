@@ -448,11 +448,11 @@ glass3::util::WorkState CHypoList::work() {
 		}
 
 		// process this hypocenter
-		evolve(hyp);
-
-		// reposition the hypo in the list to maintain
-		// time order
-		updatePosition(hyp);
+		if (evolve(hyp) == true) {
+			// reposition the hypo in the list to maintain
+			// time order
+			updatePosition(hyp);
+		}
 	} catch (const std::exception &e) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -1346,24 +1346,19 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
-	// get the range of possible values (since we sort on an int)
-	std::pair<std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator,
-			std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator> range =
-			m_msHypoList.equal_range(hyp);
+	// get the possible hypos for this window
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator lower =
+			m_msHypoList.lower_bound(hyp);
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator upper =
+			m_msHypoList.upper_bound(hyp);
 
-	// only one found
-	if ((range.first == range.second) && (range.first != m_msHypoList.end())) {
-		m_msHypoList.erase(range.first);
-		return;
-	}
-
-	// found more than one
 	// loop through found hypos
-	for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it = range
-			.first; ((it != range.second) && (it != m_msHypoList.end()));
-			++it) {
+	for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it = lower;
+			((it != upper) && (it != m_msHypoList.end())); ++it) {
+		std::shared_ptr<CHypo> aHyp = *it;
+
 		// only erase the correct one
-		if ((*it)->getID() == hyp->getID()) {
+		if (aHyp->getID() == hyp->getID()) {
 			m_msHypoList.erase(it);
 			return;
 		}
@@ -1371,6 +1366,6 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::error,
-			"CHypoList::updatePosition: did find hypo in multiset.");
+			"CHypoList::eraseFromMultiset: did not find hypo in multiset.");
 }
 }  // namespace glasscore
