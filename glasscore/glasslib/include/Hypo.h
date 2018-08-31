@@ -909,7 +909,7 @@ class CHypo {
 	void setTOrigin(double newTOrg);
 
 	void setTSort(double newTSort);
-	double getTSort() const;
+	int64_t getTSort() const;
 
  private:
 	/**
@@ -1113,10 +1113,10 @@ class CHypo {
 	std::atomic<double> m_tCreate;
 
 	/**
-	 * \brief A double value containing this hypo's sort time in julian
+	 * \brief An int value containing this hypo's sort time in julian
 	 * seconds
 	 */
-	std::atomic<double> m_tSort;
+	std::atomic<int64_t> m_tSort;
 
 	/**
 	 * \brief A vector of shared_ptr's to the pick data that supports this hypo.

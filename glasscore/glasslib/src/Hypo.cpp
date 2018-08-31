@@ -1,4 +1,5 @@
 #include <json.h>
+#include <math.h>
 #include <string>
 #include <algorithm>
 #include <memory>
@@ -1637,7 +1638,7 @@ double CHypo::getTOrigin() const {
 	return (m_tOrigin);
 }
 
-double CHypo::getTSort() const {
+int64_t CHypo::getTSort() const {
 	return(m_tSort);
 }
 
@@ -1990,6 +1991,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	setLongitude(lon);
 	setDepth(z);
 	setTOrigin(time);
+	printf("init: time %f\n", time);
 	setTSort(time);
 	m_sID = pid;
 	m_sWebName = web;
@@ -2753,7 +2755,7 @@ void CHypo::setTOrigin(double newTOrg) {
 }
 
 void CHypo::setTSort(double newTSort) {
-	m_tSort = newTSort;
+	m_tSort = std::floor(newTSort);
 }
 
 void CHypo::setNucleationStackThreshold(double thresh) {

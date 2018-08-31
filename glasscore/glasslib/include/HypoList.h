@@ -322,6 +322,8 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 */
 	void updatePosition(std::shared_ptr<CHypo> hyp);
 
+	void eraseFromMultiset(std::shared_ptr<CHypo> hyp);
+
 	/**
 	 * \brief A pointer to the parent CGlass class, used to send output,
 	 * encode/decode time, get configuration values, and debug flags

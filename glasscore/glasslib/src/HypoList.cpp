@@ -1177,27 +1177,7 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	}
 
 	// remove from from multiset
-	int num = m_msHypoList.erase(hypo);
-
-	if (num == 0) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CHypoList::updatePosition: did not erase hypo in list.");
-	} else if (num > 1) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CHypoList::updatePosition: erased multiple hypos in list.");
-	}
-
-	/*std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
-	 m_msHypoList.find(hypo);
-	 if (it != m_msHypoList.end()) {
-	 m_msHypoList.erase(it);
-	 } else {
-	 glassutil::CLogit::log(
-	 glassutil::log_level::error,
-	 "CHypoList::removeHypo: Could not find hypo in list.");
-	 }*/
+	eraseFromMultiset(hypo);
 
 	// erase this hypo from the map
 	m_mHypo.erase(pid);
@@ -1321,17 +1301,7 @@ void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
 	// complexity for updating one item, which is better than a full sort
 	// (which I'm not really sure how to do on a multiset)
 	// erase
-	int num = m_msHypoList.erase(hyp);
-
-	if (num == 0) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CHypoList::updatePosition: did not erase hypo in list.");
-	} else if (num > 1) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CHypoList::updatePosition: erased multiple hypos in list.");
-	}
+	eraseFromMultiset(hyp);
 
 	// update tSort
 	hyp->setTSort(hyp->getTOrigin());
@@ -1354,5 +1324,35 @@ void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
 	 glassutil::log_level::error,
 	 "CHypoList::updatePosition: Could not find hypo in list.");
 	 }*/
+}
+
+// ---------------------------------------------------------updatePosition
+void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
+	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
+	if (m_msHypoList.size() == 0) {
+		return;
+	}
+
+	// get the range of possible values (since we sort on an int)
+	std::pair<std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator,
+			std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator> range =
+			m_msHypoList.equal_range(hyp);
+
+	// did we find anything
+	if (range.first != m_msHypoList.end()) {
+		// loop through found hypos
+		for (std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator it =
+				range.first;
+				((it != range.second) && (it != m_msHypoList.end())); ++it) {
+			if ((*it)->getID() == hyp->getID()) {
+				m_msHypoList.erase(it);
+				return;
+			}
+		}
+	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::error,
+			"CHypoList::updatePosition: did not erase hypo from multiset.");
 }
 }  // namespace glasscore

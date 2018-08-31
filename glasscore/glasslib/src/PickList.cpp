@@ -206,7 +206,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	m_PickListMutex.lock();
 
 	// check to see if we're at the pick limit
-	while (m_msPickList.size() >= m_iPickMax) {
+	if (m_msPickList.size() == m_iPickMax) {
 		std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator oldest =
 				m_msPickList.begin();
 
