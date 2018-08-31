@@ -20,7 +20,7 @@
 #include "HypoList.h"
 #include "Logit.h"
 
-#define MAX_QUEUE_FACTOR 3
+#define MAX_QUEUE_FACTOR 10
 
 namespace glasscore {
 
@@ -162,6 +162,25 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		return (false);
 	}
 
+	// get the current size of the queue
+	m_PicksToProcessMutex.lock();
+	int queueSize = m_qPicksToProcess.size();
+	m_PicksToProcessMutex.unlock();
+
+	while (queueSize >= (getNumThreads() * MAX_QUEUE_FACTOR)) {
+		/* glassutil::CLogit::log(glassutil::log_level::debug,
+		 "CPickList::addPick. Delaying work due to "
+		 "PickList process queue size."); */
+
+		setThreadHealth();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+		// check to see if the queue has changed size
+		m_PicksToProcessMutex.lock();
+		queueSize = m_qPicksToProcess.size();
+		m_PicksToProcessMutex.unlock();
+	}
+
 	// create new pick from json message
 	CPick * newPick = new CPick(pick, m_iPickTotal + 1, m_pSiteList);
 
@@ -229,24 +248,10 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// done modifying the multiset
 	m_PickListMutex.unlock();
 
-	// get the current size of the queue
-	m_PicksToProcessMutex.lock();
-	int queueSize = m_qPicksToProcess.size();
-	m_PicksToProcessMutex.unlock();
-
 	// wait until there's space in the queue
 	// we don't want to build up a huge queue of unprocessed
 	// picks
 	if ((m_pGlass) && (m_pGlass->getHypoList())) {
-		while (queueSize >= (getNumThreads() * MAX_QUEUE_FACTOR)) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-			// check to see if the queue has changed size
-			m_PicksToProcessMutex.lock();
-			queueSize = m_qPicksToProcess.size();
-			m_PicksToProcessMutex.unlock();
-		}
-
 		// add pick to processing list
 		m_PicksToProcessMutex.lock();
 		m_qPicksToProcess.push(pck);
