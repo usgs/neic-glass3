@@ -96,7 +96,7 @@ TEST(HypoTest, Construction) {
 	ASSERT_STREQ("", testHypo->getWebName().c_str())<< "sWeb is empty";
 	ASSERT_EQ(0, testHypo->getBayesValue())<< "dBayes is zero";
 	ASSERT_EQ(0, testHypo->getNucleationStackThreshold())<< "dThresh is zero";
-	ASSERT_EQ(0, testHypo->getDistanceCutoff())<< "nCut is zero";
+	ASSERT_EQ(0, testHypo->getAssociationDistanceCutoff())<< "nCut is zero";
 	ASSERT_EQ(0, testHypo->getCycleCount())<< "iCycle is zero";
 	ASSERT_EQ(0, testHypo->getMedianDistance())<< "dMed is zero";
 	ASSERT_EQ(0, testHypo->getMinDistance())<< "dMin is zero";
@@ -174,9 +174,9 @@ TEST(HypoTest, PickOperations) {
 	std::shared_ptr<glasscore::CPick> sharedPick3(testPick3);
 
 	// add picks to hypo
-	testHypo->addPick(sharedPick);
-	testHypo->addPick(sharedPick2);
-	testHypo->addPick(sharedPick3);
+	testHypo->addPickReference(sharedPick);
+	testHypo->addPickReference(sharedPick2);
+	testHypo->addPickReference(sharedPick3);
 
 	// check to make sure the size isn't any larger than our max
 	int expectedSize = MAXNPICK;
@@ -184,8 +184,8 @@ TEST(HypoTest, PickOperations) {
 	"hypo vPick not larger than max";
 
 	// remove picks from hypo
-	testHypo->removePick(sharedPick);
-	testHypo->removePick(sharedPick2);
+	testHypo->removePickReference(sharedPick);
+	testHypo->removePickReference(sharedPick2);
 
 	// check to see that only one pick remains
 	expectedSize = 1;

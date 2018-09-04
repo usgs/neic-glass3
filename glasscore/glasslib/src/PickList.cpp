@@ -440,7 +440,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 			std::shared_ptr<CHypo> pickHyp = currentPick->getHypo();
 
 			// check to see if this pick is already in this hypo
-			if (hyp->hasPick(currentPick)) {
+			if (hyp->hasPickReference(currentPick)) {
 				// it is, skip it
 				continue;
 			}
@@ -458,7 +458,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 				currentPick->addHypo(hyp, true);
 
 				// add pick to this hypo
-				hyp->addPick(currentPick);
+				hyp->addPickReference(currentPick);
 
 				// we've associated a pick
 				associated = true;
@@ -467,7 +467,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 				// associated with an existing hypo
 				// Add it to this hypo, but don't change the pick's hypo link
 				// Let resolve() sort out which hypo the pick fits best with
-				hyp->addPick(currentPick);
+				hyp->addPickReference(currentPick);
 
 				// we've associated a pick
 				associated = true;

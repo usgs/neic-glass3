@@ -50,14 +50,11 @@ struct PickCompare {
 /**
  * \brief glasscore pick list class
  *
- * The CPickList class is the class that maintains a std::map of all the
+ * The CPickList class is the class that maintains a std::multiset of all the
  * waveform arrival picks being considered by glasscore.
  *
- * CPickList also maintains a std::vector mapping the double pick arrival time
- * (in julian seconds) to the std::string pick id
  *
- * CPickList contains functions to support pick scavenging, resoultion, rogue
- * tracking, and new data input.
+ * CPickList contains functions to support pick parsing, scavenging, and nucleation.
  *
  * CPickList uses smart pointers (std::shared_ptr).
  */

@@ -32,32 +32,35 @@ class CHypo;
  * CCorrelation contains functions to support creation of a new event based
  * on the correlation.
  *
- * CCorrelation maintains a graph database link between it and the the site (station)
- * the correlation was made at.
+ * CCorrelation maintains a graph database link between it and the the site
+ * (station) the correlation was made at.
  *
- * CCorrelation also maintains a vector of CHypo objects represent the graph database
- * links between  this correlation and various hypocenters.  A single correlation may be
- * linked to multiple hypocenters
+ * CCorrelation also maintains a weak_ptr to a CHypo object representing a graph
+ * database link between this correlation and a hypocenters.  A single
+ * correlation may be included in multiple hypocenters, but a correlation will
+ * only include a single hypocenter
  *
  * CCorrelation uses smart pointers (std::shared_ptr).
  */
 class CCorrelation {
  public:
 	/**
-	 * \brief CCorrelation constructor
+	 * \brief CCorrelation default constructor
+	 *
+	 * The default constructor for the CCorrelation class.
+	 * Initializes members to default values.
 	 */
 	CCorrelation();
 
 	/**
-	 * \brief CCorrelation alternate constructor
+	 * \brief CCorrelation advanced constructor
 	 *
-	 * Constructs a CCorellation using the provided values
+	 * An advanced constructor for the CCorrelation class. This function
+	 * initializing members to the provided values.
 	 *
 	 * \param correlationSite - A shared pointer to a CSite object that the
 	 * correlation wasmade at
 	 * \param correlationTime - A double containing the correlation arrival time
-	 * \param correlationId - An integer containing the glass correlation id
-	 * (index) to use.
 	 * \param correlationIdString - A std::string containing the external
 	 * correlation id.
 	 * \param phase - A std::string containing the phase name
@@ -71,21 +74,24 @@ class CCorrelation {
 	 * \param corrVal - A double containing the correlation value
 	 */
 	CCorrelation(std::shared_ptr<CSite> correlationSite, double correlationTime,
-					int correlationId, std::string correlationIdString,
-					std::string phase, double orgTime, double orgLat,
-					double orgLon, double orgZ, double corrVal);
+					std::string correlationIdString, std::string phase,
+					double orgTime, double orgLat, double orgLon, double orgZ,
+					double corrVal);
 
 	/**
-	 * \brief CCorrelation alternate constructor
+	 * \brief CCorrelation advanced constructor
 	 *
-	 * Constructs a CCorrelation class from the provided json object and id, using
-	 * a CGlass pointer to convert times and lookup stations.
+	 * An advanced constructor for the CCorrelation class. This function
+	 * initializing members to the values parsed from the provided json object,
+	 * identified by the provided id, and using the provided pointer to a
+	 * CSiteList class to lookup the correlation station.
 	 *
-	 * \param correlation - A pointer to a json::Object to construct the correlation from
-	 * \param correlationId - An integer containing the correlation id to use.
-	 * \param pSiteList - A pointer to the CSiteList class
+	 * \param correlation - A shared pointer to a json::Object to containing the
+	 * data construct the correlation from
+	 * \param pSiteList - A pointer to the CSiteList class to use when looking
+	 * up the correlation station
 	 */
-	CCorrelation(std::shared_ptr<json::Object> correlation, int correlationId,
+	CCorrelation(std::shared_ptr<json::Object> correlation,
 					CSiteList *pSiteList);
 
 	/**
@@ -106,8 +112,6 @@ class CCorrelation {
 	 * \param correlationSite - A shared pointer to a CSite object that the
 	 * correlation wasmade at
 	 * \param correlationTime - A double containing the correlation arrival time
-	 * \param correlationId - An integer containing the glass correlation id
-	 * (index) to use.
 	 * \param correlationIdString - A std::string containing the external
 	 * correlation id.
 	 * \param phase - A std::string containing the phase name
@@ -122,157 +126,168 @@ class CCorrelation {
 	 * \return Returns true if successful, false otherwise.
 	 */
 	bool initialize(std::shared_ptr<CSite> correlationSite,
-					double correlationTime, int correlationId,
-					std::string correlationIdString, std::string phase,
-					double orgTime, double orgLat, double orgLon, double orgZ,
-					double corrVal);
+					double correlationTime, std::string correlationIdString,
+					std::string phase, double orgTime, double orgLat,
+					double orgLon, double orgZ, double corrVal);
 
 	/**
-	 * \brief Add hypo reference to this correlation
+	 * \brief Add a hypo reference to this correlation
 	 *
-	 * Adds a shared_ptr reference to the given hypo to this correlation,
-	 * representing a graph database link between this correlation and the
-	 * hypocenters.
+	 * Adds a weak_ptr reference to the given hypo to this correlation,
+	 * representing a graph database link between this correlation and a
+	 * hypocenter. If the correlation is already linked to a hypocenter,
+	 * the new link will be ignored unless force is set to true.
 	 *
-	 * Note that this correlation may or may not also be linked
-	 * to other hypocenters
+	 * Note that this correlation may or may not also be included in other
+	 * hypocenter correlation data lists, but this correlation will only link to
+	 * a single hypocenter
 	 *
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to link.
 	 * \param force - A boolean flag indicating whether to force the association,
 	 * defaults to false.
 	 */
-	void addHypo(std::shared_ptr<CHypo> hyp, bool force =
-							false);
+	void addHypoReference(std::shared_ptr<CHypo> hyp, bool force = false);
 
 	/**
 	 * \brief Remove hypo specific reference to this correlation
 	 *
-	 * Remove a shared_ptr reference from the given hypo to this correlation,
+	 * Remove a weak_ptr reference to the given hypo from this correlation,
 	 * breaking the graph database link between this correlation and the
 	 * hypocenter.
 	 *
-	 * Note that this correlation may or may not be still linked
-	 * to other hypocenters
+	 * Note that this correlation may or may not still be included in other
+	 * hypocenter correlation data lists.
 	 *
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to unlink.
 	 */
-	void removeHypo(std::shared_ptr<CHypo> hyp);
+	void removeHypoReference(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Remove hypo specific reference to this correlation
+	 * \brief Remove hypo specific reference to this correlation by id
 	 *
-	 * Remove a shared_ptr reference from the given hypo id to this correlation,
+	 * Remove a weak_ptr reference to the given hypo id from this correlation,
 	 * breaking the graph database link between this correlation and the
 	 * hypocenter.
 	 *
-	 * Note that this correlation may or may not be still linked
-	 * to other hypocenters
+	 * Note that this correlation may or may not still be included in other
+	 * hypocenter correlation data lists.
 	 *
 	 * \param pid - A std::string identifying the the hypocenter to unlink.
 	 */
-	void removeHypo(std::string pid);
+	void removeHypoReference(std::string pid);
 
 	/**
 	 * \brief Remove hypo reference to this correlation
 	 *
-	 * Remove any shared_ptr reference from this correlation, breaking the graph
-	 * database link between this correlation and any hypocenter.
+	 * Remove any existing weak_ptr reference to a hypo from this correlation,
+	 * breaking the graph database link between this correlation a hypocenter.
+	 *
+	 * Note that this correlation may or may not still be included in other
+	 * hypocenter correlation data lists.
 	 */
-	void clearHypo();
+	void clearHypoReference();
 
 	/**
-	 * \brief Correlation value getter
-	 * \return the correlation value
+	 * \brief Get the correlation value for this correlation
+	 * \return Return a double containing the correlation value
 	 */
 	double getCorrelation() const;
 
 	/**
-	 * \brief Latitude getter
-	 * \return the latitude
+	 * \brief Get the correlation source longitude for this correlation
+	 * \return Return a double containing the correlation source latitude
 	 */
 	double getLatitude() const;
 
 	/**
-	 * \brief Longitude getter
-	 * \return the longitude
+	 * \brief Get the correlation source longitude for this correlation
+	 * \return Return a double containing the correlation source longitude
 	 */
 	double getLongitude() const;
 
 	/**
-	 * \brief Depth getter
-	 * \return the depth
+	 * \brief Get the correlation source depth for this correlation
+	 * \return Return a double containing the correlation source depth
 	 */
 	double getDepth() const;
 
 	/**
-	 * \brief Origin time getter
-	 * \return the origin time
+	 * \brief Get the correlation source origin time for this correlation
+	 * \return Return a double containing the correlation source origin time
 	 */
 	double getTOrigin() const;
 
 	/**
-	 * \brief Correlation id getter
-	 * \return the correlation id
-	 */
-	int getCorrelationID() const;
-
-	/**
-	 * \brief Json correlation getter
-	 * \return the json correlation
+	 * \brief Get input JSON correlation message
+	 * \return Return a shared_ptr to a json::Object containing the correlation
+	 * message
 	 */
 	const std::shared_ptr<json::Object>& getJSONCorrelation() const;
 
 	/**
-	 * \brief Hypo getter
-	 * \return the hypo
+	 * \brief Get the current hypo reference to this correlation
+	 *
+	 * Note that this correlation may or may not also be included in other
+	 * hypocenter correlation data lists, but this correlation will only link to
+	 * a single hypocenter
+	 *
+	 * \return Return a shared_ptr to the CHypo referenced by this correlation,
+	 * or NULL if no hypo is referenced
 	 */
-	const std::shared_ptr<CHypo> getHypo() const;
+	const std::shared_ptr<CHypo> getHypoReference() const;
 
 	/**
-	 * \brief Pid getter
-	 * \return the pid
+	 * \brief Get the ID of the current hypo reference to this correlation
+	 *
+	 * Note that this correlation may or may not also be included in other
+	 * hypocenter correlation data lists, but this correlation will only link to
+	 * a single hypocenter
+	 *
+	 *  \return Return a std::string containing the ID of the CHypo referenced by
+	 * this correlation, or an empty string if no hypo is referenced
 	 */
-	const std::string getHypoID() const;
+	const std::string getHypoReferenceID() const;
 
 	/**
-	 * \brief Site getter
-	 * \return the site
+	 * \brief Get the set for this correlation
+	 * \return Return a shared_ptr to a CSite object containing the site this
+	 * correlation was made at
 	 */
-	const std::shared_ptr<CSite>& getSite() const;
+	const std::shared_ptr<CSite> getSite() const;
 
 	/**
-	 * \brief Phase getter
-	 * \return the phase
+	 * \brief Get the phase name for this correlation
+	 * \return Return a std::string containing the correlation phase name
 	 */
 	const std::string& getPhaseName() const;
 
 	/**
-	 * \brief Pid getter
-	 * \return the pid
+	 * \brief Get the ID of this correlation
+	 * \return Return a std::string containing the correlation ID
 	 */
 	const std::string& getID() const;
 
 	/**
-	 * \brief Correlation time getter
-	 * \return the correlation time
+	 * \brief Get the arrival time for this correlation
+	 * \return Return a double containing the correlation arrival time
 	 */
 	double getTCorrelation() const;
 
 	/**
-	 * \brief Creation time getter
-	 * \return the creation time
+	 * \brief Get the creation (insertion) time of this correlation
+	 * \return Return a double containing the correlation creation time
 	 */
 	double getTCreate() const;
 
  private:
 	/**
-	 * \brief A std::shared_ptr to a CSite object
+	 * \brief A std::weak_ptr to a CSite object
 	 * representing the link between this correlation and the site it was
 	 * correlated at
 	 */
-	std::shared_ptr<CSite> m_pSite;
+	std::weak_ptr<CSite> m_wpSite;
 
 	/**
 	 * \brief A std::weak_ptr to a CHypo object
@@ -286,14 +301,9 @@ class CCorrelation {
 	std::string m_sPhaseName;
 
 	/**
-	 * \brief A std::string containing the string unique id of this correlation
+	 * \brief A std::string containing the unique string id of this correlation
 	 */
 	std::string m_sID;
-
-	/**
-	 * \brief An integer value containing the numeric id of the correlation
-	 */
-	std::atomic<int> m_iCorrelationID;
 
 	/**
 	 * \brief A double value containing the arrival time of the correlation
@@ -328,15 +338,15 @@ class CCorrelation {
 	std::atomic<double> m_dCorrelation;
 
 	/**
-	 * \brief A double value containing the creation time of the correlation in
-	 * glass
+	 * \brief A double value containing the creation (insertion) time of the
+	 * correlation in glass in julian seconds
 	 */
 	std::atomic<double> m_tCreate;
 
 	/**
-	 * \brief A std::shared_ptr to a json object
-	 * representing the original correlation input, used in accessing
-	 * information not relevant to glass that are needed for generating outputs.
+	 * \brief A std::shared_ptr to a json object representing the original
+	 * correlation input message, used in accessing information not relevant to
+	 * glass that are needed for generating outputs.
 	 */
 	std::shared_ptr<json::Object> m_JSONCorrelation;
 

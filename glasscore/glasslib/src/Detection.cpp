@@ -67,7 +67,7 @@ bool CDetection::dispatch(std::shared_ptr<json::Object> com) {
 
 		// add a detection
 		if (v == "Detection") {
-			return (process(com));
+			return (processDetectionMessage(com));
 		}
 	}
 
@@ -76,7 +76,7 @@ bool CDetection::dispatch(std::shared_ptr<json::Object> com) {
 }
 
 // ---------------------------------------------------------process
-bool CDetection::process(std::shared_ptr<json::Object> com) {
+bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(

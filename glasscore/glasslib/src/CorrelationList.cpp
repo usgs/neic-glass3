@@ -39,14 +39,6 @@ void CCorrelationList::clear() {
 	m_pGlass = NULL;
 	m_pSiteList = NULL;
 
-	// clear correlations
-	clearCorrelations();
-}
-
-// ---------------------------------------------------------clearCorrelations
-void CCorrelationList::clearCorrelations() {
-	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
-
 	// clear the multiset
 	m_msCorrelationList.clear();
 
@@ -138,9 +130,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 	}
 
 	// create new correlation from json message
-	CCorrelation * newCorrelation = new CCorrelation(correlation,
-														m_iCorrelationTotal + 1,
-														m_pSiteList);
+	CCorrelation * newCorrelation = new CCorrelation(correlation, m_pSiteList);
 
 	// check to see if we got a valid correlation
 	if ((newCorrelation->getSite() == NULL)
@@ -227,10 +217,10 @@ bool CCorrelationList::addCorrelationFromJSON(
 					m_pGlass->getNucleationStackThreshold());
 
 			// add correlation to hypo
-			hypo->addCorrelation(corr);
+			hypo->addCorrelationReference(corr);
 
 			// link the correlation to the hypo
-			corr->addHypo(hypo);
+			corr->addHypoReference(hypo);
 
 			// Add other data to this hypo
 			// Search for any associable picks that match hypo in the pick list
@@ -278,12 +268,12 @@ std::vector<std::weak_ptr<CCorrelation>> CCorrelationList::getCorrelations(
 	// construct the lower bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
 	std::shared_ptr<CCorrelation> lowerValue = std::make_shared<CCorrelation>(
-			nullSite, t1, 0, "", "", 0, 0, 0, 0, 0);
+			nullSite, t1, "", "", 0, 0, 0, 0, 0);
 
 	// construct the upper bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
 	std::shared_ptr<CCorrelation> upperValue = std::make_shared<CCorrelation>(
-			nullSite, t2, 0, "", "", 0, 0, 0, 0, 0);
+			nullSite, t2, "", "", 0, 0, 0, 0, 0);
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_CorrelationListMutex);
 
@@ -446,10 +436,11 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 		// make sure pick is still valid before checking
 		if (std::shared_ptr<CCorrelation> currentCorrelation = correlations[i]
 				.lock()) {
-			std::shared_ptr<CHypo> corrHyp = currentCorrelation->getHypo();
+			std::shared_ptr<CHypo> corrHyp = currentCorrelation
+					->getHypoReference();
 
 			// check to see if this correlation is already in this hypo
-			if (hyp->hasCorrelation(currentCorrelation)) {
+			if (hyp->hasCorrelationReference(currentCorrelation)) {
 				// it is, skip it
 				continue;
 			}
@@ -467,10 +458,10 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 			if (corrHyp == NULL) {
 				// unassociated with any existing hypo
 				// link correlation to the hypo we're working on
-				currentCorrelation->addHypo(hyp, true);
+				currentCorrelation->addHypoReference(hyp, true);
 
 				// add correlation to this hypo
-				hyp->addCorrelation(currentCorrelation);
+				hyp->addCorrelationReference(currentCorrelation);
 
 				// we've associated a correlation
 				associated = true;
@@ -478,7 +469,7 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 				// associated with an existing hypo
 				// Add it to this hypo, but don't change the correlation's hypo link
 				// Let resolve() sort out which hypo the correlation fits best with
-				hyp->addCorrelation(currentCorrelation);
+				hyp->addCorrelationReference(currentCorrelation);
 
 				// we've associated a correlation
 				associated = true;

@@ -112,6 +112,10 @@ class CNode {
 	 * Add a link to/from this node to the provided site
 	 * using the provided travel time
 	 *
+	 * NOTE: The node is required as parameter because issues occurred linking
+	 * and unlinking (deleting) using this-> The solution was to pass a pointer
+	 * to the node in this function.
+	 *
 	 * \param travelTime1 - A double value containing the first travel time to
 	 * use for the link
 	 * \param travelTime2 - A double value containing the optional second travel
@@ -159,8 +163,9 @@ class CNode {
 	/**
 	 * \brief CNode significance function
 	 *
-	 * Given an observed time and a like to a site, compute the best
-	 * significance value from the traveltime(s) contained in the link
+	 * Given an observed time and a link to a site, compute the best
+	 * significance value from the traveltime(s) contained in the link to this
+	 * node.
 	 *
 	 * \param tObservedTT - A double value containing the observed travel time
 	 * \param link - A SiteLink containing the travel times to use
@@ -317,7 +322,7 @@ class CNode {
 
 	/**
 	 * \brief A boolean flag indicating whether this node is enabled for
-	 * nucleation
+	 * nucleation. Nodes are disabled when they are being reconfigured.
 	 */
 	std::atomic<bool> m_bEnabled;
 

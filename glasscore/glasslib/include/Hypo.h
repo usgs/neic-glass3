@@ -30,8 +30,8 @@ class CTrigger;
  * The CHypo class is the class that encapsulates everything necessary
  * to represent an earthquake hypocenter.
  *
- * CHypo also maintains a vector of CPick objects that make up the data that
- * supports the hypocenter
+ * CHypo also maintains vectors of CPick and CCorrelation objects that make up
+ * the data that supports the hypocenter
  *
  * CHypo contains functions to support association, disassociation, location,
  * removal, and various statistical calculations, as well as generating
@@ -59,9 +59,10 @@ class CHypo {
 	CHypo();
 
 	/**
-	 * \brief CHypo alternate constructor
+	 * \brief CHypo advanced constructor
 	 *
-	 * Constructs a CHypo using the provided values
+	 * An advanced constructor for the CHypo class. This function initializing
+	 * members to the provided values.
 	 *
 	 * \param lat - A double containing the geocentric latitude in degrees to
 	 * use
@@ -84,8 +85,8 @@ class CHypo {
 	 * \param resolution - A double value containing the web resolution used
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
-	 * \param aziTaper = A double value containing the azimuth taper to be used,
-	 * defaults to 360
+	 * \param maxDep = A double value containing the maximum allowed depth,
+	 * defaults to 800
 	 * \return Returns true if successful, false otherwise.
 	 */
 	CHypo(double lat, double lon, double z, double time, std::string pid,
@@ -93,13 +94,14 @@ class CHypo {
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100,
-			double aziTap = 360., double maxDep = 800.);
+			double aziTap = 360.0, double maxDep = 800.0);
 
 	/**
-	 * \brief CHypo alternate constructor
+	 * \brief CHypo advanced constructor
 	 *
-	 * Alternate constructor for the CHypo class that uses a CNode to create
-	 * a CHypo
+	 * An advanced constructor for the CHypo class. This function initializing
+	 * members to the values contained in the provided CTrigger object, used
+	 * when a new hypo is nucleated.
 	 *
 	 * \param trigger - A CTrigger object containing the nucleation trigger to
 	 * construct this hypo from.
@@ -109,10 +111,11 @@ class CHypo {
 					std::shared_ptr<traveltime::CTTT> ttt);
 
 	/**
-	 * \brief CHypo alternate constructor
+	 * \brief CHypo advanced constructor
 	 *
-	 * Alternate constructor for the CHypo class that uses a CCorrellation to
-	 * create a CHypo
+	 * An advanced constructor for the CHypo class. This function initializing
+	 * members to the values contained in the provided CCorrelation object, used
+	 * when a creating a new hypo based on a correlation message.
 	 *
 	 * \param corr - A shared pointer to a CNode object containing the
 	 * correlation to construct this hypo from.
@@ -166,7 +169,8 @@ class CHypo {
 	 * \param resolution - A double value containing the web resolution used
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
-	 * \param maxDepth = A double value the maximum event depth for the locator
+	 * \param maxDepth = A double value the maximum event depth for the locator,
+	 * defaults to 800
 	 * \return Returns true if successful, false otherwise.
 	 */
 	bool initialize(double lat, double lon, double z, double time,
@@ -176,117 +180,121 @@ class CHypo {
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
 					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
 							100,
-					double aziTap = 360., double maxDep = 800.);
+					double aziTap = 360.0, double maxDep = 800.0);
 
 	/**
 	 * \brief Add pick reference to this hypo
 	 *
-	 * Adds a shared_ptr reference to the given pick to this hypo,
-	 * representing a graph database link between this hypocenter
-	 * and the pick.  This link also represents a phase association.
+	 * Adds a shared_ptr reference to the given pick to the list of supporting
+	 * pick references for this hypo, representing a graph database link between
+	 * this hypocenter and the provided pick.  This link also represents a phase
+	 * association.
 	 *
-	 * Note that this pick may or may not also be linked
-	 * to other hypocenters
+	 * Note that this pick may or may not also be referenced by other hypocenters
 	 *
-	 * \param pck - A std::shared_ptr to the CPick object to
-	 * add.
+	 * \param pck - A std::shared_ptr to the CPick object to add.
 	 */
-	void addPick(std::shared_ptr<CPick> pck);
+	void addPickReference(std::shared_ptr<CPick> pck);
 
 	/**
 	 * \brief Remove pick reference from this hypo
 	 *
-	 * Remove a shared_ptr reference from the given pick to this hypo,
-	 * breaking the graph database link between this hypocenter and the pick.
-	 * The breaking of this link also represents a phase disassociation.
+	 * Remove a shared_ptr reference to the given pick from the list of supporting
+	 * pick references for this hypo, breaking the graph database link between
+	 * this hypocenter and the provided pick. The breaking of this link also
+	 * represents a phase disassociation.
 	 *
-	 * Note that this pick may or may not be still linked to other hypocenters
+	 * Note that this pick may or may not be still referenced by other hypocenters
 	 *
 	 * \param pck - A std::shared_ptr to the CPick object to remove.
 	 */
-	void removePick(std::shared_ptr<CPick> pck);
+	void removePickReference(std::shared_ptr<CPick> pck);
 
 	/**
-	 * \brief Check if hypo has pick reference
+	 * \brief Check if pick is referenced by this hypo
 	 *
 	 * Check to see if a shared_ptr reference from the given pick to this hypo
 	 * exists
 	 *
-	 * Note that this pick may or may not be still linked to other hypocenters
+	 * Note that this pick may or may not be also referenced by other hypocenters
 	 *
 	 * \param pck - A std::shared_ptr to the CPick object to check.
 	 * \return returns true if a reference exists to the given pick, false
 	 * otherwise
 	 */
-	bool hasPick(std::shared_ptr<CPick> pck);
+	bool hasPickReference(std::shared_ptr<CPick> pck);
 
 	/**
-	 * \brief Clear all pick reference for this hypo
+	 * \brief Clear all pick references for this hypo
 	 *
-	 * Clear all shared_ptr references from picks to this hypo
+	 * Clears the list of supporting shared_ptr pick references for this hypo
 	 *
-	 * Note picks may or may not be still linked to other hypocenters
+	 * Note picks may or may not be still referenced by other hypocenters
 	 */
-	void clearPicks();
+	void clearPickReferences();
 
 	/**
 	 * \brief Add correlation reference to this hypo
 	 *
-	 * Adds a shared_ptr reference to the given correlation to this hypo,
-	 * representing a graph database link between this hypocenter
-	 * and the correlation.  This link also represents a correlation association.
+	 * Adds a shared_ptr reference to the given correlation to the list of
+	 * supporting correlation references for this hypo, representing a graph
+	 * database link between this hypocenter and the provided correlation.
+	 * This link also represents a correlation association.
 	 *
-	 * Note that this correlation may or may not also be linked
-	 * to other hypocenters
+	 * Note that this correlation may or may not also be referenced by other
+	 * hypocenters
 	 *
 	 * \param corr - A std::shared_ptr to the CCorrelation object to
 	 * add.
 	 */
-	void addCorrelation(std::shared_ptr<CCorrelation> corr);
+	void addCorrelationReference(std::shared_ptr<CCorrelation> corr);
 
 	/**
 	 * \brief Remove correlation reference from this hypo
 	 *
-	 * Remove a shared_ptr reference from the given correlation to this hypo,
-	 * breaking the graph database link between this hypocenter and the correlation.
-	 * The breaking of this link also represents a correlation disassociation.
+	 * Remove a shared_ptr reference to the given correlation from the list of
+	 * supporting correlation references for this hypo, breaking the graph
+	 * database link between this hypocenter and the provided correlation. The
+	 * breaking of this link also represents a correlation disassociation.
 	 *
-	 * Note that this correlation may or may not be still linked to other
+	 * Note that this correlation may or may not still be referenced by other
 	 * hypocenters
 	 *
 	 * \param corr - A std::shared_ptr to the CCorrelation object to remove.
 	 */
-	void removeCorrelation(std::shared_ptr<CCorrelation> corr);
+	void removeCorrelationReference(std::shared_ptr<CCorrelation> corr);
 
 	/**
-	 * \brief Check if hypo has correlation reference
+	 * \brief  Check if correlation is referenced by this hypo
 	 *
 	 * Check to see if a shared_ptr reference from the given correlation to this
 	 * hypo exists
 	 *
-	 * Note that this correlation may or may not be still linked to other
+	 * Note that this correlation may or may not be also referenced by other
 	 * hypocenters
 	 *
 	 * \param corr - A std::shared_ptr to the CCorrelation object to check.
 	 * \return returns true if a reference exists to the given correlation,
 	 * false otherwise
 	 */
-	bool hasCorrelation(std::shared_ptr<CCorrelation> corr);
+	bool hasCorrelationReference(std::shared_ptr<CCorrelation> corr);
 
 	/**
-	 * \brief Clear all correlation reference for this hypo
+	 * \brief Clear all correlation references for this hypo
 	 *
-	 * Clear all shared_ptr references from correlation to this hypo
+	 * Clears the list of supporting shared_ptr correlation references for this
+	 * hypo
 	 *
-	 * Note that correlations may or may not be still linked to other hypocenters
+	 * Note correlations may or may not be still referenced by other hypocenters
 	 */
-	void clearCorrelations();
+	void clearCorrelationReferences();
 
 	/**
 	 * \brief Calculate Gaussian random sample
 	 *
-	 * Calculate random normal gaussian deviate value using
-	 * Box-Muller method
+	 * Calculate random normal gaussian deviate value using Box-Muller method.
+	 * This function is used in determining the randomized step sizes for
+	 * relocation (anneal and localize)
 	 *
 	 * \param avg - The mean average value to use in the Box-Muller method
 	 * \param std - The standard deviation value to use in the Box-Muller method
@@ -297,7 +305,9 @@ class CHypo {
 	/**
 	 * \brief Generate Random Number
 	 *
-	 * Generate s random number between x and y
+	 * Generate s random number between x and y. This function is used by gauss
+	 * in determining the randomized step sizes for relocation (anneal and
+	 * localize)
 	 *
 	 * \param x - The minimum random number
 	 * \param y - The maximum random number
@@ -308,46 +318,66 @@ class CHypo {
 	/**
 	 * \brief Generate Hypo message
 	 *
-	 * Generate a json object representing this hypocenter in the
-	 * "Hypo" format and send a pointer to this object to CGlass
-	 * (and out of glasscore) using the send function (pGlass->send)
+	 * Generate a json object representing this hypocenter in the "Hypo" format
+	 * and optionally send a pointer to this object to CGlass (and out of
+	 * glasscore) using the CGlass send function (pGlass->send)
 	 *
-	 * \return Returns the generated json object.
+	 * \param send - A boolean flag indicating that in addition to generating
+	 * the "Hypo" format message, the function should also send it. Defaults to
+	 * true
+	 * \return Returns the generated json object in the "Hypo" format.
 	 */
-	std::shared_ptr<json::Object> hypo(bool send = true);
+	std::shared_ptr<json::Object> generateHypoMessage(bool send = true);
 
 	/**
 	 * \brief Generate Event message
 	 *
-	 * Generate a json object representing this hypocenter in the
-	 * "Event" format and send a pointer to this object to CGlass
-	 * (and out of glasscore) using the send function (pGlass->send)
+	 * Generate a json object representing a summary of this hypocenter in the
+	 * "Event" format and optionally send a pointer to this object to CGlass
+	 * (and out of glasscore) using the CGlass send function (pGlass->send)
+	 *
+	 * \param send - A boolean flag indicating that in addition to generating
+	 * the "Event" format message, the function should also send it. Defaults to
+	 * true
+	 * \return Returns the generated json object in the "Event" format.
 	 */
-	std::shared_ptr<json::Object> event(bool send = true);
+	std::shared_ptr<json::Object> generateEventMessage(bool send = true);
 
 	/**
 	 * \brief Generate cancel message
 	 *
-	 * Generate a json object representing the cancellation of this hypocenter
-	 * and send a pointer to this object to CGlass (and out of glasscore) using
-	 * the send function (pGlass->send)
+	 * Generate a json object representing a cancellation of this hypocenter in
+	 * the "Cancel" format and optionally send a pointer to this object to CGlass
+	 * (and out of glasscore) using the CGlass send function (pGlass->send)
+	 *
+	 * \param send - A boolean flag indicating that in addition to generating
+	 * the "Cancel" format message, the function should also send it. Defaults to
+	 * true
+	 * \return Returns the generated json object in the "Cancel" format.
 	 */
-	std::shared_ptr<json::Object> cancel(bool send = true);
+	std::shared_ptr<json::Object> generateCancelMessage(bool send = true);
 
 	/**
 	 * \brief Generate expire message
 	 *
-	 * Generate a json object representing the expiration of this hypocenter
-	 * and send a pointer to this object to CGlass (and out of glasscore) using
-	 * the send function (pGlass->send)
+	 * Generate a json object representing a expiration of this hypocenter in
+	 * the "Expire" format and optionally send a pointer to this object to CGlass
+	 * (and out of glasscore) using the CGlass send function (pGlass->send).
+	 *
+	 * If this hypocenter was previously reported, a copy of it is included in
+	 * this message via the generateHypoMessage() function
+	 *
+	 * \param send - A boolean flag indicating that in addition to generating
+	 * the "Expire" format message, the function should also send it. Defaults to
+	 * true
+	 * \return Returns the generated json object in the "Expire" format.
 	 */
-	std::shared_ptr<json::Object> expire(bool send = true);
+	std::shared_ptr<json::Object> generateExpireMessage(bool send = true);
 
 	/**
 	 * \brief Check to see if pick could be associated
 	 *
-	 * Check to see if a given pick could be associated to this
-	 * CHypo
+	 * Check to see if a given pick could be associated to this CHypo
 	 *
 	 * \param pick - A std::shared_ptr to the CPick object to
 	 * check.
@@ -431,27 +461,27 @@ class CHypo {
 	/**
 	 * \brief Evaluate hypocenter report suitability
 	 *
-	 * Evaluate whether the hypocenter is suitable to be reported,
+	 * Evaluate whether the hypocenter is suitable to be reported, utilizing the
+	 * reporting data and stack thresholds (instead of the nucleation thresholds)
 	 *
 	 * \return Returns true if the hypocenter can be reported, false otherwise
 	 */
 	bool reportCheck();
 
 	/**
-	 * \brief Calculate supporting data statistical distribution
+	 * \brief Calculate supporting data statistical values
 	 *
-	 * Calculate the statistical distribution of the supporting data in
-	 * distance.  The values are reflected to give a mean of 0.  These
-	 * statistics are used in the automatic supporting data disassocation
-	 * process cull()
+	 * Calculate various statistical values for this hypo, including minimum
+	 * distance, median distance, gap, kurtosis value, and association distance
+	 * cutoff as part of the anneal() and localize()
 	 */
 	void stats();
 
 	/**
 	 * \brief Synthetic annealing used by nucleation
 	 *
-	 * Synthetic annealing used by nucleation to rapidly achieve
-	 * a viable starting location.
+	 * Synthetic annealing used by nucleation to rapidly achieve a viable
+	 * starting location.
 	 *
 	 * Also computes supporting data statistical distribution by calling
 	 * stats() and computes station weights by calling weights()
@@ -696,10 +726,10 @@ class CHypo {
 	double getInitialBayesValue() const;
 
 	/**
-	 * \brief dCut  getter
+	 * \brief dCut getter
 	 * \return the dcut value
 	 */
-	double getDistanceCutoff() const;
+	double getAssociationDistanceCutoff() const;
 
 	/**
 	 * \brief Cut factor getter
@@ -877,18 +907,27 @@ class CHypo {
 
 	/**
 	 * \brief get pTrv1
+	 *
+	 * This object is kept in CHypo for performance (throughput) reasons.
+	 *
 	 * \return pTrv1
 	 */
 	std::shared_ptr<traveltime::CTravelTime> getNucleationTravelTime1() const;
 
 	/**
 	 * \brief get pTrv2
+	 *
+	 * This object is kept in CHypo for performance (throughput) reasons.
+	 *
 	 * \return pTrv2
 	 */
 	std::shared_ptr<traveltime::CTravelTime> getNucleationTravelTime2() const;
 
 	/**
 	 * \brief get TTT
+	 *
+	 * This object is kept in CHypo for performance (throughput) reasons.
+	 *
 	 * \return pTTT
 	 */
 	std::shared_ptr<traveltime::CTTT> getTravelTimeTables() const;
@@ -1027,26 +1066,26 @@ class CHypo {
 
 	/**
 	 * \brief A double value containing the factor used to calculate this hypo's
-	 * distance cutoff
+	 * association distance cutoff
 	 */
 	std::atomic<double> m_dDistanceCutoffFactor;
 
 	/**
 	 * \brief A double value containing the percentage used to calculate this
-	 *  hypo's distance cutoff
+	 * hypo's association distance cutoff
 	 */
 	std::atomic<double> m_dDistanceCutoffPercentage;
 
 	/**
-	 * \brief A double value containing the minimum distance cutoff
+	 * \brief A double value containing the minimum association distance cutoff
 	 */
 	std::atomic<double> m_dMinDistanceCutoff;
 
 	/**
-	 * \brief A double value containing this hypo's distance cutoff (2.0 * 80
-	 * percentile)  in degrees
+	 * \brief A double value containing this hypo's association distance cutoff
+	 * (2.0 * 80 percentile) in degrees
 	 */
-	std::atomic<double> m_dDistanceCutoff;
+	std::atomic<double> m_dAssociationDistanceCutoff;
 
 	/**
 	 * \brief A std::string containing this hypo's unique identifier
@@ -1120,30 +1159,41 @@ class CHypo {
 
 	/**
 	 * \brief A vector of shared_ptr's to the pick data that supports this hypo.
+	 *
+	 * We use shared_ptr's instead of weak ptr's in this vector so that any
+	 * supporting picks will not be deleted before the hypo is canceled or
+	 * expired.
 	 */
 	std::vector<std::shared_ptr<CPick>> m_vPickData;
 
 	/**
 	 * \brief A vector of shared pointers to correlation data that support
 	 * this hypo.
+	 *
+	 * We use shared_ptr's instead of weak ptr's in this vector so that any
+	 * supporting correlations will not be deleted before the hypo is canceled or
+	 * expired.
 	 */
 	std::vector<std::shared_ptr<CCorrelation>> m_vCorrelationData;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
-	 * travel times for the first phase used to nucleate this hypo
+	 * travel times for the first phase used to nucleate this hypo. This
+	 * object is kept in CHypo for performance (throughput) reasons.
 	 */
 	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime1;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
-	 * travel times for the second phase used to nucleate this hypo
+	 * travel times for the second phase used to nucleate this hypo. This
+	 * object is kept in CHypo for performance (throughput) reasons.
 	 */
 	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime2;
 
 	/**
 	 * \brief A pointer to a CTTT object containing the travel
-	 * time phases and branches used for association and location
+	 * time phases and branches used for association and location.  This
+	 * object is kept in CHypo for performance (throughput) reasons.
 	 */
 	std::shared_ptr<traveltime::CTTT> m_pTravelTimeTables;
 

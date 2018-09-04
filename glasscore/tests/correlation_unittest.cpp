@@ -16,7 +16,6 @@
 #define NET "LB"
 #define LOC "01"
 #define CORRELATIONTIME 3660327144.0170002
-#define CORRELATIONID 1
 #define CORRELATIONIDSTRING "12GFH48776857"
 #define LAT 40.3344
 #define LON -121.44
@@ -57,11 +56,6 @@ void checkdata(glasscore::CCorrelation * corrleationobject,
 	double correlationtime = corrleationobject->getTCorrelation();
 	double expectedcorrelationtime = CORRELATIONTIME;
 	ASSERT_NEAR(correlationtime, expectedcorrelationtime, 0.0001);
-
-	// check id
-	int id = corrleationobject->getCorrelationID();
-	int expectedid = CORRELATIONID;
-	ASSERT_EQ(id, expectedid);
 
 	// check string id
 	std::string stringid = corrleationobject->getID();
@@ -108,7 +102,6 @@ TEST(CorrelationTest, Construction) {
 
 	// assert default values
 	ASSERT_EQ(0, testCorrelation->getTCorrelation())<< "time is zero";
-	ASSERT_EQ(0, testCorrelation->getCorrelationID())<< "id is zero";
 	ASSERT_EQ(0, testCorrelation->getTOrigin())<< "origin time is zero";
 	ASSERT_EQ(0, testCorrelation->getLatitude())<< "lat is zero";
 	ASSERT_EQ(0, testCorrelation->getLongitude())<< "lon is zero";
@@ -120,7 +113,7 @@ TEST(CorrelationTest, Construction) {
 
 	// pointers
 	ASSERT_TRUE(testCorrelation->getSite() == NULL)<< "pSite null";
-	ASSERT_TRUE(testCorrelation->getHypo() == NULL)<< "pHypo null";
+	ASSERT_TRUE(testCorrelation->getHypoReference() == NULL)<< "pHypo null";
 	ASSERT_TRUE(testCorrelation->getJSONCorrelation() == NULL)<< "jCorrelation null";
 
 	// create  shared pointer to the site
@@ -130,7 +123,7 @@ TEST(CorrelationTest, Construction) {
 			new glasscore::CSite(siteJSON, NULL));
 
 	// now init
-	testCorrelation->initialize(sharedTestSite, CORRELATIONTIME, CORRELATIONID,
+	testCorrelation->initialize(sharedTestSite, CORRELATIONTIME,
 								std::string(CORRELATIONIDSTRING),
 								std::string(PHASE), ORIGINTIME,
 								LAT,
@@ -149,16 +142,17 @@ TEST(CorrelationTest, JSONConstruction) {
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// add site to site list
 	testSiteList->addSite(siteJSON);
 
 	// construct a correlation using a JSON object
-	std::shared_ptr<json::Object> correlationJSON = std::make_shared<json::Object>(
-					json::Object(json::Deserialize(std::string(CORRELATIONJSON))));
+	std::shared_ptr<json::Object> correlationJSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATIONJSON))));
 	glasscore::CCorrelation * testCorrelation = new glasscore::CCorrelation(
-			correlationJSON, CORRELATIONID, testSiteList);
+			correlationJSON, testSiteList);
 
 	// check results
 	checkdata(testCorrelation, "json construction check");
@@ -172,14 +166,14 @@ TEST(CorrelationTest, HypoOperations) {
 
 	// create  shared pointer to the site
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-				new glasscore::CSite(siteJSON, NULL));
+			new glasscore::CSite(siteJSON, NULL));
 
 	// create correlation
 	glasscore::CCorrelation *testCorrelation = new glasscore::CCorrelation(
-			sharedTestSite, CORRELATIONTIME, CORRELATIONID,
-			std::string(CORRELATIONIDSTRING), std::string(PHASE), ORIGINTIME,
+			sharedTestSite, CORRELATIONTIME, std::string(CORRELATIONIDSTRING),
+			std::string(PHASE), ORIGINTIME,
 			LAT,
 			LON, Z, CORRELATION);
 
@@ -195,14 +189,14 @@ TEST(CorrelationTest, HypoOperations) {
 	std::shared_ptr<glasscore::CHypo> sharedHypo(testHypo);
 
 	// add hypo to correlation
-	testCorrelation->addHypo(sharedHypo);
+	testCorrelation->addHypoReference(sharedHypo);
 
 	// check hypo
-	ASSERT_TRUE(testCorrelation->getHypo() != NULL)<< "pHypo  not null";
+	ASSERT_TRUE(testCorrelation->getHypoReference() != NULL)<< "pHypo  not null";
 
 	// remove hypo from correlation
-	testCorrelation->removeHypo(sharedHypo);
+	testCorrelation->removeHypoReference(sharedHypo);
 
 	// check hypo
-	ASSERT_TRUE(testCorrelation->getHypo() == NULL)<< "pHypo null";
+	ASSERT_TRUE(testCorrelation->getHypoReference() == NULL)<< "pHypo null";
 }

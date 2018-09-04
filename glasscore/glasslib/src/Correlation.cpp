@@ -24,57 +24,46 @@ CCorrelation::CCorrelation() {
 
 // ---------------------------------------------------------CCorrelation
 CCorrelation::CCorrelation(std::shared_ptr<CSite> correlationSite,
-							double correlationTime, int correlationId,
+							double correlationTime,
 							std::string correlationIdString, std::string phase,
 							double orgTime, double orgLat, double orgLon,
 							double orgZ, double corrVal) {
 	clear();
 
-	initialize(correlationSite, correlationTime, correlationId,
+	initialize(correlationSite, correlationTime,
 				correlationIdString, phase, orgTime, orgLat, orgLon, orgZ,
 				corrVal);
 }
 
 // ---------------------------------------------------------CCorrelation
 CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
-							int correlationId, CSiteList *pSiteList) {
+							CSiteList *pSiteList) {
 	clear();
 
 	// null check json
 	if (correlation == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CCorrelation::CCorrelation: NULL json communication.");
+				"CCorrelation::CCorrelation: NULL json correlation message.");
 		return;
 	}
 
-	// check cmd
-	if (correlation->HasKey("Cmd")
-			&& ((*correlation)["Cmd"].GetType() == json::ValueType::StringVal)) {
-		std::string cmd = (*correlation)["Cmd"].ToString();
-
-		if (cmd != "Correlation") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
-					"CCorrelation::CCorrelation: Non-Correlation message passed"
-					" in.");
-			return;
-		}
-	} else if (correlation->HasKey("Type")
+	// check Type
+	if (correlation->HasKey("Type")
 			&& ((*correlation)["Type"].GetType() == json::ValueType::StringVal)) {
 		std::string type = (*correlation)["Type"].ToString();
 
 		if (type != "Correlation") {
 			glassutil::CLogit::log(
 					glassutil::log_level::warn,
-					"CCorrelation::CCorrelation: Non-Correlation message passed"
-					" in.");
+					"CCorrelation::CCorrelation: Non-Correlation type message"
+					" passed in.");
 			return;
 		}
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CCorrelation::CCorrelation: Missing required Cmd or Type Key.");
+				"CCorrelation::CCorrelation: Missing required Type Key.");
 		return;
 	}
 
@@ -182,7 +171,7 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 		return;
 	}
 
-	// pid
+	// ID
 	// get the correlation id
 	if (correlation->HasKey("ID")
 			&& ((*correlation)["ID"].GetType() == json::ValueType::StringVal)) {
@@ -294,7 +283,7 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 	}
 
 	// pass to initialization function
-	if (!initialize(site, tcorr, correlationId, pid, phs, tori, lat, lon, z,
+	if (!initialize(site, tcorr, pid, phs, tori, lat, lon, z,
 					corr)) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -307,7 +296,6 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 
 	// remember input json for hypo message generation
 	// note move to init?
-	// std::shared_ptr<json::Object> jcorr(new json::Object(*correlation));
 	m_JSONCorrelation = correlation;
 }
 
@@ -320,13 +308,12 @@ CCorrelation::~CCorrelation() {
 void CCorrelation::clear() {
 	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
-	m_pSite.reset();
+	m_wpSite.reset();
 	m_wpHypo.reset();
 	m_JSONCorrelation.reset();
 
 	m_sPhaseName = "";
 	m_sID = "";
-	m_iCorrelationID = 0;
 	m_tCorrelation = 0;
 	m_tOrigin = 0;
 	m_dLatitude = 0;
@@ -339,7 +326,7 @@ void CCorrelation::clear() {
 
 // ---------------------------------------------------------initialize
 bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
-								double correlationTime, int correlationId,
+								double correlationTime,
 								std::string correlationIdString,
 								std::string phase, double orgTime,
 								double orgLat, double orgLon, double orgZ,
@@ -348,10 +335,9 @@ bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
 
 	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
-	m_pSite = correlationSite;
+	m_wpSite = correlationSite;
 	m_sPhaseName = phase;
 	m_sID = correlationIdString;
-	m_iCorrelationID = correlationId;
 	m_tCorrelation = correlationTime;
 	m_tOrigin = orgTime;
 
@@ -367,23 +353,11 @@ bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
 		return (false);
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CCorrelation::initialize: pSite:" + m_pSite->getSCNL()
-					+ "; tCorrelation:" + std::to_string(m_tCorrelation)
-					+ "; idCorrelation:" + std::to_string(m_iCorrelationID)
-					+ "; sPid:" + m_sID + "; sPhs:" + m_sPhaseName + "; tOrg:"
-					+ std::to_string(m_tOrigin) + "; dLat:"
-					+ std::to_string(m_dLatitude) + "; dLon:"
-					+ std::to_string(m_dLongitude) + "; dZ:"
-					+ std::to_string(m_dDepth) + "; dCorrelation:"
-					+ std::to_string(m_dCorrelation));
-
 	return (true);
 }
 
 // ---------------------------------------------------------addHypo
-void CCorrelation::addHypo(std::shared_ptr<CHypo> hyp, bool force) {
+void CCorrelation::addHypoReference(std::shared_ptr<CHypo> hyp, bool force) {
 	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
 	// nullcheck
@@ -403,7 +377,7 @@ void CCorrelation::addHypo(std::shared_ptr<CHypo> hyp, bool force) {
 }
 
 // ---------------------------------------------------------removeHypo
-void CCorrelation::removeHypo(std::shared_ptr<CHypo> hyp) {
+void CCorrelation::removeHypoReference(std::shared_ptr<CHypo> hyp) {
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -411,27 +385,27 @@ void CCorrelation::removeHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
-	removeHypo(hyp->getID());
+	removeHypoReference(hyp->getID());
 }
 
 // ---------------------------------------------------------removeHypo
-void CCorrelation::removeHypo(std::string pid) {
+void CCorrelation::removeHypoReference(std::string pid) {
 	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
 	// is the pointer still valid
 	if (auto pHypo = m_wpHypo.lock()) {
 		// Remove hypo reference from this pick
 		if (pHypo->getID() == pid) {
-			clearHypo();
+			clearHypoReference();
 		}
 	} else {
 		// remove invalid pointer
-		clearHypo();
+		clearHypoReference();
 	}
 }
 
 // ---------------------------------------------------------clearHypo
-void CCorrelation::clearHypo() {
+void CCorrelation::clearHypoReference() {
 	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 	m_wpHypo.reset();
 }
@@ -456,24 +430,19 @@ double CCorrelation::getDepth() const {
 	return (m_dDepth);
 }
 
-// ---------------------------------------------------------getCorrelationID
-int CCorrelation::getCorrelationID() const {
-	return (m_iCorrelationID);
-}
-
 // ---------------------------------------------------------getJSONCorrelation
 const std::shared_ptr<json::Object>& CCorrelation::getJSONCorrelation() const {
 	return (m_JSONCorrelation);
 }
 
 // ---------------------------------------------------------getHypo
-const std::shared_ptr<CHypo> CCorrelation::getHypo() const {
+const std::shared_ptr<CHypo> CCorrelation::getHypoReference() const {
 	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 	return (m_wpHypo.lock());
 }
 
 // ---------------------------------------------------------getHypoID
-const std::string CCorrelation::getHypoID() const {
+const std::string CCorrelation::getHypoReferenceID() const {
 	std::lock_guard<std::recursive_mutex> pickGuard(m_CorrelationMutex);
 	std::string hypoPid = "";
 
@@ -483,7 +452,7 @@ const std::string CCorrelation::getHypoID() const {
 	}
 
 	// get the hypo
-	std::shared_ptr<CHypo> pHypo = getHypo();
+	std::shared_ptr<CHypo> pHypo = getHypoReference();
 	if (pHypo != NULL) {
 		// get the hypo pid
 		hypoPid = pHypo->getID();
@@ -493,8 +462,8 @@ const std::string CCorrelation::getHypoID() const {
 }
 
 // ---------------------------------------------------------getSite
-const std::shared_ptr<CSite>& CCorrelation::getSite() const {
-	return (m_pSite);
+const std::shared_ptr<CSite> CCorrelation::getSite() const {
+	return (m_wpSite.lock());
 }
 
 // ---------------------------------------------------------getPhaseName

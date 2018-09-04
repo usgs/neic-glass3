@@ -446,7 +446,7 @@ bool CPick::nucleate() {
 
 		for (auto pick : vTriggerPicks) {
 			// they're not associated yet, just potentially
-			hypo->addPick(pick);
+			hypo->addPickReference(pick);
 		}
 
 		// use the hypo's nucleation threshold, which is really the

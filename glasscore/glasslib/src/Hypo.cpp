@@ -126,7 +126,7 @@ CHypo::~CHypo() {
 }
 
 // ---------------------------------------------------------addCorrelation
-void CHypo::addCorrelation(std::shared_ptr<CCorrelation> corr) {
+void CHypo::addCorrelationReference(std::shared_ptr<CCorrelation> corr) {
 	// null check
 	if (corr == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -158,12 +158,12 @@ void CHypo::addCorrelation(std::shared_ptr<CCorrelation> corr) {
 	m_bCorrelationAdded = true;
 }
 
-// ---------------------------------------------------------addPick
-void CHypo::addPick(std::shared_ptr<CPick> pck) {
+// ---------------------------------------------------------addPickReference
+void CHypo::addPickReference(std::shared_ptr<CPick> pck) {
 	// null check
 	if (pck == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypo::addPick: NULL pck.");
+								"CHypo::addPickReference: NULL pck.");
 		return;
 	}
 
@@ -320,7 +320,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 	// *** Second, based on the new location/depth/time, remove ill fitting
 	// picks ***
 
-	// compute current stats
+	// compute current stats after location
 	stats();
 
 	// create pick delete vector
@@ -393,7 +393,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		}
 
 		// remove the pick from this hypo
-		removePick(pick);
+		removePickReference(pick);
 	}
 
 	// return the final bayesian value
@@ -752,7 +752,7 @@ bool CHypo::associate(std::shared_ptr<CPick> pick, double sigma,
 	double siteDistance = hypoGeo.delta(&site->getGeo()) / DEG2RAD;
 
 	// check if distance is beyond cutoff
-	if (siteDistance > m_dDistanceCutoff) {
+	if (siteDistance > m_dAssociationDistanceCutoff) {
 		// it is, don't associated
 		return (false);
 	}
@@ -884,7 +884,7 @@ bool CHypo::associate(std::shared_ptr<CCorrelation> corr, double tWindow,
 }
 
 // ---------------------------------------------------------cancel
-std::shared_ptr<json::Object> CHypo::cancel(bool send) {
+std::shared_ptr<json::Object> CHypo::generateCancelMessage(bool send) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -1072,15 +1072,15 @@ void CHypo::clear() {
 
 	m_bCorrelationAdded = false;
 
-	clearPicks();
-	clearCorrelations();
+	clearPickReferences();
+	clearCorrelationReferences();
 
 	m_iProcessCount = 0;
 	m_iReportCount = 0;
 }
 
 // ---------------------------------------------------------clearCorrelations
-void CHypo::clearCorrelations() {
+void CHypo::clearCorrelationReferences() {
 	// lock the hypo since we're iterating through it's lists
 	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
 
@@ -1093,7 +1093,7 @@ void CHypo::clearCorrelations() {
 		// remove the hypo from the corr
 		// note only removes hypo if corr
 		// is linked
-		corr->removeHypo(m_sID);
+		corr->removeHypoReference(m_sID);
 	}
 
 	// remove all correlation links to this hypo
@@ -1101,7 +1101,7 @@ void CHypo::clearCorrelations() {
 }
 
 // ---------------------------------------------------------clearPicks
-void CHypo::clearPicks() {
+void CHypo::clearPickReferences() {
 	// lock the hypo since we're iterating through it's lists
 	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
 
@@ -1122,7 +1122,7 @@ void CHypo::clearPicks() {
 }
 
 // ---------------------------------------------------------event
-std::shared_ptr<json::Object> CHypo::event(bool send) {
+std::shared_ptr<json::Object> CHypo::generateEventMessage(bool send) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -1162,7 +1162,7 @@ std::shared_ptr<json::Object> CHypo::event(bool send) {
 }
 
 // ---------------------------------------------------------expire
-std::shared_ptr<json::Object> CHypo::expire(bool send) {
+std::shared_ptr<json::Object> CHypo::generateExpireMessage(bool send) {
 	std::shared_ptr<json::Object> expire = std::make_shared<json::Object>(
 			json::Object());
 	(*expire)["Cmd"] = "Expire";
@@ -1171,7 +1171,7 @@ std::shared_ptr<json::Object> CHypo::expire(bool send) {
 	// add a copy of the expiring hypo to the message
 	// if we CAN report
 	if (reportCheck() == true) {
-		std::shared_ptr<json::Object> expireHypo = hypo(false);
+		std::shared_ptr<json::Object> expireHypo = generateHypoMessage(false);
 		(*expire)["Hypo"] = (*expireHypo);
 	}
 	// log it
@@ -1420,8 +1420,8 @@ int CHypo::getNucleationDataThreshold() const {
 	return (m_iNucleationDataThreshold);
 }
 
-double CHypo::getDistanceCutoff() const {
-	return (m_dDistanceCutoff);
+double CHypo::getAssociationDistanceCutoff() const {
+	return (m_dAssociationDistanceCutoff);
 }
 
 double CHypo::getDistanceCutoffFactor() const {
@@ -1725,7 +1725,7 @@ void CHypo::graphicsOutput() {
 }
 
 // ---------------------------------------------------------hasCorrelation
-bool CHypo::hasCorrelation(std::shared_ptr<CCorrelation> corr) {
+bool CHypo::hasCorrelationReference(std::shared_ptr<CCorrelation> corr) {
 	// null check
 	if (corr == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -1748,7 +1748,7 @@ bool CHypo::hasCorrelation(std::shared_ptr<CCorrelation> corr) {
 }
 
 // ---------------------------------------------------------hasPick
-bool CHypo::hasPick(std::shared_ptr<CPick> pck) {
+bool CHypo::hasPickReference(std::shared_ptr<CPick> pck) {
 	// null check
 	if (pck == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -1771,7 +1771,7 @@ bool CHypo::hasPick(std::shared_ptr<CPick> pck) {
 }
 
 // ---------------------------------------------------------Hypo
-std::shared_ptr<json::Object> CHypo::hypo(bool send) {
+std::shared_ptr<json::Object> CHypo::generateHypoMessage(bool send) {
 	std::shared_ptr<json::Object> hypo = std::make_shared<json::Object>(
 			json::Object());
 
@@ -2042,7 +2042,7 @@ double CHypo::localize() {
 
 	// based on the number of picks, call relocate
 	// if there are already a large number of picks, only do it
-	// do often...
+	// so often...
 
 	// create taper using the number of picks to define the
 	// search distance in localize. Smaller search with more picks
@@ -2094,6 +2094,9 @@ double CHypo::localize() {
 				dt.dateTime().c_str(), getLatitude(), getLongitude(),
 				getDepth(), static_cast<int>(m_vPickData.size()));
 	glassutil::CLogit::log(sLog);
+
+	// compute current stats after location
+	stats();
 
 	// return the final maximum bayesian fit
 	return (m_dBayesValue);
@@ -2150,12 +2153,12 @@ bool CHypo::prune() {
 		// THIS NEEDS TO BE CONVERTER DO DEG BUT NEED TO TEST LATER - WY
 		double delta = geo.delta(&pck->getSite()->getGeo());
 		// check if delta is beyond distance limit
-		if (delta > m_dDistanceCutoff) {
+		if (delta > m_dAssociationDistanceCutoff) {
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f > %.2f)",
 					glassutil::CDate::encodeDateTime(pck->getTPick()).c_str(),
 					pck->getSite()->getSCNL().c_str(), delta,
-					getDistanceCutoff());
+					getAssociationDistanceCutoff());
 			glassutil::CLogit::log(sLog);
 
 			// add pick to remove list
@@ -2170,7 +2173,7 @@ bool CHypo::prune() {
 	for (auto pck : vremove) {
 		pruneCount++;
 		pck->clearHypo();
-		removePick(pck);
+		removePickReference(pck);
 	}
 
 	glassutil::CLogit::log(
@@ -2206,8 +2209,8 @@ bool CHypo::prune() {
 	}
 
 	for (auto cor : vcremove) {
-		cor->clearHypo();
-		removeCorrelation(cor);
+		cor->clearHypoReference();
+		removeCorrelationReference(cor);
 	}
 
 	// if we didn't find any data to remove, just
@@ -2231,7 +2234,7 @@ double CHypo::Rand(double x, double y) {
 }
 
 // ---------------------------------------------------------remCorrelation
-void CHypo::removeCorrelation(std::shared_ptr<CCorrelation> corr) {
+void CHypo::removeCorrelationReference(std::shared_ptr<CCorrelation> corr) {
 	// null check
 	if (corr == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -2260,7 +2263,7 @@ void CHypo::removeCorrelation(std::shared_ptr<CCorrelation> corr) {
 }
 
 // ---------------------------------------------------------remPick
-void CHypo::removePick(std::shared_ptr<CPick> pck) {
+void CHypo::removePickReference(std::shared_ptr<CPick> pck) {
 	// null check
 	if (pck == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -2411,7 +2414,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		if (aff1 > aff2) {
 			// this pick has a higher affinity with the provided hypo
 			// remove the pick from it's original hypo
-			pickHyp->removePick(pck);
+			pickHyp->removePickReference(pck);
 
 			// link pick to the provided hypo
 			pck->addHypo(hyp, true);
@@ -2433,7 +2436,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		} else {
 			// this pick has higher affinity with the original hypo
 			// remove pick from provided hypo
-			removePick(pck);
+			removePickReference(pck);
 
 			// we've made a change to the hypo (got rid of a pick)
 			bAss = true;
@@ -2456,12 +2459,12 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		auto corr = m_vCorrelationData[iCorr];
 
 		// get the correlation's hypo pointer
-		std::shared_ptr<CHypo> corrHyp = corr->getHypo();
+		std::shared_ptr<CHypo> corrHyp = corr->getHypoReference();
 
 		// if this correlation isn't linked to a hypo
 		if (corrHyp == NULL) {
 			// link to this hypo and move on
-			corr->addHypo(hyp);
+			corr->addHypoReference(hyp);
 			continue;
 		}
 
@@ -2491,10 +2494,10 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		if (aff1 > aff2) {
 			// this correlation has a higher affinity with the provided hypo
 			// remove the correlation from it's original hypo
-			corrHyp->removeCorrelation(corr);
+			corrHyp->removeCorrelationReference(corr);
 
 			// link pick to the provided hypo
-			corr->addHypo(hyp, true);
+			corr->addHypoReference(hyp, true);
 
 			// add provided hypo to the processing queue
 			// NOTE: this puts provided hypo before original hypo in FIFO,
@@ -2510,7 +2513,7 @@ bool CHypo::resolve(std::shared_ptr<CHypo> hyp) {
 		} else {
 			// this pick has higher affinity with the original hypo
 			// remove pick from provided hypo
-			removeCorrelation(corr);
+			removeCorrelationReference(corr);
 
 			// we've made a change to the hypo (got rid of a pick)
 			bAss = true;
@@ -2536,7 +2539,7 @@ void CHypo::stats() {
 		m_dKurtosisValue = 0.0;
 		m_dMedianDistance = 0.0;
 		m_dMinDistance = 0.0;
-		m_dDistanceCutoff = 0.0;
+		m_dAssociationDistanceCutoff = 0.0;
 		m_dGap = 360.0;
 		return;
 	}
@@ -2602,11 +2605,11 @@ void CHypo::stats() {
 	// In the long term, he wants to replace this with a more statistics
 	// based algorithm
 	int icut = static_cast<int>((m_dDistanceCutoffPercentage * ndis));
-	m_dDistanceCutoff = m_dDistanceCutoffFactor * dis[icut];
+	m_dAssociationDistanceCutoff = m_dDistanceCutoffFactor * dis[icut];
 
 	// make sure our calculated dCut is not below the minimum allowed
-	if (m_dDistanceCutoff < getMinDistanceCutoff()) {
-		m_dDistanceCutoff = getMinDistanceCutoff();
+	if (m_dAssociationDistanceCutoff < getMinDistanceCutoff()) {
+		m_dAssociationDistanceCutoff = getMinDistanceCutoff();
 	}
 
 	// sort the azimuths

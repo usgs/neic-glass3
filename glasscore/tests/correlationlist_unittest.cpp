@@ -120,7 +120,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	"testCorrelationList not larger than max";
 
 	// test clearing correlations
-	testCorrelationList->clearCorrelations();
+	testCorrelationList->clear();
 	expectedSize = 0;
 	ASSERT_EQ(expectedSize, testCorrelationList->getCorrelationTotal())<<
 	"Cleared Correlations";

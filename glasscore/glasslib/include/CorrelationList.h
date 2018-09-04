@@ -25,10 +25,10 @@ class CHypo;
 class CGlass;
 
 /**
- * \brief CPickList comparison function
+ * \brief CCorrelationList comparison function
  *
- * PickCompare contains the comparison function used by std::multiset when
- * inserting, sorting, and retrieving picks.
+ * CorrelationCompare contains the comparison function used by std::multiset when
+ * inserting, sorting, and retrieving correlations.
  */
 struct CorrelationCompare {
 	bool operator()(const std::shared_ptr<CCorrelation> &lhs,
@@ -43,20 +43,12 @@ struct CorrelationCompare {
 /**
  * \brief glasscore correlation list class
  *
- * The CCorrelationList class is the class that encapsulates everything
- * necessary to represent a waveform arrival correlation, including arrival
- * time, phase id,and an unique identifier.  The CCorrelationList class is also
- * a node in the detection graph database.
+ * The CCorrelationList class is the class that maintains a std::multiset of all
+ * the correlations being considered by glasscore.
  *
- * CCorrelationList contains functions to support nucleation of a new event
- * basedon the correlation.
+ * CCorrelationList contains functions to support correlation parsing,
+ * scavenging, and the creation of a new event hypocenter based on the correlation.
  *
- * CCorrelationList maintains a graph database link between it and the the site
- * (station)the correlation was made at.
- *
- * CCorrelationList also maintains a vector of CHypo objects represent the graph
- * database links between  this correlation and various hypocenters.  A single
- * correlation may belinked to multiple hypocenters
  *
  * CCorrelationList uses smart pointers (std::shared_ptr).
  */
@@ -76,13 +68,6 @@ class CCorrelationList {
 	 * \brief CCorrelationList clear function
 	 */
 	void clear();
-
-	/**
-	 * \brief Remove all correlations from correlation list
-	 *
-	 * Clears all correlations from the vector and map
-	 */
-	void clearCorrelations();
 
 	/**
 	 * \brief CCorrelationList communication receiving function
@@ -155,60 +140,85 @@ class CCorrelationList {
 	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2.5);
 
 	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
+	 * \brief Get the CGlass pointer used by this correlation list for global
+	 * and configuration lookups
+	 * \return Return a pointer to the CGlass class used by this correlation
+	 * list
 	 */
 	const CGlass* getGlass() const;
 
 	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
+	 * \brief Set the CGlass pointer used by this correlation list for global
+	 * and configuration lookups
+	 * \param glass - a pointer to the CGlass class used by this correlation
+	 * list
 	 */
 	void setGlass(CGlass* glass);
 
 	/**
-	 * \brief CSiteList getter
-	 * \return the CSiteList pointer
+	 * \brief Get the CSiteList pointer used by this correlation list for site
+	 * lookups
+	 * \return Return a pointer to the CSiteList class used by this correlation
+	 * list
 	 */
 	const CSiteList* getSiteList() const;
 
 	/**
-	 * \brief CSiteList setter
-	 * \param siteList - the CSiteList pointer
+	 * \brief Set the CSiteList pointer used by this correlation list for site
+	 * lookups
+	 * \param siteList - a pointer to the CSiteList class used by this correlation
+	 * list
 	 */
 	void setSiteList(CSiteList* siteList);
 
 	/**
-	 * \brief nCorrelationMax getter
-	 * \return the nCorrelationMax
+	 * \brief Get the maximum allowed size of this correlation list
+	 * \return Return an integer containing the maximum allowed size of this
+	 * correlation list
 	 */
 	int getCorrelationMax() const;
 
 	/**
-	 * \brief nCorrelationMax Setter
-	 * \param correlationMax - the nCorrelationMax
+	 * \brief ZSet the maximum allowed size of this correlation list
+	 * \param correlationMax -  an integer containing the maximum allowed size
+	 * of this correlation list
 	 */
 	void setCorrelationMax(int correlationMax);
 
 	/**
-	 * \brief nCorrelationTotal getter
-	 * \return the nCorrelationTotal
+	 * \brief Get the total number of correlations processed by this list
+	 * \return Return an integer containing the total number of correlations
+	 * processed by this list
 	 */
 	int getCorrelationTotal() const;
 
 	/**
-	 * \brief Get the current size of the correlation list
+	 * \brief Get the current number of correlations contained in this list
+	 * \return Return an integer containing the current number of correlations
+	 * contained in this list
 	 */
 	int size() const;
 
+	/**
+	 * \brief Get a vector of correlations that fall within a time window
+	 *
+	 * Get a vector of correlations that fall within the provided time window
+	 * from t1 to t2
+	 *
+	 * \param t1 - A double value containing the beginning of the time window in
+	 * julian seconds
+	 * \param t2 - A double value containing the end of the time window in
+	 * julian seconds
+	 * \return Return a std::vector of std::weak_ptrs to the correlations within
+	 * the time window
+	 */
 	std::vector<std::weak_ptr<CCorrelation>> getCorrelations(double t1,
 																double t2);
 
  private:
 	/**
-	 * \brief A pointer to the parent CGlass class, used to send output,
-	 * look up site information, encode/decode time, get configuration values,
-	 * call association functions, and debug flags
+	 * \brief A pointer to the parent CGlass class, used to get configuration
+	 * values and access other parts of glass3
 	 */
 	CGlass * m_pGlass;
 
@@ -220,8 +230,8 @@ class CCorrelationList {
 
 	/**
 	 * \brief An integer containing the maximum number of correlations allowed in
-	 * CCorrelationList. This value is overridden by pGlass->nPickMax if provided.
-	 * Defaults to 10000.
+	 * CCorrelationList. This value is overridden by pGlass->getMaxNumCorrelations()
+	 * if provided. Defaults to 10000.
 	 */
 	std::atomic<int> m_iCorrelationMax;
 

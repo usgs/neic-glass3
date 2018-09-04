@@ -83,7 +83,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 		std::shared_ptr<CHypo> oldestHypo = *oldest;
 
 		// send expiration message
-		oldestHypo->expire();
+		oldestHypo->generateExpireMessage();
 
 		// remove it
 		removeHypo(oldestHypo, false);
@@ -190,7 +190,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		pk->addHypo(bestHyp, true);
 
 		// link the hypo to the pick
-		bestHyp->addPick(pk);
+		bestHyp->addPickReference(pk);
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
@@ -316,10 +316,10 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 		 */
 
 		// link the correlation to the hypo
-		corr->addHypo(bestHyp, true);
+		corr->addHypoReference(bestHyp, true);
 
 		// link the hypo to the correlation
-		bestHyp->addCorrelation(corr);
+		bestHyp->addCorrelationReference(corr);
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
@@ -682,7 +682,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 		// if we CAN report
 		if (hyp->reportCheck() == true) {
 			// report
-			hyp->event();
+			hyp->generateEventMessage();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
@@ -996,11 +996,11 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 
 					// add all picks for other two events
 					for (auto pick : hVPick) {
-						hypo3->addPick(pick);
+						hypo3->addPickReference(pick);
 					}
 
 					for (auto pick : h2VPick) {
-						hypo3->addPick(pick);
+						hypo3->addPickReference(pick);
 					}
 
 					// First localization attempt after nucleation
@@ -1152,19 +1152,17 @@ std::shared_ptr<CHypo> CHypoList::getHypoToProcess() {
 		return (NULL);
 	}
 
+	// start at the beginning
 	std::vector<std::weak_ptr<CHypo>>::iterator it = m_vHyposToProcess.begin();
-
 	while(it != m_vHyposToProcess.end()) {
-		// get the first hypo in the vector
+		// get the next hypo in the vector
 		std::shared_ptr<CHypo> hyp = (*it).lock();
 
-		// remove the first hypo from the vector now that we have it
-		// Does not throw unless an exception is thrown by the assignment
-		// operator of T.
+		// one way or another we're done with this hypo
 		it = m_vHyposToProcess.erase(it);
 
 		// is it valid?
-		if (hyp != NULL) {
+		if ((hyp != NULL) && (hyp->getID() != "")) {
 			// return the hypo
 			return (hyp);
 		}
@@ -1190,7 +1188,7 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		// only if we've sent an event message
 		if (hypo->getEventSent()) {
 			// create cancellation message
-			hypo->cancel();
+			hypo->generateCancelMessage();
 		}
 	}
 
@@ -1276,7 +1274,7 @@ bool CHypoList::requestHypo(std::shared_ptr<json::Object> com) {
 	}
 
 	// generate the hypo message
-	hyp->hypo();
+	hyp->generateHypoMessage();
 
 	// done
 	return (true);
