@@ -1111,11 +1111,26 @@ int CHypoList::addHypoToProcess(std::shared_ptr<CHypo> hyp) {
 
 	// is this id already on the queue?
 	m_vHyposToProcessMutex.lock();
-	if (std::find(m_vHyposToProcess.begin(), m_vHyposToProcess.end(), pid)
-			== m_vHyposToProcess.end()) {
-		// it is not, add it
-		m_vHyposToProcess.push_back(pid);
+	for (std::vector<std::weak_ptr<CHypo>>::iterator it = m_vHyposToProcess
+			.begin(); it != m_vHyposToProcess.end(); ++it) {
+		std::shared_ptr<CHypo> aHyp = (*it).lock();
+
+		if ((aHyp != NULL) && (aHyp->getID() == hyp->getID())) {
+			// found it, don't bother adding it again
+			m_vHyposToProcessMutex.unlock();
+			return (size);
+		}
 	}
+
+	// normal queue (insert at end)
+	// m_vHyposToProcess.push_back(std::weak_ptr<CHypo>(hyp));
+
+	// FIFO queue (insert at beginning)
+	m_vHyposToProcess.insert(m_vHyposToProcess.begin(),
+								std::weak_ptr<CHypo>(hyp));
+
+	// added one
+	size++;
 	m_vHyposToProcessMutex.unlock();
 
 	glassutil::CLogit::log(
@@ -1128,37 +1143,34 @@ int CHypoList::addHypoToProcess(std::shared_ptr<CHypo> hyp) {
 
 // ---------------------------------------------------------getHypoToProcess
 std::shared_ptr<CHypo> CHypoList::getHypoToProcess() {
-	// don't use a lock guard for queue mutex and hypomutex,
-	// to avoid a deadlock when both mutexes are locked
-	m_vHyposToProcessMutex.lock();
+	std::lock_guard<std::mutex> queueGuard(m_vHyposToProcessMutex);
 
 	// Pop first hypocenter off processing fifo
 	// is there anything on the queue?
-	if (m_vHyposToProcess.size() < 1) {
+	if (m_vHyposToProcess.size() == 0) {
 		// nope
-		m_vHyposToProcessMutex.unlock();
 		return (NULL);
 	}
 
-	// get the first id on the queue
-	std::string pid = m_vHyposToProcess.front();
+	std::vector<std::weak_ptr<CHypo>>::iterator it = m_vHyposToProcess.begin();
 
-	// remove the first id from the queue now that we have it
-	// Does not throw unless an exception is thrown by the assignment operator
-	// of T.
-	m_vHyposToProcess.erase(m_vHyposToProcess.begin());
+	while(it != m_vHyposToProcess.end()) {
+		// get the first hypo in the vector
+		std::shared_ptr<CHypo> hyp = (*it).lock();
 
-	m_vHyposToProcessMutex.unlock();
+		// remove the first hypo from the vector now that we have it
+		// Does not throw unless an exception is thrown by the assignment
+		// operator of T.
+		it = m_vHyposToProcess.erase(it);
 
-	m_HypoListMutex.lock();
+		// is it valid?
+		if (hyp != NULL) {
+			// return the hypo
+			return (hyp);
+		}
+	}
 
-	// use the map to get the hypo based on the id
-	std::shared_ptr<CHypo> hyp = m_mHypo[pid];
-
-	m_HypoListMutex.unlock();
-
-	// return the hypo
-	return (hyp);
+	return (NULL);
 }
 
 // ---------------------------------------------------------removeHypo

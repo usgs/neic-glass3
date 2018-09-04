@@ -346,7 +346,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \brief A std::vector containing the queue of hypocenters that need
 	 * to be processed
 	 */
-	std::vector<std::string> m_vHyposToProcess;
+	std::vector<std::weak_ptr<CHypo>> m_vHyposToProcess;
 
 	/**
 	 * \brief the std::mutex for m_vHyposToProcess
