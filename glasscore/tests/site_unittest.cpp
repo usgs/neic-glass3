@@ -144,7 +144,7 @@ TEST(SiteTest, JSONConstruction) {
 
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-					json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct a site using a JSON object
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
@@ -162,9 +162,9 @@ TEST(SiteTest, Distance) {
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-					json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
-					json::Object(json::Deserialize(std::string(SITE2JSON))));
+			json::Object(json::Deserialize(std::string(SITE2JSON))));
 
 	// construct sites using JSON objects
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
@@ -189,21 +189,21 @@ TEST(SiteTest, PickOperations) {
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(SITEJSON))));
-		std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
-						json::Object(json::Deserialize(std::string(SITE2JSON))));
+	std::shared_ptr<json::Object> site2JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITE2JSON))));
 
 	// construct a site using a JSON object
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-						new glasscore::CSite(siteJSON, NULL));
+			new glasscore::CSite(siteJSON, NULL));
 	std::shared_ptr<glasscore::CSite> sharedTestSite2(
-						new glasscore::CSite(site2JSON, NULL));
+			new glasscore::CSite(site2JSON, NULL));
 
 	// create pick objects
-	glasscore::CPick * testPick = new glasscore::CPick(sharedTestSite, 10.0, 1,
+	glasscore::CPick * testPick = new glasscore::CPick(sharedTestSite, 10.0,
 														"1", -1, -1);
 	glasscore::CPick * testPick2 = new glasscore::CPick(sharedTestSite2, 11.1,
-														2, "2", -1, -1);
+														"2", -1, -1);
 
 	// create new shared pointers to the picks
 	std::shared_ptr<glasscore::CPick> sharedTestPick(testPick);
@@ -231,16 +231,16 @@ TEST(SiteTest, NodeOperations) {
 
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-							json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct a site using a JSON object
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
 
 	// create node objects
 	glasscore::CNode * testNode = new glasscore::CNode("test", 0.0, 0.0, 10,
-														100, "1");
+														100);
 	glasscore::CNode * testNode2 = new glasscore::CNode("test2", 0.897, 0.897,
-														10, 100, "2");
+														10, 100);
 
 	// create new shared pointers to the nodes
 	std::shared_ptr<glasscore::CNode> sharedNode(testNode);

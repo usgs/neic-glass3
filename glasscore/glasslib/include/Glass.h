@@ -251,7 +251,7 @@ class CGlass {
 	 * \brief Cycle limit getter
 	 * \return the limit of processing cycles
 	 */
-	int getCycleLimit() const;
+	int getProcessLimit() const;
 
 	/**
 	 * \brief Graphics minimize TT locator getter
@@ -587,7 +587,7 @@ class CGlass {
 	 * \brief Maximum number of processing cycles a hypo can do without having
 	 * new data associated
 	 */
-	int m_iCycleLimit;
+	int m_iProcessLimit;
 
 	/**
 	 * \brief boolean to use a locator which minimizes TT as opposed to

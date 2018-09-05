@@ -126,7 +126,7 @@ TEST(HypoListTest, HypoOperations) {
 	"testHypoList is one smaller";
 
 	// test clearing hypos
-	testHypoList->clearHypos();
+	testHypoList->clear();
 	expectedSize = 0;
 	ASSERT_EQ(expectedSize, (int)testHypoList->getHypoTotal())<< "Cleared Hypos";
 }

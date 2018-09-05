@@ -47,14 +47,6 @@ void CPickList::clear() {
 	m_pGlass = NULL;
 	m_pSiteList = NULL;
 
-	// clear picks
-	clearPicks();
-}
-
-// ---------------------------------------------------------~clear
-void CPickList::clearPicks() {
-	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
-
 	// clear the multiset
 	m_msPickList.clear();
 
@@ -69,7 +61,7 @@ void CPickList::clearPicks() {
 	m_iPickMax = 10000;
 }
 
-// ---------------------------------------------------------Dispatch
+// ---------------------------------------------------------dispatch
 bool CPickList::dispatch(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
@@ -77,28 +69,6 @@ bool CPickList::dispatch(std::shared_ptr<json::Object> com) {
 				glassutil::log_level::error,
 				"CPickList::dispatch: NULL json communication.");
 		return (false);
-	}
-
-	// check for a command
-	if (com->HasKey("Cmd")
-			&& ((*com)["Cmd"].GetType() == json::ValueType::StringVal)) {
-		// dispatch to appropriate function based on Cmd value
-		json::Value v = (*com)["Cmd"].ToString();
-
-		// add a pick
-		if (v == "Pick") {
-			return (addPick(com));
-		}
-
-		// clear all picks
-		if (v == "ClearGlass") {
-			clearPicks();
-
-			// ClearGlass is also relevant to other glass
-			// components, return false so they also get a
-			// chance to process it
-			return (false);
-		}
 	}
 
 	// Input pick data can have Type keys
@@ -182,7 +152,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// create new pick from json message
-	CPick * newPick = new CPick(pick, m_iPickTotal + 1, m_pSiteList);
+	CPick * newPick = new CPick(pick, m_pSiteList);
 
 	// check to see if we got a valid pick
 	if ((newPick->getSite() == NULL) || (newPick->getTPick() == 0)
@@ -279,12 +249,12 @@ std::vector<std::weak_ptr<CPick>> CPickList::getPicks(double t1, double t2) {
 
 	// construct the lower bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(nullSite, t1, 0,
+	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(nullSite, t1,
 																"", 0, 0);
 
 	// construct the upper bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(nullSite, t2, 0,
+	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(nullSite, t2,
 																"", 0, 0);
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
@@ -437,7 +407,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 				continue;
 			}
 
-			std::shared_ptr<CHypo> pickHyp = currentPick->getHypo();
+			std::shared_ptr<CHypo> pickHyp = currentPick->getHypoReference();
 
 			// check to see if this pick is already in this hypo
 			if (hyp->hasPickReference(currentPick)) {
@@ -446,7 +416,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 			}
 
 			// check to see if this pick can be associated with this hypo
-			if (!hyp->associate(currentPick, 1.0, sdassoc)) {
+			if (!hyp->canAssociate(currentPick, 1.0, sdassoc)) {
 				// it can't, skip it
 				continue;
 			}
@@ -455,7 +425,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 			if (pickHyp == NULL) {
 				// unassociated with any existing hypo
 				// link pick to the hypo we're working on
-				currentPick->addHypo(hyp, true);
+				currentPick->addHypoReference(hyp, true);
 
 				// add pick to this hypo
 				hyp->addPickReference(currentPick);
@@ -535,7 +505,7 @@ glass3::util::WorkState CPickList::work() {
 	// Attempt both association and nucleation of the new pick.
 	// If both succeed, the mess is sorted out in darwin/evolve
 	// associate
-	m_pGlass->getHypoList()->associate(pck);
+	m_pGlass->getHypoList()->associateData(pck);
 
 	// nucleate
 	pck->nucleate();

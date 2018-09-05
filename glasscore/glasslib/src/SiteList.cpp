@@ -50,7 +50,7 @@ void CSiteList::clearSites() {
 	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
 	// remove all picks from sites
 	for (auto site : m_vSite) {
-		site->clearVPick();
+		site->clear();
 	}
 
 	// clear the vector and map
@@ -74,16 +74,6 @@ bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
 			&& ((*com)["Cmd"].GetType() == json::ValueType::StringVal)) {
 		// dispatch to appropriate function based on Cmd value
 		json::Value v = (*com)["Cmd"].ToString();
-
-		// clear all sites
-		if (v == "ClearGlass") {
-			clearSites();
-
-			// ClearGlass is also relevant to other glass
-			// components, return false so they also get a
-			// chance to process it
-			return (false);
-		}
 
 		// get the current site list
 		if (v == "ReqSiteList") {

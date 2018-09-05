@@ -125,7 +125,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * Supports Global (genrate global grid) Shell (generate grid at
 	 * single depth), Grid (generate local grid), Single (generate
 	 * single node), GetWeb (generate output message detailing detection
-	 * graph database), and ClearGlass (clear all Node data) inputs.
+	 * graph database) inputs.
 	 *
 	 * \param com - A pointer to a json::object containing the
 	 * communication.

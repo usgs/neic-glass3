@@ -18,7 +18,6 @@
 #define PICKTIME 3628281703.599
 #define BACKAZIMUTH 2.65
 #define SLOWNESS 1.44
-#define PICKID 1
 #define PICKIDSTRING "20682837"
 
 // NOTE: Need to consider testing nucleate function, but that would need a
@@ -67,11 +66,6 @@ void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 	double expectedslowness = SLOWNESS;
 	ASSERT_EQ(beamslowness, expectedslowness);
 
-	// check id
-	int pickid = pickobject->getPickID();
-	double expectedpickid = PICKID;
-	ASSERT_EQ(pickid, expectedpickid);
-
 	// check string id
 	std::string pickstringid = pickobject->getID();
 	std::string expectedstringid = std::string(PICKIDSTRING);
@@ -89,13 +83,12 @@ TEST(PickTest, Construction) {
 	ASSERT_EQ(0, testPick->getTPick())<< "time is zero";
 	ASSERT_EQ(-1, testPick->getBackAzimuth())<< "backazimuth is -1";
 	ASSERT_EQ(-1, testPick->getSlowness())<< "slowness is -1";
-	ASSERT_EQ(0, testPick->getPickID())<< "id is zero";
 	ASSERT_STREQ("", testPick->getPhaseName().c_str());
 	ASSERT_STREQ("", testPick->getID().c_str());
 
 	// pointers
 	ASSERT_TRUE(testPick->getSite() == NULL)<< "pSite null";
-	ASSERT_TRUE(testPick->getHypo() == NULL)<< "pHypo null";
+	ASSERT_TRUE(testPick->getHypoReference() == NULL)<< "pHypo null";
 	ASSERT_TRUE(testPick->getJSONPick() == NULL)<< "jPick null";
 
 	// create  shared pointer to the site
@@ -105,8 +98,8 @@ TEST(PickTest, Construction) {
 			new glasscore::CSite(siteJSON, NULL));
 
 	// now init
-	testPick->initialize(sharedTestSite, PICKTIME, PICKID,
-							std::string(PICKIDSTRING), BACKAZIMUTH, SLOWNESS);
+	testPick->initialize(sharedTestSite, PICKTIME, std::string(PICKIDSTRING),
+							BACKAZIMUTH, SLOWNESS);
 
 	// check results
 	checkdata(testPick, "initialize check");
@@ -132,8 +125,7 @@ TEST(PickTest, JSONConstruction) {
 	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(PICKJSON))));
 
-	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, PICKID,
-														testSiteList);
+	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, testSiteList);
 
 	// check results
 	checkdata(testPick, "json construction check");
@@ -151,9 +143,8 @@ TEST(PickTest, HypoOperations) {
 
 	// create pick
 	glasscore::CPick * testPick = new glasscore::CPick(
-			sharedTestSite, PICKTIME,
-			PICKID,
-			std::string(PICKIDSTRING), BACKAZIMUTH, SLOWNESS);
+			sharedTestSite, PICKTIME, std::string(PICKIDSTRING), BACKAZIMUTH,
+			SLOWNESS);
 
 	// create a hypo
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -167,14 +158,14 @@ TEST(PickTest, HypoOperations) {
 	std::shared_ptr<glasscore::CHypo> sharedHypo(testHypo);
 
 	// add hypo to pick
-	testPick->addHypo(sharedHypo);
+	testPick->addHypoReference(sharedHypo);
 
 	// check hypo
-	ASSERT_TRUE(testPick->getHypo() != NULL)<< "pHypo  not null";
+	ASSERT_TRUE(testPick->getHypoReference() != NULL)<< "pHypo  not null";
 
 	// remove hypo from pick
-	testPick->removeHypo(sharedHypo);
+	testPick->removeHypoReference(sharedHypo);
 
 	// check hypo
-	ASSERT_TRUE(testPick->getHypo() == NULL)<< "pHypo null";
+	ASSERT_TRUE(testPick->getHypoReference() == NULL)<< "pHypo null";
 }

@@ -27,8 +27,8 @@ class CGlass;
 /**
  * \brief glasscore site list class
  *
- * The CSiteList class is the class that maintains a std::map of all the seismic
- * stations used by glasscore.
+ * The CSiteList class is the class that maintains a vector and :map of all the
+ * seismic stations used by glasscore.
  *
  * CSiteList also maintains a std::vector mapping the string SCNL id
  * to CSite objects

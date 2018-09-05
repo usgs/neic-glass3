@@ -106,7 +106,7 @@ TEST(PickListTest, PickOperations) {
 	"testPickList not larger than max";
 
 	// test clearing picks
-	testPickList->clearPicks();
+	testPickList->clear();
 	expectedSize = 0;
 	ASSERT_EQ(expectedSize, testPickList->getPickTotal())<< "Cleared Picks";
 }

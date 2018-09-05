@@ -1408,7 +1408,7 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 
 	// create node
 	std::shared_ptr<CNode> node(
-			new CNode(m_sName, lat, lon, z, resol, glassutil::CPid::pid()));
+			new CNode(m_sName, lat, lon, z, resol));
 
 	// set parent web
 	node->setWeb(this);
@@ -1609,7 +1609,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		double maxDistance = RAD2DEG * geo.delta(&furthestSite->getGeo());
 
 		// Ignore if new site is farther than last linked site
-		if ((node->getSiteLinksCount() >= m_iNumStationsPerNode)
+		if ((node->count() >= m_iNumStationsPerNode)
 				&& (newDistance > maxDistance)) {
 			node->setEnabled(true);
 			continue;
@@ -1638,7 +1638,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		}
 
 		// check to see if we're at the limit
-		if (node->getSiteLinksCount() < m_iNumStationsPerNode) {
+		if (node->count() < m_iNumStationsPerNode) {
 			// Link node to site using traveltimes
 			node->linkSite(site, node, travelTime1, travelTime2);
 

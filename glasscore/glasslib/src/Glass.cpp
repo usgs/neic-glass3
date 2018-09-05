@@ -80,68 +80,22 @@ bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
-	// check for a command
+	// check for a command, usually configuration or a request
 	if (com->HasKey("Cmd")
 			&& ((*com)["Cmd"].GetType() == json::ValueType::StringVal)) {
 		// dispatch to appropriate function based on Cmd value
 		json::Value v = (*com)["Cmd"].ToString();
-
-		// log cmd if it isn't one of the common ones
-		if ((v != "Site") && (v != "ReqHypo") && (v != "Correlation")
-				&& (v != "Pick")) {
-			glassutil::CLogit::log(glassutil::log_level::debug,
-									"CGlass::dispatch: Cmd:" + v.ToString());
-		}
-
-		// generate travel time file
-		// NOTE: Move to stand alone program
-		// if (v == "GenTrv") {
-		// return((genTrv(com));
-		// }
-
-		// test travel time classes
-		// NOTE: Move to unit tests.
-		// if (v == "TestTTT") {
-		// testTTT(com);
-		// return(true);
-		// }
 
 		// Initialize glass
 		if (v == "Initialize") {
 			return (initialize(com));
 		}
 
-		// clear glass configuration
-		if (v == "ClearGlass") {
-			clear();
-			// ClearGlass is also relevant to other glass
-			// components, Fall through intentional
-		}
-		// check to see if glass has been set up
-		if (!m_pWebList) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CGlass::dispatch: ***** Glass Not initialized *****.");
-
-			glassutil::CLogit::log(glassutil::log_level::debug,
-									"CGlass::dispatch: Cmd is:" + v.ToString());
-			return (false);
-		}
-
 		// send any other commands to any of the configurable / input classes
-		if (m_pPickList->dispatch(com)) {
-			return (true);
-		}
 		if (m_pSiteList->dispatch(com)) {
 			return (true);
 		}
 		if (m_pHypoList->dispatch(com)) {
-			return (true);
-		}
-		if (m_pCorrelationList->dispatch(com)) {
-			return (true);
-		}
-		if (m_pDetectionProcessor->dispatch(com)) {
 			return (true);
 		}
 		if (m_pWebList->dispatch(com)) {
@@ -149,7 +103,7 @@ bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
 		}
 	}
 
-	// Input data can have Type keys
+	// Check for a type, usually input data
 	if (com->HasKey("Type")
 			&& ((*com)["Type"].GetType() == json::ValueType::StringVal)) {
 		// send any input to any of the input processing classes
@@ -198,7 +152,7 @@ void CGlass::clear() {
 	m_dDistanceCutoffFactor = 4.0;
 	m_dDistanceCutoffPercentage = 0.4;
 	m_dMinDistanceCutoff = 30.0;
-	m_iCycleLimit = 25;
+	m_iProcessLimit = 25;
 	m_bTestTravelTimes = false;
 	m_bTestLocator = false;
 	m_bGraphicsOut = false;
@@ -644,17 +598,17 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		// iCycleLimit
 		if ((params.HasKey("iCycleLimit"))
 				&& (params["iCycleLimit"].GetType() == json::ValueType::IntVal)) {
-			m_iCycleLimit = params["iCycleLimit"].ToInt();
+			m_iProcessLimit = params["iCycleLimit"].ToInt();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using iCycleLimit: "
-							+ std::to_string(m_iCycleLimit));
+							+ std::to_string(m_iProcessLimit));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using default iCycleLimit: "
-							+ std::to_string(m_iCycleLimit));
+							+ std::to_string(m_iProcessLimit));
 		}
 
 		// correlationMatchingTWindow
@@ -1191,8 +1145,8 @@ int CGlass::getGraphicsSteps() const {
 }
 
 // ------------------------------------------------getCycleLimit
-int CGlass::getCycleLimit() const {
-	return (m_iCycleLimit);
+int CGlass::getProcessLimit() const {
+	return (m_iProcessLimit);
 }
 
 // ------------------------------------------------getMinimizeTTLocator
@@ -1266,7 +1220,7 @@ CSiteList*& CGlass::getSiteList() {
 }
 
 // -----------------------------------------------getDefaultNucleationTravelTime
-std::shared_ptr<traveltime::CTravelTime>& CGlass::getDefaultNucleationTravelTime() { // NOLINT
+std::shared_ptr<traveltime::CTravelTime>& CGlass::getDefaultNucleationTravelTime() {  // NOLINT
 	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 	return (m_pDefaultNucleationTravelTime);
 }

@@ -57,28 +57,13 @@ bool CCorrelationList::dispatch(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
-	// check for a command
-	if (com->HasKey("Cmd")
-			&& ((*com)["Cmd"].GetType() == json::ValueType::StringVal)) {
-		// dispatch to appropriate function based on Cmd value
-		json::Value v = (*com)["Cmd"].ToString();
-
-		// clear all data
-		if (v == "ClearGlass") {
-			// ClearGlass is also relevant to other glass
-			// components, return false so they also get a
-			// chance to process it
-			return (false);
-		}
-	}
-
 	// Input data can have Type keys
 	if (com->HasKey("Type")
 			&& ((*com)["Type"].GetType() == json::ValueType::StringVal)) {
 		// dispatch to appropriate function based on Cmd value
 		json::Value v = (*com)["Type"].ToString();
 
-		// add a detection
+		// add a correlation
 		if (v == "Correlation") {
 			return (addCorrelationFromJSON(com));
 		}
@@ -193,7 +178,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 	if ((m_pGlass) && (m_pGlass->getHypoList())) {
 		// Attempt association of the new correlation.  If that fails create a
 		// new hypo from the correlation
-		if (!m_pGlass->getHypoList()->associate(corr)) {
+		if (!m_pGlass->getHypoList()->associateData(corr)) {
 			// not associated, we need to create a new hypo
 			// NOTE: maybe move below to CCorrelation function to match pick?
 
@@ -235,7 +220,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 
 			// ensure all data scavanged belong to hypo choosing to not localize
 			// after because we trust  the correlation location for this step
-			m_pGlass->getHypoList()->resolve(hypo);
+			m_pGlass->getHypoList()->resolveData(hypo);
 
 			// add hypo to hypo list
 			m_pGlass->getHypoList()->addHypo(hypo);
@@ -446,7 +431,7 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 			}
 
 			// check to see if this correlation can be associated with this hypo
-			if (!hyp->associate(
+			if (!hyp->canAssociate(
 					currentCorrelation,
 					m_pGlass->getCorrelationMatchingTimeWindow(),
 					m_pGlass->getCorrelationMatchingDistanceWindow())) {

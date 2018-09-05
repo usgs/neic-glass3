@@ -56,7 +56,7 @@ class CCorrelation {
 	 * \brief CCorrelation advanced constructor
 	 *
 	 * An advanced constructor for the CCorrelation class. This function
-	 * initializing members to the provided values.
+	 * initializes members to the provided values.
 	 *
 	 * \param correlationSite - A shared pointer to a CSite object that the
 	 * correlation wasmade at
@@ -83,11 +83,11 @@ class CCorrelation {
 	 *
 	 * An advanced constructor for the CCorrelation class. This function
 	 * initializing members to the values parsed from the provided json object,
-	 * identified by the provided id, and using the provided pointer to a
-	 * CSiteList class to lookup the correlation station.
+	 * and using the provided pointer to a CSiteList class to lookup the
+	 * correlation station.
 	 *
 	 * \param correlation - A shared pointer to a json::Object to containing the
-	 * data construct the correlation from
+	 * data to construct the correlation from
 	 * \param pSiteList - A pointer to the CSiteList class to use when looking
 	 * up the correlation station
 	 */
@@ -182,7 +182,7 @@ class CCorrelation {
 	 * \brief Remove hypo reference to this correlation
 	 *
 	 * Remove any existing weak_ptr reference to a hypo from this correlation,
-	 * breaking the graph database link between this correlation a hypocenter.
+	 * breaking the graph database link between this correlation and a hypocenter.
 	 *
 	 * Note that this correlation may or may not still be included in other
 	 * hypocenter correlation data lists.
@@ -196,26 +196,30 @@ class CCorrelation {
 	double getCorrelation() const;
 
 	/**
-	 * \brief Get the correlation source longitude for this correlation
-	 * \return Return a double containing the correlation source latitude
+	 * \brief Get the correlation source latitude for this correlation
+	 * \return Return a double containing the correlation source latitude in
+	 * degrees
 	 */
 	double getLatitude() const;
 
 	/**
 	 * \brief Get the correlation source longitude for this correlation
-	 * \return Return a double containing the correlation source longitude
+	 * \return Return a double containing the correlation source longitude in
+	 * degrees
 	 */
 	double getLongitude() const;
 
 	/**
 	 * \brief Get the correlation source depth for this correlation
-	 * \return Return a double containing the correlation source depth
+	 * \return Return a double containing the correlation source depth in
+	 * kilometers
 	 */
 	double getDepth() const;
 
 	/**
 	 * \brief Get the correlation source origin time for this correlation
-	 * \return Return a double containing the correlation source origin time
+	 * \return Return a double containing the correlation source origin time in
+	 * julian seconds
 	 */
 	double getTOrigin() const;
 
@@ -251,7 +255,7 @@ class CCorrelation {
 	const std::string getHypoReferenceID() const;
 
 	/**
-	 * \brief Get the set for this correlation
+	 * \brief Get the site for this correlation
 	 * \return Return a shared_ptr to a CSite object containing the site this
 	 * correlation was made at
 	 */
@@ -292,6 +296,8 @@ class CCorrelation {
 	/**
 	 * \brief A std::weak_ptr to a CHypo object
 	 * representing the links between this correlation and associated hypocenter
+	 * A weak_ptr is used here instead of a shared_ptr to prevent a cyclical
+	 * reference between CPick and CHypo.
 	 */
 	std::weak_ptr<CHypo> m_wpHypo;
 

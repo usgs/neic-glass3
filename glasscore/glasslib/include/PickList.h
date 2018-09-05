@@ -87,21 +87,13 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	void clear() override;
 
 	/**
-	 * \brief Remove all picks from pick list
-	 *
-	 * Clears all picks from the vector and map
-	 */
-	void clearPicks();
-
-	/**
 	 * \brief CPickList communication receiving function
 	 *
 	 * The function used by CPickList to receive communication
 	 * (such as configuration or input data), from outside the
 	 * glasscore library, or it's parent CGlass.
 	 *
-	 * Supports Pick (add pick data to list) and ClearGlass
-	 * (clear all pick data) inputs.
+	 * Supports Pick (add pick data to list) input.
 	 *
 	 * \param com - A pointer to a json::object containing the
 	 * communication.
@@ -113,13 +105,14 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	/**
 	 * \brief CPickList add pick function
 	 *
-	 * The function used by CPickList to add a pick to the vector
-	 * and map, if the new pick causes the number of picks in the vector/map
-	 * to exceed the configured maximum, remove the oldest pick
-	 * from the list/map, as well as the list of picks in CSite.
+	 * The function used by CPickList to add a pick to the multiset, if the new
+	 * pick causes the number of picks in the multiset to exceed the configured
+	 * maximum, remove the oldest pick from the multiset, as well as try to
+	 * remove it from the shorter list of picks in CSite.
 	 *
 	 * This function will generate a json formatted request for site
-	 * (station) information if the pick is from an unknown site.
+	 * (station) information if the pick is from an unknown site via the
+	 * CSiteList getSite() function.
 	 *
 	 * This function will first attempt to associate the pick with
 	 * an existing hypocenter via calling the CHypoList::associate()
@@ -134,12 +127,18 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	bool addPick(std::shared_ptr<json::Object> pick);
 
 	/**
-	 * \brief Checks if picks is duplicate
+	 * \brief Checks if the provided pick time is a duplicate
 	 *
-	 * Takes a new pick and compares with list of picks.
-	 * True if pick is a duplicate
+	 * Compares the given pick time with the existing pick list times, in order
+	 * to determine  whether the given pick is a duplicate of an existing pick.
+	 *
+	 * \param newTPick - A double containing the arrival time of the pick
+	 * \param newSCNL - A std::string containing the scnl of the new pick
+	 * \param tWindow - A double containing the allowable matching time window
+	 * in seconds
+	 * \return Returns true if pick is a duplicate, false otherwise
 	 */
-	bool checkDuplicate(double newTPick, std::string newSCNL, double window);
+	bool checkDuplicate(double newTPick, std::string newSCNL, double tWindow);
 
 	/**
 	 * \brief Search for any associable picks that match hypo
@@ -158,51 +157,73 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2400.0);
 
 	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
+	 * \brief Get the CGlass pointer used by this pick list for global constants
+	 * and configuration lookups
+	 * \return Return a pointer to the CGlass class used by this pick list
 	 */
 	const CGlass* getGlass() const;
 
 	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
+	 * \brief Set the CGlass pointer used by this pick list for global constants
+	 * and configuration lookups
+	 * \param glass - a pointer to the CGlass class used by this pick list
 	 */
 	void setGlass(CGlass* glass);
 
 	/**
-	 * \brief CSiteList getter
-	 * \return the CSiteList pointer
+	 * \brief Get the CSiteList pointer used by this pick list for site lookups
+	 * \return Return a pointer to the CSiteList class used by this pick list
 	 */
 	const CSiteList* getSiteList() const;
 
 	/**
-	 * \brief CSiteList setter
-	 * \param siteList - the CSiteList pointer
+	 * \brief Set the CSiteList pointer used by this pick list for site lookups
+	 * \param siteList - a pointer to the CSiteList class used by this pick list
 	 */
 	void setSiteList(CSiteList* siteList);
 
 	/**
-	 * \brief nPickMax getter
-	 * \return the nPickMax
+	 * \brief Get the maximum allowed size of this pick list
+	 * \return Return an integer containing the maximum allowed size of this
+	 * pick list
 	 */
 	int getPickMax() const;
 
 	/**
-	 * \brief nPickMax Setter
-	 * \param picknMax - the nPickMax
+	 * \brief Set the maximum allowed size of this pick list
+	 * \param picknMax -  an integer containing the maximum allowed size of this
+	 * pick list
 	 */
 	void setPickMax(int picknMax);
 
 	/**
-	 * \brief nPickTotal getter
-	 * \return the nPickTotal
+	 * \brief Get the total number of picks processed by this list
+	 * \return Return an integer containing the total number of picks processed
+	 * by this list
 	 */
 	int getPickTotal() const;
 
 	/**
-	 * \brief Get the current size of the pick list
+	 * \brief Get the current number of picks contained in this list
+	 * \return Return an integer containing the current number of picks
+	 * contained in this list
 	 */
 	int size() const;
+
+	/**
+	 * \brief Get a vector of picks that fall within a time window
+	 *
+	 * Get a vector of picks that fall within the provided time window from t1
+	 * to t2
+	 *
+	 * \param t1 - A double value containing the beginning of the time window in
+	 * julian seconds
+	 * \param t2 - A double value containing the end of the time window in
+	 * julian seconds
+	 * \return Return a std::vector of std::weak_ptrs to the picks within the
+	 * time window
+	 */
+	std::vector<std::weak_ptr<CPick>> getPicks(double t1, double t2);
 
 	/**
 	 * \brief PickList work function
@@ -213,13 +234,10 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 */
 	glass3::util::WorkState work() override;
 
-	std::vector<std::weak_ptr<CPick>> getPicks(double t1, double t2);
-
  private:
 	/**
-	 * \brief A pointer to the parent CGlass class, used to look up site
-	 * information, configuration values, call association functions, and debug
-	 * flags
+	 * \brief A pointer to the parent CGlass class, used to get configuration
+	 * values and access other parts of glass3
 	 */
 	CGlass * m_pGlass;
 
@@ -230,17 +248,17 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	CSiteList * m_pSiteList;
 
 	/**
-	 * \brief An integer containing the total number of picks ever added to
-	 * CPickList
-	 */
-	int m_iPickTotal;
-
-	/**
 	 * \brief An integer containing the maximum number of picks allowed in
 	 * CPickList. This value is overridden by pGlass->nPickMax if provided.
 	 * Defaults to 10000.
 	 */
 	int m_iPickMax;
+
+	/**
+	 * \brief An integer containing the total number of picks ever added to
+	 * CPickList
+	 */
+	int m_iPickTotal;
 
 	/**
 	 * \brief A std::multiset containing each pick in the list in sequential
@@ -255,7 +273,7 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	std::queue<std::shared_ptr<CPick>> m_qPicksToProcess;
 
 	/**
-	 * \brief the std::mutex for qProcessList
+	 * \brief the std::mutex for m_qPicksToProcess
 	 */
 	std::mutex m_PicksToProcessMutex;
 

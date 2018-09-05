@@ -106,8 +106,8 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	return (true);
 }
 
-// ---------------------------------------------------------associate
-bool CHypoList::associate(std::shared_ptr<CPick> pk) {
+// ---------------------------------------------------------associateData
+bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 	// nullcheck
 	if (pk == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -135,8 +135,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 	if (hypoList.size() == 0) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::associate NOASSOC idPick:"
-						+ std::to_string(pk->getPickID())
+				"CHypoList::associate NOASSOC idPick:" + pk->getID()
 						+ "; No Usable Hypos");
 		// nope
 		return (false);
@@ -152,7 +151,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 			// check to see if the pick will associate with
 			// this hypo
 			// NOTE: The sigma value passed into associate is hard coded
-			if (hyp->associate(pk, 1.0, sdassoc)) {
+			if (hyp->canAssociate(pk, 1.0, sdassoc)) {
 				// add to the list of hypos this pick can associate with
 				viper.push_back(hyp);
 
@@ -166,8 +165,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 	if (viper.size() < 1) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::associate NOASSOC idPick:"
-						+ std::to_string(pk->getPickID()));
+				"CHypoList::associate NOASSOC idPick:" + pk->getID());
 
 		return (false);
 	}
@@ -187,7 +185,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 		 */
 
 		// link the pick to the hypo
-		pk->addHypo(bestHyp, true);
+		pk->addHypoReference(bestHyp, true);
 
 		// link the hypo to the pick
 		bestHyp->addPickReference(pk);
@@ -198,15 +196,15 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 						+ " resetting cycle count due to new association");
 
 		// reset the cycle count
-		bestHyp->setCycleCount(0);
+		bestHyp->setProcessCount(0);
 
 		// add to the processing queue
 		addHypoToProcess(bestHyp);
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::associate ASSOC idPick:"
-						+ std::to_string(pk->getPickID()) + "; numHypos:1");
+				"CHypoList::associate ASSOC idPick:" + pk->getID()
+						+ "; numHypos: 1");
 
 		// the pick was associated
 		return (true);
@@ -220,7 +218,7 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 						+ " resetting cycle count due to new association");
 
 		// reset the cycle count
-		q->setCycleCount(0);
+		q->setProcessCount(0);
 
 		// add the hypo to the processing queue
 		// note that we didn't link the pick to any hypos
@@ -229,16 +227,15 @@ bool CHypoList::associate(std::shared_ptr<CPick> pk) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CHypoList::associate ASSOC idPick:"
-					+ std::to_string(pk->getPickID()) + "; numHypos:"
+			"CHypoList::associate ASSOC idPick:" + pk->getID() + "; numHypos: "
 					+ std::to_string(viper.size()));
 
 	// the pick was associated
 	return (true);
 }
 
-// ---------------------------------------------------------associate
-bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
+// ---------------------------------------------------------associateData
+bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 	// nullcheck
 	if (corr == NULL) {
 		glassutil::CLogit::log(
@@ -281,7 +278,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 		if (std::shared_ptr<CHypo> hyp = hypoList[i].lock()) {
 			// check to see if the correlation will associate with
 			// this hypo
-			if (hyp->associate(
+			if (hyp->canAssociate(
 					corr, m_pGlass->getCorrelationMatchingTimeWindow(),
 					m_pGlass->getCorrelationMatchingDistanceWindow())) {
 				// add to the list of hypos this correlation can associate with
@@ -327,7 +324,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 						+ " resetting cycle count due to new association");
 
 		// reset the cycle count
-		bestHyp->setCycleCount(0);
+		bestHyp->setProcessCount(0);
 
 		// add to the processing queue
 		addHypoToProcess(bestHyp);
@@ -344,7 +341,7 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 						+ " resetting cycle count due to new association");
 
 		// reset the cycle count
-		q->setCycleCount(0);
+		q->setProcessCount(0);
 
 		// add the hypo to the processing queue
 		// note that we didn't link the correlation to any hypos
@@ -357,14 +354,6 @@ bool CHypoList::associate(std::shared_ptr<CCorrelation> corr) {
 
 // ---------------------------------------------------------clear
 void CHypoList::clear() {
-	std::lock_guard<std::recursive_mutex> hypoListGuard(m_HypoListMutex);
-
-	clearHypos();
-	m_pGlass = NULL;
-}
-
-// ---------------------------------------------------------clearHypos
-void CHypoList::clearHypos() {
 	std::lock_guard<std::mutex> queueGuard(m_vHyposToProcessMutex);
 	m_vHyposToProcess.clear();
 
@@ -375,6 +364,7 @@ void CHypoList::clearHypos() {
 	// reset
 	m_iHypoTotal = 0;
 	m_iHypoMax = 100;
+	m_pGlass = NULL;
 }
 
 // ---------------------------------------------------------work
@@ -411,7 +401,7 @@ glass3::util::WorkState CHypoList::work() {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CHypoList::darwin Processing Hypo sPid:" + hyp->getID()
-						+ " Cycle:" + std::to_string(hyp->getCycleCount())
+						+ " Cycle:" + std::to_string(hyp->getProcessCount())
 						+ " Fifo Size:"
 						+ std::to_string(getHyposToProcessSize()));
 
@@ -423,7 +413,7 @@ glass3::util::WorkState CHypoList::work() {
 					glassutil::log_level::debug,
 					"CHypoList::darwin canceling sPid:" + hyp->getID()
 							+ " processCount:"
-							+ std::to_string(hyp->getProcessCount()));
+							+ std::to_string(hyp->getTotalProcessCount()));
 
 			// remove hypo from the hypo list
 			removeHypo(hyp);
@@ -434,21 +424,21 @@ glass3::util::WorkState CHypoList::work() {
 
 		// check to see if we've hit the iCycle Limit for this
 		// hypo
-		if (hyp->getCycleCount() >= m_pGlass->getCycleLimit()) {
+		if (hyp->getProcessCount() >= m_pGlass->getProcessLimit()) {
 			// log
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
 					"CHypoList::darwin skipping sPid:" + hyp->getID()
 							+ " at cycle limit:"
-							+ std::to_string(hyp->getCycleCount())
+							+ std::to_string(hyp->getProcessCount())
 							+ +" processCount:"
-							+ std::to_string(hyp->getProcessCount()));
+							+ std::to_string(hyp->getTotalProcessCount()));
 
 			return (glass3::util::WorkState::OK);
 		}
 
 		// process this hypocenter
-		if (evolve(hyp) == true) {
+		if (processHypo(hyp) == true) {
 			// reposition the hypo in the list to maintain
 			// time order
 			updatePosition(hyp);
@@ -481,16 +471,6 @@ bool CHypoList::dispatch(std::shared_ptr<json::Object> com) {
 		// dispatch to appropriate function based on Cmd value
 		json::Value v = (*com)["Cmd"].ToString();
 
-		// clear all hypos
-		if (v == "ClearGlass") {
-			clearHypos();
-
-			// ClearGlass is also relevant to other glass
-			// components, return false so they also get a
-			// chance to process it
-			return (false);
-		}
-
 		// a hypo message has been requested
 		if (v == "ReqHypo") {
 			return (requestHypo(com));
@@ -501,17 +481,17 @@ bool CHypoList::dispatch(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
-// ---------------------------------------------------------evolve
-bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
+// ---------------------------------------------------------processHypo
+bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CHypoList::evolve: NULL hypo provided.");
+								"CHypoList::processHypo: NULL hypo provided.");
 		return (false);
 	}
 	if (m_pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypoList::evolve: NULL pGlass.");
+								"CHypoList::processHypo: NULL pGlass.");
 		return (false);
 	}
 
@@ -520,8 +500,8 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	std::chrono::high_resolution_clock::time_point tEvolveStartTime =
 			std::chrono::high_resolution_clock::now();
 
-	hyp->incrementProcessCount();
-	hyp->setCycleCount(hyp->getCycleCount() + 1);
+	hyp->incrementTotalProcessCount();
+	hyp->setProcessCount(hyp->getProcessCount() + 1);
 
 	// initialize breport, gets set to true later if event isn't cancelled.
 	// otherwise, in some cases events will not be reported.
@@ -562,7 +542,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 			.count();
 
 	// Ensure all data belong to hypo
-	if (resolve(hyp)) {
+	if (resolveData(hyp)) {
 		// we should report this hypo since it has changed
 		breport = true;
 
@@ -577,7 +557,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 			.count();
 
 	// Remove data that no longer fit hypo's association criteria
-	if (hyp->prune()) {
+	if (hyp->pruneData()) {
 		// we should report this hypo since it has changed
 		breport = true;
 		// relocate the hypo
@@ -585,7 +565,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	}
 
 	// Iterate on pruning data
-	if (hyp->prune()) {
+	if (hyp->pruneData()) {
 		// we should report this hypo since it has changed
 		breport = true;
 		// relocate the hypo
@@ -620,11 +600,11 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::evolve: Canceled sPid:" + pid + " cycle:"
-						+ std::to_string(hyp->getCycleCount())
-						+ " processCount:"
+				"CHypoList::processHypo: Canceled sPid:" + pid + " cycle:"
 						+ std::to_string(hyp->getProcessCount())
-						+ " Evolve Timing: localizeTime:"
+						+ " processCount:"
+						+ std::to_string(hyp->getTotalProcessCount())
+						+ " processHypo Timing: localizeTime:"
 						+ std::to_string(localizeTime) + " scavengeTime:"
 						+ std::to_string(scavengeTime) + " resolveTime:"
 						+ std::to_string(resolveTime) + " pruneTime:"
@@ -644,7 +624,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	if (mergeCloseEvents(hyp)) {
+	if (mergeCloseHypos(hyp)) {
 		return (false);
 	}
 
@@ -665,13 +645,13 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	}
 
 	// check to see if this is a new event
-	if (hyp->getProcessCount() < 2) {
+	if (hyp->getTotalProcessCount() < 2) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::evolve: Should report new hypo sPid:" + pid
-						+ " cycle:" + std::to_string(hyp->getCycleCount())
+				"CHypoList::processHypo: Should report new hypo sPid:" + pid
+						+ " cycle:" + std::to_string(hyp->getProcessCount())
 						+ " processCount:"
-						+ std::to_string(hyp->getProcessCount()));
+						+ std::to_string(hyp->getTotalProcessCount()));
 
 		// we should always report a new hypo (ensure it reports at least once)
 		breport = true;
@@ -686,15 +666,16 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
-					"CHypoList::evolve: Reported hypo sPid:" + pid + " cycle:"
-							+ std::to_string(hyp->getCycleCount())
+					"CHypoList::processHypo: Reported hypo sPid:" + pid
+							+ " cycle:" + std::to_string(hyp->getProcessCount())
 							+ " processCount:"
-							+ std::to_string(hyp->getProcessCount()));
+							+ std::to_string(hyp->getTotalProcessCount()));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
-					"CHypoList::evolve: hypo sPid:" + pid + " processCount:"
-							+ std::to_string(hyp->getProcessCount())
+					"CHypoList::processHypo: hypo sPid:" + pid
+							+ " processCount:"
+							+ std::to_string(hyp->getTotalProcessCount())
 							+ " failed reportCheck()");
 		}
 	}
@@ -719,10 +700,10 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CHypoList::evolve: Finished sPid:" + pid + " cycle:"
-					+ std::to_string(hyp->getCycleCount()) + " processCount:"
-					+ std::to_string(hyp->getProcessCount())
-					+ " Evolve Timing: localizeTime:"
+			"CHypoList::processHypo: Finished sPid:" + pid + " cycle:"
+					+ std::to_string(hyp->getProcessCount()) + " processCount:"
+					+ std::to_string(hyp->getTotalProcessCount())
+					+ " processHypo Timing: localizeTime:"
 					+ std::to_string(localizeTime) + " scavengeTime:"
 					+ std::to_string(scavengeTime) + " resolveTime:"
 					+ std::to_string(resolveTime) + " pruneTime:"
@@ -738,7 +719,7 @@ bool CHypoList::evolve(std::shared_ptr<CHypo> hyp) {
 	 if (hyp->getVPickSize() != OriginalPicks) {
 	 glassutil::CLogit::log(
 	 glassutil::log_level::debug,
-	 "CHypoList::evolve: Picks changed for sPid:" + pid
+	 "CHypoList::processHypo: Picks changed for sPid:" + pid
 	 + " old picks:" + std::to_string(OriginalPicks)
 	 + " new picks:" + std::to_string(hyp->getVPickSize()));
 	 addHypoToProcess(hyp);
@@ -860,10 +841,10 @@ int CHypoList::size() const {
 }
 
 // ---------------------------------------------------------mergeCloseEvents
-bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
+bool CHypoList::mergeCloseHypos(std::shared_ptr<CHypo> hypo) {
 	if (m_pGlass == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
-								"CHypoList::merge: NULL pGlass.");
+								"CHypoList::mergeCloseHypos: NULL pGlass.");
 		return (false);
 	}
 
@@ -888,10 +869,12 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	// make sure we got hypos returned
 	if (hypoList.size() == 0) {
 		// print not events to merge message
-		snprintf(sLog, sizeof(sLog),
-					"CHypoList::merge: No events returned in ot time frame for "
-					"merger of %s, Skipping",
-					hypo->getID().c_str());
+		snprintf(
+				sLog,
+				sizeof(sLog),
+				"CHypoList::mergeCloseHypos: No events returned in ot time frame"
+				" for  merger of %s, Skipping",
+				hypo->getID().c_str());
 		glassutil::CLogit::log(sLog);
 		return (false);
 	}
@@ -900,11 +883,10 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 	if (hypoList.size() == 1) {
 		// print not events to merge message
 		std::shared_ptr<CHypo> thypo = hypoList[0].lock();
-		snprintf(
-				sLog, sizeof(sLog),
-				"CHypoList::merge: Only event returned in ot time frame for "
-				"merger of %s was %s, Skipping",
-				hypo->getID().c_str(), thypo->getID().c_str());
+		snprintf(sLog, sizeof(sLog),
+					"CHypoList::mergeCloseHypos: Only event returned in ot time"
+					" frame for merger of %s was %s, Skipping",
+					hypo->getID().c_str(), thypo->getID().c_str());
 		glassutil::CLogit::log(sLog);
 		return (false);
 	}
@@ -949,25 +931,27 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 				if (delta < distanceCut) {
 					snprintf(
 							sLog, sizeof(sLog),
-							"CHypoList::merge: Testing merger of %s and %s\n",
+							"CHypoList::mergeCloseHypos: Testing merger of %s "
+							"and %s\n",
 							hypo->getID().c_str(), hypo2->getID().c_str());
 					glassutil::CLogit::log(sLog);
 
 					// Log info on two events
 					snprintf(
 							sLog, sizeof(sLog),
-							"CHypoList::merge: %s: %.3f, %.3f, %.3f, %.3f\n",
+							"CHypoList::mergeCloseHypos: %s: %.3f, %.3f, %.3f, "
+							"%.3f\n",
 							hypo->getID().c_str(), hypo->getLatitude(),
 							hypo->getLongitude(), hypo->getDepth(),
 							hypo->getTOrigin());
 					glassutil::CLogit::log(sLog);
 
-					snprintf(
-							sLog, sizeof(sLog),
-							"CHypoList::merge: %s: %.3f, %.3f, %.3f, %.3f\n",
-							hypo2->getID().c_str(), hypo2->getLatitude(),
-							hypo2->getLongitude(), hypo2->getDepth(),
-							hypo2->getTOrigin());
+					snprintf(sLog, sizeof(sLog),
+								"CHypoList::mergeCloseHypos: %s: %.3f, %.3f, "
+								"%.3f, %.3f\n",
+								hypo2->getID().c_str(), hypo2->getLatitude(),
+								hypo2->getLongitude(), hypo2->getDepth(),
+								hypo2->getTOrigin());
 					glassutil::CLogit::log(sLog);
 
 					// create a new merged event hypo3
@@ -1016,7 +1000,7 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 					 }
 					 */
 					// Remove picks that do not fit hypo 3
-					if (hypo3->prune()) {
+					if (hypo3->pruneData()) {
 						// relocate the hypo
 						hypo3->localize();
 					}
@@ -1034,10 +1018,10 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						snprintf(
 								sLog,
 								sizeof(sLog),
-								"CHypoList::merge: keeping new event %s which"
-								" scavanged %d picks (%lu, %lu picks in old events), "
-								"New Bayes %.3f, old bayes"
-								"%.3f and %.3f",
+								"CHypoList::mergeCloseHypos: keeping new event"
+								" %s which scavanged %d picks (%lu, %lu picks in"
+								"  old events), New Bayes %.3f, old bayes"
+								" %.3f and %.3f",
 								hypo3->getID().c_str(), npick, (hVPick.size()),
 								(h2VPick.size()), hypo3->getBayesValue(),
 								hypo->getBayesValue(), hypo2->getBayesValue());
@@ -1049,12 +1033,12 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						addHypo(hypo3);
 
 						snprintf(sLog, sizeof(sLog),
-									"CHypoList::merge: Removing %s\n",
+									"CHypoList::mergeCloseHypos: Removing %s\n",
 									hypo->getID().c_str());
 						glassutil::CLogit::Out(sLog);
 
 						snprintf(sLog, sizeof(sLog),
-									"CHypoList::merge: Removing %s\n",
+									"CHypoList::mergeCloseHypos: Removing %s\n",
 									hypo2->getID().c_str());
 						glassutil::CLogit::Out(sLog);
 
@@ -1064,9 +1048,9 @@ bool CHypoList::mergeCloseEvents(std::shared_ptr<CHypo> hypo) {
 						// hypo list, don't delete the unmerged hypos)
 						snprintf(
 								sLog, sizeof(sLog),
-								"CHypoList::merge: -- canceling potential new"
-								" event %s which associated %d picks of %d + %d"
-								" potential picks",
+								"CHypoList::mergeCloseHypos: -- canceling"
+								" potential new event %s which associated %d"
+								" picks of %d + %d potential picks",
 								hypo3->getID().c_str(), npick,
 								(static_cast<int>(hypo->getPickDataSize())),
 								(static_cast<int>(hypo2->getPickDataSize())));
@@ -1154,7 +1138,7 @@ std::shared_ptr<CHypo> CHypoList::getHypoToProcess() {
 
 	// start at the beginning
 	std::vector<std::weak_ptr<CHypo>>::iterator it = m_vHyposToProcess.begin();
-	while(it != m_vHyposToProcess.end()) {
+	while (it != m_vHyposToProcess.end()) {
 		// get the next hypo in the vector
 		std::shared_ptr<CHypo> hyp = (*it).lock();
 
@@ -1281,7 +1265,7 @@ bool CHypoList::requestHypo(std::shared_ptr<json::Object> com) {
 }
 
 // ---------------------------------------------------------resolve
-bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
+bool CHypoList::resolveData(std::shared_ptr<CHypo> hyp) {
 	// null checks
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -1301,7 +1285,7 @@ bool CHypoList::resolve(std::shared_ptr<CHypo> hyp) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 
 	// return whether we've changed the pick set
-	return (hyp->resolve(hyp));
+	return (hyp->resolveData(hyp));
 }
 
 // ---------------------------------------------------------setGlass

@@ -325,7 +325,9 @@ void CSite::clear() {
 	m_vNode.clear();
 	m_vNodeMutex.unlock();
 
-	clearVPick();
+	vPickMutex.lock();
+	m_vPick.clear();
+	vPickMutex.unlock();
 
 	// reset max picks
 	m_iPickMax = 200;
@@ -335,13 +337,6 @@ void CSite::clear() {
 
 	// reset picks since last check
 	setPickCountSinceCheck(0);
-}
-
-// --------------------------------------------------------clearVPick
-void CSite::clearVPick() {
-	vPickMutex.lock();
-	m_vPick.clear();
-	vPickMutex.unlock();
 }
 
 // --------------------------------------------------------update
@@ -375,14 +370,14 @@ void CSite::update(CSite *aSite) {
 // --------------------------------------------------------getUnitVectors
 double * CSite::getUnitVectors(double * vec) {
 	if (vec == NULL) {
-		return(NULL);
+		return (NULL);
 	}
 
 	vec[0] = m_daUnitVectors[0];
 	vec[1] = m_daUnitVectors[1];
 	vec[2] = m_daUnitVectors[2];
 
-	return(vec);
+	return (vec);
 }
 
 // ---------------------------------------------------------setLocation
@@ -615,7 +610,7 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 
 			if (trigger1 != NULL) {
 				// if node triggered, add to triggered vector
-				addTrigger(&vTrigger, trigger1);
+				addTriggerToList(&vTrigger, trigger1);
 				primarySuccessful = true;
 			}
 		}
@@ -627,7 +622,7 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 
 			if (trigger2 != NULL) {
 				// if node triggered, add to triggered vector
-				addTrigger(&vTrigger, trigger2);
+				addTriggerToList(&vTrigger, trigger2);
 			}
 		}
 
@@ -645,7 +640,7 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 }
 
 // ---------------------------------------------------------addTrigger
-void CSite::addTrigger(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
+void CSite::addTriggerToList(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
 						std::shared_ptr<CTrigger> trigger) {
 	if (trigger == NULL) {
 		return;
@@ -783,7 +778,7 @@ void CSite::setPickCountSinceCheck(int count) {
 
 // ------------------------------------------------------getPickCountSinceCheck
 int CSite::getPickCountSinceCheck() const {
-	return(m_iPickCountSinceCheck);
+	return (m_iPickCountSinceCheck);
 }
 
 }  // namespace glasscore

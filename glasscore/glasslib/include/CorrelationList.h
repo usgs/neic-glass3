@@ -88,14 +88,14 @@ class CCorrelationList {
 	/**
 	 * \brief CCorrelationList add correlation function
 	 *
-	 * The function used by CCorrelationList to add a correlation to the vector
-	 * and map, if the new correlation causes the number of correlations in the
-	 * vector/map to exceed the configured maximum, remove the oldest
-	 * correlation from the list/map, as well as the list of correlations in
-	 * CSite.
+	 * The function used by CCorrelationList to add a correlation to multiset,
+	 * if the new correlation causes the number of correlations in the
+	 * multiset to exceed the configured maximum, remove the oldest
+	 * correlation from the multiset.
 	 *
 	 * This function will generate a json formatted request for site
-	 * (station) information if the correlation is from an unknown site.
+	 * (station) information if the correlation is from an unknown site via the
+	 * CSiteList getSite() function.
 	 *
 	 * This function will first attempt to associate the correlation with
 	 * an existing hypocenter via calling the CHypoList::associate()
@@ -109,9 +109,11 @@ class CCorrelationList {
 	bool addCorrelationFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
-	 * \brief Checks if correlation is duplicate
+	 * \brief Checks if the provided correlation is sduplicate
 	 *
-	 * Takes a new correlation and compares with list of correlations.
+	 * Compares the given correlation with the existing correlation list, in
+	 * order to determine whether the given correlation is a duplicate of an
+	 * existing correlation.
 	 *
 	 * \param newCorrelation - A shared pointer to the correlation to check
 	 * \param tWindow - A double containing the allowable matching time window
@@ -179,7 +181,7 @@ class CCorrelationList {
 	int getCorrelationMax() const;
 
 	/**
-	 * \brief ZSet the maximum allowed size of this correlation list
+	 * \brief Set the maximum allowed size of this correlation list
 	 * \param correlationMax -  an integer containing the maximum allowed size
 	 * of this correlation list
 	 */

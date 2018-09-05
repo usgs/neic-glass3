@@ -60,8 +60,7 @@ TEST(TriggerTest, Construction) {
 	testSiteList->addSite(siteJSON);
 
 	// create pick
-	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, 1,
-														testSiteList);
+	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, testSiteList);
 
 	std::shared_ptr<glasscore::CPick> sharedPick(testPick);
 

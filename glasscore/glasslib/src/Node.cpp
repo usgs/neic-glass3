@@ -47,8 +47,8 @@ CNode::CNode() {
 
 // ---------------------------------------------------------CNode
 CNode::CNode(std::string name, double lat, double lon, double z,
-				double resolution, std::string nodeID) {
-	if (!initialize(name, lat, lon, z, resolution, nodeID)) {
+				double resolution) {
+	if (!initialize(name, lat, lon, z, resolution)) {
 		clear();
 	}
 }
@@ -70,7 +70,6 @@ void CNode::clear() {
 	m_dLongitude = 0;
 	m_dDepth = 0;
 	m_dResolution = 0;
-	m_sID = "";
 	m_bEnabled = false;
 }
 
@@ -86,7 +85,7 @@ void CNode::clearSiteLinks() {
 	// remove any links that sites have TO this node
 	for (auto &link : m_vSiteLinkList) {
 		std::shared_ptr<CSite> aSite = std::get< LINK_PTR>(link);
-		aSite->removeNode(m_sID);
+		aSite->removeNode(getID());
 	}
 
 	// remove all the links from this node to sites
@@ -95,7 +94,7 @@ void CNode::clearSiteLinks() {
 
 // ---------------------------------------------------------initialize
 bool CNode::initialize(std::string name, double lat, double lon, double z,
-						double resolution, std::string nodeID) {
+						double resolution) {
 	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
 
 	clear();
@@ -105,7 +104,6 @@ bool CNode::initialize(std::string name, double lat, double lon, double z,
 	m_dLongitude = lon;
 	m_dDepth = z;
 	m_dResolution = resolution;
-	m_sID = nodeID;
 	m_bEnabled = true;
 
 	return (true);
@@ -192,7 +190,7 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 
 			// unlink node from site
 			// done after unlock to avoid node-site deadlocks
-			foundSite->removeNode(m_sID);
+			foundSite->removeNode(getID());
 
 			return (true);
 		}
@@ -215,7 +213,7 @@ bool CNode::unlinkLastSite() {
 	// unlink node from last site
 	// done before lock guard to prevent
 	// deadlock between node and site list mutexes.
-	lastSite->removeNode(m_sID);
+	lastSite->removeNode(getID());
 
 	// lock mutex for this scope
 	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
@@ -465,8 +463,8 @@ double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
 }
 
 // ---------------------------------------------------------getSite
-std::shared_ptr<CSite> CNode::getSite(std::string sScnl) {
-	if (sScnl == "") {
+std::shared_ptr<CSite> CNode::getSite(std::string siteID) {
+	if (siteID == "") {
 		return (NULL);
 	}
 
@@ -480,7 +478,7 @@ std::shared_ptr<CSite> CNode::getSite(std::string sScnl) {
 		// get the site
 		auto aSite = std::get< LINK_PTR>(link);
 
-		if (aSite->getSCNL() == sScnl) {
+		if (aSite->getSCNL() == siteID) {
 			// found
 			return (aSite);
 		}
@@ -492,7 +490,7 @@ std::shared_ptr<CSite> CNode::getSite(std::string sScnl) {
 
 // ---------------------------------------------------------getLastSite
 std::shared_ptr<CSite> CNode::getLastSite() {
-	if (getSiteLinksCount() == 0) {
+	if (count() == 0) {
 		return (NULL);
 	}
 
@@ -529,7 +527,7 @@ std::string CNode::getSitesString() {
 
 		currentSite->getGeo().getGeographic(&lat, &lon, &r);
 
-		siteString += m_sID + "," + currentSite->getSCNL() + ","
+		siteString += getID() + "," + currentSite->getSCNL() + ","
 				+ std::to_string(lat) + ";" + std::to_string(lon) + ";"
 				+ std::to_string(r) + "\n";
 	}
@@ -538,7 +536,7 @@ std::string CNode::getSitesString() {
 }
 
 // ---------------------------------------------------------getSiteLinksCount
-int CNode::getSiteLinksCount() const {
+int CNode::count() const {
 	// lock mutex for this scope
 	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 	return (m_vSiteLinkList.size());
@@ -599,7 +597,10 @@ const std::string& CNode::getName() const {
 }
 
 // ---------------------------------------------------------getID
-const std::string& CNode::getID() const {
-	return (m_sID);
+std::string CNode::getID() const {
+	return (std::string(
+			m_sName + "." + std::to_string(getLatitude()) + "."
+					+ std::to_string(getLongitude()) + "."
+					+ std::to_string(getDepth())));
 }
 }  // namespace glasscore

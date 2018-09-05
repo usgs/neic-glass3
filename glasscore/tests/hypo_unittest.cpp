@@ -97,7 +97,7 @@ TEST(HypoTest, Construction) {
 	ASSERT_EQ(0, testHypo->getBayesValue())<< "dBayes is zero";
 	ASSERT_EQ(0, testHypo->getNucleationStackThreshold())<< "dThresh is zero";
 	ASSERT_EQ(0, testHypo->getAssociationDistanceCutoff())<< "nCut is zero";
-	ASSERT_EQ(0, testHypo->getCycleCount())<< "iCycle is zero";
+	ASSERT_EQ(0, testHypo->getProcessCount())<< "iCycle is zero";
 	ASSERT_EQ(0, testHypo->getMedianDistance())<< "dMed is zero";
 	ASSERT_EQ(0, testHypo->getMinDistance())<< "dMin is zero";
 	ASSERT_EQ(0, testHypo->getGap())<< "dGap is zero";
@@ -161,11 +161,10 @@ TEST(HypoTest, PickOperations) {
 	testSiteList->addSite(site3JSON);
 
 	// create picks
-	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, 1,
+	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, testSiteList);
+	glasscore::CPick * testPick2 = new glasscore::CPick(pick2JSON,
 														testSiteList);
-	glasscore::CPick * testPick2 = new glasscore::CPick(pick2JSON, 2,
-														testSiteList);
-	glasscore::CPick * testPick3 = new glasscore::CPick(pick3JSON, 3,
+	glasscore::CPick * testPick3 = new glasscore::CPick(pick3JSON,
 														testSiteList);
 
 	// create new shared pointers to the picks

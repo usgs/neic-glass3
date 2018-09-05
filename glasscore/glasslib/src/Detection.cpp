@@ -44,21 +44,6 @@ bool CDetection::dispatch(std::shared_ptr<json::Object> com) {
 		return (false);
 	}
 
-	// check for a command
-	if (com->HasKey("Cmd")
-			&& ((*com)["Cmd"].GetType() == json::ValueType::StringVal)) {
-		// dispatch to appropriate function based on Cmd value
-		json::Value v = (*com)["Cmd"].ToString();
-
-		// clear all data
-		if (v == "ClearGlass") {
-			// ClearGlass is also relevant to other glass
-			// components, return false so they also get a
-			// chance to process it
-			return (false);
-		}
-	}
-
 	// Input data can have Type keys
 	if (com->HasKey("Type")
 			&& ((*com)["Type"].GetType() == json::ValueType::StringVal)) {
@@ -230,7 +215,7 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 		hypo->setMinDistanceCutoff(m_pGlass->getMinDistanceCutoff());
 
 		// process hypo using evolve
-		if (m_pGlass->getHypoList()->evolve(hypo)) {
+		if (m_pGlass->getHypoList()->processHypo(hypo)) {
 			// add to hypo list
 			m_pGlass->getHypoList()->addHypo(hypo);
 		}

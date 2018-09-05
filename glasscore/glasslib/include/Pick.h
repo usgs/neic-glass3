@@ -44,40 +44,44 @@ class CSiteList;
 class CPick {
  public:
 	/**
-	 * \brief CPick constructor
+	 * \brief CPick default constructor
 	 *
-	 * Constructs an empty CPick
+	 * The default constructor for the CPick class.
+	 * Initializes members to default values.
 	 */
 	CPick();
 
 	/**
-	 * \brief CPick alternate constructor
+	 * \brief CPick advanced constructor
 	 *
-	 * Constructs a CPick using the provided values
+	 * An advanced constructor for the CPick class. This function
+	 * initializes members to the provided values.
 	 *
 	 * \param pickSite - A shared pointer to a CSite object that the pick was
 	 * made at
 	 * \param pickTime - A double containing the pick arrival time
-	 * \param pickId - An integer containing the glass pick id (index) to use.
 	 * \param pickIdString - A std::string containing the external pick id.
 	 * \param backAzimuth - A double containing the optional back azimuth, -1
 	 * to omit
 	 * \param slowness - A double containing the optional slowness, -1 to omit
 	 */
-	CPick(std::shared_ptr<CSite> pickSite, double pickTime, int pickId,
+	CPick(std::shared_ptr<CSite> pickSite, double pickTime,
 			std::string pickIdString, double backAzimuth, double slowness);
 
 	/**
-	 * \brief CPick alternate constructor
+	 * \brief CPick advanced constructor
 	 *
-	 * Constructs a CPick class from the provided json object and id, using
-	 * a CGlass pointer to convert times and lookup stations.
+	 * An advanced constructor for the CPick class. This function
+	 * initializes members to the values parsed from the provided json object
+	 * and using the provided pointer to a CSiteList class to lookup the pick
+	 * station.
 	 *
-	 * \param pick - A pointer to a json::Object to construct the pick from
-	 * \param pickId - An integer containing the pick id to use.
-	 * \param pSiteList - A pointer to the CSiteList class
+	 * \param pick - A shared pointer to a json::Object to containing the
+	 * data to construct the pick from
+	 * \param pSiteList - A pointer to the CSiteList class to use when looking
+	 * up the pick station
 	 */
-	CPick(std::shared_ptr<json::Object> pick, int pickId, CSiteList *pSiteList);
+	CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList);
 
 	/**
 	 * \brief CPick destructor
@@ -97,7 +101,6 @@ class CPick {
 	 * \param pickSite - A shared pointer to a CSite object that the pick was
 	 * made at
 	 * \param pickTime - A double containing the pick arrival time
-	 * \param pickId - An integer containing the glass pick id (index) to use.
 	 * \param pickIdString - A std::string containing the external pick id.
 	 * \param backAzimuth - A double containing the optional back azimuth, -1
 	 * to omit
@@ -105,128 +108,141 @@ class CPick {
 	 * \return Returns true if successful, false otherwise.
 	 */
 	bool initialize(std::shared_ptr<CSite> pickSite, double pickTime,
-					int pickId, std::string pickIdString, double backAzimuth,
+					std::string pickIdString, double backAzimuth,
 					double slowness);
 
 	/**
 	 * \brief Add hypo reference to this pick
 	 *
-	 * Adds a shared_ptr reference to the given hypo to this pick,
-	 * representing a graph database link between this pick and the hypocenters.
+	 * Adds a weak_ptr reference to the given hypo to this pick, representing a
+	 * graph database link between this pick and a hypocenter. If the pick is
+	 * already linked to a hypocenter, the new link will be ignored unless force
+	 * is set to true.
 	 *
-	 * Note that this pick may or may not also be linked
-	 * to other hypocenters
+	 * Note that this pick may or may not also be included in other hypocenter
+	 * pick data lists, but this pick will only link to a single
+	 * hypocenter
 	 *
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to link.
 	 * \param force - A boolean flag indicating whether to force the association,
 	 * defaults to false.
 	 */
-	void addHypo(std::shared_ptr<CHypo> hyp, bool force = false);
+	void addHypoReference(std::shared_ptr<CHypo> hyp, bool force = false);
 
 	/**
 	 * \brief Remove hypo reference to this pick
 	 *
-	 * Remove a shared_ptr reference from the given hypo to this pick,
-	 * breaking the graph database link between this pick and the hypocenter.
+	 * Remove a weak_ptr reference to the given hypo from this pick, breaking the
+	 * graph database link between this pick and the hypocenter.
 	 *
-	 * Note that this pick may or may not be still linked
-	 * to other hypocenters
+	 * Note that this pick may or may not still be included in other hypocenter
+	 * pick data lists.
 	 *
 	 * \param hyp - A std::shared_ptr to an object containing the hypocenter
 	 * to unlink.
 	 */
-	void removeHypo(std::shared_ptr<CHypo> hyp);
+	void removeHypoReference(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Remove hypo specific reference to this pick
+	 * \brief Remove hypo specific reference to this pick by id
 	 *
-	 * Remove a shared_ptr reference from the given hypo id to this pick,
-	 * breaking the graph database link between this pick and the
-	 * hypocenter.
+	 * Remove a weak_ptr reference to the given hypo id from this pick, breaking
+	 * the graph database link between this pick and the hypocenter.
 	 *
-	 * Note that this pick may or may not be still linked to other hypocenters
+	 * Note that this pick may or may not still be included in other hypocenter
+	 * pick data lists.
 	 *
 	 * \param pid - A std::string identifying the the hypocenter to unlink.
 	 */
-	void removeHypo(std::string pid);
+	void removeHypoReference(std::string pid);
 
 	/**
 	 * \brief Remove hypo reference to this pick
 	 *
-	 * Remove any shared_ptr reference from this pick, breaking the graph
-	 * database link between this pick and any hypocenter.
+	 * Remove any existing weak_ptr reference to a hypo from this pick,
+	 * breaking the graph database link between this pick and a hypocenter.
+	 *
+	 * Note that this pick may or may not still be included in other hypocenter
+	 * pick data lists.
 	 */
-	void clearHypo();
+	void clearHypoReference();
 
 	/**
-	 * \brief Nucleate new event based on the addition of this pick
+	 * \brief Attempt to nucleate new hypo based on the addition of this pick
 	 *
-	 * Attempt to nucleate a new event based on the addition of this
-	 * pick. First scan all nodes linked to this pick's site. Then, for each
-	 * one, calculate the stacked agoric at that node. Then, for each node who's
-	 * agoric surpassed the threhold, try to generate a new hypocenter. If that
-	 * hypocenter survives, add it to the list.
+	 * Attempt to nucleate a new hypo based on the addition of this pick. By
+	 * scanning all nodes linked to this pick's site, producing a list of
+	 * triggers. Then, for each trigger, try to generate a new hypo, performing
+	 * a fast location/prune using hypo->anneal
+	 * \return Returns true if successful, false otherwise
 	 */
 	bool nucleate();
 
 	/**
-	 * \brief Back azimuth getter
-	 * \return the back azimuth
+	 * \brief Get the optional back azimuth related to this pick
+	 * \return Returns a double value containing the optional back azimuth, or
+	 * std::numeric_limits<double>::quiet_NaN() if no back azimuth was provided
 	 */
 	double getBackAzimuth() const;
 
 	/**
-	 * \brief Slowness getter
-	 * \return the slowness
+	 * \brief Get the optional slowness related to this pick
+	 * \return Returns a double value containing the optional slowness, or
+	 * std::numeric_limits<double>::quiet_NaN() if no slowness was provided
 	 */
 	double getSlowness() const;
 
 	/**
-	 * \brief Pick id getter
-	 * \return the pick id
-	 */
-	int getPickID() const;
-
-	/**
-	 * \brief Json pick getter
-	 * \return the json pick
+	 * \brief Get input JSON pick message
+	 * \return Return a shared_ptr to a json::Object containing the pick message
 	 */
 	const std::shared_ptr<json::Object>& getJSONPick() const;
 
 	/**
-	 * \brief Hypo getter
-	 * \return the hypo
+	 * \brief Get the current hypo reference to this pick
+	 *
+	 * Note that this pick may or may not also be included in other hypocenter
+	 * pick data lists, but this pick will only link to a single hypocenter
+	 *
+	 * \return Return a shared_ptr to the CHypo referenced by this pick, or NULL
+	 * if no hypo is referenced
 	 */
-	const std::shared_ptr<CHypo> getHypo() const;
+	const std::shared_ptr<CHypo> getHypoReference() const;
 
 	/**
-	 * \brief Pid getter
-	 * \return the pid
+	 * \brief Get the ID of the current hypo reference to this pick
+	 *
+	 * Note that this pick may or may not also be included in other hypocenter
+	 * pick data lists, but this pick will only link to a single hypocenter
+	 *
+	 * \return Return a std::string containing the ID of the CHypo referenced by
+	 * this pick, or an empty string if no hypo is referenced
 	 */
-	const std::string getHypoID() const;
+	const std::string getHypoReferenceID() const;
 
 	/**
-	 * \brief Site getter
-	 * \return the site
+	 * \brief Get the site for this pick
+	 * \return Return a shared_ptr to a CSite object containing the site this
+	 * pick was made at
 	 */
 	const std::shared_ptr<CSite> getSite() const;
 
 	/**
-	 * \brief Phase getter
-	 * \return the phase
+	 * \brief Get the phase name for this pick
+	 * \return Return a std::string containing the pick phase name
 	 */
 	const std::string& getPhaseName() const;
 
 	/**
-	 * \brief Pid getter
-	 * \return the pid
+	 * \brief Get the ID of this pick
+	 * \return Return a std::string containing the pick ID
 	 */
 	const std::string& getID() const;
 
 	/**
-	 * \brief Pick time getter
-	 * \return the pick time
+	 * \brief Get the arrival time for this pick
+	 * \return Return a double containing the pick arrival time
 	 */
 	double getTPick() const;
 
@@ -272,11 +288,6 @@ class CPick {
 	 * \brief A double value containing the arrival time of the pick
 	 */
 	std::atomic<double> m_tPick;
-
-	/**
-	 * \brief An integer value containing the numeric id of the pick
-	 */
-	std::atomic<int> m_iPickID;
 
 	/**
 	 * \brief A std::shared_ptr to a json object
