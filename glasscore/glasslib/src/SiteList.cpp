@@ -37,18 +37,6 @@ void CSiteList::clear() {
 	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 
 	// clear sites
-	clearSites();
-
-	m_iHoursWithoutPicking = -1;
-	m_iHoursBeforeLookingUp = -1;
-	m_iMaxPicksPerHour = -1;
-	m_tLastChecked = std::time(NULL);
-}
-
-// ---------------------------------------------------------clearSites
-void CSiteList::clearSites() {
-	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
-	// remove all picks from sites
 	for (auto site : m_vSite) {
 		site->clear();
 	}
@@ -56,7 +44,12 @@ void CSiteList::clearSites() {
 	// clear the vector and map
 	m_vSite.clear();
 	m_mSite.clear();
-	m_mLookup.clear();
+	m_mLastTimeSiteLookedUp.clear();
+
+	m_iMaxHoursWithoutPicking = -1;
+	m_iHoursBeforeLookingUp = -1;
+	m_iMaxPicksPerHour = -1;
+	m_tLastChecked = std::time(NULL);
 }
 
 // ---------------------------------------------------------dispatch
@@ -77,7 +70,8 @@ bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
 
 		// get the current site list
 		if (v == "ReqSiteList") {
-			return (requestSiteList());
+			generateSiteListMessage();
+			return (true);
 		}
 	}
 
@@ -89,11 +83,11 @@ bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
 
 		// add or update a site
 		if (v == "StationInfo") {
-			return (addSite(com));
+			return (addSiteFromJSON(com));
 		}
 		// add a list of sites
 		if (v == "StationInfoList") {
-			return (addSiteList(com));
+			return (addSiteListFromJSON(com));
 		}
 	}
 
@@ -101,8 +95,8 @@ bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
-// ---------------------------------------------------------addSite
-bool CSiteList::addSite(std::shared_ptr<json::Object> com) {
+// ---------------------------------------------------------addSiteFromJSON
+bool CSiteList::addSiteFromJSON(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -144,8 +138,8 @@ bool CSiteList::addSite(std::shared_ptr<json::Object> com) {
 	return (addSite(newSite));
 }
 
-// ---------------------------------------------------------addSiteList
-bool CSiteList::addSiteList(std::shared_ptr<json::Object> com) {
+// ---------------------------------------------------------addSiteListFromJSON
+bool CSiteList::addSiteListFromJSON(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -256,24 +250,9 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 
 	// since we've just added or updated
 	// set the lookup time to now
-	m_mLookup[site->getSCNL()] = tNow;
+	m_mLastTimeSiteLookedUp[site->getSCNL()] = tNow;
 
 	return (true);
-}
-
-// ---------------------------------------------------------getSiteCount
-int CSiteList::size() {
-	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
-	int size = static_cast<int>(m_vSite.size());
-	// Return number of sites in site list (for iteration)
-	return (size);
-}
-
-// ---------------------------------------------------------getSite
-std::shared_ptr<CSite> CSiteList::getSite(int ix) {
-	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
-	// Return shared pointer to site from vector given index
-	return (m_vSite[ix]);
 }
 
 // ---------------------------------------------------------getSite
@@ -357,9 +336,9 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 
 		// get what time this station has been looked up before
 		int tLookup = 0;
-		auto itsite = m_mLookup.find(scnl);
-		if (itsite != m_mLookup.end()) {
-			tLookup = m_mLookup[scnl];
+		auto itsite = m_mLastTimeSiteLookedUp.find(scnl);
+		if (itsite != m_mLastTimeSiteLookedUp.end()) {
+			tLookup = m_mLastTimeSiteLookedUp[scnl];
 		}
 
 		// only ask for a station occasionally
@@ -386,7 +365,7 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 			}
 
 			// remember when we tried
-			m_mLookup[scnl] = tNow;
+			m_mLastTimeSiteLookedUp[scnl] = tNow;
 		}
 	}
 
@@ -400,7 +379,8 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 	return (NULL);
 }
 
-std::vector<std::shared_ptr<CSite>> CSiteList::getSiteList() {
+// ---------------------------------------------------------getListOfSites
+std::vector<std::shared_ptr<CSite>> CSiteList::getListOfSites() {
 	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
 
 	std::vector<std::shared_ptr<CSite>> siteList;
@@ -414,9 +394,8 @@ std::vector<std::shared_ptr<CSite>> CSiteList::getSiteList() {
 	return (siteList);
 }
 
-// ---------------------------------------------------------getSiteList
-bool CSiteList::requestSiteList() {
-	// construct request json message
+// ------------------------------------------------------generateSiteListMessage
+std::shared_ptr<json::Object> CSiteList::generateSiteListMessage(bool send) {
 	std::shared_ptr<json::Object> sitelistObj = std::make_shared<json::Object>(
 			json::Object());
 	(*sitelistObj)["Cmd"] = "SiteList";
@@ -462,36 +441,40 @@ bool CSiteList::requestSiteList() {
 
 	(*sitelistObj)["SiteList"] = stationList;
 
-	if (m_pGlass) {
+	if ((send == true) && (m_pGlass != NULL)) {
 		m_pGlass->send(sitelistObj);
 	}
 
-	return (true);
+	return (sitelistObj);
 }
 
+// ------------------------------------------------------getGlass
 const CGlass* CSiteList::getGlass() const {
 	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	return (m_pGlass);
 }
 
+// ------------------------------------------------------setGlass
 void CSiteList::setGlass(CGlass* glass) {
 	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	m_pGlass = glass;
 }
 
-int CSiteList::getVSiteSize() const {
+// ------------------------------------------------------size
+int CSiteList::size() const {
 	std::lock_guard<std::recursive_mutex> vSiteGuard(m_SiteListMutex);
 	return (m_vSite.size());
 }
 
+// ------------------------------------------------------work
 glass3::util::WorkState CSiteList::work() {
 	// don't bother if we're not configured to check sites
-	if ((getHoursWithoutPicking() < 0) && (getHoursBeforeLookingUp() < 0)
+	if ((getMaxHoursWithoutPicking() < 0) && (getHoursBeforeLookingUp() < 0)
 			&& (getMaxPicksPerHour() < 0)) {
 		return (glass3::util::WorkState::Idle);
 	}
 
-	if (getVSiteSize() <= 0) {
+	if (size() <= 0) {
 		return (glass3::util::WorkState::Idle);
 	}
 
@@ -529,12 +512,13 @@ glass3::util::WorkState CSiteList::work() {
 		bool disableSite = false;
 
 		// check for sites that are not picking
-		if (m_iHoursWithoutPicking > 0) {
+		if (m_iMaxHoursWithoutPicking > 0) {
 			// when was the last pick added to this site
 			time_t tLastPickAdded = aSite->getTLastPickAdded();
 
 			// have we not seen data?
-			if ((tNow - tLastPickAdded) > (60 * 60 * m_iHoursWithoutPicking)) {
+			if ((tNow - tLastPickAdded)
+					> (60 * 60 * m_iMaxHoursWithoutPicking)) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
 						"CSiteList::work: Removing " + aSite->getSCNL()
@@ -596,12 +580,13 @@ glass3::util::WorkState CSiteList::work() {
 		bool enableSite = false;
 
 		// check or sites that started picking
-		if (m_iHoursWithoutPicking > 0) {
+		if (m_iMaxHoursWithoutPicking > 0) {
 			// when was the last pick added to this site
 			time_t tLastPickAdded = aSite->getTLastPickAdded();
 
 			// have we seen data?
-			if ((tNow - tLastPickAdded) < (60 * 60 * m_iHoursWithoutPicking)) {
+			if ((tNow - tLastPickAdded)
+					< (60 * 60 * m_iMaxHoursWithoutPicking)) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
 						"CSiteList::work: Added " + aSite->getSCNL()
@@ -653,26 +638,32 @@ glass3::util::WorkState CSiteList::work() {
 	return (glass3::util::WorkState::OK);
 }
 
-void CSiteList::setHoursWithoutPicking(int hoursWithoutPicking) {
-	m_iHoursWithoutPicking = hoursWithoutPicking;
+// ----------------------------------------------------setMaxHoursWithoutPicking
+void CSiteList::setMaxHoursWithoutPicking(int hoursWithoutPicking) {
+	m_iMaxHoursWithoutPicking = hoursWithoutPicking;
 }
 
-int CSiteList::getHoursWithoutPicking() const {
-	return (m_iHoursWithoutPicking);
+// ----------------------------------------------------getMaxHoursWithoutPicking
+int CSiteList::getMaxHoursWithoutPicking() const {
+	return (m_iMaxHoursWithoutPicking);
 }
 
+// ----------------------------------------------------setHoursBeforeLookingUp
 void CSiteList::setHoursBeforeLookingUp(int hoursBeforeLookingUp) {
 	m_iHoursBeforeLookingUp = hoursBeforeLookingUp;
 }
 
+// ----------------------------------------------------getHoursBeforeLookingUp
 int CSiteList::getHoursBeforeLookingUp() const {
 	return (m_iHoursBeforeLookingUp);
 }
 
+// ----------------------------------------------------setMaxPicksPerHour
 void CSiteList::setMaxPicksPerHour(int maxPicksPerHour) {
 	m_iMaxPicksPerHour = maxPicksPerHour;
 }
 
+// ----------------------------------------------------getMaxPicksPerHour
 int CSiteList::getMaxPicksPerHour() const {
 	return (m_iMaxPicksPerHour);
 }

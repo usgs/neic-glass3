@@ -63,12 +63,6 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	void clear() override;
 
 	/**
-	 * \brief CSiteList vector and map clear function
-	 *
-	 */
-	void clearSites();
-
-	/**
 	 * \brief CSiteList communication receiving function
 	 *
 	 * The function used by CSiteList to receive communication
@@ -96,7 +90,7 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * \return Returns true if the site was complete and added by CSiteList,
 	 * false otherwise
 	 */
-	bool addSite(std::shared_ptr<json::Object> com);
+	bool addSiteFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList add list of sites function
@@ -108,7 +102,7 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * \return Returns true if the site was complete and added by CSiteList,
 	 * false otherwise
 	 */
-	bool addSiteList(std::shared_ptr<json::Object> com);
+	bool addSiteListFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList  add/update  site function
@@ -127,20 +121,11 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * \return Returns an integer variable containing the number of sites in
 	 * CSiteList
 	 */
-	int size();
-
-	/**
-	 * \brief Get site by index
-	 * Gets a specific site using the given index.
-	 *
-	 * \param ix - An integer variable containing the index
-	 * \return Returns a shared_ptr to the CSite object containing the desired
-	 * site.
-	 */
-	std::shared_ptr<CSite> getSite(int ix);
+	int size() const;
 
 	/**
 	 * \brief Get site by scnl
+	 *
 	 * Gets a specific site using the given scnl id.
 	 *
 	 * \param scnl - A std::string containing the scnl
@@ -150,7 +135,8 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	std::shared_ptr<CSite> getSite(std::string scnl);
 
 	/**
-	 * \brief Get site by scnl
+	 * \brief Get site by station, component, network, and location
+	 *
 	 * Gets a specific site using the given station, component, network, and
 	 * location
 	 *
@@ -164,39 +150,90 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	std::shared_ptr<CSite> getSite(std::string site, std::string comp,
 									std::string net, std::string loc);
 
-	std::vector<std::shared_ptr<CSite>> getSiteList();
-
 	/**
-	 * \brief CSiteList get site list function
-	 * \return Returns true if successful, false otherwise
+	 * \brief Get current list of sites
+	 *
+	 * Gets the current list of sites contained within this sitelist
+	 *
+	 * \return Returns a vector of shared_ptr's to the CSite objects contained
+	 * in this list
 	 */
-	bool requestSiteList();
+	std::vector<std::shared_ptr<CSite>> getListOfSites();
 
 	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
+	 * \brief Generate SiteList message
+	 *
+	 * Generate a json object representing all thie sites in this SiteList in the
+	 * "SiteList" format and optionally send a pointer to this object to CGlass
+	 * (and out of glasscore) using the CGlass send function (pGlass->send)
+	 *
+	 * \param send - A boolean flag indicating that in addition to generating
+	 * the "SiteList" format message, the function should also send it. Defaults
+	 * to true
+	 * \return Returns the generated json object in the "SiteList" format.
+	 */
+	std::shared_ptr<json::Object> generateSiteListMessage(bool send = true);
+
+	/**
+	 * \brief Get the CGlass pointer used by this site list for global constants
+	 * and configuration lookups
+	 * \return Return a pointer to the CGlass class used by this site list
 	 */
 	const CGlass* getGlass() const;
 
 	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
+	 * \brief Set the CGlass pointer used by this site list for global constants
+	 * and configuration lookups
+	 * \param glass - a pointer to the CGlass class used by this site list
 	 */
 	void setGlass(CGlass* glass);
 
 	/**
-	 * \brief Get the current size of the site list
+	 * \brief Get the maximum hours without picking before a site is declared
+	 * nonresponsive and unused, a -1 disables this metric
+	 * \return Return an integer containing the maximum hours without picking
+	 *  allowed
 	 */
-	int getVSiteSize() const;
+	int getMaxHoursWithoutPicking() const;
 
-	void setHoursWithoutPicking(int hoursWithoutPicking);
-	int getHoursWithoutPicking() const;
+	/**
+	 * \brief Set the maximum hours without picking before a site is declared
+	 * nonresponsive and unused, a -1 disables this metric
+	 * \param hoursWithoutPicking - an integer containing the maximum hours
+	 * without picking allowed
+	 */
+	void setMaxHoursWithoutPicking(int hoursWithoutPicking);
 
-	void setHoursBeforeLookingUp(int hoursBeforeLookingUp);
+	/**
+	 * \brief Get the maximum hours between requesting site information from
+	 * outside glasscore, a -1 disables this process
+	 * \return Return an integer containing the maximum hours between requesting
+	 * site information
+	 */
 	int getHoursBeforeLookingUp() const;
 
-	void setMaxPicksPerHour(int maxPicksPerHour);
+	/**
+	 * \brief Set the maximum hours between requesting site information from
+	 * outside glasscore, a -1 disables this process
+	 * \param hoursBeforeLookingUp - an integer containing the maximum hours
+	 * between requesting site information
+	 */
+	void setHoursBeforeLookingUp(int hoursBeforeLookingUp);
+
+	/**
+	 * \brief Get the maximum picks per hour before a site is declared too
+	 * noisy to use, a -1 disables this metric
+	 * \return Return an integer containing the  maximum picks per hour allowed
+	 */
 	int getMaxPicksPerHour() const;
+
+	/**
+	 * \brief Set the maximum picks per hour before a site is declared too
+	 * noisy to use, a -1 disables this metric
+	 * \param maxPicksPerHour - an integer containing the maximum picks per
+	 * hour allowed
+	 */
+	void setMaxPicksPerHour(int maxPicksPerHour);
 
 	/**
 	 * \brief SiteList work function
@@ -209,8 +246,8 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 
  private:
 	/**
-	 * \brief A pointer to the main CGlass class, used to pass this information
-	 * to sites added to CSiteList
+	 * \brief A pointer to the parent CGlass class, used to get configuration
+	 * values and access other parts of glass3
 	 */
 	CGlass * m_pGlass;
 
@@ -226,10 +263,10 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	std::map<std::string, std::shared_ptr<CSite>> m_mSite;
 
 	/**
-	 * \brief A std::map containing a std::shared_ptr to each site
-	 * in CSiteList indexed by the std::string scnl id.
+	 * \brief A std::map the last time in epoch seconds each site in CSiteList
+	 * was looked up, indexed by the std::string scnl id.
 	 */
-	std::map<std::string, int> m_mLookup;
+	std::map<std::string, int> m_mLastTimeSiteLookedUp;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CSiteList.
@@ -240,12 +277,28 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 */
 	mutable std::recursive_mutex m_SiteListMutex;
 
+	/**
+	 * \brief A double value containing the last time the site list was checked
+	 * in epoch seconds
+	 */
 	std::atomic<double> m_tLastChecked;
 
-	std::atomic<int> m_iHoursWithoutPicking;
-
+	/**
+	 * \brief An integer containing the maximum hours between requesting site
+	 * information from outside glasscore, a -1 disables this process
+	 */
 	std::atomic<int> m_iHoursBeforeLookingUp;
 
+	/**
+	 * \brief An integer containing the maximum hours without picking before a
+	 * site is declared nonresponsive and unused, a -1 disables this metric
+	 */
+	std::atomic<int> m_iMaxHoursWithoutPicking;
+
+	/**
+	 * \brief An integer containing the maximum picks per hour allowed before a
+	 * site is declared too noisy to use, a -1 disables this metric
+	 */
 	std::atomic<int> m_iMaxPicksPerHour;
 };
 }  // namespace glasscore

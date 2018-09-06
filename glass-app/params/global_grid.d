@@ -3,10 +3,10 @@
 {
   "Cmd": "Global",
   "Name": "Global",
-  "Resolution": 100.0,
-  "Detect": 40,
-  "Nucleate": 8,
-  "Z": [
+  "NodeResolution": 100.0,
+  "NumStationsPerNode": 40,
+  "NucleationDataThreshold": 8,
+  "DepthLayers": [
       10.0,
       30.0,
       50.0,
@@ -19,7 +19,7 @@
       750.0
   ],
   "SaveGrid":false,
-	"Update":false, # False because glass-app does not do site lookups.
+	"UpdateGrid":false, # False because glass-app does not do site lookups.
   "NucleationPhases":{
 	    "Phase1": {
       		"PhaseName": "P",

@@ -145,7 +145,7 @@ TEST(CorrelationTest, JSONConstruction) {
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// add site to site list
-	testSiteList->addSite(siteJSON);
+	testSiteList->addSiteFromJSON(siteJSON);
 
 	// construct a correlation using a JSON object
 	std::shared_ptr<json::Object> correlationJSON = std::make_shared<

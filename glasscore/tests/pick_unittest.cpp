@@ -119,7 +119,7 @@ TEST(PickTest, JSONConstruction) {
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// add site to site list
-	testSiteList->addSite(siteJSON);
+	testSiteList->addSiteFromJSON(siteJSON);
 
 	// construct a pick using a JSON object
 	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(

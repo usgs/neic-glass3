@@ -85,7 +85,7 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 					trigger->getWeb()->getNucleationDataThreshold(),
 					trigger->getWeb()->getNucleationTravelTime1(),
 					trigger->getWeb()->getNucleationTravelTime2(), ttt,
-					trigger->getResolution(),
+					trigger->getWebResolution(),
 					trigger->getWeb()->getAzimuthTaper(),
 					trigger->getWeb()->getMaxDepth())) {
 		clear();

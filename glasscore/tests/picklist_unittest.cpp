@@ -79,9 +79,9 @@ TEST(PickListTest, PickOperations) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// add sites to site list
-	testSiteList->addSite(siteJSON);
-	testSiteList->addSite(site2JSON);
-	testSiteList->addSite(site3JSON);
+	testSiteList->addSiteFromJSON(siteJSON);
+	testSiteList->addSiteFromJSON(site2JSON);
+	testSiteList->addSiteFromJSON(site3JSON);
 
 	// construct a picklist
 	glasscore::CPickList * testPickList = new glasscore::CPickList();

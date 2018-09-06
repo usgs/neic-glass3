@@ -38,6 +38,9 @@ class CPick;
  * The CWeb class represents a detection graph database.  CWeb contains
  * the list of all the detection nodes.
  *
+ * CWeb uses a background thread to handle live reconfiguration / updates
+ * of the web.
+ *
  * CWeb uses smart pointers (std::shared_ptr).
  */
 class CWeb : public glass3::util::ThreadBaseClass {
@@ -70,14 +73,10 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * required for the web to nucleate an event.
 	 * \param resolution - A double value containing the desired resolution
 	 * for this web
-	 * \param numRows - An integer value containing the number of rows in this
-	 * web.
-	 * \param numCols - An integer value containing the number of columns in
-	 * this web.
-	 * \param numZ - An integer value containing the number of depths in this
-	 * web.
 	 * \param update - A boolean flag indicating whether this web is allowed to
 	 * update
+	 * \param save - A boolean flag indicating whether this web should save it's
+	 * nodes to a file
 	 * \param firstTrav - A shared pointer to the first CTravelTime object to
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
@@ -95,11 +94,11 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * defaults to 800 km.
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
-			int resolution, int numRows, int numCols, int numZ, bool update,
+			int resolution, bool update, bool save,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			int numThreads = 0, int sleepTime = 100, int checkInterval = 60,
-			double aziTaper = 360., double maxDepth = 800.);
+			double aziTaper = 360.0, double maxDepth = 800.0);
 
 	/**
 	 * \brief CWeb destructor
@@ -146,14 +145,10 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * required for the web to nucleate an event.
 	 * \param resolution - A double value containing the desired resolution
 	 * for this web
-	 * \param numRows - An integer value containing the number of rows in this
-	 * web.
-	 * \param numCols - An integer value containing the number of columns in
-	 * this web.
-	 * \param numZ - An integer value containing the number of depths in this
-	 * web.
 	 * \param update - A boolean flag indicating whether this web is allowed to
 	 * update
+	 * \param save - A boolean flag indicating whether this web should save it's
+	 * nodes to a file
 	 * \param firstTrav - A shared pointer to the first CTravelTime object to
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
@@ -165,77 +160,92 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
-					int numNucleate, int resolution, int numRows, int numCols,
-					int numZ, bool update,
+					int numNucleate, int resolution, bool update, bool save,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
-					double aziTap = 360., double maxDep = 800.);
+					double aziTaper = 360.0, double maxDepth = 800.0);
 
 	/**
 	 * \brief Generate a local detection grid
 	 *
-	 * This function generates a local detection grid of nodes, at a single
-	 * depth.
+	 * This function initializes this web to the provided configuration and
+	 * generates a local detection grid of nodes
 	 *
-	 * \param com - A pointer to a json::object containing desired node
-	 * configuration
+	 * \param gridConfiguration - A pointer to a json::object containing desired
+	 * node grid configuration
 	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool grid(std::shared_ptr<json::Object> com);
+	bool generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration);
 
 	/**
 	 * \brief Generate a detection grid with explicit nodes
 	 *
-	 * This function generates a  detection grid of explicitly defined nodes
+	 * This function initializes this web to the provided configuration and
+	 * generates a detection grid of explicitly defined nodes
 	 *
-	 * \param com - A pointer to a json::object containing desired node
-	 * configuration
+	 * \param gridConfiguration - A pointer to a json::object containing desired
+	 * node configuration
 	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool gridExplicit(std::shared_ptr<json::Object> com);
+	bool generateExplicitGrid(std::shared_ptr<json::Object> gridConfiguration);
 
 	/**
 	 * \brief Generate a global detection grid
 	 *
-	 * This function generates a global detection grid of nodes, at multiple
-	 * depths.
+	 * This function initializes this web to the provided configuration and
+	 * generates a global detection grid of nodes
 	 *
-	 * \param com - A pointer to a json::object containing desired node
-	 * configuration
-	 * \return Always returns true
+	 * \param gridConfiguration - A pointer to a json::object containing desired
+	 * node configuration
+	 * \return Returns true if successful, false if a grid was not created.
 	 */
-	bool global(std::shared_ptr<json::Object> com);
+	bool generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration);
+
+	/**
+	 * \brief Load the common grid configuration
+	 *
+	 * This function initializes this web to the provided configuration
+	 *
+	 * \param gridConfiguration - A pointer to a json::object containing desired
+	 * configuration
+	 * \return Returns true if successful, false otherwise.
+	 */
+	bool loadGridConfiguration(std::shared_ptr<json::Object> gridConfiguration);
 
 	/**
 	 * \brief Load the travel times for this web
 	 *
-	 * This function loads the travel times used by this web.
+	 * This function loads the travel times used by this web using the provided
+	 * configuraiton
 	 *
-	 * \param com - A pointer to a json::object containing the web configuration
+	 * \param gridConfiguration - A pointer to a json::object containing the web
+	 * configuration
 	 * \return Returns true if successful, false otherwise.
 	 */
-	bool loadTravelTimes(json::Object *com);
+	bool loadTravelTimes(json::Object *gridConfiguration);
 
 	/**
-	 * \brief Generate Site filters
+	 * \brief Load Site filters
 	 *
-	 * This function generates station and network filter lists used in
-	 * selecting eligible sites.
+	 * This function loads the station and network filter lists used in
+	 * selecting eligible sites from the provided cofiguration
 	 *
-	 * \param com - A pointer to a json::object containing the web configuration
+	 * \param gridConfiguration - A pointer to a json::object containing the web
+	 * configuration
 	 * \return Returns true if successful, false otherwise.
 	 */
-	bool generateSiteFilters(std::shared_ptr<json::Object> com);
+	bool loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration);
 
 	/**
-	 * \brief Generate node site list
+	 * \brief Load web site list
 	 *
-	 * This function generates a list of eligible sites (stations) to be used
-	 * while generating nodes.  This list is stored in vSite.
+	 * This function loads the list of eligible sites (stations) to be used
+	 * by this web, filtering out unused/disabled sites and sites excluded by
+	 * the site filters via isSiteAllowed(). This list is stored in vSite.
 	 *
 	 * \return Always returns true
 	 */
-	bool generateNodeSiteList();
+	bool loadWebSiteList();
 
 	/**
 	 * \brief Sort site list
@@ -248,7 +258,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \param lat - A double varible containing the latitude to use
 	 * \param lon - A double varible containing the longitude to use
 	 */
-	void sortNodeSiteList(double lat, double lon);
+	void sortSiteListForNode(double lat, double lon);
 
 	/**
 	 * \brief Create new node
@@ -264,7 +274,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \return Returns a std::shared_ptr to the newly created node.
 	 */
 	std::shared_ptr<CNode> generateNode(double lat, double lon, double z,
-									double resol);
+										double resol);
 
 	/**
 	 * \brief Add node to list
@@ -308,7 +318,8 @@ class CWeb : public glass3::util::ThreadBaseClass {
 
 	/**
 	 * \brief Check if this web has a site
-	 * This function checks to see if the given site is used for this web
+	 * This function checks to see if the given site is used for this web,
+	 * used by CWebList
 	 *
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * check
@@ -317,7 +328,8 @@ class CWeb : public glass3::util::ThreadBaseClass {
 
 	/**
 	 * \brief Check to see if site allowed
-	 * This function checks to see if a given site is allowed in the web
+	 * This function checks to see if a given site is allowed in the web by
+	 * checking the given site against the configured site filters
 	 *
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * check
@@ -336,128 +348,130 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	void addJob(std::function<void()> newjob);
 
 	/**
-	 * \brief aziTapre Getter
-	 * \return double with the azi taper start
+	 * \brief Get the azimuth taper used for this web
+	 * \return Returns a double value containing the taper to use
 	 */
 	double getAzimuthTaper() const;
 
 	/**
-	 * \brief max depth for locator getter
-	 * \return double with the maximum allowable depth
+	 * \brief Get the maximum depth used for this web
+	 * \return Returns a double value containing the maximum depth to use
 	 */
 	double getMaxDepth() const;
 
 	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
+	 * \brief Get the CGlass pointer used by this web for global constant
+	 * and configuration lookups
+	 * \return Return a pointer to the CGlass class used by this web
 	 */
 	CGlass* getGlass() const;
 
 	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
+	 * \brief Set the CGlass pointer used by this web for global constant
+	 * and configuration lookups
+	 * \param glass - a pointer to the CGlass class used by this web
 	 */
 	void setGlass(CGlass* glass);
 
 	/**
-	 * \brief CSiteList getter
-	 * \return the CSiteList pointer
+	 * \brief Get the CSiteList pointer used by this web for site lookups
+	 * \return Return a pointer to the CSiteList class used by this web
 	 */
 	const CSiteList* getSiteList() const;
 
 	/**
-	 * \brief CSiteList setter
-	 * \param siteList - the CSiteList pointer
+	 * \brief Set the CSiteList pointer used by this web for site lookups
+	 * \param siteList - a pointer to the CSiteList class used by this web
 	 */
 	void setSiteList(CSiteList* siteList);
 
 	/**
-	 * \brief Update getter
-	 * \return a flag indicating whether this web supports updates
+	 * \brief Gets a flag indicating whether this web supports updates
+	 * \return Returns a boolean flag indicating whether this web supports
+	 * updates, true if it does, false otherwise
 	 */
 	bool getUpdate() const;
 
 	/**
-	 * \brief Resolution getter
-	 * \return the web resolution
+	 * \brief Gets a flag indicating whether this web supports saving its nodes
+	 * to an external file
+	 * \return Returns a boolean flag indicating whether this web supports
+	 * saving it's nodes, true if it does, false otherwise
 	 */
-	double getResolution() const;
+	bool getSaveGrid() const;
 
 	/**
-	 * \brief Nucleation threshold getter
-	 * \return the nucleation viability threshold
+	 * \brief Gets the node resolution of this web
+	 * \return Returns a double value containing the node resolution of this web
+	 * in kilometers
+	 */
+	double getNodeResolution() const;
+
+	/**
+	 * \brief Gets the nucleation minimum stack threshold used for this web
+	 * \return Returns a double value containing the nucleation minimum stack
+	 * threshold
 	 */
 	double getNucleationStackThreshold() const;
 
 	/**
-	 * \brief Default number of detection stations getter
-	 * \return the default number of detections used in a node
+	 * \brief Gets the number of stations to link to each node in this web
+	 * \return Returns an integer value containing the number of stations to
+	 * link to each node
 	 */
 	int getNumStationsPerNode() const;
 
 	/**
-	 * \brief Default number of picks for nucleation getter
-	 * \return the default number of nucleations used in for a detection
+	 * \brief Gets the nucleation data minimum threshold used for this web
+	 * \return Returns an integer value containing the nucleation data minimum
+	 * threshold
 	 */
 	int getNucleationDataThreshold() const;
 
 	/**
-	 * \brief Row getter
-	 * \return the number of rows
-	 */
-	int getNumRows() const;
-
-	/**
-	 * \brief Col getter
-	 * \return the number of columns
-	 */
-	int getNumColumns() const;
-
-	/**
-	 * \brief Z getter
-	 * \return the number of depths
-	 */
-	int getNumDepths() const;
-
-	/**
-	 * \brief Name getter
-	 * \return the name of this web
+	 * \brief Gets the name of this web
+	 * \return Returns a std::string containing the name of this web
 	 */
 	const std::string& getName() const;
 
 	/**
-	 * \brief Primary nucleation travel time  etter
-	 * \return the primary nucleation travel time
+	 * \brief Gets the primary nucleation travel time for this web
+	 * \return Returns a shared_ptr to the CTravelTime containing the primary
+	 * nucleation travel time
 	 */
-	const std::shared_ptr<traveltime::CTravelTime>& getNucleationTravelTime1() const; // NOLINT
+	const std::shared_ptr<traveltime::CTravelTime>& getNucleationTravelTime1() const;  // NOLINT
 
 	/**
-	 * \brief Secondary nucleation travel time  etter
-	 * \return the secondary nucleation travel time
+	 * \brief Gets the secondary nucleation travel time for this web
+	 * \return Returns a shared_ptr to the CTravelTime containing the secondary
+	 * nucleation travel time
 	 */
-	const std::shared_ptr<traveltime::CTravelTime>& getNucleationTravelTime2() const; // NOLINT
+	const std::shared_ptr<traveltime::CTravelTime>& getNucleationTravelTime2() const;  // NOLINT
 
 	/**
-	 * \brief Net Filter Size getter
-	 * \return the number network filters
+	 * \brief Get the number of network filters for this web
+	 * \return Returns an integer containing the number of network filters
 	 */
 	int getNetworksFilterSize() const;
 
 	/**
-	 * \brief Site Filter Size getter
-	 * \return the number site filters
+	 * \brief Get the number of site filters for this web
+	 * \return Returns an integer containing the number of site filters
 	 */
 	int getSitesFilterSize() const;
 
 	/**
-	 * \brief Use only teleseismic stations flag getter
-	 * \return the use only teleseismic stations flag
+	 * \brief Gets the flag indicating whether this web should only use sites
+	 * flagged as UseForTeleseismic
+	 * \return Returns a boolean flag indicating hether this web should only
+	 * use sites  lagged as UseForTeleseismic
 	 */
 	bool getUseOnlyTeleseismicStations() const;
 
 	/**
-	 * \brief Node size getter
-	 * \return the number of nodes
+	 * \brief Get the number of nodes in this web
+	 * \return Returns an integer value containing the number of nodes in this
+	 * web
 	 */
 	int size() const;
 
@@ -513,38 +527,20 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	std::vector<std::pair<double, std::shared_ptr<CSite>>> m_vNodeSites;
 
 	/**
-	 * \brief A std::vector containing a std::shared_ptr to each
-	 * node in the detection graph database
+	 * \brief A std::vector containing a std::shared_ptr to each node in this
+	 * web
 	 */
 	std::vector<std::shared_ptr<CNode>> m_vNode;
 
 	/**
-	 * \brief the std::mutex for m_vNode
+	 * \brief the std::mutex for accessing m_vNode
 	 */
 	mutable std::mutex m_vNodeMutex;
 
 	/**
-	 * \brief String name of web used in tuning
+	 * \brief The name identifying this web
 	 */
 	std::string m_sName;
-
-	/**
-	 * \brief A integer containing the number of rows in a detection grid
-	 * generated by the Grid() command
-	 */
-	std::atomic<int> m_iNumRows;
-
-	/**
-	 * \brief A integer containing the number of columns in a detection grid
-	 * generated by the Grid() command
-	 */
-	std::atomic<int> m_iNumColumns;
-
-	/**
-	 * \brief A integer containing the number of depths in a detection grid
-	 * generated by the Grid() command
-	 */
-	std::atomic<int> m_iNumDepths;
 
 	/**
 	 * \brief A double value containing the number of closest stations to use
@@ -571,16 +567,17 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief A double value containing the inter-node resolution for this
 	 * detection array
 	 */
-	std::atomic<double> m_dResolution;
+	std::atomic<double> m_dNodeResolution;
 
 	/**
-	 * \brief A double which describes where the locator should start
-	 * down weighting for azimuthal gap
+	 * \brief A double which describes the web specific value where the locator
+	 * should start down weighting for azimuthal gap
 	 **/
 	std::atomic<double> m_dAzimuthTaper;
 
 	/**
-	 * \brief A double which describes the maximum allowable event depth
+	 * \brief A double which describes the web specific maximum allowable event
+	 * depth
 	 **/
 	std::atomic<double> m_dMaxDepth;
 
@@ -589,6 +586,12 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * station has changed.
 	 */
 	std::atomic<bool> m_bUpdate;
+
+	/**
+	 * \brief A boolean flag that stores whether this web should save it's
+	 * nodes to a file
+	 */
+	std::atomic<bool> m_bSaveGrid;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing

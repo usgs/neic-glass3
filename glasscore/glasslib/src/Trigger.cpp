@@ -37,7 +37,7 @@ void CTrigger::clear() {
 	m_dLongitude = 0;
 	m_dDepth = 0;
 	m_tOrigin = 0;
-	m_dResolution = 0;
+	m_dWebResolution = 0;
 	m_dBayesValue = 0;
 	m_iPickCount = 0;
 	m_pWeb = NULL;
@@ -58,7 +58,7 @@ bool CTrigger::initialize(double lat, double lon, double z, double ot,
 	m_dLongitude = lon;
 	m_dDepth = z;
 	m_tOrigin = ot;
-	m_dResolution = resolution;
+	m_dWebResolution = resolution;
 	m_dBayesValue = sum;
 	m_iPickCount = count;
 	m_pWeb = web;
@@ -66,16 +66,6 @@ bool CTrigger::initialize(double lat, double lon, double z, double ot,
 	for (auto aPick : picks) {
 		m_vPick.push_back(aPick);
 	}
-
-/*	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CTrigger::initialize: dLat:" + std::to_string(dLat) + "; dLon:"
-					+ std::to_string(dLon) + "; dZ:" + std::to_string(dZ)
-					+ "; tOrg:" + std::to_string(tOrg) + "; dResolution:"
-					+ std::to_string(dResolution) + "; dSum:"
-					+ std::to_string(dSum) + "; nCount:"
-					+ std::to_string(nCount) + "; vPick Size:"
-					+ std::to_string(vPick.size()));*/
 
 	return (true);
 }
@@ -108,8 +98,8 @@ glassutil::CGeo CTrigger::getGeo() const {
 }
 
 // ---------------------------------------------------------getResolution
-double CTrigger::getResolution() const {
-	return (m_dResolution);
+double CTrigger::getWebResolution() const {
+	return (m_dWebResolution);
 }
 
 // ---------------------------------------------------------getBayesValue

@@ -34,12 +34,11 @@
 #define NUMDETECT 5
 #define NUMNUCLEATE 4
 #define RESOLUTION 100.0
-#define AZIGAP 360.
-#define NUMROWS 3
-#define NUMCOLS 4
-#define NUMZ 1
+#define AZIGAP 360.0
 #define UPDATE true
 #define NOUPDATE false
+#define SAVE true
+#define NOSAVE false
 #define NUMTHREADS 1
 #define NOTHREADS 0
 
@@ -57,9 +56,6 @@
 #define GRIDNUMDETECT 10
 #define GRIDNUMNUCLEATE 6
 #define GRIDRESOLUTION 25.0
-#define GRIDNUMROWS 51
-#define GRIDNUMCOLS 51
-#define GRIDNUMZ 1
 #define GRIDNUMNODES 2601
 
 #define GRIDEXPLICITNAME "TestExplicitGrid"
@@ -89,11 +85,8 @@ TEST(WebTest, Construction) {
 													NUMDETECT,
 													NUMNUCLEATE,
 													RESOLUTION,
-													NUMROWS,
-													NUMCOLS, NUMZ,
 													UPDATE,
-													nullTrav,
-													nullTrav);
+													NOSAVE, nullTrav, nullTrav);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testWeb->getName().c_str())<<
@@ -109,19 +102,13 @@ TEST(WebTest, Construction) {
 	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataThreshold())<< "Web getNucleate() Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testWeb->getResolution())<< "Web resolution Check";
-
-	// getRow()
-	ASSERT_EQ(NUMROWS, testWeb->getNumRows())<< "Web getRow() Check";
-
-	// getCol()
-	ASSERT_EQ(NUMCOLS, testWeb->getNumColumns())<< "Web getCol() Check";
-
-	// getZ()
-	ASSERT_EQ(NUMZ, testWeb->getNumDepths())<< "Web getZ() Check";
+	ASSERT_EQ(RESOLUTION, testWeb->getNodeResolution())<< "Web resolution Check";
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testWeb->getUpdate())<< "Web getUpdate() Check";
+
+	// getSaveGrid()
+	ASSERT_EQ(NOSAVE, testWeb->getSaveGrid())<< "Web getSaveGrid() Check";
 
 	// lists
 	int expectedSize = 0;
@@ -142,10 +129,8 @@ TEST(WebTest, Construction) {
 														NUMDETECT,
 														NUMNUCLEATE,
 														RESOLUTION,
-														NUMROWS,
-														NUMCOLS, NUMZ,
 														NOUPDATE,
-														nullTrav,
+														SAVE, nullTrav,
 														nullTrav);
 
 	// name
@@ -162,19 +147,13 @@ TEST(WebTest, Construction) {
 	ASSERT_EQ(NUMNUCLEATE, testWeb2->getNucleationDataThreshold())<< "Web getNucleate() Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testWeb2->getResolution())<< "Web resolution Check";
-
-	// getRow()
-	ASSERT_EQ(NUMROWS, testWeb2->getNumRows())<< "Web getRow() Check";
-
-	// getCol()
-	ASSERT_EQ(NUMCOLS, testWeb2->getNumColumns())<< "Web getCol() Check";
-
-	// getZ()
-	ASSERT_EQ(NUMZ, testWeb2->getNumDepths())<< "Web getZ() Check";
+	ASSERT_EQ(RESOLUTION, testWeb2->getNodeResolution())<< "Web resolution Check";
 
 	// getUpdate()
 	ASSERT_EQ(NOUPDATE, testWeb2->getUpdate())<< "Web getUpdate() Check";
+
+	// getSaveGrid()
+	ASSERT_EQ(SAVE, testWeb2->getSaveGrid())<< "Web getSaveGrid() Check";
 
 	// lists
 	ASSERT_EQ(expectedSize, (int)testWeb2->size())<< "node list empty";
@@ -208,11 +187,9 @@ TEST(WebTest, Initialize) {
 	THRESH,
 						NUMDETECT,
 						NUMNUCLEATE,
-						RESOLUTION, NUMROWS,
-						NUMCOLS,
-						NUMZ,
+						RESOLUTION,
 						UPDATE,
-						nullTrav, nullTrav, AZIGAP);
+						SAVE, nullTrav, nullTrav, AZIGAP);
 
 	printf("[ init     ]\n");
 
@@ -230,19 +207,13 @@ TEST(WebTest, Initialize) {
 	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataThreshold())<< "Web getNucleate() Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testWeb->getResolution())<< "Web resolution Check";
-
-	// getRow()
-	ASSERT_EQ(NUMROWS, testWeb->getNumRows())<< "Web getRow() Check";
-
-	// getCol()
-	ASSERT_EQ(NUMCOLS, testWeb->getNumColumns())<< "Web getCol() Check";
-
-	// getZ()
-	ASSERT_EQ(NUMZ, testWeb->getNumDepths())<< "Web getZ() Check";
+	ASSERT_EQ(RESOLUTION, testWeb->getNodeResolution())<< "Web resolution Check";
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testWeb->getUpdate())<< "Web getUpdate() Check";
+
+	// getSaveGrid()
+	ASSERT_EQ(SAVE, testWeb->getSaveGrid())<< "Web getSaveGrid() Check";
 
 	// lists
 	int expectedSize = 0;
@@ -315,20 +286,14 @@ TEST(WebTest, GlobalTest) {
 	"Web getNucleate() Check";
 
 	// getResolution()
-	ASSERT_EQ(GLOBALRESOLUTION, testGlobalWeb.getResolution())<<
+	ASSERT_EQ(GLOBALRESOLUTION, testGlobalWeb.getNodeResolution())<<
 	"Web getResolution() Check";
-
-	// getRow()
-	ASSERT_EQ(0, testGlobalWeb.getNumRows())<< "Web getRow() Check";
-
-	// getCol()
-	ASSERT_EQ(0, testGlobalWeb.getNumColumns())<< "Web getCol() Check";
-
-	// getCol()
-	ASSERT_EQ(GLOBALNUMZ, testGlobalWeb.getNumDepths())<< "Web getZ() Check";
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testGlobalWeb.getUpdate())<< "Web getUpdate() Check";
+
+	// getSaveGrid()
+	ASSERT_EQ(SAVE, testGlobalWeb.getSaveGrid())<< "Web getSaveGrid() Check";
 
 	// lists
 	ASSERT_EQ(GLOBALNUMNODES, (int)testGlobalWeb.size())<< "node list";
@@ -345,10 +310,12 @@ TEST(WebTest, GlobalTest) {
 	ASSERT_TRUE(NULL != testGlobalWeb.getNucleationTravelTime2())<< "getTrv2() not null";
 
 	// phase name
-	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime1()->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime1()->sPhase.c_str(),
+					phasename1.c_str());
 
 	// phase name
-	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime2()->sPhase.c_str(), phasename2.c_str());
+	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime2()->sPhase.c_str(),
+					phasename2.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -410,20 +377,14 @@ TEST(WebTest, GridTest) {
 	"Web getNucleate() Check";
 
 	// getResolution()
-	ASSERT_EQ(GRIDRESOLUTION, testGridWeb.getResolution())<<
+	ASSERT_EQ(GRIDRESOLUTION, testGridWeb.getNodeResolution())<<
 	"Web getResolution() Check";
-
-	// getRow()
-	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getNumRows())<< "Web getRow() Check";
-
-	// getCol()
-	ASSERT_EQ(GRIDNUMROWS, testGridWeb.getNumColumns())<< "Web getCol() Check";
-
-	// getCol()
-	ASSERT_EQ(GRIDNUMZ, testGridWeb.getNumDepths())<< "Web getZ() Check";
 
 	// getUpdate()
 	ASSERT_EQ(UPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
+
+	// getSaveGrid()
+	ASSERT_EQ(SAVE, testGridWeb.getSaveGrid())<< "Web getSaveGrid() Check";
 
 	// lists
 	ASSERT_EQ(GRIDNUMNODES, (int)testGridWeb.size())<< "node list";
@@ -440,10 +401,12 @@ TEST(WebTest, GridTest) {
 	ASSERT_TRUE(NULL != testGridWeb.getNucleationTravelTime2())<< "getTrv2() not null";
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->sPhase.c_str(),
+					phasename1.c_str());
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getNucleationTravelTime2()->sPhase.c_str(), phasename2.c_str());
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime2()->sPhase.c_str(),
+					phasename2.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -507,19 +470,13 @@ TEST(WebTest, GridExplicitTest) {
 
 	// getResolution()
 	ASSERT_EQ(GRIDEXPLICITRESOLUTION,
-			testGridWeb.getResolution())<< "Web getResolution() Check";
-
-	// getRow()
-	ASSERT_EQ(0, testGridWeb.getNumRows())<< "Web getRow() Check";
-
-	// getCol()
-	ASSERT_EQ(0, testGridWeb.getNumColumns())<< "Web getCol() Check";
-
-	// getCol()
-	ASSERT_EQ(0, testGridWeb.getNumDepths())<< "Web getZ() Check";
+			testGridWeb.getNodeResolution())<< "Web getResolution() Check";
 
 	// getUpdate()
-	ASSERT_EQ(NOUPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
+	ASSERT_EQ(UPDATE, testGridWeb.getUpdate())<< "Web getUpdate() Check";
+
+	// getSaveGrid()
+	ASSERT_EQ(SAVE, testGridWeb.getSaveGrid())<< "Web getSaveGrid() Check";
 
 	// lists
 	ASSERT_EQ(GRIDEXPLICITNUMNODES, (int)testGridWeb.size())<< "node list";
@@ -536,7 +493,8 @@ TEST(WebTest, GridExplicitTest) {
 	ASSERT_TRUE(NULL == testGridWeb.getNucleationTravelTime2())<< "getTrv2() null";
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->sPhase.c_str(), phasename1.c_str());
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->sPhase.c_str(),
+					phasename1.c_str());
 
 	// cleanup
 	delete (testSiteList);
@@ -664,22 +622,26 @@ TEST(WebTest, RemoveTest) {
 TEST(WebTest, FailTests) {
 	glassutil::CLogit::disable();
 
+	printf("[ startup  ]\n");
+
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
 	glasscore::CWeb aWeb(std::string(NAME),
 	THRESH,
 							NUMDETECT,
 							NUMNUCLEATE,
 							RESOLUTION,
-							NUMROWS,
-							NUMCOLS, NUMZ,
 							NOUPDATE,
-							nullTrav, nullTrav, NOTHREADS, 10, 10);
+							SAVE, nullTrav, nullTrav, NOTHREADS, 10, 10);
+
+	printf("[ construct]\n");
 
 	// Nulls
 	ASSERT_FALSE(aWeb.dispatch(NULL))<< "Null dispatch false";
-	ASSERT_FALSE(aWeb.global(NULL))<< "Null global false";
-	ASSERT_FALSE(aWeb.grid(NULL))<< "Null grid false";
-	ASSERT_FALSE(aWeb.gridExplicit(NULL))<< "Null grid_explicit false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(NULL))<< "Null global false";
+	ASSERT_FALSE(aWeb.generateLocalGrid(NULL))<< "Null grid false";
+	ASSERT_FALSE(aWeb.generateExplicitGrid(NULL))<< "Null grid_explicit false";
+
+	printf("[ nulls    ]\n");
 
 	// grid fails
 	std::ifstream badGridFile;
@@ -696,7 +658,7 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<json::Object> badGridConfig =
 			std::make_shared<json::Object>(json::Deserialize(badGridLine));
-	ASSERT_FALSE(aWeb.global(badGridConfig))<< "bad global1 false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(badGridConfig))<< "bad global1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -708,7 +670,7 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<json::Object> badGridConfig2 =
 			std::make_shared<json::Object>(json::Deserialize(badGridLine));
-	ASSERT_FALSE(aWeb.global(badGridConfig2))<< "bad global2 false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(badGridConfig2))<< "bad global2 false";
 
 	// no depths
 	badGridFile.open(
@@ -720,7 +682,9 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<json::Object> badGridConfig3 =
 			std::make_shared<json::Object>(json::Deserialize(badGridLine));
-	ASSERT_FALSE(aWeb.global(badGridConfig3))<< "bad global4 false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(badGridConfig3))<< "bad global4 false";
+
+	printf("[ global   ]\n");
 
 	// grid
 	// bad tt
@@ -732,7 +696,7 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<json::Object> badGridConfig4 =
 			std::make_shared<json::Object>(json::Deserialize(badGridLine));
-	ASSERT_FALSE(aWeb.global(badGridConfig4))<< "bad grid1 false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(badGridConfig4))<< "bad grid1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -743,7 +707,7 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<json::Object> badGridConfig5 =
 			std::make_shared<json::Object>(json::Deserialize(badGridLine));
-	ASSERT_FALSE(aWeb.global(badGridConfig5))<< "bad grid2 false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(badGridConfig5))<< "bad grid2 false";
 
 	// no depths
 	badGridFile.open(
@@ -754,7 +718,9 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<json::Object> badGridConfig6 =
 			std::make_shared<json::Object>(json::Deserialize(badGridLine));
-	ASSERT_FALSE(aWeb.global(badGridConfig6))<< "bad grid3 false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(badGridConfig6))<< "bad grid3 false";
+
+	printf("[ local    ]\n");
 
 	// explicit
 	// bad tt
@@ -767,7 +733,7 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<json::Object> badGridConfig7 =
 			std::make_shared<json::Object>(json::Deserialize(badGridLine));
-	ASSERT_FALSE(aWeb.global(badGridConfig7))<< "bad grid1 false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(badGridConfig7))<< "bad grid1 false";
 
 	// no resolution
 	badGridFile.open(
@@ -779,5 +745,7 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<json::Object> badGridConfig8 =
 			std::make_shared<json::Object>(json::Deserialize(badGridLine));
-	ASSERT_FALSE(aWeb.global(badGridConfig8))<< "bad grid2 false";
+	ASSERT_FALSE(aWeb.generateGlobalGrid(badGridConfig8))<< "bad grid2 false";
+
+	printf("[ explicit ]\n");
 }

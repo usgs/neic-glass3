@@ -50,13 +50,13 @@ class CWebList {
 	void clear();
 
 	/**
-	 * \brief CWeb communication recieveing function
+	 * \brief CWeb communication receiving function
 	 *
-	 * The function used by CWeb to recieve communication
+	 * The function used by CWeb to receive communication
 	 * (such as configuration or input data), from outside the
 	 * glasscore library, or it's parent CGlass.
 	 *
-	 * Supports Global (genrate global grid) Shell (generate grid at
+	 * Supports Global (generate global grid) Shell (generate grid at
 	 * single depth), Grid (generate local grid), Single (generate
 	 * single node), GetWeb (generate output message detailing detection
 	 * graph database) inputs.
@@ -69,29 +69,24 @@ class CWebList {
 	bool dispatch(std::shared_ptr<json::Object> com);
 
 	/**
-	 * \brief Add subnet web ('Grid', etc) from detection fabric
+	 * \brief Add web ('Grid', etc) to list using provided configuration
 	 *
-	 * This method creates a new web component, handling common
-	 * parameters and then generating the particular flavor by passing
-	 * command to the 'dispatch' message in the generated CWeb instance
+	 * This method creates a web and then configures it by passing the
+	 * configuration to the 'dispatch' message in the CWeb
 	 *
-	 * \param com - A pointer to a json::object containing name of the node
-	 * to be removed.
+	 * \param com - A pointer to a json::object containing the web configuration
 	 *
 	 * \return Always returns true
 	 */
 	bool addWeb(std::shared_ptr<json::Object> com);
 
 	/**
-	 * \brief Remove subnet compoent ('Grid', etc) from detection fabric
+	 * \brief Remove web ('Grid', etc) from list by name
 	 *
-	 * This method removes a previously named subnet component from the
-	 * detection fabric by scanning all of the nodes in the current fabric,
-	 * and deleting all those that match the name of the grid to be removed.
-	 * When a node is deleted, all station linkages are reset for that node.
+	 * This method removes a web from the list
 	 *
 	 * \param com - A pointer to a json::object containing name of the web
-	 * component to be removed.
+	 * to be removed.
 	 *
 	 * \return Always returns true
 	 */
@@ -99,8 +94,8 @@ class CWebList {
 
 	/**
 	 * \brief Add a site to the webs
-	 * This function adds the given site to all appropriate web detection arrays
-	 * in the list of wweb detection arrays
+	 * This function adds the given site to all appropriate webs
+	 * in the list of webs
 	 *
 	 * \param site - A shared_ptr to a CSite object containing the site to add
 	 */
@@ -108,8 +103,8 @@ class CWebList {
 
 	/**
 	 * \brief Remove Site from the webs
-	 * This function removes the given site from all web detection arrays in the
-	 * list of web detection arrays
+	 * This function removes the given site from all webs in the
+	 * list of webs
 	 *
 	 * \param site - A shared_ptr to a CSite object containing the site to remove
 	 */
@@ -117,7 +112,8 @@ class CWebList {
 
 	/**
 	 * \brief Check if the webs have a site
-	 * This function checks to see if the given site is used in any web
+	 * This function checks to see if the given site is used in any web in the
+	 * list
 	 *
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * check
@@ -132,26 +128,28 @@ class CWebList {
 	bool healthCheck();
 
 	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
+	 * \brief Get the CGlass pointer used by this web list for global constant
+	 * and configuration lookups
+	 * \return Return a pointer to the CGlass class used by this web list
 	 */
 	const CGlass* getGlass() const;
 
 	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
+	 * \brief Set the CGlass pointer used by this web list for global constant
+	 * and configuration lookups
+	 * \param glass - a pointer to the CGlass class used by this web list
 	 */
 	void setGlass(CGlass* glass);
 
 	/**
-	 * \brief CSiteList getter
-	 * \return the CSiteList pointer
+	 * \brief Get the CSiteList pointer used by this web list for site lookups
+	 * \return Return a pointer to the CSiteList class used by this web list
 	 */
 	const CSiteList* getSiteList() const;
 
 	/**
-	 * \brief CSiteList setter
-	 * \param siteList - the CSiteList pointer
+	 * \brief Set the CSiteList pointer used by this web list for site lookups
+	 * \param siteList - a pointer to the CSiteList class used by this web list
 	 */
 	void setSiteList(CSiteList* siteList);
 
@@ -162,19 +160,20 @@ class CWebList {
 
  private:
 	/**
-	 * \brief A pointer to the main CGlass class, used to send output,
-	 * get sites (stations), encode/decode time, and get debug flags
+	 * \brief A pointer to the parent CGlass class, used to get configuration
+	 * values and access other parts of glass3
 	 */
 	CGlass * m_pGlass;
 
 	/**
-	 * \brief A pointer to the CSiteList class, used get sites (stations)
+	 * \brief A pointer to a CSiteList object containing all the sites for
+	 * lookups
 	 */
 	CSiteList * m_pSiteList;
 
 	/**
 	 * \brief A vector of shared pointers to all currently defined
-	 * web detection arrays.
+	 * webs.
 	 */
 	std::vector<std::shared_ptr<CWeb>> m_vWebs;
 

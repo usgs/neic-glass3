@@ -466,148 +466,160 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		json::Object params = (*com)["Params"].ToObject();
 
 		// Thresh
-		if ((params.HasKey("Thresh"))
-				&& (params["Thresh"].GetType() == json::ValueType::DoubleVal)) {
-			m_dNucleationStackThreshold = params["Thresh"].ToDouble();
+		if ((params.HasKey("NucleationStackThreshold"))
+				&& (params["NucleationStackThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dNucleationStackThreshold = params["NucleationStackThreshold"]
+					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using Thresh: "
+					"CGlass::initialize: Using NucleationStackThreshold: "
 							+ std::to_string(m_dNucleationStackThreshold));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default Thresh: "
+					"CGlass::initialize: Using default NucleationStackThreshold: "
 							+ std::to_string(m_dNucleationStackThreshold));
 		}
 
 		// Nucleate
-		if ((params.HasKey("Nucleate"))
-				&& (params["Nucleate"].GetType() == json::ValueType::IntVal)) {
-			m_iNucleationDataThreshold = params["Nucleate"].ToInt();
+		if ((params.HasKey("NucleationDataThreshold"))
+				&& (params["NucleationDataThreshold"].GetType()
+						== json::ValueType::IntVal)) {
+			m_iNucleationDataThreshold =
+					params["NucleationDataThreshold"].ToInt();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using Nucleate: "
+					"CGlass::initialize: Using NucleationDataThreshold: "
 							+ std::to_string(m_iNucleationDataThreshold));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default Nucleate: "
+					"CGlass::initialize: Using default NucleationDataThreshold: "
 							+ std::to_string(m_iNucleationDataThreshold));
 		}
 
 		// sdAssociate
-		if ((params.HasKey("sdAssociate"))
-				&& (params["sdAssociate"].GetType()
+		if ((params.HasKey("AssociationStandardDeviationCutoff"))
+				&& (params["AssociationStandardDeviationCutoff"].GetType()
 						== json::ValueType::DoubleVal)) {
-			m_dAssociationSDCutoff = params["sdAssociate"].ToDouble();
+			m_dAssociationSDCutoff =
+					params["AssociationStandardDeviationCutoff"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using sdAssociate: "
+					"CGlass::initialize: Using AssociationStandardDeviationCutoff: "
 							+ std::to_string(m_dAssociationSDCutoff));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default sdAssociate: "
+					"CGlass::initialize: Using default AssociationStandardDeviationCutoff: "
 							+ std::to_string(m_dAssociationSDCutoff));
 		}
 
 		// sdPrune
-		if ((params.HasKey("sdPrune"))
-				&& (params["sdPrune"].GetType() == json::ValueType::DoubleVal)) {
-			m_dPruningSDCutoff = params["sdPrune"].ToDouble();
+		if ((params.HasKey("PruningStandardDeviationCutoff"))
+				&& (params["PruningStandardDeviationCutoff"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dPruningSDCutoff = params["PruningStandardDeviationCutoff"]
+					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using sdPrune: "
+					"CGlass::initialize: Using PruningStandardDeviationCutoff: "
 							+ std::to_string(m_dPruningSDCutoff));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default sdPrune: "
+					"CGlass::initialize: Using default PruningStandardDeviationCutoff: "
 							+ std::to_string(m_dPruningSDCutoff));
 		}
 
 		// ExpAffinity
-		if ((params.HasKey("expAffinity"))
-				&& (params["expAffinity"].GetType()
+		if ((params.HasKey("PickAffinityExponentialFactor"))
+				&& (params["PickAffinityExponentialFactor"].GetType()
 						== json::ValueType::DoubleVal)) {
-			m_dPickAffinityExpFactor = params["expAffinity"].ToDouble();
+			m_dPickAffinityExpFactor = params["PickAffinityExponentialFactor"]
+					.ToDouble();
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using expAffinity: "
+					"CGlass::initialize: Using PickAffinityExponentialFactor: "
 							+ std::to_string(m_dPickAffinityExpFactor));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default expAffinity: "
+					"CGlass::initialize: Using default PickAffinityExponentialFactor: "
 							+ std::to_string(m_dPickAffinityExpFactor));
 		}
 
 		// dCutFactor
-		if ((params.HasKey("dCutFactor"))
-				&& (params["dCutFactor"].GetType() == json::ValueType::DoubleVal)) {
-			m_dDistanceCutoffFactor = params["dCutFactor"].ToDouble();
+		if ((params.HasKey("DistanceCutoffFactor"))
+				&& (params["DistanceCutoffFactor"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dDistanceCutoffFactor = params["DistanceCutoffFactor"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using dCutFactor: "
+					"CGlass::initialize: Using DistanceCutoffFactor: "
 							+ std::to_string(m_dDistanceCutoffFactor));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default dCutFactor: "
+					"CGlass::initialize: Using default DistanceCutoffFactor: "
 							+ std::to_string(m_dDistanceCutoffFactor));
 		}
 
 		// dCutPercentage
-		if ((params.HasKey("dCutPercentage"))
-				&& (params["dCutPercentage"].GetType()
+		if ((params.HasKey("DistanceCutoffPercentage"))
+				&& (params["DistanceCutoffPercentage"].GetType()
 						== json::ValueType::DoubleVal)) {
-			m_dDistanceCutoffPercentage = params["dCutPercentage"].ToDouble();
+			m_dDistanceCutoffPercentage = params["DistanceCutoffPercentage"]
+					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using dCutPercentage: "
+					"CGlass::initialize: Using DistanceCutoffPercentage: "
 							+ std::to_string(m_dDistanceCutoffPercentage));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default dCutPercentage: "
+					"CGlass::initialize: Using default DistanceCutoffPercentage: "
 							+ std::to_string(m_dDistanceCutoffPercentage));
 		}
 
 		// dCutMin
-		if ((params.HasKey("dCutMin"))
-				&& (params["dCutMin"].GetType() == json::ValueType::DoubleVal)) {
-			m_dMinDistanceCutoff = params["dCutMin"].ToDouble();
+		if ((params.HasKey("DistanceCutoffMinimum"))
+				&& (params["DistanceCutoffMinimum"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dMinDistanceCutoff = params["DistanceCutoffMinimum"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using dCutMin: "
+					"CGlass::initialize: Using DistanceCutoffMinimum: "
 							+ std::to_string(m_dMinDistanceCutoff));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default dCutMin: "
+					"CGlass::initialize: Using default DistanceCutoffMinimum: "
 							+ std::to_string(m_dMinDistanceCutoff));
 		}
 
 		// iCycleLimit
-		if ((params.HasKey("iCycleLimit"))
-				&& (params["iCycleLimit"].GetType() == json::ValueType::IntVal)) {
-			m_iProcessLimit = params["iCycleLimit"].ToInt();
+		if ((params.HasKey("HypoProcessCountLimit"))
+				&& (params["HypoProcessCountLimit"].GetType()
+						== json::ValueType::IntVal)) {
+			m_iProcessLimit = params["HypoProcessCountLimit"].ToInt();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using iCycleLimit: "
+					"CGlass::initialize: Using HypoProcessCountLimit: "
 							+ std::to_string(m_iProcessLimit));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default iCycleLimit: "
+					"CGlass::initialize: Using default HypoProcessCountLimit: "
 							+ std::to_string(m_iProcessLimit));
 		}
 
@@ -710,39 +722,43 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		 */
 
 		// dReportThresh
-		if ((params.HasKey("ReportThresh"))
-				&& (params["ReportThresh"].GetType()
+		if ((params.HasKey("ReportingStackThreshold"))
+				&& (params["ReportingStackThreshold"].GetType()
 						== json::ValueType::DoubleVal)) {
-			m_dReportingStackThreshold = params["ReportThresh"].ToDouble();
+			m_dReportingStackThreshold = params["ReportingStackThreshold"]
+					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using ReportThresh: "
+					"CGlass::initialize: Using ReportingStackThreshold: "
 							+ std::to_string(m_dReportingStackThreshold));
 		} else {
 			// default to overall thresh
 			m_dReportingStackThreshold = m_dNucleationStackThreshold;
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default ReportThresh (=Thresh): "
+					"CGlass::initialize: Using default ReportingStackThreshold "
+							"( = NucleationStackThreshold): "
 							+ std::to_string(m_dReportingStackThreshold));
 		}
 
 		// nReportCut
-		if ((params.HasKey("ReportCut"))
-				&& (params["ReportCut"].GetType() == json::ValueType::IntVal)) {
-			m_iReportingDataThreshold = params["ReportCut"].ToInt();
+		if ((params.HasKey("ReportingDataThreshold"))
+				&& (params["ReportingDataThreshold"].GetType()
+						== json::ValueType::IntVal)) {
+			m_iReportingDataThreshold =
+					params["ReportingDataThreshold"].ToInt();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using ReportCut: "
+					"CGlass::initialize: Using ReportingDataThreshold: "
 							+ std::to_string(m_iReportingDataThreshold));
 		} else {
 			// default to overall nNucleate
 			m_iReportingDataThreshold = 0;
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default ReportCut: "
+					"CGlass::initialize: Using default ReportingDataThreshold: "
 							+ std::to_string(m_iReportingDataThreshold));
 		}
 	} else {
@@ -772,50 +788,53 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	// set maximum number of picks
-	if ((com->HasKey("PickMax"))
-			&& ((*com)["PickMax"].GetType() == json::ValueType::IntVal)) {
-		m_iMaxNumPicks = (*com)["PickMax"].ToInt();
+	if ((com->HasKey("MaximumNumberOfPicks"))
+			&& ((*com)["MaximumNumberOfPicks"].GetType()
+					== json::ValueType::IntVal)) {
+		m_iMaxNumPicks = (*com)["MaximumNumberOfPicks"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using PickMax: "
+				"CGlass::initialize: Using MaximumNumberOfPicks: "
 						+ std::to_string(m_iMaxNumPicks));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default PickMax: "
+				"CGlass::initialize: Using default MaximumNumberOfPicks: "
 						+ std::to_string(m_iMaxNumPicks));
 	}
 
 	// set maximum number of pick in a single site
-	if ((com->HasKey("SitePickMax"))
-			&& ((*com)["SitePickMax"].GetType() == json::ValueType::IntVal)) {
-		m_iMaxNumPicksPerSite = (*com)["SitePickMax"].ToInt();
+	if ((com->HasKey("MaximumNumberOfPicksPerSite"))
+			&& ((*com)["MaximumNumberOfPicksPerSite"].GetType()
+					== json::ValueType::IntVal)) {
+		m_iMaxNumPicksPerSite = (*com)["MaximumNumberOfPicksPerSite"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using SitePickMax: "
+				"CGlass::initialize: Using MaximumNumberOfPicksPerSite: "
 						+ std::to_string(m_iMaxNumPicksPerSite));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default SitePickMax: "
+				"CGlass::initialize: Using default MaximumNumberOfPicksPerSite: "
 						+ std::to_string(m_iMaxNumPicksPerSite));
 	}
 
 	// set maximum number of correlations
-	if ((com->HasKey("CorrelationMax"))
-			&& ((*com)["CorrelationMax"].GetType() == json::ValueType::IntVal)) {
-		m_iMaxNumCorrelations = (*com)["CorrelationMax"].ToInt();
+	if ((com->HasKey("MaximumNumberOfCorrelations"))
+			&& ((*com)["MaximumNumberOfCorrelations"].GetType()
+					== json::ValueType::IntVal)) {
+		m_iMaxNumCorrelations = (*com)["MaximumNumberOfCorrelations"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using CorrelationMax: "
+				"CGlass::initialize: Using MaximumNumberOfCorrelations: "
 						+ std::to_string(m_iMaxNumCorrelations));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default CorrelationMax: "
+				"CGlass::initialize: Using default MaximumNumberOfCorrelations: "
 						+ std::to_string(m_iMaxNumCorrelations));
 	}
 
@@ -837,70 +856,73 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	// set maximum number of hypos
-	if ((com->HasKey("HypoMax"))
-			&& ((*com)["HypoMax"].GetType() == json::ValueType::IntVal)) {
-		m_iMaxNumHypos = (*com)["HypoMax"].ToInt();
+	if ((com->HasKey("MaximumNumberOfHypos"))
+			&& ((*com)["MaximumNumberOfHypos"].GetType()
+					== json::ValueType::IntVal)) {
+		m_iMaxNumHypos = (*com)["MaximumNumberOfHypos"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using HypoMax: "
+				"CGlass::initialize: Using MaximumNumberOfHypos: "
 						+ std::to_string(m_iMaxNumHypos));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default HypoMax: "
+				"CGlass::initialize: Using default MaximumNumberOfHypos: "
 						+ std::to_string(m_iMaxNumHypos));
 	}
 
 	// set the number of nucleation threads
 	int numNucleationThreads = 5;
-	if ((com->HasKey("NumNucleationThreads"))
-			&& ((*com)["NumNucleationThreads"].GetType()
+	if ((com->HasKey("NumberOfNucleationThreads"))
+			&& ((*com)["NumberOfNucleationThreads"].GetType()
 					== json::ValueType::IntVal)) {
-		numNucleationThreads = (*com)["NumNucleationThreads"].ToInt();
+		numNucleationThreads = (*com)["NumberOfNucleationThreads"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using NumNucleationThreads: "
+				"CGlass::initialize: Using NumberOfNucleationThreads: "
 						+ std::to_string(numNucleationThreads));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default NumNucleationThreads: "
+				"CGlass::initialize: Using default NumberOfNucleationThreads: "
 						+ std::to_string(numNucleationThreads));
 	}
 
 	// set the number of hypo threads
 	int numHypoThreads = 3;
-	if ((com->HasKey("NumHypoThreads"))
-			&& ((*com)["NumHypoThreads"].GetType() == json::ValueType::IntVal)) {
-		numHypoThreads = (*com)["NumHypoThreads"].ToInt();
+	if ((com->HasKey("NumberOfHypoThreads"))
+			&& ((*com)["NumberOfHypoThreads"].GetType()
+					== json::ValueType::IntVal)) {
+		numHypoThreads = (*com)["NumberOfHypoThreads"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using NumHypoThreads: "
+				"CGlass::initialize: Using NumberOfHypoThreads: "
 						+ std::to_string(numHypoThreads));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default NumHypoThreads: "
+				"CGlass::initialize: Using default NumberOfHypoThreads: "
 						+ std::to_string(numHypoThreads));
 	}
 
 	// set the number of web threads
 	int numWebThreads = 0;
-	if ((com->HasKey("NumWebThreads"))
-			&& ((*com)["NumWebThreads"].GetType() == json::ValueType::IntVal)) {
-		numWebThreads = (*com)["NumWebThreads"].ToInt();
+	if ((com->HasKey("NumberOfWebThreads"))
+			&& ((*com)["NumberOfWebThreads"].GetType()
+					== json::ValueType::IntVal)) {
+		numWebThreads = (*com)["NumberOfWebThreads"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using NumWebThreads: "
+				"CGlass::initialize: Using NumberOfWebThreads: "
 						+ std::to_string(numWebThreads));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default NumWebThreads: "
+				"CGlass::initialize: Using default NumberOfWebThreads: "
 						+ std::to_string(numWebThreads));
 	}
 
@@ -939,18 +961,19 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	int iMaxPicksPerHour = -1;
-	if ((com->HasKey("MaxPicksPerHour"))
-			&& ((*com)["MaxPicksPerHour"].GetType() == json::ValueType::IntVal)) {
-		iMaxPicksPerHour = (*com)["MaxPicksPerHour"].ToInt();
+	if ((com->HasKey("SiteMaximumPicksPerHour"))
+			&& ((*com)["SiteMaximumPicksPerHour"].GetType()
+					== json::ValueType::IntVal)) {
+		iMaxPicksPerHour = (*com)["SiteMaximumPicksPerHour"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using MaxPicksPerHour: "
+				"CGlass::initialize: Using SiteMaximumPicksPerHour: "
 						+ std::to_string(iMaxPicksPerHour));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default MaxPicksPerHour: "
+				"CGlass::initialize: Using default SiteMaximumPicksPerHour: "
 						+ std::to_string(iMaxPicksPerHour));
 	}
 
@@ -968,7 +991,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	// create site list
 	m_pSiteList = new CSiteList();
 	m_pSiteList->setGlass(this);
-	m_pSiteList->setHoursWithoutPicking(iHoursWithoutPicking);
+	m_pSiteList->setMaxHoursWithoutPicking(iHoursWithoutPicking);
 	m_pSiteList->setHoursBeforeLookingUp(iHoursBeforeLookingUp);
 	m_pSiteList->setMaxPicksPerHour(iMaxPicksPerHour);
 

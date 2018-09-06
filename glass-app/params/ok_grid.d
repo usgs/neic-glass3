@@ -3,16 +3,16 @@
 {
 	"Cmd": "Grid",
 	"Name": "Oklahoma",
-	"Resolution": 25.0,
-	"Rows": 51,
-	"Cols": 51,
-	"Lat": 36.0,
-	"Lon": -97.5,
-	"Z": [ 10.0 ],
-	"Detect": 12,
-	"Nucleate": 7,
-	"Thresh": 0.5,
-	"Update":false, # False because glass-app does not do site lookups.
+	"NodeResolution": 25.0,
+	"NumberOfRows": 51,
+	"NumberOfColumns": 51,
+	"CenterLatitude": 36.0,
+	"CenterLongitude": -97.5,
+	"DepthLayers": [ 10.0 ],
+	"NumStationsPerNode": 10,
+	"NucleationDataThreshold": 6,
+	"NucleationStackThreshold": 5.0,
+	"UpdateGrid":false, # False because glass-app does not do site lookups.
 	"SaveGrid":false,
 	"NucleationPhases":{
 	    "Phase1": {

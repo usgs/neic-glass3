@@ -54,7 +54,7 @@ CWeb::CWeb(int numThreads, int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------CWeb
 CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
-			int resolution, int numRows, int numCols, int numZ, bool update,
+			int resolution, bool update, bool save,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
 			int sleepTime, int checkInterval, double aziTap, double maxDep)
@@ -62,8 +62,8 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 										checkInterval) {
 	clear();
 
-	initialize(name, thresh, numDetect, numNucleate, resolution, numRows,
-				numCols, numZ, update, firstTrav, secondTrav, aziTap, maxDep);
+	initialize(name, thresh, numDetect, numNucleate, resolution, update, save,
+				firstTrav, secondTrav, aziTap, maxDep);
 
 	// start up the threads
 	start();
@@ -77,17 +77,15 @@ CWeb::~CWeb() {
 // ---------------------------------------------------------clear
 void CWeb::clear() {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
-	m_iNumRows = 0;
-	m_iNumColumns = 0;
-	m_iNumDepths = 0;
 	m_iNumStationsPerNode = 10;
 	m_iNucleationDataThreshold = 5;
 	m_dNucleationStackThreshold = 2.5;
-	m_dResolution = 100;
+	m_dNodeResolution = 100;
 	m_sName = "Nemo";
 	m_pGlass = NULL;
 	m_pSiteList = NULL;
 	m_bUpdate = false;
+	m_bSaveGrid = false;
 	m_dAzimuthTaper = 360.0;
 	m_dMaxDepth = 800.0;
 
@@ -129,8 +127,7 @@ void CWeb::clear() {
 
 // ---------------------------------------------------------initialize
 bool CWeb::initialize(std::string name, double thresh, int numDetect,
-						int numNucleate, int resolution, int numRows,
-						int numCols, int numZ, bool update,
+						int numNucleate, int resolution, bool update, bool save,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav,
 						double aziTap, double maxDep) {
@@ -140,11 +137,9 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	m_dNucleationStackThreshold = thresh;
 	m_iNumStationsPerNode = numDetect;
 	m_iNucleationDataThreshold = numNucleate;
-	m_dResolution = resolution;
-	m_iNumRows = numRows;
-	m_iNumColumns = numCols;
-	m_iNumDepths = numZ;
+	m_dNodeResolution = resolution;
 	m_bUpdate = update;
+	m_bSaveGrid = save;
 	m_pNucleationTravelTime1 = firstTrav;
 	m_pNucleationTravelTime2 = secondTrav;
 	m_dAzimuthTaper = aziTap;
@@ -168,19 +163,19 @@ bool CWeb::dispatch(std::shared_ptr<json::Object> com) {
 		// dispatch to appropriate function based on Cmd value
 		json::Value v = (*com)["Cmd"].ToString();
 
-		// generate a global grid
+		// generate a Global grid
 		if (v == "Global") {
-			return (global(com));
+			return (generateGlobalGrid(com));
 		}
 
 		// generate a regional or local grid
 		if (v == "Grid") {
-			return (grid(com));
+			return (generateLocalGrid(com));
 		}
 
 		// generate an explicitly defined grid
-		if (v == "Grid_Explicit") {
-			return (gridExplicit(com));
+		if (v == "GridExplicit") {
+			return (generateExplicitGrid(com));
 		}
 	}
 
@@ -188,114 +183,34 @@ bool CWeb::dispatch(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
-// ---------------------------------------------------------global
-bool CWeb::global(std::shared_ptr<json::Object> com) {
-	glassutil::CLogit::log(glassutil::log_level::debug, "CWeb::global");
+// ---------------------------------------------------------generateGlobalGrid
+bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CWeb::generateGlobalGrid");
 
 	// nullchecks
 	// check json
-	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::global: NULL json configuration.");
+	if (gridConfiguration == NULL) {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateGlobalGrid: NULL json configuration.");
 		return (false);
 	}
 
 	char sLog[1024];
-
-	// global grid definition variables and defaults
-	std::string name = "Nemo";
-	int detect = 20;
-	int nucleate = 7;
-	double thresh = 2.0;
-
-	// check pGlass
-	if (m_pGlass != NULL) {
-		detect = m_pGlass->getNumStationsPerNode();
-		nucleate = m_pGlass->getNucleationDataThreshold();
-		thresh = m_pGlass->getNucleationStackThreshold();
-	}
-
-	double resol = 100;
 	std::vector<double> zzz;
 	int zs = 0;
-	bool saveGrid = false;
-	bool update = false;
-	double aziTaper = 360.;
-	double maxDepth = 800.;
-	// get grid configuration from json
-	// name
-	if (((*com).HasKey("Name"))
-			&& ((*com)["Name"].GetType() == json::ValueType::StringVal)) {
-		name = (*com)["Name"].ToString();
+
+	// load basic (common) grid configuration
+	if (loadGridConfiguration(gridConfiguration) == false) {
+		return(false);
 	}
 
-	// Nucleation Phases to be used for this Global grid
-	if (((*com).HasKey("NucleationPhases"))
-			&& ((*com)["NucleationPhases"].GetType()
-					== json::ValueType::ObjectVal)) {
-		json::Object nucleationPhases = (*com)["NucleationPhases"].ToObject();
-
-		if (loadTravelTimes(&nucleationPhases) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CWeb::global: Error Loading NucleationPhases");
-			return (false);
-		}
-	} else {
-		if (loadTravelTimes((json::Object *) NULL) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CWeb::global: Error Loading default NucleationPhases");
-			return (false);
-		}
-	}
-
-	// the number of stations that are assigned to each node
-	if (((*com).HasKey("Detect"))
-			&& ((*com)["Detect"].GetType() == json::ValueType::IntVal)) {
-		detect = (*com)["Detect"].ToInt();
-	}
-
-	// number of picks that need to associate to start an event
-	if (((*com).HasKey("Nucleate"))
-			&& ((*com)["Nucleate"].GetType() == json::ValueType::IntVal)) {
-		nucleate = (*com)["Nucleate"].ToInt();
-	}
-
-	// viability threshold needed to exceed for a nucleation to be successful.
-	if (((*com).HasKey("Thresh"))
-			&& ((*com)["Thresh"].GetType() == json::ValueType::DoubleVal)) {
-		thresh = (*com)["Thresh"].ToDouble();
-	}
-
-	// sets the aziTaper value
-	if ((*com).HasKey("AzimuthGapTaper")
-			&& ((*com)["AzimuthGapTaper"].GetType()
-					== json::ValueType::DoubleVal)) {
-		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
-	}
-
-	// sets the maxDepth value
-	if ((*com).HasKey("MaximumDepth")
-			&& ((*com)["MaximumDepth"].GetType() == json::ValueType::DoubleVal)) {
-		maxDepth = (*com)["MaximumDepth"].ToDouble();
-	}
-
-	// Node resolution for this Global grid
-	if (((*com).HasKey("Resolution"))
-			&& ((*com)["Resolution"].GetType() == json::ValueType::DoubleVal)) {
-		resol = (*com)["Resolution"].ToDouble();
-	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CWeb::global: Missing required Resolution Key.");
-		return (false);
-	}
-
-	// list of depth layers to generate for this Global grid
-	if (((*com).HasKey("Z"))
-			&& ((*com)["Z"].GetType() == json::ValueType::ArrayVal)) {
-		json::Array zarray = (*com)["Z"].ToArray();
+	// list of depth layers to generate for this grid
+	if (((*gridConfiguration).HasKey("DepthLayers"))
+			&& ((*gridConfiguration)["DepthLayers"].GetType()
+					== json::ValueType::ArrayVal)) {
+		json::Array zarray = (*gridConfiguration)["DepthLayers"].ToArray();
 		for (auto v : zarray) {
 			if (v.GetType() == json::ValueType::DoubleVal) {
 				zzz.push_back(v.ToDouble());
@@ -303,65 +218,36 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 		}
 		zs = static_cast<int>(zzz.size());
 	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::global: Missing required Z Array.");
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateGlobalGrid: Missing required DepthLayers Array.");
 		return (false);
 	}
 
-	// whether to create a file detailing the node configuration for
-	// this Global grid
-	if ((*com).HasKey("SaveGrid")) {
-		saveGrid = (*com)["SaveGrid"].ToBool();
-	}
-
-	// set whether to update weblists
-	if ((com->HasKey("Update"))
-			&& ((*com)["Update"].GetType() == json::ValueType::BoolVal)) {
-		update = (*com)["Update"].ToBool();
-
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::global: Using Update: " + std::to_string(update));
-	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::global: Using default Update: "
-						+ std::to_string(update));
-	}
-
-	// init, note global doesn't use nRow or nCol
-	initialize(name, thresh, detect, nucleate, resol, 0, 0, zs, update,
-				m_pNucleationTravelTime1, m_pNucleationTravelTime2, aziTaper,
-				maxDepth);
-
-	// generate site and network filter lists
-	generateSiteFilters(com);
-
-	// Generate eligible station list
-	generateNodeSiteList();
-
 	// calculate the number of nodes from the desired resolution
-	// This function was empirically determined via using different
+	// using a function that was empirically determined via using different
 	// numNode values and computing the average resolution from a node to
-	// the nearest other 6 nodes
-	int numNodes = 5.0E8 * std::pow(m_dResolution, -1.965);
+	// the nearest other 6 nodes. The intention is to calculate the number
+	// of nodes to ensure the desired node resolution when the grid is
+	// generated below
+	int numNodes = 5.0E8 * std::pow(getNodeResolution(), -1.965);
 
 	// should have an odd number of nodes (see paper named below)
 	if ((numNodes % 2) == 0) {
 		numNodes += 1;
 	}
 
-	snprintf(sLog, sizeof(sLog), "CWeb::global: Calculated numNodes:%d;",
-				numNodes);
+	snprintf(sLog, sizeof(sLog),
+				"CWeb::generateGlobalGrid: Calculated numNodes:%d;", numNodes);
 	glassutil::CLogit::log(sLog);
 
 	// create / open gridfile for saving
 	std::ofstream outfile;
 	std::ofstream outstafile;
-	if (saveGrid) {
+	if (getSaveGrid()) {
 		std::string filename = m_sName + "_gridfile.txt";
 		outfile.open(filename, std::ios::out);
-		outfile << "Grid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
+		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
 
 		filename = m_sName + "_gridstafile.txt";
 		outstafile.open(filename, std::ios::out);
@@ -370,7 +256,7 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 	}
 
 	// Generate equally spaced grid of nodes over the globe (more or less)
-	// Follows Paper (Gonzolez, 2010) Measurement of Areas on a Sphere Using
+	// Follows Paper (Gonzalez, 2010) Measurement of Areas on a Sphere Using
 	// Fibonacci and Latitude Longitude Lattices
 	// std::vector<std::pair<double, double>> vVert;
 	int iNodeCount = 0;
@@ -394,20 +280,20 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 		std::lock_guard<std::mutex> guard(m_vSiteMutex);
 
 		// sort site list for this vertex
-		sortNodeSiteList(aLat, aLon);
+		sortSiteListForNode(aLat, aLon);
 
 		// for each depth
 		for (auto z : zzz) {
 			// create node
 			std::shared_ptr<CNode> node = generateNode(aLat, aLon, z,
-														m_dResolution);
+														getNodeResolution());
 
 			// if we got a valid node, add it
 			if (addNode(node) == true) {
 				iNodeCount++;
 
-				// write node to grid file
-				if (saveGrid) {
+				// write node to generateLocalGrid file
+				if (getSaveGrid()) {
 					outfile << m_sName << "," << node->getID() << ","
 							<< std::to_string(aLat) << ","
 							<< std::to_string(aLon) << "," << std::to_string(z)
@@ -420,324 +306,8 @@ bool CWeb::global(std::shared_ptr<json::Object> com) {
 		}
 	}
 
-	// close grid file
-	if (saveGrid) {
-		outfile.close();
-		outstafile.close();
-	}
-
-	std::string phases = "";
-	if (m_pNucleationTravelTime1 != NULL) {
-		phases += m_pNucleationTravelTime1->sPhase;
-	}
-	if (m_pNucleationTravelTime2 != NULL) {
-		phases += ", " + m_pNucleationTravelTime2->sPhase;
-	}
-
-	// log global grid info
-	snprintf(
-			sLog, sizeof(sLog),
-			"CWeb::global sName:%s Phase(s):%s; nZ:%d; resol:%.2f; nDetect:%d;"
-			" nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
-			" vSitesFilter:%d; bUseOnlyTeleseismicStations:%d; iNodeCount:%d;",
-			m_sName.c_str(), phases.c_str(), getNumDepths(), getResolution(),
-			getNumStationsPerNode(), getNucleationDataThreshold(),
-			getNucleationStackThreshold(),
-			static_cast<int>(m_vNetworksFilter.size()),
-			static_cast<int>(m_vSitesFilter.size()),
-			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
-	glassutil::CLogit::log(glassutil::log_level::info, sLog);
-
-	// success
-	return (true);
-}
-
-// ---------------------------------------------------------grid
-bool CWeb::grid(std::shared_ptr<json::Object> com) {
-	glassutil::CLogit::log(glassutil::log_level::debug, "CWeb::grid");
-	// nullchecks
-	// check json
-	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: NULL json configuration.");
-		return (false);
-	}
-
-	char sLog[1024];
-
-	// grid definition variables and defaults
-	std::string name = "Nemo";
-	int detect = 20;
-	int nucleate = 7;
-	double thresh = 2.0;
-
-	// check pGlass
-	if (m_pGlass != NULL) {
-		detect = m_pGlass->getNumStationsPerNode();
-		nucleate = m_pGlass->getNucleationDataThreshold();
-		thresh = m_pGlass->getNucleationStackThreshold();
-	}
-
-	double resol = 0;
-	double lat = 0;
-	double lon = 0;
-	int rows = 0;
-	int cols = 0;
-	double aziTaper = 360.;
-	double maxDepth = 800.;
-	std::vector<double> zzz;
-	int zs = 0;
-	bool saveGrid = false;
-	bool update = false;
-
-	// get grid configuration from json
-	// name
-	if (((*com).HasKey("Name"))
-			&& ((*com)["Name"].GetType() == json::ValueType::StringVal)) {
-		name = (*com)["Name"].ToString();
-	}
-
-	// Nucleation Phases to be used for this grid
-	if (((*com).HasKey("NucleationPhases"))
-			&& ((*com)["NucleationPhases"].GetType()
-					== json::ValueType::ObjectVal)) {
-		json::Object nucleationPhases = (*com)["NucleationPhases"].ToObject();
-
-		if (loadTravelTimes(&nucleationPhases) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CWeb::grid: Error Loading NucleationPhases");
-			return (false);
-		}
-	} else {
-		if (loadTravelTimes((json::Object *) NULL) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CWeb::grid: Error Loading default NucleationPhases");
-			return (false);
-		}
-	}
-
-	// the number of stations that are assigned to each node
-	if (((*com).HasKey("Detect"))
-			&& ((*com)["Detect"].GetType() == json::ValueType::IntVal)) {
-		detect = (*com)["Detect"].ToInt();
-	}
-
-	// number of picks that need to associate to start an event
-	if (((*com).HasKey("Nucleate"))
-			&& ((*com)["Nucleate"].GetType() == json::ValueType::IntVal)) {
-		nucleate = (*com)["Nucleate"].ToInt();
-	}
-
-	// viability threshold needed to exceed for a nucleation to be successful.
-	if (((*com).HasKey("Thresh"))
-			&& ((*com)["Thresh"].GetType() == json::ValueType::DoubleVal)) {
-		thresh = (*com)["Thresh"].ToDouble();
-	}
-
-	// Node resolution for this grid
-	if (((*com).HasKey("Resolution"))
-			&& ((*com)["Resolution"].GetType() == json::ValueType::DoubleVal)) {
-		resol = (*com)["Resolution"].ToDouble();
-	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: Missing required Resolution Key.");
-		return (false);
-	}
-
-	// Latitude of the center point of this grid
-	if (((*com).HasKey("Lat"))
-			&& ((*com)["Lat"].GetType() == json::ValueType::DoubleVal)) {
-		lat = (*com)["Lat"].ToDouble();
-	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: Missing required Lat Key.");
-		return (false);
-	}
-
-	// Longitude of the center point of this grid
-	if (((*com).HasKey("Lon"))
-			&& ((*com)["Lon"].GetType() == json::ValueType::DoubleVal)) {
-		lon = (*com)["Lon"].ToDouble();
-	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: Missing required Lon Key.");
-		return (false);
-	}
-
-	// list of depth layers to generate for this grid
-	if (((*com).HasKey("Z"))
-			&& ((*com)["Z"].GetType() == json::ValueType::ArrayVal)) {
-		json::Array zarray = (*com)["Z"].ToArray();
-		for (auto v : zarray) {
-			if (v.GetType() == json::ValueType::DoubleVal) {
-				zzz.push_back(v.ToDouble());
-			}
-		}
-		zs = static_cast<int>(zzz.size());
-	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: Missing required Z Array.");
-		return (false);
-	}
-
-	// the number of rows in this grid
-	if (((*com).HasKey("Rows"))
-			&& ((*com)["Rows"].GetType() == json::ValueType::IntVal)) {
-		rows = (*com)["Rows"].ToInt();
-	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: Missing required Rows Key.");
-		return (false);
-	}
-
-	// the number of columns in this grid
-	if (((*com).HasKey("Cols"))
-			&& ((*com)["Cols"].GetType() == json::ValueType::IntVal)) {
-		cols = (*com)["Cols"].ToInt();
-	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::grid: Missing required Cols Key.");
-		return (false);
-	}
-
-	// sets the aziTaper value
-	if ((*com).HasKey("AzimuthGapTaper")
-			&& ((*com)["AzimuthGapTaper"].GetType()
-					== json::ValueType::DoubleVal)) {
-		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
-	}
-
-	// sets the maxDepth value
-	if ((*com).HasKey("MaximumDepth")
-			&& ((*com)["MaximumDepth"].GetType() == json::ValueType::DoubleVal)) {
-		maxDepth = (*com)["MaximumDepth"].ToDouble();
-	}
-
-	// whether to create a file detailing the node configuration for
-	// this grid
-	if ((*com).HasKey("SaveGrid")) {
-		saveGrid = (*com)["SaveGrid"].ToBool();
-	}
-
-	// set whether to update weblists
-	if ((com->HasKey("Update"))
-			&& ((*com)["Update"].GetType() == json::ValueType::BoolVal)) {
-		update = (*com)["Update"].ToBool();
-
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::grid: Using Update: " + std::to_string(update));
-	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::grid: Using default Update: "
-						+ std::to_string(update));
-	}
-
-	// initialize
-	initialize(name, thresh, detect, nucleate, resol, rows, cols, zs, update,
-				m_pNucleationTravelTime1, m_pNucleationTravelTime2, aziTaper,
-				maxDepth);
-
-	// generate site and network filter lists
-	generateSiteFilters(com);
-
-	// Generate eligible station list
-	generateNodeSiteList();
-
-	// Generate initial node values
-	// compute latitude distance in geographic degrees by converting
-	// the provided resolution in kilometers to degrees
-	// NOTE: Hard coded conversion factor
-	double latDistance = resol / DEG2KM;
-
-	// compute the longitude distance in geographic degrees by
-	// dividing the latitude distance by the cosine of the center latitude
-	double lonDistance = latDistance / cos(DEG2RAD * lat);
-
-	// compute the middle row index
-	int irow0 = m_iNumRows / 2;
-
-	// compute the middle column index
-	int icol0 = m_iNumColumns / 2;
-
-	// compute the maximum latitude using the provided center latitude,
-	// middle row index, and the latitude distance
-	double lat0 = lat + (irow0 * latDistance);
-
-	// compute the minimum longitude using the provided center longitude,
-	// middle column index, and the longitude distance
-	double lon0 = lon - (icol0 * lonDistance);
-
-	// create / open gridfile for saving
-	std::ofstream outfile;
-	std::ofstream outstafile;
-	if (saveGrid) {
-		std::string filename = m_sName + "_gridfile.txt";
-		outfile.open(filename, std::ios::out);
-		outfile << "Grid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
-
-		filename = m_sName + "_gridstafile.txt";
-		outstafile.open(filename, std::ios::out);
-		outstafile << "NodeID,[StationSCNL;StationLat;StationLon;StationRad],"
-					<< "\n";
-	}
-
-	// init node count
-	int iNodeCount = 0;
-
-	// generate grid
-	// for each row
-	for (int irow = 0; irow < m_iNumRows; irow++) {
-		// compute the current row latitude by subtracting
-		// the row index multiplied by the latitude distance from the
-		// maximum latitude
-		double latrow = lat0 - (irow * latDistance);
-
-		// log the latitude
-		snprintf(sLog, sizeof(sLog), "LatRow:%.2f", latrow);
-		glassutil::CLogit::log(glassutil::log_level::debug, sLog);
-		// for each col
-		for (int icol = 0; icol < m_iNumColumns; icol++) {
-			// compute the current column longitude by adding the
-			// column index multiplied by the longitude distance to the
-			// minimum longitude
-			double loncol = lon0 + (icol * lonDistance);
-
-			std::lock_guard<std::mutex> guard(m_vSiteMutex);
-
-			// sort site list for this grid point
-			sortNodeSiteList(latrow, loncol);
-
-			// for each depth at this grid point
-			for (auto z : zzz) {
-				// generate this node
-				std::shared_ptr<CNode> node = generateNode(latrow, loncol, z,
-															m_dResolution);
-
-				// if we got a valid node, add it
-				if (addNode(node) == true) {
-					iNodeCount++;
-				}
-
-				// write node to grid file
-				if (saveGrid) {
-					outfile << m_sName << "," << node->getID() << ","
-							<< std::to_string(latrow) << ","
-							<< std::to_string(loncol) << ","
-							<< std::to_string(z) << "\n";
-
-					// write to station file
-					outstafile << node->getSitesString();
-				}
-			}
-		}
-	}
-
-	// close grid file
-	if (saveGrid) {
+	// close generateLocalGrid file
+	if (getSaveGrid()) {
 		outfile.close();
 		outstafile.close();
 	}
@@ -751,137 +321,273 @@ bool CWeb::grid(std::shared_ptr<json::Object> com) {
 	}
 
 	// log grid info
-	snprintf(sLog, sizeof(sLog),
-				"CWeb::grid sName:%s Phase(s):%s; Ranges:Lat(%.2f,%.2f),"
-				"Lon:(%.2f,%.2f); nRow:%d; nCol:%d; nZ:%d; resol:%.2f;"
-				" nDetect:%d; nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
-				" vSitesFilter:%d;  bUseOnlyTeleseismicStations:%d;"
-				" iNodeCount:%d;",
-				m_sName.c_str(), phases.c_str(), lat0,
-				lat0 - (m_iNumRows - 1) * latDistance, lon0,
-				lon0 + (m_iNumColumns - 1) * lonDistance, getNumRows(),
-				getNumColumns(), getNumDepths(), getResolution(),
-				getNumStationsPerNode(), getNucleationDataThreshold(),
-				getNucleationStackThreshold(),
-				static_cast<int>(m_vNetworksFilter.size()),
-				static_cast<int>(m_vSitesFilter.size()),
-				static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
+	snprintf(
+			sLog, sizeof(sLog),
+			"CWeb::generateGlobalGrid sName:%s Phase(s):%s; nZ:%d; resol:%.2f;"
+			" nDetect:%d; nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
+			" vSitesFilter:%d; bUseOnlyTeleseismicStations:%d; iNodeCount:%d;",
+			m_sName.c_str(), phases.c_str(), zs,
+			getNodeResolution(), getNumStationsPerNode(),
+			getNucleationDataThreshold(), getNucleationStackThreshold(),
+			static_cast<int>(m_vNetworksFilter.size()),
+			static_cast<int>(m_vSitesFilter.size()),
+			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
 
 	// success
 	return (true);
 }
 
-// ---------------------------------------------------------gridExplicit
-bool CWeb::gridExplicit(std::shared_ptr<json::Object> com) {
-	glassutil::CLogit::log(glassutil::log_level::debug, "CWeb::grid_explicit");
+// ---------------------------------------------------------generateLocalGrid
+bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CWeb::generateLocalGrid");
 
 	// nullchecks
 	// check json
-	if (com == NULL) {
+	if (gridConfiguration == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CWeb::grid_explicit: NULL json configuration.");
+				"CWeb::generateLocalGrid: NULL json configuration.");
+		return (false);
+	}
+
+	char sLog[1024];
+	double lat = 0;
+	double lon = 0;
+	int rows = 0;
+	int cols = 0;
+	std::vector<double> zzz;
+	int zs = 0;
+
+	// load basic (common) grid configuration
+	if (loadGridConfiguration(gridConfiguration) == false) {
+		return(false);
+	}
+
+	// Latitude of the center point of this generateLocalGrid
+	if (((*gridConfiguration).HasKey("CenterLatitude"))
+			&& ((*gridConfiguration)["CenterLatitude"].GetType()
+					== json::ValueType::DoubleVal)) {
+		lat = (*gridConfiguration)["CenterLatitude"].ToDouble();
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateLocalGrid: Missing required CenterLatitude Key.");
+		return (false);
+	}
+
+	// Longitude of the center point of this generateLocalGrid
+	if (((*gridConfiguration).HasKey("CenterLongitude"))
+			&& ((*gridConfiguration)["CenterLongitude"].GetType()
+					== json::ValueType::DoubleVal)) {
+		lon = (*gridConfiguration)["CenterLongitude"].ToDouble();
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateLocalGrid: Missing required Lon Key.");
+		return (false);
+	}
+
+	// list of depth layers to generate for this generateLocalGrid
+	if (((*gridConfiguration).HasKey("DepthLayers"))
+			&& ((*gridConfiguration)["DepthLayers"].GetType()
+					== json::ValueType::ArrayVal)) {
+		json::Array zarray = (*gridConfiguration)["DepthLayers"].ToArray();
+		for (auto v : zarray) {
+			if (v.GetType() == json::ValueType::DoubleVal) {
+				zzz.push_back(v.ToDouble());
+			}
+		}
+		zs = static_cast<int>(zzz.size());
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateLocalGrid: Missing required DepthLayers Array.");
+		return (false);
+	}
+
+	// the number of rows in this generateLocalGrid
+	if (((*gridConfiguration).HasKey("NumberOfRows"))
+			&& ((*gridConfiguration)["NumberOfRows"].GetType()
+					== json::ValueType::IntVal)) {
+		rows = (*gridConfiguration)["NumberOfRows"].ToInt();
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateLocalGrid: Missing required NumberOfRows Key.");
+		return (false);
+	}
+
+	// the number of columns in this generateLocalGrid
+	if (((*gridConfiguration).HasKey("NumberOfColumns"))
+			&& ((*gridConfiguration)["NumberOfColumns"].GetType()
+					== json::ValueType::IntVal)) {
+		cols = (*gridConfiguration)["NumberOfColumns"].ToInt();
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateLocalGrid: Missing required NumberOfColumns Key.");
+		return (false);
+	}
+
+	// Generate initial node values
+	// compute latitude distance in geographic degrees by converting
+	// the provided resolution in kilometers to degrees
+	// NOTE: Hard coded conversion factor
+	double latDistance = getNodeResolution() / DEG2KM;
+
+	// compute the longitude distance in geographic degrees by
+	// dividing the latitude distance by the cosine of the center latitude
+	double lonDistance = latDistance / cos(DEG2RAD * lat);
+
+	// compute the middle row index
+	int irow0 = rows / 2;
+
+	// compute the middle column index
+	int icol0 = cols / 2;
+
+	// compute the maximum latitude using the provided center latitude,
+	// middle row index, and the latitude distance
+	double lat0 = lat + (irow0 * latDistance);
+
+	// compute the minimum longitude using the provided center longitude,
+	// middle column index, and the longitude distance
+	double lon0 = lon - (icol0 * lonDistance);
+
+	// create / open gridfile for saving
+	std::ofstream outfile;
+	std::ofstream outstafile;
+	if (getSaveGrid()) {
+		std::string filename = m_sName + "_gridfile.txt";
+		outfile.open(filename, std::ios::out);
+		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
+
+		filename = m_sName + "_gridstafile.txt";
+		outstafile.open(filename, std::ios::out);
+		outstafile << "NodeID,[StationSCNL;StationLat;StationLon;StationRad],"
+					<< "\n";
+	}
+
+	// init node count
+	int iNodeCount = 0;
+
+	// generate grid
+	// for each row
+	for (int irow = 0; irow < rows; irow++) {
+		// compute the current row latitude by subtracting
+		// the row index multiplied by the latitude distance from the
+		// maximum latitude
+		double latrow = lat0 - (irow * latDistance);
+
+		// log the latitude
+		snprintf(sLog, sizeof(sLog), "LatRow:%.2f", latrow);
+		glassutil::CLogit::log(glassutil::log_level::debug, sLog);
+		// for each col
+		for (int icol = 0; icol < cols; icol++) {
+			// compute the current column longitude by adding the
+			// column index multiplied by the longitude distance to the
+			// minimum longitude
+			double loncol = lon0 + (icol * lonDistance);
+
+			std::lock_guard<std::mutex> guard(m_vSiteMutex);
+
+			// sort site list for this generateLocalGrid point
+			sortSiteListForNode(latrow, loncol);
+
+			// for each depth at this generateLocalGrid point
+			for (auto z : zzz) {
+				// generate this node
+				std::shared_ptr<CNode> node = generateNode(
+						latrow, loncol, z, getNodeResolution());
+
+				// if we got a valid node, add it
+				if (addNode(node) == true) {
+					iNodeCount++;
+				}
+
+				// write node to generateLocalGrid file
+				if (getSaveGrid()) {
+					outfile << m_sName << "," << node->getID() << ","
+							<< std::to_string(latrow) << ","
+							<< std::to_string(loncol) << ","
+							<< std::to_string(z) << "\n";
+
+					// write to station file
+					outstafile << node->getSitesString();
+				}
+			}
+		}
+	}
+
+	// close generateLocalGrid file
+	if (getSaveGrid()) {
+		outfile.close();
+		outstafile.close();
+	}
+
+	std::string phases = "";
+	if (m_pNucleationTravelTime1 != NULL) {
+		phases += m_pNucleationTravelTime1->sPhase;
+	}
+	if (m_pNucleationTravelTime2 != NULL) {
+		phases += ", " + m_pNucleationTravelTime2->sPhase;
+	}
+
+	// log local grid info
+	snprintf(
+			sLog,
+			sizeof(sLog),
+			"CWeb::generateLocalGrid sName:%s Phase(s):%s; Ranges:Lat(%.2f,%.2f),"
+			"Lon:(%.2f,%.2f); nRow:%d; nCol:%d; nZ:%d; resol:%.2f;"
+			" nDetect:%d; nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
+			" vSitesFilter:%d;  bUseOnlyTeleseismicStations:%d;"
+			" iNodeCount:%d;",
+			m_sName.c_str(), phases.c_str(), lat0,
+			lat0 - (rows - 1) * latDistance, lon0,
+			lon0 + (cols - 1) * lonDistance, rows, cols, zs,
+			getNodeResolution(), getNumStationsPerNode(),
+			getNucleationDataThreshold(), getNucleationStackThreshold(),
+			static_cast<int>(m_vNetworksFilter.size()),
+			static_cast<int>(m_vSitesFilter.size()),
+			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
+	glassutil::CLogit::log(glassutil::log_level::info, sLog);
+
+	// success
+	return (true);
+}
+
+// ---------------------------------------------------------generateExplicitGrid
+bool CWeb::generateExplicitGrid(
+		std::shared_ptr<json::Object> gridConfiguration) {
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CWeb::generateExplicitGrid");
+
+	// nullchecks
+	// check json
+	if (gridConfiguration == NULL) {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateExplicitGrid: NULL json configuration.");
 		return (false);
 	}
 
 	char sLog[1024];
 
-	// grid definition variables and defaults
-	std::string name = "Nemo";
-	int detect = 20;
-	int nucleate = 7;
-	double thresh = 2.0;
-
-	// check pGlass
-	if (m_pGlass != NULL) {
-		detect = m_pGlass->getNumStationsPerNode();
-		nucleate = m_pGlass->getNucleationDataThreshold();
-		thresh = m_pGlass->getNucleationStackThreshold();
+	// load basic (common) grid configuration
+	if (loadGridConfiguration(gridConfiguration) == false) {
+		return(false);
 	}
 
 	int nN = 0;
-	bool saveGrid = false;
-	bool update = false;
-	double aziTaper = 360.;
-	double maxDepth = 800.;
 	std::vector<std::vector<double>> nodes;
 	double resol = 0;
 
-	// get grid configuration from json
-	// name
-	if (((*com).HasKey("Name"))
-			&& ((*com)["Name"].GetType() == json::ValueType::StringVal)) {
-		name = (*com)["Name"].ToString();
-	}
-
-	// Nucleation Phases to be used for this grid
-	if (((*com).HasKey("NucleationPhases"))
-			&& ((*com)["NucleationPhases"].GetType()
-					== json::ValueType::ObjectVal)) {
-		json::Object nucleationPhases = (*com)["NucleationPhases"].ToObject();
-
-		if (loadTravelTimes(&nucleationPhases) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CWeb::grid_explicit: Error Loading NucleationPhases");
-			return (false);
-		}
-	} else {
-		if (loadTravelTimes((json::Object *) NULL) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CWeb::grid_explicit: Error Loading default NucleationPhases");
-			return (false);
-		}
-	}
-
-	// the number of stations that are assigned to each node
-	if (((*com).HasKey("Detect"))
-			&& ((*com)["Detect"].GetType() == json::ValueType::IntVal)) {
-		detect = (*com)["Detect"].ToInt();
-	}
-
-	// number of picks that need to associate to start an event
-	if (((*com).HasKey("Nucleate"))
-			&& ((*com)["Nucleate"].GetType() == json::ValueType::IntVal)) {
-		nucleate = (*com)["Nucleate"].ToInt();
-	}
-
-	// viability threshold needed to exceed for a nucleation to be successful.
-	if (((*com).HasKey("Thresh"))
-			&& ((*com)["Thresh"].GetType() == json::ValueType::DoubleVal)) {
-		thresh = (*com)["Thresh"].ToDouble();
-	}
-
-	// sets the aziTaper value
-	if ((*com).HasKey("AzimuthGapTaper")
-			&& ((*com)["AzimuthGapTaper"].GetType()
-					== json::ValueType::DoubleVal)) {
-		aziTaper = (*com)["AzimuthGapTaper"].ToDouble();
-	}
-
-	// sets the maxDepth value
-	if ((*com).HasKey("MaximumDepth")
-			&& ((*com)["MaximumDepth"].GetType() == json::ValueType::DoubleVal)) {
-		maxDepth = (*com)["MaximumDepth"].ToDouble();
-	}
-
-	// Node resolution for this grid
-	if (((*com).HasKey("Resolution"))
-			&& ((*com)["Resolution"].GetType() == json::ValueType::DoubleVal)) {
-		resol = (*com)["Resolution"].ToDouble();
-	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CWeb::grid_explicit: Missing required Resolution Key.");
-		return (false);
-	}
-
-	// the number of columns in this grid
-	if ((com->HasKey("NodeList"))
-			&& ((*com)["NodeList"].GetType() == json::ValueType::ArrayVal)) {
-		json::Array nodeList = (*com)["NodeList"].ToArray();
+	// the number of columns in this generateLocalGrid
+	if ((gridConfiguration->HasKey("NodeList"))
+			&& ((*gridConfiguration)["NodeList"].GetType()
+					== json::ValueType::ArrayVal)) {
+		json::Array nodeList = (*gridConfiguration)["NodeList"].ToArray();
 
 		for (const auto &val : nodeList) {
 			nN++;
@@ -893,8 +599,8 @@ bool CWeb::gridExplicit(std::shared_ptr<json::Object> com) {
 			if (val.GetType() != json::ValueType::ObjectVal) {
 				glassutil::CLogit::log(
 						glassutil::log_level::error,
-						"CWeb::grid_explicit: Bad Node Definition found in Node"
-						" List.");
+						"CWeb::generateExplicitGrid: Bad Node Definition found"
+						" in Node List.");
 				continue;
 			}
 			json::Object obj = val.ToObject();
@@ -903,8 +609,8 @@ bool CWeb::gridExplicit(std::shared_ptr<json::Object> com) {
 					|| obj["Depth"].GetType() != json::ValueType::DoubleVal) {
 				glassutil::CLogit::log(
 						glassutil::log_level::error,
-						"CWeb::grid_explicit: Node Lat, Lon, or Depth not a "
-						" double in param file.");
+						"CWeb::generateExplicitGrid: Node Lat, Lon, or Depth not"
+						" a  double in param file.");
 				return (false);
 			}
 			double lat = obj["Latitude"].ToDouble();
@@ -919,48 +625,17 @@ bool CWeb::gridExplicit(std::shared_ptr<json::Object> com) {
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CWeb::grid_explicit: Missing required NodeList Key.");
+				"CWeb::generateExplicitGrid: Missing required NodeList Key.");
 		return (false);
 	}
-	// whether to create a file detailing the node configuration for
-	// this grid
-	if ((*com).HasKey("SaveGrid")) {
-		saveGrid = (*com)["SaveGrid"].ToBool();
-	}
-	// set whether to update weblists
-	if ((com->HasKey("Update"))
-			&& ((*com)["Update"].GetType() == json::ValueType::BoolVal)) {
-		update = (*com)["Update"].ToBool();
-
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::grid_explicit: Using Update: "
-						+ std::to_string(update));
-	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::grid_explicit: Using default Update: "
-						+ std::to_string(update));
-	}
-
-	// initialize
-	initialize(name, thresh, detect, nucleate, resol, 0., 0., 0., update,
-				m_pNucleationTravelTime1, m_pNucleationTravelTime2, aziTaper,
-				maxDepth);
-
-	// generate site and network filter lists
-	generateSiteFilters(com);
-
-	// Generate eligible station list
-	generateNodeSiteList();
 
 	// create / open gridfile for saving
 	std::ofstream outfile;
 	std::ofstream outstafile;
-	if (saveGrid) {
+	if (getSaveGrid()) {
 		std::string filename = m_sName + "_gridfile.txt";
 		outfile.open(filename, std::ios::out);
-		outfile << "Grid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
+		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
 
 		filename = m_sName + "_gridstafile.txt";
 		outstafile.open(filename, std::ios::out);
@@ -981,10 +656,11 @@ bool CWeb::gridExplicit(std::shared_ptr<json::Object> com) {
 		std::lock_guard<std::mutex> guard(m_vSiteMutex);
 
 		// sort site list
-		sortNodeSiteList(lat, lon);
+		sortSiteListForNode(lat, lon);
 
 		// create node, note resolution set to 0
-		std::shared_ptr<CNode> node = generateNode(lat, lon, Z, resol);
+		std::shared_ptr<CNode> node = generateNode(lat, lon, Z,
+													getNodeResolution());
 		if (addNode(node) == true) {
 			iNodeCount++;
 		}
@@ -994,7 +670,7 @@ bool CWeb::gridExplicit(std::shared_ptr<json::Object> com) {
 	}
 
 	// close grid file
-	if (saveGrid) {
+	if (getSaveGrid()) {
 		outfile.close();
 		outstafile.close();
 	}
@@ -1007,13 +683,12 @@ bool CWeb::gridExplicit(std::shared_ptr<json::Object> com) {
 		phases += ", " + m_pNucleationTravelTime2->sPhase;
 	}
 
-	// log grid info
+	// log explicit grid info
 	snprintf(
-			sLog,
-			sizeof(sLog),
-			"CWeb::grid_explicit sName:%s Phase(s):%s; nDetect:%d; nNucleate:%d;"
-			" dThresh:%.2f; vNetFilter:%d; bUseOnlyTeleseismicStations:%d;"
-			" vSitesFilter:%d; iNodeCount:%d;",
+			sLog, sizeof(sLog),
+			"CWeb::generateExplicitGrid sName:%s Phase(s):%s; nDetect:%d;"
+			" nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
+			" bUseOnlyTeleseismicStations:%d; vSitesFilter:%d; iNodeCount:%d;",
 			m_sName.c_str(), phases.c_str(), getNumStationsPerNode(),
 			getNucleationDataThreshold(), getNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
@@ -1025,10 +700,148 @@ bool CWeb::gridExplicit(std::shared_ptr<json::Object> com) {
 	return (true);
 }
 
-// ---------------------------------------------------------loadTravelTimes
-bool CWeb::loadTravelTimes(json::Object *com) {
+// ---------------------------------------------------------loadGridConfiguration
+bool CWeb::loadGridConfiguration(
+		std::shared_ptr<json::Object> gridConfiguration) {
+	// nullchecks
 	// check json
-	if (com == NULL) {
+	if (gridConfiguration == NULL) {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::loadGridConfiguration: NULL json configuration.");
+		return (false);
+	}
+
+	// grid definition variables and defaults
+	std::string name = "Nemo";
+	int detect = 20;
+	int nucleate = 7;
+	double thresh = 2.0;
+
+	// check pGlass
+	if (m_pGlass != NULL) {
+		detect = m_pGlass->getNumStationsPerNode();
+		nucleate = m_pGlass->getNucleationDataThreshold();
+		thresh = m_pGlass->getNucleationStackThreshold();
+	}
+
+	double resol = 0;
+	double aziTaper = 360.;
+	double maxDepth = 800.;
+	bool saveGrid = false;
+	bool update = false;
+
+	// get grid configuration from json
+	// name
+	if (((*gridConfiguration).HasKey("Name"))
+			&& ((*gridConfiguration)["Name"].GetType()
+					== json::ValueType::StringVal)) {
+		name = (*gridConfiguration)["Name"].ToString();
+	}
+
+	// Nucleation Phases to be used for this generateLocalGrid
+	if (((*gridConfiguration).HasKey("NucleationPhases"))
+			&& ((*gridConfiguration)["NucleationPhases"].GetType()
+					== json::ValueType::ObjectVal)) {
+		json::Object nucleationPhases = (*gridConfiguration)["NucleationPhases"]
+				.ToObject();
+
+		if (loadTravelTimes(&nucleationPhases) == false) {
+			glassutil::CLogit::log(
+					glassutil::log_level::error,
+					"CWeb::loadGridConfiguration: Error Loading NucleationPhases");
+			return (false);
+		}
+	} else {
+		if (loadTravelTimes((json::Object *) NULL) == false) {
+			glassutil::CLogit::log(
+					glassutil::log_level::error,
+					"CWeb::loadGridConfiguration: Error Loading default "
+					"NucleationPhases");
+			return (false);
+		}
+	}
+
+	// the number of stations that are assigned to each node
+	if (((*gridConfiguration).HasKey("NumStationsPerNode"))
+			&& ((*gridConfiguration)["NumStationsPerNode"].GetType()
+					== json::ValueType::IntVal)) {
+		detect = (*gridConfiguration)["NumStationsPerNode"].ToInt();
+	}
+
+	// number of picks that need to associate to start an event
+	if (((*gridConfiguration).HasKey("NucleationDataThreshold"))
+			&& ((*gridConfiguration)["NucleationDataThreshold"].GetType()
+					== json::ValueType::IntVal)) {
+		nucleate = (*gridConfiguration)["NucleationDataThreshold"].ToInt();
+	}
+
+	// viability threshold needed to exceed for a nucleation to be successful.
+	if (((*gridConfiguration).HasKey("NucleationStackThreshold"))
+			&& ((*gridConfiguration)["NucleationStackThreshold"].GetType()
+					== json::ValueType::DoubleVal)) {
+		thresh = (*gridConfiguration)["NucleationStackThreshold"].ToDouble();
+	}
+
+	// Node resolution for this grid
+	if (((*gridConfiguration).HasKey("NodeResolution"))
+			&& ((*gridConfiguration)["NodeResolution"].GetType()
+					== json::ValueType::DoubleVal)) {
+		resol = (*gridConfiguration)["NodeResolution"].ToDouble();
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::loadGridConfiguration: Missing required Resolution Key.");
+		return (false);
+	}
+
+	// sets the aziTaper value
+	if ((*gridConfiguration).HasKey("AzimuthGapTaper")
+			&& ((*gridConfiguration)["AzimuthGapTaper"].GetType()
+					== json::ValueType::DoubleVal)) {
+		aziTaper = (*gridConfiguration)["AzimuthGapTaper"].ToDouble();
+	}
+
+	// sets the maxDepth value
+	if ((*gridConfiguration).HasKey("MaximumDepth")
+			&& ((*gridConfiguration)["MaximumDepth"].GetType()
+					== json::ValueType::DoubleVal)) {
+		maxDepth = (*gridConfiguration)["MaximumDepth"].ToDouble();
+	}
+
+	// whether to create a file detailing the node configuration for
+	// this grid
+	if ((gridConfiguration->HasKey("SaveGrid"))
+			&& ((*gridConfiguration)["SaveGrid"].GetType()
+					== json::ValueType::BoolVal)) {
+		saveGrid = (*gridConfiguration)["SaveGrid"].ToBool();
+	}
+
+	// set whether to update weblists
+	if ((gridConfiguration->HasKey("UpdateGrid"))
+			&& ((*gridConfiguration)["UpdateGrid"].GetType()
+					== json::ValueType::BoolVal)) {
+		update = (*gridConfiguration)["UpdateGrid"].ToBool();
+	}
+
+	// initialize
+	initialize(name, thresh, detect, nucleate, resol, update, saveGrid,
+				m_pNucleationTravelTime1, m_pNucleationTravelTime2, aziTaper,
+				maxDepth);
+
+	// generate site and network filter lists
+	loadSiteFilters(gridConfiguration);
+
+	// Generate eligible station list
+	loadWebSiteList();
+
+	return (true);
+}
+
+// ---------------------------------------------------------loadTravelTimes
+bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
+	// check json
+	if (gridConfiguration == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
 				"CWeb::loadTravelTimes: NULL json configuration "
@@ -1060,10 +873,11 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 	}
 
 	// load the first travel time
-	if ((com->HasKey("Phase1"))
-			&& ((*com)["Phase1"].GetType() == json::ValueType::ObjectVal)) {
+	if ((gridConfiguration->HasKey("Phase1"))
+			&& ((*gridConfiguration)["Phase1"].GetType()
+					== json::ValueType::ObjectVal)) {
 		// get the phase object
-		json::Object phsObj = (*com)["Phase1"].ToObject();
+		json::Object phsObj = (*gridConfiguration)["Phase1"].ToObject();
 
 		// clean out old phase if any
 		m_pNucleationTravelTime1.reset();
@@ -1126,10 +940,11 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 	}
 
 	// load the second travel time
-	if ((com->HasKey("Phase2"))
-			&& ((*com)["Phase2"].GetType() == json::ValueType::ObjectVal)) {
+	if ((gridConfiguration->HasKey("Phase2"))
+			&& ((*gridConfiguration)["Phase2"].GetType()
+					== json::ValueType::ObjectVal)) {
 		// get the phase object
-		json::Object phsObj = (*com)["Phase2"].ToObject();
+		json::Object phsObj = (*gridConfiguration)["Phase2"].ToObject();
 
 		// clean out old phase if any
 		m_pNucleationTravelTime2.reset();
@@ -1175,17 +990,17 @@ bool CWeb::loadTravelTimes(json::Object *com) {
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CWeb::loadTravelTimes: Not using secondary nuclation phase");
+				"CWeb::loadTravelTimes: Not using secondary nucleation phase");
 	}
 
 	return (true);
 }
 
-// ---------------------------------------------------------generateSiteFilters
-bool CWeb::generateSiteFilters(std::shared_ptr<json::Object> com) {
+// ---------------------------------------------------------loadSiteFilters
+bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 	// nullchecks
 	// check json
-	if (com == NULL) {
+	if (gridConfiguration == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"genSiteFilters: NULL json configuration.");
 		return (false);
@@ -1194,13 +1009,14 @@ bool CWeb::generateSiteFilters(std::shared_ptr<json::Object> com) {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 
 	// Get the network names to be included in this web.
-	if ((*com).HasKey("Nets")
-			&& ((*com)["Nets"].GetType() == json::ValueType::ArrayVal)) {
+	if ((*gridConfiguration).HasKey("IncludeNetworks")
+			&& ((*gridConfiguration)["IncludeNetworks"].GetType()
+					== json::ValueType::ArrayVal)) {
 		// clear any previous network filter list
 		m_vNetworksFilter.clear();
 
 		// get the network array
-		json::Array arr = (*com)["Nets"].ToArray();
+		json::Array arr = (*gridConfiguration)["IncludeNetworks"].ToArray();
 
 		// for each network in the array
 		int netFilterCount = 0;
@@ -1224,14 +1040,15 @@ bool CWeb::generateSiteFilters(std::shared_ptr<json::Object> com) {
 	}
 
 	// get the SCNL names to be included in this web.
-	if ((*com).HasKey("Sites")
-			&& ((*com)["Sites"].GetType() == json::ValueType::ArrayVal)) {
+	if ((*gridConfiguration).HasKey("IncludeSites")
+			&& ((*gridConfiguration)["IncludeSites"].GetType()
+					== json::ValueType::ArrayVal)) {
 		// clear any previous site filter list
 		m_vSitesFilter.clear();
 
 		// get the site array
 		int staFilterCount = 0;
-		json::Array arr = (*com)["Sites"].ToArray();
+		json::Array arr = (*gridConfiguration)["IncludeSites"].ToArray();
 
 		// for each site in the array
 		for (int i = 0; i < arr.size(); i++) {
@@ -1254,11 +1071,11 @@ bool CWeb::generateSiteFilters(std::shared_ptr<json::Object> com) {
 	}
 
 	// check to see if we're only to use teleseismic stations.
-	if ((*com).HasKey("UseOnlyTeleseismicStations")
-			&& ((*com)["UseOnlyTeleseismicStations"].GetType()
+	if ((*gridConfiguration).HasKey("UseOnlyTeleseismicStations")
+			&& ((*gridConfiguration)["UseOnlyTeleseismicStations"].GetType()
 					== json::ValueType::BoolVal)) {
-		m_bUseOnlyTeleseismicStations = (*com)["UseOnlyTeleseismicStations"]
-				.ToBool();
+		m_bUseOnlyTeleseismicStations =
+				(*gridConfiguration)["UseOnlyTeleseismicStations"].ToBool();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
@@ -1312,13 +1129,14 @@ bool CWeb::isSiteAllowed(std::shared_ptr<CSite> site) {
 	return (returnFlag);
 }
 
-// ---------------------------------------------------------generateNodeSiteList
-bool CWeb::generateNodeSiteList() {
+// ---------------------------------------------------------loadWebSiteList
+bool CWeb::loadWebSiteList() {
 	// nullchecks
 	// check pSiteList
 	if (m_pSiteList == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::genSiteList: NULL pSiteList pointer.");
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::loadWebSiteList: NULL pSiteList pointer.");
 		return (false);
 	}
 
@@ -1327,25 +1145,34 @@ bool CWeb::generateNodeSiteList() {
 
 	// don't bother continuing if we have no sites
 	if (nsite <= 0) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
-								"CWeb::genSiteList: No sites in site list.");
+		glassutil::CLogit::log(
+				glassutil::log_level::warn,
+				"CWeb::loadWebSiteList: No sites in site list.");
 		return (false);
 	}
 
 	// log
 	char sLog[1024];
 	snprintf(sLog, sizeof(sLog),
-				"CWeb::genSiteList: %d sites available for web %s", nsite,
+				"CWeb::loadWebSiteList: %d sites available for web %s", nsite,
 				m_sName.c_str());
 	glassutil::CLogit::log(glassutil::log_level::debug, sLog);
 
 	// clear web site list
 	m_vNodeSites.clear();
 
+	std::vector<std::shared_ptr<CSite>> siteList =
+			m_pSiteList->getListOfSites();
+
 	// for each site
-	for (int isite = 0; isite < nsite; isite++) {
+	for (std::vector<std::shared_ptr<CSite>>::iterator it = siteList.begin();
+			it != siteList.end(); ++it) {
 		// get site from the overall site list
-		std::shared_ptr<CSite> site = m_pSiteList->getSite(isite);
+		std::shared_ptr<CSite> site = *it;
+
+		if (site == NULL) {
+			continue;
+		}
 
 		// Ignore if station out of service
 		if (!site->getUse()) {
@@ -1363,15 +1190,15 @@ bool CWeb::generateNodeSiteList() {
 
 	// log
 	snprintf(sLog, sizeof(sLog),
-				"CWeb::genSiteList: %d sites selected for web %s",
+				"CWeb::loadWebSiteList: %d sites selected for web %s",
 				static_cast<int>(m_vNodeSites.size()), m_sName.c_str());
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
 
 	return (true);
 }
 
-// ---------------------------------------------------------sortNodeSiteList
-void CWeb::sortNodeSiteList(double lat, double lon) {
+// ---------------------------------------------------------sortSiteListForNode
+void CWeb::sortSiteListForNode(double lat, double lon) {
 	// set to provided geographic location
 	glassutil::CGeo geo;
 
@@ -1407,8 +1234,7 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 	}
 
 	// create node
-	std::shared_ptr<CNode> node(
-			new CNode(m_sName, lat, lon, z, resol));
+	std::shared_ptr<CNode> node(new CNode(m_sName, lat, lon, z, resol));
 
 	// set parent web
 	node->setWeb(this);
@@ -1743,7 +1569,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		// iteration where a node is modified
 		if (!bSiteList) {
 			// generate the site list
-			generateNodeSiteList();
+			loadWebSiteList();
 			bSiteList = true;
 
 			// make sure we've got enough sites for a node
@@ -1754,7 +1580,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		}
 
 		// sort overall list of sites for this node
-		sortNodeSiteList(node->getLatitude(), node->getLongitude());
+		sortSiteListForNode(node->getLatitude(), node->getLongitude());
 
 		// remove site link
 		if (node->unlinkSite(foundSite) == true) {
@@ -1935,19 +1761,19 @@ bool CWeb::getUpdate() const {
 	return (m_bUpdate);
 }
 
+// ---------------------------------------------------------getSaveGrid
+bool CWeb::getSaveGrid() const {
+	return (m_bSaveGrid);
+}
+
 // ---------------------------------------------------------getResolution
-double CWeb::getResolution() const {
-	return (m_dResolution);
+double CWeb::getNodeResolution() const {
+	return (m_dNodeResolution);
 }
 
 // --------------------------------------------------getNucleationStackThreshold
 double CWeb::getNucleationStackThreshold() const {
 	return (m_dNucleationStackThreshold);
-}
-
-// ---------------------------------------------------------getNumColumns
-int CWeb::getNumColumns() const {
-	return (m_iNumColumns);
 }
 
 // -------------------------------------------------------getNumStationsPerNode
@@ -1960,29 +1786,19 @@ int CWeb::getNucleationDataThreshold() const {
 	return (m_iNucleationDataThreshold);
 }
 
-// ---------------------------------------------------------getNumRows
-int CWeb::getNumRows() const {
-	return (m_iNumRows);
-}
-
-// ---------------------------------------------------------getNumDepths
-int CWeb::getNumDepths() const {
-	return (m_iNumDepths);
-}
-
 // ---------------------------------------------------------getName
 const std::string& CWeb::getName() const {
 	return (m_sName);
 }
 
 // -----------------------------------------------------getNucleationTravelTime1
-const std::shared_ptr<traveltime::CTravelTime>& CWeb::getNucleationTravelTime1() const { // NOLINT
+const std::shared_ptr<traveltime::CTravelTime>& CWeb::getNucleationTravelTime1() const {  // NOLINT
 	std::lock_guard<std::mutex> webGuard(m_TravelTimeMutex);
 	return (m_pNucleationTravelTime1);
 }
 
 // -----------------------------------------------------getNucleationTravelTime2
-const std::shared_ptr<traveltime::CTravelTime>& CWeb::getNucleationTravelTime2() const { // NOLINT
+const std::shared_ptr<traveltime::CTravelTime>& CWeb::getNucleationTravelTime2() const {  // NOLINT
 	std::lock_guard<std::mutex> webGuard(m_TravelTimeMutex);
 	return (m_pNucleationTravelTime2);
 }

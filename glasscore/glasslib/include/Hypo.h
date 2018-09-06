@@ -655,7 +655,7 @@ class CHypo {
 	/**
 	 * \brief Get the azimuth taper used on the bayseian stack value in order
 	 * to compensate for a large azimuthal gap
-	 * \return Returns a double value containing the the taper to use
+	 * \return Returns a double value containing the taper to use
 	 */
 	double getAzimuthTaper() const;
 

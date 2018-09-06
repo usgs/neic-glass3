@@ -25,10 +25,8 @@
 #define NUMDETECT 5
 #define NUMNUCLEATE 4
 #define RESOLUTION 100.0
-#define NUMROWS 3
-#define NUMCOLS 4
-#define NUMZ 1
 #define UPDATE true
+#define SAVE false
 
 // tests to see if the node can be constructed
 TEST(TriggerTest, Construction) {
@@ -41,10 +39,8 @@ TEST(TriggerTest, Construction) {
 													NUMDETECT,
 													NUMNUCLEATE,
 													RESOLUTION,
-													NUMROWS,
-													NUMCOLS, NUMZ,
 													UPDATE,
-													nullTrav, nullTrav);
+													SAVE, nullTrav, nullTrav);
 
 	// create  shared pointer to the site
 	// create json objects from the strings
@@ -57,7 +53,7 @@ TEST(TriggerTest, Construction) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// add sites to site list
-	testSiteList->addSite(siteJSON);
+	testSiteList->addSiteFromJSON(siteJSON);
 
 	// create pick
 	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, testSiteList);
@@ -84,7 +80,7 @@ TEST(TriggerTest, Construction) {
 	ASSERT_EQ(0, testTrigger->getTOrigin())<< "Trigger Time 0";
 
 	// resolution
-	ASSERT_EQ(0, testTrigger->getResolution())<< "Trigger Resolution 0";
+	ASSERT_EQ(0, testTrigger->getWebResolution())<< "Trigger Resolution 0";
 
 	// Sum
 	ASSERT_EQ(0, testTrigger->getBayesValue())<< "Trigger Sum 0";
@@ -120,7 +116,7 @@ TEST(TriggerTest, Construction) {
 	ASSERT_EQ(TIME, testTrigger->getTOrigin())<< "Trigger Time Check";
 
 	// resolution
-	ASSERT_EQ(RESOLUTION, testTrigger->getResolution())<< "Trigger Resolution "
+	ASSERT_EQ(RESOLUTION, testTrigger->getWebResolution())<< "Trigger Resolution "
 	"Check";
 
 	// Sum
@@ -154,7 +150,7 @@ TEST(TriggerTest, Construction) {
 	ASSERT_EQ(0, testTrigger->getTOrigin())<< "Trigger Time 0";
 
 	// resolution
-	ASSERT_EQ(0, testTrigger->getResolution())<< "Trigger Resolution 0";
+	ASSERT_EQ(0, testTrigger->getWebResolution())<< "Trigger Resolution 0";
 
 	// Sum
 	ASSERT_EQ(0, testTrigger->getBayesValue())<< "Trigger Sum 0";

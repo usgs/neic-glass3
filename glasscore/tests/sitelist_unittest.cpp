@@ -24,7 +24,7 @@ TEST(SiteListTest, Construction) {
 
 	// assert default values
 	// lists
-	ASSERT_EQ(0, testSiteList->getVSiteSize())<< "vSite is empty";
+	ASSERT_EQ(0, testSiteList->size())<< "vSite is empty";
 
 	// pointers
 	ASSERT_EQ(NULL, testSiteList->getGlass())<< "pGlass null";
@@ -61,7 +61,7 @@ TEST(SiteListTest, SiteOperations) {
 	// test adding sites to site list via all three methods
 	// shared_ptr, json, and dispatch (also json)
 	testSiteList->addSite(sharedTestSite);
-	testSiteList->addSite(site2JSON);
+	testSiteList->addSiteFromJSON(site2JSON);
 	testSiteList->dispatch(site3JSON);
 	int expectedSize = 3;
 	ASSERT_EQ(expectedSize, testSiteList->size())<< "Added Sites";

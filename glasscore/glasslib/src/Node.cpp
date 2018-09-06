@@ -366,7 +366,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 				// remember the best pick
 				pickBest = pick;
 			}
-		}
+		}  // ---- end search through each pick at this site ----
 
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site
@@ -421,26 +421,18 @@ double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
 	// get traveltime2 to site
 	double travelTime2 = std::get< LINK_TT2>(link);
 
-	// use observed travel time, travel times to site, and a dT/dKm of
-	// 0.1 s/km to calculate distance residuals
+	// use observed travel time, travel times to site
 	double tRes1 = -1;
 	if (travelTime1 > 0) {
 		// calculate time residual
 		tRes1 = std::abs(tObservedTT - travelTime1);
-
-		// calculate distance residual
-		// NOTE:  dT/dKm is hard coded
-		// dRes1 = tRes1 / 0.1;
 	}
 	double tRes2 = -1;
 	if (travelTime2 > 0) {
 		// calculate time residual
 		tRes2 = std::abs(tObservedTT - travelTime2);
-
-		// calculate distance residual
-		// NOTE:  dT/dKm is hard coded
-		// dRes2 = tRes2 / 0.1;
 	}
+
 	// compute significances using residuals
 	// pick sigma is defined as resolution / 5.0 * 2.0
 	// should trigger be a looser cutoff than location cutoff
@@ -452,8 +444,7 @@ double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
 	if (tRes2 > 0) {
 		dSig2 = m_pWeb->getGlass()->sig(tRes2, m_dResolution);
 	}
-	// printf("getBestSig %.2f, %.2f, %.2f, %.2f, %.2f\n", tRes1, dSig1, tRes2,
-	//	   dSig2, dResolution);
+
 	// return the higher of the two significances
 	if (dSig1 > dSig2) {
 		return (dSig1);

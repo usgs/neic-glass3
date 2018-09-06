@@ -418,12 +418,12 @@ bool CPick::nucleate() {
 
 				// is the associated hypo close enough to this trigger to skip
 				// close enough means within the resolution of the trigger
-				if (dist < trigger->getResolution()) {
+				if (dist < trigger->getWebResolution()) {
 					glassutil::CLogit::log(
 							glassutil::log_level::debug,
 							"CPick::nucleate: SKIPTRG because pick proximal hypo ("
 									+ std::to_string(dist) + " < "
-									+ std::to_string(trigger->getResolution())
+									+ std::to_string(trigger->getWebResolution())
 									+ ")");
 					continue;
 				}
@@ -465,9 +465,9 @@ bool CPick::nucleate() {
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
 			double bayes = hypo->anneal(
-					10000, trigger->getResolution() / 2.,
-					trigger->getResolution() / 100.,
-					std::max(trigger->getResolution() / 10.0, 5.0), .1);
+					10000, trigger->getWebResolution() / 2.,
+					trigger->getWebResolution() / 100.,
+					std::max(trigger->getWebResolution() / 10.0, 5.0), .1);
 
 			// get the number of picks we have now
 			int npick = hypo->getPickDataSize();
