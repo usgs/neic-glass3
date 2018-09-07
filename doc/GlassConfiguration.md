@@ -119,16 +119,18 @@ These configuration parameters define and control glasscore nucleation and
 association. All values should be greater than zero, but exact limits are still
 being determined.
 
-* **NucleationStackThreshold** - The default viability threshold needed to exceed for a nucleation
-to be successful. This value can be overridden in a detection grid (Web) if
-provided as part of a specific grid configuration.
-* **NucleationDataThreshold** - The default number of data that need to be gathered to trigger
-the nucleation of an event. This value can be overridden in a detection grid
-(Web) if provided as part of a specific grid configuration.
-* **AssociationStandardDeviationCutoff** - The standard deviation cutoff used for associating a pick
-with a hypocenter.
-* **PruningStandardDeviationCutoff** - The standard deviation cutoff used for pruning a pick
-from a hypocenter.
+* **NucleationStackThreshold** - The default threshold that the bayesian stack
+needs to exceed for a nucleation to be declared. This threshold is also used to
+cancel a previously nucleated hypocenter. This value can be overridden in a
+detection grid (Web).
+* **NucleationDataThreshold** - The default threshold that the number of supporting  
+data must exceed for a nucleation to be declared. This threshold is also used to
+cancel a previously nucleated hypocenter. This value can be overridden in a
+detection grid (Web).
+* **AssociationStandardDeviationCutoff** - The standard deviation cutoff used for
+associating a pick with a hypocenter.
+* **PruningStandardDeviationCutoff** - The standard deviation cutoff used for
+pruning a pick from a hypocenter.
 * **PickAffinityExponentialFactor** - The exponential factor used when calculating the affinity of
 a pick with a hypocenter. **This value has little effect and likely does not need
 to be changed.**
@@ -196,9 +198,10 @@ if not present, the grid will use the DefaultNucleationPhase
 		* **PhaseName** - The name of the secondary nucleation phase
 		* **TravFile** - The path to the travel-time lookup file for the secondary
     nucleation phase.
-* **IncludeNetworks** - A list of network codes to filter the stations available to a grid.
-* **IncludeSites** - A list of SCNL codes to filter the stations available to a grid,
-generally used only in very small local grids.
+* **IncludeNetworks** - A list of network codes limit the stations available to
+a grid, a station must have one of the given network codes to be used in the grid
+* **IncludeSites** - A list of SCNL codes to limit the stations available to
+a grid, a station must have one of the given SCNL codes to be used in the grid
 * **UseOnlyTeleseismicStations** - A flag indicating that the grid should only
 use stations flagged as "UseForTeleseismic" in the station list, generally used
 only in global grids.
