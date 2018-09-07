@@ -38,13 +38,6 @@ CGlass::CGlass() {
 	m_iMaxNumCorrelations = 1000;
 	m_iMaxNumPicksPerSite = 200;
 	m_iMaxNumHypos = 100;
-	m_bGraphicsOut = false;
-	m_sGraphicsOutFolder = "./";
-	m_dGraphicsStepKM = 1.;
-	m_iGraphicsSteps = 100;
-	m_bTestTravelTimes = false;
-	m_bMinimizeTTLocator = false;
-	m_bTestLocator = false;
 }
 
 // ---------------------------------------------------------~CGlass
