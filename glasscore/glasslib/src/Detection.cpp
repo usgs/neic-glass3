@@ -193,7 +193,7 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 		}
 	}
 
-	if ((hypo != NULL) && (match == true)) {
+	if (match == true) {
 		// existing hypo, now hwat?
 		// schedule hypo for processing?
 		m_pGlass->getHypoList()->addHypoToProcess(hypo);

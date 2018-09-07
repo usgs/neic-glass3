@@ -496,7 +496,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	}
 
 	std::string pid = hyp->getID();
-	int OriginalPicks = hyp->getPickDataSize();
+	// int OriginalPicks = hyp->getPickDataSize();
 	std::chrono::high_resolution_clock::time_point tEvolveStartTime =
 			std::chrono::high_resolution_clock::now();
 
