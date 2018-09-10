@@ -15,7 +15,8 @@ namespace util {
 // ---------------------------------------------------------ThreadBaseClass
 ThreadBaseClass::ThreadBaseClass()
 		: util::BaseClass() {
-	setThreadName("unknown");
+	m_sThreadName = "unknown";
+
 	setWorkThreadsState(glass3::util::ThreadState::Initialized);
 	setHealthCheckInterval(DEFAULT_HEALTHCHECK_INTERVAL);
 	setNumThreads(1);
@@ -31,7 +32,8 @@ ThreadBaseClass::ThreadBaseClass()
 ThreadBaseClass::ThreadBaseClass(std::string threadName, int sleepTimeMS,
 									int numThreads, int checkInterval)
 		: util::BaseClass() {
-	setThreadName(threadName);
+	m_sThreadName = threadName;
+
 	setWorkThreadsState(glass3::util::ThreadState::Initialized);
 	setHealthCheckInterval(checkInterval);
 	setNumThreads(numThreads);
@@ -45,19 +47,21 @@ ThreadBaseClass::ThreadBaseClass(std::string threadName, int sleepTimeMS,
 
 // ---------------------------------------------------------~ThreadBaseClass
 ThreadBaseClass::~ThreadBaseClass() {
-	glass3::util::log(
-			"debug",
-			"ThreadBaseClass::~ThreadBaseClass(): Destruction. ("
-					+ getThreadName() + ")");
-
-	stop();
+	try {
+		stop();
+	} catch (const std::exception& e) {
+		glass3::util::log(
+				"warning",
+				"ThreadBaseClass::~ThreadBaseClass()(): Exception "
+						+ std::string(e.what()));
+	}
 }
 
 // ---------------------------------------------------------start
 bool ThreadBaseClass::start() {
 	// don't bother if we've not got any threads
 	if (getNumThreads() <= 0) {
-		return(true);
+		return (true);
 	}
 	// are we already running
 	if ((getWorkThreadsState() != glass3::util::ThreadState::Initialized)
@@ -92,15 +96,10 @@ bool ThreadBaseClass::start() {
 			// to track status
 			m_ThreadHealthMap[m_WorkThreads[i].get_id()] = std::time(nullptr);
 		}
-
-		glass3::util::log(
-				"debug",
-				"ThreadBaseClass::start(): Created Work Thread #"
-						+ std::to_string(i) + " (" + getThreadName() + ")");
 	}
 
 	glass3::util::log(
-			"debug",
+			"trace",
 			"ThreadBaseClass::start(): Started "
 					+ std::to_string(m_WorkThreads.size()) + " Work Threads. ("
 					+ getThreadName() + ")");
@@ -111,10 +110,10 @@ bool ThreadBaseClass::start() {
 bool ThreadBaseClass::stop() {
 	// don't bother if we've not got any threads
 	if (getNumThreads() <= 0) {
-		return(false);
+		return (false);
 	}
 	if (m_WorkThreads.size() <= 0) {
-		return(false);
+		return (false);
 	}
 
 	// check if we're running
@@ -177,7 +176,7 @@ void ThreadBaseClass::setThreadHealth(bool health) {
 bool ThreadBaseClass::healthCheck() {
 	// don't bother if we've not got any threads
 	if (getNumThreads() <= 0) {
-		return(true);
+		return (true);
 	}
 
 	// if we have a negative check interval,
@@ -300,7 +299,7 @@ void ThreadBaseClass::workLoop() {
 std::time_t ThreadBaseClass::getAllLastHealthy() {
 	// don't bother if we've not got any threads
 	if (getNumThreads() <= 0) {
-		return(0);
+		return (0);
 	}
 
 	// empty check
@@ -381,15 +380,8 @@ int ThreadBaseClass::getSleepTime() {
 	return (m_iSleepTimeMS);
 }
 
-// ---------------------------------------------------------setThreadName
-void ThreadBaseClass::setThreadName(std::string threadName) {
-	std::lock_guard<std::mutex> guard(getMutex());
-	m_sThreadName = threadName;
-}
-
 // ---------------------------------------------------------getThreadName
 const std::string& ThreadBaseClass::getThreadName() {
-	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_sThreadName);
 }
 

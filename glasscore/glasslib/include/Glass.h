@@ -119,30 +119,6 @@ class CGlass {
 	void clear();
 
 	/**
-	 * \brief CGlass significance function
-	 *
-	 * This function calculates the significance function for glasscore,
-	 * which is the bell shaped curve with sig(0, x) pinned to 0.
-	 *
-	 * \param tdif - A double containing x value.
-	 * \param sig - A double value containing the sigma,
-	 * \return Returns a double value containing significance function result
-	 */
-	double sig(double tdif, double sig);
-
-	/**
-	 * \brief CGlass laplacian significance function (PDF)
-	 *
-	 * This function calculates a laplacian significance used in associator.
-	 * This should have the affect of being L1 normish, instead of L2 normish.
-	 * Unlike the other significance function, this returns the PDF value
-	 * \param tdif - A double containing x value.
-	 * \param sig - A double value containing the sigma,
-	 * \return Returns a double value containing significance function result
-	 */
-	double sig_laplace_pdf(double tdif, double sig);
-
-	/**
 	 * \brief An IGlassSend interface pointer used to send communication
 	 * (such as output data), to outside the glasscore library
 	 */

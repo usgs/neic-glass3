@@ -15,6 +15,7 @@
 #include "Pick.h"
 #include "Date.h"
 #include "Logit.h"
+#include "GlassMath.h"
 
 namespace glasscore {
 
@@ -438,11 +439,11 @@ double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
 	// should trigger be a looser cutoff than location cutoff
 	double dSig1 = 0;
 	if (tRes1 > 0) {
-		dSig1 = m_pWeb->getGlass()->sig(tRes1, m_dResolution);
+		dSig1 = glassutil::GlassMath::sig(tRes1, m_dResolution);
 	}
 	double dSig2 = 0;
 	if (tRes2 > 0) {
-		dSig2 = m_pWeb->getGlass()->sig(tRes2, m_dResolution);
+		dSig2 = glassutil::GlassMath::sig(tRes2, m_dResolution);
 	}
 
 	// return the higher of the two significances

@@ -20,6 +20,7 @@
 #include "Glass.h"
 #include "Logit.h"
 #include "Taper.h"
+#include "GlassMath.h"
 #include <fstream>
 #include <limits>
 
@@ -29,10 +30,6 @@ namespace glasscore {
 
 // ---------------------------------------------------------CHypo
 CHypo::CHypo() {
-	// seed the random number generator
-	std::random_device randomDevice;
-	m_RandomGenerator.seed(randomDevice());
-
 	clear();
 }
 
@@ -43,10 +40,6 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 				std::shared_ptr<traveltime::CTravelTime> secondTrav,
 				std::shared_ptr<traveltime::CTTT> ttt, double resolution,
 				double aziTap, double maxDep) {
-	// seed the random number generator
-	std::random_device randomDevice;
-	m_RandomGenerator.seed(randomDevice());
-
 	if (!initialize(lat, lon, z, time, pid, web, bayes, thresh, cut, firstTrav,
 					secondTrav, ttt, resolution, aziTap, maxDep)) {
 		clear();
@@ -56,10 +49,6 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 // ---------------------------------------------------------CHypo
 CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 				std::shared_ptr<traveltime::CTTT> ttt) {
-	// seed the random number generator
-	std::random_device randomDevice;
-	m_RandomGenerator.seed(randomDevice());
-
 	// null checks
 	if (trigger == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -97,9 +86,6 @@ CHypo::CHypo(std::shared_ptr<CCorrelation> corr,
 				std::shared_ptr<traveltime::CTravelTime> firstTrav,
 				std::shared_ptr<traveltime::CTravelTime> secondTrav,
 				std::shared_ptr<traveltime::CTTT> ttt) {
-	// seed the random number generator
-	std::random_device randomDevice;
-	m_RandomGenerator.seed(randomDevice());
 	m_pTravelTimeTables = NULL;
 	m_pNucleationTravelTime1 = NULL;
 	m_pNucleationTravelTime2 = NULL;
@@ -460,10 +446,10 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
 
 		// init x, y, and z gaussian step distances
-		double dx = gauss(0.0, dkm * 2);
-		double dy = gauss(0.0, dkm * 2);
-		double dz = gauss(0.0, dkm);
-		double dt = gauss(0.0, dOt);
+		double dx = glassutil::GlassMath::gauss(0.0, dkm * 2);
+		double dy = glassutil::GlassMath::gauss(0.0, dkm * 2);
+		double dz = glassutil::GlassMath::gauss(0.0, dkm);
+		double dt = glassutil::GlassMath::gauss(0.0, dOt);
 
 		// compute current location using the hypo location and the x and y
 		// Gaussian step distances
@@ -507,7 +493,8 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 		if (val > valBest
 				|| (val > m_dNucleationStackThreshold
 						&& (valBest - val)
-								< (pow(gauss(0, .2), 2) / (500. / dkm)))) {
+								< (pow(glassutil::GlassMath::gauss(0, .2), 2)
+										/ (500. / dkm)))) {
 			// then this is the new best value
 			valBest = val;
 			// set the hypo location/depth/time from the new best
@@ -613,10 +600,10 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
 
 		// init x, y, and z gaussian step distances
-		double dx = gauss(0.0, dkm * 2);
-		double dy = gauss(0.0, dkm * 2);
-		double dz = gauss(0.0, dkm);
-		double dt = gauss(0.0, dOt);
+		double dx = glassutil::GlassMath::gauss(0.0, dkm * 2);
+		double dy = glassutil::GlassMath::gauss(0.0, dkm * 2);
+		double dz = glassutil::GlassMath::gauss(0.0, dkm);
+		double dt = glassutil::GlassMath::gauss(0.0, dOt);
 
 		// compute current location using the hypo location and the x and y
 		// Gaussian step distances
@@ -1056,6 +1043,7 @@ void CHypo::clear() {
 	m_dKurtosisValue = 0;
 	m_dWebResolution = 0;
 
+	m_dAssociationDistanceCutoff = 0;
 	m_dDistanceCutoffFactor = 4.0;
 	m_dDistanceCutoffPercentage = 0.4;
 	m_dMinDistanceCutoff = 30.0;
@@ -1235,27 +1223,6 @@ double CHypo::calculateGap(double lat, double lon, double z) {
 	return tempGap;
 }
 
-// ---------------------------------------------------------gauss
-double CHypo::gauss(double avg, double std) {
-	// generate Gaussian pseudo-random number using the
-	// polar form of the Box-Muller method
-	// NOTE: Move to some glass math utility library?
-	double rsq = 0;
-	double v1 = 0;
-
-	do {
-		v1 = Rand(-1.0, 1.0);
-		double v2 = Rand(-1.0, 1.0);
-		rsq = v1 * v1 + v2 * v2;
-	} while (rsq >= 1.0);
-
-	double fac = sqrt(-2.0 * log(rsq) / rsq);
-	double x = std * fac * v1 + avg;
-
-	// return random normal deviate
-	return (x);
-}
-
 // --------------------------------------------------------calculateResidual
 double CHypo::calculateResidual(std::shared_ptr<CPick> pick) {
 	// lock mutex for this scope
@@ -1406,7 +1373,7 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 		double sigma = (tap.Val(delta) * 2.25) + 0.75;
 
 		// calculate and add to the stack
-		value += m_pGlass->sig(resi, sigma);
+		value += glassutil::GlassMath::sig(resi, sigma);
 	}
 	return value;
 }
@@ -1751,7 +1718,8 @@ void CHypo::graphicsOutput() {
 				}
 
 				// compute stack value
-				stack += m_pGlass->sig_laplace_pdf(tobs - tcal, sigma);
+				stack += glassutil::GlassMath::sig_laplace_pdf(tobs - tcal,
+																sigma);
 
 				// write to fiel
 				outfile << std::to_string(xlat) << " " << std::to_string(xlon)
@@ -1893,7 +1861,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage(bool send) {
 		double tcal = m_pTravelTimeTables->T(&site->getGeo(), tobs);
 		double tres = tobs - tcal;
 		// should this be changed?
-		double sig = m_pGlass->sig(tres, 1.0);
+		double sig = glassutil::GlassMath::sig(tres, 1.0);
 
 		// if we have it, use the shared pointer
 		json::Object pickObj;
@@ -1935,7 +1903,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage(bool send) {
 		double tcal = m_pTravelTimeTables->T(&site->getGeo(), tobs);
 		double tres = tobs - tcal;
 		// should this be changed?
-		double sig = m_pGlass->sig(tres, 1.0);
+		double sig = glassutil::GlassMath::sig(tres, 1.0);
 
 		// if we have it, use the shared pointer
 		json::Object correlationObj;
@@ -2258,16 +2226,6 @@ bool CHypo::pruneData() {
 
 	// we've removed at least one data
 	return (true);
-}
-
-// ---------------------------------------------------------Rand
-double CHypo::Rand(double x, double y) {
-	// double randNum = ((x) + ((y) - (x)) * rand() / (float) RAND_MAX);
-	// return randNum;
-	// NOTE: Move to some glass math utility library?
-	std::uniform_real_distribution<double> distribution(x, y);
-	double number = distribution(m_RandomGenerator);
-	return (number);
 }
 
 // ---------------------------------------------------removeCorrelationReference

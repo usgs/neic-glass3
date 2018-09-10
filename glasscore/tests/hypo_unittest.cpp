@@ -88,21 +88,23 @@ TEST(HypoTest, Construction) {
 	glasscore::CHypo * testHypo = new glasscore::CHypo();
 
 	// assert default values
-	ASSERT_EQ(0, testHypo->getLatitude())<< "dLat is zero";
-	ASSERT_EQ(0, testHypo->getLongitude())<< "dLon is zero";
-	ASSERT_EQ(0, testHypo->getDepth())<< "dZ is zero";
-	ASSERT_EQ(0, testHypo->getTOrigin())<< "tOrg is zero";
+	ASSERT_NEAR(0, testHypo->getLatitude(), 0.0001)<< "dLat is zero";
+	ASSERT_NEAR(0, testHypo->getLongitude(), 0.0001)<< "dLon is zero";
+	ASSERT_NEAR(0, testHypo->getDepth(), 0.0001)<< "dZ is zero";
+	ASSERT_NEAR(0, testHypo->getTOrigin(), 0.0001)<< "tOrg is zero";
 	ASSERT_STREQ("", testHypo->getID().c_str())<< "sPid is empty";
 	ASSERT_STREQ("", testHypo->getWebName().c_str())<< "sWeb is empty";
-	ASSERT_EQ(0, testHypo->getBayesValue())<< "dBayes is zero";
-	ASSERT_EQ(0, testHypo->getNucleationStackThreshold())<< "dThresh is zero";
-	ASSERT_EQ(0, testHypo->getAssociationDistanceCutoff())<< "nCut is zero";
+	ASSERT_NEAR(0, testHypo->getBayesValue(), 0.0001)<< "dBayes is zero";
+	ASSERT_NEAR(0, testHypo->getNucleationStackThreshold(), 0.0001)<<
+			"dThresh is zero";
+	ASSERT_NEAR(0, testHypo->getAssociationDistanceCutoff(), 0.0001)<<
+			"nCut is zero";
 	ASSERT_EQ(0, testHypo->getProcessCount())<< "iCycle is zero";
-	ASSERT_EQ(0, testHypo->getMedianDistance())<< "dMed is zero";
-	ASSERT_EQ(0, testHypo->getMinDistance())<< "dMin is zero";
-	ASSERT_EQ(0, testHypo->getGap())<< "dGap is zero";
-	ASSERT_EQ(0, testHypo->getDistanceSD())<< "dSig is zero";
-	ASSERT_EQ(0, testHypo->getKurtosisValue())<< "dKrt is zero";
+	ASSERT_NEAR(0, testHypo->getMedianDistance(), 0.0001)<< "dMed is zero";
+	ASSERT_NEAR(0, testHypo->getMinDistance(), 0.0001)<< "dMin is zero";
+	ASSERT_NEAR(0, testHypo->getGap(), 0.0001)<< "dGap is zero";
+	ASSERT_NEAR(0, testHypo->getDistanceSD(), 0.0001)<< "dSig is zero";
+	ASSERT_NEAR(0, testHypo->getKurtosisValue(), 0.0001)<< "dKrt is zero";
 	ASSERT_FALSE(testHypo->getFixed())<< "bFixed is false";
 	ASSERT_FALSE(testHypo->getEventSent())<< "bEvent is false";
 

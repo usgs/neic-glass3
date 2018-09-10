@@ -1034,25 +1034,6 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	return (true);
 }
 
-// ---------------------------------------------------------Sig
-// Calculate the significance function, which is just
-// the bell shaped curve with Sig(0, x) pinned to 1.
-// It is used for pruning and association, and is roughly
-// analogous to residual pruning in least squares approaches
-double CGlass::sig(double x, double sigma) {
-	return (exp(-0.5 * x * x / sigma / sigma));
-}
-// ---------------------------------------------------------Sig
-// Calculate the laplacian significance function, which is just
-// It is used for pruning and association, and is roughly
-// analogous to residual pruning in L1 approach.
-double CGlass::sig_laplace_pdf(double x, double sigma) {
-	if (x > 0) {
-		return ((1. / (2. * sigma)) * exp(-1. * x / sigma));
-	} else {
-		return ((1. / (2. * sigma)) * exp(x / sigma));
-	}
-}
 
 // ---------------------------------------------------------statusCheck
 bool CGlass::healthCheck() {

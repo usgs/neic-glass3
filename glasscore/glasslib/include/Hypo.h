@@ -13,7 +13,6 @@
 #include <string>
 #include <vector>
 #include <mutex>
-#include <random>
 #include <atomic>
 
 namespace glasscore {
@@ -288,32 +287,6 @@ class CHypo {
 	 * Note correlations may or may not be still referenced by other hypocenters
 	 */
 	void clearCorrelationReferences();
-
-	/**
-	 * \brief Calculate Gaussian random sample
-	 *
-	 * Calculate random normal gaussian deviate value using Box-Muller method.
-	 * This function is used in determining the randomized step sizes for
-	 * relocation (anneal and localize)
-	 *
-	 * \param avg - The mean average value to use in the Box-Muller method
-	 * \param std - The standard deviation value to use in the Box-Muller method
-	 * \return Returns the Gaussian random sample
-	 */
-	double gauss(double avg, double std);
-
-	/**
-	 * \brief Generate Random Number
-	 *
-	 * Generate s random number between x and y. This function is used by gauss
-	 * in determining the randomized step sizes for relocation (anneal and
-	 * localize)
-	 *
-	 * \param x - The minimum random number
-	 * \param y - The maximum random number
-	 * \return Returns the random sample
-	 */
-	double Rand(double x, double y);
 
 	/**
 	 * \brief Generate Hypo message
@@ -1306,11 +1279,6 @@ class CHypo {
 	 * \brief A mutex to control processing access to CHypo.
 	 */
 	std::mutex m_ProcessingMutex;
-
-	/**
-	 * \brief A random engine used to generate random numbers
-	 */
-	std::default_random_engine m_RandomGenerator;
 };
 }  // namespace glasscore
 #endif  // HYPO_H

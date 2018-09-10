@@ -199,16 +199,6 @@ class ThreadBaseClass : public util::BaseClass {
 	int getHealthCheckInterval();
 
 	/**
-	 * \brief Function to set the name of the work thread
-	 *
-	 * This function sets the name of the work thread, this name is used to
-	 * identify the work thread in logging
-	 *
-	 * \param threadName = A std::string containing the thread name to set
-	 */
-	void setThreadName(std::string threadName);
-
-	/**
 	 * \brief Function to retrieve the name of the work threads
 	 *
 	 * This function retrieves the name of the work threads, this name is used to

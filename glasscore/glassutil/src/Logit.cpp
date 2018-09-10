@@ -1,4 +1,3 @@
-// Seed.cpp
 #include <logger.h>
 
 #include <cstdio>
