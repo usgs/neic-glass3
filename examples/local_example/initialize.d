@@ -28,7 +28,7 @@
       "CorrelationCancelAge": 900,
       "BeamMatchingAzimuthWindow": 22.5,
       "ReportingStackThreshold": 2.0,
-      "ReportingDataThreshold":2.0
+      "ReportingDataThreshold":2
   },
   "DefaultNucleationPhase": {
       "PhaseName": "P",

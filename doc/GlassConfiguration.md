@@ -31,7 +31,7 @@ An example `glass_init.d` configuration file:
       "CorrelationCancelAge": 900,
       "BeamMatchingAzimuthWindow" : 22.5,
       "ReportingStackThreshold": 0.5,
-      "ReportingDataThreshold":5
+      "ReportingDataThreshold": 5
   },
   "DefaultNucleationPhase": {
       "PhaseName": "P",
@@ -172,7 +172,7 @@ this association phase.  Mutually exclusive with **Assoc**
 phase.
 
 ## Grid Configuration
-GLASS 3 uses detection grids (or webs) of nodes to NucleationDataThreshold detections. In
+GLASS 3 uses detection grids (or webs) of nodes to nucleate detections. In
 general, there are two types of grids, Regional/Local grids, and Global grids.
 
 ## General Parameters
@@ -211,7 +211,7 @@ only in global grids.
 file for evaluation.
 * **UpdateGrid** - A flag indicating whether a grid is allowed to add or remove sites
 from nodes. Note that if Update is false, features like **SiteHoursWithoutPicking**
-and **SiteLookupInterval** will be ineffective for this grid.
+and **SiteLookupInterval** will be omitted for this grid.
 
 ## Regional / Local Grid
 This is a detection grid designed to cover some regional or local area of

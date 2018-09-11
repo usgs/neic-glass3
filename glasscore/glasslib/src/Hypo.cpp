@@ -446,6 +446,8 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
 
 		// init x, y, and z gaussian step distances
+		// the km for dx and dy is double so the epicentral search space is
+		// larger than the depth search space, because we live on a sphere
 		double dx = glassutil::GlassMath::gauss(0.0, dkm * 2);
 		double dy = glassutil::GlassMath::gauss(0.0, dkm * 2);
 		double dz = glassutil::GlassMath::gauss(0.0, dkm);
