@@ -441,26 +441,6 @@ const std::shared_ptr<CHypo> CCorrelation::getHypoReference() const {
 	return (m_wpHypo.lock());
 }
 
-// ---------------------------------------------------------getHypoID
-const std::string CCorrelation::getHypoReferenceID() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(m_CorrelationMutex);
-	std::string hypoPid = "";
-
-	// make sure we have a hypo
-	if (m_wpHypo.expired() == true) {
-		return (hypoPid);
-	}
-
-	// get the hypo
-	std::shared_ptr<CHypo> pHypo = getHypoReference();
-	if (pHypo != NULL) {
-		// get the hypo pid
-		hypoPid = pHypo->getID();
-	}
-
-	return (hypoPid);
-}
-
 // ---------------------------------------------------------getSite
 const std::shared_ptr<CSite> CCorrelation::getSite() const {
 	return (m_wpSite.lock());

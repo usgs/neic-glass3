@@ -142,22 +142,6 @@ class CCorrelationList {
 	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2.5);
 
 	/**
-	 * \brief Get the CGlass pointer used by this correlation list for global
-	 * and configuration lookups
-	 * \return Return a pointer to the CGlass class used by this correlation
-	 * list
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief Set the CGlass pointer used by this correlation list for global
-	 * and configuration lookups
-	 * \param glass - a pointer to the CGlass class used by this correlation
-	 * list
-	 */
-	void setGlass(CGlass* glass);
-
-	/**
 	 * \brief Get the CSiteList pointer used by this correlation list for site
 	 * lookups
 	 * \return Return a pointer to the CSiteList class used by this correlation
@@ -218,12 +202,6 @@ class CCorrelationList {
 																double t2);
 
  private:
-	/**
-	 * \brief A pointer to the parent CGlass class, used to get configuration
-	 * values and access other parts of glass3
-	 */
-	CGlass * m_pGlass;
-
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites for
 	 * lookups

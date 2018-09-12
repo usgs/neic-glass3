@@ -6,6 +6,7 @@
 #include "Site.h"
 #include "SiteList.h"
 #include "Logit.h"
+#include "Glass.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
 #define SITE2JSON "{\"Type\":\"StationInfo\",\"Elevation\":1342.000000,\"Latitude\":46.711330,\"Longitude\":-111.831200,\"Site\":{\"Station\":\"HRY\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
@@ -48,8 +49,7 @@ TEST(CorrelationListTest, Construction) {
 	ASSERT_EQ(0, testCorrelationList->size())<<
 	"vCorrelation.size() is 0";
 
-	// pointers
-	ASSERT_EQ(NULL, testCorrelationList->getGlass())<< "pGlass null";
+	// pointer
 	ASSERT_EQ(NULL, testCorrelationList->getSiteList())<< "pSiteList null";
 
 	// cleanup
@@ -99,7 +99,9 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	glasscore::CCorrelationList * testCorrelationList =
 			new glasscore::CCorrelationList();
 	testCorrelationList->setSiteList(testSiteList);
+
 	testCorrelationList->setCorrelationMax(MAXNCORRELATION);
+	glasscore::CGlass::setMaxNumCorrelations(-1);
 
 	// test adding correlations by addCorrelation and dispatch
 	testCorrelationList->addCorrelationFromJSON(correlationJSON);

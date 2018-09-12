@@ -434,13 +434,6 @@ bool CPick::nucleate() {
 		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
 				trigger, pGlass->getAssociationTravelTimes());
 
-		// set hypo glass pointer and such
-		hypo->setGlass(pGlass);
-		hypo->setDistanceCutoffFactor(pGlass->getDistanceCutoffFactor());
-		hypo->setDistanceCutoffPercentage(
-				pGlass->getDistanceCutoffPercentage());
-		hypo->setMinDistanceCutoff(pGlass->getMinDistanceCutoff());
-
 		// add links to all the picks that support the hypo
 		std::vector<std::shared_ptr<CPick>> vTriggerPicks = trigger->getVPick();
 
@@ -551,26 +544,6 @@ const std::shared_ptr<json::Object>& CPick::getJSONPick() const {
 const std::shared_ptr<CHypo> CPick::getHypoReference() const {
 	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
 	return (m_wpHypo.lock());
-}
-
-// ---------------------------------------------------------getHypoID
-const std::string CPick::getHypoReferenceID() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
-	std::string hypoPid = "";
-
-	// make sure we have a hypo,
-	if (m_wpHypo.expired() == true) {
-		return (hypoPid);
-	}
-
-	// get the hypo
-	std::shared_ptr<CHypo> pHypo = getHypoReference();
-	if (pHypo != NULL) {
-		// get the hypo pid
-		hypoPid = pHypo->getID();
-	}
-
-	return (hypoPid);
 }
 
 // ---------------------------------------------------------getSite

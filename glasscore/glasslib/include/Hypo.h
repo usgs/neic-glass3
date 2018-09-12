@@ -40,8 +40,9 @@ class CTrigger;
  * the glasscore data association engine, along with the various statistical
  * calculations.
  *
- * The glasscore location algorithm consists of the CHypo iterate(), focus(),
- * localize(), and locate() functions, along with the various statistical
+ * The glasscore location algorithm consists of the CHypo anneal(), localize(),
+ * annealingLocateBayes(), annealingLocateResidual(), calculateBayes(), and
+ * calculateAbsResidualSum() functions, along with the various statistical
  * calculations.
  *
  * CHypo uses smart pointers (std::shared_ptr).
@@ -292,60 +293,43 @@ class CHypo {
 	 * \brief Generate Hypo message
 	 *
 	 * Generate a json object representing this hypocenter in the "Hypo" format
-	 * and optionally send a pointer to this object to CGlass (and out of
-	 * glasscore) using the CGlass send function (pGlass->send)
 	 *
-	 * \param send - A boolean flag indicating that in addition to generating
-	 * the "Hypo" format message, the function should also send it. Defaults to
-	 * true
 	 * \return Returns the generated json object in the "Hypo" format.
 	 */
-	std::shared_ptr<json::Object> generateHypoMessage(bool send = true);
+	std::shared_ptr<json::Object> generateHypoMessage();
 
 	/**
 	 * \brief Generate Event message
 	 *
 	 * Generate a json object representing a summary of this hypocenter in the
-	 * "Event" format and optionally send a pointer to this object to CGlass
-	 * (and out of glasscore) using the CGlass send function (pGlass->send)
+	 * "Event" format
 	 *
-	 * \param send - A boolean flag indicating that in addition to generating
-	 * the "Event" format message, the function should also send it. Defaults to
-	 * true
 	 * \return Returns the generated json object in the "Event" format.
 	 */
-	std::shared_ptr<json::Object> generateEventMessage(bool send = true);
+	std::shared_ptr<json::Object> generateEventMessage();
 
 	/**
 	 * \brief Generate cancel message
 	 *
 	 * Generate a json object representing a cancellation of this hypocenter in
-	 * the "Cancel" format and optionally send a pointer to this object to CGlass
-	 * (and out of glasscore) using the CGlass send function (pGlass->send)
+	 * the "Cancel" format
 	 *
-	 * \param send - A boolean flag indicating that in addition to generating
-	 * the "Cancel" format message, the function should also send it. Defaults to
-	 * true
 	 * \return Returns the generated json object in the "Cancel" format.
 	 */
-	std::shared_ptr<json::Object> generateCancelMessage(bool send = true);
+	std::shared_ptr<json::Object> generateCancelMessage();
 
 	/**
 	 * \brief Generate expire message
 	 *
 	 * Generate a json object representing a expiration of this hypocenter in
-	 * the "Expire" format and optionally send a pointer to this object to CGlass
-	 * (and out of glasscore) using the CGlass send function (pGlass->send).
+	 * the "Expire" format
 	 *
 	 * If this hypocenter was previously reported, a copy of it is included in
 	 * this message via the generateHypoMessage() function
 	 *
-	 * \param send - A boolean flag indicating that in addition to generating
-	 * the "Expire" format message, the function should also send it. Defaults to
-	 * true
 	 * \return Returns the generated json object in the "Expire" format.
 	 */
-	std::shared_ptr<json::Object> generateExpireMessage(bool send = true);
+	std::shared_ptr<json::Object> generateExpireMessage();
 
 	/**
 	 * \brief Check to see if pick could be associated
@@ -725,12 +709,20 @@ class CHypo {
 	void setCorrelationAdded(bool corrAdded);
 
 	/**
-	 * \brief Gets whether an event message generated for this hypo
+	 * \brief Gets whether an event message was generated for this hypo
 	 *
 	 * \return Returns a boolean flag indicating whether an event message has
 	 * been generated for this hypo, true if one has, false otherwise
 	 */
-	bool getEventSent() const;
+	bool getEventGenerated() const;
+
+	/**
+	 * \brief Gets whether an hypo message was generated for this hypo
+	 *
+	 * \return Returns a boolean flag indicating whether a hypo message has
+	 * been generated for this hypo, true if one has, false otherwise
+	 */
+	bool getHypoGenerated() const;
 
 	/**
 	 * \brief Gets whether this hypo is fixed
@@ -771,44 +763,6 @@ class CHypo {
 	double getDistanceCutoffFactor() const;
 
 	/**
-	 * \brief Sets the distance cutoff factor used in calculating the
-	 * Association Distance Cutoff
-	 * \param cutFactor - a double value containing the distance cutoff factor
-	 */
-	void setDistanceCutoffFactor(double cutFactor);
-
-	/**
-	 * \brief Gets the minimum association distance cutoff used in calculating
-	 * the Association Distance Cutoff
-	 * \return Returns a double value containing the minimum association
-	 * distance cutoff
-	 */
-	double getMinDistanceCutoff() const;
-
-	/**
-	 * \brief Sets the minimum association distance cutoff used in calculating
-	 * the Association Distance Cutoff
-	 * \param cutMin - a double value containing the minimum association
-	 * distance cutoff
-	 */
-	void setMinDistanceCutoff(double cutMin);
-
-	/**
-	 * \brief Gets the distance cutoff percentage used in calculating the
-	 * Association Distance Cutoff
-	 * \return Returns a double value containing the distance cutoff percentage
-	 */
-	double getDistanceCutoffPercentage() const;
-
-	/**
-	 * \brief Sets the distance cutoff percentage used in calculating the
-	 * Association Distance Cutoff
-	 * \param cutPercentage - a double value containing the distance cutoff
-	 * percentage
-	 */
-	void setDistanceCutoffPercentage(double cutPercentage);
-
-	/**
 	 * \brief Gets the nucleation data minimum threshold used in determining
 	 * hypo viability in cancelCheck()
 	 * \return Returns an integer value containing the nucleation data minimum
@@ -841,26 +795,28 @@ class CHypo {
 	void setNucleationStackThreshold(double thresh);
 
 	/**
-	 * \brief Gets the current azimuthal gap
-	 * \return Returns a double value containing the current azimuthal gap value
+	 * \brief Gets the azimuthal gap as of the last call of calculateStatistics
+	 * \return Returns a double value containing the azimuthal gap
 	 */
 	double getGap() const;
 
 	/**
-	 * \brief Gets the current kurtosis value
+	 * \brief Gets the kurtosis value as of the last call of calculateStatistics
 	 * \return Returns a double value containing the current kurtosis value
 	 */
 	double getKurtosisValue() const;
 
 	/**
-	 * \brief Gets the current median data distance
-	 * \return Returns a double value containing the current median data distance
+	 * \brief Gets the median data distance as of the last call of
+	 * calculateStatistics
+	 * \return Returns a double value containing the median data distance
 	 */
 	double getMedianDistance() const;
 
 	/**
-	 * \brief Gets the current minimum data distance
-	 * \return Returns a double value containing the current minimum data distance
+	 * \brief Gets the minimum data distance as of the last call of
+	 * calculateStatistics
+	 * \return Returns a double value containing the minimum data distance
 	 */
 	double getMinDistance() const;
 
@@ -910,20 +866,6 @@ class CHypo {
 	 * \return Returns an integer value containing the new total process count
 	 */
 	int incrementTotalProcessCount();
-
-	/**
-	 * \brief Get the CGlass pointer used by this hypo for global constant
-	 * and configuration lookups
-	 * \return Return a pointer to the CGlass class used by this hypo
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief Set the CGlass pointer used by this hypo for global constant
-	 * and configuration lookups
-	 * \param glass - a pointer to the CGlass class used by this hypo
-	 */
-	void setGlass(CGlass* glass);
 
 	/**
 	 * \brief Gets the identifier for this hypo
@@ -1022,12 +964,6 @@ class CHypo {
 
  private:
 	/**
-	 * \brief A pointer to the parent CGlass class, used to get configuration
-	 * values and access other parts of glass3
-	 */
-	CGlass * m_pGlass;
-
-	/**
 	 * \brief  A std::string with the name of the web used during the nucleation
 	 * process
 	 */
@@ -1085,7 +1021,13 @@ class CHypo {
 	/**
 	 * \brief A boolean indicating if an Event message was sent for this hypo.
 	 */
-	std::atomic<bool> m_bEventSent;
+	std::atomic<bool> m_bEventGenerated;
+
+	/**
+	 * \brief A boolean indicating if an Event message was generated for this
+	 * hypo.
+	 */
+	std::atomic<bool> m_bHypoGenerated;
 
 	/**
 	 * \brief A double value containing this hypo's Bayes statistic
@@ -1099,17 +1041,19 @@ class CHypo {
 
 	/**
 	 * \brief A double value containing this hypo's minimum distance in degrees
+	 * as of the last call of calculateStatistics
 	 */
 	std::atomic<double> m_dMinDistance;
 
 	/**
 	 * \brief A double value containing this hypo's median distance in degrees
+	 * as of the last call of calculateStatistics
 	 */
 	std::atomic<double> m_dMedianDistance;
 
 	/**
 	 * \brief A double value containing this hypo's maximum azimuthal gap in
-	 * degrees
+	 * degrees as of the last call of calculateStatistics
 	 */
 	std::atomic<double> m_dGap;
 
@@ -1125,26 +1069,9 @@ class CHypo {
 
 	/**
 	 * \brief A double value containing this hypo's distance sample excess
-	 * kurtosis value
+	 * kurtosis value as of the last call of calculateStatistics
 	 */
 	std::atomic<double> m_dKurtosisValue;
-
-	/**
-	 * \brief A double value containing the factor used to calculate this hypo's
-	 * association distance cutoff
-	 */
-	std::atomic<double> m_dDistanceCutoffFactor;
-
-	/**
-	 * \brief A double value containing the percentage used to calculate this
-	 * hypo's association distance cutoff
-	 */
-	std::atomic<double> m_dDistanceCutoffPercentage;
-
-	/**
-	 * \brief A double value containing the minimum association distance cutoff
-	 */
-	std::atomic<double> m_dMinDistanceCutoff;
 
 	/**
 	 * \brief A double value containing this hypo's association distance cutoff
@@ -1161,36 +1088,6 @@ class CHypo {
 	 * \brief A boolean indicating if this hypo is fixed (not allowed to change)
 	 */
 	std::atomic<bool> m_bFixed;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral latitude in
-	 * degrees during relocation iterations
-	 */
-	double m_dXLatitude;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral longitude in
-	 * degrees during relocation iterations
-	 */
-	double m_dXLongitude;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral depth in
-	 * kilometers during relocation iterations
-	 */
-	double m_dXDepth;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral Bayes statistic
-	 * during relocation iterations
-	 */
-	double m_dXBayes;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral origin time in
-	 * julian seconds during relocation iterations
-	 */
-	double m_tXOrigin;
 
 	/**
 	 * \brief A boolean indicating if a correlation was recently added to this

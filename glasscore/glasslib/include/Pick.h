@@ -211,17 +211,6 @@ class CPick {
 	const std::shared_ptr<CHypo> getHypoReference() const;
 
 	/**
-	 * \brief Get the ID of the current hypo reference to this pick
-	 *
-	 * Note that this pick may or may not also be included in other hypocenter
-	 * pick data lists, but this pick will only link to a single hypocenter
-	 *
-	 * \return Return a std::string containing the ID of the CHypo referenced by
-	 * this pick, or an empty string if no hypo is referenced
-	 */
-	const std::string getHypoReferenceID() const;
-
-	/**
 	 * \brief Get the site for this pick
 	 * \return Return a shared_ptr to a CSite object containing the site this
 	 * pick was made at

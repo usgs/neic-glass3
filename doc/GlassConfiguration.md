@@ -30,6 +30,8 @@ An example `glass_init.d` configuration file:
       "CorrelationDistanceWindow": 0.5,
       "CorrelationCancelAge": 900,
       "BeamMatchingAzimuthWindow" : 22.5,
+      "HypocenterTimeWindow": 30.0,
+      "HypocenterDistanceWindow": 3.0,      
       "ReportingStackThreshold": 0.5,
       "ReportingDataThreshold": 5
   },
@@ -148,6 +150,10 @@ duplicate correlations and to associate a correlation with an existing
 hypocenter.
 * **CorrelationCancelAge** - The minimum age of a correlations before allowing a
 hypocenter to cancel.
+* **HypocenterTimeWindow** - The time window (+/-) used to check for mergeable
+hypocenters in seconds.
+* **HypocenterDistanceWindow** - The distance window (+/-) used to check for
+mergeable hypocenters in degrees.
 * **ReportingStackThreshold** The viability threshold needed to exceed to report a
 hypocenter. Defaults to **NucleationStackThreshold**.
 * **ReportingDataThreshold** The default number of data that need to be associated to report

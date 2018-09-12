@@ -175,9 +175,6 @@ double CHypo::calculateAffinity(std::shared_ptr<CPick> pck) {
 	if (pck == NULL) {
 		return (0.0);
 	}
-	if (m_pGlass == NULL) {
-		return (0.0);
-	}
 
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
@@ -187,10 +184,10 @@ double CHypo::calculateAffinity(std::shared_ptr<CPick> pck) {
 
 	// get various global parameters from the glass pointer
 	// get the standard deviation allowed for association
-	double sdassoc = m_pGlass->getAssociationSDCutoff();
+	double sdassoc = CGlass::getAssociationSDCutoff();
 
 	// get the affinity factor
-	double expaff = m_pGlass->getPickAffinityExpFactor();
+	double expaff = CGlass::getPickAffinityExpFactor();
 
 	// check to see if this pick can  associate with this hypo using
 	// the given association standard deviation
@@ -241,13 +238,10 @@ double CHypo::calculateAffinity(std::shared_ptr<CCorrelation> corr) {
 	if (corr == NULL) {
 		return (0.0);
 	}
-	if (m_pGlass == NULL) {
-		return (0.0);
-	}
 
 	// get various global parameters from the glass pointer
-	double tWindow = m_pGlass->getCorrelationMatchingTimeWindow();
-	double xWindow = m_pGlass->getCorrelationMatchingDistanceWindow();
+	double tWindow = CGlass::getCorrelationMatchingTimeWindow();
+	double xWindow = CGlass::getCorrelationMatchingDistanceWindow();
 
 	// check to see if this correlation can associate with this hypo
 	if (!canAssociate(corr, tWindow, xWindow)) {
@@ -288,16 +282,11 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
 	// This is essentially a faster algorithmic implementation of iterate
-	// nullcheck
-	if (m_pGlass == NULL) {
-		return (0);
-	}
-
 	glassutil::CLogit::log(glassutil::log_level::debug,
 							"CHypo::anneal. " + m_sID);
 
 	// *** First, locate ***
-	if (m_pGlass->getMinimizeTTLocator() == false) {
+	if (CGlass::getMinimizeTTLocator() == false) {
 		annealingLocateBayes(nIter, dStart, dStop, tStart, tStop, 1);
 	} else {
 		annealingLocateResidual(nIter, dStart, dStop, tStart, tStop, 1);
@@ -362,7 +351,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 
 		// make sure the pick residual is within the residual limits
 		// NOTE: The residual limit is hard coded
-		if (tResBest > m_pGlass->getAssociationSDCutoff()) {
+		if (tResBest > CGlass::getAssociationSDCutoff()) {
 			vkill.push_back(pick);
 		}
 	}
@@ -412,7 +401,7 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 
 	// if testing locator, setup output file
 	std::ofstream outfile;
-	if (m_pGlass->getTestLocator()) {
+	if (CGlass::getTestLocator()) {
 		std::string filename = "./locatorTest/" + m_sID + ".txt";
 		outfile.open(filename, std::ios::out | std::ios::app);
 		outfile << std::to_string(m_dLatitude) << " "
@@ -442,8 +431,10 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 		// compute the current step distance from the current iteration and
 		// starting and stopping values, use the taper to make the step distance
 		// slowly decrease
-		double dkm = dStart * taper.Val(static_cast<double>(iter)) + dStop;
-		double dOt = tStart * taper.Val(static_cast<double>(iter)) + tStop;
+		double dkm = (dStart - dStop) * taper.Val(static_cast<double>(iter))
+				+ dStop;
+		double dOt = (tStart - tStop) * taper.Val(static_cast<double>(iter))
+				+ tStop;
 
 		// init x, y, and z gaussian step distances
 		// the km for dx and dy is double so the epicentral search space is
@@ -480,7 +471,7 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 				* taperGap.Val(calculateGap(xlat, xlon, xz));
 
 		// if testing locator print iteration
-		if (m_pGlass->getTestLocator()) {
+		if (CGlass::getTestLocator()) {
 			outfile << std::to_string(xlat) << " " << std::to_string(xlon)
 					<< " " << std::to_string(xz) << " " << std::to_string(oT)
 					<< " " << std::to_string(m_vPickData.size()) << " "
@@ -529,12 +520,12 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 			ddz, ddt, m_sID.c_str(), valBest, valStart);
 	glassutil::CLogit::log(sLog);
 
-	if (m_pGlass->getGraphicsOut() == true) {
+	if (CGlass::getGraphicsOut() == true) {
 		graphicsOutput();
 	}
 
 	// if testing the locator close the file
-	if (m_pGlass->getTestLocator()) {
+	if (CGlass::getTestLocator()) {
 		outfile.close();
 	}
 
@@ -666,7 +657,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 				"CHypo::annealingLocate: new sum abs residual %.4f", valBest);
 	glassutil::CLogit::log(sLog);
 
-	if (m_pGlass->getGraphicsOut() == true) {
+	if (CGlass::getGraphicsOut() == true) {
 		graphicsOutput();
 	}
 
@@ -685,16 +676,13 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 								"CHypo::associate: NULL pick.");
 		return (false);
 	}
-	if (m_pGlass == NULL) {
-		return (false);
-	}
 	if (m_pTravelTimeTables == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::associate: NULL pTTT.");
 		return (false);
 	}
 
-	double dAzimuthRange = m_pGlass->getBeamMatchingAzimuthWindow();
+	double dAzimuthRange = CGlass::getBeamMatchingAzimuthWindow();
 	// double dDistanceRange = pGlass->getBeamMatchingDistanceWindow();
 
 	// get site
@@ -806,9 +794,6 @@ bool CHypo::canAssociate(std::shared_ptr<CCorrelation> corr, double tWindow,
 								"CHypo::associate: NULL correlation.");
 		return (false);
 	}
-	if (m_pGlass == NULL) {
-		return (false);
-	}
 
 	char sLog[1024];
 
@@ -872,7 +857,7 @@ bool CHypo::canAssociate(std::shared_ptr<CCorrelation> corr, double tWindow,
 }
 
 // -------------------------------------------------------generateCancelMessage
-std::shared_ptr<json::Object> CHypo::generateCancelMessage(bool send) {
+std::shared_ptr<json::Object> CHypo::generateCancelMessage() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -888,11 +873,6 @@ std::shared_ptr<json::Object> CHypo::generateCancelMessage(bool send) {
 			glassutil::log_level::debug,
 			"CHypo::event: Created cancel message:" + json::Serialize(*cancel));
 
-	// send it
-	if ((send == true) && (m_pGlass != NULL)) {
-		m_pGlass->send(cancel);
-	}
-
 	return (cancel);
 }
 
@@ -900,11 +880,6 @@ std::shared_ptr<json::Object> CHypo::generateCancelMessage(bool send) {
 bool CHypo::cancelCheck() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
-
-	// nullcheck
-	if (m_pGlass == NULL) {
-		return (false);
-	}
 
 	// can't cancel fixed hypos
 	// NOTE: What implication does this have for "seed hypos" like twitter
@@ -935,7 +910,7 @@ bool CHypo::cancelCheck() {
 	if (m_vCorrelationData.size() > 0) {
 		// get the current time
 		double now = glassutil::CDate::now();
-		int cancelAge = m_pGlass->getCorrelationCancelAge();
+		int cancelAge = CGlass::getCorrelationCancelAge();
 
 		// check correlations
 		int expireCount = 0;
@@ -1046,14 +1021,9 @@ void CHypo::clear() {
 	m_dWebResolution = 0;
 
 	m_dAssociationDistanceCutoff = 0;
-	m_dDistanceCutoffFactor = 4.0;
-	m_dDistanceCutoffPercentage = 0.4;
-	m_dMinDistanceCutoff = 30.0;
 
 	m_bFixed = false;
-	m_bEventSent = false;
-
-	m_pGlass = NULL;
+	m_bEventGenerated = false;
 
 	m_pTravelTimeTables.reset();
 	m_pNucleationTravelTime1.reset();
@@ -1111,11 +1081,11 @@ void CHypo::clearPickReferences() {
 }
 
 // ---------------------------------------------------------generateEventMessage
-std::shared_ptr<json::Object> CHypo::generateEventMessage(bool send) {
+std::shared_ptr<json::Object> CHypo::generateEventMessage() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
-	m_bEventSent = true;
+	m_bEventGenerated = true;
 	m_iReportCount++;
 	std::shared_ptr<json::Object> event = std::make_shared<json::Object>(
 			json::Object());
@@ -1142,16 +1112,11 @@ std::shared_ptr<json::Object> CHypo::generateEventMessage(bool send) {
 			glassutil::log_level::debug,
 			"CHypo::event: Created event message:" + json::Serialize(*event));
 
-	// send it
-	if ((send == true) && (m_pGlass != NULL)) {
-		m_pGlass->send(event);
-	}
-
 	return (event);
 }
 
 // -------------------------------------------------------generateExpireMessage
-std::shared_ptr<json::Object> CHypo::generateExpireMessage(bool send) {
+std::shared_ptr<json::Object> CHypo::generateExpireMessage() {
 	std::shared_ptr<json::Object> expire = std::make_shared<json::Object>(
 			json::Object());
 	(*expire)["Cmd"] = "Expire";
@@ -1160,18 +1125,14 @@ std::shared_ptr<json::Object> CHypo::generateExpireMessage(bool send) {
 	// add a copy of the expiring hypo to the message
 	// if we CAN report
 	if (reportCheck() == true) {
-		std::shared_ptr<json::Object> expireHypo = generateHypoMessage(false);
+		std::shared_ptr<json::Object> expireHypo = generateHypoMessage();
 		(*expire)["Hypo"] = (*expireHypo);
 	}
+
 	// log it
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
 			"CHypo::event: Created expire message:" + json::Serialize(*expire));
-
-	// send message
-	if ((send == true) && (m_pGlass != NULL)) {
-		m_pGlass->send(expire);
-	}
 
 	return (expire);
 }
@@ -1400,29 +1361,19 @@ double CHypo::getAssociationDistanceCutoff() const {
 	return (m_dAssociationDistanceCutoff);
 }
 
-// ------------------------------------------------getDistanceCutoffFactor
-double CHypo::getDistanceCutoffFactor() const {
-	return (m_dDistanceCutoffFactor);
-}
-
-// ------------------------------------------------getMinDistanceCutoff
-double CHypo::getMinDistanceCutoff() const {
-	return (m_dMinDistanceCutoff);
-}
-
-// ------------------------------------------------getDistanceCutoffPercentage
-double CHypo::getDistanceCutoffPercentage() const {
-	return (m_dDistanceCutoffPercentage);
-}
-
 // ------------------------------------------------------------getProcessCount
 int CHypo::getProcessCount() const {
 	return (m_iProcessCount);
 }
 
 // ------------------------------------------------------------getEventSent
-bool CHypo::getEventSent() const {
-	return (m_bEventSent);
+bool CHypo::getEventGenerated() const {
+	return (m_bEventGenerated);
+}
+
+// ------------------------------------------------------------getHypoGenerated
+bool CHypo::getHypoGenerated() const {
+	return (m_bHypoGenerated);
 }
 
 // ------------------------------------------------------------getFixed
@@ -1441,12 +1392,6 @@ glassutil::CGeo CHypo::getGeo() const {
 	glassutil::CGeo geoHypo;
 	geoHypo.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
 	return (geoHypo);
-}
-
-// ------------------------------------------------------------getGlass
-const CGlass* CHypo::getGlass() const {
-	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
-	return (m_pGlass);
 }
 
 // ------------------------------------------------------------getKurtosisValue
@@ -1669,7 +1614,7 @@ void CHypo::graphicsOutput() {
 
 	// create and open file
 	std::ofstream outfile;
-	std::string filename = m_pGlass->getGraphicsOutFolder() + m_sID + ".txt";
+	std::string filename = CGlass::getGraphicsOutFolder() + m_sID + ".txt";
 	outfile.open(filename, std::ios::out);
 
 	// header
@@ -1685,17 +1630,17 @@ void CHypo::graphicsOutput() {
 
 	int npick = m_vPickData.size();
 	// for each step in the y axis
-	for (int y = -1 * m_pGlass->getGraphicsSteps();
-			y <= m_pGlass->getGraphicsSteps(); y++) {
+	for (int y = -1 * CGlass::getGraphicsSteps();
+			y <= CGlass::getGraphicsSteps(); y++) {
 		// compute lat
-		double xlat = m_dLatitude + (y * m_pGlass->getGraphicsStepKm()) / DEG2KM;
+		double xlat = m_dLatitude + (y * CGlass::getGraphicsStepKm()) / DEG2KM;
 
 		// for each step in the x axis
-		for (int x = -1 * m_pGlass->getGraphicsSteps();
-				x <= m_pGlass->getGraphicsSteps(); x++) {
+		for (int x = -1 * CGlass::getGraphicsSteps();
+				x <= CGlass::getGraphicsSteps(); x++) {
 			// compute lon
 			double xlon = m_dLongitude
-					+ cos(DEG2RAD * xlat) * (x * m_pGlass->getGraphicsStepKm())
+					+ cos(DEG2RAD * xlat) * (x * CGlass::getGraphicsStepKm())
 							/ DEG2KM;
 
 			// set up traveltimes
@@ -1780,14 +1725,11 @@ bool CHypo::hasPickReference(std::shared_ptr<CPick> pck) {
 }
 
 // ---------------------------------------------------------generateHypoMessage
-std::shared_ptr<json::Object> CHypo::generateHypoMessage(bool send) {
+std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 	std::shared_ptr<json::Object> hypo = std::make_shared<json::Object>(
 			json::Object());
 
 	// null check
-	if (m_pGlass == NULL) {
-		return (hypo);
-	}
 	if (m_pTravelTimeTables == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CHypo::Hypo: NULL pTTT.");
@@ -1946,9 +1888,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage(bool send) {
 	// add data array to object
 	(*hypo)["Data"] = data;
 
-	if ((send == true) && (m_pGlass != NULL)) {
-		m_pGlass->send(hypo);
-	}
+	m_bHypoGenerated = true;
 
 	// done
 	return (hypo);
@@ -2029,10 +1969,6 @@ bool CHypo::isLockedForProcessing() {
 // ---------------------------------------------------------localize
 double CHypo::localize() {
 	// Localize this hypo
-	// nullcheck
-	if (m_pGlass == NULL) {
-		return (0);
-	}
 	char sLog[1024];
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
@@ -2068,7 +2004,7 @@ double CHypo::localize() {
 			+ taper.Val(m_vPickData.size()) * .75 * m_dWebResolution) / 2.;
 
 	// This should be the default
-	if (m_pGlass->getMinimizeTTLocator() == false) {
+	if (CGlass::getMinimizeTTLocator() == false) {
 		if (npick < 50) {
 			annealingLocateBayes(5000, searchR, 1., searchR / 30.0, .1);
 		} else if (npick < 150 && (npick % 10) == 0) {
@@ -2115,11 +2051,6 @@ double CHypo::localize() {
 
 // ---------------------------------------------------------pruneData
 bool CHypo::pruneData() {
-	// nullcheck
-	if (m_pGlass == NULL) {
-		return (false);
-	}
-
 	char sLog[1024];
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
@@ -2133,7 +2064,7 @@ bool CHypo::pruneData() {
 	geo.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM);
 
 	// get the standard deviation allowed for pruning
-	double sdprune = m_pGlass->getPruningSDCutoff();
+	double sdprune = CGlass::getPruningSDCutoff();
 
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
@@ -2191,8 +2122,8 @@ bool CHypo::pruneData() {
 	std::vector<std::shared_ptr<CCorrelation>> vcremove;
 
 	// get the correlation windows
-	double tWindow = m_pGlass->getCorrelationMatchingTimeWindow();
-	double xWindow = m_pGlass->getCorrelationMatchingDistanceWindow();
+	double tWindow = CGlass::getCorrelationMatchingTimeWindow();
+	double xWindow = CGlass::getCorrelationMatchingDistanceWindow();
 
 	// for each correlation in this hypo
 	for (auto cor : m_vCorrelationData) {
@@ -2291,11 +2222,6 @@ void CHypo::removePickReference(std::shared_ptr<CPick> pck) {
 
 // ---------------------------------------------------------reportCheck
 bool CHypo::reportCheck() {
-	// nullcheck
-	if (m_pGlass == NULL) {
-		return (false);
-	}
-
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -2307,7 +2233,7 @@ bool CHypo::reportCheck() {
 				dt.dateTime().c_str(), getLatitude(), getLongitude(),
 				getDepth(), static_cast<int>(m_vPickData.size()));
 
-	int nReportCut = m_pGlass->getReportingDataThreshold();
+	int nReportCut = CGlass::getReportingDataThreshold();
 
 	// check data count
 	if ((m_vPickData.size() + m_vCorrelationData.size()) < nReportCut) {
@@ -2327,7 +2253,7 @@ bool CHypo::reportCheck() {
 	// rms check? other checks?
 
 	// baysian threshold check
-	double dReportThresh = m_pGlass->getReportingStackThreshold();
+	double dReportThresh = CGlass::getReportingStackThreshold();
 	if (m_dBayesValue < dReportThresh) {
 		// failure
 		snprintf(
@@ -2348,10 +2274,7 @@ bool CHypo::reportCheck() {
 // ---------------------------------------------------------resolveData
 bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
 	// nullchecks
-	if (m_pGlass == NULL) {
-		return (false);
-	}
-	if (m_pGlass->getHypoList() == NULL) {
+	if (CGlass::getHypoList() == NULL) {
 		return (false);
 	}
 
@@ -2423,10 +2346,10 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
 			// just stealing it back, which is why we do it here
 			// NOTE: why add it at all? we're gonna locate before we finish
 			// is it to see if we can get more next time
-			m_pGlass->getHypoList()->addHypoToProcess(hyp);
+			CGlass::getHypoList()->addHypoToProcess(hyp);
 
 			// add the original hypo the pick was linked to the processing queue
-			m_pGlass->getHypoList()->addHypoToProcess(pickHyp);
+			CGlass::getHypoList()->addHypoToProcess(pickHyp);
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;
@@ -2501,10 +2424,10 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
 			// NOTE: this puts provided hypo before original hypo in FIFO,
 			// we want this hypo to keep this pick, rather than the original
 			// just stealing it back, which is why we do it here
-			m_pGlass->getHypoList()->addHypoToProcess(hyp);
+			CGlass::getHypoList()->addHypoToProcess(hyp);
 
 			// add the original hypo the pick was linked to the processing queue
-			m_pGlass->getHypoList()->addHypoToProcess(corrHyp);
+			CGlass::getHypoList()->addHypoToProcess(corrHyp);
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;
@@ -2602,12 +2525,12 @@ void CHypo::calculateStatistics() {
 	// configurable via glass_init.
 	// In the long term, he wants to replace this with a more statistics
 	// based algorithm
-	int icut = static_cast<int>((m_dDistanceCutoffPercentage * ndis));
-	m_dAssociationDistanceCutoff = m_dDistanceCutoffFactor * dis[icut];
+	int icut = static_cast<int>((CGlass::getDistanceCutoffPercentage() * ndis));
+	m_dAssociationDistanceCutoff = CGlass::getDistanceCutoffFactor() * dis[icut];
 
 	// make sure our calculated dCut is not below the minimum allowed
-	if (m_dAssociationDistanceCutoff < getMinDistanceCutoff()) {
-		m_dAssociationDistanceCutoff = getMinDistanceCutoff();
+	if (m_dAssociationDistanceCutoff < CGlass::getMinDistanceCutoff()) {
+		m_dAssociationDistanceCutoff = CGlass::getMinDistanceCutoff();
 	}
 
 	// sort the azimuths
@@ -2671,21 +2594,6 @@ void CHypo::setNucleationDataThreshold(int cut) {
 	m_iNucleationDataThreshold = cut;
 }
 
-// ---------------------------------------------------setDistanceCutoffFactor
-void CHypo::setDistanceCutoffFactor(double cutFactor) {
-	m_dDistanceCutoffFactor = cutFactor;
-}
-
-// ---------------------------------------------------setMinDistanceCutoff
-void CHypo::setMinDistanceCutoff(double cutMin) {
-	m_dMinDistanceCutoff = cutMin;
-}
-
-// --------------------------------------------------setDistanceCutoffPercentage
-void CHypo::setDistanceCutoffPercentage(double cutPercentage) {
-	m_dDistanceCutoffPercentage = cutPercentage;
-}
-
 // --------------------------------------------------setCorrelationAdded
 void CHypo::setCorrelationAdded(bool corrAdded) {
 	m_bCorrelationAdded = corrAdded;
@@ -2694,11 +2602,6 @@ void CHypo::setCorrelationAdded(bool corrAdded) {
 // --------------------------------------------------setFixed
 void CHypo::setFixed(bool fixed) {
 	m_bFixed = fixed;
-}
-
-// --------------------------------------------------setGlass
-void CHypo::setGlass(CGlass* glass) {
-	m_pGlass = glass;
 }
 
 // --------------------------------------------------setLatitude

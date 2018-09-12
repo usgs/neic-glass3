@@ -38,11 +38,6 @@ class CDetection {
 	~CDetection();
 
 	/**
-	 * \brief CDetection clear function
-	 */
-	void clear();
-
-	/**
 	 * \brief CDetection communication receiving function
 	 *
 	 * The function used by CDetection to receive communication (such as
@@ -74,25 +69,7 @@ class CDetection {
 	bool processDetectionMessage(
 			std::shared_ptr<json::Object> detectionMessage);
 
-	/**
-	 * \brief Get the CGlass pointer used by this class for configuration lookups
-	 * \return Return a pointer to the CGlass class used by this class
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief Set the CGlass pointer used by this class for configuration lookups
-	 * \param glass - a pointer to the CGlass class used by this class
-	 */
-	void setGlass(CGlass* glass);
-
  private:
-	/**
-	 * \brief A pointer to the parent CGlass class, used to get configuration
-	 * values and access other parts of glass3
-	 */
-	CGlass * m_pGlass;
-
 	/**
 	 * \brief A recursive_mutex to control threading access to CDetection.
 	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it

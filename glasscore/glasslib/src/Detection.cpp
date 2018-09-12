@@ -20,18 +20,10 @@ namespace glasscore {
 
 // ---------------------------------------------------------CDetection
 CDetection::CDetection() {
-	clear();
 }
 
 // ---------------------------------------------------------~CDetection
 CDetection::~CDetection() {
-	clear();
-}
-
-// ---------------------------------------------------------clear
-void CDetection::clear() {
-	std::lock_guard<std::recursive_mutex> detectionGuard(m_DetectionMutex);
-	m_pGlass = NULL;
 }
 
 // ---------------------------------------------------------Dispatch
@@ -67,12 +59,6 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
 				"CDetection::process: NULL json communication.");
-		return (false);
-	}
-	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CDetection::process: NULL pGlass.");
-
 		return (false);
 	}
 
@@ -167,8 +153,7 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 	bool match = false;
 
 	// search for the first hypocenter in the window
-	// std::shared_ptr<CHypo> hypo = m_pGlass->getHypoList()->findHypo(t1, t2);
-	std::vector<std::weak_ptr<CHypo>> hypos = m_pGlass->getHypoList()->getHypos(
+	std::vector<std::weak_ptr<CHypo>> hypos = CGlass::getHypoList()->getHypos(
 			t1, t2);
 
 	// check to see if we found a hypo
@@ -196,7 +181,7 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 	if (match == true) {
 		// existing hypo, now hwat?
 		// schedule hypo for processing?
-		m_pGlass->getHypoList()->addHypoToProcess(hypo);
+		CGlass::getHypoList()->addHypoToProcess(hypo);
 	} else {
 		// detections don't have a second travel time
 		std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -204,36 +189,23 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 		// create new hypo
 		hypo = std::make_shared<CHypo>(
 				lat, lon, z, torg, glassutil::CPid::pid(), "Detection", 0.0,
-				0.0, 0, m_pGlass->getDefaultNucleationTravelTime(), nullTrav,
-				m_pGlass->getAssociationTravelTimes());
+				0.0, 0, CGlass::getDefaultNucleationTravelTime(), nullTrav,
+				CGlass::getAssociationTravelTimes());
 
-		// set hypo glass pointer and such
-		hypo->setGlass(m_pGlass);
-		hypo->setDistanceCutoffFactor(m_pGlass->getDistanceCutoffFactor());
-		hypo->setDistanceCutoffPercentage(
-				m_pGlass->getDistanceCutoffPercentage());
-		hypo->setMinDistanceCutoff(m_pGlass->getMinDistanceCutoff());
+		// set thresholds
+		hypo->setNucleationDataThreshold(
+				CGlass::getNucleationDataThreshold());
+		hypo->setNucleationStackThreshold(
+				CGlass::getNucleationStackThreshold());
 
 		// process hypo using evolve
-		if (m_pGlass->getHypoList()->processHypo(hypo)) {
+		if (CGlass::getHypoList()->processHypo(hypo)) {
 			// add to hypo list
-			m_pGlass->getHypoList()->addHypo(hypo);
+			CGlass::getHypoList()->addHypo(hypo);
 		}
 	}
 
 	// done
 	return (true);
-}
-
-// ---------------------------------------------------------getGlass
-const CGlass* CDetection::getGlass() const {
-	std::lock_guard<std::recursive_mutex> detectionGuard(m_DetectionMutex);
-	return (m_pGlass);
-}
-
-// ---------------------------------------------------------setGlass
-void CDetection::setGlass(CGlass* glass) {
-	std::lock_guard<std::recursive_mutex> detectionGuard(m_DetectionMutex);
-	m_pGlass = glass;
 }
 }  // namespace glasscore

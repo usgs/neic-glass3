@@ -220,7 +220,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \param hyp - a shared_ptr to the CHypo to start the merge process with
 	 * \return Returns true if hypos were merged, false otherwise
 	 */
-	bool mergeCloseHypos(std::shared_ptr<CHypo> hyp);
+	bool findAndMergeMatchingHypos(std::shared_ptr<CHypo> hyp);
 
 	/**
 	 * \brief Add hypo to processing queue
@@ -284,20 +284,6 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	bool resolveData(std::shared_ptr<CHypo> hypo);
 
 	/**
-	 * \brief Get the CGlass pointer used by this hypo list for global constants
-	 * and configuration lookups
-	 * \return Return a pointer to the CGlass class used by this hypo list
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief Set the CGlass pointer used by this hypo list for global constants
-	 * and configuration lookups
-	 * \param glass - a pointer to the CGlass class used by this hypo list
-	 */
-	void setGlass(CGlass* glass);
-
-	/**
 	 * \brief Set the maximum number of hypos that this list will support
 	 * \param hypoMax - an integer containing the  maximum number of hypos that
 	 * this list will support
@@ -335,12 +321,6 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \param hyp - A shared_ptr to the hypo to be remvoed
 	 */
 	void eraseFromMultiset(std::shared_ptr<CHypo> hyp);
-
-	/**
-	 * \brief A pointer to the parent CGlass class, used to get configuration
-	 * values and access other parts of glass3
-	 */
-	CGlass * m_pGlass;
 
 	/**
 	 * \brief An integer containing the total number of hypocenters

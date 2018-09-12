@@ -106,12 +106,9 @@ TEST(HypoTest, Construction) {
 	ASSERT_NEAR(0, testHypo->getDistanceSD(), 0.0001)<< "dSig is zero";
 	ASSERT_NEAR(0, testHypo->getKurtosisValue(), 0.0001)<< "dKrt is zero";
 	ASSERT_FALSE(testHypo->getFixed())<< "bFixed is false";
-	ASSERT_FALSE(testHypo->getEventSent())<< "bEvent is false";
+	ASSERT_FALSE(testHypo->getEventGenerated())<< "bEvent is false";
 
 	ASSERT_EQ(0, testHypo->getPickDataSize())<< "vPick size is zero";
-
-	// pointers
-	ASSERT_TRUE(testHypo->getGlass() == NULL)<< "pGlass null";
 
 	// now init
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;

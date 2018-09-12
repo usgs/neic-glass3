@@ -7,6 +7,7 @@
 #include "HypoList.h"
 #include "Pick.h"
 #include "Logit.h"
+#include "Glass.h"
 
 #define TESTHYPOID "3"
 
@@ -37,9 +38,6 @@ TEST(HypoListTest, Construction) {
 	// lists
 	ASSERT_EQ(0, testHypoList->size())<< "vHypo.size() is 0";
 	ASSERT_EQ(0, testHypoList->getHyposToProcessSize())<< "qFifo.size() is 0";
-
-	// pointers
-	ASSERT_EQ(NULL, testHypoList->getGlass())<< "pGlass null";
 }
 
 // test various hypo operations
@@ -84,6 +82,7 @@ TEST(HypoListTest, HypoOperations) {
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
 
 	testHypoList->setHypoMax(MAXNHYPO);
+	glasscore::CGlass::setMaxNumHypos(-1);
 
 	// test adding hypos by addHypo
 	testHypoList->addHypo(hypo1, false);
