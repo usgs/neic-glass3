@@ -11,6 +11,7 @@
 
 #include <json.h>
 #include <vector>
+#include <list>
 #include <queue>
 #include <map>
 #include <set>
@@ -168,11 +169,11 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	bool processHypo(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Get the current size of the hypocenter processing queue
-	 * \return Returns an integer value containing the current size of the
+	 * \brief Get the current length of the hypocenter processing queue
+	 * \return Returns an integer value containing the current length of the
 	 * processing queue
 	 */
-	int getHyposToProcessSize();
+	int getHypoProcessingQueueLength();
 
 	/**
 	 * \brief Get list of CHypos in given time range
@@ -191,14 +192,14 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \return Returns an integer containing the maximum number of hypocenters
 	 * this list will hold
 	 */
-	int getHypoMax() const;
+	int getMaxAllowableHypoCount() const;
 
 	/**
 	 * \brief Get the total number of hypos processed by this list
 	 * \return Return an integer containing the total number of hypos processed
 	 * by this list
 	 */
-	int getHypoTotal() const;
+	int getCountOfTotalHyposProcessed() const;
 
 	/**
 	 * \brief Get the current number of hypos contained in this list
@@ -222,25 +223,25 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	bool findAndMergeMatchingHypos(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Add hypo to processing queue
+	 * \brief Append hypo to processing queue
 	 *
-	 * Add the given hypocenter to the processing queue if it is not already in
-	 * the queue.
+	 * Append the given hypocenter to the processing queue if it is not already
+	 * in the queue.
 	 *
 	 * \param hyp - A std::shared_ptr to the hypocenter to add
 	 * \return Returns the current size of the processing queue
 	 */
-	int addHypoToProcess(std::shared_ptr<CHypo> hyp);
+	int appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Get hypo from processing queue
+	 * \brief Get first hypo from processing queue
 	 *
 	 * Get the first valid hypocenter from the processing queue.
 	 *
 	 * \return Returns a std::shared_ptr to the hypocenter retrieved
 	 * from the queue.
 	 */
-	std::shared_ptr<CHypo> getHypoToProcess();
+	std::shared_ptr<CHypo> getNextHypoFromProcessingQueue();
 
 	/**
 	 * \brief Remove hypo from list
@@ -287,7 +288,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \param hypoMax - an integer containing the  maximum number of hypos that
 	 * this list will support
 	 */
-	void setHypoMax(int hypoMax);
+	void setMaxAllowableHypoCount(int hypoMax);
 
 	/**
 	 * \brief Hypolist work function
@@ -322,23 +323,23 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	void eraseFromMultiset(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief An integer containing the total number of hypocenters
-	 * ever added to CHypoList
-	 */
-	std::atomic<int> m_iHypoTotal;
-
-	/**
 	 * \brief An integer containing the maximum number of hypocenters stored by
 	 * CHypoList
 	 */
-	std::atomic<int> m_iHypoMax;
+	std::atomic<int> m_iMaxAllowableHypoCount;
 
 	/**
-	 * \brief A std::vector of weak_ptrs to the hypocenters that need to be
-	 * processed. This vector is managed in a way to make it act as a FIFO
+	 * \brief An integer containing the total number of hypocenters
+	 * ever added to CHypoList
+	 */
+	std::atomic<int> m_iCountOfTotalHyposProcessed;
+
+	/**
+	 * \brief A std::list of weak_ptrs to the hypocenters that need to be
+	 * processed. This list is managed in a way to make it act as a FIFO
 	 * queue
 	 */
-	std::vector<std::weak_ptr<CHypo>> m_vHyposToProcess;
+	std::list<std::weak_ptr<CHypo>> m_lHypoProcessingQueue;
 
 	/**
 	 * \brief the std::mutex for accessing m_vHyposToProcess

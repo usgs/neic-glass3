@@ -199,7 +199,9 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 
 	/**
 	 * \brief Set the maximum hours between requesting site information from
-	 * outside glasscore, a -1 disables this process
+	 * outside glasscore, a -1 disables this process. If enabled, glass will
+	 * always re-request the coordinates and properties of this station every
+	 * hoursBeforeLookingUp hours, regardless if the site is currently known.
 	 * \param hoursBeforeLookingUp - an integer containing the maximum hours
 	 * between requesting site information
 	 */

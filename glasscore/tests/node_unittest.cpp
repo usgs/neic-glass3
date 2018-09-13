@@ -53,7 +53,7 @@ TEST(NodeTest, Construction) {
 
 	// site list
 	int expectedSize = 0;
-	ASSERT_EQ(expectedSize, testNode->count())<< "sitelist empty";
+	ASSERT_EQ(expectedSize, testNode->getSiteLinksCount())<< "sitelist empty";
 }
 
 // tests to see if sites can be added to the node
@@ -84,12 +84,12 @@ TEST(NodeTest, SiteOperations) {
 
 	// check to see if the site was added
 	int expectedSize = 1;
-	ASSERT_EQ(expectedSize, testNode->count())<< "node has one site";
+	ASSERT_EQ(expectedSize, testNode->getSiteLinksCount())<< "node has one site";
 
 	// test clearing the node site links
 	testNode->clearSiteLinks();
 
 	// check to see if the site list was cleared
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testNode->count())<< "sitelist cleared";
+	ASSERT_EQ(expectedSize, testNode->getSiteLinksCount())<< "sitelist cleared";
 }

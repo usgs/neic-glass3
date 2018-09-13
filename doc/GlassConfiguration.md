@@ -33,7 +33,9 @@ An example `glass_init.d` configuration file:
       "HypocenterTimeWindow": 30.0,
       "HypocenterDistanceWindow": 3.0,      
       "ReportingStackThreshold": 0.5,
-      "ReportingDataThreshold": 5
+      "ReportingDataThreshold": 5,
+      "EventFragmentDepthThreshold": 550.0,
+      "EventFragmentAzimuthThreshold": 270.0      
   },
   "DefaultNucleationPhase": {
       "PhaseName": "P",
@@ -129,17 +131,21 @@ detection grid (Web).
 data must exceed for a nucleation to be declared. This threshold is also used to
 cancel a previously nucleated hypocenter. This value can be overridden in a
 detection grid (Web).
-* **AssociationStandardDeviationCutoff** - The standard deviation cutoff used for
-associating a pick with a hypocenter.
-* **PruningStandardDeviationCutoff** - The standard deviation cutoff used for
-pruning a pick from a hypocenter.
+* **AssociationStandardDeviationCutoff** - The cutoff threshold in terms of number
+of standard deviations for associating data (eg. Picks) with a hypocenter. The
+standard deviation is fixed to 1.
+* **PruningStandardDeviationCutoff** - The cutoff threshold in terms of number
+of standard deviations for pruning data (eg. Picks) from a hypocenter. The
+standard deviation is fixed to 1.
 * **PickAffinityExponentialFactor** - The exponential factor used when calculating the affinity of
 a pick with a hypocenter. **This value has little effect and likely does not need
 to be changed.**
-* **DistanceCutoffFactor** - The distance factor used in calculating a hypocenter's
-association distance cutoff.
-* **DistanceCutoffPercentage** - The percentage used to calculate a hypocenter's
-association distance cutoff.
+* **DistanceCutoffFactor** - The factor, used with the distance cutoff ratio to
+calculate a hypocenter's association distance cutoff, i.e the distance beyond
+which data (eg. Picks) will not be associated.
+* **DistanceCutoffRatio** - The ratio, used with the distance cutoff factor to
+calculate a hypocenter's association distance cutoff, i.e the distance beyond
+which data (eg. Picks) will not be associated.
 * **DistanceCutoffMinimum** - The hypocenter's minimum association distance cutoff.
 * **HypoProcessCountLimit** - The maximum number of processing cycles a hypocenter can run
 without having new data associated.
@@ -158,6 +164,10 @@ mergeable hypocenters in degrees.
 hypocenter. Defaults to **NucleationStackThreshold**.
 * **ReportingDataThreshold** The default number of data that need to be associated to report
 a hypocenter. Defaults to **NucleationDataThreshold**.
+* **EventFragmentDepthThreshold** The depth threshold for declaring a hypo an
+event fragment, in combination with  **EventFragmentAzimuthThreshold**.
+* **EventFragmentAzimuthThreshold** The azimuth threshold for declaring a hypo an
+event fragment, in combination with **EventFragmentDepthThreshold**.
 
 ### DefaultNucleationPhase
 This parameter defines the default nucleation phase for glass. This value can be
@@ -211,8 +221,9 @@ a grid, a station must have one of the given SCNL codes to be used in the grid
 * **UseOnlyTeleseismicStations** - A flag indicating that the grid should only
 use stations flagged as "UseForTeleseismic" in the station list, generally used
 only in global grids.
-* **DepthLayers** - The list of depth layers for a grid
-* **NodeResolution** - The desired inter-node resolution (or spacing) for a grid.
+* **DepthLayers** - The list of depth layers for a grid in kilometers
+* **NodeResolution** - The desired inter-node resolution (or spacing) for a grid
+in kilometers.
 * **SaveGrid** - A flag indicating whether to save the grid node locations to a
 file for evaluation.
 * **UpdateGrid** - A flag indicating whether a grid is allowed to add or remove sites

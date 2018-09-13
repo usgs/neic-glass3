@@ -33,11 +33,11 @@ TEST(HypoListTest, Construction) {
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
 
 	// assert default values
-	ASSERT_EQ(0, testHypoList->getHypoTotal())<< "nHypoTotal is 0";
+	ASSERT_EQ(0, testHypoList->getCountOfTotalHyposProcessed())<< "nHypoTotal is 0";
 
 	// lists
 	ASSERT_EQ(0, testHypoList->length())<< "vHypo.size() is 0";
-	ASSERT_EQ(0, testHypoList->getHyposToProcessSize())<< "qFifo.size() is 0";
+	ASSERT_EQ(0, testHypoList->getHypoProcessingQueueLength())<< "qFifo.size() is 0";
 }
 
 // test various hypo operations
@@ -81,14 +81,14 @@ TEST(HypoListTest, HypoOperations) {
 	// construct a hypolist
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
 
-	testHypoList->setHypoMax(MAXNHYPO);
+	testHypoList->setMaxAllowableHypoCount(MAXNHYPO);
 	glasscore::CGlass::setMaxNumHypos(-1);
 
 	// test adding hypos by addHypo
 	testHypoList->addHypo(hypo1, false);
 	testHypoList->addHypo(hypo2, false);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testHypoList->getHypoTotal())<< "Added Hypos";
+	ASSERT_EQ(expectedSize, testHypoList->getCountOfTotalHyposProcessed())<< "Added Hypos";
 
 	// add more hypos
 	testHypoList->addHypo(hypo3);
@@ -127,5 +127,5 @@ TEST(HypoListTest, HypoOperations) {
 	// test clearing hypos
 	testHypoList->clear();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testHypoList->getHypoTotal())<< "Cleared Hypos";
+	ASSERT_EQ(expectedSize, (int)testHypoList->getCountOfTotalHyposProcessed())<< "Cleared Hypos";
 }

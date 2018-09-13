@@ -63,7 +63,8 @@ class CSite {
 	 * \brief CSite advanced constructor
 	 *
 	 * An advanced constructor for the CSite class. This function
-	 * initializes members to the provided values.
+	 * initializes members to the provided SCNL, Lat/Lon/elv, qual, and
+	 * use-flags values
 	 *
 	 * \param sta - A string containing the station name for this site.
 	 * \param comp - A string containing the component code for this site.

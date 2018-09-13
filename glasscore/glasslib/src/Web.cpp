@@ -1430,7 +1430,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		double maxDistance = RAD2DEG * geo.delta(&furthestSite->getGeo());
 
 		// Ignore if new site is farther than last linked site
-		if ((node->count() >= m_iNumStationsPerNode)
+		if ((node->getSiteLinksCount() >= m_iNumStationsPerNode)
 				&& (newDistance > maxDistance)) {
 			node->setEnabled(true);
 			continue;
@@ -1459,7 +1459,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		}
 
 		// check to see if we're at the limit
-		if (node->count() < m_iNumStationsPerNode) {
+		if (node->getSiteLinksCount() < m_iNumStationsPerNode) {
 			// Link node to site using traveltimes
 			node->linkSite(site, node, travelTime1, travelTime2);
 
@@ -1776,13 +1776,13 @@ const std::string& CWeb::getName() const {
 
 // -----------------------------------------------------getNucleationTravelTime1
 const std::shared_ptr<traveltime::CTravelTime>& CWeb::getNucleationTravelTime1() const {  // NOLINT
-	std::lock_guard<std::mutex> webGuard(m_TravelTimeMutex);
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 	return (m_pNucleationTravelTime1);
 }
 
 // -----------------------------------------------------getNucleationTravelTime2
 const std::shared_ptr<traveltime::CTravelTime>& CWeb::getNucleationTravelTime2() const {  // NOLINT
-	std::lock_guard<std::mutex> webGuard(m_TravelTimeMutex);
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 	return (m_pNucleationTravelTime2);
 }
 

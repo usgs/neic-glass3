@@ -1113,7 +1113,13 @@ class CHypo {
 
 	/**
 	 * \brief An int64_t value containing this hypo's sort time in julian
-	 * seconds
+	 * seconds, this is a cached copy of tOrigin as an integer that is
+	 * guaranteed to not change during the lifetime of the Hypo in a HypoList's
+	 * internal multiset, ensuring that sort order won't change, even when
+	 * tOrigin changes because of a relocation. Resorting is accomplished by
+	 * removing the hypo from the internal multiset (NOT the HypoList), updating
+	 * tSort to equal the current tOrigin, and then reinserting the hypo into
+	 * the internal multiset. /see HypoList.
 	 */
 	std::atomic<int64_t> m_tSort;
 

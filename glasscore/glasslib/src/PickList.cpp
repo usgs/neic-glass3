@@ -56,8 +56,8 @@ void CPickList::clear() {
 	m_PicksToProcessMutex.unlock();
 
 	// reset nPick
-	m_iPickTotal = 0;
-	m_iPickMax = 10000;
+	m_iCountOfTotalPicksProcessed = 0;
+	m_iMaxAllowablePickCount = 10000;
 }
 
 // -------------------------------------------------------receiveExternalMessage
@@ -180,19 +180,19 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// create new shared pointer to this pick
 	std::shared_ptr<CPick> pck(newPick);
 
-	m_iPickTotal++;
+	m_iCountOfTotalPicksProcessed++;
 
 	// get maximum number of picks
 	// use max picks from pGlass if we have it
 	if (CGlass::getMaxNumPicks() > 0) {
-		m_iPickMax = CGlass::getMaxNumPicks();
+		m_iMaxAllowablePickCount = CGlass::getMaxNumPicks();
 	}
 
 	// lock while we're modifying the multiset
 	m_PickListMutex.lock();
 
 	// check to see if we're at the pick limit
-	if (m_msPickList.size() == m_iPickMax) {
+	if (m_msPickList.size() == m_iMaxAllowablePickCount) {
 		std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator oldest =
 				m_msPickList.begin();
 
@@ -454,7 +454,7 @@ glass3::util::WorkState CPickList::work() {
 	}
 
 	// check to see that we've not run to far ahead of the hypo processing
-	if (CGlass::getHypoList()->getHyposToProcessSize()
+	if (CGlass::getHypoList()->getHypoProcessingQueueLength()
 			> (CGlass::getHypoList()->getNumThreads() * MAX_QUEUE_FACTOR)) {
 		glassutil::CLogit::log(glassutil::log_level::debug,
 								"CPickList::work. Delaying work due to "
@@ -513,18 +513,18 @@ void CPickList::setSiteList(CSiteList* siteList) {
 }
 
 // ---------------------------------------------------------getPickMax
-int CPickList::getPickMax() const {
-	return (m_iPickMax);
+int CPickList::getMaxAllowablePickCount() const {
+	return (m_iMaxAllowablePickCount);
 }
 
 // ---------------------------------------------------------setPickMax
-void CPickList::setPickMax(int picknMax) {
-	m_iPickMax = picknMax;
+void CPickList::setMaxAllowablePickCount(int picknMax) {
+	m_iMaxAllowablePickCount = picknMax;
 }
 
 // ---------------------------------------------------------getPickTotal
-int CPickList::getPickTotal() const {
-	return (m_iPickTotal);
+int CPickList::getCountOfTotalPicksProcessed() const {
+	return (m_iCountOfTotalPicksProcessed);
 }
 
 // ---------------------------------------------------------size

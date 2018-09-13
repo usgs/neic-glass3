@@ -63,7 +63,8 @@ std::atomic<int> CGlass::m_iReportingDataThreshold { 0 };
 std::atomic<double> CGlass::m_dReportingStackThreshold { 2.5 };
 std::atomic<double> CGlass::m_dHypoMergingTimeWindow { 30.0 };
 std::atomic<double> CGlass::m_dHypoMergingDistanceWindow { 3.0 };
-
+std::atomic<double> CGlass::m_dEventFragmentDepthThreshold { 550.0 };
+std::atomic<double> CGlass::m_dEventFragmentAzimuthThreshold { 270.0 };
 std::mutex CGlass::m_TTTMutex;
 
 // ---------------------------------------------------------CGlass
@@ -202,6 +203,8 @@ void CGlass::clear() {
 	m_dReportingStackThreshold = 2.5;
 	m_dHypoMergingTimeWindow = 30.0;
 	m_dHypoMergingDistanceWindow = 3.0;
+	m_dEventFragmentDepthThreshold = 550.0;
+	m_dEventFragmentAzimuthThreshold = 270.0;
 }
 
 // ---------------------------------------------------------Initialize
@@ -613,8 +616,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		if ((params.HasKey("DistanceCutoffRatio"))
 				&& (params["DistanceCutoffRatio"].GetType()
 						== json::ValueType::DoubleVal)) {
-			m_dDistanceCutoffRatio = params["DistanceCutoffRatio"]
-					.ToDouble();
+			m_dDistanceCutoffRatio = params["DistanceCutoffRatio"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
@@ -773,6 +775,44 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 					"CGlass::initialize: Using default "
 							"BeamMatchingAzimuthWindow: "
 							+ std::to_string(m_dBeamMatchingAzimuthWindow));
+		}
+
+		// EventFragmentDepthThreshold
+		if ((params.HasKey("EventFragmentDepthThreshold"))
+				&& (params["EventFragmentDepthThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dEventFragmentDepthThreshold =
+					params["EventFragmentDepthThreshold"].ToDouble();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using EventFragmentDepthThreshold: "
+							+ std::to_string(m_dEventFragmentDepthThreshold));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using default "
+							"EventFragmentDepthThreshold: "
+							+ std::to_string(m_dEventFragmentDepthThreshold));
+		}
+
+		// EventFragmentAzimuthThreshold
+		if ((params.HasKey("EventFragmentAzimuthThreshold"))
+				&& (params["EventFragmentAzimuthThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dEventFragmentAzimuthThreshold =
+					params["EventFragmentAzimuthThreshold"].ToDouble();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using EventFragmentAzimuthThreshold: "
+							+ std::to_string(m_dEventFragmentAzimuthThreshold));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using default "
+							"EventFragmentAzimuthThreshold: "
+							+ std::to_string(m_dEventFragmentAzimuthThreshold));
 		}
 
 		/*
@@ -1210,7 +1250,7 @@ int CGlass::getNucleationDataThreshold() {
 }
 
 // ------------------------------------------------getReportingDataThreshold
-double CGlass::getReportingDataThreshold() {
+int CGlass::getReportingDataThreshold() {
 	return (m_iReportingDataThreshold);
 }
 
@@ -1252,6 +1292,16 @@ int CGlass::getMaxNumHypos() {
 // ------------------------------------------------setMaxNumHypos
 void CGlass::setMaxNumHypos(int max) {
 	m_iMaxNumHypos = max;
+}
+
+// ----------------------------------------------getEventFragmentDepthThreshold
+double CGlass::getEventFragmentDepthThreshold() {
+	return (m_dEventFragmentDepthThreshold);
+}
+
+// ---------------------------------------------getEventFragmentAzimuthThreshold
+double CGlass::getEventFragmentAzimuthThreshold() {
+	return (m_dEventFragmentAzimuthThreshold);
 }
 
 // ------------------------------------------------getCorrelationList

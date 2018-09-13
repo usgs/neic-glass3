@@ -158,17 +158,6 @@ class CPick {
 	void removeHypoReference(std::string pid);
 
 	/**
-	 * \brief Remove hypo reference to this pick
-	 *
-	 * Remove any existing weak_ptr reference to a hypo from this pick,
-	 * breaking the graph database link between this pick and a hypocenter.
-	 *
-	 * Note that this pick may or may not still be included in other hypocenter
-	 * pick data lists.
-	 */
-	void clearHypoReference();
-
-	/**
 	 * \brief Attempt to nucleate new hypo based on the addition of this pick
 	 *
 	 * Attempt to nucleate a new hypo based on the addition of this pick. By
@@ -234,6 +223,18 @@ class CPick {
 	 * \return Return a double containing the pick arrival time
 	 */
 	double getTPick() const;
+
+ protected:
+	/**
+	 * \brief Remove hypo reference to this pick
+	 *
+	 * Remove any existing weak_ptr reference to a hypo from this pick,
+	 * breaking the graph database link between this pick and a hypocenter.
+	 *
+	 * Note that this pick may or may not still be included in other hypocenter
+	 * pick data lists.
+	 */
+	void clearHypoReference();
 
  private:
 	/**

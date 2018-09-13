@@ -362,7 +362,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		std::shared_ptr<CHypo> pickHyp = pick->getHypoReference();
 		if (pickHyp != NULL) {
 			if (pickHyp->getID() == getID()) {
-				pick->clearHypoReference();
+				pick->removeHypoReference(pickHyp->getID());
 			}
 		}
 
@@ -376,7 +376,8 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 
 // ---------------------------------------------------------annealingLocateBayes
 void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
-									double tStart, double tStop, bool nucleate) {
+									double tStart, double tStop,
+									bool nucleate) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -534,7 +535,8 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 
 // ------------------------------------------------------annealingLocateResidual
 void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
-									double tStart, double tStop, bool nucleate) {
+									double tStart, double tStop,
+									bool nucleate) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -989,14 +991,17 @@ bool CHypo::cancelCheck() {
 		return (true);
 	}
 
-	// Whispy (event fragment) check (does the quake have a gap greater than 270
-	// while being deeper than 550)
-	// NOTE: Hardcoded
-	if ((m_dDepth > 550.0) && (m_dGap > 270.0)) {
+	// Whispy (event fragment) check (does the quake have a gap greater than the
+	// azimuth threshold while being deeper than the depth threshold)
+	if ((m_dDepth > CGlass::getEventFragmentDepthThreshold())
+			&& (m_dGap > CGlass::getEventFragmentAzimuthThreshold())) {
 		// failure
-		snprintf(sLog, sizeof(sLog),
-					"CHypo::cancel: Whispie trap (%.1f>550, %.1f>270) Hypo: %s",
-					getDepth(), getGap(), sHypo);
+		snprintf(
+				sLog,
+				sizeof(sLog),
+				"CHypo::cancel: Event Fragment check (%.1f>%.1f, %.1f>%.1f) Hypo: %s",
+				getDepth(), CGlass::getEventFragmentDepthThreshold(), getGap(),
+				CGlass::getEventFragmentAzimuthThreshold(), sHypo);
 		glassutil::CLogit::log(sLog);
 
 		// this hypo can be canceled
@@ -1900,9 +1905,6 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 // ---------------------------------------------------incrementTotalProcessCount
 int CHypo::incrementTotalProcessCount() {
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
-
 	m_iTotalProcessCount++;
 
 	return (m_iTotalProcessCount);
@@ -1992,8 +1994,6 @@ double CHypo::localize() {
 	if (m_bFixed) {
 		return (m_dBayesValue);
 	}
-
-
 
 	// get the number of picks
 	int npick = m_vPickData.size();
@@ -2125,7 +2125,7 @@ bool CHypo::pruneData() {
 	int pruneCount = 0;
 	for (auto pck : vremove) {
 		pruneCount++;
-		pck->clearHypoReference();
+		pck->removeHypoReference(getID());
 		removePickReference(pck);
 	}
 
@@ -2371,10 +2371,10 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
 			// just stealing it back, which is why we do it here
 			// NOTE: why add it at all? we're gonna locate before we finish
 			// is it to see if we can get more next time
-			CGlass::getHypoList()->addHypoToProcess(hyp);
+			CGlass::getHypoList()->appendToHypoProcessingQueue(hyp);
 
 			// add the original hypo the pick was linked to the processing queue
-			CGlass::getHypoList()->addHypoToProcess(pickHyp);
+			CGlass::getHypoList()->appendToHypoProcessingQueue(pickHyp);
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;
@@ -2449,10 +2449,10 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
 			// NOTE: this puts provided hypo before original hypo in FIFO,
 			// we want this hypo to keep this pick, rather than the original
 			// just stealing it back, which is why we do it here
-			CGlass::getHypoList()->addHypoToProcess(hyp);
+			CGlass::getHypoList()->appendToHypoProcessingQueue(hyp);
 
 			// add the original hypo the pick was linked to the processing queue
-			CGlass::getHypoList()->addHypoToProcess(corrHyp);
+			CGlass::getHypoList()->appendToHypoProcessingQueue(corrHyp);
 
 			// we've made a change to the hypo (grabbed a pick)
 			bAss = true;
@@ -2542,7 +2542,8 @@ void CHypo::calculateStatistics() {
 	// In the long term, he wants to replace this with a more statistics
 	// based algorithm
 	int icut = static_cast<int>((CGlass::getDistanceCutoffRatio() * ndis));
-	m_dAssociationDistanceCutoff = CGlass::getDistanceCutoffFactor() * dis[icut];
+	m_dAssociationDistanceCutoff = CGlass::getDistanceCutoffFactor()
+			* dis[icut];
 
 	// make sure our calculated dCut is not below the minimum allowed
 	if (m_dAssociationDistanceCutoff < CGlass::getMinDistanceCutoff()) {

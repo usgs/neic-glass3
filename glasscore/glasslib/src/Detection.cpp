@@ -144,10 +144,9 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 	// Check to see if hypo already exists. We could also
 	// check location at this point, but it seems unlikely
 	// that would add much value
-	// define a three minute search window
-	// NOTE: Hard coded.
-	double t1 = torg - 90.0;
-	double t2 = torg + 90.0;
+	// use the merging time window
+	double t1 = torg - CGlass::getHypoMergingTimeWindow();
+	double t2 = torg + CGlass::getHypoMergingTimeWindow();
 
 	std::shared_ptr<CHypo> hypo = NULL;
 	bool match = false;
@@ -170,9 +169,8 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 								hypo->getDepth());
 			double delta = RAD2DEG * geo1.delta(&geo2);
 
-			// if the detection is more than 5 degrees away, it isn't a match
-			// NOTE: Hard coded.
-			if (delta < 5.0) {
+			// if the detection is beyond the merging window, it isn't a match
+			if (delta < CGlass::getHypoMergingDistanceWindow()) {
 				match = true;
 			}
 		}
@@ -181,7 +179,7 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 	if (match == true) {
 		// existing hypo, now hwat?
 		// schedule hypo for processing?
-		CGlass::getHypoList()->addHypoToProcess(hypo);
+		CGlass::getHypoList()->appendToHypoProcessingQueue(hypo);
 	} else {
 		// detections don't have a second travel time
 		std::shared_ptr<traveltime::CTravelTime> nullTrav;

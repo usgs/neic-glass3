@@ -173,13 +173,12 @@ class CNode {
 	double getBestSignificance(double tObservedTT, SiteLink link);
 
 	/**
-	 * \brief CNode get site function
+	 * \brief CNode site used function
 	 *
-	 * Given a site id, get the site if it is used by the node
+	 * Given a site id, check to see if the site is used by the node
 	 *
 	 * \param siteID - A string containing the id of the site to get
-	 * \return Returns a shared pointer to the CSite object if found, null
-	 * otherwise
+	 * \return Returns a boolean flag, true if the site is used, false otherwise
 	 */
 	std::shared_ptr<CSite> getSite(std::string siteID);
 
@@ -202,8 +201,9 @@ class CNode {
 
 	/**
 	 * \brief Generates a string that contains each site link, including the
-	 * siteID, latitude, longitude, and depth. This string is used when creating
-	 * web files.
+	 * siteID, latitude, longitude, and depth. This string is generated when
+	 * optionally creating web files that are used for tuning the web using
+	 * third party programs.
 	 * \return the sites string
 	 */
 	std::string getSitesString();
@@ -213,7 +213,7 @@ class CNode {
 	 * \return Returns an integer containing the count of sites linked to this
 	 * node
 	 */
-	int count() const;
+	int getSiteLinksCount() const;
 
 	/**
 	 * \brief Gets a flag indicating that the node is enabled for nucleation.

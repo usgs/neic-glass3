@@ -261,8 +261,8 @@ void CPick::clear() {
 	m_sPhaseName = "";
 	m_sID = "";
 	m_tPick = 0;
-	m_dBackAzimuth = -1;
-	m_dSlowness = -1;
+	m_dBackAzimuth = std::numeric_limits<double>::quiet_NaN();
+	m_dSlowness = std::numeric_limits<double>::quiet_NaN();
 }
 
 // ---------------------------------------------------------initialize

@@ -161,21 +161,21 @@ class CCorrelationList {
 	 * \return Return an integer containing the maximum allowed size of this
 	 * correlation list
 	 */
-	int getCorrelationMax() const;
+	int getMaxAllowableCorrelationCount() const;
 
 	/**
 	 * \brief Set the maximum allowed size of this correlation list
 	 * \param correlationMax -  an integer containing the maximum allowed size
 	 * of this correlation list
 	 */
-	void setCorrelationMax(int correlationMax);
+	void setMaxAllowableCorrelationCount(int correlationMax);
 
 	/**
 	 * \brief Get the total number of correlations processed by this list
 	 * \return Return an integer containing the total number of correlations
 	 * processed by this list
 	 */
-	int getCorrelationTotal() const;
+	int getCountOfTotalCorrelationsProcessed() const;
 
 	/**
 	 * \brief Get the current number of correlations contained in this list
@@ -212,13 +212,13 @@ class CCorrelationList {
 	 * CCorrelationList. This value is overridden by pGlass->getMaxNumCorrelations()
 	 * if provided. Defaults to 10000.
 	 */
-	std::atomic<int> m_iCorrelationMax;
+	std::atomic<int> m_iMaxAllowableCorrelationCount;
 
 	/**
 	 * \brief An integer containing the total number of correlations ever added
 	 * to CCorrelationList
 	 */
-	std::atomic<int> m_iCorrelationTotal;
+	std::atomic<int> m_iCountOfTotalCorrelationsProcessed;
 
 	/**
 	 * \brief A std::multiset containing each correlation in the list in sequential

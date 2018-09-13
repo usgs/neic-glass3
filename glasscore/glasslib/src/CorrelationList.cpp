@@ -42,8 +42,8 @@ void CCorrelationList::clear() {
 	m_msCorrelationList.clear();
 
 	// reset nCorrelation
-	m_iCorrelationTotal = 0;
-	m_iCorrelationMax = 10000;
+	m_iCountOfTotalCorrelationsProcessed = 0;
+	m_iMaxAllowableCorrelationCount = 10000;
 }
 
 // -------------------------------------------------------receiveExternalMessage
@@ -147,16 +147,16 @@ bool CCorrelationList::addCorrelationFromJSON(
 	// create new shared pointer to this correlation
 	std::shared_ptr<CCorrelation> corr(newCorrelation);
 
-	m_iCorrelationTotal++;
+	m_iCountOfTotalCorrelationsProcessed++;
 
 	// get maximum number of correlations
 	// use max correlations from CGlass if we have it
 	if (CGlass::getMaxNumCorrelations() > 0) {
-		m_iCorrelationMax = CGlass::getMaxNumCorrelations();
+		m_iMaxAllowableCorrelationCount = CGlass::getMaxNumCorrelations();
 	}
 
 	// check to see if we're at the correlation limit
-	while (m_msCorrelationList.size() >= m_iCorrelationMax) {
+	while (m_msCorrelationList.size() >= m_iMaxAllowableCorrelationCount) {
 		std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare>::iterator oldest =  // NOLINT
 				m_msCorrelationList.begin();
 
@@ -217,7 +217,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 			CGlass::getHypoList()->addHypo(hypo);
 
 			// schedule it for processing
-			CGlass::getHypoList()->addHypoToProcess(hypo);
+			CGlass::getHypoList()->appendToHypoProcessingQueue(hypo);
 		}
 	}
 
@@ -450,18 +450,18 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 }
 
 // ---------------------------------------------------------getCorrelationMax
-int CCorrelationList::getCorrelationMax() const {
-	return (m_iCorrelationMax);
+int CCorrelationList::getMaxAllowableCorrelationCount() const {
+	return (m_iMaxAllowableCorrelationCount);
 }
 
 // ---------------------------------------------------------setCorrelationMax
-void CCorrelationList::setCorrelationMax(int correlationMax) {
-	m_iCorrelationMax = correlationMax;
+void CCorrelationList::setMaxAllowableCorrelationCount(int correlationMax) {
+	m_iMaxAllowableCorrelationCount = correlationMax;
 }
 
 // ---------------------------------------------------------getCorrelationTotal
-int CCorrelationList::getCorrelationTotal() const {
-	return (m_iCorrelationTotal);
+int CCorrelationList::getCountOfTotalCorrelationsProcessed() const {
+	return (m_iCountOfTotalCorrelationsProcessed);
 }
 
 // ---------------------------------------------------------size

@@ -31,7 +31,8 @@ Associator::Associator(glass3::util::iInput* inputint,
 	m_MessageQueue = new glass3::util::Queue();
 
 	// hook up glass communication with Associator class
-	glasscore::CGlass::setExternalInterface(dynamic_cast<glasscore::IGlassSend *>(this));
+	glasscore::CGlass::setExternalInterface(
+			dynamic_cast<glasscore::IGlassSend *>(this));
 
 	setHealthCheckInterval(600);
 
@@ -92,7 +93,8 @@ void Associator::clear() {
 }
 
 // ---------------------------------------------------------Send
-void Associator::recieveGlassMessage(std::shared_ptr<json::Object> communication) {
+void Associator::recieveGlassMessage(
+		std::shared_ptr<json::Object> communication) {
 	// tell base class we're still alive
 	ThreadBaseClass::setThreadHealth();
 

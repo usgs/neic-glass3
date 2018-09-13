@@ -296,7 +296,7 @@ class CGlass {
 	 * \return Returns an integer containing the minimum number of data required
 	 * to report an event
 	 */
-	static double getReportingDataThreshold();
+	static int getReportingDataThreshold();
 
 	/**
 	 * \brief Gets the time window used when checking whether an input pick
@@ -307,14 +307,18 @@ class CGlass {
 	static double getPickDuplicateTimeWindow();
 
 	/**
-	 * \brief Gets the standard deviation cutoff used for association
+	 * \brief Gets the cutoff threshold in terms of number of standard
+	 * deviations for associating data (eg. Picks) with a hypocenter. The
+	 * standard deviation is fixed to 1.
 	 * \return Returns a double containing the standard deviation cutoff used
 	 * for association
 	 */
 	static double getAssociationSDCutoff();
 
 	/**
-	 * \brief Gets the standard deviation cutoff used for pruning
+	 * \brief Gets the cutoff threshold in terms of number of standard
+	 * deviations for pruning data (eg. Picks) from a hypocenter. The
+	 * standard deviation is fixed to 1.
 	 * \return Returns a double containing the standard deviation cutoff used
 	 * for pruning
 	 */
@@ -383,6 +387,19 @@ class CGlass {
 	 */
 	static void setMaxNumHypos(int max);
 
+
+	/**
+	 * \brief Gets the depth threshold used for declaring a hypo an event
+	 * fragment, in combination with m_dEventFragmentAzimuthThreshold.
+	 */
+	static double getEventFragmentDepthThreshold();
+
+	/**
+	 * \brief Gets the azimuth threshold used for declaring a hypo an event
+	 * fragment, in combination with m_dEventFragmentDepthThreshold.
+	 */
+	static double getEventFragmentAzimuthThreshold();
+
 	/**
 	 * \brief Gets a pointer to the Correlation list
 	 * \return Returns a pointer to the correlation list
@@ -390,7 +407,8 @@ class CGlass {
 	static CCorrelationList* getCorrelationList();
 
 	/**
-	 * \brief Gets a pointer to the detection processor
+	 * \brief Gets a pointer to the CDetection object used to process detections
+	 * made external to glasscore
 	 * \return Returns a pointer to the detection processor
 	 */
 	static CDetection* getDetectionProcessor();
@@ -459,14 +477,16 @@ class CGlass {
 	static std::atomic<int> m_iNumStationsPerNode;
 
 	/**
-	 * \brief A double value containing the standard deviation cutoff used for
-	 * associating a pick with a hypocenter.
+	 * \brief A double value containing the cutoff threshold in terms of number
+	 * of standard deviations for associating data (eg. Picks) with a hypocenter.
+	 * The standard deviation is fixed to 1.
 	 */
 	static std::atomic<double> m_dAssociationSDCutoff;
 
 	/**
-	 * \brief A double value containing the standard deviation cutoff used for
-	 * pruning a pick from a hypocenter.
+	 * \brief A double value containing the cutoff threshold in terms of number
+	 * of standard deviations for pruning data (eg. Picks) from a hypocenter.
+	 * The standard deviation is fixed to 1.
 	 */
 	static std::atomic<double> m_dPruningSDCutoff;
 
@@ -618,6 +638,18 @@ class CGlass {
 	 * to for reporting a hypo
 	 */
 	static std::atomic<double> m_dReportingStackThreshold;
+
+	/**
+	 * \brief The depth threshold for declaring a hypo an event fragment, in
+	 * combination with m_dEventFragmentAzimuthThreshold.
+	 */
+	static std::atomic<double> m_dEventFragmentDepthThreshold;
+
+	/**
+	 * \brief The azimuth threshold for declaring a hypo an event fragment, in
+	 * combination with m_dEventFragmentDepthThreshold.
+	 */
+	static std::atomic<double> m_dEventFragmentAzimuthThreshold;
 
 	/**
 	 * \brief An IGlassSend interface pointer used to send communication

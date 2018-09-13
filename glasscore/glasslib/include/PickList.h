@@ -172,21 +172,21 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * \return Return an integer containing the maximum allowed size of this
 	 * pick list
 	 */
-	int getPickMax() const;
+	int getMaxAllowablePickCount() const;
 
 	/**
 	 * \brief Set the maximum allowed size of this pick list
-	 * \param picknMax -  an integer containing the maximum allowed size of this
+	 * \param pickMax -  an integer containing the maximum allowed size of this
 	 * pick list
 	 */
-	void setPickMax(int picknMax);
+	void setMaxAllowablePickCount(int pickMax);
 
 	/**
 	 * \brief Get the total number of picks processed by this list
 	 * \return Return an integer containing the total number of picks processed
 	 * by this list
 	 */
-	int getPickTotal() const;
+	int getCountOfTotalPicksProcessed() const;
 
 	/**
 	 * \brief Get the current number of picks contained in this list
@@ -231,13 +231,13 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * CPickList. This value is overridden by pGlass->nPickMax if provided.
 	 * Defaults to 10000.
 	 */
-	int m_iPickMax;
+	int m_iMaxAllowablePickCount;
 
 	/**
 	 * \brief An integer containing the total number of picks ever added to
 	 * CPickList
 	 */
-	int m_iPickTotal;
+	int m_iCountOfTotalPicksProcessed;
 
 	/**
 	 * \brief A std::multiset containing each pick in the list in sequential

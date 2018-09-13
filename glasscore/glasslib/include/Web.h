@@ -585,11 +585,6 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime2;
 
 	/**
-	 * \brief the std::mutex for traveltimes
-	 */
-	mutable std::mutex m_TravelTimeMutex;
-
-	/**
 	 * \brief A mutex to control threading access to vSite.
 	 */
 	std::mutex m_vSiteMutex;

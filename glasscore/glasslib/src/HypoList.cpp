@@ -4,6 +4,7 @@
 #include <utility>
 #include <algorithm>
 #include <vector>
+#include <list>
 #include <map>
 #include <set>
 #include <ctime>
@@ -23,6 +24,8 @@
 #include "Pid.h"
 
 namespace glasscore {
+
+#define ASSOC_SIGMA_VALUE 1.0
 
 // ---------------------------------------------------------CHypoList
 CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval)
@@ -53,17 +56,17 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	// lock for this scope
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 
-	m_iHypoTotal++;
+	m_iCountOfTotalHyposProcessed++;
 
 	// get maximum number of hypos
 	// use max hypos from CGlass if we have it
 	if (CGlass::getMaxNumHypos() > 0) {
-		m_iHypoMax = CGlass::getMaxNumHypos();
+		m_iMaxAllowableHypoCount = CGlass::getMaxNumHypos();
 	}
 
 	// remove oldest hypo if this new one
 	// pushes us over the limit
-	if (m_msHypoList.size() >= m_iHypoMax) {
+	if (m_msHypoList.size() >= m_iMaxAllowableHypoCount) {
 		std::multiset<std::shared_ptr<CHypo>, HypoCompare>::iterator oldest =
 				m_msHypoList.begin();
 
@@ -88,7 +91,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	// hypo will be the first one in the queue, and will be the
 	// first one processed.
 	if (scheduleProcessing == true) {
-		addHypoToProcess(hypo);
+		appendToHypoProcessingQueue(hypo);
 	}
 
 	// done
@@ -134,7 +137,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 			// check to see if the pick will associate with
 			// this hypo
 			// NOTE: The sigma value passed into associate is hard coded
-			if (hyp->canAssociate(pk, 1.0, sdassoc)) {
+			if (hyp->canAssociate(pk, ASSOC_SIGMA_VALUE, sdassoc)) {
 				// add to the list of hypos this pick can associate with
 				assocHypoList.push_back(hyp);
 
@@ -170,7 +173,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 		bestHyp->setProcessCount(0);
 
 		// add to the processing queue
-		addHypoToProcess(bestHyp);
+		appendToHypoProcessingQueue(bestHyp);
 
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
@@ -193,7 +196,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 
 		// add the hypo to the processing queue
 		// note that we didn't link the pick to any hypos
-		addHypoToProcess(q);
+		appendToHypoProcessingQueue(q);
 	}
 
 	glassutil::CLogit::log(
@@ -276,7 +279,7 @@ bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 		bestHyp->setProcessCount(0);
 
 		// add to the processing queue
-		addHypoToProcess(bestHyp);
+		appendToHypoProcessingQueue(bestHyp);
 
 		// the pick was associated
 		return (true);
@@ -294,7 +297,7 @@ bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 
 		// add the hypo to the processing queue
 		// note that we didn't link the correlation to any hypos
-		addHypoToProcess(q);
+		appendToHypoProcessingQueue(q);
 	}
 
 	// the pick was associated
@@ -304,21 +307,21 @@ bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 // ---------------------------------------------------------clear
 void CHypoList::clear() {
 	std::lock_guard<std::mutex> queueGuard(m_vHyposToProcessMutex);
-	m_vHyposToProcess.clear();
+	m_lHypoProcessingQueue.clear();
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 	m_msHypoList.clear();
 	m_mHypo.clear();
 
 	// reset
-	m_iHypoTotal = 0;
-	m_iHypoMax = 100;
+	m_iCountOfTotalHyposProcessed = 0;
+	m_iMaxAllowableHypoCount = 100;
 }
 
 // ---------------------------------------------------------work
 glass3::util::WorkState CHypoList::work() {
 	// don't bother if there's nothing to do
-	if (getHyposToProcessSize() < 1) {
+	if (getHypoProcessingQueueLength() < 1) {
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}
@@ -327,7 +330,7 @@ glass3::util::WorkState CHypoList::work() {
 	char sLog[1024];
 
 	// get the next hypo to process
-	std::shared_ptr<CHypo> hyp = getHypoToProcess();
+	std::shared_ptr<CHypo> hyp = getNextHypoFromProcessingQueue();
 
 	// check to see if we got a valid hypo
 	if (!hyp) {
@@ -345,7 +348,7 @@ glass3::util::WorkState CHypoList::work() {
 				"CHypoList::darwin Processing Hypo sPid:" + hyp->getID()
 						+ " Cycle:" + std::to_string(hyp->getProcessCount())
 						+ " Fifo Size:"
-						+ std::to_string(getHyposToProcessSize()));
+						+ std::to_string(getHypoProcessingQueueLength()));
 
 		// check to see if this hypo is viable.
 		if (hyp->cancelCheck()) {
@@ -601,7 +604,6 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 			// report
 			CGlass::sendExternalMessage(hyp->generateEventMessage());
 
-
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
 					"CHypoList::processHypo: Reported hypo sPid:" + pid
@@ -667,12 +669,12 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	return (true);
 }
 
-// -------------------------------------------------------getHyposToProcessSize
-int CHypoList::getHyposToProcessSize() {
+// -------------------------------------------------getHypoProcessingQueueLength
+int CHypoList::getHypoProcessingQueueLength() {
 	std::lock_guard<std::mutex> queueGuard(m_vHyposToProcessMutex);
 
 	// return the current size of the queue
-	int size = m_vHyposToProcess.size();
+	int size = m_lHypoProcessingQueue.size();
 	return (size);
 }
 
@@ -758,13 +760,13 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 }
 
 // ---------------------------------------------------------getHypoMax
-int CHypoList::getHypoMax() const {
-	return (m_iHypoMax);
+int CHypoList::getMaxAllowableHypoCount() const {
+	return (m_iMaxAllowableHypoCount);
 }
 
 // ----------------------------------------------------------
-int CHypoList::getHypoTotal() const {
-	return (m_iHypoTotal);
+int CHypoList::getCountOfTotalHyposProcessed() const {
+	return (m_iCountOfTotalHyposProcessed);
 }
 
 // ---------------------------------------------------------size
@@ -876,7 +878,6 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 					fromHypo->getID().c_str(), toHypo->getID().c_str());
 			glassutil::CLogit::log(sLog);
 
-
 			snprintf(
 					sLog, sizeof(sLog),
 					"CHypoList::findAndMergeMatchingHypos: fromHypo %s: %.3f, "
@@ -963,19 +964,19 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 	return (merged);
 }
 
-// ---------------------------------------------------------addHypoToProcess
-int CHypoList::addHypoToProcess(std::shared_ptr<CHypo> hyp) {
+// --------------------------------------------------appendToHypoProcessingQueue
+int CHypoList::appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp) {
 	// don't use a lock guard for queue mutex and vhypolist mutex,
 	// to avoid a deadlock when both mutexes are locked
 	m_vHyposToProcessMutex.lock();
-	int size = m_vHyposToProcess.size();
+	int size = m_lHypoProcessingQueue.size();
 	m_vHyposToProcessMutex.unlock();
 
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CHypoList::addHypoToProcess: NULL hypo provided.");
+				"CHypoList::appendToHypoProcessingQueue: NULL hypo provided.");
 		return (size);
 	}
 
@@ -994,8 +995,8 @@ int CHypoList::addHypoToProcess(std::shared_ptr<CHypo> hyp) {
 
 	// is this id already on the queue?
 	m_vHyposToProcessMutex.lock();
-	for (std::vector<std::weak_ptr<CHypo>>::iterator it = m_vHyposToProcess
-			.begin(); it != m_vHyposToProcess.end(); ++it) {
+	for (std::list<std::weak_ptr<CHypo>>::iterator it = m_lHypoProcessingQueue
+			.begin(); it != m_lHypoProcessingQueue.end(); ++it) {
 		std::shared_ptr<CHypo> aHyp = (*it).lock();
 
 		if ((aHyp != NULL) && (aHyp->getID() == hyp->getID())) {
@@ -1006,7 +1007,7 @@ int CHypoList::addHypoToProcess(std::shared_ptr<CHypo> hyp) {
 	}
 
 	// add to queue (FIFO)
-	m_vHyposToProcess.push_back(std::weak_ptr<CHypo>(hyp));
+	m_lHypoProcessingQueue.push_back(std::weak_ptr<CHypo>(hyp));
 
 	// added one
 	size++;
@@ -1014,30 +1015,31 @@ int CHypoList::addHypoToProcess(std::shared_ptr<CHypo> hyp) {
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
-			"CHypoList::addHypoToProcess: sPid:" + pid + " "
+			"CHypoList::appendToHypoProcessingQueue: sPid:" + pid + " "
 					+ std::to_string(size) + " hypos in queue.");
 
 	return (size);
 }
 
-// ---------------------------------------------------------getHypoToProcess
-std::shared_ptr<CHypo> CHypoList::getHypoToProcess() {
+// -----------------------------------------------getNextHypoFromProcessingQueue
+std::shared_ptr<CHypo> CHypoList::getNextHypoFromProcessingQueue() {
 	std::lock_guard<std::mutex> queueGuard(m_vHyposToProcessMutex);
 
 	// is there anything on the queue?
-	if (m_vHyposToProcess.size() == 0) {
+	if (m_lHypoProcessingQueue.size() == 0) {
 		// nope
 		return (NULL);
 	}
 
 	// Pop first hypocenter off processing queue (FIFO)
-	std::vector<std::weak_ptr<CHypo>>::iterator it = m_vHyposToProcess.begin();
-	while (it != m_vHyposToProcess.end()) {
+	std::list<std::weak_ptr<CHypo>>::iterator it =
+			m_lHypoProcessingQueue.begin();
+	while (it != m_lHypoProcessingQueue.end()) {
 		// get the next hypo in the vector
 		std::shared_ptr<CHypo> hyp = (*it).lock();
 
 		// one way or another we're done with this hypo
-		it = m_vHyposToProcess.erase(it);
+		it = m_lHypoProcessingQueue.erase(it);
 
 		// is it valid?
 		if ((hyp != NULL) && (hyp->getID() != "")) {
@@ -1154,7 +1156,6 @@ bool CHypoList::requestHypo(std::shared_ptr<json::Object> com) {
 	// generate the hypo message
 	CGlass::sendExternalMessage(hyp->generateHypoMessage());
 
-
 	// done
 	return (true);
 }
@@ -1178,9 +1179,9 @@ bool CHypoList::resolveData(std::shared_ptr<CHypo> hyp) {
 }
 
 // ---------------------------------------------------------setNHypoMax
-void CHypoList::setHypoMax(int hypoMax) {
+void CHypoList::setMaxAllowableHypoCount(int hypoMax) {
 	std::lock_guard<std::recursive_mutex> hypoListGuard(m_HypoListMutex);
-	m_iHypoMax = hypoMax;
+	m_iMaxAllowableHypoCount = hypoMax;
 }
 
 // ---------------------------------------------------------updatePosition

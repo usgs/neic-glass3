@@ -312,7 +312,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 				// set up a geo for distance calculations
 				glassutil::CGeo nodeGeo;
 				nodeGeo.setGeographic(m_dLatitude, m_dLongitude,
-										6371.0 - m_dDepth);
+									  EARTHRADIUSKM - m_dDepth);
 
 				// compute azimith from the site to the node
 				double siteAzimuth = pick->getSite()->getGeo().azimuth(
@@ -428,8 +428,7 @@ double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
 		tRes2 = std::abs(tObservedTT - travelTime2);
 	}
 
-	// compute significances using residuals
-	// pick sigma is defined as resolution / 5.0 * 2.0
+	// compute significances using residuals and web resolution
 	// should trigger be a looser cutoff than location cutoff
 	double dSig1 = 0;
 	if (tRes1 > 0) {
@@ -476,7 +475,7 @@ std::shared_ptr<CSite> CNode::getSite(std::string siteID) {
 
 // ---------------------------------------------------------getLastSite
 std::shared_ptr<CSite> CNode::getLastSite() {
-	if (count() == 0) {
+	if (getSiteLinksCount() == 0) {
 		return (NULL);
 	}
 
@@ -522,7 +521,7 @@ std::string CNode::getSitesString() {
 }
 
 // ---------------------------------------------------------getSiteLinksCount
-int CNode::count() const {
+int CNode::getSiteLinksCount() const {
 	// lock mutex for this scope
 	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 	return (m_vSiteLinkList.size());
@@ -561,7 +560,7 @@ double CNode::getDepth() const {
 // ---------------------------------------------------------getGeo
 glassutil::CGeo CNode::getGeo() const {
 	glassutil::CGeo geoNode;
-	geoNode.setGeographic(m_dLatitude, m_dLongitude, 6371.0 - m_dDepth);
+	geoNode.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
 	return (geoNode);
 }
 

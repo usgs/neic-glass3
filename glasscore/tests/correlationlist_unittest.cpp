@@ -42,7 +42,7 @@ TEST(CorrelationListTest, Construction) {
 			new glasscore::CCorrelationList();
 
 	// assert default values
-	ASSERT_EQ(0, testCorrelationList->getCorrelationTotal())<<
+	ASSERT_EQ(0, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"nCorrelationTotal is 0";
 
 	// lists
@@ -100,14 +100,14 @@ TEST(CorrelationListTest, CorrelationOperations) {
 			new glasscore::CCorrelationList();
 	testCorrelationList->setSiteList(testSiteList);
 
-	testCorrelationList->setCorrelationMax(MAXNCORRELATION);
+	testCorrelationList->setMaxAllowableCorrelationCount(MAXNCORRELATION);
 	glasscore::CGlass::setMaxNumCorrelations(-1);
 
 	// test adding correlations by addCorrelation and dispatch
 	testCorrelationList->addCorrelationFromJSON(correlationJSON);
 	testCorrelationList->receiveExternalMessage(correlation3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testCorrelationList->getCorrelationTotal())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"Added Correlations";
 
 	// add more correlations
@@ -124,7 +124,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	// test clearing correlations
 	testCorrelationList->clear();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testCorrelationList->getCorrelationTotal())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"Cleared Correlations";
 
 	// cleanup
