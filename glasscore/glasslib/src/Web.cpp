@@ -82,7 +82,6 @@ void CWeb::clear() {
 	m_dNucleationStackThreshold = 2.5;
 	m_dNodeResolution = 100;
 	m_sName = "Nemo";
-	m_pGlass = NULL;
 	m_pSiteList = NULL;
 	m_bUpdate = false;
 	m_bSaveGrid = false;
@@ -148,12 +147,13 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	return (true);
 }
 
-// ---------------------------------------------------------dispatch
-bool CWeb::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CWeb::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWeb::dispatch: NULL json communication.");
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
@@ -203,7 +203,7 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 	// load basic (common) grid configuration
 	if (loadGridConfiguration(gridConfiguration) == false) {
-		return(false);
+		return (false);
 	}
 
 	// list of depth layers to generate for this grid
@@ -326,9 +326,9 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			"CWeb::generateGlobalGrid sName:%s Phase(s):%s; nZ:%d; resol:%.2f;"
 			" nDetect:%d; nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
 			" vSitesFilter:%d; bUseOnlyTeleseismicStations:%d; iNodeCount:%d;",
-			m_sName.c_str(), phases.c_str(), zs,
-			getNodeResolution(), getNumStationsPerNode(),
-			getNucleationDataThreshold(), getNucleationStackThreshold(),
+			m_sName.c_str(), phases.c_str(), zs, getNodeResolution(),
+			getNumStationsPerNode(), getNucleationDataThreshold(),
+			getNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
@@ -362,7 +362,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 	// load basic (common) grid configuration
 	if (loadGridConfiguration(gridConfiguration) == false) {
-		return(false);
+		return (false);
 	}
 
 	// Latitude of the center point of this generateLocalGrid
@@ -576,7 +576,7 @@ bool CWeb::generateExplicitGrid(
 
 	// load basic (common) grid configuration
 	if (loadGridConfiguration(gridConfiguration) == false) {
-		return(false);
+		return (false);
 	}
 
 	int nN = 0;
@@ -719,11 +719,9 @@ bool CWeb::loadGridConfiguration(
 	double thresh = 2.0;
 
 	// check pGlass
-	if (m_pGlass != NULL) {
-		detect = m_pGlass->getNumStationsPerNode();
-		nucleate = m_pGlass->getNucleationDataThreshold();
-		thresh = m_pGlass->getNucleationStackThreshold();
-	}
+	detect = CGlass::getNumStationsPerNode();
+	nucleate = CGlass::getNucleationDataThreshold();
+	thresh = CGlass::getNucleationStackThreshold();
 
 	double resol = 0;
 	double aziTaper = 360.;
@@ -852,10 +850,8 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 		m_pNucleationTravelTime1.reset();
 
 		// use overall glass default if available
-		if ((m_pGlass != NULL)
-				&& (m_pGlass->getDefaultNucleationTravelTime() != NULL)) {
-			m_pNucleationTravelTime1 =
-					m_pGlass->getDefaultNucleationTravelTime();
+		if (CGlass::getDefaultNucleationTravelTime() != NULL) {
+			m_pNucleationTravelTime1 = CGlass::getDefaultNucleationTravelTime();
 		} else {
 			// create new traveltime
 			m_pNucleationTravelTime1 =
@@ -922,9 +918,8 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 		m_pNucleationTravelTime1.reset();
 
 		// use overall glass default if available
-		if (m_pGlass->getDefaultNucleationTravelTime() != NULL) {
-			m_pNucleationTravelTime1 =
-					m_pGlass->getDefaultNucleationTravelTime();
+		if (CGlass::getDefaultNucleationTravelTime() != NULL) {
+			m_pNucleationTravelTime1 = CGlass::getDefaultNucleationTravelTime();
 		} else {
 			// create new traveltime
 			m_pNucleationTravelTime1 =
@@ -1742,18 +1737,6 @@ const CSiteList* CWeb::getSiteList() const {
 void CWeb::setSiteList(CSiteList* siteList) {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 	m_pSiteList = siteList;
-}
-
-// ---------------------------------------------------------getGlass
-CGlass* CWeb::getGlass() const {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
-	return (m_pGlass);
-}
-
-// ---------------------------------------------------------setGlass
-void CWeb::setGlass(CGlass* glass) {
-	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
-	m_pGlass = glass;
 }
 
 // ---------------------------------------------------------getUpdate

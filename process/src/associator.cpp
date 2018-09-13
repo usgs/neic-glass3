@@ -28,11 +28,10 @@ Associator::Associator(glass3::util::iInput* inputint,
 
 	m_Input = inputint;
 	m_Output = outputint;
-	m_pGlass = new glasscore::CGlass();
 	m_MessageQueue = new glass3::util::Queue();
 
 	// hook up glass communication with Associator class
-	m_pGlass->piSend = dynamic_cast<glasscore::IGlassSend *>(this);
+	glasscore::CGlass::setExternalInterface(dynamic_cast<glasscore::IGlassSend *>(this));
 
 	setHealthCheckInterval(600);
 
@@ -51,10 +50,6 @@ Associator::~Associator() {
 
 	m_Input = NULL;
 	m_Output = NULL;
-
-	// delete glass
-	if (m_pGlass != NULL)
-		delete (m_pGlass);
 
 	// clean up message queue
 	m_MessageQueue->clear();
@@ -77,15 +72,11 @@ bool Associator::setup(std::shared_ptr<const json::Object> config) {
 		return (false);
 	}
 
-	if (m_pGlass == NULL) {
-		glass3::util::log(
-				"error", "associator::setup(): Class Core interface is NULL .");
-		return (false);
-	}
 	std::shared_ptr<json::Object> pConfig = std::make_shared<json::Object>(
 			*config);
+
 	// send the config to glass
-	m_pGlass->dispatch(pConfig);
+	glasscore::CGlass::receiveExternalMessage(pConfig);
 	glass3::util::log(
 			"debug", "associator::setup(): Done Passing in provided config.");
 
@@ -101,7 +92,7 @@ void Associator::clear() {
 }
 
 // ---------------------------------------------------------Send
-void Associator::Send(std::shared_ptr<json::Object> communication) {
+void Associator::recieveGlassMessage(std::shared_ptr<json::Object> communication) {
 	// tell base class we're still alive
 	ThreadBaseClass::setThreadHealth();
 
@@ -138,9 +129,6 @@ glass3::util::WorkState Associator::work() {
 	if (m_Input == NULL) {
 		return (glass3::util::WorkState::Error);
 	}
-	if (m_pGlass == NULL) {
-		return (glass3::util::WorkState::Error);
-	}
 	if (m_MessageQueue == NULL) {
 		return (glass3::util::WorkState::Error);
 	}
@@ -151,7 +139,7 @@ glass3::util::WorkState Associator::work() {
 
 	if (message != NULL) {
 		// send the message into glass
-		m_pGlass->dispatch(message);
+		glasscore::CGlass::receiveExternalMessage(message);
 	}
 
 	std::time_t tNow;
@@ -172,7 +160,7 @@ glass3::util::WorkState Associator::work() {
 	// thread monitoring, or add a call to setworkcheck()
 	std::chrono::high_resolution_clock::time_point tGlassStartTime =
 			std::chrono::high_resolution_clock::now();
-	m_pGlass->dispatch(data);
+	glasscore::CGlass::receiveExternalMessage(data);
 	std::chrono::high_resolution_clock::time_point tGlassEndTime =
 			std::chrono::high_resolution_clock::now();
 
@@ -201,11 +189,11 @@ glass3::util::WorkState Associator::work() {
 		} else {
 			int hypoListSize = 0;
 			int pickListSize = 0;
-			if (m_pGlass->getHypoList()) {
-				hypoListSize = m_pGlass->getHypoList()->size();
+			if (glasscore::CGlass::getHypoList()) {
+				hypoListSize = glasscore::CGlass::getHypoList()->length();
 			}
-			if (m_pGlass->getPickList()) {
-				pickListSize = m_pGlass->getPickList()->size();
+			if (glasscore::CGlass::getPickList()) {
+				pickListSize = glasscore::CGlass::getPickList()->length();
 			}
 
 			// update the total input count with the input count
@@ -258,16 +246,13 @@ glass3::util::WorkState Associator::work() {
 
 // -----------------------------------------------------------------healthCheck
 bool Associator::healthCheck() {
-	// don't check m_pGlass if it is not created yet
-	if (m_pGlass != NULL) {
-		// check glass
-		// check glass thread status
-		if (m_pGlass->healthCheck() == false) {
-			glass3::util::log(
-					"error",
-					"Associator::statusCheck(): GlassLib statusCheck() returned false!.");
-			return (false);
-		}
+	// check glass
+	// check glass thread status
+	if (glasscore::CGlass::healthCheck() == false) {
+		glass3::util::log(
+				"error",
+				"Associator::statusCheck(): GlassLib statusCheck() returned false!.");
+		return (false);
 	}
 
 	// let threadbaseclass handle background worker thread

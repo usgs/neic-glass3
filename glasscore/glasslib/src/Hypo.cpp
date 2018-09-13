@@ -287,9 +287,9 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 
 	// *** First, locate ***
 	if (CGlass::getMinimizeTTLocator() == false) {
-		annealingLocateBayes(nIter, dStart, dStop, tStart, tStop, 1);
+		annealingLocateBayes(nIter, dStart, dStop, tStart, tStop, true);
 	} else {
-		annealingLocateResidual(nIter, dStart, dStop, tStart, tStop, 1);
+		annealingLocateResidual(nIter, dStart, dStop, tStart, tStop, true);
 	}
 	// *** Second, based on the new location/depth/time, remove ill fitting
 	// picks ***
@@ -376,7 +376,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 
 // ---------------------------------------------------------annealingLocateBayes
 void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
-									double tStart, double tStop, int nucleate) {
+									double tStart, double tStop, bool nucleate) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -507,7 +507,7 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 
 	// set dBayes to current value
 	m_dBayesValue = valBest;
-	if (nucleate == 1) {
+	if (nucleate == true) {
 		m_dInitialBayesValue = valBest;
 	}
 
@@ -534,7 +534,7 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 
 // ------------------------------------------------------annealingLocateResidual
 void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
-									double tStart, double tStop, int nucleate) {
+									double tStart, double tStop, bool nucleate) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -670,6 +670,11 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (m_sID == "") {
+		return (false);
+	}
+
 	// null check
 	if (pick == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -785,6 +790,11 @@ bool CHypo::canAssociate(std::shared_ptr<CCorrelation> corr, double tWindow,
 							double xWindow) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
+
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (m_sID == "") {
+		return (false);
+	}
 
 	// NOTE: this is a simple time/distance check for association
 	// wiser heads than mine may come up with a more robust approach JMP
@@ -1017,7 +1027,6 @@ void CHypo::clear() {
 	m_dMinDistance = 0;
 	m_dGap = 0;
 	m_dDistanceSD = 0;
-	m_dKurtosisValue = 0;
 	m_dWebResolution = 0;
 
 	m_dAssociationDistanceCutoff = 0;
@@ -1230,7 +1239,7 @@ double CHypo::getBayesValue() const {
 
 // ---------------------------------------------------calculateBayes
 double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
-								int nucleate) {
+								bool nucleate) {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
@@ -1285,7 +1294,7 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 		glassutil::CGeo siteGeo = site->getGeo();
 
 		// only use nucleation phases if on nucleation branch
-		if (nucleate == 1) {
+		if (nucleate == true) {
 			if ((m_pNucleationTravelTime1) && (m_pNucleationTravelTime2)) {
 				// we have both nucleation phases
 				// first nucleation phase
@@ -1394,11 +1403,6 @@ glassutil::CGeo CHypo::getGeo() const {
 	return (geoHypo);
 }
 
-// ------------------------------------------------------------getKurtosisValue
-double CHypo::getKurtosisValue() const {
-	return (m_dKurtosisValue);
-}
-
 // ------------------------------------------------------------getLatitude
 double CHypo::getLatitude() const {
 	return (m_dLatitude);
@@ -1502,7 +1506,7 @@ const std::string& CHypo::getWebName() const {
 
 // ---------------------------------------------------calculateAbsResidualSum
 double CHypo::calculateAbsResidualSum(double xlat, double xlon, double xZ,
-										double oT, int nucleate) {
+										double oT, bool nucleate) {
 	if (m_pTravelTimeTables == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::getSumAbsResidual: NULL pTTT.");
@@ -1543,10 +1547,10 @@ double CHypo::calculateAbsResidualSum(double xlat, double xlon, double xZ,
 		std::shared_ptr<CSite> site = pick->getSite();
 
 		// only use nucleation phase if on nucleation branch
-		if (nucleate == 1 && m_pNucleationTravelTime2 == NULL) {
+		if ((nucleate == true) && (m_pNucleationTravelTime2 == NULL)) {
 			tcal = m_pNucleationTravelTime1->T(&site->getGeo());
 			resi = tobs - tcal;
-		} else if (nucleate == 1 && m_pNucleationTravelTime1 == NULL) {
+		} else if ((nucleate == true) && (m_pNucleationTravelTime1 == NULL)) {
 			tcal = m_pNucleationTravelTime2->T(&site->getGeo());
 			resi = tobs - tcal;
 		} else {
@@ -1931,8 +1935,8 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	m_dNucleationStackThreshold = thresh;
 	m_iNucleationDataThreshold = cut;
 	m_dWebResolution = resolution;
-	if (m_dWebResolution == 0.) {
-		m_dWebResolution = 100.;
+	if (m_dWebResolution == 0.0) {
+		m_dWebResolution = 100.0;
 	}
 
 	// make local copies of the travel times so that we don't
@@ -1968,6 +1972,14 @@ bool CHypo::isLockedForProcessing() {
 
 // ---------------------------------------------------------localize
 double CHypo::localize() {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
+
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (m_sID == "") {
+		return (m_dBayesValue);
+	}
+
 	// Localize this hypo
 	char sLog[1024];
 
@@ -1981,8 +1993,7 @@ double CHypo::localize() {
 		return (m_dBayesValue);
 	}
 
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
+
 
 	// get the number of picks
 	int npick = m_vPickData.size();
@@ -2051,7 +2062,13 @@ double CHypo::localize() {
 
 // ---------------------------------------------------------pruneData
 bool CHypo::pruneData() {
-	char sLog[1024];
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
+
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (m_sID == "") {
+		return (false);
+	}
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
 							"CHypo::prune. " + m_sID);
@@ -2065,9 +2082,7 @@ bool CHypo::pruneData() {
 
 	// get the standard deviation allowed for pruning
 	double sdprune = CGlass::getPruningSDCutoff();
-
-	// lock mutex for this scope
-	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
+	char sLog[1024];
 
 	// for each pick in this hypo
 	for (auto pck : m_vPickData) {
@@ -2225,6 +2240,11 @@ bool CHypo::reportCheck() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (m_sID == "") {
+		return (false);
+	}
+
 	char sLog[2048];
 	char sHypo[1024];
 
@@ -2273,16 +2293,21 @@ bool CHypo::reportCheck() {
 
 // ---------------------------------------------------------resolveData
 bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
+	// lock the hypo since we're iterating through it's lists
+	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
+
 	// nullchecks
 	if (CGlass::getHypoList() == NULL) {
 		return (false);
 	}
 
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (m_sID == "") {
+		return (false);
+	}
+
 	glassutil::CLogit::log(glassutil::log_level::debug,
 							"CHypo::resolve. " + m_sID);
-
-	// lock the hypo since we're iterating through it's lists
-	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
 
 	bool bAss = false;
 	char sLog[1024];
@@ -2457,7 +2482,6 @@ void CHypo::calculateStatistics() {
 	// there are no picks
 	if (m_vPickData.size() < 1) {
 		m_dDistanceSD = 0.0;
-		m_dKurtosisValue = 0.0;
 		m_dMedianDistance = 0.0;
 		m_dMinDistance = 0.0;
 		m_dAssociationDistanceCutoff = 0.0;
@@ -2503,14 +2527,6 @@ void CHypo::calculateStatistics() {
 	double var = sum / ndis;
 	m_dDistanceSD = sqrt(var);
 
-	// calculate the sample excess kurtosis value
-	sum = 0.0;
-	for (int i = 0; i < ndis; i++) {
-		double arg = dis[i] / m_dDistanceSD;
-		sum += arg * arg * arg * arg;
-	}
-	m_dKurtosisValue = sum / ndis - 3.0;
-
 	// sort the distances
 	sort(dis.begin(), dis.end());
 
@@ -2525,7 +2541,7 @@ void CHypo::calculateStatistics() {
 	// configurable via glass_init.
 	// In the long term, he wants to replace this with a more statistics
 	// based algorithm
-	int icut = static_cast<int>((CGlass::getDistanceCutoffPercentage() * ndis));
+	int icut = static_cast<int>((CGlass::getDistanceCutoffRatio() * ndis));
 	m_dAssociationDistanceCutoff = CGlass::getDistanceCutoffFactor() * dis[icut];
 
 	// make sure our calculated dCut is not below the minimum allowed

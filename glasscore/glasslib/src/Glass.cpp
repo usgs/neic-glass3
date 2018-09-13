@@ -21,7 +21,7 @@
 
 namespace glasscore {
 
-glasscore::IGlassSend *CGlass::piSend = NULL;
+glasscore::IGlassSend *CGlass::m_pExternalInterface = NULL;
 CWebList* CGlass::m_pWebList = NULL;
 CSiteList* CGlass::m_pSiteList = NULL;
 CPickList* CGlass::m_pPickList = NULL;
@@ -32,37 +32,37 @@ std::shared_ptr<traveltime::CTravelTime> CGlass::m_pDefaultNucleationTravelTime 
 		NULL;
 std::shared_ptr<traveltime::CTTT> CGlass::m_pAssociationTravelTimes = NULL;
 
-int CGlass::m_iMaxNumPicks = -1;
-int CGlass::m_iMaxNumCorrelations = -1;
-int CGlass::m_iMaxNumPicksPerSite = -1;
-int CGlass::m_iMaxNumHypos = -1;
-int CGlass::m_iNucleationDataThreshold = 7;
-int CGlass::m_iNumStationsPerNode = 20;
-double CGlass::m_dNucleationStackThreshold = 2.5;
-double CGlass::m_dAssociationSDCutoff = 3.0;
-double CGlass::m_dPruningSDCutoff = 3.0;
-double CGlass::m_dPickAffinityExpFactor = 2.5;
-double CGlass::m_dDistanceCutoffFactor = 4.0;
-double CGlass::m_dDistanceCutoffPercentage = 0.4;
-double CGlass::m_dMinDistanceCutoff = 30.0;
-int CGlass::m_iProcessLimit = 25;
-bool CGlass::m_bTestTravelTimes = false;
-bool CGlass::m_bTestLocator = false;
-bool CGlass::m_bGraphicsOut = false;
+std::atomic<int> CGlass::m_iMaxNumPicks { -1 };
+std::atomic<int> CGlass::m_iMaxNumCorrelations { -1 };
+std::atomic<int> CGlass::m_iMaxNumPicksPerSite { -1 };
+std::atomic<int> CGlass::m_iMaxNumHypos { -1 };
+std::atomic<int> CGlass::m_iNucleationDataThreshold { 7 };
+std::atomic<int> CGlass::m_iNumStationsPerNode { 20 };
+std::atomic<double> CGlass::m_dNucleationStackThreshold { 2.5 };
+std::atomic<double> CGlass::m_dAssociationSDCutoff { 3.0 };
+std::atomic<double> CGlass::m_dPruningSDCutoff { 3.0 };
+std::atomic<double> CGlass::m_dPickAffinityExpFactor { 2.5 };
+std::atomic<double> CGlass::m_dDistanceCutoffFactor { 4.0 };
+std::atomic<double> CGlass::m_dDistanceCutoffRatio { 0.4 };
+std::atomic<double> CGlass::m_dMinDistanceCutoff { 30.0 };
+std::atomic<int> CGlass::m_iProcessLimit { 25 };
+std::atomic<bool> CGlass::m_bTestTravelTimes { false };
+std::atomic<bool> CGlass::m_bTestLocator { false };
+std::atomic<bool> CGlass::m_bGraphicsOut { false };
 std::string CGlass::m_sGraphicsOutFolder = "./";  // NOLINT
-double CGlass::m_dGraphicsStepKM = 1.;
-int CGlass::m_iGraphicsSteps = 100;
-bool CGlass::m_bMinimizeTTLocator = false;
-double CGlass::m_dPickDuplicateTimeWindow = 2.5;
-double CGlass::m_dCorrelationMatchingTimeWindow = 2.5;
-double CGlass::m_dCorrelationMatchingDistanceWindow = .5;
-int CGlass::m_iCorrelationCancelAge = 900;
-double CGlass::m_dBeamMatchingAzimuthWindow = 22.5;
-double CGlass::m_dBeamMatchingDistanceWindow = 5;
-int CGlass::m_iReportingDataThreshold = 0;
-double CGlass::m_dReportingStackThreshold = 2.5;
-double CGlass::m_dHypoMergingTimeWindow = 30.0;
-double CGlass::m_dHypoMergingDistanceWindow = 3.0;
+std::atomic<double> CGlass::m_dGraphicsStepKM { 1.0 };
+std::atomic<int> CGlass::m_iGraphicsSteps { 100 };
+std::atomic<bool> CGlass::m_bMinimizeTTLocator { false };
+std::atomic<double> CGlass::m_dPickDuplicateTimeWindow { 2.5 };
+std::atomic<double> CGlass::m_dCorrelationMatchingTimeWindow { 2.5 };
+std::atomic<double> CGlass::m_dCorrelationMatchingDistanceWindow { 0.5 };
+std::atomic<int> CGlass::m_iCorrelationCancelAge { 900 };
+std::atomic<double> CGlass::m_dBeamMatchingAzimuthWindow { 22.5 };
+std::atomic<double> CGlass::m_dBeamMatchingDistanceWindow { 5.0 };
+std::atomic<int> CGlass::m_iReportingDataThreshold { 0 };
+std::atomic<double> CGlass::m_dReportingStackThreshold { 2.5 };
+std::atomic<double> CGlass::m_dHypoMergingTimeWindow { 30.0 };
+std::atomic<double> CGlass::m_dHypoMergingDistanceWindow { 3.0 };
 
 std::mutex CGlass::m_TTTMutex;
 
@@ -92,12 +92,13 @@ CGlass::~CGlass() {
 	}
 }
 
-// ---------------------------------------------------------dispatch
-bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CGlass::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CGlass::dispatch: NULL json communication.");
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CGlass::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
@@ -113,13 +114,13 @@ bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
 		}
 
 		// send any other commands to any of the configurable / input classes
-		if (m_pSiteList->dispatch(com)) {
+		if (m_pSiteList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (m_pHypoList->dispatch(com)) {
+		if (m_pHypoList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (m_pWebList->dispatch(com)) {
+		if (m_pWebList->receiveExternalMessage(com)) {
 			return (true);
 		}
 	}
@@ -128,16 +129,16 @@ bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
 	if (com->HasKey("Type")
 			&& ((*com)["Type"].GetType() == json::ValueType::StringVal)) {
 		// send any input to any of the input processing classes
-		if (m_pPickList->dispatch(com)) {
+		if (m_pPickList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (m_pSiteList->dispatch(com)) {
+		if (m_pSiteList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (m_pCorrelationList->dispatch(com)) {
+		if (m_pCorrelationList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (m_pDetectionProcessor->dispatch(com)) {
+		if (m_pDetectionProcessor->receiveExternalMessage(com)) {
 			return (true);
 		}
 	}
@@ -147,16 +148,16 @@ bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
 }
 
 // ---------------------------------------------------------setSend
-void CGlass::setSend(glasscore::IGlassSend *newSend) {
-	piSend = newSend;
+void CGlass::setExternalInterface(glasscore::IGlassSend *newSend) {
+	m_pExternalInterface = newSend;
 }
 
 // ---------------------------------------------------------send
-bool CGlass::send(std::shared_ptr<json::Object> com) {
+bool CGlass::sendExternalMessage(std::shared_ptr<json::Object> com) {
 	// make sure we have something to send to
-	if (piSend) {
+	if (m_pExternalInterface) {
 		// send the communication
-		piSend->Send(com);
+		m_pExternalInterface->recieveGlassMessage(com);
 
 		// done
 		return (true);
@@ -181,7 +182,7 @@ void CGlass::clear() {
 	m_dPruningSDCutoff = 3.0;
 	m_dPickAffinityExpFactor = 2.5;
 	m_dDistanceCutoffFactor = 4.0;
-	m_dDistanceCutoffPercentage = 0.4;
+	m_dDistanceCutoffRatio = 0.4;
 	m_dMinDistanceCutoff = 30.0;
 	m_iProcessLimit = 25;
 	m_bTestTravelTimes = false;
@@ -239,6 +240,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	if ((com->HasKey("DefaultNucleationPhase"))
 			&& ((*com)["DefaultNucleationPhase"].GetType()
 					== json::ValueType::ObjectVal)) {
+		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 		// get the phase object
 		json::Object phsObj = (*com)["DefaultNucleationPhase"].ToObject();
 
@@ -276,6 +278,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		m_pDefaultNucleationTravelTime->setup(phs, file);
 
 	} else {
+		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 		// if no first phase, default to P
 		// clean out old phase if any
 		m_pDefaultNucleationTravelTime.reset();
@@ -296,6 +299,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	if ((com->HasKey("AssociationPhases"))
 			&& ((*com)["AssociationPhases"].GetType()
 					== json::ValueType::ArrayVal)) {
+		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 		// get the array of phase entries
 		json::Array phases = (*com)["AssociationPhases"].ToArray();
 
@@ -408,8 +412,8 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			} else {
 				glassutil::CLogit::log(
 						glassutil::log_level::info,
-						"CGlass::initialize: Using default file location for association phase: "
-								+ phs);
+						"CGlass::initialize: Using default file location for "
+								"association phase: " + phs);
 			}
 
 			// set up this phase
@@ -484,6 +488,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		if ((paramsPlot.HasKey("graphicsOutFolder"))
 				&& (paramsPlot["graphicsOutFolder"].GetType()
 						== json::ValueType::StringVal)) {
+			std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 			m_sGraphicsOutFolder = paramsPlot["graphicsOutFolder"].ToString();
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
@@ -587,7 +592,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 							+ std::to_string(m_dPickAffinityExpFactor));
 		}
 
-		// dCutFactor
+		// m_dDistanceCutoffFactor
 		if ((params.HasKey("DistanceCutoffFactor"))
 				&& (params["DistanceCutoffFactor"].GetType()
 						== json::ValueType::DoubleVal)) {
@@ -604,25 +609,25 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 							+ std::to_string(m_dDistanceCutoffFactor));
 		}
 
-		// dCutPercentage
-		if ((params.HasKey("DistanceCutoffPercentage"))
-				&& (params["DistanceCutoffPercentage"].GetType()
+		// m_dDistanceCutoffRatio
+		if ((params.HasKey("DistanceCutoffRatio"))
+				&& (params["DistanceCutoffRatio"].GetType()
 						== json::ValueType::DoubleVal)) {
-			m_dDistanceCutoffPercentage = params["DistanceCutoffPercentage"]
+			m_dDistanceCutoffRatio = params["DistanceCutoffRatio"]
 					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using DistanceCutoffPercentage: "
-							+ std::to_string(m_dDistanceCutoffPercentage));
+					"CGlass::initialize: Using DistanceCutoffRatio: "
+							+ std::to_string(m_dDistanceCutoffRatio));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default DistanceCutoffPercentage: "
-							+ std::to_string(m_dDistanceCutoffPercentage));
+					"CGlass::initialize: Using default DistanceCutoffRatio: "
+							+ std::to_string(m_dDistanceCutoffRatio));
 		}
 
-		// dCutMin
+		// m_dMinDistanceCutoff
 		if ((params.HasKey("DistanceCutoffMinimum"))
 				&& (params["DistanceCutoffMinimum"].GetType()
 						== json::ValueType::DoubleVal)) {
@@ -805,7 +810,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 							+ std::to_string(m_dReportingStackThreshold));
 		} else {
 			// default to overall thresh
-			m_dReportingStackThreshold = m_dNucleationStackThreshold;
+			m_dReportingStackThreshold = getNucleationStackThreshold();
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using default ReportingStackThreshold "
@@ -922,8 +927,6 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				"CGlass::initialize: Using default PickDuplicateWindow: "
 						+ std::to_string(m_dPickDuplicateTimeWindow));
 	}
-
-
 
 	// set the number of nucleation threads
 	int numNucleationThreads = 5;
@@ -1146,8 +1149,8 @@ double CGlass::getMinDistanceCutoff() {
 }
 
 // ------------------------------------------------getDistanceCutoffPercentage
-double CGlass::getDistanceCutoffPercentage() {
-	return (m_dDistanceCutoffPercentage);
+double CGlass::getDistanceCutoffRatio() {
+	return (m_dDistanceCutoffRatio);
 }
 
 // ------------------------------------------------getReportingStackThreshold
@@ -1172,6 +1175,7 @@ bool CGlass::getGraphicsOut() {
 
 // ------------------------------------------------getGraphicsOutFolder
 const std::string& CGlass::getGraphicsOutFolder() {
+	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 	return (m_sGraphicsOutFolder);
 }
 

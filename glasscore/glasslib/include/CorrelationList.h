@@ -22,7 +22,6 @@ namespace glasscore {
 class CSite;
 class CSiteList;
 class CHypo;
-class CGlass;
 
 /**
  * \brief CCorrelationList comparison function
@@ -83,7 +82,7 @@ class CCorrelationList {
 	 * \return Returns true if the communication was handled by CCorrelationList,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CCorrelationList add correlation function
@@ -183,7 +182,7 @@ class CCorrelationList {
 	 * \return Return an integer containing the current number of correlations
 	 * contained in this list
 	 */
-	int size() const;
+	int length() const;
 
 	/**
 	 * \brief Get a vector of correlations that fall within a time window

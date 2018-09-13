@@ -8,7 +8,6 @@
 #define ASSOCIATOR_H
 
 #include <json.h>
-#include <Glass.h>
 #include <IGlassSend.h>
 #include <Logit.h>
 #include <inputinterface.h>
@@ -88,7 +87,8 @@ class Associator : public glasscore::IGlassSend,
 	 * \param communication - A shared_ptr a to json::Object containing the
 	 * message from glasscore.
 	 */
-	void Send(std::shared_ptr<json::Object> communication) override;
+	void recieveGlassMessage(std::shared_ptr<json::Object> communication)
+			override;
 
 	/**
 	 * \brief glasscore message sending function
@@ -122,11 +122,6 @@ class Associator : public glasscore::IGlassSend,
 	glass3::util::WorkState work() override;
 
  private:
-	/**
-	 * \brief Pointer to (glasscore) CGlass class instance
-	 */
-	glasscore::CGlass *m_pGlass;
-
 	/**
 	 * \brief Integer holding the count of input data sent to glasscore since
 	 * the last informational report.

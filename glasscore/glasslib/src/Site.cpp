@@ -20,32 +20,6 @@
 
 namespace glasscore {
 
-std::vector<std::string> &split(const std::string &s, char delim,
-								std::vector<std::string> &elems) {  // NOLINT
-	std::string item;
-
-	// convert to stringstream
-	std::stringstream ss(s);
-
-	// search through string looking for delimiter
-	while (std::getline(ss, item, delim)) {
-		// add substring to list
-		elems.push_back(item);
-	}
-	// return list
-	return (elems);
-}
-
-std::vector<std::string> split(const std::string &s, char delim) {
-	std::vector<std::string> elems;
-
-	// split using string and delimiter
-	split(s, delim, elems);
-
-	// return list
-	return (elems);
-}
-
 // ---------------------------------------------------------CSite
 CSite::CSite() {
 	clear();
@@ -54,14 +28,13 @@ CSite::CSite() {
 // ---------------------------------------------------------CSite
 CSite::CSite(std::string sta, std::string comp, std::string net,
 				std::string loc, double lat, double lon, double elv,
-				double qual, bool enable, bool useTele, CGlass *glassPtr) {
+				double qual, bool enable, bool useTele) {
 	// pass to initialization function
-	initialize(sta, comp, net, loc, lat, lon, elv, qual, enable, useTele,
-				glassPtr);
+	initialize(sta, comp, net, loc, lat, lon, elv, qual, enable, useTele);
 }
 
 // ---------------------------------------------------------CSite
-CSite::CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr) {
+CSite::CSite(std::shared_ptr<json::Object> site) {
 	clear();
 
 	// null check json
@@ -222,14 +195,13 @@ CSite::CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr) {
 
 	// pass to initialization function
 	initialize(station, channel, network, location, latitude, longitude,
-				elevation, quality, enable, useForTelesiesmic, glassPtr);
+				elevation, quality, enable, useForTelesiesmic);
 }
 
 // --------------------------------------------------------initialize
 bool CSite::initialize(std::string sta, std::string comp, std::string net,
 						std::string loc, double lat, double lon, double elv,
-						double qual, bool enable, bool useTele,
-						CGlass *glassPtr) {
+						double qual, bool enable, bool useTele) {
 	clear();
 
 	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
@@ -282,11 +254,8 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	m_bUse = true;
 	m_bUseForTeleseismic = useTele;
 
-	// pointer to main glass class
-	m_pGlass = glassPtr;
-
-	if (m_pGlass) {
-		m_iPickMax = m_pGlass->getMaxNumPicksPerSite();
+	if (CGlass::getMaxNumPicksPerSite() > -1) {
+		m_iPickMax = CGlass::getMaxNumPicksPerSite();
 	}
 
 	return (true);
@@ -311,8 +280,6 @@ void CSite::clear() {
 	m_bEnable = true;
 	m_bUseForTeleseismic = true;
 	m_dQuality = 1.0;
-
-	m_pGlass = NULL;
 
 	// clear geographic
 	m_Geo = glassutil::CGeo();
@@ -728,11 +695,6 @@ glassutil::CGeo &CSite::getGeo() {
 // ---------------------------------------------------------getPickMax
 int CSite::getPickMax() const {
 	return (m_iPickMax);
-}
-
-// ---------------------------------------------------------getGlass
-CGlass* CSite::getGlass() const {
-	return (m_pGlass);
 }
 
 // ---------------------------------------------------------getComponent

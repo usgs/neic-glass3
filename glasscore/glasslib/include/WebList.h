@@ -15,7 +15,6 @@
 namespace glasscore {
 
 // forward declarations
-class CGlass;
 class CSite;
 class CSiteList;
 class CWeb;
@@ -50,9 +49,9 @@ class CWebList {
 	void clear();
 
 	/**
-	 * \brief CWeb communication receiving function
+	 * \brief CWebList communication receiving function
 	 *
-	 * The function used by CWeb to receive communication
+	 * The function used by CWebList to receive communication
 	 * (such as configuration or input data), from outside the
 	 * glasscore library, or it's parent CGlass.
 	 *
@@ -63,10 +62,10 @@ class CWebList {
 	 *
 	 * \param com - A pointer to a json::object containing the
 	 * communication.
-	 * \return Returns true if the communication was handled by CWeb,
+	 * \return Returns true if the communication was handled by CWebList,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Add web ('Grid', etc) to list using provided configuration
@@ -128,20 +127,6 @@ class CWebList {
 	bool healthCheck();
 
 	/**
-	 * \brief Get the CGlass pointer used by this web list for global constant
-	 * and configuration lookups
-	 * \return Return a pointer to the CGlass class used by this web list
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief Set the CGlass pointer used by this web list for global constant
-	 * and configuration lookups
-	 * \param glass - a pointer to the CGlass class used by this web list
-	 */
-	void setGlass(CGlass* glass);
-
-	/**
 	 * \brief Get the CSiteList pointer used by this web list for site lookups
 	 * \return Return a pointer to the CSiteList class used by this web list
 	 */
@@ -159,12 +144,6 @@ class CWebList {
 	int size() const;
 
  private:
-	/**
-	 * \brief A pointer to the parent CGlass class, used to get configuration
-	 * values and access other parts of glass3
-	 */
-	CGlass * m_pGlass;
-
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites for
 	 * lookups

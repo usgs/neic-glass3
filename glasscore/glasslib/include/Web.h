@@ -26,7 +26,6 @@
 namespace glasscore {
 
 // forward declarations
-class CGlass;
 class CSite;
 class CSiteList;
 class CNode;
@@ -131,7 +130,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \return Returns true if the communication was handled by CWeb,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CWeb initialization function
@@ -216,7 +215,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief Load the travel times for this web
 	 *
 	 * This function loads the travel times used by this web using the provided
-	 * configuraiton
+	 * configuration
 	 *
 	 * \param gridConfiguration - A pointer to a json::object containing the web
 	 * configuration
@@ -267,10 +266,10 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * longitude, depth, and spatial resolution.  The new node is linked to
 	 * the N closest sites (stations) where N is defined by nDetect.
 	 *
-	 * \param lat - A double varible containing the latitude to use
-	 * \param lon - A double varible containing the longitude to use
-	 * \param z - A double varible containing the depth to use
-	 * \param resol - A double varible containing the spatial resolution to use
+	 * \param lat - A double variable containing the latitude to use
+	 * \param lon - A double variable containing the longitude to use
+	 * \param z - A double variable containing the depth to use
+	 * \param resol - A double variable containing the spatial resolution to use
 	 * \return Returns a std::shared_ptr to the newly created node.
 	 */
 	std::shared_ptr<CNode> generateNode(double lat, double lon, double z,
@@ -358,20 +357,6 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \return Returns a double value containing the maximum depth to use
 	 */
 	double getMaxDepth() const;
-
-	/**
-	 * \brief Get the CGlass pointer used by this web for global constant
-	 * and configuration lookups
-	 * \return Return a pointer to the CGlass class used by this web
-	 */
-	CGlass* getGlass() const;
-
-	/**
-	 * \brief Set the CGlass pointer used by this web for global constant
-	 * and configuration lookups
-	 * \param glass - a pointer to the CGlass class used by this web
-	 */
-	void setGlass(CGlass* glass);
 
 	/**
 	 * \brief Get the CSiteList pointer used by this web for site lookups
@@ -485,12 +470,6 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	glass3::util::WorkState work() override;
 
  private:
-	/**
-	 * \brief A pointer to the main CGlass class, used to send output,
-	 * get default values, encode/decode time, and get debug flags
-	 */
-	CGlass * m_pGlass;
-
 	/**
 	 * \brief A pointer to the CSiteList class, used get sites (stations)
 	 */

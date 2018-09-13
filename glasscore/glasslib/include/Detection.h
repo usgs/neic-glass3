@@ -21,9 +21,9 @@ class CHypo;
 /**
  * \brief glasscore detection class
  *
- * The CDetection class is a class that encapsulates the processing a detection
- * message from an external source, including parseing the message, creating
- * a hypo from the message, and adding the hypo to the hypo list.
+ * The CDetection class is a class that encapsulates the processing of a
+ * detection message from an external source, including parseing the message,
+ * creating a hypo from the message, and adding the hypo to the hypo list.
  */
 class CDetection {
  public:
@@ -51,7 +51,7 @@ class CDetection {
 	 * \return Returns true if the communication was handled by CDetection,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Process detection message

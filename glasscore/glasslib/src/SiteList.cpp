@@ -19,8 +19,6 @@ namespace glasscore {
 CSiteList::CSiteList(int numThreads, int sleepTime, int checkInterval)
 		: glass3::util::ThreadBaseClass("SiteList", sleepTime, numThreads,
 										checkInterval) {
-	m_pGlass = NULL;
-
 	clear();
 
 	// start up the thread
@@ -52,13 +50,13 @@ void CSiteList::clear() {
 	m_tLastChecked = std::time(NULL);
 }
 
-// ---------------------------------------------------------dispatch
-bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CSiteList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CSiteList::dispatch: NULL json communication.");
+				"CSiteList::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
@@ -122,7 +120,7 @@ bool CSiteList::addSiteFromJSON(std::shared_ptr<json::Object> com) {
 	}
 
 	// create a new a site from the json message;
-	CSite * site = new CSite(com, m_pGlass);
+	CSite * site = new CSite(com);
 
 	// make sure a site was actually created
 	if (site->getSCNL() == "") {
@@ -178,7 +176,7 @@ bool CSiteList::addSiteListFromJSON(std::shared_ptr<json::Object> com) {
 						json::Object>(v.ToObject());
 
 				// create a new a site from the station json;
-				CSite * site = new CSite(siteObj, m_pGlass);
+				CSite * site = new CSite(siteObj);
 
 				// make sure a site was actually created
 				if (site->getSCNL() == "") {
@@ -226,10 +224,8 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 		oldSite->update(site.get());
 
 		// pass updated site to webs
-		if (m_pGlass) {
-			if (m_pGlass->getWebList()) {
-				m_pGlass->getWebList()->addSite(oldSite);
-			}
+		if (CGlass::getWebList()) {
+			CGlass::getWebList()->addSite(oldSite);
 		}
 	} else {
 		// add new site to list and map
@@ -237,10 +233,8 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 		m_mSite[site->getSCNL()] = site;
 
 		// pass new site to webs
-		if (m_pGlass) {
-			if (m_pGlass->getWebList()) {
-				m_pGlass->getWebList()->addSite(site);
-			}
+		if (CGlass::getWebList()) {
+			CGlass::getWebList()->addSite(site);
 		}
 	}
 
@@ -360,9 +354,7 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 			glassutil::CLogit::log(sLog);
 
 			// send request
-			if (m_pGlass != NULL) {
-				m_pGlass->send(request);
-			}
+			CGlass::sendExternalMessage(request);
 
 			// remember when we tried
 			m_mLastTimeSiteLookedUp[scnl] = tNow;
@@ -441,23 +433,11 @@ std::shared_ptr<json::Object> CSiteList::generateSiteListMessage(bool send) {
 
 	(*sitelistObj)["SiteList"] = stationList;
 
-	if ((send == true) && (m_pGlass != NULL)) {
-		m_pGlass->send(sitelistObj);
+	if (send == true) {
+		CGlass::sendExternalMessage(sitelistObj);
 	}
 
 	return (sitelistObj);
-}
-
-// ------------------------------------------------------getGlass
-const CGlass* CSiteList::getGlass() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	return (m_pGlass);
-}
-
-// ------------------------------------------------------setGlass
-void CSiteList::setGlass(CGlass* glass) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	m_pGlass = glass;
 }
 
 // ------------------------------------------------------size
@@ -555,10 +535,8 @@ glass3::util::WorkState CSiteList::work() {
 			aSite->setUse(false);
 
 			// remove site from webs
-			if (m_pGlass) {
-				if (m_pGlass->getWebList()) {
-					m_pGlass->getWebList()->removeSite(aSite);
-				}
+			if (CGlass::getWebList()) {
+				CGlass::getWebList()->removeSite(aSite);
 			}
 		}
 
@@ -624,10 +602,8 @@ glass3::util::WorkState CSiteList::work() {
 			aSite->setUse(true);
 
 			// add site to webs
-			if (m_pGlass) {
-				if (m_pGlass->getWebList()) {
-					m_pGlass->getWebList()->addSite(aSite);
-				}
+			if (CGlass::getWebList()) {
+				CGlass::getWebList()->addSite(aSite);
 			}
 		}
 

@@ -173,8 +173,8 @@ class CPick {
 	 *
 	 * Attempt to nucleate a new hypo based on the addition of this pick. By
 	 * scanning all nodes linked to this pick's site, producing a list of
-	 * triggers. Then, for each trigger, try to generate a new hypo, performing
-	 * a fast location/prune using hypo->anneal
+	 * triggers. Then, for the best trigger for each web, try to generate a new
+	 * hypo, performing a fast location/prune using hypo->anneal
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool nucleate();
@@ -200,7 +200,7 @@ class CPick {
 	const std::shared_ptr<json::Object>& getJSONPick() const;
 
 	/**
-	 * \brief Get the current hypo reference to this pick
+	 * \brief Get the current hypo referenced by this pick
 	 *
 	 * Note that this pick may or may not also be included in other hypocenter
 	 * pick data lists, but this pick will only link to a single hypocenter

@@ -46,13 +46,14 @@ void CCorrelationList::clear() {
 	m_iCorrelationMax = 10000;
 }
 
-// ---------------------------------------------------------dispatch
-bool CCorrelationList::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CCorrelationList::receiveExternalMessage(
+		std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CCorrelationList::dispatch: NULL json communication.");
+				"CCorrelationList::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
@@ -464,7 +465,7 @@ int CCorrelationList::getCorrelationTotal() const {
 }
 
 // ---------------------------------------------------------size
-int CCorrelationList::size() const {
+int CCorrelationList::length() const {
 	std::lock_guard<std::recursive_mutex> vCorrelationGuard(
 			m_CorrelationListMutex);
 	return (m_msCorrelationList.size());

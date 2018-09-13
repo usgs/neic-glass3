@@ -72,7 +72,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 
 		// send expiration message
 		if (oldestHypo->getHypoGenerated()) {
-			CGlass::send(oldestHypo->generateExpireMessage());
+			CGlass::sendExternalMessage(oldestHypo->generateExpireMessage());
 		}
 		// remove it
 		removeHypo(oldestHypo, false);
@@ -105,7 +105,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 		return (false);
 	}
 
-	std::vector<std::shared_ptr<CHypo>> viper;
+	std::vector<std::shared_ptr<CHypo>> assocHypoList;
 
 	// compute the list of hypos to associate with
 	// (a potential hypo must be before the pick we're associating)
@@ -136,7 +136,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 			// NOTE: The sigma value passed into associate is hard coded
 			if (hyp->canAssociate(pk, 1.0, sdassoc)) {
 				// add to the list of hypos this pick can associate with
-				viper.push_back(hyp);
+				assocHypoList.push_back(hyp);
 
 				// remember this hypo
 				bestHyp = hyp;
@@ -145,7 +145,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 	}
 
 	// there were no hypos that the pick associated with
-	if (viper.size() < 1) {
+	if (assocHypoList.size() < 1) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CHypoList::associate NOASSOC idPick:" + pk->getID());
@@ -154,7 +154,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 	}
 
 	// there was only one hypo that the pick associated with
-	if (viper.size() == 1) {
+	if (assocHypoList.size() == 1) {
 		// link the pick to the hypo
 		pk->addHypoReference(bestHyp, true);
 
@@ -182,7 +182,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 	}
 
 	// For each hypo that the pick could associate with
-	for (auto q : viper) {
+	for (auto q : assocHypoList) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CHypoList::associate (pick) sPid:" + q->getID()
@@ -199,7 +199,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
 			"CHypoList::associate ASSOC idPick:" + pk->getID() + "; numHypos: "
-					+ std::to_string(viper.size()));
+					+ std::to_string(assocHypoList.size()));
 
 	// the pick was associated
 	return (true);
@@ -216,8 +216,7 @@ bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 		return (false);
 	}
 
-	bool bass = false;
-	std::vector<std::shared_ptr<CHypo>> viper;
+	std::vector<std::shared_ptr<CHypo>> assocHypoList;
 
 	// compute the index range to search for hypos to associate with
 	// (a potential hypo must be before the pick we're associating)
@@ -247,7 +246,7 @@ bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 					corr, CGlass::getCorrelationMatchingTimeWindow(),
 					CGlass::getCorrelationMatchingDistanceWindow())) {
 				// add to the list of hypos this correlation can associate with
-				viper.push_back(hyp);
+				assocHypoList.push_back(hyp);
 
 				// remember this hypo for later
 				bestHyp = hyp;
@@ -256,12 +255,12 @@ bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 	}
 
 	// there were no hypos that the correlation associated with
-	if (viper.size() < 1) {
+	if (assocHypoList.size() < 1) {
 		return (false);
 	}
 
 	// there was only one hypo that the correlation associated with
-	if (viper.size() == 1) {
+	if (assocHypoList.size() == 1) {
 		// link the correlation to the hypo
 		corr->addHypoReference(bestHyp, true);
 
@@ -284,7 +283,7 @@ bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 	}
 
 	// For each hypo that the correlation could associate with
-	for (auto q : viper) {
+	for (auto q : assocHypoList) {
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
 				"CHypoList::associate (correlation) sPid:" + q->getID()
@@ -398,13 +397,13 @@ glass3::util::WorkState CHypoList::work() {
 	return (glass3::util::WorkState::OK);
 }
 
-// ---------------------------------------------------------dispatch
-bool CHypoList::dispatch(std::shared_ptr<json::Object> com) {
+// ------------------------------------------------------receiveExternalMessage
+bool CHypoList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CHypoList::dispatch: NULL json communication.");
+				"CHypoList::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
@@ -600,7 +599,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 		// if we CAN report
 		if (hyp->reportCheck() == true) {
 			// report
-			CGlass::send(hyp->generateEventMessage());
+			CGlass::sendExternalMessage(hyp->generateEventMessage());
 
 
 			glassutil::CLogit::log(
@@ -684,6 +683,7 @@ std::vector<std::weak_ptr<CHypo>> CHypoList::getHypos(double t1, double t2) {
 	if (t1 == t2) {
 		return (hypos);
 	}
+	// swap t1 and t2 if necessary so that t1 <= t2
 	if (t1 > t2) {
 		double temp = t2;
 		t2 = t1;
@@ -768,7 +768,7 @@ int CHypoList::getHypoTotal() const {
 }
 
 // ---------------------------------------------------------size
-int CHypoList::size() const {
+int CHypoList::length() const {
 	std::lock_guard<std::recursive_mutex> vHypoGuard(m_HypoListMutex);
 	return (m_msHypoList.size());
 }
@@ -1066,7 +1066,7 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		// only if we've sent an event message
 		if (hypo->getEventGenerated()) {
 			// create cancellation message
-			CGlass::send(hypo->generateCancelMessage());
+			CGlass::sendExternalMessage(hypo->generateCancelMessage());
 		}
 	}
 
@@ -1152,7 +1152,7 @@ bool CHypoList::requestHypo(std::shared_ptr<json::Object> com) {
 	}
 
 	// generate the hypo message
-	CGlass::send(hyp->generateHypoMessage());
+	CGlass::sendExternalMessage(hyp->generateHypoMessage());
 
 
 	// done

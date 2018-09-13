@@ -46,7 +46,7 @@ TEST(CorrelationListTest, Construction) {
 	"nCorrelationTotal is 0";
 
 	// lists
-	ASSERT_EQ(0, testCorrelationList->size())<<
+	ASSERT_EQ(0, testCorrelationList->length())<<
 	"vCorrelation.size() is 0";
 
 	// pointer
@@ -105,7 +105,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 
 	// test adding correlations by addCorrelation and dispatch
 	testCorrelationList->addCorrelationFromJSON(correlationJSON);
-	testCorrelationList->dispatch(correlation3JSON);
+	testCorrelationList->receiveExternalMessage(correlation3JSON);
 	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testCorrelationList->getCorrelationTotal())<<
 	"Added Correlations";
@@ -118,7 +118,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNCORRELATION;
-	ASSERT_EQ(expectedSize, testCorrelationList->size())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->length())<<
 	"testCorrelationList not larger than max";
 
 	// test clearing correlations

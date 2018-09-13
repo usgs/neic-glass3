@@ -36,7 +36,7 @@ TEST(HypoListTest, Construction) {
 	ASSERT_EQ(0, testHypoList->getHypoTotal())<< "nHypoTotal is 0";
 
 	// lists
-	ASSERT_EQ(0, testHypoList->size())<< "vHypo.size() is 0";
+	ASSERT_EQ(0, testHypoList->length())<< "vHypo.size() is 0";
 	ASSERT_EQ(0, testHypoList->getHyposToProcessSize())<< "qFifo.size() is 0";
 }
 
@@ -98,7 +98,7 @@ TEST(HypoListTest, HypoOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNHYPO;
-	ASSERT_EQ(expectedSize, (int)testHypoList->size())<<
+	ASSERT_EQ(expectedSize, (int)testHypoList->length())<<
 	"testHypoList not larger than max";
 
 	// test getting a hypo
@@ -121,7 +121,7 @@ TEST(HypoListTest, HypoOperations) {
 
 	// check to make sure the size is now one less
 	expectedSize = MAXNHYPO - 1;
-	ASSERT_EQ(expectedSize, (int)testHypoList->size())<<
+	ASSERT_EQ(expectedSize, (int)testHypoList->length())<<
 	"testHypoList is one smaller";
 
 	// test clearing hypos

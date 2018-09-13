@@ -44,7 +44,6 @@ CPickList::~CPickList() {
 void CPickList::clear() {
 	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
 
-	m_pGlass = NULL;
 	m_pSiteList = NULL;
 
 	// clear the multiset
@@ -61,13 +60,13 @@ void CPickList::clear() {
 	m_iPickMax = 10000;
 }
 
-// ---------------------------------------------------------dispatch
-bool CPickList::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CPickList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CPickList::dispatch: NULL json communication.");
+				"CPickList::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
@@ -164,20 +163,18 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// check if pick is duplicate, if pGlass exists
-	if (m_pGlass) {
-		bool duplicate = checkDuplicate(newPick->getTPick(),
-										newPick->getSite()->getSCNL(),
-										m_pGlass->getPickDuplicateTimeWindow());
+	bool duplicate = checkDuplicate(newPick->getTPick(),
+									newPick->getSite()->getSCNL(),
+									CGlass::getPickDuplicateTimeWindow());
 
-		// it is a duplicate, log and don't add pick
-		if (duplicate) {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
-					"CPickList::addPick: Duplicate pick not passed in.");
-			delete (newPick);
-			// message was processed
-			return (true);
-		}
+	// it is a duplicate, log and don't add pick
+	if (duplicate) {
+		glassutil::CLogit::log(
+				glassutil::log_level::warn,
+				"CPickList::addPick: Duplicate pick not passed in.");
+		delete (newPick);
+		// message was processed
+		return (true);
 	}
 
 	// create new shared pointer to this pick
@@ -187,8 +184,8 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 
 	// get maximum number of picks
 	// use max picks from pGlass if we have it
-	if (m_pGlass) {
-		m_iPickMax = m_pGlass->getMaxNumPicks();
+	if (CGlass::getMaxNumPicks() > 0) {
+		m_iPickMax = CGlass::getMaxNumPicks();
 	}
 
 	// lock while we're modifying the multiset
@@ -221,7 +218,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// wait until there's space in the queue
 	// we don't want to build up a huge queue of unprocessed
 	// picks
-	if ((m_pGlass) && (m_pGlass->getHypoList())) {
+	if (CGlass::getHypoList()) {
 		// add pick to processing list
 		m_PicksToProcessMutex.lock();
 		m_qPicksToProcess.push(pck);
@@ -362,7 +359,7 @@ bool CPickList::checkDuplicate(double newTPick, std::string newSCNL,
 }
 
 // ---------------------------------------------------------scavenge
-bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
+bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	// Scan all picks within specified time range, adding any
 	// that meet association criteria to hypo object provided.
 	// Returns true if any associated.
@@ -374,25 +371,18 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 		return (false);
 	}
 
-	// check pGlass
-	if (m_pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CPickList::scavenge: NULL glass pointer.");
-		return (false);
-	}
-
 	char sLog[1024];
 
 	glassutil::CLogit::log(glassutil::log_level::debug,
 							"CPickList::scavenge. " + hyp->getID());
 
 	// Calculate range for possible associations
-	double sdassoc = m_pGlass->getAssociationSDCutoff();
+	double sdassoc = CGlass::getAssociationSDCutoff();
 	int addCount = 0;
 	bool associated = false;
 
 	std::vector<std::weak_ptr<CPick>> picks = getPicks(
-			hyp->getTOrigin() - tWindow, hyp->getTOrigin() + tWindow);
+			hyp->getTOrigin() - tDuration, hyp->getTOrigin() + tDuration);
 
 	if (picks.size() == 0) {
 		return (false);
@@ -457,19 +447,15 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 
 // ---------------------------------------------------------work
 glass3::util::WorkState CPickList::work() {
-	// make sure we have a pGlass and pGlass->pHypoList
-	if (m_pGlass == NULL) {
-		// on to the next loop
-		return (glass3::util::WorkState::Idle);
-	}
-	if (m_pGlass->getHypoList() == NULL) {
+	// make sure we have a HypoList
+	if (CGlass::getHypoList() == NULL) {
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}
 
 	// check to see that we've not run to far ahead of the hypo processing
-	if (m_pGlass->getHypoList()->getHyposToProcessSize()
-			> (m_pGlass->getHypoList()->getNumThreads() * MAX_QUEUE_FACTOR)) {
+	if (CGlass::getHypoList()->getHyposToProcessSize()
+			> (CGlass::getHypoList()->getNumThreads() * MAX_QUEUE_FACTOR)) {
 		glassutil::CLogit::log(glassutil::log_level::debug,
 								"CPickList::work. Delaying work due to "
 								"HypoList process queue size.");
@@ -505,7 +491,7 @@ glass3::util::WorkState CPickList::work() {
 	// Attempt both association and nucleation of the new pick.
 	// If both succeed, the mess is sorted out in darwin/evolve
 	// associate
-	m_pGlass->getHypoList()->associateData(pck);
+	CGlass::getHypoList()->associateData(pck);
 
 	// nucleate
 	pck->nucleate();
@@ -526,18 +512,6 @@ void CPickList::setSiteList(CSiteList* siteList) {
 	m_pSiteList = siteList;
 }
 
-// ---------------------------------------------------------getGlass
-const CGlass* CPickList::getGlass() const {
-	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
-	return (m_pGlass);
-}
-
-// ---------------------------------------------------------setGlass
-void CPickList::setGlass(CGlass* glass) {
-	std::lock_guard<std::recursive_mutex> pickListGuard(m_PickListMutex);
-	m_pGlass = glass;
-}
-
 // ---------------------------------------------------------getPickMax
 int CPickList::getPickMax() const {
 	return (m_iPickMax);
@@ -554,7 +528,7 @@ int CPickList::getPickTotal() const {
 }
 
 // ---------------------------------------------------------size
-int CPickList::size() const {
+int CPickList::length() const {
 	std::lock_guard<std::recursive_mutex> vPickGuard(m_PickListMutex);
 	return (m_msPickList.size());
 }

@@ -120,9 +120,6 @@ TEST(WebTest, Construction) {
 	ASSERT_EQ(expectedSize, (int)testWeb->getSitesFilterSize())<<
 	"site filter list empty";
 
-	// pointers
-	ASSERT_EQ(NULL, testWeb->getGlass())<< "getGlass() null";
-
 	// construct a web
 	glasscore::CWeb * testWeb2 = new glasscore::CWeb(std::string(NAME),
 	THRESH,
@@ -163,9 +160,6 @@ TEST(WebTest, Construction) {
 	"net filter list empty";
 	ASSERT_EQ(expectedSize, (int)testWeb->getSitesFilterSize())<<
 	"site filter list empty";
-
-	// pointers
-	ASSERT_EQ(NULL, testWeb2->getGlass())<< "getGlass() null";
 
 	delete (testWeb);
 	delete (testWeb2);
@@ -261,12 +255,12 @@ TEST(WebTest, GlobalTest) {
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(siteList);
+	testSiteList->receiveExternalMessage(siteList);
 
 	// construct a web
 	glasscore::CWeb testGlobalWeb(NUMTHREADS);
 	testGlobalWeb.setSiteList(testSiteList);
-	testGlobalWeb.dispatch(globalConfig);
+	testGlobalWeb.receiveExternalMessage(globalConfig);
 
 	// name
 	ASSERT_STREQ(std::string(GLOBALNAME).c_str(),
@@ -305,7 +299,6 @@ TEST(WebTest, GlobalTest) {
 	"site filter list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testGlobalWeb.getGlass())<< "getGlass() null";
 	ASSERT_TRUE(NULL != testGlobalWeb.getNucleationTravelTime1())<< "getTrv1() not null";
 	ASSERT_TRUE(NULL != testGlobalWeb.getNucleationTravelTime2())<< "getTrv2() not null";
 
@@ -355,12 +348,12 @@ TEST(WebTest, GridTest) {
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(siteList);
+	testSiteList->receiveExternalMessage(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(NUMTHREADS);
 	testGridWeb.setSiteList(testSiteList);
-	testGridWeb.dispatch(gridConfig);
+	testGridWeb.receiveExternalMessage(gridConfig);
 
 	// name
 	ASSERT_STREQ(std::string(GRIDNAME).c_str(), testGridWeb.getName().c_str())<<
@@ -396,7 +389,6 @@ TEST(WebTest, GridTest) {
 	"site filter list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
 	ASSERT_TRUE(NULL != testGridWeb.getNucleationTravelTime1())<< "getTrv1() not null";
 	ASSERT_TRUE(NULL != testGridWeb.getNucleationTravelTime2())<< "getTrv2() not null";
 
@@ -445,12 +437,12 @@ TEST(WebTest, GridExplicitTest) {
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(siteList);
+	testSiteList->receiveExternalMessage(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(NUMTHREADS);
 	testGridWeb.setSiteList(testSiteList);
-	testGridWeb.dispatch(gridConfig);
+	testGridWeb.receiveExternalMessage(gridConfig);
 
 	// name
 	ASSERT_STREQ(std::string(GRIDEXPLICITNAME).c_str(),
@@ -488,7 +480,6 @@ TEST(WebTest, GridExplicitTest) {
 	"site filter list empty";
 
 	// pointers
-	ASSERT_EQ(NULL, testGridWeb.getGlass())<< "getGlass() null";
 	ASSERT_TRUE(NULL != testGridWeb.getNucleationTravelTime1())<< "getTrv1() not null";
 	ASSERT_TRUE(NULL == testGridWeb.getNucleationTravelTime2())<< "getTrv2() null";
 
@@ -530,17 +521,17 @@ TEST(WebTest, AddTest) {
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(siteList);
+	testSiteList->receiveExternalMessage(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(NUMTHREADS);
 	testGridWeb.setSiteList(testSiteList);
-	testGridWeb.dispatch(gridConfig);
+	testGridWeb.receiveExternalMessage(gridConfig);
 
 	// create site to add
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(ADDSITE))));
-	glasscore::CSite * addSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * addSite = new glasscore::CSite(siteJSON);
 	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
 
 	// add to site list
@@ -589,17 +580,17 @@ TEST(WebTest, RemoveTest) {
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(siteList);
+	testSiteList->receiveExternalMessage(siteList);
 
 	// construct a web
 	glasscore::CWeb testGridWeb(NUMTHREADS);
 	testGridWeb.setSiteList(testSiteList);
-	testGridWeb.dispatch(gridConfig);
+	testGridWeb.receiveExternalMessage(gridConfig);
 
 	// create site to remove
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(REMOVESITE))));
-	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
 
 	// update in site list
@@ -636,7 +627,7 @@ TEST(WebTest, FailTests) {
 	printf("[ construct]\n");
 
 	// Nulls
-	ASSERT_FALSE(aWeb.dispatch(NULL))<< "Null dispatch false";
+	ASSERT_FALSE(aWeb.receiveExternalMessage(NULL))<< "Null dispatch false";
 	ASSERT_FALSE(aWeb.generateGlobalGrid(NULL))<< "Null global false";
 	ASSERT_FALSE(aWeb.generateLocalGrid(NULL))<< "Null grid false";
 	ASSERT_FALSE(aWeb.generateExplicitGrid(NULL))<< "Null grid_explicit false";

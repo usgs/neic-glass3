@@ -20,7 +20,7 @@
       "PruningStandardDeviationCutoff": 5.0,
       "PickAffinityExponentialFactor": 2.5,
       "DistanceCutoffFactor": 5.0,
-      "DistanceCutoffPercentage": 0.8,
+      "DistanceCutoffRatio": 0.8,
       "DistanceCutoffMinimum": 30.0,
       "HypoProcessCountLimit": 25,
       "CorrelationTimeWindow": 2.5,

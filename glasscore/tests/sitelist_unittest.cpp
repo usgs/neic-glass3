@@ -26,9 +26,6 @@ TEST(SiteListTest, Construction) {
 	// lists
 	ASSERT_EQ(0, testSiteList->size())<< "vSite is empty";
 
-	// pointers
-	ASSERT_EQ(NULL, testSiteList->getGlass())<< "pGlass null";
-
 	printf("[ shutdown ]\n");
 }
 
@@ -50,8 +47,8 @@ TEST(SiteListTest, SiteOperations) {
 				json::Object(json::Deserialize(std::string(SITE4JSON))));
 
 	// construct sites using JSON objects
-	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
-	glasscore::CSite * testSite4 = new glasscore::CSite(site4JSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
+	glasscore::CSite * testSite4 = new glasscore::CSite(site4JSON);
 
 
 	// create new shared pointer to the sites
@@ -62,7 +59,7 @@ TEST(SiteListTest, SiteOperations) {
 	// shared_ptr, json, and dispatch (also json)
 	testSiteList->addSite(sharedTestSite);
 	testSiteList->addSiteFromJSON(site2JSON);
-	testSiteList->dispatch(site3JSON);
+	testSiteList->receiveExternalMessage(site3JSON);
 	int expectedSize = 3;
 	ASSERT_EQ(expectedSize, testSiteList->size())<< "Added Sites";
 

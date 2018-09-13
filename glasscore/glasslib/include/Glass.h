@@ -86,9 +86,7 @@ class CGlass {
 	 * \return Returns true if the communication was handled by CGlass,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
-
-	void setSend(glasscore::IGlassSend *newSend);
+	static bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass communication sending function
@@ -102,7 +100,17 @@ class CGlass {
 	 * \return Returns true if the communication was sent via
 	 * a valid IGlassSend interface pointer, false otherwise
 	 */
-	static bool send(std::shared_ptr<json::Object> com);
+	static bool sendExternalMessage(std::shared_ptr<json::Object> com);
+
+	/**
+	 * \brief Sets the IGlassSend interface pointer used to send communication
+	 * (such as output data), to outside the glasscore library
+	 *
+	 * \param newSend - A pointer to a glasscore::IGlassSend interrace to
+	 * use to send communication (such as output data), to outside the glasscore
+	 * library
+	 */
+	static void setExternalInterface(glasscore::IGlassSend *newSend);
 
 	/**
 	 * \brief CGlass initialization function
@@ -204,7 +212,7 @@ class CGlass {
 	 * cutoff factor for pick data
 	 * \return Returns a double containing the distance cutoff percentage
 	 */
-	static double getDistanceCutoffPercentage();
+	static double getDistanceCutoffRatio();
 
 	/**
 	 * \brief Gets the minimum bayesian stack threshold needed to report a hypo
@@ -416,7 +424,7 @@ class CGlass {
 	 * \return Returns a shared_ptr to the CTravelTime containing the default
 	 *  nucleation travel time
 	 */
-	static std::shared_ptr<traveltime::CTravelTime>& getDefaultNucleationTravelTime(); // NOLINT
+	static std::shared_ptr<traveltime::CTravelTime>& getDefaultNucleationTravelTime();  // NOLINT
 
 	/**
 	 * \brief Gets the list of association travel times
@@ -427,12 +435,12 @@ class CGlass {
 
  private:
 	/**
-	 * \brief A double value containing the default number of data that
-	 * that need to be gathered to trigger the nucleation of an event.
-	 * This value can be overridden in a detection grid (Web) if provided as
-	 * part of a specific grid setup.
+	 * \brief A double value containing the default number of (e.g. Pick,
+	 * Correlation) that need to be gathered to trigger the nucleation of an
+	 * event. This value can be overridden in a detection grid (Web) if provided
+	 * as part of a specific grid setup.
 	 */
-	static int m_iNucleationDataThreshold;
+	static std::atomic<int> m_iNucleationDataThreshold;
 
 	/**
 	 * \brief A double value containing the default viability threshold needed
@@ -440,7 +448,7 @@ class CGlass {
 	 * This value can be overridden in a detection grid (Web) if provided as
 	 * part of a specific grid setup.
 	 */
-	static double m_dNucleationStackThreshold;
+	static std::atomic<double> m_dNucleationStackThreshold;
 
 	/**
 	 * \brief A double value containing the default number of closest stations
@@ -448,130 +456,130 @@ class CGlass {
 	 * This value can be overridden in a detection grid (Web) if provided as
 	 * part of a specific grid setup.
 	 */
-	static int m_iNumStationsPerNode;
+	static std::atomic<int> m_iNumStationsPerNode;
 
 	/**
 	 * \brief A double value containing the standard deviation cutoff used for
 	 * associating a pick with a hypocenter.
 	 */
-	static double m_dAssociationSDCutoff;
+	static std::atomic<double> m_dAssociationSDCutoff;
 
 	/**
 	 * \brief A double value containing the standard deviation cutoff used for
 	 * pruning a pick from a hypocenter.
 	 */
-	static double m_dPruningSDCutoff;
+	static std::atomic<double> m_dPruningSDCutoff;
 
 	/**
 	 * \brief A double value containing the exponential factor used when
 	 * calculating the affinity of a pick with a hypocenter.
 	 */
-	static double m_dPickAffinityExpFactor;
+	static std::atomic<double> m_dPickAffinityExpFactor;
 
 	/**
 	 * \brief A double value containing the factor used to calculate a hypo's
 	 * distance cutoff
 	 */
-	static double m_dDistanceCutoffFactor;
+	static std::atomic<double> m_dDistanceCutoffFactor;
 
 	/**
 	 * \brief A double value containing the percentage used to calculate a
 	 *  hypo's distance cutoff
 	 */
-	static double m_dDistanceCutoffPercentage;
+	static std::atomic<double> m_dDistanceCutoffRatio;
 
 	/**
 	 * \brief A double value containing the minimum distance cutoff in degrees
 	 */
-	static double m_dMinDistanceCutoff;
+	static std::atomic<double> m_dMinDistanceCutoff;
 
 	/**
 	 * \brief An integer containing the maximum number of picks stored by
 	 * pPickList
 	 */
-	static int m_iMaxNumPicks;
+	static std::atomic<int> m_iMaxNumPicks;
 
 	/**
 	 * \brief An integer containing the maximum number of correlations stored by
 	 * pCorrelationList
 	 */
-	static int m_iMaxNumCorrelations;
+	static std::atomic<int> m_iMaxNumCorrelations;
 
 	/**
 	 * \brief An integer containing the maximum number of picks stored by
 	 * the vector in a site
 	 */
-	static int m_iMaxNumPicksPerSite;
+	static std::atomic<int> m_iMaxNumPicksPerSite;
 
 	/**
 	 * \brief An integer containing the maximum number of hypocenters stored by
 	 * pHypoList
 	 */
-	static int m_iMaxNumHypos;
+	static std::atomic<int> m_iMaxNumHypos;
 
 	/**
 	 * \brief Window in seconds to check for 'duplicate' picks at same station.
 	 * If new pick is within window, it isn't added to pick list.
 	 */
-	static double m_dPickDuplicateTimeWindow;
+	static std::atomic<double> m_dPickDuplicateTimeWindow;
 
 	/**
 	 * \brief Time Window to check for matching correlations in seconds. Used
 	 * for checking for duplicate correlations and associating correlations to
 	 * hypos
 	 */
-	static double m_dCorrelationMatchingTimeWindow;
+	static std::atomic<double> m_dCorrelationMatchingTimeWindow;
 
 	/**
 	 * \brief Distance Window to check for matching correlations in degrees.
 	 * Used for checking for duplicate correlations and associating correlations
 	 * to hypos
 	 */
-	static double m_dCorrelationMatchingDistanceWindow;
+	static std::atomic<double> m_dCorrelationMatchingDistanceWindow;
 
 	/**
 	 * \brief Time Window to check for merging hypos in seconds. Used
 	 * for checking when hypos can be merged together
 	 */
-	static double m_dHypoMergingTimeWindow;
+	static std::atomic<double> m_dHypoMergingTimeWindow;
 
 	/**
 	 * \brief Distance Window to check for merging hypos in degrees.
 	 * Used for checking when hypos can be merged together
 	 */
-	static double m_dHypoMergingDistanceWindow;
+	static std::atomic<double> m_dHypoMergingDistanceWindow;
 
 	/**
 	 * \brief age of correlations before allowing cancel in seconds
 	 */
-	static int m_iCorrelationCancelAge;
+	static std::atomic<int> m_iCorrelationCancelAge;
 
 	/**
 	 * \brief Azimuth Window to check for matching beams in degrees. Used for
 	 * nucleating beams and associating beams to hypos
 	 */
-	static double m_dBeamMatchingAzimuthWindow;
+	static std::atomic<double> m_dBeamMatchingAzimuthWindow;
 
 	/**
 	 * \brief Distance Window to check for matching beams in degrees. Used for
 	 * nucleating beams and associating beams to hypos
 	 */
-	static double m_dBeamMatchingDistanceWindow;
+	static std::atomic<double> m_dBeamMatchingDistanceWindow;
 
 	/**
 	 * \brief Bool to decide when to print out travel-times.
 	 */
-	static bool m_bTestTravelTimes;
+	static std::atomic<bool> m_bTestTravelTimes;
 
 	/**
 	 * \brief Bool to decide when to print files for locator test
 	 */
-	static bool m_bTestLocator;
+	static std::atomic<bool> m_bTestLocator;
 
 	/**
 	 * \brief Flag indicating whether to output info for graphics.
 	 */
-	static bool m_bGraphicsOut;
+	static std::atomic<bool> m_bGraphicsOut;
 
 	/**
 	 * \brief Output locations info for graphics.
@@ -581,41 +589,41 @@ class CGlass {
 	/**
 	 * \brief For graphics, the step size for output.
 	 */
-	static double m_dGraphicsStepKM;
+	static std::atomic<double> m_dGraphicsStepKM;
 
 	/**
 	 * \brief For graphics, the number of steps from hypocenter.
 	 */
-	static int m_iGraphicsSteps;
+	static std::atomic<int> m_iGraphicsSteps;
 
 	/**
 	 * \brief Maximum number of processing cycles a hypo can do without having
 	 * new data associated
 	 */
-	static int m_iProcessLimit;
+	static std::atomic<int> m_iProcessLimit;
 
 	/**
 	 * \brief boolean to use a locator which minimizes TT as opposed to
 	 * maximizes significance functions
 	 */
-	static bool m_bMinimizeTTLocator;
+	static std::atomic<bool> m_bMinimizeTTLocator;
 
 	/**
 	 * \brief number of data required for reporting a hypo
 	 */
-	static int m_iReportingDataThreshold;
+	static std::atomic<int> m_iReportingDataThreshold;
 
 	/**
 	 * \brief A double value containing the default viability threshold needed
 	 * to for reporting a hypo
 	 */
-	static double m_dReportingStackThreshold;
+	static std::atomic<double> m_dReportingStackThreshold;
 
 	/**
 	 * \brief An IGlassSend interface pointer used to send communication
 	 * (such as output data), to outside the glasscore library
 	 */
-	static glasscore::IGlassSend *piSend;
+	static glasscore::IGlassSend *m_pExternalInterface;
 
 	/**
 	 * \brief A pointer to a CWeb object containing the detection web

@@ -111,9 +111,6 @@ TEST(SiteTest, Construction) {
 	ASSERT_EQ(true, testSite->getUseForTeleseismic())<< "bUseForTele false";
 	ASSERT_EQ(1, testSite->getQuality())<< "dQual one";
 
-	// pointers
-	ASSERT_EQ(NULL, testSite->getGlass())<< "pGlass null";
-
 	// geographic
 	ASSERT_EQ(0, testSite->getGeo().dLat)<< "geo.dLat 0";
 	ASSERT_EQ(0, testSite->getGeo().dLon)<< "geo.dLon 0";
@@ -129,7 +126,7 @@ TEST(SiteTest, Construction) {
 							ELEVATION,
 							QUALITY,
 							USE,
-							USEFORTELE, NULL);
+							USEFORTELE);
 
 	// check results
 	checkdata(testSite, "initialize check");
@@ -147,7 +144,7 @@ TEST(SiteTest, JSONConstruction) {
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct a site using a JSON object
-	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
 
 	// check results
 	checkdata(testSite, "json construction check");
@@ -167,8 +164,8 @@ TEST(SiteTest, Distance) {
 			json::Object(json::Deserialize(std::string(SITE2JSON))));
 
 	// construct sites using JSON objects
-	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
-	glasscore::CSite * testSite2 = new glasscore::CSite(site2JSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
+	glasscore::CSite * testSite2 = new glasscore::CSite(site2JSON);
 
 	// create new shared pointer to the site
 	std::shared_ptr<glasscore::CSite> sharedTestSite2(testSite2);
@@ -193,11 +190,11 @@ TEST(SiteTest, PickOperations) {
 			json::Object(json::Deserialize(std::string(SITE2JSON))));
 
 	// construct a site using a JSON object
-	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-			new glasscore::CSite(siteJSON, NULL));
+			new glasscore::CSite(siteJSON));
 	std::shared_ptr<glasscore::CSite> sharedTestSite2(
-			new glasscore::CSite(site2JSON, NULL));
+			new glasscore::CSite(site2JSON));
 
 	// create pick objects
 	glasscore::CPick * testPick = new glasscore::CPick(sharedTestSite, 10.0,
@@ -234,7 +231,7 @@ TEST(SiteTest, NodeOperations) {
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct a site using a JSON object
-	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
 
 	// create node objects
 	glasscore::CNode * testNode = new glasscore::CNode("test", 0.0, 0.0, 10,

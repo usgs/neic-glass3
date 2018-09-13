@@ -18,7 +18,6 @@
 namespace glasscore {
 
 // forward declarations
-class CGlass;
 class CPick;
 class CCorrelation;
 class CTrigger;
@@ -29,8 +28,8 @@ class CTrigger;
  * The CHypo class is the class that encapsulates everything necessary
  * to represent an earthquake hypocenter.
  *
- * CHypo also maintains vectors of CPick and CCorrelation objects that make up
- * the data that supports the hypocenter
+ * CHypo also maintains vectors of shared_ptr's to CPick and CCorrelation
+ * objects that make up the data that supports the hypocenter
  *
  * CHypo contains functions to support association, disassociation, location,
  * removal, and various statistical calculations, as well as generating
@@ -61,7 +60,7 @@ class CHypo {
 	/**
 	 * \brief CHypo advanced constructor
 	 *
-	 * An advanced constructor for the CHypo class. This function initializing
+	 * An advanced constructor for the CHypo class. This function initializes
 	 * members to the provided values.
 	 *
 	 * \param lat - A double containing the geocentric latitude in degrees to
@@ -398,7 +397,7 @@ class CHypo {
 
 	/* \brief Remove data that no longer fit association criteria
 	 *
-	 * Calculate the association affinity between the given
+	 * Calculate the association affinity between it's associated
 	 * supporting data and the current hypocenter based on a number of factors
 	 * including the identified phase, distance to picked station,
 	 * observation error, and other hypocentral properties
@@ -443,8 +442,8 @@ class CHypo {
 	 * \brief Fast baysian fit synthetic annealing location algorithm used by
 	 * nucleation
 	 *
-	 * Rapid synthetic annealing algoritym used by nucleation to calculate a
-	 * an initial starting location.
+	 * Rapid synthetic annealing algoritym used by nucleation to calculate an
+	 * initial starting location.
 	 *
 	 * Also computes supporting data statistics by calling calculateStatistics()
 	 *
@@ -490,11 +489,12 @@ class CHypo {
 	 * gregorian seconds
 	 * \param tStop - A double value containing the time stopping value in
 	 * gregorian seconds
-	 * \param nucleate - An int value sets if this is a nucleation which limits
-	 * the phase used.
+	 * \param nucleate - An boolean flag that sets if this is a nucleation which
+	 * limits the phase used.
 	 */
 	void annealingLocateBayes(int nIter, double dStart, double dStop,
-								double tStart, double tStop, int nucleate = 0);
+								double tStart, double tStop, bool nucleate =
+										false);
 
 	/**
 	 * \brief Residual synthetic annealing location algorithm
@@ -509,12 +509,12 @@ class CHypo {
 	 * gregorian seconds
 	 * \param tStop - A double value containing the time stopping value in
 	 * gregorian seconds
-	 * \param nucleate - An integer value that sets if this is a nucleation,
+	 * \param nucleate - A boolean flag that sets if this is a nucleation,
 	 * which limits the phases used.
 	 */
 	void annealingLocateResidual(int nIter, double dStart, double dStop,
-									double tStart, double tStop, int nucleate =
-											0);
+									double tStart, double tStop, bool nucleate =
+											false);
 
 	/**
 	 * \brief Calculate gap
@@ -540,13 +540,13 @@ class CHypo {
 	 * \param xlon - A double of the longitude to evaluate
 	 * \param xZ - A double of the depth to evaluate
 	 * \param oT - A double of the oT to evaluate
-	 * \param nucleate - An integer value that sets if this is a nucleation,
+	 * \param nucleate - A boolean flag that sets if this is a nucleation,
 	 * which limits the phases used.
 	 * \return Returns a double value containing the total bayseian stack value
 	 * for the given location.
 	 */
 	double calculateBayes(double xlat, double xlon, double xZ, double oT,
-							int nucleate);
+							bool nucleate);
 
 	/**
 	 * \brief Calculate absolute residual sum
@@ -558,13 +558,13 @@ class CHypo {
 	 * \param xlon - A double of the longitude to evaluate
 	 * \param xZ - A double of the depth to evaluate
 	 * \param oT - A double of the oT in gregorian seconds
-	 * \param nucleate - An integer value that sets if this is a nucleation,
+	 * \param nucleate - A boolean flag that sets if this is a nucleation,
 	 * which limits the phases used.
 	 * \return Returns a double value containing the absolute residual sum for
 	 * the given location.
 	 */
 	double calculateAbsResidualSum(double xlat, double xlon, double xZ,
-									double oT, int nucleate);
+									double oT, bool nucleate);
 
 	/**
 	 * \brief Calculate residual for a phase
@@ -587,11 +587,11 @@ class CHypo {
 	void graphicsOutput();
 
 	/**
-	 * \brief Ensure all supporting belong to this hypo
+	 * \brief Ensure all supporting data belong to this hypo
 	 *
-	 * Search through all supporting data in the given hypocenter's lists, using
-	 * the affinity functions to determine whether the data best fits this
-	 * hypocenter or not.
+	 * Search through all supporting data (eg. Picks) in the given hypocenter's
+	 * lists, using the affinity functions to determine whether the data best
+	 *  fits this hypocenter or not.
 	 *
 	 * \param hypo - A shared_ptr to a CHypo to use when adding references to
 	 * this hypo. This parameter is passed because issues occurred using
@@ -779,16 +779,26 @@ class CHypo {
 	void setNucleationDataThreshold(int cut);
 
 	/**
-	 * \brief Gets the nucleation minimum stack threshold used in determining
-	 * hypo viability in cancelCheck()
+	 * \brief Gets the threshold that represents the minimum count of data
+	 * required to successfully nucleate or maintain (via passing cancelCheck()
+	 * a hypocenter.
+	 *
+	 * If threshold is 10, then 8 picks + 1 correlation + 1 beam would be
+	 * sufficient, but 9 picks would not be.
+	 *
 	 * \return Returns a double value containing the nucleation minimum stack
 	 * threshold
 	 */
 	double getNucleationStackThreshold() const;
 
 	/**
-	 * \brief Sets the nucleation minimum stack threshold used in determining
-	 * hypo viability in cancelCheck()
+	 * \brief Sets the threshold that represents the minimum count of data
+	 * required to successfully nucleate or maintain (via passing cancelCheck()
+	 * a hypocenter.
+	 *
+	 * If threshold is 10, then 8 picks + 1 correlation + 1 beam would be
+	 * sufficient, but 9 picks would not be.
+	 *
 	 * \param thresh - a double value containing the nucleation minimum stack
 	 * threshold
 	 */
@@ -801,21 +811,15 @@ class CHypo {
 	double getGap() const;
 
 	/**
-	 * \brief Gets the kurtosis value as of the last call of calculateStatistics
-	 * \return Returns a double value containing the current kurtosis value
-	 */
-	double getKurtosisValue() const;
-
-	/**
 	 * \brief Gets the median data distance as of the last call of
-	 * calculateStatistics
+	 * calculateStatistics()
 	 * \return Returns a double value containing the median data distance
 	 */
 	double getMedianDistance() const;
 
 	/**
 	 * \brief Gets the minimum data distance as of the last call of
-	 * calculateStatistics
+	 * calculateStatistics()
 	 * \return Returns a double value containing the minimum data distance
 	 */
 	double getMinDistance() const;
@@ -1066,12 +1070,6 @@ class CHypo {
 	 * \brief A double value the resolution of the triggering web
 	 */
 	std::atomic<double> m_dWebResolution;
-
-	/**
-	 * \brief A double value containing this hypo's distance sample excess
-	 * kurtosis value as of the last call of calculateStatistics
-	 */
-	std::atomic<double> m_dKurtosisValue;
 
 	/**
 	 * \brief A double value containing this hypo's association distance cutoff

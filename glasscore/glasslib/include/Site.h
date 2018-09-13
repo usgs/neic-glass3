@@ -24,7 +24,6 @@ namespace glasscore {
 // forward declarations
 class CPick;
 class CNode;
-class CGlass;
 class CTrigger;
 class CHypo;
 
@@ -81,11 +80,10 @@ class CSite {
 	 * enabled or not
 	 * \param useTele - A boolean flag indicating whether the site is to be used
 	 * for teleseismic or not
-	 * \param glassPtr - A pointer to the CGlass class
 	 */
 	CSite(std::string sta, std::string comp, std::string net, std::string loc,
 			double lat, double lon, double elv, double qual, bool enable,
-			bool useTele, CGlass *glassPtr);
+			bool useTele);
 
 	/**
 	 * \brief CSite advanced constructor
@@ -94,9 +92,8 @@ class CSite {
 	 * initializing members to the values parsed from the provided json object.
 	 *
 	 * \param site - A shared_ptr to a json::Object to construct the site from
-	 * \param glassPtr - A pointer to the CGlass class
 	 */
-	CSite(std::shared_ptr<json::Object> site, CGlass *glassPtr);
+	explicit CSite(std::shared_ptr<json::Object> site);
 
 	/**
 	 * \brief CSite destructor
@@ -112,7 +109,7 @@ class CSite {
 	 * \brief CSite update function
 	 *
 	 * This function updates the CSite with the data contained in the provided
-	 * CSite, while not modifying the data list or glass pointer
+	 * CSite, while not modifying the data list
 	 *
 	 * \param site - A pointer to a CSite object containing the site to update
 	 * from.
@@ -139,12 +136,11 @@ class CSite {
 	 * enabled or not
 	 * \param useTele - A boolean flag indicating whether the site is to be used
 	 * for teleseismic or not
-	 * \param glassPtr - A pointer to the CGlass class
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string sta, std::string comp, std::string net,
 					std::string loc, double lat, double lon, double elv,
-					double qual, bool enable, bool useTele, CGlass *glassPtr);
+					double qual, bool enable, bool useTele);
 
 	/**
 	 * \brief Set the site's location
@@ -325,13 +321,6 @@ class CSite {
 	int getPickMax() const;
 
 	/**
-	 * \brief Get the CGlass pointer used by this site for global constants
-	 * and configuration lookups
-	 * \return Return a pointer to the CGlass class used by this site
-	 */
-	CGlass* getGlass() const;
-
-	/**
 	 * \brief Get the SCNL identifier for this site
 	 * \return Returns a std::string containing the SCNL identifier for this
 	 * site
@@ -408,12 +397,6 @@ class CSite {
 	 * cyclical reference between CPick and CSite) to improve performance
 	 */
 	std::vector<std::shared_ptr<CPick>> m_vPick;
-
-	/**
-	 * \brief A pointer to the parent CGlass class, used to get configuration
-	 * values and access other parts of glass3
-	 */
-	CGlass * m_pGlass;
 
 	/**
 	 * \brief A std::string containing the SCNL (Site, Component, Network,

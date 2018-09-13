@@ -26,7 +26,6 @@
 namespace glasscore {
 
 // forward declarations
-class CGlass;
 class CSite;
 class CSiteList;
 class CHypo;
@@ -100,7 +99,7 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * \return Returns true if the communication was handled by CPickList,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CPickList add pick function
@@ -134,11 +133,11 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 *
 	 * \param newTPick - A double containing the arrival time of the pick
 	 * \param newSCNL - A std::string containing the scnl of the new pick
-	 * \param tWindow - A double containing the allowable matching time window
-	 * in seconds
+	 * \param tDuration - A double containing the allowable matching time window
+	 * duration in seconds
 	 * \return Returns true if pick is a duplicate, false otherwise
 	 */
-	bool checkDuplicate(double newTPick, std::string newSCNL, double tWindow);
+	bool checkDuplicate(double newTPick, std::string newSCNL, double tDuration);
 
 	/**
 	 * \brief Search for any associable picks that match hypo
@@ -155,20 +154,6 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * false otherwise.
 	 */
 	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2400.0);
-
-	/**
-	 * \brief Get the CGlass pointer used by this pick list for global constants
-	 * and configuration lookups
-	 * \return Return a pointer to the CGlass class used by this pick list
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief Set the CGlass pointer used by this pick list for global constants
-	 * and configuration lookups
-	 * \param glass - a pointer to the CGlass class used by this pick list
-	 */
-	void setGlass(CGlass* glass);
 
 	/**
 	 * \brief Get the CSiteList pointer used by this pick list for site lookups
@@ -208,7 +193,7 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * \return Return an integer containing the current number of picks
 	 * contained in this list
 	 */
-	int size() const;
+	int length() const;
 
 	/**
 	 * \brief Get a vector of picks that fall within a time window
@@ -235,12 +220,6 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	glass3::util::WorkState work() override;
 
  private:
-	/**
-	 * \brief A pointer to the parent CGlass class, used to get configuration
-	 * values and access other parts of glass3
-	 */
-	CGlass * m_pGlass;
-
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites for
 	 * lookups

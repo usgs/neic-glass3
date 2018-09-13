@@ -94,7 +94,7 @@ TEST(GlassTest, Construction) {
 	"getDistanceCutoffFactor";
 	ASSERT_EQ(DEFAULT_DISTCUTMIN, testGlass->getMinDistanceCutoff())<<
 	"getMinDistanceCutoff";
-	ASSERT_EQ(DEFAULT_DISTCUTPERC, testGlass->getDistanceCutoffPercentage())<<
+	ASSERT_EQ(DEFAULT_DISTCUTPERC, testGlass->getDistanceCutoffRatio())<<
 	"getDistanceCutoffPercentage";
 	ASSERT_EQ(DEFAULT_REPORTTHRESH, testGlass->getReportingStackThreshold())<<
 	"getReportingStackThreshold";
@@ -174,7 +174,7 @@ TEST(GlassTest, Init) {
 	std::shared_ptr<json::Object> initConfig = std::make_shared<json::Object>(
 			json::Deserialize(initLine));
 
-	testGlass->dispatch(initConfig);
+	testGlass->receiveExternalMessage(initConfig);
 
 	// assert values
 	ASSERT_EQ(BEAMMATCHAZM, testGlass->getBeamMatchingAzimuthWindow())<<
@@ -191,7 +191,7 @@ TEST(GlassTest, Init) {
 	"getDistanceCutoffFactor";
 	ASSERT_EQ(DISTCUTMIN, testGlass->getMinDistanceCutoff())<<
 	"getMinDistanceCutoff";
-	ASSERT_EQ(DISTCUTPERC, testGlass->getDistanceCutoffPercentage())<<
+	ASSERT_EQ(DISTCUTPERC, testGlass->getDistanceCutoffRatio())<<
 	"getDistanceCutoffPercentage";
 	ASSERT_EQ(REPORTTHRESH, testGlass->getReportingStackThreshold())<<
 	"getReportingStackThreshold";

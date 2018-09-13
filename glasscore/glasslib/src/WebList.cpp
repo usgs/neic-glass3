@@ -27,7 +27,6 @@ CWebList::~CWebList() {
 void CWebList::clear() {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
-	m_pGlass = NULL;
 	m_pSiteList = NULL;
 
 	// clear out all the  webs
@@ -37,12 +36,13 @@ void CWebList::clear() {
 	m_vWebs.clear();
 }
 
-// ---------------------------------------------------------dispatch
-bool CWebList::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CWebList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CWebList::dispatch: NULL json configuration.");
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWebList::receiveExternalMessage: NULL json configuration.");
 		return (false);
 	}
 
@@ -102,15 +102,12 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 
 	// Create a new web object
 	std::shared_ptr<CWeb> web(new CWeb(m_iNumThreads));
-	if (m_pGlass != NULL) {
-		web->setGlass(m_pGlass);
-	}
 	if (m_pSiteList != NULL) {
 		web->setSiteList(m_pSiteList);
 	}
 
 	// send the config to web so that it can generate itself
-	if (web->dispatch(com)) {
+	if (web->receiveExternalMessage(com)) {
 		// add the web to the list if it was successfully created
 		m_vWebs.push_back(web);
 
@@ -223,19 +220,19 @@ bool CWebList::hasSite(std::shared_ptr<CSite> site) {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
 	if (m_vWebs.size() < 1) {
-		return(false);
+		return (false);
 	}
 
 	// for each node in web
 	for (auto &web : m_vWebs) {
 		// check to see if we have this site
 		if (web->hasSite(site) == true) {
-			return(true);
+			return (true);
 		}
 	}
 
 	// site not found
-	return(false);
+	return (false);
 }
 
 // ---------------------------------------------------------healthCheck
@@ -274,21 +271,9 @@ void CWebList::setSiteList(CSiteList* siteList) {
 	m_pSiteList = siteList;
 }
 
-// ---------------------------------------------------------getGlass
-const CGlass* CWebList::getGlass() const {
-	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-	return (m_pGlass);
-}
-
-// ---------------------------------------------------------setGlass
-void CWebList::setGlass(CGlass* glass) {
-	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-	m_pGlass = glass;
-}
-
 // ---------------------------------------------------------size
 int CWebList::size() const {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-	return(m_vWebs.size());
+	return (m_vWebs.size());
 }
 }  // namespace glasscore

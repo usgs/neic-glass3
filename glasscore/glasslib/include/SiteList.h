@@ -22,7 +22,6 @@ namespace glasscore {
 
 // forward declarations
 class CSite;
-class CGlass;
 
 /**
  * \brief glasscore site list class
@@ -77,7 +76,7 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * \return Returns true if the communication was handled by CSiteList,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList add/update  site function
@@ -175,20 +174,6 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	std::shared_ptr<json::Object> generateSiteListMessage(bool send = true);
 
 	/**
-	 * \brief Get the CGlass pointer used by this site list for global constants
-	 * and configuration lookups
-	 * \return Return a pointer to the CGlass class used by this site list
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief Set the CGlass pointer used by this site list for global constants
-	 * and configuration lookups
-	 * \param glass - a pointer to the CGlass class used by this site list
-	 */
-	void setGlass(CGlass* glass);
-
-	/**
 	 * \brief Get the maximum hours without picking before a site is declared
 	 * nonresponsive and unused, a -1 disables this metric
 	 * \return Return an integer containing the maximum hours without picking
@@ -245,12 +230,6 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	glass3::util::WorkState work() override;
 
  private:
-	/**
-	 * \brief A pointer to the parent CGlass class, used to get configuration
-	 * values and access other parts of glass3
-	 */
-	CGlass * m_pGlass;
-
 	/**
 	 * \brief A std::vector of all the sites in CSiteList.
 	 */

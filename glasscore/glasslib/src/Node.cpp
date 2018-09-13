@@ -239,12 +239,6 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 								"CNode::nucleate: NULL web pointer.");
 		return (NULL);
 	}
-	// check web pGlass
-	if (m_pWeb->getGlass() == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::nucleate: NULL web glass pointer.");
-		return (NULL);
-	}
 	// don't nucleate if this node is disabled
 	if (m_bEnabled == false) {
 		return (NULL);
@@ -254,10 +248,10 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	// parent web
 	int nCut = m_pWeb->getNucleationDataThreshold();
 	double dThresh = m_pWeb->getNucleationStackThreshold();
-	double dAzimuthRange = m_pWeb->getGlass()->getBeamMatchingAzimuthWindow();
+	double dAzimuthRange = CGlass::getBeamMatchingAzimuthWindow();
 	// commented out because slowness matching of beams is not yet implemented
 	// but is scheduled to be soon
-	// double dDistanceRange = pWeb->pGlass->getBeamMatchingDistanceWindow();
+	// double dDistanceRange = CGlass::getBeamMatchingDistanceWindow();
 
 	// init overall significance sum and node site count
 	// to 0

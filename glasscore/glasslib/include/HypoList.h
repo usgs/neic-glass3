@@ -26,7 +26,6 @@
 namespace glasscore {
 
 // forward declarations
-class CGlass;
 class CSite;
 class CPick;
 class CCorrelation;
@@ -152,7 +151,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \return Returns true if the communication was handled by CGlass,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief Process provided hypocenter
@@ -206,7 +205,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \return Return an integer containing the current number of hypos
 	 * contained in this list
 	 */
-	int size() const;
+	int length() const;
 
 	/**
 	 * \brief Merge hypos close in space time

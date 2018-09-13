@@ -26,13 +26,13 @@ CDetection::CDetection() {
 CDetection::~CDetection() {
 }
 
-// ---------------------------------------------------------Dispatch
-bool CDetection::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CDetection::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CDetection::dispatch: NULL json communication.");
+				"CDetection::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
@@ -193,8 +193,7 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 				CGlass::getAssociationTravelTimes());
 
 		// set thresholds
-		hypo->setNucleationDataThreshold(
-				CGlass::getNucleationDataThreshold());
+		hypo->setNucleationDataThreshold(CGlass::getNucleationDataThreshold());
 		hypo->setNucleationStackThreshold(
 				CGlass::getNucleationStackThreshold());
 

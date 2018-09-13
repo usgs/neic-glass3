@@ -344,17 +344,6 @@ void CPick::clearHypoReference() {
 bool CPick::nucleate() {
 	// get the site shared_ptr
 	std::shared_ptr<CSite> pickSite = m_wpSite.lock();
-
-	// get CGlass pointer from site
-	CGlass *pGlass = pickSite->getGlass();
-
-	// nullcheck
-	if (pGlass == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CPick::nucleate: NULL pGlass.");
-		return (false);
-	}
-
 	std::string pt = glassutil::CDate::encodeDateTime(m_tPick);
 	char sLog[1024];
 
@@ -432,7 +421,7 @@ bool CPick::nucleate() {
 
 		// create the hypo using the node
 		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
-				trigger, pGlass->getAssociationTravelTimes());
+				trigger, CGlass::getAssociationTravelTimes());
 
 		// add links to all the picks that support the hypo
 		std::vector<std::shared_ptr<CPick>> vTriggerPicks = trigger->getVPick();
@@ -527,7 +516,7 @@ bool CPick::nucleate() {
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit adding it to the hypo list
-		pGlass->getHypoList()->addHypo(hypo);
+		CGlass::getHypoList()->addHypo(hypo);
 	}
 
 	// done

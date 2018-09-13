@@ -104,7 +104,6 @@ TEST(HypoTest, Construction) {
 	ASSERT_NEAR(0, testHypo->getMinDistance(), 0.0001)<< "dMin is zero";
 	ASSERT_NEAR(0, testHypo->getGap(), 0.0001)<< "dGap is zero";
 	ASSERT_NEAR(0, testHypo->getDistanceSD(), 0.0001)<< "dSig is zero";
-	ASSERT_NEAR(0, testHypo->getKurtosisValue(), 0.0001)<< "dKrt is zero";
 	ASSERT_FALSE(testHypo->getFixed())<< "bFixed is false";
 	ASSERT_FALSE(testHypo->getEventGenerated())<< "bEvent is false";
 

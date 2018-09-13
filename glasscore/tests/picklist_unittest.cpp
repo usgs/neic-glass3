@@ -43,10 +43,9 @@ TEST(PickListTest, Construction) {
 	ASSERT_EQ(0, testPickList->getPickTotal())<< "nPickTotal is 0";
 
 	// lists
-	ASSERT_EQ(0, testPickList->size())<< "getVPickSize() is 0";
+	ASSERT_EQ(0, testPickList->length())<< "getVPickSize() is 0";
 
 	// pointers
-	ASSERT_EQ(NULL, testPickList->getGlass())<< "pGlass null";
 	ASSERT_EQ(NULL, testPickList->getSiteList())<< "pSiteList null";
 }
 
@@ -86,11 +85,13 @@ TEST(PickListTest, PickOperations) {
 	// construct a picklist
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
 	testPickList->setSiteList(testSiteList);
+
+	glasscore::CGlass::setMaxNumPicks(-1);
 	testPickList->setPickMax(MAXNPICK);
 
 	// test adding picks by addPick and dispatch
 	testPickList->addPick(pickJSON);
-	testPickList->dispatch(pick3JSON);
+	testPickList->receiveExternalMessage(pick3JSON);
 	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testPickList->getPickTotal())<< "Added Picks";
 
@@ -102,7 +103,7 @@ TEST(PickListTest, PickOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNPICK;
-	ASSERT_EQ(expectedSize, testPickList->size())<<
+	ASSERT_EQ(expectedSize, testPickList->length())<<
 	"testPickList not larger than max";
 
 	// test clearing picks
