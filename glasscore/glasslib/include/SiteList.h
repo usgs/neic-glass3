@@ -7,6 +7,8 @@
 #ifndef SITELIST_H
 #define SITELIST_H
 
+#include <threadbaseclass.h>
+
 #include <json.h>
 #include <string>
 #include <vector>
@@ -14,18 +16,18 @@
 #include <map>
 #include <mutex>
 #include <thread>
+#include <atomic>
 
 namespace glasscore {
 
 // forward declarations
 class CSite;
-class CGlass;
 
 /**
  * \brief glasscore site list class
  *
- * The CSiteList class is the class that maintains a std::map of all the seismic
- * stations used by glasscore.
+ * The CSiteList class is the class that maintains a vector and :map of all the
+ * seismic stations used by glasscore.
  *
  * CSiteList also maintains a std::vector mapping the string SCNL id
  * to CSite objects
@@ -35,7 +37,7 @@ class CGlass;
  *
  * CSiteList uses smart pointers (std::shared_ptr).
  */
-class CSiteList {
+class CSiteList : public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief CSiteList constructor
@@ -43,7 +45,8 @@ class CSiteList {
 	 * The constructor for the CSiteList class.
 	 * Initializes members to default values.
 	 */
-	explicit CSiteList(int sleepTime = 100, int checkInterval = 60);
+	explicit CSiteList(int numThreads = 1, int sleepTime = 100,
+						int checkInterval = 60);
 
 	/**
 	 * \brief CSiteList destructor
@@ -56,13 +59,7 @@ class CSiteList {
 	 * \brief CSiteList clear function
 	 *
 	 */
-	void clear();
-
-	/**
-	 * \brief CSiteList vector and map clear function
-	 *
-	 */
-	void clearSites();
+	void clear() override;
 
 	/**
 	 * \brief CSiteList communication receiving function
@@ -79,7 +76,7 @@ class CSiteList {
 	 * \return Returns true if the communication was handled by CSiteList,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList add/update  site function
@@ -92,7 +89,7 @@ class CSiteList {
 	 * \return Returns true if the site was complete and added by CSiteList,
 	 * false otherwise
 	 */
-	bool addSite(std::shared_ptr<json::Object> com);
+	bool addSiteFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList add list of sites function
@@ -104,7 +101,7 @@ class CSiteList {
 	 * \return Returns true if the site was complete and added by CSiteList,
 	 * false otherwise
 	 */
-	bool addSiteList(std::shared_ptr<json::Object> com);
+	bool addListOfSitesFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList  add/update  site function
@@ -123,20 +120,11 @@ class CSiteList {
 	 * \return Returns an integer variable containing the number of sites in
 	 * CSiteList
 	 */
-	int getSiteCount();
-
-	/**
-	 * \brief Get site by index
-	 * Gets a specific site using the given index.
-	 *
-	 * \param ix - An integer variable containing the index
-	 * \return Returns a shared_ptr to the CSite object containing the desired
-	 * site.
-	 */
-	std::shared_ptr<CSite> getSite(int ix);
+	int size() const;
 
 	/**
 	 * \brief Get site by scnl
+	 *
 	 * Gets a specific site using the given scnl id.
 	 *
 	 * \param scnl - A std::string containing the scnl
@@ -146,7 +134,8 @@ class CSiteList {
 	std::shared_ptr<CSite> getSite(std::string scnl);
 
 	/**
-	 * \brief Get site by scnl
+	 * \brief Get site by station, component, network, and location
+	 *
 	 * Gets a specific site using the given station, component, network, and
 	 * location
 	 *
@@ -160,90 +149,105 @@ class CSiteList {
 	std::shared_ptr<CSite> getSite(std::string site, std::string comp,
 									std::string net, std::string loc);
 
-	std::vector<std::shared_ptr<CSite>> getSiteList();
-
 	/**
-	 * \brief CSiteList get site list function
-	 * \return Returns true if successful, false otherwise
-	 */
-	bool reqSiteList();
-
-	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
-	 */
-	void setGlass(CGlass* glass);
-
-	/**
-	 * \brief Get the current size of the site list
-	 */
-	int getVSiteSize() const;
-
-	/**
-	 * \brief check to see if the thread is still functional
+	 * \brief Get current list of sites
 	 *
-	 * Checks the thread to see if it is still responsive.
+	 * Gets the current list of sites contained within this sitelist
+	 *
+	 * \return Returns a vector of shared_ptr's to the CSite objects contained
+	 * in this list
 	 */
-	bool statusCheck();
+	std::vector<std::shared_ptr<CSite>> getListOfSites();
 
-	void setHoursWithoutPicking(int hoursWithoutPicking);
-	int getHoursWithoutPicking() const;
+	/**
+	 * \brief Generate SiteList message
+	 *
+	 * Generate a json object representing all thie sites in this SiteList in the
+	 * "SiteList" format and optionally send a pointer to this object to CGlass
+	 * (and out of glasscore) using the CGlass send function (pGlass->send)
+	 *
+	 * \param send - A boolean flag indicating that in addition to generating
+	 * the "SiteList" format message, the function should also send it. Defaults
+	 * to true
+	 * \return Returns the generated json object in the "SiteList" format.
+	 */
+	std::shared_ptr<json::Object> generateSiteListMessage(bool send = true);
 
-	void setHoursBeforeLookingUp(int hoursBeforeLookingUp);
+	/**
+	 * \brief Get the maximum hours without picking before a site is declared
+	 * nonresponsive and unused, a -1 disables this metric
+	 * \return Return an integer containing the maximum hours without picking
+	 *  allowed
+	 */
+	int getMaxHoursWithoutPicking() const;
+
+	/**
+	 * \brief Set the maximum hours without picking before a site is declared
+	 * nonresponsive and unused, a -1 disables this metric
+	 * \param hoursWithoutPicking - an integer containing the maximum hours
+	 * without picking allowed
+	 */
+	void setMaxHoursWithoutPicking(int hoursWithoutPicking);
+
+	/**
+	 * \brief Get the maximum hours between requesting site information from
+	 * outside glasscore, a -1 disables this process
+	 * \return Return an integer containing the maximum hours between requesting
+	 * site information
+	 */
 	int getHoursBeforeLookingUp() const;
 
-	void setMaxPicksPerHour(int maxPicksPerHour);
+	/**
+	 * \brief Set the maximum hours between requesting site information from
+	 * outside glasscore, a -1 disables this process. If enabled, glass will
+	 * always re-request the coordinates and properties of this station every
+	 * hoursBeforeLookingUp hours, regardless if the site is currently known.
+	 * \param hoursBeforeLookingUp - an integer containing the maximum hours
+	 * between requesting site information
+	 */
+	void setHoursBeforeLookingUp(int hoursBeforeLookingUp);
+
+	/**
+	 * \brief Get the maximum picks per hour before a site is declared too
+	 * noisy to use, a -1 disables this metric
+	 * \return Return an integer containing the  maximum picks per hour allowed
+	 */
 	int getMaxPicksPerHour() const;
 
- private:
-	void checkSites();
-
 	/**
-	 * \brief Background thread work loop for this web
+	 * \brief Set the maximum picks per hour before a site is declared too
+	 * noisy to use, a -1 disables this metric
+	 * \param maxPicksPerHour - an integer containing the maximum picks per
+	 * hour allowed
 	 */
-	void backgroundLoop();
+	void setMaxPicksPerHour(int maxPicksPerHour);
 
 	/**
-	 * \brief thread status update function
+	 * \brief SiteList work function
 	 *
-	 * Updates the status for the thread
-	 * \param status - A boolean flag containing the status to set
+	 * checks sites
+	 * \return returns glass3::util::WorkState::OK if work was successful,
+	 * glass3::util::WorkState::Error if not.
 	 */
-	void setStatus(bool status);
+	glass3::util::WorkState work() override;
 
-	/**
-	 * \brief A pointer to the main CGlass class, used to pass this information
-	 * to sites added to CSiteList
-	 */
-	CGlass *pGlass;
-
-	/**
-	 * \brief A mutex to control threading access to vSite.
-	 */
-	mutable std::mutex vSiteMutex;
-
+ private:
 	/**
 	 * \brief A std::vector of all the sites in CSiteList.
 	 */
-	std::vector<std::shared_ptr<CSite>> vSite;
+	std::vector<std::shared_ptr<CSite>> m_vSite;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each site
 	 * in CSiteList indexed by the std::string scnl id.
 	 */
-	std::map<std::string, std::shared_ptr<CSite>> mSite;
+	std::map<std::string, std::shared_ptr<CSite>> m_mSite;
 
 	/**
-	 * \brief A std::map containing a std::shared_ptr to each site
-	 * in CSiteList indexed by the std::string scnl id.
+	 * \brief A std::map the last time in epoch seconds each site in CSiteList
+	 * was looked up, indexed by the std::string scnl id.
 	 */
-	std::map<std::string, int> mLookup;
+	std::map<std::string, int> m_mLastTimeSiteLookedUp;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CSiteList.
@@ -255,51 +259,28 @@ class CSiteList {
 	mutable std::recursive_mutex m_SiteListMutex;
 
 	/**
-	 * \brief the boolean flags indicating that the jobloop threads
-	 * should keep running.
+	 * \brief A double value containing the last time the site list was checked
+	 * in epoch seconds
 	 */
-	bool m_bRunBackgroundLoop;
+	std::atomic<double> m_tLastChecked;
 
 	/**
-	 * \brief the std::thread pointer to the background thread
+	 * \brief An integer containing the maximum hours between requesting site
+	 * information from outside glasscore, a -1 disables this process
 	 */
-	std::thread * m_BackgroundThread;
+	std::atomic<int> m_iHoursBeforeLookingUp;
 
 	/**
-	 * \brief boolean flag used to check thread status
+	 * \brief An integer containing the maximum hours without picking before a
+	 * site is declared nonresponsive and unused, a -1 disables this metric
 	 */
-	bool m_bThreadStatus;
+	std::atomic<int> m_iMaxHoursWithoutPicking;
 
 	/**
-	 * \brief An integer containing the amount of
-	 * time to sleep in milliseconds between picks.
+	 * \brief An integer containing the maximum picks per hour allowed before a
+	 * site is declared too noisy to use, a -1 disables this metric
 	 */
-	int m_iSleepTimeMS;
-
-	/**
-	 * \brief the integer interval in seconds after which the work thread
-	 * will be considered dead. A negative check interval disables thread
-	 * status checks
-	 */
-	int m_iStatusCheckInterval;
-
-	/**
-	 * \brief the time_t holding the last time the thread status was checked
-	 */
-	time_t tLastStatusCheck;
-
-	/**
-	 * \brief the std::mutex for thread status
-	 */
-	std::mutex m_StatusMutex;
-
-	time_t m_tLastChecked;
-
-	int iHoursWithoutPicking;
-
-	int iHoursBeforeLookingUp;
-
-	int m_iMaxPicksPerHour;
+	std::atomic<int> m_iMaxPicksPerHour;
 };
 }  // namespace glasscore
 #endif  // SITELIST_H

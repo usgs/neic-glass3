@@ -2,32 +2,37 @@
 # Configuration file for the glass parameters
 {
   "Cmd": "Initialize",
-  "HypoMax": 250,
-  "PickMax": 10000,
-  "SitePickMax": 30,
-  "CorrelationMax": 1000,
+  "MaximumNumberOfPicks": 10000,
+  "MaximumNumberOfPicksPerSite": 30,
+  "MaximumNumberOfCorrelations": 1000,
+  "MaximumNumberOfHypos": 250,
   "PickDuplicateWindow": 2.5,
-  "NumNucleationThreads": 5,
-  "NumHypoThreads": 5,
-  "NumWebThreads": 0,  # 0 because glass-app does not do site lookups.
+  "NumberOfNucleationThreads": 5,
+  "NumberOfHypoThreads": 5,
+  "NumberOfWebThreads": 0,  # 0 because glass-app does not do site lookups.
   "SiteHoursWithoutPicking": -1,  # Disabled because glass-app does not do site lookups.
   "SiteLookupInterval":-1,  # Disabled because glass-app does not do site lookups.
+  "SiteMaximumPicksPerHour": -1,   # Disabled because glass-app does not do site lookups.
   "Params": {
-      "Thresh": 0.5,
-      "Nucleate": 10,
-      "sdAssociate": 5.0,
-      "avgDelta": 0.0,
-      "avgSigma": 0.75,
-      "dCutFactor": 5.0,
-      "dCutPercentage": 0.8,
-      "dCutMin": 30.0,
-      "iCycleLimit": 25,
+      "NucleationStackThreshold": 0.5,
+      "NucleationDataThreshold": 10,
+      "AssociationStandardDeviationCutoff": 5.0,
+      "PruningStandardDeviationCutoff": 5.0,
+      "PickAffinityExponentialFactor": 2.5,
+      "DistanceCutoffFactor": 5.0,
+      "DistanceCutoffRatio": 0.8,
+      "DistanceCutoffMinimum": 30.0,
+      "HypoProcessCountLimit": 25,
       "CorrelationTimeWindow": 2.5,
       "CorrelationDistanceWindow": 0.5,
       "CorrelationCancelAge": 900,
       "BeamMatchingAzimuthWindow" : 22.5,
-      "ReportThresh": 0.5,
-      "ReportCut":5
+      "ReportingStackThreshold": 0.5,
+      "ReportingDataThreshold":5,
+      "EventFragmentDepthThreshold": 550.0,
+      "EventFragmentAzimuthThreshold": 270.0,
+      "HypocenterTimeWindow": 30,
+      "HypocenterDistanceWindow": 3
   },
   "DefaultNucleationPhase": {
       "PhaseName": "P",

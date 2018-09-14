@@ -7,6 +7,7 @@
 #include "HypoList.h"
 #include "Pick.h"
 #include "Logit.h"
+#include "Glass.h"
 
 #define TESTHYPOID "3"
 
@@ -32,18 +33,11 @@ TEST(HypoListTest, Construction) {
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
 
 	// assert default values
-	ASSERT_EQ(-1, testHypoList->getNHypoTotal())<< "nPickTotal is 0";
-	ASSERT_EQ(0, testHypoList->getNHypo())<< "nHypo is 0";
+	ASSERT_EQ(0, testHypoList->getCountOfTotalHyposProcessed())<< "nHypoTotal is 0";
 
 	// lists
-	ASSERT_EQ(0, testHypoList->getVHypoSize())<< "vHypo.size() is 0";
-	ASSERT_EQ(0, testHypoList->getFifoSize())<< "qFifo.size() is 0";
-
-	// pointers
-	ASSERT_EQ(NULL, testHypoList->getGlass())<< "pGlass null";
-
-	// cleanup
-	delete (testHypoList);
+	ASSERT_EQ(0, testHypoList->length())<< "vHypo.size() is 0";
+	ASSERT_EQ(0, testHypoList->getHypoProcessingQueueLength())<< "qFifo.size() is 0";
 }
 
 // test various hypo operations
@@ -87,24 +81,14 @@ TEST(HypoListTest, HypoOperations) {
 	// construct a hypolist
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
 
-	testHypoList->setNHypoMax(MAXNHYPO);
-
-	// test indexpick when empty
-	ASSERT_EQ(-2, testHypoList->indexHypo(0))<< "test indexHypo when empty";
+	testHypoList->setMaxAllowableHypoCount(MAXNHYPO);
+	glasscore::CGlass::setMaxNumHypos(-1);
 
 	// test adding hypos by addHypo
 	testHypoList->addHypo(hypo1, false);
 	testHypoList->addHypo(hypo2, false);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testHypoList->getNHypo())<< "Added Hypos";
-
-	// test indexHypo
-	ASSERT_EQ(-1, testHypoList->indexHypo(TORG))<<
-	"test indexHypo with time before";
-	ASSERT_EQ(1, testHypoList->indexHypo(TORG2))<<
-	"test indexHypo with time after";
-	ASSERT_EQ(0, testHypoList->indexHypo(TORG3))<<
-	"test indexHypo with time within";
+	ASSERT_EQ(expectedSize, testHypoList->getCountOfTotalHyposProcessed())<< "Added Hypos";
 
 	// add more hypos
 	testHypoList->addHypo(hypo3);
@@ -114,34 +98,34 @@ TEST(HypoListTest, HypoOperations) {
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNHYPO;
-	ASSERT_EQ(expectedSize, (int)testHypoList->getVHypoSize())<<
+	ASSERT_EQ(expectedSize, (int)testHypoList->length())<<
 	"testHypoList not larger than max";
 
 	// test getting a hypo
-	std::shared_ptr<glasscore::CHypo> testHypo = testHypoList->findHypo(TSTART,
-	TEND);
+	std::vector<std::weak_ptr<glasscore::CHypo>> testHypos = testHypoList
+			->getHypos(TSTART, TEND);
+	ASSERT_TRUE(testHypos.size() != 0)<< "testHypos not empty";
+
+	std::shared_ptr<glasscore::CHypo> testHypo = testHypos[0].lock();
 
 	// check testHypo
 	ASSERT_TRUE(testHypo != NULL)<< "testHypo not null";
 
 	// check id
-	std::string hypoId = testHypo->getPid();
+	std::string hypoId = testHypo->getID();
 	std::string expectedId = std::string(TESTHYPOID);
 	ASSERT_STREQ(hypoId.c_str(), expectedId.c_str())<< "testHypo has right id";
 
 	// test removing hypos by remhypo
-	testHypoList->remHypo(hypo6);
+	testHypoList->removeHypo(hypo6);
 
 	// check to make sure the size is now one less
 	expectedSize = MAXNHYPO - 1;
-	ASSERT_EQ(expectedSize, (int)testHypoList->getVHypoSize())<<
+	ASSERT_EQ(expectedSize, (int)testHypoList->length())<<
 	"testHypoList is one smaller";
 
 	// test clearing hypos
-	testHypoList->clearHypos();
+	testHypoList->clear();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testHypoList->getNHypo())<< "Cleared Hypos";
-
-	// cleanup
-	delete (testHypoList);
+	ASSERT_EQ(expectedSize, (int)testHypoList->getCountOfTotalHyposProcessed())<< "Cleared Hypos";
 }

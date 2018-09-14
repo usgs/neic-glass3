@@ -13,6 +13,8 @@
 #include <utility>
 #include <mutex>
 #include <tuple>
+#include <atomic>
+
 #include "Geo.h"
 #include "Link.h"
 
@@ -102,115 +104,124 @@ class CTrigger {
 	void clear();
 
 	/**
-	 * \brief Latitude getter
-	 * \return the latitude
+	 * \brief Get the latitude for this trigger
+	 * \return Return a double containing the latitude in degrees
 	 */
-	double getLat() const;
+	double getLatitude() const;
 
 	/**
-	 * \brief Longitude getter
-	 * \return the longitude
+	 * \brief Get the longitude for this trigger
+	 * \return Return a double containing the longitude in degrees
 	 */
-	double getLon() const;
+	double getLongitude() const;
 
 	/**
-	 * \brief Depth getter
-	 * \return the depth
+	 * \brief Get the depth for this trigger
+	 * \return Return a double containing the depth in kilometers
 	 */
-	double getZ() const;
+	double getDepth() const;
 
+	/**
+	 * \brief Get the combined trigger location (latitude, longitude, depth) as
+	 * a CGeo object
+	 * \return Returns a glassutil::CGeo object containing the combined location.
+	 */
 	glassutil::CGeo getGeo() const;
 
 	/**
-	 * \brief Origin time getter
-	 * \return the origin time
+	 * \brief Get the origin time for this trigger
+	 * \return Returns a double containing the trigger origin time in julian seconds
 	 */
-	double getTOrg() const;
+	double getTOrigin() const;
 
 	/**
-	 * \brief Resolution getter
-	 * \return the resolution
+	 * \brief Gets the node resolution of the web that nucleated this trigger
+	 * \return Returns a double value containing the node resolution of the web
+	 * that nucleated this trigger in kilometers
 	 */
-	double getResolution() const;
+	double getWebResolution() const;
 
 	/**
-	 * \brief Sum getter
-	 * \return the sum
+	 * \brief Gets the current bayes stack value for this trigger
+	 * \return Returns a double containing the current bayes stack value
 	 */
-	double getSum() const;
+	double getBayesValue() const;
 
 	/**
-	 * \brief Count getter
-	 * \return the count
+	 * \brief Gets the number of picks supporting this trigger
+	 * \return Returns and integer containing the number of picks supporting
+	 * this trigger
 	 */
-	int getCount() const;
+	int getPickCount() const;
 
 	/**
-	 * \brief Web pointer getter
-	 * \return the CWeb pointer
+	 * \brief Gets a pointer to the web that generated this trigger, used to get
+	 * travel times
+	 * \return Returns a pointer to the CWeb that generated this trigger
 	 */
 	const CWeb* getWeb() const;
 
 	/**
-	 * \brief vPick getter
-	 * \return the vPick
+	 * \brief Get the list of picks supporting this trigger
+	 * \return Returns a vector of shared_ptr's to the CPick objects supporting
+	 * this trigger
 	 */
 	const std::vector<std::shared_ptr<CPick>> getVPick() const;
 
  private:
 	/**
-	 * \brief A double value containing latitude of this triggerin degrees.
+	 * \brief A double value containing latitude of this trigger in degrees.
 	 */
-	double dLat;
+	std::atomic<double> m_dLatitude;
 
 	/**
-	 * \brief A double value containing longitude of this triggerin degrees.
+	 * \brief A double value containing longitude of this trigger in degrees.
 	 */
-	double dLon;
+	std::atomic<double> m_dLongitude;
 
 	/**
 	 * \brief A double value containing the depth of this trigger in kilometers.
 	 */
-	double dZ;
+	std::atomic<double> m_dDepth;
 
 	/**
 	 * \brief A double value with the origin time of this trigger in seconds
 	 */
-	double tOrg;
+	std::atomic<double> m_tOrigin;
 
 	/**
 	 * \brief A double value containing the spatial resolution
 	 * (between nodes) in kilometers.
 	 */
-	double dResolution;
+	std::atomic<double> m_dWebResolution;
 
 	/**
 	 * \brief A double value that accumulates the Bayesian
 	 * sum of this trigger
 	 */
-	double dSum;
+	std::atomic<double> m_dBayesValue;
 
 	/**
 	 * \brief A integer value that tallies the number of sites
 	 * that are included in this trigger
 	 */
-	int nCount;
+	std::atomic<int> m_iPickCount;
 
 	/**
 	 * \brief A std::vector of std::shared_ptr's to CPick objects
 	 * used in creating this trigger
 	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
+	std::vector<std::shared_ptr<CPick>> m_vPick;
 
 	/**
-	 * \brief A pointer to the node CWeb class, used get travel times
+	 * \brief A pointer to the node CWeb class, used to get travel times
 	 */
-	CWeb *pWeb;
+	CWeb * m_pWeb;
 
 	/**
 	 * \brief A recursive mutex to control threading access to this trigger.
 	 */
-	mutable std::recursive_mutex triggerMutex;
+	mutable std::recursive_mutex m_TriggerMutex;
 };
 }  // namespace glasscore
 #endif  // TRIGGER_H

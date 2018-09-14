@@ -16,7 +16,6 @@
 #define NET "LB"
 #define LOC "01"
 #define CORRELATIONTIME 3660327144.0170002
-#define CORRELATIONID 1
 #define CORRELATIONIDSTRING "12GFH48776857"
 #define LAT 40.3344
 #define LON -121.44
@@ -29,7 +28,7 @@
 void checkdata(glasscore::CCorrelation * corrleationobject,
 				const std::string &testinfo) {
 	// check scnl
-	std::string sitescnl = corrleationobject->getSite()->getScnl();
+	std::string sitescnl = corrleationobject->getSite()->getSCNL();
 	std::string expectedscnl = std::string(SCNL);
 	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str());
 
@@ -39,17 +38,17 @@ void checkdata(glasscore::CCorrelation * corrleationobject,
 	ASSERT_STREQ(sitesite.c_str(), expectedsite.c_str());
 
 	// check comp
-	std::string sitecomp = corrleationobject->getSite()->getComp();
+	std::string sitecomp = corrleationobject->getSite()->getComponent();
 	std::string expectedcomp = std::string(COMP);
 	ASSERT_STREQ(sitecomp.c_str(), expectedcomp.c_str());
 
 	// check net
-	std::string sitenet = corrleationobject->getSite()->getNet();
+	std::string sitenet = corrleationobject->getSite()->getNetwork();
 	std::string expectednet = std::string(NET);
 	ASSERT_STREQ(sitenet.c_str(), expectednet.c_str());
 
 	// check loc
-	std::string siteloc = corrleationobject->getSite()->getLoc();
+	std::string siteloc = corrleationobject->getSite()->getLocation();
 	std::string expectedloc = std::string(LOC);
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 
@@ -58,33 +57,28 @@ void checkdata(glasscore::CCorrelation * corrleationobject,
 	double expectedcorrelationtime = CORRELATIONTIME;
 	ASSERT_NEAR(correlationtime, expectedcorrelationtime, 0.0001);
 
-	// check id
-	int id = corrleationobject->getIdCorrelation();
-	int expectedid = CORRELATIONID;
-	ASSERT_EQ(id, expectedid);
-
 	// check string id
-	std::string stringid = corrleationobject->getPid();
+	std::string stringid = corrleationobject->getID();
 	std::string expectedstringid = std::string(CORRELATIONIDSTRING);
 	ASSERT_STREQ(stringid.c_str(), expectedstringid.c_str());
 
 	// check origin time
-	double origintime = corrleationobject->getTOrg();
+	double origintime = corrleationobject->getTOrigin();
 	double expectedorigintime = ORIGINTIME;
 	ASSERT_NEAR(origintime, expectedorigintime, 0.0001);
 
 	// check lat
-	double lat = corrleationobject->getLat();
+	double lat = corrleationobject->getLatitude();
 	double expectedlat = LAT;
 	ASSERT_NEAR(lat, expectedlat, 0.0001);
 
 	// check lon
-	double lon = corrleationobject->getLon();
+	double lon = corrleationobject->getLongitude();
 	double expectedlon = LON;
 	ASSERT_NEAR(lon, expectedlon, 0.0001);
 
 	// check rad
-	double z = corrleationobject->getZ();
+	double z = corrleationobject->getDepth();
 	double expectedz = Z;
 	ASSERT_NEAR(z, expectedz, 0.0001);
 
@@ -94,7 +88,7 @@ void checkdata(glasscore::CCorrelation * corrleationobject,
 	ASSERT_NEAR(correlation, expectedcorrelation, 0.0001);
 
 	// check phase
-	std::string stringphase = corrleationobject->getPhs();
+	std::string stringphase = corrleationobject->getPhaseName();
 	std::string expectedstringphase = std::string(PHASE);
 	ASSERT_STREQ(stringphase.c_str(), expectedstringphase.c_str());
 }
@@ -108,30 +102,28 @@ TEST(CorrelationTest, Construction) {
 
 	// assert default values
 	ASSERT_EQ(0, testCorrelation->getTCorrelation())<< "time is zero";
-	ASSERT_EQ(0, testCorrelation->getIdCorrelation())<< "id is zero";
-	ASSERT_EQ(0, testCorrelation->getTOrg())<< "origin time is zero";
-	ASSERT_EQ(0, testCorrelation->getLat())<< "lat is zero";
-	ASSERT_EQ(0, testCorrelation->getLon())<< "lon is zero";
-	ASSERT_EQ(0, testCorrelation->getZ())<< "z is zero";
+	ASSERT_EQ(0, testCorrelation->getTOrigin())<< "origin time is zero";
+	ASSERT_EQ(0, testCorrelation->getLatitude())<< "lat is zero";
+	ASSERT_EQ(0, testCorrelation->getLongitude())<< "lon is zero";
+	ASSERT_EQ(0, testCorrelation->getDepth())<< "z is zero";
 	ASSERT_EQ(0, testCorrelation->getCorrelation())<< "correlation is zero";
 
-	ASSERT_STREQ("", testCorrelation->getAss().c_str());
-	ASSERT_STREQ("", testCorrelation->getPhs().c_str());
-	ASSERT_STREQ("", testCorrelation->getPid().c_str());
+	ASSERT_STREQ("", testCorrelation->getPhaseName().c_str());
+	ASSERT_STREQ("", testCorrelation->getID().c_str());
 
 	// pointers
 	ASSERT_TRUE(testCorrelation->getSite() == NULL)<< "pSite null";
-	ASSERT_TRUE(testCorrelation->getHypo() == NULL)<< "pHypo null";
-	ASSERT_TRUE(testCorrelation->getJCorrelation() == NULL)<< "jCorrelation null";
+	ASSERT_TRUE(testCorrelation->getHypoReference() == NULL)<< "pHypo null";
+	ASSERT_TRUE(testCorrelation->getJSONCorrelation() == NULL)<< "jCorrelation null";
 
 	// create  shared pointer to the site
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-			new glasscore::CSite(siteJSON, NULL));
+			new glasscore::CSite(siteJSON));
 
 	// now init
-	testCorrelation->initialize(sharedTestSite, CORRELATIONTIME, CORRELATIONID,
+	testCorrelation->initialize(sharedTestSite, CORRELATIONTIME,
 								std::string(CORRELATIONIDSTRING),
 								std::string(PHASE), ORIGINTIME,
 								LAT,
@@ -150,16 +142,17 @@ TEST(CorrelationTest, JSONConstruction) {
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// add site to site list
-	testSiteList->addSite(siteJSON);
+	testSiteList->addSiteFromJSON(siteJSON);
 
 	// construct a correlation using a JSON object
-	std::shared_ptr<json::Object> correlationJSON = std::make_shared<json::Object>(
-					json::Object(json::Deserialize(std::string(CORRELATIONJSON))));
+	std::shared_ptr<json::Object> correlationJSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATIONJSON))));
 	glasscore::CCorrelation * testCorrelation = new glasscore::CCorrelation(
-			correlationJSON, CORRELATIONID, testSiteList);
+			correlationJSON, testSiteList);
 
 	// check results
 	checkdata(testCorrelation, "json construction check");
@@ -173,14 +166,14 @@ TEST(CorrelationTest, HypoOperations) {
 
 	// create  shared pointer to the site
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 	std::shared_ptr<glasscore::CSite> sharedTestSite(
-				new glasscore::CSite(siteJSON, NULL));
+			new glasscore::CSite(siteJSON));
 
 	// create correlation
 	glasscore::CCorrelation *testCorrelation = new glasscore::CCorrelation(
-			sharedTestSite, CORRELATIONTIME, CORRELATIONID,
-			std::string(CORRELATIONIDSTRING), std::string(PHASE), ORIGINTIME,
+			sharedTestSite, CORRELATIONTIME, std::string(CORRELATIONIDSTRING),
+			std::string(PHASE), ORIGINTIME,
 			LAT,
 			LON, Z, CORRELATION);
 
@@ -196,14 +189,14 @@ TEST(CorrelationTest, HypoOperations) {
 	std::shared_ptr<glasscore::CHypo> sharedHypo(testHypo);
 
 	// add hypo to correlation
-	testCorrelation->addHypo(sharedHypo);
+	testCorrelation->addHypoReference(sharedHypo);
 
 	// check hypo
-	ASSERT_TRUE(testCorrelation->getHypo() != NULL)<< "pHypo  not null";
+	ASSERT_TRUE(testCorrelation->getHypoReference() != NULL)<< "pHypo  not null";
 
 	// remove hypo from correlation
-	testCorrelation->remHypo(sharedHypo);
+	testCorrelation->removeHypoReference(sharedHypo);
 
 	// check hypo
-	ASSERT_TRUE(testCorrelation->getHypo() == NULL)<< "pHypo null";
+	ASSERT_TRUE(testCorrelation->getHypoReference() == NULL)<< "pHypo null";
 }

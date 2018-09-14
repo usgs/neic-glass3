@@ -13,12 +13,11 @@
 #include <string>
 #include <vector>
 #include <mutex>
-#include <random>
+#include <atomic>
 
 namespace glasscore {
 
 // forward declarations
-class CGlass;
 class CPick;
 class CCorrelation;
 class CTrigger;
@@ -29,8 +28,8 @@ class CTrigger;
  * The CHypo class is the class that encapsulates everything necessary
  * to represent an earthquake hypocenter.
  *
- * CHypo also maintains a vector of CPick objects that make up the data that
- * supports the hypocenter
+ * CHypo also maintains vectors of shared_ptr's to CPick and CCorrelation
+ * objects that make up the data that supports the hypocenter
  *
  * CHypo contains functions to support association, disassociation, location,
  * removal, and various statistical calculations, as well as generating
@@ -40,8 +39,9 @@ class CTrigger;
  * the glasscore data association engine, along with the various statistical
  * calculations.
  *
- * The glasscore location algorithm consists of the CHypo iterate(), focus(),
- * localize(), and locate() functions, along with the various statistical
+ * The glasscore location algorithm consists of the CHypo anneal(), localize(),
+ * annealingLocateBayes(), annealingLocateResidual(), calculateBayes(), and
+ * calculateAbsResidualSum() functions, along with the various statistical
  * calculations.
  *
  * CHypo uses smart pointers (std::shared_ptr).
@@ -58,9 +58,10 @@ class CHypo {
 	CHypo();
 
 	/**
-	 * \brief CHypo alternate constructor
+	 * \brief CHypo advanced constructor
 	 *
-	 * Constructs a CHypo using the provided values
+	 * An advanced constructor for the CHypo class. This function initializes
+	 * members to the provided values.
 	 *
 	 * \param lat - A double containing the geocentric latitude in degrees to
 	 * use
@@ -83,8 +84,8 @@ class CHypo {
 	 * \param resolution - A double value containing the web resolution used
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
-	 * \param aziTaper = A double value containing the azimuth taper to be used,
-	 * defaults to 360
+	 * \param maxDepth = A double value containing the maximum allowed depth,
+	 * defaults to 800
 	 * \return Returns true if successful, false otherwise.
 	 */
 	CHypo(double lat, double lon, double z, double time, std::string pid,
@@ -92,13 +93,14 @@ class CHypo {
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100,
-			double aziTap = 360., double maxDep = 800.);
+			double aziTaper = 360.0, double maxDepth = 800.0);
 
 	/**
-	 * \brief CHypo alternate constructor
+	 * \brief CHypo advanced constructor
 	 *
-	 * Alternate constructor for the CHypo class that uses a CNode to create
-	 * a CHypo
+	 * An advanced constructor for the CHypo class. This function initializing
+	 * members to the values contained in the provided CTrigger object, used
+	 * when a new hypo is nucleated.
 	 *
 	 * \param trigger - A CTrigger object containing the nucleation trigger to
 	 * construct this hypo from.
@@ -108,10 +110,11 @@ class CHypo {
 					std::shared_ptr<traveltime::CTTT> ttt);
 
 	/**
-	 * \brief CHypo alternate constructor
+	 * \brief CHypo advanced constructor
 	 *
-	 * Alternate constructor for the CHypo class that uses a CCorrellation to
-	 * create a CHypo
+	 * An advanced constructor for the CHypo class. This function initializing
+	 * members to the values contained in the provided CCorrelation object, used
+	 * when a creating a new hypo based on a correlation message.
 	 *
 	 * \param corr - A shared pointer to a CNode object containing the
 	 * correlation to construct this hypo from.
@@ -165,7 +168,8 @@ class CHypo {
 	 * \param resolution - A double value containing the web resolution used
 	 * \param aziTaper = A double value containing the azimuth taper to be used,
 	 * defaults to 360
-	 * \param maxDepth = A double value the maximum event depth for the locator
+	 * \param maxDepth = A double value the maximum event depth for the locator,
+	 * defaults to 800
 	 * \return Returns true if successful, false otherwise.
 	 */
 	bool initialize(double lat, double lon, double z, double time,
@@ -175,197 +179,161 @@ class CHypo {
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
 					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
 							100,
-					double aziTap = 360., double maxDep = 800.);
+					double aziTaper = 360.0, double maxDepth = 800.0);
 
 	/**
 	 * \brief Add pick reference to this hypo
 	 *
-	 * Adds a shared_ptr reference to the given pick to this hypo,
-	 * representing a graph database link between this hypocenter
-	 * and the pick.  This link also represents a phase association.
+	 * Adds a shared_ptr reference to the given pick to the list of supporting
+	 * pick references for this hypo, representing a graph database link between
+	 * this hypocenter and the provided pick.  This link also represents a phase
+	 * association.
 	 *
-	 * Note that this pick may or may not also be linked
-	 * to other hypocenters
+	 * Note that this pick may or may not also be referenced by other hypocenters
 	 *
-	 * \param pck - A std::shared_ptr to the CPick object to
-	 * add.
+	 * \param pck - A std::shared_ptr to the CPick object to add.
 	 */
-	void addPick(std::shared_ptr<CPick> pck);
+	void addPickReference(std::shared_ptr<CPick> pck);
 
 	/**
 	 * \brief Remove pick reference from this hypo
 	 *
-	 * Remove a shared_ptr reference from the given pick to this hypo,
-	 * breaking the graph database link between this hypocenter and the pick.
-	 * The breaking of this link also represents a phase disassociation.
+	 * Remove a shared_ptr reference to the given pick from the list of supporting
+	 * pick references for this hypo, breaking the graph database link between
+	 * this hypocenter and the provided pick. The breaking of this link also
+	 * represents a phase disassociation.
 	 *
-	 * Note that this pick may or may not be still linked to other hypocenters
+	 * Note that this pick may or may not be still referenced by other hypocenters
 	 *
 	 * \param pck - A std::shared_ptr to the CPick object to remove.
 	 */
-	void remPick(std::shared_ptr<CPick> pck);
+	void removePickReference(std::shared_ptr<CPick> pck);
 
 	/**
-	 * \brief Check if hypo has pick reference
+	 * \brief Check if pick is referenced by this hypo
 	 *
 	 * Check to see if a shared_ptr reference from the given pick to this hypo
 	 * exists
 	 *
-	 * Note that this pick may or may not be still linked to other hypocenters
+	 * Note that this pick may or may not be also referenced by other hypocenters
 	 *
 	 * \param pck - A std::shared_ptr to the CPick object to check.
 	 * \return returns true if a reference exists to the given pick, false
 	 * otherwise
 	 */
-	bool hasPick(std::shared_ptr<CPick> pck);
+	bool hasPickReference(std::shared_ptr<CPick> pck);
 
 	/**
-	 * \brief Clear all pick reference for this hypo
+	 * \brief Clear all pick references for this hypo
 	 *
-	 * Clear all shared_ptr references from picks to this hypo
+	 * Clears the list of supporting shared_ptr pick references for this hypo
 	 *
-	 * Note picks may or may not be still linked to other hypocenters
+	 * Note picks may or may not be still referenced by other hypocenters
 	 */
-	void clearPicks();
+	void clearPickReferences();
 
 	/**
 	 * \brief Add correlation reference to this hypo
 	 *
-	 * Adds a shared_ptr reference to the given correlation to this hypo,
-	 * representing a graph database link between this hypocenter
-	 * and the correlation.  This link also represents a correlation association.
+	 * Adds a shared_ptr reference to the given correlation to the list of
+	 * supporting correlation references for this hypo, representing a graph
+	 * database link between this hypocenter and the provided correlation.
+	 * This link also represents a correlation association.
 	 *
-	 * Note that this correlation may or may not also be linked
-	 * to other hypocenters
+	 * Note that this correlation may or may not also be referenced by other
+	 * hypocenters
 	 *
 	 * \param corr - A std::shared_ptr to the CCorrelation object to
 	 * add.
 	 */
-	void addCorrelation(std::shared_ptr<CCorrelation> corr);
+	void addCorrelationReference(std::shared_ptr<CCorrelation> corr);
 
 	/**
 	 * \brief Remove correlation reference from this hypo
 	 *
-	 * Remove a shared_ptr reference from the given correlation to this hypo,
-	 * breaking the graph database link between this hypocenter and the correlation.
-	 * The breaking of this link also represents a correlation disassociation.
+	 * Remove a shared_ptr reference to the given correlation from the list of
+	 * supporting correlation references for this hypo, breaking the graph
+	 * database link between this hypocenter and the provided correlation. The
+	 * breaking of this link also represents a correlation disassociation.
 	 *
-	 * Note that this correlation may or may not be still linked to other
+	 * Note that this correlation may or may not still be referenced by other
 	 * hypocenters
 	 *
 	 * \param corr - A std::shared_ptr to the CCorrelation object to remove.
 	 */
-	void remCorrelation(std::shared_ptr<CCorrelation> corr);
+	void removeCorrelationReference(std::shared_ptr<CCorrelation> corr);
 
 	/**
-	 * \brief Check if hypo has correlation reference
+	 * \brief  Check if correlation is referenced by this hypo
 	 *
 	 * Check to see if a shared_ptr reference from the given correlation to this
 	 * hypo exists
 	 *
-	 * Note that this correlation may or may not be still linked to other
+	 * Note that this correlation may or may not be also referenced by other
 	 * hypocenters
 	 *
 	 * \param corr - A std::shared_ptr to the CCorrelation object to check.
 	 * \return returns true if a reference exists to the given correlation,
 	 * false otherwise
 	 */
-	bool hasCorrelation(std::shared_ptr<CCorrelation> corr);
+	bool hasCorrelationReference(std::shared_ptr<CCorrelation> corr);
 
 	/**
-	 * \brief Clear all correlation reference for this hypo
+	 * \brief Clear all correlation references for this hypo
 	 *
-	 * Clear all shared_ptr references from correlation to this hypo
+	 * Clears the list of supporting shared_ptr correlation references for this
+	 * hypo
 	 *
-	 * Note that correlations may or may not be still linked to other hypocenters
+	 * Note correlations may or may not be still referenced by other hypocenters
 	 */
-	void clearCorrelations();
-
-	/**
-	 * \brief Calculate Gaussian random sample
-	 *
-	 * Calculate random normal gaussian deviate value using
-	 * Box-Muller method
-	 *
-	 * \param avg - The mean average value to use in the Box-Muller method
-	 * \param std - The standard deviation value to use in the Box-Muller method
-	 * \return Returns the Gaussian random sample
-	 */
-	double gauss(double avg, double std);
-
-	/**
-	 * \brief Generate Random Number
-	 *
-	 * Generate s random number between x and y
-	 *
-	 * \param x - The minimum random number
-	 * \param y - The maximum random number
-	 * \return Returns the random sample
-	 */
-	double Rand(double x, double y);
+	void clearCorrelationReferences();
 
 	/**
 	 * \brief Generate Hypo message
 	 *
-	 * Generate a json object representing this hypocenter in the
-	 * "Hypo" format and send a pointer to this object to CGlass
-	 * (and out of glasscore) using the send function (pGlass->send)
+	 * Generate a json object representing this hypocenter in the "Hypo" format
 	 *
-	 * \return Returns the generated json object.
+	 * \return Returns the generated json object in the "Hypo" format.
 	 */
-	std::shared_ptr<json::Object> hypo(bool send = true);
+	std::shared_ptr<json::Object> generateHypoMessage();
 
 	/**
 	 * \brief Generate Event message
 	 *
-	 * Generate a json object representing this hypocenter in the
-	 * "Event" format and send a pointer to this object to CGlass
-	 * (and out of glasscore) using the send function (pGlass->send)
+	 * Generate a json object representing a summary of this hypocenter in the
+	 * "Event" format
+	 *
+	 * \return Returns the generated json object in the "Event" format.
 	 */
-	std::shared_ptr<json::Object> event(bool send = true);
+	std::shared_ptr<json::Object> generateEventMessage();
 
 	/**
 	 * \brief Generate cancel message
 	 *
-	 * Generate a json object representing the cancellation of this hypocenter
-	 * and send a pointer to this object to CGlass (and out of glasscore) using
-	 * the send function (pGlass->send)
+	 * Generate a json object representing a cancellation of this hypocenter in
+	 * the "Cancel" format
+	 *
+	 * \return Returns the generated json object in the "Cancel" format.
 	 */
-	std::shared_ptr<json::Object> cancel(bool send = true);
+	std::shared_ptr<json::Object> generateCancelMessage();
 
 	/**
 	 * \brief Generate expire message
 	 *
-	 * Generate a json object representing the expiration of this hypocenter
-	 * and send a pointer to this object to CGlass (and out of glasscore) using
-	 * the send function (pGlass->send)
-	 */
-	std::shared_ptr<json::Object> expire(bool send = true);
-
-	/**
-	 * \brief Print basic hypocenter values to screen
+	 * Generate a json object representing a expiration of this hypocenter in
+	 * the "Expire" format
 	 *
-	 * Causes CHypo to print the current hypocenter values
-	 * (latitude, longitude, depth, etc.) to the console
-	 */
-	void summary();
-
-	/**
-	 * \brief Print advanced hypocenter values to screen
+	 * If this hypocenter was previously reported, a copy of it is included in
+	 * this message via the generateHypoMessage() function
 	 *
-	 * Causes CHypo to print all the current hypocenter values,
-	 * statistics, and pick information to the console
-	 *
-	 * \param src - A std::string indicating a context / reason
-	 * for printing hypocenter values.
+	 * \return Returns the generated json object in the "Expire" format.
 	 */
-	void list(std::string src);
+	std::shared_ptr<json::Object> generateExpireMessage();
 
 	/**
 	 * \brief Check to see if pick could be associated
 	 *
-	 * Check to see if a given pick could be associated to this
-	 * CHypo
+	 * Check to see if a given pick could be associated to this CHypo
 	 *
 	 * \param pick - A std::shared_ptr to the CPick object to
 	 * check.
@@ -374,14 +342,19 @@ class CHypo {
 	 * deviation assocaiation limit to use
 	 * \return Returns true if the pick can be associated, false otherwise
 	 */
-	bool associate(std::shared_ptr<CPick> pick, double sigma, double sdassoc);
+	bool canAssociate(std::shared_ptr<CPick> pick, double sigma,
+						double sdassoc);
 
 	/**
-	 * returns the residual of a pick to the hypocenter
+	 * \brief Calculates the residual of a pick to this hypo
+	 *
+	 * Calculates the residual of the given supporting data to this hypo
 	 *
 	 * \param pick - The pick to calculate a residual for
+	 * \return Returns a double value containing the residual of the given
+	 * pick
 	 */
-	double getResidual(std::shared_ptr<CPick> pick);
+	double calculateResidual(std::shared_ptr<CPick> pick);
 
 	/**
 	 * \brief Check to see if correlation could be associated
@@ -395,8 +368,8 @@ class CHypo {
 	 * \param xWindow - A double value containing the distance window
 	 * \return Returns true if the correlation can be associated, false otherwise
 	 */
-	bool associate(std::shared_ptr<CCorrelation> corr, double tWindow,
-					double xWindow);
+	bool canAssociate(std::shared_ptr<CCorrelation> corr, double tWindow,
+						double xWindow);
 
 	/* \brief Calculate pick affinity
 	 *
@@ -408,7 +381,7 @@ class CHypo {
 	 * \param pck - A std::shared_ptr to the pick to consider.
 	 * \return Returns a double value containing the pick affinity
 	 */
-	double affinity(std::shared_ptr<CPick> pck);
+	double calculateAffinity(std::shared_ptr<CPick> pck);
 
 	/* \brief Calculate correlation affinity
 	 *
@@ -420,18 +393,18 @@ class CHypo {
 	 * \param corr - A std::shared_ptr to the correlation to consider.
 	 * \return Returns a double value containing the correlation affinity
 	 */
-	double affinity(std::shared_ptr<CCorrelation> corr);
+	double calculateAffinity(std::shared_ptr<CCorrelation> corr);
 
-	/* \brief Remove picks that no longer fit association criteria
+	/* \brief Remove data that no longer fit association criteria
 	 *
-	 * Calculate the association affinity between the given
+	 * Calculate the association affinity between it's associated
 	 * supporting data and the current hypocenter based on a number of factors
 	 * including the identified phase, distance to picked station,
 	 * observation error, and other hypocentral properties
 	 *
-	 * \return Returns true if any picks removed
+	 * \return Returns true if any data removed
 	 */
-	bool prune();
+	bool pruneData();
 
 	/**
 	 * \brief Evaluate hypocenter viability
@@ -449,37 +422,37 @@ class CHypo {
 	/**
 	 * \brief Evaluate hypocenter report suitability
 	 *
-	 * Evaluate whether the hypocenter is suitable to be reported,
+	 * Evaluate whether the hypocenter is suitable to be reported, utilizing the
+	 * reporting data and stack thresholds (instead of the nucleation thresholds)
 	 *
 	 * \return Returns true if the hypocenter can be reported, false otherwise
 	 */
 	bool reportCheck();
 
 	/**
-	 * \brief Calculate supporting data statistical distribution
+	 * \brief Calculate supporting data statistical values
 	 *
-	 * Calculate the statistical distribution of the supporting data in
-	 * distance.  The values are reflected to give a mean of 0.  These
-	 * statistics are used in the automatic supporting data disassocation
-	 * process cull()
+	 * Calculate various statistical values for this hypo, including minimum
+	 * distance, median distance, gap, kurtosis value, and association distance
+	 * cutoff as part of the anneal() and localize()
 	 */
-	void stats();
+	void calculateStatistics();
 
 	/**
-	 * \brief Synthetic annealing used by nucleation
+	 * \brief Fast baysian fit synthetic annealing location algorithm used by
+	 * nucleation
 	 *
-	 * Synthetic annealing used by nucleation to rapidly achieve
-	 * a viable starting location.
+	 * Rapid synthetic annealing algoritym used by nucleation to calculate an
+	 * initial starting location.
 	 *
-	 * Also computes supporting data statistical distribution by calling
-	 * stats() and computes station weights by calling weights()
+	 * Also computes supporting data statistics by calling calculateStatistics()
 	 *
 	 * \param nIter - An integer containing the number of iterations to perform,
 	 * defaults to 250
 	 * \param dStart - A double value containing the starting distance iteration
 	 * step size in kilometers, default 100 km
 	 * \param dStop - A double value containing the ending distance iteration
-	 * step sizein kilometers, default 1 km
+	 * step size in kilometers, default 1 km
 	 * \param tStart - A double value containing the starting time iteration
 	 * step size in seconds, default 5 seconds
 	 * \param tStop - A double value containing the ending time iteration
@@ -490,43 +463,24 @@ class CHypo {
 					double tStart = 5., double tStop = .5);
 
 	/**
-	 * \brief Localize this hypo
+	 * \brief Location calculation function
 	 *
-	 * Localize the hypocenter by computing the maximum bayesian fit via
-	 * calls to the focus() function using different focus values (number
-	 * of iterations, starting step size, and ending step size) based
-	 * on the number of associated supporting data.
+	 * This function calculates the current location of this hypo given the
+	 * supporting data using either a maximum baysian fit (annealingLocateBayes)
+	 * or minimum residual (annealingLocateResidual) depending on the
+	 * configuration
 	 *
-	 * Also computes station weights by calling weights()
+	 * Also computes supporting data statistics by calling calculateStatistics()
 	 *
 	 * \return Returns a double value containing the final baysian fit.
 	 */
 	double localize();
 
 	/**
-	 * \brief brief grid_serach to minimize residuals for this hypo
+	 * \brief Baysian Fit synthetic annealing location algorithm
 	 *
-	 * NOTE: Need more detailed description from Will
-	 */
-	void grid_search();
-
-	/**
-	 * \brief perform the grid search
-	 *
-	 * NOTE: Need more detailed description from Will
-	 *
-	 * \param distLimit - A double value containing the distance limit
-	 * \param distStep - A double value containing the distance step
-	 * \param depthLimit - A double value containing the depth limit
-	 * \param depthStep - A double value containing the depth step
-	 * \param timeLimit - A double value containing the time limit
-	 * \param timeStep - A double value containing the time step
-	 */
-	void doSearch(double distLimit, double distStep, double depthLimit,
-					double depthStep, double timeLimit, double timeStep);
-
-	/**
-	 * Locator which does annealing to find maximum of stacks
+	 * Locator which uses synthetic annealing to compute the geographic point
+	 * of the maximum bayesian fit given the supporting data.
 	 *
 	 * \param nIter - An integer value containing the number of iterations
 	 * \param dStart - A double value containing the distance starting value
@@ -535,15 +489,18 @@ class CHypo {
 	 * gregorian seconds
 	 * \param tStop - A double value containing the time stopping value in
 	 * gregorian seconds
-	 * \param nucleate - An int value sets if this is a nucleation which limits
-	 * the phase used.
+	 * \param nucleate - An boolean flag that sets if this is a nucleation which
+	 * limits the phase used.
 	 */
-	void annealingLocate(int nIter, double dStart, double dStop, double tStart,
-							double tStop, int nucleate = 0);
+	void annealingLocateBayes(int nIter, double dStart, double dStop,
+								double tStart, double tStop, bool nucleate =
+										false);
 
 	/**
-	 * Locator which does annealing to find minimum of sum of absolute of
-	 * residuals
+	 * \brief Residual synthetic annealing location algorithm
+	 *
+	 * Locator which uses synthetic annealing to compute the geographic point
+	 * of the minimum of sum of absolute of residuals given the supporting data.
 	 *
 	 * \param nIter - An integer value containing the number of iterations
 	 * \param dStart - A double value containing the distance starting value
@@ -552,56 +509,76 @@ class CHypo {
 	 * gregorian seconds
 	 * \param tStop - A double value containing the time stopping value in
 	 * gregorian seconds
-	 * \param nucleate - An int value sets if this is a nucleation which limits
-	 * the phase used.
+	 * \param nucleate - A boolean flag that sets if this is a nucleation,
+	 * which limits the phases used.
 	 */
 	void annealingLocateResidual(int nIter, double dStart, double dStop,
-									double tStart, double tStop, int nucleate =
-											0);
+									double tStart, double tStop, bool nucleate =
+											false);
 
 	/**
-	 * Calculates azimuthal gap for a proposed location
+	 * \brief Calculate gap
+	 *
+	 * Calculates the azimuthal gap for a given location using the supporting
+	 * data
 	 *
 	 * \param lat - latitude of test location
 	 * \param lon - longitude of test location
 	 * \param z - depth of test location
+	 * \return Returns a double value containing the calculated gap
 	 */
-	double gap(double lat, double lon, double z);
+	double calculateGap(double lat, double lon, double z);
 
 	/**
-	 * Gets the stack of associated arrivals at location
+	 * \brief Calculate bayes
+	 *
+	 * Calculates the total bayseian stack value for a given location using
+	 * the supporting data. Used in calculating locations by
+	 * annealingLocateBayes()
 	 *
 	 * \param xlat - A double of the latitude to evaluate
 	 * \param xlon - A double of the longitude to evaluate
 	 * \param xZ - A double of the depth to evaluate
 	 * \param oT - A double of the oT to evaluate
-	 * \param nucleate - An int value sets if this is a nucleation which limits
-	 * the phase used.
+	 * \param nucleate - A boolean flag that sets if this is a nucleation,
+	 * which limits the phases used.
+	 * \return Returns a double value containing the total bayseian stack value
+	 * for the given location.
 	 */
-	double getBayes(double xlat, double xlon, double xZ, double oT,
-					int nucleate);
+	double calculateBayes(double xlat, double xlon, double xZ, double oT,
+							bool nucleate);
 
 	/**
-	 * gets a weight residual (with S down weighted) for locator
+	 * \brief Calculate absolute residual sum
 	 *
-	 * \param sPhase - A string with the phase type
-	 * \param tObs - The observed travel time in gregorian seconds
-	 * \param tCal - The calculated travel time in gregorian seconds
-	 */
-	double getWeightedResidual(std::string sPhase, double tObs, double tCal);
-
-	/**
-	 * Get the sum of the absolute residuals at a location
+	 * Calculates the sum of the absolute residuals of the supporting data for a
+	 * given location. Used in calculating locations by annealingLocateResidual()
 	 *
 	 * \param xlat - A double of the latitude to evaluate
 	 * \param xlon - A double of the longitude to evaluate
 	 * \param xZ - A double of the depth to evaluate
 	 * \param oT - A double of the oT in gregorian seconds
-	 * \param nucleate - An int value sets if this is a nucleation which limits
-	 * the phase used.
+	 * \param nucleate - A boolean flag that sets if this is a nucleation,
+	 * which limits the phases used.
+	 * \return Returns a double value containing the absolute residual sum for
+	 * the given location.
 	 */
-	double getSumAbsResidual(double xlat, double xlon, double xZ, double oT,
-								int nucleate);
+	double calculateAbsResidualSum(double xlat, double xlon, double xZ,
+									double oT, bool nucleate);
+
+	/**
+	 * \brief Calculate residual for a phase
+	 * Calculates the weighted residual (with S down weighted) for the current
+	 * location given the phase, observed travel time, and calculated travel
+	 * time
+	 *
+	 * \param sPhase - A string with the phase type
+	 * \param tObs - The observed travel time in gregorian seconds
+	 * \param tCal - The calculated travel time in gregorian seconds
+	 * \return Returns a double value containing the weighted residual
+	 */
+	double calculateWeightedResidual(std::string sPhase, double tObs,
+										double tCal);
 
 	/**
 	 * \brief Write files for plotting output
@@ -610,567 +587,587 @@ class CHypo {
 	void graphicsOutput();
 
 	/**
-	 * \brief Calculate station weights
+	 * \brief Ensure all supporting data belong to this hypo
 	 *
-	 * Calculate the weight of each station for each pick in this
-	 * hypo from the hypocentral distance and distance to nearby stations
-	 * to reduce biases induced by network density differences
-	 * \return Returns false if all weights are zero
-	 */
-	bool weights();
-
-	/**
-	 * \brief Ensure all picks in the hypo belong to hypo
+	 * Search through all supporting data (eg. Picks) in the given hypocenter's
+	 * lists, using the affinity functions to determine whether the data best
+	 *  fits this hypocenter or not.
 	 *
-	 * Search through all picks in the given hypocenter's pick list, using the
-	 * hypo's affinity function to determine whether the pick belongs to the
-	 * given hypocenter or not.
-	 *
+	 * \param hypo - A shared_ptr to a CHypo to use when adding references to
+	 * this hypo. This parameter is passed because issues occurred using
+	 * this-> to reference data.
 	 * \return Returns true if the hypocenter's pick list was changed,
 	 * false otherwise.
 	 */
-	bool resolve(std::shared_ptr<CHypo> hyp);
+	bool resolveData(std::shared_ptr<CHypo> hypo);
 
 	/**
-	 * \brief Pick Link checking function
+	 * \brief Supporting data link checking function
 	 *
-	 * Causes CHypo to print any picks in vPick that are either improperly
+	 * Causes CHypo to print any data in in it's lists that are either improperly
 	 * linked or do not belong to this CHypo.
 	 */
 	void trap();
 
 	/**
-	 * \brief aziTaper
-	 * \return the aziTaper
+	 * \brief Get the azimuth taper used on the bayseian stack value in order
+	 * to compensate for a large azimuthal gap
+	 * \return Returns a double value containing the taper to use
 	 */
-	double getAziTaper() const;
+	double getAzimuthTaper() const;
 
 	/**
-	 * \brief maxDepth
-	 * \return the maximum allowable depth
+	 * \brief Get the maximum allowed depth for this hypo
+	 * \return Returns a double value containing the maximum depth in kilometers
 	 */
 	double getMaxDepth() const;
 
 	/**
-	 * \brief Latitude getter
-	 * \return the latitude
+	 * \brief Get the latitude for this hypo
+	 * \return Returns a double containing the hypo latitude in degrees
 	 */
-	double getLat() const;
+	double getLatitude() const;
 
 	/**
-	 * \brief Longitude getter
-	 * \return the longitude
+	 * \brief Set the latitude for this hypo
+	 * \param lat - a double containing the hypo latitude in degrees
 	 */
-	double getLon() const;
+	void setLatitude(double lat);
 
 	/**
-	 * \brief Depth getter
-	 * \return the depth
+	 * \brief Get the longitude for this hypo
+	 * \return Returns a double containing the hypo longitude in degrees
 	 */
-	double getZ() const;
+	double getLongitude() const;
 
 	/**
-	 * \brief CGeo getter
-	 * \return the hypo location as a glassutil::CGeo object.
+	 * \brief Set the longitude for this hypo, accounting for the longitude
+	 * wrap at +/-180
+	 * \param lon - a double containing the hypo longitude in degrees
+	 */
+	void setLongitude(double lon);
+
+	/**
+	 * \brief Get the depth for this hypo
+	 * \return Returns a double containing the hypo depth in kilometers
+	 */
+	double getDepth() const;
+
+	/**
+	 * \brief Sets the depth for this hypo
+	 * \param z - a double containing the hypo depth in kilometers
+	 */
+	void setDepth(double z);
+
+	/**
+	 * \brief Get the combined hypo location (latitude, longitude, depth) as
+	 * a CGeo object
+	 * \return Returns a glassutil::CGeo object containing the combined location.
 	 */
 	glassutil::CGeo getGeo() const;
 
 	/**
-	 * \brief Origin time getter
-	 * \return the origin time
+	 * \brief Get the origin time for this hypo
+	 * \return Returns a double containing the hypo origin time in julian seconds
 	 */
-	double getTOrg() const;
+	double getTOrigin() const;
 
 	/**
-	 * \brief Bayes value getter
-	 * \return the bayes value
+	 * \brief Sets the origin time for this hypo
+	 * \param newTOrg - a double containing the hypo origin time in julian seconds
 	 */
-	double getBayes() const;
+	void setTOrigin(double newTOrg);
 
 	/**
-	 * \brief Correlation added flag getter
-	 * \return the correlation added flag
+	 * \brief Gets the current bayes stack value for this hypo
+	 * \return Returns a double containing the current bayes stack value
 	 */
-	bool getCorrAdded() const;
+	double getBayesValue() const;
 
 	/**
-	 * \brief Correlation added flag setter
-	 * \param corrAdded - the correlation added flag
+	 * \brief Gets whether a correlation has been added to this hypo.
+	 *
+	 * Gets whether a correlation has been added to this hypo.  This flag is used
+	 * in preserving hypos generated from correlations long enough for supporting
+	 * data to be added.
+	 *
+	 * \return Returns a boolean flag indicating whether a correlation has been
+	 * added to this hypo, true if one has, false otherwise
 	 */
-	void setCorrAdded(bool corrAdded);
+	bool getCorrelationAdded() const;
 
 	/**
-	 * \brief Event reported flag getter
-	 * \return the event reported flag
+	 * \brief Sets whether a correlation has been added to this hypo.
+	 *
+	 * Sets whether a correlation has been added to this hypo.  This flag is used
+	 * in preserving hypos generated from correlations long enough for supporting
+	 * data to be added.
+	 *
+	 * \param corrAdded - a boolean flag indicating whether a correlation has
+	 * been added to this hypo, true if one has, false otherwise
 	 */
-	bool getEvent() const;
+	void setCorrelationAdded(bool corrAdded);
 
 	/**
-	 * \brief Fixed flag getter
-	 * \return the fixed flag
+	 * \brief Gets whether an event message was generated for this hypo
+	 *
+	 * \return Returns a boolean flag indicating whether an event message has
+	 * been generated for this hypo, true if one has, false otherwise
+	 */
+	bool getEventGenerated() const;
+
+	/**
+	 * \brief Gets whether an hypo message was generated for this hypo
+	 *
+	 * \return Returns a boolean flag indicating whether a hypo message has
+	 * been generated for this hypo, true if one has, false otherwise
+	 */
+	bool getHypoGenerated() const;
+
+	/**
+	 * \brief Gets whether this hypo is fixed
+	 *
+	 * \return Returns a boolean flag indicating whether this hypo is fixed,
+	 * true if it is, false otherwise
 	 */
 	bool getFixed() const;
 
 	/**
-	 * \brief Fixed flag setter
-	 * \param fixed - the fixed flag
+	 * \brief Sets whether this hypo is fixed
+	 *
+	 * \param fixed - a boolean flag indicating whether this hypo is fixed,
+	 * true if it is, false otherwise
 	 */
 	void setFixed(bool fixed);
 
 	/**
-	 * \brief Bayes initial value getter
-	 * \return the intial bayes value
+	 * \brief Gets the initial (nucleation) bayes stack value for this hypo
+	 * \return Returns a double value containing the initial (nucleation) bayes
+	 * stack value
 	 */
-	double getBayesInitial() const;
+	double getInitialBayesValue() const;
 
 	/**
-	 * \brief Cut factor getter
-	 * \return the cut factor value
+	 * \brief Gets the association distance cutoff used in canAssociate() and
+	 * generateAffinitu()
+	 * \return Returns a double value containing the current association distance
+	 * cutoff
 	 */
-	double getCutFactor() const;
+	double getAssociationDistanceCutoff() const;
 
 	/**
-	 * \brief Cut factor setter
-	 * \param cutFactor -  the cut factor
+	 * \brief Gets the distance cutoff factor used in calculating the
+	 * Association Distance Cutoff
+	 * \return Returns a double value containing the distance cutoff factor
 	 */
-	void setCutFactor(double cutFactor);
+	double getDistanceCutoffFactor() const;
+
 
 	/**
-	 * \brief Cut min getter
-	 * \return the cut min value
+	 * \brief Gets the threshold that represents the minimum count of data
+	 * required to successfully nucleate or maintain (via passing cancelCheck()
+	 * a hypocenter.
+	 *
+	 * If threshold is 10, then 8 picks + 1 correlation + 1 beam would be
+	 * sufficient, but 9 picks would not be.
+	 *
+	 * \return Returns a double value containing the nucleation minimum stack
+	 * threshold
 	 */
-	double getCutMin() const;
+	int getNucleationDataThreshold() const;
+
 
 	/**
-	 * \brief Cut min setter
-	 * \param cutMin - the cut min value
+	 * \brief Sets the threshold that represents the minimum count of data
+	 * required to successfully nucleate or maintain (via passing cancelCheck()
+	 * a hypocenter.
+	 *
+	 * If threshold is 10, then 8 picks + 1 correlation + 1 beam would be
+	 * sufficient, but 9 picks would not be.
+	 *
+	 * \param cut - a double value containing the nucleation minimum stack
+	 * threshold
 	 */
-	void setCutMin(double cutMin);
+	void setNucleationDataThreshold(int cut);
 
 	/**
-	 * \brief Cut percentage getter
-	 * \return the cut percentage value
+	 * \brief Gets the nucleation stack minimum threshold used in determining
+	 * hypo viability in cancelCheck()
+	 * \return Returns an integer value containing the nucleation data minimum
+	 * threshold
 	 */
-	double getCutPercentage() const;
+	double getNucleationStackThreshold() const;
 
 	/**
-	 * \brief Cut factor setter
-	 * \param cutPercentage - the cut percentage value
+	 * \brief Sets the nucleation stack minimum threshold used in determining
+	 * hypo viability in cancelCheck()
+	 * \param thresh - an integer value containing the nucleation stack minimum
+	 * threshold
 	 */
-	void setCutPercentage(double cutPercentage);
+	void setNucleationStackThreshold(double thresh);
 
 	/**
-	 * \brief Cut getter
-	 * \return the cut value
-	 */
-	int getCut() const;
-
-	/**
-	 * \brief Cut setter
-	 * \param cut - the cut value
-	 */
-	void setCut(double cut);
-
-	/**
-	 * \brief Thresh getter
-	 * \return the thresh value
-	 */
-	double getThresh() const;
-
-	/**
-	 * \brief Thresh setter
-	 * \param thresh - the thresh value
-	 */
-	void setThresh(double thresh);
-
-	/**
-	 * \brief Gap getter
-	 * \return the gap value
+	 * \brief Gets the azimuthal gap as of the last call of calculateStatistics
+	 * \return Returns a double value containing the azimuthal gap
 	 */
 	double getGap() const;
 
 	/**
-	 * \brief Kurtosis getter
-	 * \return the kurtosis value
+	 * \brief Gets the median data distance as of the last call of
+	 * calculateStatistics()
+	 * \return Returns a double value containing the median data distance
 	 */
-	double getKrt() const;
+	double getMedianDistance() const;
 
 	/**
-	 * \brief Med distance getter
-	 * \return the med distance value
+	 * \brief Gets the minimum data distance as of the last call of
+	 * calculateStatistics()
+	 * \return Returns a double value containing the minimum data distance
 	 */
-	double getMed() const;
+	double getMinDistance() const;
 
 	/**
-	 * \brief Min distance getter
-	 * \return the min distance value
-	 */
-	double getMin() const;
-
-	/**
-	 * \brief Mutex getter
-	 * \return the hypo mutex
+	 * \brief Gets the mutex used to ensure that the hypo can be processed by
+	 * only one thread at a time
+	 * \return Returns a std::mutex
 	 */
 	std::mutex & getProcessingMutex();
 
 	/**
-	 * \brief Residual getter
-	 * \return the residual value
+	 * \brief Gets the node resolution of the web that nucleated this hypo
+	 * \return Returns a double value containing the node resolution of the web
+	 * that nucleated this hypo in kilometers
 	 */
-	double getRes() const;
+	double getWebResolution() const;
 
 	/**
-	 * \brief Sig getter
-	 * \return the sig value
+	 * \brief Gets the current distance standard deviation
+	 * \return Returns a double value containing the current distance standard
+	 * deviation
 	 */
-	double getSig() const;
+	double getDistanceSD() const;
 
 	/**
-	 * \brief Cycle getter
-	 * \return the cycle value
-	 */
-	int getCycle() const;
-
-	/**
-	 * \brief Cycle setter
-	 * \param newCycle - the cycle value
-	 */
-	int setCycle(int newCycle);
-
-	/**
-	 * \brief Process count getter
-	 * \return the process count value
+	 * \brief Gets the current process count, used by HypoList to prevent
+	 * continuous hypo reprocessing
+	 * \return Returns an integer value containing the current process count
 	 */
 	int getProcessCount() const;
 
 	/**
-	 * \brief Process count incrementer
-	 * \return the process count value
+	 * \brief Sets the process count, used by HypoList to prevent continuous
+	 * hypo reprocessing
+	 * \return newCycle - an integer value containing the new process count
 	 */
-	int incrementProcessCount();
+	int setProcessCount(int newCycle);
 
 	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
+	 * \brief Gets the total process count
+	 * \return Returns an integer value containing the total process count
 	 */
-	const CGlass* getGlass() const;
+	int getTotalProcessCount() const;
 
 	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
+	 * \brief Increments the total process count
+	 * \return Returns an integer value containing the new total process count
 	 */
-	void setGlass(CGlass* glass);
+	int incrementTotalProcessCount();
 
 	/**
-	 * \brief Pid getter
-	 * \return the Pid
+	 * \brief Gets the identifier for this hypo
+	 * \return Returns a std::string containing this hypo's identifier
 	 */
-	const std::string& getPid() const;
+	const std::string& getID() const;
 
 	/**
-	 * \brief Web Name getter
-	 * \return the Web Name
+	 * \brief Gets the name of the web that nucleated this hypo
+	 * \return Returns a std::string containing the name of the web that
+	 * nuclated this hypo
 	 */
 	const std::string& getWebName() const;
 
 	/**
-	 * \brief Pick vector size getter
-	 * \return the pick vector size
+	 * \brief Get the current size of the supporting data pick vector
+	 * \return Returns an integer containing current size of the supporting data
+	 * pick vector
 	 */
-	int getVPickSize() const;
+	int getPickDataSize() const;
 
 	/**
-	 * \brief Pick vector getter
-	 * \return the pick vector
+	 * \brief Get a vector containing all the supporting pick data for this hypo
+	 * \return Returns a std::vector containing all the supporting pick data
 	 */
-	std::vector<std::shared_ptr<CPick>> getVPick() const;
+	std::vector<std::shared_ptr<CPick>> getPickData() const;
 
 	/**
-	 * \brief Correlation vector size getter
-	 * \return the correlation vector size
+	 * \brief Get the current size of the supporting data correlation vector
+	 * \return Returns an integer containing current size of the supporting data
+	 * correlation vector
 	 */
-	int getVCorrSize() const;
+	int getCorrelationDataSize() const;
 
 	/**
-	 * \brief Creation time getter
-	 * \return the creation time
+	 * \brief Get the time that this hypo was created
+	 * \return Returns a double value containg the time this hypo was created in
+	 * julian seconds
 	 */
 	double getTCreate() const;
 
 	/**
-	 * \brief get pTrv1
-	 * \return pTrv1
+	 * \brief Get the primary phase/travel time used in nucleating this hypo
+	 * This object is kept in CHypo for performance (throughput) reasons, and is
+	 * used in the calculateBayes() and calculateAbsResidualSum() functions
+	 *
+	 * \return Returns a shared_ptr to the primary CTravelTime used in
+	 * nucleating this hypo
 	 */
-	std::shared_ptr<traveltime::CTravelTime> getTrv1() const;
+	std::shared_ptr<traveltime::CTravelTime> getNucleationTravelTime1() const;
 
 	/**
-	 * \brief get pTrv2
-	 * \return pTrv2
+	 * \brief Get the secondary phase/travel time used in nucleating this hypo
+	 * This object is kept in CHypo for performance (throughput) reasons, and is
+	 * used in the calculateBayes() and calculateAbsResidualSum() functions
+	 *
+	 * \return Returns a shared_ptr to the secondary CTravelTime used in
+	 * nucleating this hypo
 	 */
-	std::shared_ptr<traveltime::CTravelTime> getTrv2() const;
+	std::shared_ptr<traveltime::CTravelTime> getNucleationTravelTime2() const;
 
 	/**
-	 * \brief get TTT
-	 * \return pTTT
+	 * \brief Get the list of association phases / travel times for this hypo
+	 * This object is kept in CHypo for performance (throughput) reasons, and is
+	 * used in canAssociate() calculateResidual(), and annealingLocateResidual()
+	 * functions
+	 *
+	 * \return Returns a shared_ptr to the association CTTT used in this hypo
 	 */
-	std::shared_ptr<traveltime::CTTT> getTTT() const;
+	std::shared_ptr<traveltime::CTTT> getTravelTimeTables() const;
 
 	/**
-	 * \brief Report count getter
-	 * \return the report count
+	 * \brief Gets the number of times that this hypo has been reported
+	 * \return Returns an integer value containing the report count
 	 */
 	int getReportCount() const;
 
+	/**
+	 * \brief Gets whether the mutex accessed via getProcessingMutex() is locked
+	 * \return Returns a boolean flag indicating whether the mutex is locked,
+	 * true if it is, false otherwise
+	 */
 	bool isLockedForProcessing();
-	void lockForProcessing();
-	void unlockAfterProcessing();
 
-	void setLat(double lat);
-	void setLon(double lon);
-	void setZ(double z);
-	void setTOrg(double newTOrg);
+	/**
+	 * \brief Get the sorting time for this hypo
+	 * \return Returns an int64_t containing the hypo sort time in julian seconds
+	 */
+	int64_t getTSort() const;
+
+	/**
+	 * \brief Set the sorting time for this hypo
+	 * \param newTSort - a double containing the hypo sort time in julian seconds
+	 */
+	void setTSort(double newTSort);
 
  private:
 	/**
-	 * \brief A pointer to the main CGlass class, used to send output,
-	 * look up travel times, encode/decode time, and call significance
-	 * function.
+	 * \brief  A std::string with the name of the web used during the nucleation
+	 * process
 	 */
-	CGlass *pGlass;
-
-	/**
-	 * \brief  A std::string with the name of the initiating subnet trigger
-	 * used during the nucleation process
-	 */
-	std::string sWebName;
+	std::string m_sWebName;
 
 	/**
 	 * \brief An integer containing the number of stations needed to maintain
 	 * association during the nucleation process
 	 */
-	int nCut;
+	std::atomic<int> m_iNucleationDataThreshold;
 
 	/**
 	 * \brief A double containing the subnet specific Bayesian stack threshold
 	 * used during the nucleation process
 	 */
-	double dThresh;
+	std::atomic<double> m_dNucleationStackThreshold;
 
 	/**
-	 * \brief Holds the shifts for the grid search
+	 * \brief A double value containing the the taper to use on the bayseian
+	 * stack value in order to compensate for a large azimuthal gap
 	 */
-	double searchVals[5];
-
-	/**
-	 * \brief where to taper bayesVal from azi gap
-	 */
-	double aziTaper;
+	std::atomic<double> m_dAzimuthTaper;
 
 	/**
 	 * \brief maximum allowable event depth
 	 */
-	double maxDepth;
+	std::atomic<double> m_dMaxDepth;
 
 	/**
 	 * \brief An integer value containing this hypo's processing cycle count
 	 */
-	int iCycle;
+	std::atomic<int> m_iProcessCount;
 
 	/**
 	 * \brief A double value containing this hypo's origin time in julian
 	 * seconds
 	 */
-	double tOrg;
+	std::atomic<double> m_tOrigin;
 
 	/**
 	 * \brief A double value containing this hypo's latitude in degrees
 	 */
-	double dLat;
+	std::atomic<double> m_dLatitude;
 
 	/**
 	 * \brief A double value containing this hypo's longitude in degrees
 	 */
-	double dLon;
+	std::atomic<double> m_dLongitude;
 
 	/**
 	 * \brief A double value containing this hypo's depth in kilometers
 	 */
-	double dZ;
+	std::atomic<double> m_dDepth;
 
 	/**
 	 * \brief A boolean indicating if an Event message was sent for this hypo.
 	 */
-	bool bEvent;
+	std::atomic<bool> m_bEventGenerated;
+
+	/**
+	 * \brief A boolean indicating if an Event message was generated for this
+	 * hypo.
+	 */
+	std::atomic<bool> m_bHypoGenerated;
 
 	/**
 	 * \brief A double value containing this hypo's Bayes statistic
 	 */
-	double dBayes;
+	std::atomic<double> m_dBayesValue;
 
 	/**
 	 * \brief A double value containing this hypo's initial Bayes statistic
 	 */
-	double dBayesInitial;
+	std::atomic<double> m_dInitialBayesValue;
 
 	/**
 	 * \brief A double value containing this hypo's minimum distance in degrees
+	 * as of the last call of calculateStatistics
 	 */
-	double dMin;
+	std::atomic<double> m_dMinDistance;
 
 	/**
 	 * \brief A double value containing this hypo's median distance in degrees
+	 * as of the last call of calculateStatistics
 	 */
-	double dMed;
+	std::atomic<double> m_dMedianDistance;
 
 	/**
 	 * \brief A double value containing this hypo's maximum azimuthal gap in
-	 * degrees
+	 * degrees as of the last call of calculateStatistics
 	 */
-	double dGap;
+	std::atomic<double> m_dGap;
 
 	/**
 	 * \brief A double value containing this hypo's distance standard deviation
 	 */
-	double dSig;
+	std::atomic<double> m_dDistanceSD;
 
 	/**
 	 * \brief A double value the resolution of the triggering web
 	 */
-	double dRes;
+	std::atomic<double> m_dWebResolution;
 
 	/**
-	 * \brief A double value containing this hypo's distance sample excess
-	 * kurtosis value
+	 * \brief A double value containing this hypo's association distance cutoff
+	 * (2.0 * 80 percentile) in degrees
 	 */
-	double dKrt;
-
-	/**
-	 * \brief A double value containing the factor used to calculate this hypo's
-	 * distance cutoff
-	 */
-	double dCutFactor;
-
-	/**
-	 * \brief A double value containing the percentage used to calculate this
-	 *  hypo's distance cutoff
-	 */
-	double dCutPercentage;
-
-	/**
-	 * \brief A double value containing the minimum distance cutoff
-	 */
-	double dCutMin;
-
-	/**
-	 * \brief A double value containing this hypo's distance cutoff (2.0 * 80
-	 * percentile)  in degrees
-	 */
-	double dCut;
+	std::atomic<double> m_dAssociationDistanceCutoff;
 
 	/**
 	 * \brief A std::string containing this hypo's unique identifier
 	 */
-	std::string sPid;
+	std::string m_sID;
 
 	/**
 	 * \brief A boolean indicating if this hypo is fixed (not allowed to change)
 	 */
-	bool bFixed;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral latitude in
-	 * degrees during bayes maximization iterations
-	 */
-	double xLat;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral longitude in
-	 * degrees during bayes maximization iterations
-	 */
-	double xLon;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral depth in
-	 * kilometers during bayes maximization iterations
-	 */
-	double xZ;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral Bayes statistic
-	 * during bayes maximization iterations
-	 */
-	double xBayes;
-
-	/**
-	 * \brief A double value containing this hypo's ephemeral origin time in
-	 * julian seconds during bayes maximization iterations
-	 */
-	double xOrg;
-
-	/**
-	 * \brief An integer value containing the count of station weight values
-	 * as of the last call to weights()
-	 */
-	int nWts;
+	std::atomic<bool> m_bFixed;
 
 	/**
 	 * \brief A boolean indicating if a correlation was recently added to this
 	 *  hypo.
 	 */
-	bool bCorrAdded;
+	std::atomic<double> m_bCorrelationAdded;
 
 	/**
 	 * \brief An integer containing the number of times this hypo has been
 	 * processed.
 	 */
-	int processCount;
+	std::atomic<int> m_iTotalProcessCount;
 
 	/**
 	 * \brief An integer containing the number of times this hypo has been
 	 * reported.
 	 */
-	int reportCount;
+	std::atomic<int> m_iReportCount;
 
 	/**
 	 * \brief A double value containing this hypo's creation time in julian
 	 * seconds
 	 */
-	double tCreate;
+	std::atomic<double> m_tCreate;
 
 	/**
-	 * \brief A vector of double values representing the weight of each pick
-	 * used by this hypo as of the last call to weights()
+	 * \brief An int64_t value containing this hypo's sort time in julian
+	 * seconds, this is a cached copy of tOrigin as an integer that is
+	 * guaranteed to not change during the lifetime of the Hypo in a HypoList's
+	 * internal multiset, ensuring that sort order won't change, even when
+	 * tOrigin changes because of a relocation. Resorting is accomplished by
+	 * removing the hypo from the internal multiset (NOT the HypoList), updating
+	 * tSort to equal the current tOrigin, and then reinserting the hypo into
+	 * the internal multiset. /see HypoList.
 	 */
-	std::vector<double> vWts;
+	std::atomic<int64_t> m_tSort;
 
 	/**
 	 * \brief A vector of shared_ptr's to the pick data that supports this hypo.
+	 *
+	 * We use shared_ptr's instead of weak ptr's in this vector so that any
+	 * supporting picks will not be deleted before the hypo is canceled or
+	 * expired.
 	 */
-	std::vector<std::shared_ptr<CPick>> vPick;
+	std::vector<std::shared_ptr<CPick>> m_vPickData;
 
 	/**
 	 * \brief A vector of shared pointers to correlation data that support
 	 * this hypo.
+	 *
+	 * We use shared_ptr's instead of weak ptr's in this vector so that any
+	 * supporting correlations will not be deleted before the hypo is canceled or
+	 * expired.
 	 */
-	std::vector<std::shared_ptr<CCorrelation>> vCorr;
+	std::vector<std::shared_ptr<CCorrelation>> m_vCorrelationData;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
-	 * travel times for the first phase used to nucleate this hypo
+	 * travel times for the first phase used to nucleate this hypo. This
+	 * object is kept in CHypo for performance (throughput) reasons, and is
+	 * used in the calculateBayes() and calculateAbsResidualSum() functions
 	 */
-	std::shared_ptr<traveltime::CTravelTime> pTrv1;
+	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime1;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
-	 * travel times for the second phase used to nucleate this hypo
+	 * travel times for the second phase used to nucleate this hypo. This
+	 * object is kept in CHypo for performance (throughput) reasons, and is
+	 * used in the calculateBayes() and calculateAbsResidualSum() functions
 	 */
-	std::shared_ptr<traveltime::CTravelTime> pTrv2;
+	std::shared_ptr<traveltime::CTravelTime> m_pNucleationTravelTime2;
 
 	/**
 	 * \brief A pointer to a CTTT object containing the travel
-	 * time phases and branches used for association and location
+	 * time phases and branches used for association and location.  This
+	 * object is kept in CHypo for performance (throughput) reasons, and is
+	 * used in canAssociate() calculateResidual(), and annealingLocateResidual()
+	 * functions
 	 */
-	std::shared_ptr<traveltime::CTTT> pTTT;
+	std::shared_ptr<traveltime::CTTT> m_pTravelTimeTables;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypo.
@@ -1179,17 +1176,12 @@ class CHypo {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	mutable std::recursive_mutex hypoMutex;
+	mutable std::recursive_mutex m_HypoMutex;
 
 	/**
 	 * \brief A mutex to control processing access to CHypo.
 	 */
-	std::mutex processingMutex;
-
-	/**
-	 * \brief A random engine used to generate random numbers
-	 */
-	std::default_random_engine m_RandomGenerator;
+	std::mutex m_ProcessingMutex;
 };
 }  // namespace glasscore
 #endif  // HYPO_H

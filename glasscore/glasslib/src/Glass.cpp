@@ -1,6 +1,7 @@
 #include <json.h>
 #include <cmath>
 #include <string>
+#include <atomic>
 #include "IGlassSend.h"
 #include "Date.h"
 #include "Geo.h"
@@ -12,8 +13,6 @@
 #include "CorrelationList.h"
 #include "Detection.h"
 #include "Terra.h"
-#include "Ray.h"
-#include "GenTrv.h"
 #include "Trav.h"
 #include "TTT.h"
 #include "TravelTime.h"
@@ -22,147 +21,125 @@
 
 namespace glasscore {
 
+glasscore::IGlassSend *CGlass::m_pExternalInterface = NULL;
+CWebList* CGlass::m_pWebList = NULL;
+CSiteList* CGlass::m_pSiteList = NULL;
+CPickList* CGlass::m_pPickList = NULL;
+CHypoList* CGlass::m_pHypoList = NULL;
+CCorrelationList* CGlass::m_pCorrelationList = NULL;
+CDetection* CGlass::m_pDetectionProcessor = NULL;
+std::shared_ptr<traveltime::CTravelTime> CGlass::m_pDefaultNucleationTravelTime =  // NOLINT
+		NULL;
+std::shared_ptr<traveltime::CTTT> CGlass::m_pAssociationTravelTimes = NULL;
+
+std::atomic<int> CGlass::m_iMaxNumPicks { -1 };
+std::atomic<int> CGlass::m_iMaxNumCorrelations { -1 };
+std::atomic<int> CGlass::m_iMaxNumPicksPerSite { -1 };
+std::atomic<int> CGlass::m_iMaxNumHypos { -1 };
+std::atomic<int> CGlass::m_iNucleationDataThreshold { 7 };
+std::atomic<int> CGlass::m_iNumStationsPerNode { 20 };
+std::atomic<double> CGlass::m_dNucleationStackThreshold { 2.5 };
+std::atomic<double> CGlass::m_dAssociationSDCutoff { 3.0 };
+std::atomic<double> CGlass::m_dPruningSDCutoff { 3.0 };
+std::atomic<double> CGlass::m_dPickAffinityExpFactor { 2.5 };
+std::atomic<double> CGlass::m_dDistanceCutoffFactor { 4.0 };
+std::atomic<double> CGlass::m_dDistanceCutoffRatio { 0.4 };
+std::atomic<double> CGlass::m_dMinDistanceCutoff { 30.0 };
+std::atomic<int> CGlass::m_iProcessLimit { 25 };
+std::atomic<bool> CGlass::m_bTestTravelTimes { false };
+std::atomic<bool> CGlass::m_bTestLocator { false };
+std::atomic<bool> CGlass::m_bGraphicsOut { false };
+std::string CGlass::m_sGraphicsOutFolder = "./";  // NOLINT
+std::atomic<double> CGlass::m_dGraphicsStepKM { 1.0 };
+std::atomic<int> CGlass::m_iGraphicsSteps { 100 };
+std::atomic<bool> CGlass::m_bMinimizeTTLocator { false };
+std::atomic<double> CGlass::m_dPickDuplicateTimeWindow { 2.5 };
+std::atomic<double> CGlass::m_dCorrelationMatchingTimeWindow { 2.5 };
+std::atomic<double> CGlass::m_dCorrelationMatchingDistanceWindow { 0.5 };
+std::atomic<int> CGlass::m_iCorrelationCancelAge { 900 };
+std::atomic<double> CGlass::m_dBeamMatchingAzimuthWindow { 22.5 };
+std::atomic<double> CGlass::m_dBeamMatchingDistanceWindow { 5.0 };
+std::atomic<int> CGlass::m_iReportingDataThreshold { 0 };
+std::atomic<double> CGlass::m_dReportingStackThreshold { 2.5 };
+std::atomic<double> CGlass::m_dHypoMergingTimeWindow { 30.0 };
+std::atomic<double> CGlass::m_dHypoMergingDistanceWindow { 3.0 };
+std::atomic<double> CGlass::m_dEventFragmentDepthThreshold { 550.0 };
+std::atomic<double> CGlass::m_dEventFragmentAzimuthThreshold { 270.0 };
+std::mutex CGlass::m_TTTMutex;
+
 // ---------------------------------------------------------CGlass
 CGlass::CGlass() {
-	clear();
-
-	pWebList = NULL;
-	pSiteList = NULL;
-	pPickList = NULL;
-	pHypoList = NULL;
-	pCorrelationList = NULL;
-	pDetection = NULL;
-	pTrvDefault = NULL;
-
-	nPickMax = 10000;
-	nCorrelationMax = 1000;
-	nSitePickMax = 200;
-	nHypoMax = 100;
-	graphicsOut = false;
-	graphicsOutFolder = "./";
-	graphicsStepKM = 1.;
-	graphicsSteps = 100;
-	testTimes = false;
-	minimizeTTLocator = false;
-	testLocator = false;
 }
 
 // ---------------------------------------------------------~CGlass
 CGlass::~CGlass() {
-	clear();
-
-	if (pWebList) {
-		delete (pWebList);
+	if (m_pWebList) {
+		delete (m_pWebList);
 	}
-	if (pSiteList) {
-		delete (pSiteList);
+	if (m_pSiteList) {
+		delete (m_pSiteList);
 	}
-	if (pPickList) {
-		delete (pPickList);
+	if (m_pPickList) {
+		delete (m_pPickList);
 	}
-	if (pHypoList) {
-		delete (pHypoList);
+	if (m_pHypoList) {
+		delete (m_pHypoList);
 	}
-	if (pCorrelationList) {
-		delete (pCorrelationList);
+	if (m_pCorrelationList) {
+		delete (m_pCorrelationList);
 	}
-	if (pDetection) {
-		delete (pDetection);
+	if (m_pDetectionProcessor) {
+		delete (m_pDetectionProcessor);
 	}
 }
 
-// ---------------------------------------------------------dispatch
-bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CGlass::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CGlass::dispatch: NULL json communication.");
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CGlass::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
-	// check for a command
+	// check for a command, usually configuration or a request
 	if (com->HasKey("Cmd")
 			&& ((*com)["Cmd"].GetType() == json::ValueType::StringVal)) {
 		// dispatch to appropriate function based on Cmd value
 		json::Value v = (*com)["Cmd"].ToString();
-
-		// log cmd if it isn't one of the common ones
-		if ((v != "Site") && (v != "ReqHypo") && (v != "Correlation")
-				&& (v != "Pick")) {
-			glassutil::CLogit::log(glassutil::log_level::debug,
-									"CGlass::dispatch: Cmd:" + v.ToString());
-		}
-
-		// generate travel time file
-		// NOTE: Move to stand alone program
-		// if (v == "GenTrv") {
-		// return((genTrv(com));
-		// }
-
-		// test travel time classes
-		// NOTE: Move to unit tests.
-		// if (v == "TestTTT") {
-		// testTTT(com);
-		// return(true);
-		// }
 
 		// Initialize glass
 		if (v == "Initialize") {
 			return (initialize(com));
 		}
 
-		// clear glass configuration
-		if (v == "ClearGlass") {
-			clear();
-			// ClearGlass is also relevant to other glass
-			// components, Fall through intentional
-		}
-		// check to see if glass has been set up
-		if (!pWebList) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CGlass::dispatch: ***** Glass Not initialized *****.");
-
-			glassutil::CLogit::log(glassutil::log_level::debug,
-									"CGlass::dispatch: Cmd is:" + v.ToString());
-			return (false);
-		}
-
 		// send any other commands to any of the configurable / input classes
-		if (pPickList->dispatch(com)) {
+		if (m_pSiteList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (pSiteList->dispatch(com)) {
+		if (m_pHypoList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (pHypoList->dispatch(com)) {
-			return (true);
-		}
-		if (pCorrelationList->dispatch(com)) {
-			return (true);
-		}
-		if (pDetection->dispatch(com)) {
-			return (true);
-		}
-		if (pWebList->dispatch(com)) {
+		if (m_pWebList->receiveExternalMessage(com)) {
 			return (true);
 		}
 	}
 
-	// Input data can have Type keys
+	// Check for a type, usually input data
 	if (com->HasKey("Type")
 			&& ((*com)["Type"].GetType() == json::ValueType::StringVal)) {
 		// send any input to any of the input processing classes
-		if (pPickList->dispatch(com)) {
+		if (m_pPickList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (pSiteList->dispatch(com)) {
+		if (m_pSiteList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (pCorrelationList->dispatch(com)) {
+		if (m_pCorrelationList->receiveExternalMessage(com)) {
 			return (true);
 		}
-		if (pDetection->dispatch(com)) {
+		if (m_pDetectionProcessor->receiveExternalMessage(com)) {
 			return (true);
 		}
 	}
@@ -171,12 +148,17 @@ bool CGlass::dispatch(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
+// ---------------------------------------------------------setSend
+void CGlass::setExternalInterface(glasscore::IGlassSend *newSend) {
+	m_pExternalInterface = newSend;
+}
+
 // ---------------------------------------------------------send
-bool CGlass::send(std::shared_ptr<json::Object> com) {
+bool CGlass::sendExternalMessage(std::shared_ptr<json::Object> com) {
 	// make sure we have something to send to
-	if (piSend) {
+	if (m_pExternalInterface) {
 		// send the communication
-		piSend->Send(com);
+		m_pExternalInterface->recieveGlassMessage(com);
 
 		// done
 		return (true);
@@ -189,33 +171,40 @@ bool CGlass::send(std::shared_ptr<json::Object> com) {
 // ---------------------------------------------------------Clear
 void CGlass::clear() {
 	// reset to defaults
-	nNucleate = 7;
-	nDetect = 20;
-	dThresh = 2.5;
-	sdAssociate = 3.0;
-	sdPrune = 3.0;
-	expAffinity = 2.5;
-	avgDelta = 0.0;
-	avgSigma = 2.0;
-	dCutFactor = 4.0;
-	dCutPercentage = 0.4;
-	dCutMin = 30.0;
-	iCycleLimit = 25;
-	testTimes = false;
-	testLocator = false;
-	graphicsOut = false;
-	graphicsOutFolder = "./";
-	graphicsStepKM = 1.;
-	graphicsSteps = 100;
-	minimizeTTLocator = false;
-	pickDuplicateWindow = 2.5;
-	correlationMatchingTWindow = 2.5;
-	correlationMatchingXWindow = .5;
-	correlationCancelAge = 900;
-	beamMatchingAzimuthWindow = 22.5;
-	beamMatchingDistanceWindow = 5;
-	nReportCut = 0;
-	dReportThresh = 2.5;
+	m_iMaxNumPicks = -1;
+	m_iMaxNumCorrelations = -1;
+	m_iMaxNumPicksPerSite = -1;
+	m_iMaxNumHypos = -1;
+	m_iNucleationDataThreshold = 7;
+	m_iNumStationsPerNode = 20;
+	m_iNucleationDataThreshold = 7;
+	m_dNucleationStackThreshold = 2.5;
+	m_dAssociationSDCutoff = 3.0;
+	m_dPruningSDCutoff = 3.0;
+	m_dPickAffinityExpFactor = 2.5;
+	m_dDistanceCutoffFactor = 4.0;
+	m_dDistanceCutoffRatio = 0.4;
+	m_dMinDistanceCutoff = 30.0;
+	m_iProcessLimit = 25;
+	m_bTestTravelTimes = false;
+	m_bTestLocator = false;
+	m_bGraphicsOut = false;
+	m_sGraphicsOutFolder = "./";
+	m_dGraphicsStepKM = 1.;
+	m_iGraphicsSteps = 100;
+	m_bMinimizeTTLocator = false;
+	m_dPickDuplicateTimeWindow = 2.5;
+	m_dCorrelationMatchingTimeWindow = 2.5;
+	m_dCorrelationMatchingDistanceWindow = .5;
+	m_iCorrelationCancelAge = 900;
+	m_dBeamMatchingAzimuthWindow = 22.5;
+	m_dBeamMatchingDistanceWindow = 5;
+	m_iReportingDataThreshold = 0;
+	m_dReportingStackThreshold = 2.5;
+	m_dHypoMergingTimeWindow = 30.0;
+	m_dHypoMergingDistanceWindow = 3.0;
+	m_dEventFragmentDepthThreshold = 550.0;
+	m_dEventFragmentAzimuthThreshold = 270.0;
 }
 
 // ---------------------------------------------------------Initialize
@@ -254,14 +243,16 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	if ((com->HasKey("DefaultNucleationPhase"))
 			&& ((*com)["DefaultNucleationPhase"].GetType()
 					== json::ValueType::ObjectVal)) {
+		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 		// get the phase object
 		json::Object phsObj = (*com)["DefaultNucleationPhase"].ToObject();
 
 		// clean out old phase if any
-		pTrvDefault.reset();
+		m_pDefaultNucleationTravelTime.reset();
 
 		// create new traveltime
-		pTrvDefault = std::make_shared<traveltime::CTravelTime>();
+		m_pDefaultNucleationTravelTime = std::make_shared<
+				traveltime::CTravelTime>();
 
 		// get the phase name
 		// default to P
@@ -287,18 +278,20 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		}
 
 		// set up the first phase travel time
-		pTrvDefault->setup(phs, file);
+		m_pDefaultNucleationTravelTime->setup(phs, file);
 
 	} else {
+		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 		// if no first phase, default to P
 		// clean out old phase if any
-		pTrvDefault.reset();
+		m_pDefaultNucleationTravelTime.reset();
 
 		// create new travel time
-		pTrvDefault = std::make_shared<traveltime::CTravelTime>();
+		m_pDefaultNucleationTravelTime = std::make_shared<
+				traveltime::CTravelTime>();
 
 		// set up the first phase travel time
-		pTrvDefault->setup("P");
+		m_pDefaultNucleationTravelTime->setup("P");
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
@@ -309,11 +302,12 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	if ((com->HasKey("AssociationPhases"))
 			&& ((*com)["AssociationPhases"].GetType()
 					== json::ValueType::ArrayVal)) {
+		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
 		// get the array of phase entries
 		json::Array phases = (*com)["AssociationPhases"].ToArray();
 
 		// create and initialize travel time list
-		pTTT = std::make_shared<traveltime::CTTT>();
+		m_pAssociationTravelTimes = std::make_shared<traveltime::CTTT>();
 
 		// for each phase in the array
 		for (auto val : phases) {
@@ -421,16 +415,16 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			} else {
 				glassutil::CLogit::log(
 						glassutil::log_level::info,
-						"CGlass::initialize: Using default file location for association phase: "
-								+ phs);
+						"CGlass::initialize: Using default file location for "
+								"association phase: " + phs);
 			}
 
 			// set up this phase
-			pTTT->addPhase(phs, rng, ass, file);
+			m_pAssociationTravelTimes->addPhase(phs, rng, ass, file);
 
 			// test this phase
-			if (testTimes) {
-				pTTT->testTravelTimes(phs);
+			if (m_bTestTravelTimes) {
+				m_pAssociationTravelTimes->testTravelTimes(phs);
 			}
 		}
 	} else {
@@ -442,14 +436,14 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	// setup if we are going to print phase travel times for debuging
 	if ((com->HasKey("TestTravelTimes"))
 			&& ((*com)["TestTravelTimes"].GetType() == json::ValueType::BoolVal)) {
-		testTimes = (*com)["TestTravelTimes"].ToBool();
+		m_bTestTravelTimes = (*com)["TestTravelTimes"].ToBool();
 	}
 
 	// Change locator
 	if ((com->HasKey("UseL1ResidualLocator"))
 			&& ((*com)["UseL1ResidualLocator"].GetType()
 					== json::ValueType::BoolVal)) {
-		minimizeTTLocator = (*com)["UseL1ResidualLocator"].ToBool();
+		m_bMinimizeTTLocator = (*com)["UseL1ResidualLocator"].ToBool();
 	}
 
 	// Collect info for files to plot output
@@ -460,14 +454,14 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		if ((paramsPlot.HasKey("graphicsOut"))
 				&& (paramsPlot["graphicsOut"].GetType()
 						== json::ValueType::BoolVal)) {
-			graphicsOut = paramsPlot["graphicsOut"].ToBool();
-			if (graphicsOut == true) {
+			m_bGraphicsOut = paramsPlot["graphicsOut"].ToBool();
+			if (m_bGraphicsOut == true) {
 				glassutil::CLogit::log(
 						glassutil::log_level::info,
 						"CGlass::initialize: Plotting output is on!!!");
 			}
 
-			if (graphicsOut == false) {
+			if (m_bGraphicsOut == false) {
 				glassutil::CLogit::log(
 						glassutil::log_level::info,
 						"CGlass::initialize: Plotting output is off.");
@@ -477,31 +471,32 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		if ((paramsPlot.HasKey("graphicsStepKM"))
 				&& (paramsPlot["graphicsStepKM"].GetType()
 						== json::ValueType::DoubleVal)) {
-			graphicsStepKM = paramsPlot["graphicsStepKM"].ToDouble();
+			m_dGraphicsStepKM = paramsPlot["graphicsStepKM"].ToDouble();
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Plotting Step Increment: "
-							+ std::to_string(graphicsStepKM));
+							+ std::to_string(m_dGraphicsStepKM));
 		}
 
 		if ((paramsPlot.HasKey("graphicsSteps"))
 				&& (paramsPlot["graphicsSteps"].GetType()
 						== json::ValueType::IntVal)) {
-			graphicsSteps = paramsPlot["graphicsSteps"].ToInt();
+			m_iGraphicsSteps = paramsPlot["graphicsSteps"].ToInt();
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Plotting Steps: "
-							+ std::to_string(graphicsSteps));
+							+ std::to_string(m_iGraphicsSteps));
 		}
 
 		if ((paramsPlot.HasKey("graphicsOutFolder"))
 				&& (paramsPlot["graphicsOutFolder"].GetType()
 						== json::ValueType::StringVal)) {
-			graphicsOutFolder = paramsPlot["graphicsOutFolder"].ToString();
+			std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+			m_sGraphicsOutFolder = paramsPlot["graphicsOutFolder"].ToString();
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Plotting Output Location: "
-							+ graphicsOutFolder);
+							+ m_sGraphicsOutFolder);
 		}
 	}
 
@@ -512,255 +507,312 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		json::Object params = (*com)["Params"].ToObject();
 
 		// Thresh
-		if ((params.HasKey("Thresh"))
-				&& (params["Thresh"].GetType() == json::ValueType::DoubleVal)) {
-			dThresh = params["Thresh"].ToDouble();
+		if ((params.HasKey("NucleationStackThreshold"))
+				&& (params["NucleationStackThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dNucleationStackThreshold = params["NucleationStackThreshold"]
+					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using Thresh: "
-							+ std::to_string(dThresh));
+					"CGlass::initialize: Using NucleationStackThreshold: "
+							+ std::to_string(m_dNucleationStackThreshold));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default Thresh: "
-							+ std::to_string(dThresh));
+					"CGlass::initialize: Using default NucleationStackThreshold: "
+							+ std::to_string(m_dNucleationStackThreshold));
 		}
 
 		// Nucleate
-		if ((params.HasKey("Nucleate"))
-				&& (params["Nucleate"].GetType() == json::ValueType::IntVal)) {
-			nNucleate = params["Nucleate"].ToInt();
+		if ((params.HasKey("NucleationDataThreshold"))
+				&& (params["NucleationDataThreshold"].GetType()
+						== json::ValueType::IntVal)) {
+			m_iNucleationDataThreshold =
+					params["NucleationDataThreshold"].ToInt();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using Nucleate: "
-							+ std::to_string(nNucleate));
+					"CGlass::initialize: Using NucleationDataThreshold: "
+							+ std::to_string(m_iNucleationDataThreshold));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default Nucleate: "
-							+ std::to_string(nNucleate));
+					"CGlass::initialize: Using default NucleationDataThreshold: "
+							+ std::to_string(m_iNucleationDataThreshold));
 		}
 
 		// sdAssociate
-		if ((params.HasKey("sdAssociate"))
-				&& (params["sdAssociate"].GetType()
+		if ((params.HasKey("AssociationStandardDeviationCutoff"))
+				&& (params["AssociationStandardDeviationCutoff"].GetType()
 						== json::ValueType::DoubleVal)) {
-			sdAssociate = params["sdAssociate"].ToDouble();
+			m_dAssociationSDCutoff =
+					params["AssociationStandardDeviationCutoff"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using sdAssociate: "
-							+ std::to_string(sdAssociate));
+					"CGlass::initialize: Using AssociationStandardDeviationCutoff: "
+							+ std::to_string(m_dAssociationSDCutoff));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default sdAssociate: "
-							+ std::to_string(sdAssociate));
+					"CGlass::initialize: Using default AssociationStandardDeviationCutoff: "
+							+ std::to_string(m_dAssociationSDCutoff));
 		}
 
 		// sdPrune
-		if ((params.HasKey("sdPrune"))
-				&& (params["sdPrune"].GetType() == json::ValueType::DoubleVal)) {
-			sdPrune = params["sdPrune"].ToDouble();
+		if ((params.HasKey("PruningStandardDeviationCutoff"))
+				&& (params["PruningStandardDeviationCutoff"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dPruningSDCutoff = params["PruningStandardDeviationCutoff"]
+					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using sdPrune: "
-							+ std::to_string(sdPrune));
+					"CGlass::initialize: Using PruningStandardDeviationCutoff: "
+							+ std::to_string(m_dPruningSDCutoff));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default sdPrune: "
-							+ std::to_string(sdPrune));
+					"CGlass::initialize: Using default PruningStandardDeviationCutoff: "
+							+ std::to_string(m_dPruningSDCutoff));
 		}
 
 		// ExpAffinity
-		if ((params.HasKey("expAffinity"))
-				&& (params["expAffinity"].GetType()
+		if ((params.HasKey("PickAffinityExponentialFactor"))
+				&& (params["PickAffinityExponentialFactor"].GetType()
 						== json::ValueType::DoubleVal)) {
-			expAffinity = params["expAffinity"].ToDouble();
+			m_dPickAffinityExpFactor = params["PickAffinityExponentialFactor"]
+					.ToDouble();
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using expAffinity: "
-							+ std::to_string(expAffinity));
+					"CGlass::initialize: Using PickAffinityExponentialFactor: "
+							+ std::to_string(m_dPickAffinityExpFactor));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default expAffinity: "
-							+ std::to_string(expAffinity));
+					"CGlass::initialize: Using default PickAffinityExponentialFactor: "
+							+ std::to_string(m_dPickAffinityExpFactor));
 		}
 
-		// avgDelta
-		if ((params.HasKey("avgDelta"))
-				&& (params["avgDelta"].GetType() == json::ValueType::DoubleVal)) {
-			avgDelta = params["avgDelta"].ToDouble();
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using avgDelta: "
-							+ std::to_string(avgDelta));
-		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using default avgDelta: "
-							+ std::to_string(avgDelta));
-		}
-
-		// avgSigma
-		if ((params.HasKey("avgSigma"))
-				&& (params["avgSigma"].GetType() == json::ValueType::DoubleVal)) {
-			avgSigma = params["avgSigma"].ToDouble();
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using avgSigma: "
-							+ std::to_string(avgSigma));
-		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using default avgSigma: "
-							+ std::to_string(avgSigma));
-		}
-
-		// dCutFactor
-		if ((params.HasKey("dCutFactor"))
-				&& (params["dCutFactor"].GetType() == json::ValueType::DoubleVal)) {
-			dCutFactor = params["dCutFactor"].ToDouble();
-
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using dCutFactor: "
-							+ std::to_string(dCutFactor));
-		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
-					"CGlass::initialize: Using default dCutFactor: "
-							+ std::to_string(dCutFactor));
-		}
-
-		// dCutPercentage
-		if ((params.HasKey("dCutPercentage"))
-				&& (params["dCutPercentage"].GetType()
+		// m_dDistanceCutoffFactor
+		if ((params.HasKey("DistanceCutoffFactor"))
+				&& (params["DistanceCutoffFactor"].GetType()
 						== json::ValueType::DoubleVal)) {
-			dCutPercentage = params["dCutPercentage"].ToDouble();
+			m_dDistanceCutoffFactor = params["DistanceCutoffFactor"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using dCutPercentage: "
-							+ std::to_string(dCutPercentage));
+					"CGlass::initialize: Using DistanceCutoffFactor: "
+							+ std::to_string(m_dDistanceCutoffFactor));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default dCutPercentage: "
-							+ std::to_string(dCutPercentage));
+					"CGlass::initialize: Using default DistanceCutoffFactor: "
+							+ std::to_string(m_dDistanceCutoffFactor));
 		}
 
-		// dCutMin
-		if ((params.HasKey("dCutMin"))
-				&& (params["dCutMin"].GetType() == json::ValueType::DoubleVal)) {
-			dCutMin = params["dCutMin"].ToDouble();
+		// m_dDistanceCutoffRatio
+		if ((params.HasKey("DistanceCutoffRatio"))
+				&& (params["DistanceCutoffRatio"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dDistanceCutoffRatio = params["DistanceCutoffRatio"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using dCutMin: "
-							+ std::to_string(dCutMin));
+					"CGlass::initialize: Using DistanceCutoffRatio: "
+							+ std::to_string(m_dDistanceCutoffRatio));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default dCutMin: "
-							+ std::to_string(dCutMin));
+					"CGlass::initialize: Using default DistanceCutoffRatio: "
+							+ std::to_string(m_dDistanceCutoffRatio));
+		}
+
+		// m_dMinDistanceCutoff
+		if ((params.HasKey("DistanceCutoffMinimum"))
+				&& (params["DistanceCutoffMinimum"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dMinDistanceCutoff = params["DistanceCutoffMinimum"].ToDouble();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using DistanceCutoffMinimum: "
+							+ std::to_string(m_dMinDistanceCutoff));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using default DistanceCutoffMinimum: "
+							+ std::to_string(m_dMinDistanceCutoff));
 		}
 
 		// iCycleLimit
-		if ((params.HasKey("iCycleLimit"))
-				&& (params["iCycleLimit"].GetType() == json::ValueType::IntVal)) {
-			iCycleLimit = params["iCycleLimit"].ToInt();
+		if ((params.HasKey("HypoProcessCountLimit"))
+				&& (params["HypoProcessCountLimit"].GetType()
+						== json::ValueType::IntVal)) {
+			m_iProcessLimit = params["HypoProcessCountLimit"].ToInt();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using iCycleLimit: "
-							+ std::to_string(iCycleLimit));
+					"CGlass::initialize: Using HypoProcessCountLimit: "
+							+ std::to_string(m_iProcessLimit));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default iCycleLimit: "
-							+ std::to_string(iCycleLimit));
+					"CGlass::initialize: Using default HypoProcessCountLimit: "
+							+ std::to_string(m_iProcessLimit));
 		}
 
-		// correlationMatchingTWindow
+		// CorrelationTimeWindow
 		if ((params.HasKey("CorrelationTimeWindow"))
 				&& (params["CorrelationTimeWindow"].GetType()
 						== json::ValueType::DoubleVal)) {
-			correlationMatchingTWindow = params["CorrelationTimeWindow"]
+			m_dCorrelationMatchingTimeWindow = params["CorrelationTimeWindow"]
 					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using CorrelationTimeWindow: "
-							+ std::to_string(correlationMatchingTWindow));
+							+ std::to_string(m_dCorrelationMatchingTimeWindow));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using default "
 							"CorrelationTimeWindow: "
-							+ std::to_string(correlationMatchingTWindow));
+							+ std::to_string(m_dCorrelationMatchingTimeWindow));
 		}
 
-		// correlationMatchingXWindow
+		// CorrelationDistanceWindow
 		if ((params.HasKey("CorrelationDistanceWindow"))
 				&& (params["CorrelationDistanceWindow"].GetType()
 						== json::ValueType::DoubleVal)) {
-			correlationMatchingXWindow = params["CorrelationDistanceWindow"]
-					.ToDouble();
+			m_dCorrelationMatchingDistanceWindow =
+					params["CorrelationDistanceWindow"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using CorrelationDistanceWindow: "
-							+ std::to_string(correlationMatchingXWindow));
+							+ std::to_string(
+									m_dCorrelationMatchingDistanceWindow));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using default "
 							"CorrelationDistanceWindow: "
-							+ std::to_string(correlationMatchingXWindow));
+							+ std::to_string(
+									m_dCorrelationMatchingDistanceWindow));
 		}
 
 		// correlationCancelAge
 		if ((params.HasKey("CorrelationCancelAge"))
 				&& (params["CorrelationCancelAge"].GetType()
 						== json::ValueType::DoubleVal)) {
-			correlationCancelAge = params["CorrelationCancelAge"].ToDouble();
+			m_iCorrelationCancelAge = params["CorrelationCancelAge"].ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using CorrelationCancelAge: "
-							+ std::to_string(correlationCancelAge));
+							+ std::to_string(m_iCorrelationCancelAge));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using default CorrelationCancelAge: "
-							+ std::to_string(correlationCancelAge));
+							+ std::to_string(m_iCorrelationCancelAge));
+		}
+
+		// HypocenterTimeWindow
+		if ((params.HasKey("HypocenterTimeWindow"))
+				&& (params["HypocenterTimeWindow"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dHypoMergingTimeWindow =
+					params["HypocenterTimeWindow"].ToDouble();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using HypocenterTimeWindow: "
+							+ std::to_string(m_dHypoMergingTimeWindow));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using default "
+							"HypocenterTimeWindow: "
+							+ std::to_string(m_dHypoMergingTimeWindow));
+		}
+
+		// HypocenterDistanceWindow
+		if ((params.HasKey("HypocenterDistanceWindow"))
+				&& (params["HypocenterDistanceWindow"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dHypoMergingDistanceWindow = params["HypocenterDistanceWindow"]
+					.ToDouble();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using HypocenterDistanceWindow: "
+							+ std::to_string(m_dHypoMergingDistanceWindow));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using default "
+							"HypocenterDistanceWindow: "
+							+ std::to_string(m_dHypoMergingDistanceWindow));
 		}
 
 		// beamMatchingAzimuthWindow
 		if ((params.HasKey("BeamMatchingAzimuthWindow"))
 				&& (params["BeamMatchingAzimuthWindow"].GetType()
 						== json::ValueType::DoubleVal)) {
-			beamMatchingAzimuthWindow = params["BeamMatchingAzimuthWindow"]
+			m_dBeamMatchingAzimuthWindow = params["BeamMatchingAzimuthWindow"]
 					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using BeamMatchingAzimuthWindow: "
-							+ std::to_string(beamMatchingAzimuthWindow));
+							+ std::to_string(m_dBeamMatchingAzimuthWindow));
 		} else {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: Using default "
 							"BeamMatchingAzimuthWindow: "
-							+ std::to_string(beamMatchingAzimuthWindow));
+							+ std::to_string(m_dBeamMatchingAzimuthWindow));
+		}
+
+		// EventFragmentDepthThreshold
+		if ((params.HasKey("EventFragmentDepthThreshold"))
+				&& (params["EventFragmentDepthThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dEventFragmentDepthThreshold =
+					params["EventFragmentDepthThreshold"].ToDouble();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using EventFragmentDepthThreshold: "
+							+ std::to_string(m_dEventFragmentDepthThreshold));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using default "
+							"EventFragmentDepthThreshold: "
+							+ std::to_string(m_dEventFragmentDepthThreshold));
+		}
+
+		// EventFragmentAzimuthThreshold
+		if ((params.HasKey("EventFragmentAzimuthThreshold"))
+				&& (params["EventFragmentAzimuthThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dEventFragmentAzimuthThreshold =
+					params["EventFragmentAzimuthThreshold"].ToDouble();
+
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using EventFragmentAzimuthThreshold: "
+							+ std::to_string(m_dEventFragmentAzimuthThreshold));
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::info,
+					"CGlass::initialize: Using default "
+							"EventFragmentAzimuthThreshold: "
+							+ std::to_string(m_dEventFragmentAzimuthThreshold));
 		}
 
 		/*
@@ -786,40 +838,44 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		 */
 
 		// dReportThresh
-		if ((params.HasKey("ReportThresh"))
-				&& (params["ReportThresh"].GetType()
+		if ((params.HasKey("ReportingStackThreshold"))
+				&& (params["ReportingStackThreshold"].GetType()
 						== json::ValueType::DoubleVal)) {
-			dReportThresh = params["ReportThresh"].ToDouble();
+			m_dReportingStackThreshold = params["ReportingStackThreshold"]
+					.ToDouble();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using ReportThresh: "
-							+ std::to_string(dReportThresh));
+					"CGlass::initialize: Using ReportingStackThreshold: "
+							+ std::to_string(m_dReportingStackThreshold));
 		} else {
 			// default to overall thresh
-			dReportThresh = dThresh;
+			m_dReportingStackThreshold = getNucleationStackThreshold();
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default ReportThresh (=Thresh): "
-							+ std::to_string(dReportThresh));
+					"CGlass::initialize: Using default ReportingStackThreshold "
+							"( = NucleationStackThreshold): "
+							+ std::to_string(m_dReportingStackThreshold));
 		}
 
 		// nReportCut
-		if ((params.HasKey("ReportCut"))
-				&& (params["ReportCut"].GetType() == json::ValueType::IntVal)) {
-			nReportCut = params["ReportCut"].ToInt();
+		if ((params.HasKey("ReportingDataThreshold"))
+				&& (params["ReportingDataThreshold"].GetType()
+						== json::ValueType::IntVal)) {
+			m_iReportingDataThreshold =
+					params["ReportingDataThreshold"].ToInt();
 
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using ReportCut: "
-							+ std::to_string(nReportCut));
+					"CGlass::initialize: Using ReportingDataThreshold: "
+							+ std::to_string(m_iReportingDataThreshold));
 		} else {
 			// default to overall nNucleate
-			nReportCut = 0;
+			m_iReportingDataThreshold = 0;
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
-					"CGlass::initialize: Using default ReportCut: "
-							+ std::to_string(nReportCut));
+					"CGlass::initialize: Using default ReportingDataThreshold: "
+							+ std::to_string(m_iReportingDataThreshold));
 		}
 	} else {
 		glassutil::CLogit::log(
@@ -831,9 +887,9 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	// Test Locator
 	if ((com->HasKey("TestLocator"))
 			&& ((*com)["TestLocator"].GetType() == json::ValueType::BoolVal)) {
-		testLocator = (*com)["TestLocator"].ToBool();
+		m_bTestLocator = (*com)["TestLocator"].ToBool();
 
-		if (testLocator) {
+		if (m_bTestLocator) {
 			glassutil::CLogit::log(
 					glassutil::log_level::info,
 					"CGlass::initialize: testLocator set to true");
@@ -848,136 +904,121 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	// set maximum number of picks
-	if ((com->HasKey("PickMax"))
-			&& ((*com)["PickMax"].GetType() == json::ValueType::IntVal)) {
-		nPickMax = (*com)["PickMax"].ToInt();
+	if ((com->HasKey("MaximumNumberOfPicks"))
+			&& ((*com)["MaximumNumberOfPicks"].GetType()
+					== json::ValueType::IntVal)) {
+		m_iMaxNumPicks = (*com)["MaximumNumberOfPicks"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using PickMax: "
-						+ std::to_string(nPickMax));
-	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::initialize: Using default PickMax: "
-						+ std::to_string(nPickMax));
+				"CGlass::initialize: Using MaximumNumberOfPicks: "
+						+ std::to_string(m_iMaxNumPicks));
 	}
 
 	// set maximum number of pick in a single site
-	if ((com->HasKey("SitePickMax"))
-			&& ((*com)["SitePickMax"].GetType() == json::ValueType::IntVal)) {
-		nSitePickMax = (*com)["SitePickMax"].ToInt();
+	if ((com->HasKey("MaximumNumberOfPicksPerSite"))
+			&& ((*com)["MaximumNumberOfPicksPerSite"].GetType()
+					== json::ValueType::IntVal)) {
+		m_iMaxNumPicksPerSite = (*com)["MaximumNumberOfPicksPerSite"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using SitePickMax: "
-						+ std::to_string(nSitePickMax));
-	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::initialize: Using default SitePickMax: "
-						+ std::to_string(nSitePickMax));
+				"CGlass::initialize: Using MaximumNumberOfPicksPerSite: "
+						+ std::to_string(m_iMaxNumPicksPerSite));
 	}
 
 	// set maximum number of correlations
-	if ((com->HasKey("CorrelationMax"))
-			&& ((*com)["CorrelationMax"].GetType() == json::ValueType::IntVal)) {
-		nCorrelationMax = (*com)["CorrelationMax"].ToInt();
+	if ((com->HasKey("MaximumNumberOfCorrelations"))
+			&& ((*com)["MaximumNumberOfCorrelations"].GetType()
+					== json::ValueType::IntVal)) {
+		m_iMaxNumCorrelations = (*com)["MaximumNumberOfCorrelations"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using CorrelationMax: "
-						+ std::to_string(nCorrelationMax));
-	} else {
+				"CGlass::initialize: Using MaximumNumberOfCorrelations: "
+						+ std::to_string(m_iMaxNumCorrelations));
+	}
+
+	// set maximum number of hypos
+	if ((com->HasKey("MaximumNumberOfHypos"))
+			&& ((*com)["MaximumNumberOfHypos"].GetType()
+					== json::ValueType::IntVal)) {
+		m_iMaxNumHypos = (*com)["MaximumNumberOfHypos"].ToInt();
+
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default CorrelationMax: "
-						+ std::to_string(nCorrelationMax));
+				"CGlass::initialize: Using MaximumNumberOfHypos: "
+						+ std::to_string(m_iMaxNumHypos));
 	}
 
 	// set pick duplicate window
 	if ((com->HasKey("PickDuplicateWindow"))
 			&& ((*com)["PickDuplicateWindow"].GetType()
 					== json::ValueType::DoubleVal)) {
-		pickDuplicateWindow = (*com)["PickDuplicateWindow"].ToDouble();
+		m_dPickDuplicateTimeWindow = (*com)["PickDuplicateWindow"].ToDouble();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
 				"CGlass::initialize: Using PickDuplicateWindow: "
-						+ std::to_string(pickDuplicateWindow));
+						+ std::to_string(m_dPickDuplicateTimeWindow));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
 				"CGlass::initialize: Using default PickDuplicateWindow: "
-						+ std::to_string(pickDuplicateWindow));
-	}
-
-	// set maximum number of hypos
-	if ((com->HasKey("HypoMax"))
-			&& ((*com)["HypoMax"].GetType() == json::ValueType::IntVal)) {
-		nHypoMax = (*com)["HypoMax"].ToInt();
-
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::initialize: Using HypoMax: "
-						+ std::to_string(nHypoMax));
-	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
-				"CGlass::initialize: Using default HypoMax: "
-						+ std::to_string(nHypoMax));
+						+ std::to_string(m_dPickDuplicateTimeWindow));
 	}
 
 	// set the number of nucleation threads
 	int numNucleationThreads = 5;
-	if ((com->HasKey("NumNucleationThreads"))
-			&& ((*com)["NumNucleationThreads"].GetType()
+	if ((com->HasKey("NumberOfNucleationThreads"))
+			&& ((*com)["NumberOfNucleationThreads"].GetType()
 					== json::ValueType::IntVal)) {
-		numNucleationThreads = (*com)["NumNucleationThreads"].ToInt();
+		numNucleationThreads = (*com)["NumberOfNucleationThreads"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using NumNucleationThreads: "
+				"CGlass::initialize: Using NumberOfNucleationThreads: "
 						+ std::to_string(numNucleationThreads));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default NumNucleationThreads: "
+				"CGlass::initialize: Using default NumberOfNucleationThreads: "
 						+ std::to_string(numNucleationThreads));
 	}
 
 	// set the number of hypo threads
 	int numHypoThreads = 3;
-	if ((com->HasKey("NumHypoThreads"))
-			&& ((*com)["NumHypoThreads"].GetType() == json::ValueType::IntVal)) {
-		numHypoThreads = (*com)["NumHypoThreads"].ToInt();
+	if ((com->HasKey("NumberOfHypoThreads"))
+			&& ((*com)["NumberOfHypoThreads"].GetType()
+					== json::ValueType::IntVal)) {
+		numHypoThreads = (*com)["NumberOfHypoThreads"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using NumHypoThreads: "
+				"CGlass::initialize: Using NumberOfHypoThreads: "
 						+ std::to_string(numHypoThreads));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default NumHypoThreads: "
+				"CGlass::initialize: Using default NumberOfHypoThreads: "
 						+ std::to_string(numHypoThreads));
 	}
 
 	// set the number of web threads
 	int numWebThreads = 0;
-	if ((com->HasKey("NumWebThreads"))
-			&& ((*com)["NumWebThreads"].GetType()
+	if ((com->HasKey("NumberOfWebThreads"))
+			&& ((*com)["NumberOfWebThreads"].GetType()
 					== json::ValueType::IntVal)) {
-		numWebThreads = (*com)["NumWebThreads"].ToInt();
+		numWebThreads = (*com)["NumberOfWebThreads"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using NumWebThreads: "
+				"CGlass::initialize: Using NumberOfWebThreads: "
 						+ std::to_string(numWebThreads));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default NumWebThreads: "
+				"CGlass::initialize: Using default NumberOfWebThreads: "
 						+ std::to_string(numWebThreads));
 	}
 
@@ -1016,84 +1057,318 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	int iMaxPicksPerHour = -1;
-	if ((com->HasKey("MaxPicksPerHour"))
-			&& ((*com)["MaxPicksPerHour"].GetType()
+	if ((com->HasKey("SiteMaximumPicksPerHour"))
+			&& ((*com)["SiteMaximumPicksPerHour"].GetType()
 					== json::ValueType::IntVal)) {
-		iMaxPicksPerHour = (*com)["MaxPicksPerHour"].ToInt();
+		iMaxPicksPerHour = (*com)["SiteMaximumPicksPerHour"].ToInt();
 
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using MaxPicksPerHour: "
+				"CGlass::initialize: Using SiteMaximumPicksPerHour: "
 						+ std::to_string(iMaxPicksPerHour));
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::info,
-				"CGlass::initialize: Using default MaxPicksPerHour: "
+				"CGlass::initialize: Using default SiteMaximumPicksPerHour: "
 						+ std::to_string(iMaxPicksPerHour));
 	}
 
-	// test sig and gaus
-	// NOTE: Keep for unit test reference
-	// for (double sg = 0.0; sg < 5.0; sg += 0.1) {
-	// printf("%.2f %.4f %.4f\n", sg, Gaus(sg, 1.0), Sig(sg, 1.0));
-	// }
-
-	// clean out old site list if any
-	if (pSiteList) {
-		delete (pSiteList);
-	}
-
 	// create site list
-	pSiteList = new CSiteList();
-	pSiteList->setGlass(this);
-	pSiteList->setHoursWithoutPicking(iHoursWithoutPicking);
-	pSiteList->setHoursBeforeLookingUp(iHoursBeforeLookingUp);
-	pSiteList->setMaxPicksPerHour(iMaxPicksPerHour);
-
-	// clean out old web list if any
-	if (pWebList) {
-		delete (pWebList);
+	if (m_pSiteList == NULL) {
+		m_pSiteList = new CSiteList();
 	}
+	m_pSiteList->setMaxHoursWithoutPicking(iHoursWithoutPicking);
+	m_pSiteList->setHoursBeforeLookingUp(iHoursBeforeLookingUp);
+	m_pSiteList->setMaxPicksPerHour(iMaxPicksPerHour);
 
-	// create detection web list
-	pWebList = new CWebList(numWebThreads);
-	pWebList->setGlass(this);
-	pWebList->setSiteList(pSiteList);
-
-	// clean out old pick list if any
-	if (pPickList) {
-		delete (pPickList);
+	// create web list
+	if (m_pWebList == NULL) {
+		m_pWebList = new CWebList(numWebThreads);
 	}
+	m_pWebList->setSiteList(m_pSiteList);
 
 	// create pick list
-	pPickList = new CPickList(numNucleationThreads);
-	pPickList->setGlass(this);
-	pPickList->setSiteList(pSiteList);
-
-	// clean out old correlation list if any
-	if (pCorrelationList) {
-		delete (pCorrelationList);
+	if (m_pPickList == NULL) {
+		m_pPickList = new CPickList(numNucleationThreads);
 	}
+	m_pPickList->setSiteList(m_pSiteList);
 
 	// create correlation list
-	pCorrelationList = new CCorrelationList();
-	pCorrelationList->setGlass(this);
-	pCorrelationList->setSiteList(pSiteList);
-
-	// clean out old hypo list if any
-	if (pHypoList) {
-		delete (pHypoList);
+	if (m_pCorrelationList == NULL) {
+		m_pCorrelationList = new CCorrelationList();
 	}
+	m_pPickList->setSiteList(m_pSiteList);
 
 	// create hypo list
-	pHypoList = new CHypoList(numHypoThreads);
-	pHypoList->setGlass(this);
+	if (m_pHypoList == NULL) {
+		m_pHypoList = new CHypoList(numHypoThreads);
+	}
 
 	// create detection processor
-	pDetection = new CDetection();
-	pDetection->setGlass(this);
+	if (m_pDetectionProcessor == NULL) {
+		m_pDetectionProcessor = new CDetection();
+	}
 
 	return (true);
+}
+
+// ---------------------------------------------------------statusCheck
+bool CGlass::healthCheck() {
+	// nullcheck
+	if (m_pPickList == NULL) {
+		return (false);
+	}
+
+	// check pick list
+	if (m_pPickList->healthCheck() == false) {
+		return (false);
+	}
+
+	// hypo list
+	if (m_pHypoList->healthCheck() == false) {
+		return (false);
+	}
+
+	// site list
+	if (m_pSiteList->healthCheck() == false) {
+		return (false);
+	}
+
+	// webs
+	if (m_pWebList->healthCheck() == false) {
+		return (false);
+	}
+
+	// all is well
+	return (true);
+}
+
+// -------------------------------------------------getBeamMatchingAzimuthWindow
+double CGlass::getBeamMatchingAzimuthWindow() {
+	return (m_dBeamMatchingAzimuthWindow);
+}
+
+// ------------------------------------------------getBeamMatchingDistanceWindow
+double CGlass::getBeamMatchingDistanceWindow() {
+	return (m_dBeamMatchingDistanceWindow);
+}
+
+// ------------------------------------------------getCorrelationCancelAge
+int CGlass::getCorrelationCancelAge() {
+	return (m_iCorrelationCancelAge);
+}
+
+// ---------------------------------------------getCorrelationMatchingTimeWindow
+double CGlass::getCorrelationMatchingTimeWindow() {
+	return (m_dCorrelationMatchingTimeWindow);
+}
+
+// -----------------------------------------getCorrelationMatchingDistanceWindow
+double CGlass::getCorrelationMatchingDistanceWindow() {
+	return (m_dCorrelationMatchingDistanceWindow);
+}
+
+// ---------------------------------------------getHypoMergingTimeWindow
+double CGlass::getHypoMergingTimeWindow() {
+	return (m_dHypoMergingTimeWindow);
+}
+
+// -----------------------------------------getHypoMergingDistanceWindow
+double CGlass::getHypoMergingDistanceWindow() {
+	return (m_dHypoMergingDistanceWindow);
+}
+
+// ------------------------------------------------getDistanceCutoffFactor
+double CGlass::getDistanceCutoffFactor() {
+	return (m_dDistanceCutoffFactor);
+}
+
+// ------------------------------------------------getMinDistanceCutoff
+double CGlass::getMinDistanceCutoff() {
+	return (m_dMinDistanceCutoff);
+}
+
+// ------------------------------------------------getDistanceCutoffPercentage
+double CGlass::getDistanceCutoffRatio() {
+	return (m_dDistanceCutoffRatio);
+}
+
+// ------------------------------------------------getReportingStackThreshold
+double CGlass::getReportingStackThreshold() {
+	return (m_dReportingStackThreshold);
+}
+
+// ------------------------------------------------getNucleationStackThreshold
+double CGlass::getNucleationStackThreshold() {
+	return (m_dNucleationStackThreshold);
+}
+
+// ------------------------------------------------getPickAffinityExpFactor
+double CGlass::getPickAffinityExpFactor() {
+	return (m_dPickAffinityExpFactor);
+}
+
+// ------------------------------------------------getGraphicsOut
+bool CGlass::getGraphicsOut() {
+	return (m_bGraphicsOut);
+}
+
+// ------------------------------------------------getGraphicsOutFolder
+const std::string& CGlass::getGraphicsOutFolder() {
+	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+	return (m_sGraphicsOutFolder);
+}
+
+// ------------------------------------------------getGraphicsStepKm
+double CGlass::getGraphicsStepKm() {
+	return (m_dGraphicsStepKM);
+}
+
+// ------------------------------------------------getGraphicsSteps
+int CGlass::getGraphicsSteps() {
+	return (m_iGraphicsSteps);
+}
+
+// ------------------------------------------------getCycleLimit
+int CGlass::getProcessLimit() {
+	return (m_iProcessLimit);
+}
+
+// ------------------------------------------------getMinimizeTTLocator
+bool CGlass::getMinimizeTTLocator() {
+	return (m_bMinimizeTTLocator);
+}
+
+// ------------------------------------------------getNumStationsPerNode
+int CGlass::getNumStationsPerNode() {
+	return (m_iNumStationsPerNode);
+}
+
+// ------------------------------------------------getNucleationDataThreshold
+int CGlass::getNucleationDataThreshold() {
+	return (m_iNucleationDataThreshold);
+}
+
+// ------------------------------------------------getReportingDataThreshold
+int CGlass::getReportingDataThreshold() {
+	return (m_iReportingDataThreshold);
+}
+
+// ------------------------------------------------getMaxNumPicks
+int CGlass::getMaxNumPicks() {
+	return (m_iMaxNumPicks);
+}
+
+// ------------------------------------------------setMaxNumPicks
+void CGlass::setMaxNumPicks(int max) {
+	m_iMaxNumPicks = max;
+}
+
+// ------------------------------------------------getMaxNumCorrelations
+int CGlass::getMaxNumCorrelations() {
+	return (m_iMaxNumCorrelations);
+}
+
+// ------------------------------------------------setMaxNumCorrelations
+void CGlass::setMaxNumCorrelations(int max) {
+	m_iMaxNumCorrelations = max;
+}
+
+// ------------------------------------------------getMaxNumPicksPerSite
+int CGlass::getMaxNumPicksPerSite() {
+	return (m_iMaxNumPicksPerSite);
+}
+
+// ------------------------------------------------setMaxNumPicksPerSite
+void CGlass::setMaxNumPicksPerSite(int max) {
+	m_iMaxNumPicksPerSite = max;
+}
+
+// ------------------------------------------------getMaxNumHypos
+int CGlass::getMaxNumHypos() {
+	return (m_iMaxNumHypos);
+}
+
+// ------------------------------------------------setMaxNumHypos
+void CGlass::setMaxNumHypos(int max) {
+	m_iMaxNumHypos = max;
+}
+
+// ----------------------------------------------getEventFragmentDepthThreshold
+double CGlass::getEventFragmentDepthThreshold() {
+	return (m_dEventFragmentDepthThreshold);
+}
+
+// ---------------------------------------------getEventFragmentAzimuthThreshold
+double CGlass::getEventFragmentAzimuthThreshold() {
+	return (m_dEventFragmentAzimuthThreshold);
+}
+
+// ------------------------------------------------getCorrelationList
+CCorrelationList* CGlass::getCorrelationList() {
+	return (m_pCorrelationList);
+}
+
+// ------------------------------------------------getDetectionProcessor
+CDetection* CGlass::getDetectionProcessor() {
+	return (m_pDetectionProcessor);
+}
+
+// ------------------------------------------------getHypoList
+CHypoList* CGlass::getHypoList() {
+	return (m_pHypoList);
+}
+
+// ------------------------------------------------getPickDuplicateTimeWindow
+double CGlass::getPickDuplicateTimeWindow() {
+	return (m_dPickDuplicateTimeWindow);
+}
+
+// ------------------------------------------------getPickList
+CPickList* CGlass::getPickList() {
+	return (m_pPickList);
+}
+
+// ------------------------------------------------getSiteList
+CSiteList* CGlass::getSiteList() {
+	return (m_pSiteList);
+}
+
+// -----------------------------------------------getDefaultNucleationTravelTime
+std::shared_ptr<traveltime::CTravelTime>& CGlass::getDefaultNucleationTravelTime() {  // NOLINT
+	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+	return (m_pDefaultNucleationTravelTime);
+}
+
+// ------------------------------------------------getAssociationTravelTimes
+std::shared_ptr<traveltime::CTTT>& CGlass::getAssociationTravelTimes() {
+	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+	return (m_pAssociationTravelTimes);
+}
+
+// ------------------------------------------------getWebList
+CWebList* CGlass::getWebList() {
+	return (m_pWebList);
+}
+
+// ------------------------------------------------getAssociationSDCutoff
+double CGlass::getAssociationSDCutoff() {
+	return (m_dAssociationSDCutoff);
+}
+
+// ------------------------------------------------getPruningSDCutoff
+double CGlass::getPruningSDCutoff() {
+	return (m_dPruningSDCutoff);
+}
+
+// ------------------------------------------------getTestLocator
+bool CGlass::getTestLocator() {
+	return (m_bTestLocator);
+}
+
+// ------------------------------------------------getTestTravelTimes
+bool CGlass::getTestTravelTimes() {
+	return (m_bTestTravelTimes);
 }
 
 /* NOTE: Leave these in place as examples for Travel Time unit tests.
@@ -1185,212 +1460,4 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
  }
  }*/
 
-// ---------------------------------------------------------Sig
-// Calculate the significance function, which is just
-// the bell shaped curve with Sig(0, x) pinned to 1.
-// It is used for pruning and association, and is roughly
-// analogous to residual pruning in least squares approaches
-double CGlass::sig(double x, double sigma) {
-	return (exp(-0.5 * x * x / sigma / sigma));
-}
-// ---------------------------------------------------------Sig
-// Calculate the laplacian significance function, which is just
-// It is used for pruning and association, and is roughly
-// analogous to residual pruning in L1 approach.
-double CGlass::sig_laplace_pdf(double x, double sigma) {
-	if (x > 0) {
-		return ((1. / (2. * sigma)) * exp(-1. * x / sigma));
-	} else {
-		return ((1. / (2. * sigma)) * exp(x / sigma));
-	}
-}
-
-// ---------------------------------------------------------statusCheck
-bool CGlass::statusCheck() {
-	// nullcheck
-	if (pPickList == NULL) {
-		return (false);
-	}
-
-	// check pick list
-	if (pPickList->statusCheck() == false) {
-		return (false);
-	}
-
-	// hypo list
-	if (pHypoList->statusCheck() == false) {
-		return (false);
-	}
-
-	// site list
-	if (pSiteList->statusCheck() == false) {
-		return (false);
-	}
-
-	// webs
-	if (pWebList->statusCheck() == false) {
-		return (false);
-	}
-
-	// all is well
-	return (true);
-}
-
-double CGlass::getAvgDelta() const {
-	return (avgDelta);
-}
-
-double CGlass::getAvgSigma() const {
-	return (avgSigma);
-}
-
-double CGlass::getBeamMatchingAzimuthWindow() const {
-	return (beamMatchingAzimuthWindow);
-}
-
-double CGlass::getBeamMatchingDistanceWindow() const {
-	return (beamMatchingDistanceWindow);
-}
-
-int CGlass::getCorrelationCancelAge() const {
-	return (correlationCancelAge);
-}
-
-double CGlass::getCorrelationMatchingTWindow() const {
-	return (correlationMatchingTWindow);
-}
-
-double CGlass::getCorrelationMatchingXWindow() const {
-	return (correlationMatchingXWindow);
-}
-
-double CGlass::getCutFactor() const {
-	return (dCutFactor);
-}
-
-double CGlass::getCutMin() const {
-	return (dCutMin);
-}
-
-double CGlass::getCutPercentage() const {
-	return (dCutPercentage);
-}
-
-double CGlass::getReportThresh() const {
-	return (dReportThresh);
-}
-
-double CGlass::getThresh() const {
-	return (dThresh);
-}
-
-double CGlass::getExpAffinity() const {
-	return (expAffinity);
-}
-
-bool CGlass::getGraphicsOut() const {
-	return (graphicsOut);
-}
-
-const std::string& CGlass::getGraphicsOutFolder() const {
-	return (graphicsOutFolder);
-}
-
-double CGlass::getGraphicsStepKm() const {
-	return (graphicsStepKM);
-}
-
-int CGlass::getGraphicsSteps() const {
-	return (graphicsSteps);
-}
-
-int CGlass::getCycleLimit() const {
-	return (iCycleLimit);
-}
-
-bool CGlass::getMinimizeTtLocator() const {
-	return (minimizeTTLocator);
-}
-
-int CGlass::getCorrelationMax() const {
-	return (nCorrelationMax);
-}
-
-int CGlass::getDetect() const {
-	return (nDetect);
-}
-
-int CGlass::getHypoMax() const {
-	return (nHypoMax);
-}
-
-int CGlass::getNucleate() const {
-	return (nNucleate);
-}
-
-int CGlass::getPickMax() const {
-	return (nPickMax);
-}
-
-double CGlass::getReportCut() const {
-	return (nReportCut);
-}
-
-int CGlass::getSitePickMax() const {
-	return (nSitePickMax);
-}
-
-CCorrelationList*& CGlass::getCorrelationList() {
-	return (pCorrelationList);
-}
-
-CDetection*& CGlass::getDetection() {
-	return (pDetection);
-}
-
-CHypoList*& CGlass::getHypoList() {
-	return (pHypoList);
-}
-
-double CGlass::getPickDuplicateWindow() const {
-	return (pickDuplicateWindow);
-}
-
-CPickList*& CGlass::getPickList() {
-	return (pPickList);
-}
-
-CSiteList*& CGlass::getSiteList() {
-	return (pSiteList);
-}
-
-std::shared_ptr<traveltime::CTravelTime>& CGlass::getTrvDefault() {
-	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
-	return (pTrvDefault);
-}
-
-std::shared_ptr<traveltime::CTTT>& CGlass::getTTT() {
-	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
-	return (pTTT);
-}
-
-CWebList*& CGlass::getWebList() {
-	return (pWebList);
-}
-
-double CGlass::getSdAssociate() const {
-	return (sdAssociate);
-}
-
-double CGlass::getSdPrune() const {
-	return (sdPrune);
-}
-
-bool CGlass::getTestLocator() const {
-	return (testLocator);
-}
-
-bool CGlass::getTestTimes() const {
-	return (testTimes);
-}
 }  // namespace glasscore

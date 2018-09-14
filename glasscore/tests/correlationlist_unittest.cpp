@@ -6,6 +6,7 @@
 #include "Site.h"
 #include "SiteList.h"
 #include "Logit.h"
+#include "Glass.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
 #define SITE2JSON "{\"Type\":\"StationInfo\",\"Elevation\":1342.000000,\"Latitude\":46.711330,\"Longitude\":-111.831200,\"Site\":{\"Station\":\"HRY\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
@@ -41,16 +42,14 @@ TEST(CorrelationListTest, Construction) {
 			new glasscore::CCorrelationList();
 
 	// assert default values
-	ASSERT_EQ(-1, testCorrelationList->getNCorrelationTotal())<<
+	ASSERT_EQ(0, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"nCorrelationTotal is 0";
-	ASSERT_EQ(0, testCorrelationList->getNCorrelation())<< "nCorrelation is 0";
 
 	// lists
-	ASSERT_EQ(0, testCorrelationList->getVCorrelationSize())<<
+	ASSERT_EQ(0, testCorrelationList->length())<<
 	"vCorrelation.size() is 0";
 
-	// pointers
-	ASSERT_EQ(NULL, testCorrelationList->getGlass())<< "pGlass null";
+	// pointer
 	ASSERT_EQ(NULL, testCorrelationList->getSiteList())<< "pSiteList null";
 
 	// cleanup
@@ -92,71 +91,40 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
 	// add sites to site list
-	testSiteList->addSite(siteJSON);
-	testSiteList->addSite(site2JSON);
-	testSiteList->addSite(site3JSON);
+	testSiteList->addSiteFromJSON(siteJSON);
+	testSiteList->addSiteFromJSON(site2JSON);
+	testSiteList->addSiteFromJSON(site3JSON);
 
 	// construct a correlationlist
 	glasscore::CCorrelationList * testCorrelationList =
 			new glasscore::CCorrelationList();
 	testCorrelationList->setSiteList(testSiteList);
-	testCorrelationList->setNCorrelationMax(MAXNCORRELATION);
 
-	// test indexcorrelation when empty
-	ASSERT_EQ(-2, testCorrelationList->indexCorrelation(0))<<
-	"test indexcorrelation when empty";
+	testCorrelationList->setMaxAllowableCorrelationCount(MAXNCORRELATION);
+	glasscore::CGlass::setMaxNumCorrelations(-1);
 
 	// test adding correlations by addCorrelation and dispatch
-	testCorrelationList->addCorrelation(correlationJSON);
-	testCorrelationList->dispatch(correlation3JSON);
+	testCorrelationList->addCorrelationFromJSON(correlationJSON);
+	testCorrelationList->receiveExternalMessage(correlation3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testCorrelationList->getNCorrelation())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"Added Correlations";
 
-	// test getting a correlation (first correlation, id 1)
-	std::shared_ptr<glasscore::CCorrelation> testCorrelation =
-			testCorrelationList->getCorrelation(1);
-	// check testcorrelation
-	ASSERT_TRUE(testCorrelation != NULL)<< "testCorrelation not null";
-	// check scnl
-	std::string sitescnl = testCorrelation->getSite()->getScnl();
-	std::string expectedscnl = std::string(SCNL);
-	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-	"testCorrelation has right scnl";
-
-	// test indexcorrelation
-	ASSERT_EQ(-1, testCorrelationList->indexCorrelation(TCORRELATION))<<
-	"test indexcorrelation with time before";
-	ASSERT_EQ(1, testCorrelationList->indexCorrelation(TCORRELATION2))<<
-	"test indexcorrelation with time after";
-	ASSERT_EQ(0, testCorrelationList->indexCorrelation(TCORRELATION3))<<
-	"test indexcorrelation with time within";
-
 	// add more correlations
-	testCorrelationList->addCorrelation(correlation2JSON);
-	testCorrelationList->addCorrelation(correlation4JSON);
-	testCorrelationList->addCorrelation(correlation5JSON);
-	testCorrelationList->addCorrelation(correlation6JSON);
+	testCorrelationList->addCorrelationFromJSON(correlation2JSON);
+	testCorrelationList->addCorrelationFromJSON(correlation4JSON);
+	testCorrelationList->addCorrelationFromJSON(correlation5JSON);
+	testCorrelationList->addCorrelationFromJSON(correlation6JSON);
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNCORRELATION;
-	ASSERT_EQ(expectedSize, testCorrelationList->getVCorrelationSize())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->length())<<
 	"testCorrelationList not larger than max";
 
-	// get first correlation, which is now id 2
-	std::shared_ptr<glasscore::CCorrelation> test2Correlation =
-			testCorrelationList->getCorrelation(2);
-
-	// check scnl
-	sitescnl = test2Correlation->getSite()->getScnl();
-	expectedscnl = std::string(SCNL2);
-	ASSERT_STREQ(sitescnl.c_str(), expectedscnl.c_str())<<
-	"test2Correlation has right scnl";
-
 	// test clearing correlations
-	testCorrelationList->clearCorrelations();
+	testCorrelationList->clear();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testCorrelationList->getNCorrelation())<<
+	ASSERT_EQ(expectedSize, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"Cleared Correlations";
 
 	// cleanup

@@ -21,7 +21,8 @@ int main(int argc, char* argv[]) {
 					<< std::to_string(PROJECT_VERSION_MAJOR) << "."
 					<< std::to_string(PROJECT_VERSION_MINOR) << "."
 					<< std::to_string(PROJECT_VERSION_PATCH) << "; Usage: "
-					<< "glass-app <configfile> [noconsole]" << std::endl;
+					<< "glass-app <configfile>  [logname] [noconsole]"
+					<< std::endl;
 		return 1;
 	}
 
@@ -31,13 +32,27 @@ int main(int argc, char* argv[]) {
 	if (pLogDir != NULL) {
 		logpath = pLogDir;
 	} else {
+		std::cout << "glass-broker-app using default log directory of ./"
+					<< std::endl;
 		logpath = "./";
 	}
 
-	// get whether we log to console
+	// get our logname if available
+	std::string logName = "glass-app";
 	bool logConsole = true;
-	if (argc == 3) {
+	if (argc >= 3) {
 		std::string temp = std::string(argv[2]);
+
+		if (temp == "noconsole") {
+			logConsole = false;
+		} else {
+			logName = std::string(argv[2]);
+		}
+	}
+
+	// get whether we log to console
+	if (argc == 4) {
+		std::string temp = std::string(argv[3]);
 
 		if (temp == "noconsole") {
 			logConsole = false;
@@ -45,7 +60,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// now set up our logging
-	glass3::util::log_init("glass-app", "info", logpath, logConsole);
+	glass3::util::log_init(logName, "info", logpath, logConsole);
 
 	glass3::util::log(
 			"info",
@@ -61,128 +76,126 @@ int main(int argc, char* argv[]) {
 	// now load our basic config from file
 	// note, main is gonna get cluttered, move this section
 	// to it's own function eventually
-	glass3::util::Config * glassConfig = new glass3::util::Config();
+	glass3::util::Config glassConfig;
 
 	try {
-		glassConfig->parseJSONFromFile("", std::string(argv[1]));
+		glassConfig.parseJSONFromFile("", std::string(argv[1]));
 	} catch (std::exception& e) {
 		glass3::util::log(
 				"criticalerror",
 				"Failed to load file: " + std::string(argv[1]) + "; "
 						+ std::string(e.what()));
 
-		delete (glassConfig);
 		return (1);
 	}
 
-	// check to see if our json config is of the right format
-	if (!(glassConfig->getJSON()->HasKey("Cmd"))) {
-		glass3::util::log("criticalerror", "Invalid configuration, exiting.");
+	// check to see if our config is of the right format
+	if (glassConfig.getJSON()->HasKey("Cmd")
+			&& ((*glassConfig.getJSON())["Cmd"].GetType()
+					== json::ValueType::StringVal)) {
+		std::string configType = (*glassConfig.getJSON())["Cmd"]
+				.ToString();
 
-		delete (glassConfig);
-		return (1);
-	}
-	if ((*glassConfig->getJSON())["Cmd"] != "Glass") {
-		glass3::util::log("criticalerror", "Wrong configuration, exiting.");
+		if (configType != "Glass") {
+			glass3::util::log(
+					"critical",
+					"glass-app: Wrong configuration, exiting.");
 
-		delete (glassConfig);
-		return (1);
+			return (0);
+		}
+	} else {
+		// no command
+		glass3::util::log(
+				"critical",
+				"glass-app: Missing required Cmd Key.");
+
+		return (0);
 	}
 
 	// get the directory where the rest of the glass configs are stored
-	if (!(glassConfig->getJSON()->HasKey("ConfigDirectory"))) {
+	if (glassConfig.getJSON()->HasKey("ConfigDirectory")
+			&& ((*glassConfig.getJSON())["ConfigDirectory"].GetType()
+					== json::ValueType::StringVal)) {
+		configdir = (*glassConfig.getJSON())["ConfigDirectory"].ToString();
+		glass3::util::log("info",
+							"Reading glass configurations from: " + configdir);
+	} else {
 		configdir = "./";
 		glass3::util::log(
 				"warning",
 				"missing <ConfigDirectory>, defaulting to local directory.");
-	} else {
-		configdir = (*glassConfig->getJSON())["ConfigDirectory"].ToString();
-		glass3::util::log("info",
-							"Reading glass configurations from: " + configdir);
 	}
 
 	// set our proper loglevel
-	if (glassConfig->getJSON()->HasKey("LogLevel")) {
-		glass3::util::log_update_level((*glassConfig->getJSON())["LogLevel"]);
+	if (glassConfig.getJSON()->HasKey("LogLevel")
+			&& ((*glassConfig.getJSON())["LogLevel"].GetType()
+					== json::ValueType::StringVal)) {
+		glass3::util::log_update_level((*glassConfig.getJSON())["LogLevel"]);
+	}
+
+	// get initialize config file location
+	std::string initconfigfile;
+	if (glassConfig.getJSON()->HasKey("InitializeFile")
+			&& ((*glassConfig.getJSON())["InitializeFile"].GetType()
+					== json::ValueType::StringVal)) {
+		initconfigfile = (*glassConfig.getJSON())["InitializeFile"].ToString();
+	} else {
+		glass3::util::log(
+				"critical",
+				"Invalid configuration, missing <InitializeFile>, exiting.");
+
+		return (1);
 	}
 
 	// load our initialize config
-	std::string initconfigfile;
-	if (!(glassConfig->getJSON()->HasKey("InitializeFile"))) {
-		glass3::util::log(
-				"criticalerror",
-				"Invalid configuration, missing <InitializeFile>, exiting.");
-
-		delete (glassConfig);
-		return (1);
-	} else {
-		initconfigfile = (*glassConfig->getJSON())["InitializeFile"].ToString();
-	}
-
-	glass3::util::Config * InitializeConfig;
+	glass3::util::Config InitializeConfig;
 	try {
-		InitializeConfig = new glass3::util::Config(configdir, initconfigfile);
+		InitializeConfig.parseJSONFromFile(configdir, initconfigfile);
 	} catch (std::exception& e) {
 		glass3::util::log(
 				"criticalerror",
 				"Failed to load file: " + initconfigfile + "; "
 						+ std::string(e.what()));
-
-		delete (glassConfig);
-		delete (InitializeConfig);
 		return (1);
 	}
 
-	std::shared_ptr<const json::Object> InitializeJSON = InitializeConfig
-			->getJSON();
-
-	// Load our initial stationlist
+	// get stationlist file location
 	std::string stationlistfile;
-	if (!(glassConfig->getJSON()->HasKey("StationList"))) {
-		glass3::util::log(
-				"criticalerror",
-				"Invalid configuration, missing <StationList>, exiting.");
-
-		delete (glassConfig);
-		delete (InitializeConfig);
-		return (1);
+	if (glassConfig.getJSON()->HasKey("StationList")
+			&& ((*glassConfig.getJSON())["StationList"].GetType()
+					== json::ValueType::StringVal)) {
+		stationlistfile = (*glassConfig.getJSON())["StationList"].ToString();
 	} else {
-		stationlistfile = (*glassConfig->getJSON())["StationList"].ToString();
+		glass3::util::log(
+				"critical",
+				"Invalid configuration, missing <StationList>, exiting.");
+		return (1);
 	}
 
 	// get our stationlist
-	glass3::util::Config * StationList;
+	glass3::util::Config StationList;
 	try {
-		StationList = new glass3::util::Config(configdir, stationlistfile);
+		StationList.parseJSONFromFile(configdir, stationlistfile);
 	} catch (std::exception& e) {
 		glass3::util::log(
 				"criticalerror",
 				"Failed to load file: " + stationlistfile + "; "
 						+ std::string(e.what()));
 
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
 		return (1);
 	}
 
-	std::shared_ptr<const json::Object> StationListJSON =
-			StationList->getJSON();
-
 	// get detection grid file list
 	json::Array gridconfigfilelist;
-	if (glassConfig->getJSON()->HasKey("GridFiles")
-			&& ((*glassConfig->getJSON())["GridFiles"].GetType()
+	if (glassConfig.getJSON()->HasKey("GridFiles")
+			&& ((*glassConfig.getJSON())["GridFiles"].GetType()
 					== json::ValueType::ArrayVal)) {
-		gridconfigfilelist = (*glassConfig->getJSON())["GridFiles"];
+		gridconfigfilelist = (*glassConfig.getJSON())["GridFiles"];
 	} else {
 		glass3::util::log(
 				"critical",
 				"Invalid configuration, missing <GridFiles>, exiting.");
 
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
 		return (1);
 	}
 
@@ -190,189 +203,138 @@ int main(int argc, char* argv[]) {
 	if (gridconfigfilelist.size() == 0) {
 		glass3::util::log("critical", "No <GridFiles> specified, exiting.");
 
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
+		return (1);
+	}
+
+	// get input config file location
+	std::string inputconfigfile;
+	if (glassConfig.getJSON()->HasKey("InputConfig")
+			&& ((*glassConfig.getJSON())["InputConfig"].GetType()
+					== json::ValueType::StringVal)) {
+		inputconfigfile = (*glassConfig.getJSON())["InputConfig"].ToString();
+	} else {
+		glass3::util::log(
+				"critical",
+				"Invalid configuration, missing <InputConfig>, exiting.");
 		return (1);
 	}
 
 	// load our input config
-	std::string inputconfigfile;
-	if (!(glassConfig->getJSON()->HasKey("InputConfig"))) {
-		glass3::util::log(
-				"criticalerror",
-				"Invalid configuration, missing <InputConfig>, exiting.");
-
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
-		return (1);
-	} else {
-		inputconfigfile = (*glassConfig->getJSON())["InputConfig"].ToString();
-	}
-
-	glass3::util::Config * InputConfig;
+	glass3::util::Config InputConfig;
 	try {
-		InputConfig = new glass3::util::Config(configdir, inputconfigfile);
+		InputConfig.parseJSONFromFile(configdir, inputconfigfile);
 	} catch (std::exception& e) {
 		glass3::util::log(
 				"criticalerror",
 				"Failed to load file: " + inputconfigfile + "; "
 						+ std::string(e.what()));
 
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
-		delete (InputConfig);
+		return (1);
+	}
+
+	// get output config file location
+	std::string outputconfigfile;
+	if (glassConfig.getJSON()->HasKey("OutputConfig")
+			&& ((*glassConfig.getJSON())["OutputConfig"].GetType()
+					== json::ValueType::StringVal)) {
+		outputconfigfile = (*glassConfig.getJSON())["OutputConfig"].ToString();
+	} else {
+		glass3::util::log(
+				"critical",
+				"Invalid configuration, missing <OutputConfig>, exiting.");
 		return (1);
 	}
 
 	// load our output config
-	std::string outputconfigfile;
-	if (!(glassConfig->getJSON()->HasKey("OutputConfig"))) {
-		glass3::util::log(
-				"criticalerror",
-				"Invalid configuration, missing <OutputConfig>, exiting.");
-
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
-		delete (InputConfig);
-		return (1);
-	} else {
-		outputconfigfile = (*glassConfig->getJSON())["OutputConfig"].ToString();
-	}
-	glass3::util::Config * OutputConfig;
+	glass3::util::Config OutputConfig;
 	try {
-		OutputConfig = new glass3::util::Config(configdir, outputconfigfile);
+		OutputConfig.parseJSONFromFile(configdir, outputconfigfile);
 	} catch (std::exception& e) {
 		glass3::util::log(
 				"criticalerror",
 				"Failed to load file: " + outputconfigfile + "; "
 						+ std::string(e.what()));
 
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
-		delete (InputConfig);
-		delete (OutputConfig);
 		return (1);
 	}
 
 	// create our objects
-	glass::fileInput * InputThread = new glass::fileInput();
-	glass::fileOutput * OutputThread = new glass::fileOutput();
-	glass3::process::Associator * AssocThread =
-			new glass3::process::Associator(InputThread, OutputThread);
+	glass::fileInput InputThread;
+	glass::fileOutput OutputThread;
+	glass3::process::Associator AssocThread(&InputThread, &OutputThread);
 
 	// input setup
-	std::shared_ptr<const json::Object> input_config_json =
-			InputConfig->getJSON();
-	if (InputThread->setup(input_config_json) != true) {
+	if (InputThread.setup(InputConfig.getJSON()) != true) {
 		glass3::util::log("critical",
 							"glass: Failed to setup Input.  Exiting.");
 
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
-		delete (InputConfig);
-		delete (OutputConfig);
-		delete (InputThread);
-		delete (OutputThread);
-		delete (AssocThread);
 		return (1);
 	}
 
 	// output setup
-	std::shared_ptr<const json::Object> output_config_json = OutputConfig
-			->getJSON();
-	if (OutputThread->setup(output_config_json) != true) {
+	if (OutputThread.setup(OutputConfig.getJSON()) != true) {
 		glass3::util::log("critical",
 							"glass: Failed to setup Output.  Exiting.");
 
-		delete (glassConfig);
-		delete (InitializeConfig);
-		delete (StationList);
-		delete (InputConfig);
-		delete (OutputConfig);
-		delete (InputThread);
-		delete (OutputThread);
-		delete (AssocThread);
 		return (1);
 	}
 
 	// output needs to know about the associator thread to request
 	// information
-	OutputThread->setAssociator(AssocThread);
+	OutputThread.setAssociator(&AssocThread);
 
 	// configure glass
 	// first send in initialize
-	AssocThread->setup(InitializeJSON);
+	AssocThread.setup(InitializeConfig.getJSON());
 
-	// send in stationlist
-	AssocThread->setup(StationListJSON);
+	// then send in stationlist
+	AssocThread.setup(StationList.getJSON());
 
-	// send in grids
+	// finally send in grids
 	for (int i = 0; i < gridconfigfilelist.size(); i++) {
 		std::string gridconfigfile = gridconfigfilelist[i];
 		if (gridconfigfile != "") {
-			glass3::util::Config * GridConfig = new glass3::util::Config(
-					configdir, gridconfigfile);
-			std::shared_ptr<const json::Object> GridConfigJSON = GridConfig
-					->getJSON();
+			glass3::util::Config GridConfig(configdir, gridconfigfile);
 
 			// send in grid
-			AssocThread->setup(GridConfigJSON);
-
-			// done with grid config and json
-			delete (GridConfig);
+			AssocThread.setup(GridConfig.getJSON());
 		}
 	}
 
 	// startup
-	InputThread->start();
-	OutputThread->start();
-	AssocThread->start();
+	InputThread.start();
+	OutputThread.start();
+	AssocThread.start();
 
-	glass3::util::log("info", "glass: glass is running.");
+	glass3::util::log("info", "glass-app: glass3 is running.");
 
 	// run until stopped
 	while (true) {
 		// sleep to give up cycles
 		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
-		glass3::util::log("trace", "glass: Checking thread status.");
+		glass3::util::log("trace", "glass-app: Checking thread status.");
 
 		// check thread health
-		if (InputThread->healthCheck() == false) {
-			glass3::util::log("error", "glass: Input thread has exited!!");
+		if (InputThread.healthCheck() == false) {
+			glass3::util::log("error", "glass-app: Input thread has exited!!");
 			break;
-		} else if (OutputThread->healthCheck() == false) {
-			glass3::util::log("error", "glass: Output thread has exited!!");
+		} else if (OutputThread.healthCheck() == false) {
+			glass3::util::log("error", "glass-app: Output thread has exited!!");
 			break;
-		} else if (AssocThread->healthCheck() == false) {
+		} else if (AssocThread.healthCheck() == false) {
 			glass3::util::log("error",
-								"glass: Association thread has exited!!");
+								"glass-app: Association thread has exited!!");
 			break;
 		}
 	}
 
-	glass3::util::log("info", "glass: glass is shutting down.");
+	glass3::util::log("info", "glass-app: glass3 is shutting down.");
 
 	// shutdown
-	InputThread->stop();
-	OutputThread->stop();
-	AssocThread->stop();
+	InputThread.stop();
+	OutputThread.stop();
+	AssocThread.stop();
 
-	// cleanup
-	delete (glassConfig);
-	delete (InitializeConfig);
-	delete (StationList);
-	delete (InputConfig);
-	delete (OutputConfig);
-	delete (InputThread);
-	delete (OutputThread);
-	delete (AssocThread);
-
-	return 0;
+	return (0);
 }

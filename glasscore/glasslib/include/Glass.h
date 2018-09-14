@@ -10,12 +10,14 @@
 #include <json.h>
 #include <string>
 #include <memory>
-#include "Terra.h"
-#include "Ray.h"
+#include <atomic>
 #include "TTT.h"
 #include "TravelTime.h"
 
 namespace glasscore {
+
+// global defines
+#define ASSOC_SIGMA_VALUE_SECONDS 1.0
 
 // forward declarations
 class CWebList;
@@ -66,6 +68,12 @@ class CGlass {
 	~CGlass();
 
 	/**
+	 * \brief CGlass clear function
+	 *
+	 */
+	static void clear();
+
+	/**
 	 * \brief CGlass communication receiving function
 	 *
 	 * The function used by CGlass to receive communication
@@ -81,7 +89,7 @@ class CGlass {
 	 * \return Returns true if the communication was handled by CGlass,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	static bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CGlass communication sending function
@@ -95,7 +103,17 @@ class CGlass {
 	 * \return Returns true if the communication was sent via
 	 * a valid IGlassSend interface pointer, false otherwise
 	 */
-	bool send(std::shared_ptr<json::Object> com);
+	static bool sendExternalMessage(std::shared_ptr<json::Object> com);
+
+	/**
+	 * \brief Sets the IGlassSend interface pointer used to send communication
+	 * (such as output data), to outside the glasscore library
+	 *
+	 * \param newSend - A pointer to a glasscore::IGlassSend interrace to
+	 * use to send communication (such as output data), to outside the glasscore
+	 * library
+	 */
+	static void setExternalInterface(glasscore::IGlassSend *newSend);
 
 	/**
 	 * \brief CGlass initialization function
@@ -112,301 +130,338 @@ class CGlass {
 	 * \return Returns true if the initialization was successful,
 	 * false otherwise
 	 */
-	bool initialize(std::shared_ptr<json::Object> com);
-
-	/**
-	 * \brief CGlass clear function
-	 *
-	 */
-	void clear();
-
-	/**
-	 * \brief CGlass significance function
-	 *
-	 * This function calculates the significance function for glasscore,
-	 * which is the bell shaped curve with sig(0, x) pinned to 0.
-	 *
-	 * \param tdif - A double containing x value.
-	 * \param sig - A double value containing the sigma,
-	 * \return Returns a double value containing significance function result
-	 */
-	double sig(double tdif, double sig);
-
-	/**
-	 * \brief CGlass laplacian significance function (PDF)
-	 *
-	 * This function calculates a laplacian significance used in associator.
-	 * This should have the affect of being L1 normish, instead of L2 normish.
-	 * Unlike the other significance function, this returns the PDF value
-	 * \param tdif - A double containing x value.
-	 * \param sig - A double value containing the sigma,
-	 * \return Returns a double value containing significance function result
-	 */
-	double sig_laplace_pdf(double tdif, double sig);
-
-	/**
-	 * \brief An IGlassSend interface pointer used to send communication
-	 * (such as output data), to outside the glasscore library
-	 */
-	glasscore::IGlassSend *piSend;
+	static bool initialize(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief check to see if each thread is still functional
 	 *
 	 * Checks each thread to see if it is still responsive.
 	 */
-	bool statusCheck();
+	static bool healthCheck();
 
 	/**
-	 * \brief Average delta getter
-	 * \return the average delta
+	 * \brief Gets the azimuth window used to determine whether a beam can be
+	 * matched with an existing hypo
+	 * \return Returns a double containing the beam matching azimuth window in
+	 * degrees
 	 */
-	double getAvgDelta() const;
+	static double getBeamMatchingAzimuthWindow();
 
 	/**
-	 * \brief Average sigma getter
-	 * \return the average sigma
+	 * \brief Gets the distance window used to determine whether a beam can be
+	 *  matched with an existing hypo
+	 * \return Returns a double containing the beam matching distance window in
+	 * degrees
 	 */
-	double getAvgSigma() const;
+	static double getBeamMatchingDistanceWindow();
 
 	/**
-	 * \brief Beam matching azimuth window getter
-	 * \return the beam matching azimuth window in degrees
+	 * \brief Gets the correlation cancel age used to determine when a hypo
+	 * created by a correlation can be canceled if no other supporting data
+	 * exists
+	 * \return Returns an integer containing the correlation cancel age in
+	 * seconds
 	 */
-	double getBeamMatchingAzimuthWindow() const;
+	static int getCorrelationCancelAge();
 
 	/**
-	 * \brief Beam matching distance window getter
-	 * \return the beam matching distance window in degrees
+	 * \brief Gets the time window used to determine whether a correlation can
+	 * be matched with an existing hypo
+	 * \return Returns a double containing the correlation matching time window
+	 * in seconds
 	 */
-	double getBeamMatchingDistanceWindow() const;
+	static double getCorrelationMatchingTimeWindow();
 
 	/**
-	 * \brief Correlation cancel age getter
-	 * \return the correlation cancel age in seconds
+	 * \brief Gets the distance window used to determine whether a correlation
+	 * can be matched with an existing hypo
+	 * \return Returns a double containing the correlation matching distance
+	 * window in degrees
 	 */
-	int getCorrelationCancelAge() const;
+	static double getCorrelationMatchingDistanceWindow();
 
 	/**
-	 * \brief Correlation matching time window getter
-	 * \return the correlation matching time window in seconds
+	 * \brief Gets the time window used to determine whether a hypo could
+	 * be merged with an existing hypo
+	 * \return Returns a double containing the hypo merging time window  in
+	 * seconds
 	 */
-	double getCorrelationMatchingTWindow() const;
+	static double getHypoMergingTimeWindow();
 
 	/**
-	 * \brief Correlation matching distance window getter
-	 * \return the correlation matching distance window in degrees
+	 * \brief Gets the distance window used to determine whether a hypo
+	 * could be merged with an existing hypo
+	 * \return Returns a double containing the hypo merging distance window in
+	 * degrees
 	 */
-	double getCorrelationMatchingXWindow() const;
+	static double getHypoMergingDistanceWindow();
 
 	/**
-	 * \brief Distance cutoff factor getter
-	 * \return the distance cutoff factor
+	 * \brief Gets the factor used in calculating the association distance
+	 * cutoff factor for pick data
+	 * \return Returns a double containing the distance cutoff factor
 	 */
-	double getCutFactor() const;
+	static double getDistanceCutoffFactor();
 
 	/**
-	 * \brief Average distance cutoff minimum getter
-	 * \return the minimum distance cutoff in degrees
+	 * \brief Gets the minimum allowed association distance cutoff
+	 * \return Returns a double containing the minimum allowed association
+	 * distance cutoff in degrees
 	 */
-	double getCutMin() const;
+	static double getMinDistanceCutoff();
 
 	/**
-	 * \brief Distance cutoff percentage getter
-	 * \return the distance cutoff percentage
+	 * \brief Gets the percentage used in calculating the association distance
+	 * cutoff factor for pick data
+	 * \return Returns a double containing the distance cutoff percentage
 	 */
-	double getCutPercentage() const;
+	static double getDistanceCutoffRatio();
 
 	/**
-	 * \brief Report threshold getter
-	 * \return the reporting viability threshold
+	 * \brief Gets the minimum bayesian stack threshold needed to report a hypo
+	 * out of glass
+	 * \return Returns a double containing the minimum reporting stack threshold
 	 */
-	double getReportThresh() const;
+	static double getReportingStackThreshold();
 
 	/**
-	 * \brief Nucleation threshold getter
-	 * \return the nucleation viability threshold
+	 * \brief Gets the minimum bayesian stack threshold required to nucleate
+	 * an event
+	 * \return Returns a double containing the minimum nucleation stack threshold
 	 */
-	double getThresh() const;
+	static double getNucleationStackThreshold();
 
 	/**
-	 * \brief Exponential Affinity getter
-	 * \return the exponential factor used for pick affinity
+	 * \brief Gets the exponential pick affinity factor used in association
+	 * \return Returns a double containing the exponential factor used for pick
+	 * affinity
 	 */
-	double getExpAffinity() const;
+	static double getPickAffinityExpFactor();
 
 	/**
-	 * \brief Graphics output flag getter
-	 * \return a flag indicating whether to output graphics files
+	 * \brief Gets a flag indicating whether to produce graphics files for
+	 * location tuning
+	 * \return Returns a boolean flag indicating whether to output graphics
+	 * files for location tuning
 	 */
-	bool getGraphicsOut() const;
+	static bool getGraphicsOut();
 
 	/**
-	 * \brief Graphics output folder getter
-	 * \return the folder to output graphics files to
+	 * \brief Gets a string indicating the desired graphics output folder
+	 * \return Returns a std::string containing the folder to output graphics
+	 * files to
 	 */
-	const std::string& getGraphicsOutFolder() const;
+	static const std::string& getGraphicsOutFolder();
 
 	/**
-	 * \brief Graphics step getter
-	 * \return the graphics step size in km
+	 * \brief Get the size of the step used in generating graphic output files
+	 * \return Returns a double containing the graphics step size in kilometers
 	 */
-	double getGraphicsStepKm() const;
+	static double getGraphicsStepKm();
 
 	/**
-	 * \brief Graphics steps getter
-	 * \return the number of graphic steps
+	 * \brief Gets the number steps used in generating graphic output files
+	 * \return Returns an integer containing the number of graphic steps
 	 */
-	int getGraphicsSteps() const;
+	static int getGraphicsSteps();
 
 	/**
-	 * \brief Cycle limit getter
-	 * \return the limit of processing cycles
+	 * \brief Gets the maximum number of times a hypocenter can reprocess without
+	 * new data being associated to it
+	 * \return Returns an integer containing the limit of hypo processing cycles
 	 */
-	int getCycleLimit() const;
+	static int getProcessLimit();
 
 	/**
-	 * \brief Graphics minimize TT locator getter
-	 * \return the flag indicating whether to use the minimizing tt locator
+	 * \brief Gets a flag indicating whether to use the minimizing travel time
+	 * locator
+	 * \return Returns a boolean flag indicating whether to use the minimizing
+	 * travel time locator
 	 */
-	bool getMinimizeTtLocator() const;
+	static bool getMinimizeTTLocator();
 
 	/**
-	 * \brief Maximum number of correlations getter
-	 * \return the maximum number of correlations
+	 * \brief Get the maximum number of sites link to a node
+	 * \return Returns an integer containing the maximum number of sites link to
+	 * a node
 	 */
-	int getCorrelationMax() const;
+	static int getNumStationsPerNode();
 
 	/**
-	 * \brief Default number of detection stations getter
-	 * \return the default number of detections used in a node
+	 * \brief Gets the minimum number of data required to nucleate an event
+	 * \return Returns an integer containing the minimum number of data required
+	 * to nucleate an event
 	 */
-	int getDetect() const;
+	static int getNucleationDataThreshold();
 
 	/**
-	 * \brief Maximum number of hypocenters getter
-	 * \return the maximum number of hypocenters
+	 * \brief Gets the minimum number of data required to report an event
+	 * \return Returns an integer containing the minimum number of data required
+	 * to report an event
 	 */
-	int getHypoMax() const;
+	static int getReportingDataThreshold();
 
 	/**
-	 * \brief Default number of picks for nucleation getter
-	 * \return the default number of nucleations used in for a detection
+	 * \brief Gets the time window used when checking whether an input pick
+	 * is a duplicate of a pick already in the pick list
+	 * \return Returns a double containing the pick duplication time window in
+	 * seconds
 	 */
-	int getNucleate() const;
+	static double getPickDuplicateTimeWindow();
 
 	/**
-	 * \brief Maximum number of picks getter
-	 * \return the maximum number of picks
+	 * \brief Gets the cutoff threshold in terms of number of standard
+	 * deviations for associating data (eg. Picks) with a hypocenter. The
+	 * standard deviation is fixed to 1.
+	 * \return Returns a double containing the standard deviation cutoff used
+	 * for association
 	 */
-	int getPickMax() const;
+	static double getAssociationSDCutoff();
 
 	/**
-	 * \brief Report cutoff getter
-	 * \return the reporting cutoff
+	 * \brief Gets the cutoff threshold in terms of number of standard
+	 * deviations for pruning data (eg. Picks) from a hypocenter. The
+	 * standard deviation is fixed to 1.
+	 * \return Returns a double containing the standard deviation cutoff used
+	 * for pruning
 	 */
-	double getReportCut() const;
+	static double getPruningSDCutoff();
 
 	/**
-	 * \brief Maximum number of picks with a site getter
-	 * \return the maximum number of picks stored with a site
+	 * \brief Gets a flag indicating whether to output locator testing files
+	 * \return Returns a boolean flag indicating whether to output locator
+	 * testing files
 	 */
-	int getSitePickMax() const;
+	static bool getTestLocator();
 
 	/**
-	 * \brief Correlation list getter
-	 * \return a pointer to the correlation list
+	 * \brief Gets a flag indicating whether to test travel times
+	 * \return Returns a boolean flag indicating whether to test travel times
 	 */
-	CCorrelationList*& getCorrelationList();
+	static bool getTestTravelTimes();
 
 	/**
-	 * \brief Detection getter
-	 * \return a pointer to the detection processor
+	 * \brief Get the maximum number of picks to store in glass
+	 * \return Returns an integer containing the maximum number of picks
 	 */
-	CDetection*& getDetection();
+	static int getMaxNumPicks();
 
 	/**
-	 * \brief Hypocenter list getter
-	 * \return a pointer to the hypocenter list
+	 * \brief Set the maximum number of picks to store in glass
+	 * \param max - an integer containing the maximum number of picks
 	 */
-	CHypoList*& getHypoList();
+	static void setMaxNumPicks(int max);
 
 	/**
-	 * \brief Pick duplicate time window getter
-	 * \return the pick duplication time window in seconds
+	 * \brief Get the maximum number of correlations to store in glass
+	 * \return Returns an integer containing the maximum number of correlations
 	 */
-	double getPickDuplicateWindow() const;
+	static int getMaxNumCorrelations();
 
 	/**
-	 * \brief Pick list getter
-	 * \return a pointer to the pick list
+	 * \brief Set the maximum number of correlations to store in glass
+	 * \param max - an integer containing the maximum number of correlations
 	 */
-	CPickList*& getPickList();
+	static void setMaxNumCorrelations(int max);
 
 	/**
-	 * \brief Site list getter
-	 * \return a pointer to the site list
+	 * \brief Get the maximum number of picks to store with a site
+	 * \return Returns an integer containing the maximum number of picks to
+	 * store with a site
 	 */
-	CSiteList*& getSiteList();
+	static int getMaxNumPicksPerSite();
 
 	/**
-	 * \brief Default travel time  getter
-	 * \return the default nucleation travel time
+	 * \brief Set the maximum number of picks to store with a site
+	 * \param max - an integer containing the maximum number of picks to
+	 * store with a site
 	 */
-	std::shared_ptr<traveltime::CTravelTime>& getTrvDefault();
+	static void setMaxNumPicksPerSite(int max);
 
 	/**
-	 * \brief Travel time list getter
-	 * \return the list of association travel times
+	 * \brief Get the maximum number of hypos to store in glass
+	 * \return Returns an integer containing the maximum number of hypos
 	 */
-	std::shared_ptr<traveltime::CTTT>& getTTT();
+	static int getMaxNumHypos();
 
 	/**
-	 * \brief Web list getter
-	 * \return a pointer to the web list
+	 * \brief Set the maximum number of hypos to store in glass
+	 * \param max - an integer containing the maximum number of hypos
 	 */
-	CWebList*& getWebList();
+	static void setMaxNumHypos(int max);
+
 
 	/**
-	 * \brief SD associate getter
-	 * \return the standard deviation cutoff used for association
+	 * \brief Gets the depth threshold used for declaring a hypo an event
+	 * fragment, in combination with m_dEventFragmentAzimuthThreshold.
 	 */
-	double getSdAssociate() const;
+	static double getEventFragmentDepthThreshold();
 
 	/**
-	 * \brief SD prune getter
-	 * \return the standard deviation cutoff used for pruning
+	 * \brief Gets the azimuth threshold used for declaring a hypo an event
+	 * fragment, in combination with m_dEventFragmentDepthThreshold.
 	 */
-	double getSdPrune() const;
+	static double getEventFragmentAzimuthThreshold();
 
 	/**
-	 * \brief Testing locator flag getter
-	 * \return a flag indicating whether to output locator testing files
+	 * \brief Gets a pointer to the Correlation list
+	 * \return Returns a pointer to the correlation list
 	 */
-	bool getTestLocator() const;
+	static CCorrelationList* getCorrelationList();
 
 	/**
-	 * \brief Testing travel times flag getter
-	 * \return a flag indicating whether to output travel times testing files
+	 * \brief Gets a pointer to the CDetection object used to process detections
+	 * made external to glasscore
+	 * \return Returns a pointer to the detection processor
 	 */
-	bool getTestTimes() const;
+	static CDetection* getDetectionProcessor();
+
+	/**
+	 * \brief Gets a pointer to the Hypo list
+	 * \return Returns a pointer to the hypo list
+	 */
+	static CHypoList* getHypoList();
+
+	/**
+	 * \brief Gets a pointer to the Pick list
+	 * \return Returns a pointer to the pick list
+	 */
+	static CPickList* getPickList();
+
+	/**
+	 * \brief Gets a pointer to the Site list
+	 * \return Returns a pointer to the site list
+	 */
+	static CSiteList* getSiteList();
+
+	/**
+	 * \brief Gets a pointer to the Web list
+	 * \return Returns a pointer to the web list
+	 */
+	static CWebList* getWebList();
+
+	/**
+	 * \brief Gets the default nucleation travel time
+	 * \return Returns a shared_ptr to the CTravelTime containing the default
+	 *  nucleation travel time
+	 */
+	static std::shared_ptr<traveltime::CTravelTime>& getDefaultNucleationTravelTime();  // NOLINT
+
+	/**
+	 * \brief Gets the list of association travel times
+	 * \return Returns a shared_ptr to the CTTT containing the list of
+	 * association travel times
+	 */
+	static std::shared_ptr<traveltime::CTTT>& getAssociationTravelTimes();
 
  private:
 	/**
-	 * \brief A double value containing the default number of picks that
-	 * that need to be gathered to trigger the nucleation of an event.
-	 * This value can be overridden in a detection grid (Web) if provided as
-	 * part of a specific grid setup.
+	 * \brief A double value containing the default number of (e.g. Pick,
+	 * Correlation) that need to be gathered to trigger the nucleation of an
+	 * event. This value can be overridden in a detection grid (Web) if provided
+	 * as part of a specific grid setup.
 	 */
-	int nNucleate;
-
-	/**
-	 * \brief A double value containing the default number of closest stations
-	 * to use  when generating a node for a detection array.
-	 * This value can be overridden in a detection grid (Web) if provided as
-	 * part of a specific grid setup.
-	 */
-	int nDetect;
+	static std::atomic<int> m_iNucleationDataThreshold;
 
 	/**
 	 * \brief A double value containing the default viability threshold needed
@@ -414,223 +469,249 @@ class CGlass {
 	 * This value can be overridden in a detection grid (Web) if provided as
 	 * part of a specific grid setup.
 	 */
-	double dThresh;
+	static std::atomic<double> m_dNucleationStackThreshold;
 
 	/**
-	 * \brief A double value containing the standard deviation cutoff used for
-	 * associating a pick with a hypocenter.
+	 * \brief A double value containing the default number of closest stations
+	 * to use  when generating a node for a detection array.
+	 * This value can be overridden in a detection grid (Web) if provided as
+	 * part of a specific grid setup.
 	 */
-	double sdAssociate;
+	static std::atomic<int> m_iNumStationsPerNode;
 
 	/**
-	 * \brief A double value containing the standard deviation cutoff used for
-	 * pruning a pick from a hypocenter.
+	 * \brief A double value containing the cutoff threshold in terms of number
+	 * of standard deviations for associating data (eg. Picks) with a hypocenter.
+	 * The standard deviation is fixed to 1.
 	 */
-	double sdPrune;
+	static std::atomic<double> m_dAssociationSDCutoff;
+
+	/**
+	 * \brief A double value containing the cutoff threshold in terms of number
+	 * of standard deviations for pruning data (eg. Picks) from a hypocenter.
+	 * The standard deviation is fixed to 1.
+	 */
+	static std::atomic<double> m_dPruningSDCutoff;
 
 	/**
 	 * \brief A double value containing the exponential factor used when
 	 * calculating the affinity of a pick with a hypocenter.
 	 */
-	double expAffinity;
-
-	/**
-	 * \brief A double value containing the average station distance in degrees,
-	 * used as the defining value for a taper compensate for station density in
-	 * Hypo::weights()
-	 */
-	double avgDelta;
-
-	/**
-	 * \brief A double value containing the exponent of the gaussian weighting
-	 * kernel in degrees.  It is used to compensate for station density in
-	 * Hypo::weights()
-	 */
-	double avgSigma;
+	static std::atomic<double> m_dPickAffinityExpFactor;
 
 	/**
 	 * \brief A double value containing the factor used to calculate a hypo's
 	 * distance cutoff
 	 */
-	double dCutFactor;
+	static std::atomic<double> m_dDistanceCutoffFactor;
 
 	/**
 	 * \brief A double value containing the percentage used to calculate a
 	 *  hypo's distance cutoff
 	 */
-	double dCutPercentage;
+	static std::atomic<double> m_dDistanceCutoffRatio;
 
 	/**
 	 * \brief A double value containing the minimum distance cutoff in degrees
 	 */
-	double dCutMin;
-
-	/**
-	 * \brief A pointer to a CWeb object containing the detection web
-	 */
-	CWebList *pWebList;
-
-	/**
-	 * \brief A pointer to a CTravelTime object containing
-	 *default travel time for nucleation
-	 */
-	std::shared_ptr<traveltime::CTravelTime> pTrvDefault;
-
-	/**
-	 * \brief A pointer to a CTTT object containing the travel
-	 * time phases and branches used by glasscore for association
-	 */
-	std::shared_ptr<traveltime::CTTT> pTTT;
-
-	/**
-	 * \brief the std::mutex for traveltimes
-	 */
-	mutable std::mutex m_TTTMutex;
-
-	/**
-	 * \brief A pointer to a CSiteList object containing all the sites
-	 * known to glasscore
-	 */
-	CSiteList *pSiteList;
-
-	/**
-	 * \brief A pointer to a CPickList object containing the last n picks sent
-	 * into glasscore (as determined by nPickMax).  Picks passed into pPickList
-	 * are also passed into the pWeb detection web
-	 */
-	CPickList *pPickList;
-
-	/**
-	 * \brief A pointer to a CPickList object containing the last n hypos sent
-	 * into glasscore (as determined by nPickMax)
-	 */
-	CHypoList *pHypoList;
-
-	/**
-	 * \brief A pointer to a CCorrelationList object containing the last n
-	 * correlations sent into glasscore
-	 */
-	CCorrelationList *pCorrelationList;
-
-	/**
-	 * \brief A pointer to a CDetection object used to process detections sent
-	 * into glasscore
-	 */
-	CDetection *pDetection;
+	static std::atomic<double> m_dMinDistanceCutoff;
 
 	/**
 	 * \brief An integer containing the maximum number of picks stored by
 	 * pPickList
 	 */
-	int nPickMax;
+	static std::atomic<int> m_iMaxNumPicks;
 
 	/**
 	 * \brief An integer containing the maximum number of correlations stored by
 	 * pCorrelationList
 	 */
-	int nCorrelationMax;
+	static std::atomic<int> m_iMaxNumCorrelations;
 
 	/**
 	 * \brief An integer containing the maximum number of picks stored by
 	 * the vector in a site
 	 */
-	int nSitePickMax;
+	static std::atomic<int> m_iMaxNumPicksPerSite;
 
 	/**
 	 * \brief An integer containing the maximum number of hypocenters stored by
 	 * pHypoList
 	 */
-	int nHypoMax;
+	static std::atomic<int> m_iMaxNumHypos;
 
 	/**
 	 * \brief Window in seconds to check for 'duplicate' picks at same station.
 	 * If new pick is within window, it isn't added to pick list.
 	 */
-	double pickDuplicateWindow;
+	static std::atomic<double> m_dPickDuplicateTimeWindow;
 
 	/**
 	 * \brief Time Window to check for matching correlations in seconds. Used
 	 * for checking for duplicate correlations and associating correlations to
 	 * hypos
 	 */
-	double correlationMatchingTWindow;
+	static std::atomic<double> m_dCorrelationMatchingTimeWindow;
 
 	/**
 	 * \brief Distance Window to check for matching correlations in degrees.
 	 * Used for checking for duplicate correlations and associating correlations
 	 * to hypos
 	 */
-	double correlationMatchingXWindow;
+	static std::atomic<double> m_dCorrelationMatchingDistanceWindow;
+
+	/**
+	 * \brief Time Window to check for merging hypos in seconds. Used
+	 * for checking when hypos can be merged together
+	 */
+	static std::atomic<double> m_dHypoMergingTimeWindow;
+
+	/**
+	 * \brief Distance Window to check for merging hypos in degrees.
+	 * Used for checking when hypos can be merged together
+	 */
+	static std::atomic<double> m_dHypoMergingDistanceWindow;
+
+	/**
+	 * \brief age of correlations before allowing cancel in seconds
+	 */
+	static std::atomic<int> m_iCorrelationCancelAge;
 
 	/**
 	 * \brief Azimuth Window to check for matching beams in degrees. Used for
 	 * nucleating beams and associating beams to hypos
 	 */
-	double beamMatchingAzimuthWindow;
+	static std::atomic<double> m_dBeamMatchingAzimuthWindow;
 
 	/**
 	 * \brief Distance Window to check for matching beams in degrees. Used for
 	 * nucleating beams and associating beams to hypos
 	 */
-	double beamMatchingDistanceWindow;
-
-	/**
-	 * \brief age of correlations before allowing cancel in seconds
-	 */
-	int correlationCancelAge;
+	static std::atomic<double> m_dBeamMatchingDistanceWindow;
 
 	/**
 	 * \brief Bool to decide when to print out travel-times.
 	 */
-	bool testTimes;
+	static std::atomic<bool> m_bTestTravelTimes;
 
 	/**
 	 * \brief Bool to decide when to print files for locator test
 	 */
-	bool testLocator;
+	static std::atomic<bool> m_bTestLocator;
 
 	/**
 	 * \brief Flag indicating whether to output info for graphics.
 	 */
-	bool graphicsOut;
+	static std::atomic<bool> m_bGraphicsOut;
 
 	/**
 	 * \brief Output locations info for graphics.
 	 */
-	std::string graphicsOutFolder;
+	static std::string m_sGraphicsOutFolder;
 
 	/**
 	 * \brief For graphics, the step size for output.
 	 */
-	double graphicsStepKM;
+	static std::atomic<double> m_dGraphicsStepKM;
 
 	/**
 	 * \brief For graphics, the number of steps from hypocenter.
 	 */
-	int graphicsSteps;
+	static std::atomic<int> m_iGraphicsSteps;
 
 	/**
 	 * \brief Maximum number of processing cycles a hypo can do without having
 	 * new data associated
 	 */
-	int iCycleLimit;
+	static std::atomic<int> m_iProcessLimit;
 
 	/**
 	 * \brief boolean to use a locator which minimizes TT as opposed to
 	 * maximizes significance functions
 	 */
-	bool minimizeTTLocator;
+	static std::atomic<bool> m_bMinimizeTTLocator;
 
 	/**
 	 * \brief number of data required for reporting a hypo
 	 */
-	double nReportCut;
+	static std::atomic<int> m_iReportingDataThreshold;
 
 	/**
 	 * \brief A double value containing the default viability threshold needed
 	 * to for reporting a hypo
 	 */
-	double dReportThresh;
+	static std::atomic<double> m_dReportingStackThreshold;
+
+	/**
+	 * \brief The depth threshold for declaring a hypo an event fragment, in
+	 * combination with m_dEventFragmentAzimuthThreshold.
+	 */
+	static std::atomic<double> m_dEventFragmentDepthThreshold;
+
+	/**
+	 * \brief The azimuth threshold for declaring a hypo an event fragment, in
+	 * combination with m_dEventFragmentDepthThreshold.
+	 */
+	static std::atomic<double> m_dEventFragmentAzimuthThreshold;
+
+	/**
+	 * \brief An IGlassSend interface pointer used to send communication
+	 * (such as output data), to outside the glasscore library
+	 */
+	static glasscore::IGlassSend *m_pExternalInterface;
+
+	/**
+	 * \brief A pointer to a CWeb object containing the detection web
+	 */
+	static CWebList * m_pWebList;
+
+	/**
+	 * \brief A pointer to a CSiteList object containing all the sites
+	 * known to glasscore
+	 */
+	static CSiteList * m_pSiteList;
+
+	/**
+	 * \brief A pointer to a CPickList object containing the last n picks sent
+	 * into glasscore (as determined by nPickMax).  Picks passed into pPickList
+	 * are also passed into the pWeb detection web
+	 */
+	static CPickList * m_pPickList;
+
+	/**
+	 * \brief A pointer to a CPickList object containing the last n hypos sent
+	 * into glasscore (as determined by nPickMax)
+	 */
+	static CHypoList * m_pHypoList;
+
+	/**
+	 * \brief A pointer to a CCorrelationList object containing the last n
+	 * correlations sent into glasscore
+	 */
+	static CCorrelationList * m_pCorrelationList;
+
+	/**
+	 * \brief A pointer to a CDetection object used to process detections sent
+	 * into glasscore
+	 */
+	static CDetection * m_pDetectionProcessor;
+
+	/**
+	 * \brief A pointer to a CTravelTime object containing
+	 *default travel time for nucleation
+	 */
+	static std::shared_ptr<traveltime::CTravelTime> m_pDefaultNucleationTravelTime;
+
+	/**
+	 * \brief A pointer to a CTTT object containing the travel
+	 * time phases and branches used by glasscore for association
+	 */
+	static std::shared_ptr<traveltime::CTTT> m_pAssociationTravelTimes;
+
+	/**
+	 * \brief the std::mutex for traveltimes
+	 */
+	static std::mutex m_TTTMutex;
 };
 }  // namespace glasscore
 #endif  // GLASS_H

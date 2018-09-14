@@ -3,11 +3,11 @@
 {
   "Cmd": "Global",
   "Name": "GlobalCulled",
-  "Nets": ["IU", "US", "II", "CU", "G", "GE", "IM", "IC", "GT", "C", "AU", "MX", "AT"],
-  "Resolution": 100.0,
-  "Detect": 30,
-  "Nucleate": 5,
-  "Z": [
+  "IncludeNetworks": ["IU", "US", "II", "CU", "G", "GE", "IM", "IC", "GT", "C", "AU", "MX", "AT"],
+  "NodeResolution": 100.0,
+  "NumStationsPerNode": 30,
+  "NucleationDataThreshold": 5,
+  "DepthLayers": [
       10.0,
       50.0,
       100.0,

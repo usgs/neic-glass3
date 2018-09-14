@@ -24,62 +24,46 @@ CCorrelation::CCorrelation() {
 
 // ---------------------------------------------------------CCorrelation
 CCorrelation::CCorrelation(std::shared_ptr<CSite> correlationSite,
-							double correlationTime, int correlationId,
+							double correlationTime,
 							std::string correlationIdString, std::string phase,
 							double orgTime, double orgLat, double orgLon,
 							double orgZ, double corrVal) {
 	clear();
 
-	// nullcheck
-	if (correlationSite == NULL) {
-		return;
-	}
-
-	initialize(correlationSite, correlationTime, correlationId,
+	initialize(correlationSite, correlationTime,
 				correlationIdString, phase, orgTime, orgLat, orgLon, orgZ,
 				corrVal);
 }
 
 // ---------------------------------------------------------CCorrelation
 CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
-							int correlationId, CSiteList *pSiteList) {
+							CSiteList *pSiteList) {
 	clear();
 
 	// null check json
 	if (correlation == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CCorrelation::CCorrelation: NULL json communication.");
+				"CCorrelation::CCorrelation: NULL json correlation message.");
 		return;
 	}
 
-	// check cmd
-	if (correlation->HasKey("Cmd")
-			&& ((*correlation)["Cmd"].GetType() == json::ValueType::StringVal)) {
-		std::string cmd = (*correlation)["Cmd"].ToString();
-
-		if (cmd != "Correlation") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
-					"CCorrelation::CCorrelation: Non-Correlation message passed"
-					" in.");
-			return;
-		}
-	} else if (correlation->HasKey("Type")
+	// check Type
+	if (correlation->HasKey("Type")
 			&& ((*correlation)["Type"].GetType() == json::ValueType::StringVal)) {
 		std::string type = (*correlation)["Type"].ToString();
 
 		if (type != "Correlation") {
 			glassutil::CLogit::log(
 					glassutil::log_level::warn,
-					"CCorrelation::CCorrelation: Non-Correlation message passed"
-					" in.");
+					"CCorrelation::CCorrelation: Non-Correlation type message"
+					" passed in.");
 			return;
 		}
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CCorrelation::CCorrelation: Missing required Cmd or Type Key.");
+				"CCorrelation::CCorrelation: Missing required Type Key.");
 		return;
 	}
 
@@ -187,7 +171,7 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 		return;
 	}
 
-	// pid
+	// ID
 	// get the correlation id
 	if (correlation->HasKey("ID")
 			&& ((*correlation)["ID"].GetType() == json::ValueType::StringVal)) {
@@ -299,7 +283,7 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 	}
 
 	// pass to initialization function
-	if (!initialize(site, tcorr, correlationId, pid, phs, tori, lat, lon, z,
+	if (!initialize(site, tcorr, pid, phs, tori, lat, lon, z,
 					corr)) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -308,12 +292,11 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 		return;
 	}
 
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
 	// remember input json for hypo message generation
 	// note move to init?
-	// std::shared_ptr<json::Object> jcorr(new json::Object(*correlation));
-	jCorrelation = correlation;
+	m_JSONCorrelation = correlation;
 }
 
 // ---------------------------------------------------------~CCorrelation
@@ -323,73 +306,59 @@ CCorrelation::~CCorrelation() {
 
 // ---------------------------------------------------------clear
 void CCorrelation::clear() {
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
-	pSite.reset();
-	wpHypo.reset();
-	jCorrelation.reset();
+	m_wpSite.reset();
+	m_wpHypo.reset();
+	m_JSONCorrelation.reset();
 
-	sAss = "";
-	sPhs = "";
-	sPid = "";
-	idCorrelation = 0;
-	tCorrelation = 0;
-	tOrg = 0;
-	dLat = 0;
-	dLon = 0;
-	dZ = 0;
-	dCorrelation = 0;
+	m_sPhaseName = "";
+	m_sID = "";
+	m_tCorrelation = 0;
+	m_tOrigin = 0;
+	m_dLatitude = 0;
+	m_dLongitude = 0;
+	m_dDepth = 0;
+	m_dCorrelation = 0;
 
-	tGlassCreate = glassutil::CDate::now();
+	m_tCreate = glassutil::CDate::now();
 }
 
+// ---------------------------------------------------------initialize
 bool CCorrelation::initialize(std::shared_ptr<CSite> correlationSite,
-								double correlationTime, int correlationId,
+								double correlationTime,
 								std::string correlationIdString,
 								std::string phase, double orgTime,
 								double orgLat, double orgLon, double orgZ,
 								double corrVal) {
 	clear();
 
+	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
+
+	m_wpSite = correlationSite;
+	m_sPhaseName = phase;
+	m_sID = correlationIdString;
+	m_tCorrelation = correlationTime;
+	m_tOrigin = orgTime;
+
+	// set geographic location
+	m_dLatitude = orgLat;
+	m_dLongitude = orgLon;
+	m_dDepth = orgZ;
+
+	m_dCorrelation = corrVal;
+
 	// nullcheck
 	if (correlationSite == NULL) {
 		return (false);
 	}
 
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-
-	pSite = correlationSite;
-	sPhs = phase;
-	sPid = correlationIdString;
-	idCorrelation = correlationId;
-	tCorrelation = correlationTime;
-	tOrg = orgTime;
-
-	// set geographic location
-	dLat = orgLat;
-	dLon = orgLon;
-	dZ = orgZ;
-
-	dCorrelation = corrVal;
-
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CCorrelation::initialize: pSite:" + pSite->getScnl()
-					+ "; tCorrelation:" + std::to_string(tCorrelation)
-					+ "; idCorrelation:" + std::to_string(idCorrelation)
-					+ "; sPid:" + sPid + "; sPhs:" + sPhs + "; tOrg:"
-					+ std::to_string(tOrg) + "; dLat:" + std::to_string(dLat)
-					+ "; dLon:" + std::to_string(dLon) + "; dZ:"
-					+ std::to_string(dZ) + "; dCorrelation:"
-					+ std::to_string(dCorrelation));
-
 	return (true);
 }
 
 // ---------------------------------------------------------addHypo
-void CCorrelation::addHypo(std::shared_ptr<CHypo> hyp, std::string ass,
-							bool force) {
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+void CCorrelation::addHypoReference(std::shared_ptr<CHypo> hyp, bool force) {
+	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -401,16 +370,14 @@ void CCorrelation::addHypo(std::shared_ptr<CHypo> hyp, std::string ass,
 
 	// Add hypo data reference to this pick
 	if (force == true) {
-		wpHypo = hyp;
-		sAss = ass;
-	} else if (wpHypo.expired() == true) {
-		wpHypo = hyp;
-		sAss = ass;
+		m_wpHypo = hyp;
+	} else if (m_wpHypo.expired() == true) {
+		m_wpHypo = hyp;
 	}
 }
 
-// ---------------------------------------------------------remHypo
-void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
+// ---------------------------------------------------------removeHypo
+void CCorrelation::removeHypoReference(std::shared_ptr<CHypo> hyp) {
 	// nullcheck
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -418,109 +385,90 @@ void CCorrelation::remHypo(std::shared_ptr<CHypo> hyp) {
 		return;
 	}
 
-	remHypo(hyp->getPid());
+	removeHypoReference(hyp->getID());
 }
 
-void CCorrelation::remHypo(std::string pid) {
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
+// ---------------------------------------------------------removeHypo
+void CCorrelation::removeHypoReference(std::string pid) {
+	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
 
 	// is the pointer still valid
-	if (auto pHypo = wpHypo.lock()) {
+	if (auto pHypo = m_wpHypo.lock()) {
 		// Remove hypo reference from this pick
-		if (pHypo->getPid() == pid) {
-			clearHypo();
+		if (pHypo->getID() == pid) {
+			clearHypoReference();
 		}
 	} else {
 		// remove invalid pointer
-		clearHypo();
+		clearHypoReference();
 	}
 }
 
-void CCorrelation::clearHypo() {
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-	wpHypo.reset();
+// ---------------------------------------------------------clearHypo
+void CCorrelation::clearHypoReference() {
+	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
+	m_wpHypo.reset();
 }
 
+// ---------------------------------------------------------getCorrelation
 double CCorrelation::getCorrelation() const {
-	return (dCorrelation);
+	return (m_dCorrelation);
 }
 
-double CCorrelation::getLat() const {
-	return (dLat);
+// ---------------------------------------------------------getLatitude
+double CCorrelation::getLatitude() const {
+	return (m_dLatitude);
 }
 
-double CCorrelation::getLon() const {
-	return (dLon);
+// ---------------------------------------------------------getLongitude
+double CCorrelation::getLongitude() const {
+	return (m_dLongitude);
 }
 
-double CCorrelation::getZ() const {
-	return (dZ);
+// ---------------------------------------------------------getDepth
+double CCorrelation::getDepth() const {
+	return (m_dDepth);
 }
 
-int CCorrelation::getIdCorrelation() const {
-	return (idCorrelation);
+// ---------------------------------------------------------getJSONCorrelation
+const std::shared_ptr<json::Object>& CCorrelation::getJSONCorrelation() const {
+	return (m_JSONCorrelation);
 }
 
-const std::shared_ptr<json::Object>& CCorrelation::getJCorrelation() const {
-	return (jCorrelation);
+// ---------------------------------------------------------getHypo
+const std::shared_ptr<CHypo> CCorrelation::getHypoReference() const {
+	std::lock_guard<std::recursive_mutex> guard(m_CorrelationMutex);
+	return (m_wpHypo.lock());
 }
 
-const std::shared_ptr<CHypo> CCorrelation::getHypo() const {
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-	return (wpHypo.lock());
+// ---------------------------------------------------------getSite
+const std::shared_ptr<CSite> CCorrelation::getSite() const {
+	return (m_wpSite.lock());
 }
 
-const std::string CCorrelation::getHypoPid() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(correlationMutex);
-	std::string hypoPid = "";
-
-	// make sure we have a hypo
-	if (wpHypo.expired() == true) {
-		return (hypoPid);
-	}
-
-	// get the hypo
-	std::shared_ptr<CHypo> pHypo = getHypo();
-	if (pHypo != NULL) {
-		// get the hypo pid
-		hypoPid = pHypo->getPid();
-	}
-
-	return (hypoPid);
+// ---------------------------------------------------------getPhaseName
+const std::string& CCorrelation::getPhaseName() const {
+	return (m_sPhaseName);
 }
 
-const std::shared_ptr<CSite>& CCorrelation::getSite() const {
-	return (pSite);
+// ---------------------------------------------------------getID
+const std::string& CCorrelation::getID() const {
+	return (m_sID);
 }
 
-const std::string& CCorrelation::getAss() const {
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-	return (sAss);
-}
-
-void CCorrelation::setAss(std::string ass) {
-	std::lock_guard<std::recursive_mutex> guard(correlationMutex);
-	sAss = ass;
-}
-
-const std::string& CCorrelation::getPhs() const {
-	return (sPhs);
-}
-
-const std::string& CCorrelation::getPid() const {
-	return (sPid);
-}
-
+// ---------------------------------------------------------getTCorrelation
 double CCorrelation::getTCorrelation() const {
-	return (tCorrelation);
+	return (m_tCorrelation);
 }
 
-double CCorrelation::getTGlassCreate() const {
-	return (tGlassCreate);
+// ---------------------------------------------------------getTGlassCreate
+double CCorrelation::getTCreate() const {
+	return (m_tCreate);
 }
 
-double CCorrelation::getTOrg() const {
-	return (tOrg);
+// ---------------------------------------------------------getTOrigin
+double CCorrelation::getTOrigin() const {
+	return (m_tOrigin);
 }
 
 }  // namespace glasscore

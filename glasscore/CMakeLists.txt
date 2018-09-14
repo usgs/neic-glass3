@@ -23,6 +23,10 @@ include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 # uuid
 include(${CMAKE_DIR}/uuid.cmake)
 
+# ----- GLASS3 LIBRARIES ----- #
+# util
+include(${CMAKE_DIR}/include_neic-glass3_util.cmake)
+
 # ----- SET PROJECT INCLUDE DIRECTORIES ----- #
 include_directories(${PROJECT_SOURCE_DIR}/glassutil/include)
 include_directories(${PROJECT_SOURCE_DIR}/traveltime/include)
@@ -54,7 +58,7 @@ include(${CMAKE_DIR}/cpplint.cmake)
 # ----- RUN UNIT TESTS ----- #
 file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
 # WARNING: linking order of libraries matters for G++
-set(TEST_LIBRARIES ${SuperEasyJSON_LIBRARIES})
+set(TEST_LIBRARIES ${SuperEasyJSON_LIBRARIES} ${util_LIBRARIES})
 if (UNIX AND NOT APPLE)
     set(TEST_LIBRARIES ${TEST_LIBRARIES} ${LIBUUID_LIBRARY})
 endif (UNIX AND NOT APPLE)

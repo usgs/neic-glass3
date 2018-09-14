@@ -11,7 +11,7 @@
 #define LONGITUDE -112.79
 #define DEPTH 10
 #define RESOLUTION 25
-#define NODEID "1234567890"
+#define NODEID "testNode.45.900000.-112.790000.10.000000"
 
 #define SITEJSON "{\"Cmd\":\"Site\",\"Elv\":2326.000000,\"Lat\":45.822170,\"Lon\":-112.451000,\"Site\":\"LRM.EHZ.MB.--\",\"Use\":true}"  // NOLINT
 #define TRAVELTIME 122
@@ -28,27 +28,27 @@ TEST(NodeTest, Construction) {
 	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
 	LATITUDE,
 														LONGITUDE, DEPTH,
-														RESOLUTION,
-														std::string(NODEID));
+														RESOLUTION
+														);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testNode->getName().c_str())<<
 			"Node Name Matches";
 
 	// latitude
-	ASSERT_EQ(LATITUDE, testNode->getLat())<< "Node Latitude Check";
+	ASSERT_EQ(LATITUDE, testNode->getLatitude())<< "Node Latitude Check";
 
 	// longitude
-	ASSERT_EQ(LONGITUDE, testNode->getLon())<< "Node Longitude Check";
+	ASSERT_EQ(LONGITUDE, testNode->getLongitude())<< "Node Longitude Check";
 
 	// depth
-	ASSERT_EQ(DEPTH, testNode->getZ())<< "Node Depth Check";
+	ASSERT_EQ(DEPTH, testNode->getDepth())<< "Node Depth Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testNode->getResolution())<< "Node Resolution Check";
 
 	// id
-	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->getPid().c_str())<<
+	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->getID().c_str())<<
 			"Node ID Matches";
 
 	// site list
@@ -64,15 +64,14 @@ TEST(NodeTest, SiteOperations) {
 	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
 	LATITUDE,
 														LONGITUDE, DEPTH,
-														RESOLUTION,
-														std::string(NODEID));
+														RESOLUTION);
 
 	// create json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
 					json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct sites using JSON objects
-	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
 
 	// create new shared pointer to the node
 	std::shared_ptr<glasscore::CNode> sharedTestNode(testNode);

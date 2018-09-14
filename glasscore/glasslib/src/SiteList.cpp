@@ -16,70 +16,47 @@
 namespace glasscore {
 
 // ---------------------------------------------------------CSiteList
-CSiteList::CSiteList(int sleepTime, int checkInterval) {
-	// setup thread
-	m_iSleepTimeMS = sleepTime;
-	m_iStatusCheckInterval = checkInterval;
-	std::time(&tLastStatusCheck);
-
-	m_bRunBackgroundLoop = true;
-	m_BackgroundThread = new std::thread(&CSiteList::backgroundLoop, this);
-	m_bThreadStatus = true;
-
+CSiteList::CSiteList(int numThreads, int sleepTime, int checkInterval)
+		: glass3::util::ThreadBaseClass("SiteList", sleepTime, numThreads,
+										checkInterval) {
 	clear();
+
+	// start up the thread
+	start();
 }
 
 // ---------------------------------------------------------~CSiteList
 CSiteList::~CSiteList() {
 	clear();
-
-	// stop the thread
-	m_bRunBackgroundLoop = false;
-
-	// wait for the thread to finish
-	m_BackgroundThread->join();
-
-	// delete it
-	delete (m_BackgroundThread);
-
-	m_BackgroundThread = NULL;
 }
 
 // ---------------------------------------------------------clear
 void CSiteList::clear() {
 	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	pGlass = NULL;
 
 	// clear sites
-	clearSites();
-
-	std::time(&m_tLastChecked);
-	iHoursWithoutPicking = -1;
-	iHoursBeforeLookingUp = -1;
-	m_iMaxPicksPerHour = -1;
-}
-
-// ---------------------------------------------------------clearSites
-void CSiteList::clearSites() {
-	std::lock_guard<std::mutex> guard(vSiteMutex);
-	// remove all picks from sites
-	for (auto site : vSite) {
-		site->clearVPick();
+	for (auto site : m_vSite) {
+		site->clear();
 	}
 
 	// clear the vector and map
-	vSite.clear();
-	mSite.clear();
-	mLookup.clear();
+	m_vSite.clear();
+	m_mSite.clear();
+	m_mLastTimeSiteLookedUp.clear();
+
+	m_iMaxHoursWithoutPicking = -1;
+	m_iHoursBeforeLookingUp = -1;
+	m_iMaxPicksPerHour = -1;
+	m_tLastChecked = std::time(NULL);
 }
 
-// ---------------------------------------------------------dispatch
-bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
+// -------------------------------------------------------receiveExternalMessage
+bool CSiteList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CSiteList::dispatch: NULL json communication.");
+				"CSiteList::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
 
@@ -89,19 +66,10 @@ bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
 		// dispatch to appropriate function based on Cmd value
 		json::Value v = (*com)["Cmd"].ToString();
 
-		// clear all sites
-		if (v == "ClearGlass") {
-			clearSites();
-
-			// ClearGlass is also relevant to other glass
-			// components, return false so they also get a
-			// chance to process it
-			return (false);
-		}
-
 		// get the current site list
 		if (v == "ReqSiteList") {
-			return (reqSiteList());
+			generateSiteListMessage();
+			return (true);
 		}
 	}
 
@@ -113,11 +81,11 @@ bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
 
 		// add or update a site
 		if (v == "StationInfo") {
-			return (addSite(com));
+			return (addSiteFromJSON(com));
 		}
 		// add a list of sites
 		if (v == "StationInfoList") {
-			return (addSiteList(com));
+			return (addListOfSitesFromJSON(com));
 		}
 	}
 
@@ -125,8 +93,8 @@ bool CSiteList::dispatch(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
-// ---------------------------------------------------------addSite
-bool CSiteList::addSite(std::shared_ptr<json::Object> com) {
+// ---------------------------------------------------------addSiteFromJSON
+bool CSiteList::addSiteFromJSON(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -152,10 +120,10 @@ bool CSiteList::addSite(std::shared_ptr<json::Object> com) {
 	}
 
 	// create a new a site from the json message;
-	CSite * site = new CSite(com, pGlass);
+	CSite * site = new CSite(com);
 
 	// make sure a site was actually created
-	if (site->getScnl() == "") {
+	if (site->getSCNL() == "") {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CSiteList::addSite: Site not created.");
 		delete (site);
@@ -168,8 +136,8 @@ bool CSiteList::addSite(std::shared_ptr<json::Object> com) {
 	return (addSite(newSite));
 }
 
-// ---------------------------------------------------------addSiteList
-bool CSiteList::addSiteList(std::shared_ptr<json::Object> com) {
+// ---------------------------------------------------------addSiteListFromJSON
+bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(
@@ -208,10 +176,10 @@ bool CSiteList::addSiteList(std::shared_ptr<json::Object> com) {
 						json::Object>(v.ToObject());
 
 				// create a new a site from the station json;
-				CSite * site = new CSite(siteObj, pGlass);
+				CSite * site = new CSite(siteObj);
 
 				// make sure a site was actually created
-				if (site->getScnl() == "") {
+				if (site->getSCNL() == "") {
 					glassutil::CLogit::log(
 							glassutil::log_level::warn,
 							"CSiteList::addSiteList: Site not created.");
@@ -246,9 +214,9 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 	}
 
 	// check to see if we have an existing site
-	std::shared_ptr<CSite> oldSite = getSite(site->getScnl());
+	std::shared_ptr<CSite> oldSite = getSite(site->getSCNL());
 
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
 
 	// check if we already had this site
 	if (oldSite) {
@@ -256,21 +224,17 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 		oldSite->update(site.get());
 
 		// pass updated site to webs
-		if (pGlass) {
-			if (pGlass->getWebList()) {
-				pGlass->getWebList()->addSite(oldSite);
-			}
+		if (CGlass::getWebList()) {
+			CGlass::getWebList()->addSite(oldSite);
 		}
 	} else {
 		// add new site to list and map
-		vSite.push_back(site);
-		mSite[site->getScnl()] = site;
+		m_vSite.push_back(site);
+		m_mSite[site->getSCNL()] = site;
 
 		// pass new site to webs
-		if (pGlass) {
-			if (pGlass->getWebList()) {
-				pGlass->getWebList()->addSite(site);
-			}
+		if (CGlass::getWebList()) {
+			CGlass::getWebList()->addSite(site);
 		}
 	}
 
@@ -280,24 +244,9 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 
 	// since we've just added or updated
 	// set the lookup time to now
-	mLookup[site->getScnl()] = tNow;
+	m_mLastTimeSiteLookedUp[site->getSCNL()] = tNow;
 
 	return (true);
-}
-
-// ---------------------------------------------------------getSiteCount
-int CSiteList::getSiteCount() {
-	std::lock_guard<std::mutex> guard(vSiteMutex);
-	int size = static_cast<int>(vSite.size());
-	// Return number of sites in site list (for iteration)
-	return (size);
-}
-
-// ---------------------------------------------------------getSite
-std::shared_ptr<CSite> CSiteList::getSite(int ix) {
-	std::lock_guard<std::mutex> guard(vSiteMutex);
-	// Return shared pointer to site from vector given index
-	return (vSite[ix]);
 }
 
 // ---------------------------------------------------------getSite
@@ -308,12 +257,12 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string scnl) {
 		return (NULL);
 	}
 
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
 
 	// lookup the site in the map by scnl
-	auto itsite = mSite.find(scnl);
-	if (itsite != mSite.end()) {
-		return (mSite[scnl]);
+	auto itsite = m_mSite.find(scnl);
+	if (itsite != m_mSite.end()) {
+		return (m_mSite[scnl]);
 	}
 
 	// nothing found
@@ -374,20 +323,20 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 	// this section is above the getSite() call so that
 	// we could be constantly requesting new station information,
 	// which seems useful.
-	if (iHoursBeforeLookingUp >= 0) {
+	if (m_iHoursBeforeLookingUp >= 0) {
 		// what time is it
 		time_t tNow;
 		std::time(&tNow);
 
 		// get what time this station has been looked up before
 		int tLookup = 0;
-		auto itsite = mLookup.find(scnl);
-		if (itsite != mLookup.end()) {
-			tLookup = mLookup[scnl];
+		auto itsite = m_mLastTimeSiteLookedUp.find(scnl);
+		if (itsite != m_mLastTimeSiteLookedUp.end()) {
+			tLookup = m_mLastTimeSiteLookedUp[scnl];
 		}
 
 		// only ask for a station occasionally
-		if ((tNow - tLookup) > (60 * 60 * iHoursBeforeLookingUp)) {
+		if ((tNow - tLookup) > (60 * 60 * m_iHoursBeforeLookingUp)) {
 			// construct request json message
 			std::shared_ptr<json::Object> request = std::make_shared<
 					json::Object>(json::Object());
@@ -405,12 +354,10 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 			glassutil::CLogit::log(sLog);
 
 			// send request
-			if (pGlass != NULL) {
-				pGlass->send(request);
-			}
+			CGlass::sendExternalMessage(request);
 
 			// remember when we tried
-			mLookup[scnl] = tNow;
+			m_mLastTimeSiteLookedUp[scnl] = tNow;
 		}
 	}
 
@@ -424,13 +371,14 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 	return (NULL);
 }
 
-std::vector<std::shared_ptr<CSite>> CSiteList::getSiteList() {
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+// ---------------------------------------------------------getListOfSites
+std::vector<std::shared_ptr<CSite>> CSiteList::getListOfSites() {
+	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
 
 	std::vector<std::shared_ptr<CSite>> siteList;
 
 	// move through whole vector
-	for (const auto &site : vSite) {
+	for (const auto &site : m_vSite) {
 		siteList.push_back(site);
 	}
 
@@ -438,9 +386,8 @@ std::vector<std::shared_ptr<CSite>> CSiteList::getSiteList() {
 	return (siteList);
 }
 
-// ---------------------------------------------------------getSiteList
-bool CSiteList::reqSiteList() {
-	// construct request json message
+// ------------------------------------------------------generateSiteListMessage
+std::shared_ptr<json::Object> CSiteList::generateSiteListMessage(bool send) {
 	std::shared_ptr<json::Object> sitelistObj = std::make_shared<json::Object>(
 			json::Object());
 	(*sitelistObj)["Cmd"] = "SiteList";
@@ -448,10 +395,10 @@ bool CSiteList::reqSiteList() {
 	// array to hold data
 	json::Array stationList;
 
-	std::lock_guard<std::mutex> guard(vSiteMutex);
+	std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
 
 	// move through whole vector
-	for (const auto &site : vSite) {
+	for (const auto &site : m_vSite) {
 		json::Object stationObj;
 		double lat;
 		double lon;
@@ -467,17 +414,17 @@ bool CSiteList::reqSiteList() {
 		stationObj["Lat"] = lat;
 		stationObj["Lon"] = lon;
 		stationObj["Z"] = elv;
-		stationObj["Qual"] = site->getQual();
+		stationObj["Qual"] = site->getQuality();
 		stationObj["Use"] = site->getEnable();
-		stationObj["UseForTele"] = site->getUseForTele();
+		stationObj["UseForTele"] = site->getUseForTeleseismic();
 
 		stationObj["Sta"] = site->getSite();
-		if (site->getComp() != "") {
-			stationObj["Comp"] = site->getComp();
+		if (site->getComponent() != "") {
+			stationObj["Comp"] = site->getComponent();
 		}
-		stationObj["Net"] = site->getNet();
-		if (site->getLoc() != "") {
-			stationObj["Loc"] = site->getLoc();
+		stationObj["Net"] = site->getNetwork();
+		if (site->getLocation() != "") {
+			stationObj["Loc"] = site->getLocation();
 		}
 
 		// add to station list
@@ -486,109 +433,29 @@ bool CSiteList::reqSiteList() {
 
 	(*sitelistObj)["SiteList"] = stationList;
 
-	if (pGlass) {
-		pGlass->send(sitelistObj);
+	if (send == true) {
+		CGlass::sendExternalMessage(sitelistObj);
 	}
 
-	return (true);
+	return (sitelistObj);
 }
 
-const CGlass* CSiteList::getGlass() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	return (pGlass);
+// ------------------------------------------------------size
+int CSiteList::size() const {
+	std::lock_guard<std::recursive_mutex> vSiteGuard(m_SiteListMutex);
+	return (m_vSite.size());
 }
 
-void CSiteList::setGlass(CGlass* glass) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	pGlass = glass;
-}
-
-int CSiteList::getVSiteSize() const {
-	std::lock_guard<std::mutex> vSiteGuard(vSiteMutex);
-	return (vSite.size());
-}
-
-void CSiteList::backgroundLoop() {
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CSiteList::backgroundLoop: startup");
-
-	while (m_bRunBackgroundLoop == true) {
-		// make sure we're still running
-		if (m_bRunBackgroundLoop == false)
-			break;
-
-		// update thread status
-		setStatus(true);
-
-		// check the sites
-		checkSites();
-
-		// give up some time at the end of the loop
-		std::this_thread::sleep_for(std::chrono::milliseconds(m_iSleepTimeMS));
-	}
-
-	setStatus(false);
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CSiteList::backgroundLoop: thread exit");
-}
-
-void CSiteList::setStatus(bool status) {
-	std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
-	// update thread status
-	m_bThreadStatus = status;
-}
-
-bool CSiteList::statusCheck() {
-	// if we have a negative check interval,
-	// we shouldn't worry about thread status checks.
-	if (m_iStatusCheckInterval < 0) {
-		return (true);
-	}
-
-	// thread is dead if we're not running
-	if (m_bRunBackgroundLoop == false) {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
-				"CSiteList::statusCheck(): m_bRunBackgroundLoop is false.");
-		return (false);
-	}
-
-	// see if it's time to check
-	time_t tNow;
-	std::time(&tNow);
-	if ((tNow - tLastStatusCheck) >= m_iStatusCheckInterval) {
-		// get the thread status
-		std::lock_guard<std::mutex> statusGuard(m_StatusMutex);
-
-		// The thread is dead
-		if (m_bThreadStatus != true) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
-					"CSiteList::statusCheck(): Thread"
-							" did not respond in the last"
-							+ std::to_string(m_iStatusCheckInterval)
-							+ "seconds.");
-
-			return (false);
-		}
-
-		// mark check as false until next time
-		// if the thread is alive, it'll mark it
-		// as true again.
-		m_bThreadStatus = false;
-
-		// remember the last time we checked
-		tLastStatusCheck = tNow;
-	}
-
-	// everything is awesome
-	return (true);
-}
-
-void CSiteList::checkSites() {
+// ------------------------------------------------------work
+glass3::util::WorkState CSiteList::work() {
 	// don't bother if we're not configured to check sites
-	if ((iHoursWithoutPicking < 0) && (m_iMaxPicksPerHour < 0)) {
-		return;
+	if ((getMaxHoursWithoutPicking() < 0) && (getHoursBeforeLookingUp() < 0)
+			&& (getMaxPicksPerHour() < 0)) {
+		return (glass3::util::WorkState::Idle);
+	}
+
+	if (size() <= 0) {
+		return (glass3::util::WorkState::Idle);
 	}
 
 	// what time is it
@@ -600,7 +467,7 @@ void CSiteList::checkSites() {
 	// didn't seem like a parameter that would be changed
 	if ((tNow - m_tLastChecked) < (60 * 60)) {
 		// no
-		return;
+		return (glass3::util::WorkState::Idle);
 	}
 
 	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
@@ -608,12 +475,11 @@ void CSiteList::checkSites() {
 	// remember when we last checked
 	m_tLastChecked = tNow;
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
-			"CSiteList::checkSites: checking for sites not picking");
+	glassutil::CLogit::log(glassutil::log_level::debug,
+							"CSiteList::work: checking for sites not picking");
 
 	// for each used site in the site list
-	for (auto aSite : vSite) {
+	for (auto aSite : m_vSite) {
 		// skip disabled sites
 		if (aSite->getEnable() == false) {
 			continue;
@@ -626,15 +492,16 @@ void CSiteList::checkSites() {
 		bool disableSite = false;
 
 		// check for sites that are not picking
-		if (iHoursWithoutPicking > 0) {
+		if (m_iMaxHoursWithoutPicking > 0) {
 			// when was the last pick added to this site
 			time_t tLastPickAdded = aSite->getTLastPickAdded();
 
 			// have we not seen data?
-			if ((tNow - tLastPickAdded) > (60 * 60 * iHoursWithoutPicking)) {
+			if ((tNow - tLastPickAdded)
+					> (60 * 60 * m_iMaxHoursWithoutPicking)) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
-						"CSiteList::checkSites: Removing " + aSite->getScnl()
+						"CSiteList::work: Removing " + aSite->getSCNL()
 								+ " for not picking in "
 								+ std::to_string(tNow - tLastPickAdded)
 								+ " seconds ");
@@ -645,13 +512,13 @@ void CSiteList::checkSites() {
 		// check for sites that are picking too much
 		if (m_iMaxPicksPerHour > 0) {
 			// how many picks since last check
-			int picksSinceCheck = aSite->getPicksSinceCheck();
+			int picksSinceCheck = aSite->getPickCountSinceCheck();
 
 			// we check every hour, so picks since check is picks per hour
 			if (picksSinceCheck > m_iMaxPicksPerHour) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
-						"CSiteList::checkSites: Removing " + aSite->getScnl()
+						"CSiteList::work: Removing " + aSite->getSCNL()
 								+ " for picking more than "
 								+ std::to_string(m_iMaxPicksPerHour)
 								+ " in the last hour ("
@@ -660,7 +527,7 @@ void CSiteList::checkSites() {
 			}
 
 			// reset for next check
-			aSite->setPicksSinceCheck(0);
+			aSite->setPickCountSinceCheck(0);
 		}
 
 		if (disableSite == true) {
@@ -668,19 +535,17 @@ void CSiteList::checkSites() {
 			aSite->setUse(false);
 
 			// remove site from webs
-			if (pGlass) {
-				if (pGlass->getWebList()) {
-					pGlass->getWebList()->remSite(aSite);
-				}
+			if (CGlass::getWebList()) {
+				CGlass::getWebList()->removeSite(aSite);
 			}
 		}
 
 		// update thread status
-		setStatus(true);
+		setThreadHealth();
 	}
 
 	// for each unused site in the site list
-	for (auto aSite : vSite) {
+	for (auto aSite : m_vSite) {
 		// skip disabled sites
 		if (aSite->getEnable() == false) {
 			continue;
@@ -693,15 +558,16 @@ void CSiteList::checkSites() {
 		bool enableSite = false;
 
 		// check or sites that started picking
-		if (iHoursWithoutPicking > 0) {
+		if (m_iMaxHoursWithoutPicking > 0) {
 			// when was the last pick added to this site
 			time_t tLastPickAdded = aSite->getTLastPickAdded();
 
 			// have we seen data?
-			if ((tNow - tLastPickAdded) < (60 * 60 * iHoursWithoutPicking)) {
+			if ((tNow - tLastPickAdded)
+					< (60 * 60 * m_iMaxHoursWithoutPicking)) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
-						"CSiteList::checkSites: Added " + aSite->getScnl()
+						"CSiteList::work: Added " + aSite->getSCNL()
 								+ " because it has picked within "
 								+ std::to_string(tNow - tLastPickAdded)
 								+ " seconds ");
@@ -713,13 +579,13 @@ void CSiteList::checkSites() {
 		// check for sites who's rate has fallen
 		if (m_iMaxPicksPerHour > 0) {
 			// how many picks since last check
-			int picksSinceCheck = aSite->getPicksSinceCheck();
+			int picksSinceCheck = aSite->getPickCountSinceCheck();
 
 			// we check every hour, so picks since check is picks per hour
 			if (picksSinceCheck < m_iMaxPicksPerHour) {
 				glassutil::CLogit::log(
 						glassutil::log_level::debug,
-						"CSiteList::checkSites: Added " + aSite->getScnl()
+						"CSiteList::work: Added " + aSite->getSCNL()
 								+ " for picking less than "
 								+ std::to_string(m_iMaxPicksPerHour)
 								+ " in the last hour ("
@@ -728,7 +594,7 @@ void CSiteList::checkSites() {
 			}
 
 			// reset for next check
-			aSite->setPicksSinceCheck(0);
+			aSite->setPickCountSinceCheck(0);
 		}
 
 		if (enableSite == true) {
@@ -736,45 +602,45 @@ void CSiteList::checkSites() {
 			aSite->setUse(true);
 
 			// add site to webs
-			if (pGlass) {
-				if (pGlass->getWebList()) {
-					pGlass->getWebList()->addSite(aSite);
-				}
+			if (CGlass::getWebList()) {
+				CGlass::getWebList()->addSite(aSite);
 			}
 		}
 
 		// update thread status
-		setStatus(true);
+		setThreadHealth();
 	}
+
+	return (glass3::util::WorkState::OK);
 }
 
-void CSiteList::setHoursWithoutPicking(int hoursWithoutPicking) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	iHoursWithoutPicking = hoursWithoutPicking;
+// ----------------------------------------------------setMaxHoursWithoutPicking
+void CSiteList::setMaxHoursWithoutPicking(int hoursWithoutPicking) {
+	m_iMaxHoursWithoutPicking = hoursWithoutPicking;
 }
 
-int CSiteList::getHoursWithoutPicking() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	return (iHoursWithoutPicking);
+// ----------------------------------------------------getMaxHoursWithoutPicking
+int CSiteList::getMaxHoursWithoutPicking() const {
+	return (m_iMaxHoursWithoutPicking);
 }
 
+// ----------------------------------------------------setHoursBeforeLookingUp
 void CSiteList::setHoursBeforeLookingUp(int hoursBeforeLookingUp) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	iHoursBeforeLookingUp = hoursBeforeLookingUp;
+	m_iHoursBeforeLookingUp = hoursBeforeLookingUp;
 }
 
+// ----------------------------------------------------getHoursBeforeLookingUp
 int CSiteList::getHoursBeforeLookingUp() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
-	return (iHoursBeforeLookingUp);
+	return (m_iHoursBeforeLookingUp);
 }
 
+// ----------------------------------------------------setMaxPicksPerHour
 void CSiteList::setMaxPicksPerHour(int maxPicksPerHour) {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	m_iMaxPicksPerHour = maxPicksPerHour;
 }
 
+// ----------------------------------------------------getMaxPicksPerHour
 int CSiteList::getMaxPicksPerHour() const {
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
 	return (m_iMaxPicksPerHour);
 }
 

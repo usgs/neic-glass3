@@ -30,6 +30,7 @@ if(RUN_CPPCHECK)
       --template="[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)"
       --verbose
       --suppress=nullPointerRedundantCheck
+      --suppress=constStatement
       --error-exitcode=1
       ${SRCS} ${HDRS}
       COMMENT "Running cppcheck" VERBATIM

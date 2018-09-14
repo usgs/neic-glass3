@@ -7,9 +7,11 @@
 #ifndef PICKLIST_H
 #define PICKLIST_H
 
+#include <threadbaseclass.h>
+
 #include <json.h>
+#include <set>
 #include <vector>
-#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -17,32 +19,45 @@
 #include <thread>
 #include <queue>
 #include <random>
+#include <atomic>
 #include "Glass.h"
+#include "Pick.h"
 
 namespace glasscore {
 
 // forward declarations
-class CGlass;
 class CSite;
 class CSiteList;
-class CPick;
 class CHypo;
+
+/**
+ * \brief CPickList comparison function
+ *
+ * PickCompare contains the comparison function used by std::multiset when
+ * inserting, sorting, and retrieving picks.
+ */
+struct PickCompare {
+    bool operator()(const std::shared_ptr<CPick> &lhs,
+                    const std::shared_ptr<CPick> &rhs) const {
+    	if (lhs->getTPick() < rhs->getTPick()) {
+    		return(true);
+    	}
+        return (false);
+    }
+};
 
 /**
  * \brief glasscore pick list class
  *
- * The CPickList class is the class that maintains a std::map of all the
+ * The CPickList class is the class that maintains a std::multiset of all the
  * waveform arrival picks being considered by glasscore.
  *
- * CPickList also maintains a std::vector mapping the double pick arrival time
- * (in julian seconds) to the std::string pick id
  *
- * CPickList contains functions to support pick scavenging, resoultion, rogue
- * tracking, and new data input.
+ * CPickList contains functions to support pick parsing, scavenging, and nucleation.
  *
  * CPickList uses smart pointers (std::shared_ptr).
  */
-class CPickList {
+class CPickList : public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief CPickList constructor
@@ -68,14 +83,7 @@ class CPickList {
 	/**
 	 * \brief CPickList clear function
 	 */
-	void clear();
-
-	/**
-	 * \brief Remove all picks from pick list
-	 *
-	 * Clears all picks from the vector and map
-	 */
-	void clearPicks();
+	void clear() override;
 
 	/**
 	 * \brief CPickList communication receiving function
@@ -84,26 +92,26 @@ class CPickList {
 	 * (such as configuration or input data), from outside the
 	 * glasscore library, or it's parent CGlass.
 	 *
-	 * Supports Pick (add pick data to list) and ClearGlass
-	 * (clear all pick data) inputs.
+	 * Supports Pick (add pick data to list) input.
 	 *
 	 * \param com - A pointer to a json::object containing the
 	 * communication.
 	 * \return Returns true if the communication was handled by CPickList,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CPickList add pick function
 	 *
-	 * The function used by CPickList to add a pick to the vector
-	 * and map, if the new pick causes the number of picks in the vector/map
-	 * to exceed the configured maximum, remove the oldest pick
-	 * from the list/map, as well as the list of picks in CSite.
+	 * The function used by CPickList to add a pick to the multiset, if the new
+	 * pick causes the number of picks in the multiset to exceed the configured
+	 * maximum, remove the oldest pick from the multiset, as well as try to
+	 * remove it from the shorter list of picks in CSite.
 	 *
 	 * This function will generate a json formatted request for site
-	 * (station) information if the pick is from an unknown site.
+	 * (station) information if the pick is from an unknown site via the
+	 * CSiteList getSite() function.
 	 *
 	 * This function will first attempt to associate the pick with
 	 * an existing hypocenter via calling the CHypoList::associate()
@@ -118,47 +126,18 @@ class CPickList {
 	bool addPick(std::shared_ptr<json::Object> pick);
 
 	/**
-	 * \brief CPickList get pick function
+	 * \brief Checks if the provided pick time is a duplicate
 	 *
-	 * Given the integer id of a pick get a shared_ptr to that pick.
+	 * Compares the given pick time with the existing pick list times, in order
+	 * to determine  whether the given pick is a duplicate of an existing pick.
 	 *
-	 * \param idPick - An integer value containing the id of the pick to get
-	 * \return Returns a shared_ptr to the found CPick, or null if no pick
-	 * found.
+	 * \param newTPick - A double containing the arrival time of the pick
+	 * \param newSCNL - A std::string containing the scnl of the new pick
+	 * \param tDuration - A double containing the allowable matching time window
+	 * duration in seconds
+	 * \return Returns true if pick is a duplicate, false otherwise
 	 */
-	std::shared_ptr<CPick> getPick(int idPick);
-
-	/**
-	 * \brief Get insertion index for pick
-	 *
-	 * This function looks up the proper insertion index for the vector given an
-	 * arrival time using a binary search to identify the index element
-	 * is less than the time provided, and the next element is greater.
-	 *
-	 * \param tPick - A double value containing the arrival time to use, in
-	 * julian seconds of the pick to add.
-	 * \return Returns the insertion index, if the insertion is before
-	 * the beginning, -1 is returned, if insertion is after the last element,
-	 * the id of the last element is returned, if the vector is empty,
-	 * -2 is returned.
-	 */
-	int indexPick(double tPick);
-
-	/**
-	 * \brief Print basic values to screen for pick list
-	 *
-	 * Causes CPickList to print basic values to the console for
-	 * each pick in the list
-	 */
-	void listPicks();
-
-	/**
-	 * \brief Checks if picks is duplicate
-	 *
-	 * Takes a new pick and compares with list of picks.
-	 * True if pick is a duplicate
-	 */
-	bool checkDuplicate(CPick *newPick, double window);
+	bool checkDuplicate(double newTPick, std::string newSCNL, double tDuration);
 
 	/**
 	 * \brief Search for any associable picks that match hypo
@@ -169,222 +148,113 @@ class CPickList {
 	 *
 	 * \param hyp - A shared_ptr to a CHypo object containing the hypocenter
 	 * to attempt to associate to.
-	 * \param tDuration - A double value containing the duration to search picks
+	 * \param tWindow - A double value containing the window to search picks
 	 * from origin time in seconds, defaults to 2400.0
 	 * \return Returns true if any picks were associated to the hypocenter,
 	 * false otherwise.
 	 */
-	bool scavenge(std::shared_ptr<CHypo> hyp, double tDuration = 2400.0);
+	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2400.0);
 
 	/**
-	 * \brief Generate rogue list for tuning process
-	 *
-	 * Search through all picks within a provided number of seconds from the
-	 * given origin time, creating a vector of all picks that could be
-	 * associated with given hypocenter ID, but are actually either unassociated
-	 * or associated with another hypocenter
-	 *
-	 * \param pidHyp - A std::string containing the id of the hypocenter to use
-	 * \param tOrg - A double value containing the origin time in julian seconds
-	 * of the hypocenter to use.
-	 * \param tDuration - A double value containing the duration to search picks
-	 * from origin time in seconds, defaults to 2400.0
-	 */
-	std::vector<std::shared_ptr<CPick>> rogues(std::string pidHyp, double tOrg,
-												double tDuration = 2400.0);
-
-	/**
-	 * \brief check to see if each thread is still functional
-	 *
-	 * Checks each thread to see if it is still responsive.
-	 */
-	bool statusCheck();
-
-	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
-	 */
-	void setGlass(CGlass* glass);
-
-	/**
-	 * \brief CSiteList getter
-	 * \return the CSiteList pointer
+	 * \brief Get the CSiteList pointer used by this pick list for site lookups
+	 * \return Return a pointer to the CSiteList class used by this pick list
 	 */
 	const CSiteList* getSiteList() const;
 
 	/**
-	 * \brief CSiteList setter
-	 * \param siteList - the CSiteList pointer
+	 * \brief Set the CSiteList pointer used by this pick list for site lookups
+	 * \param siteList - a pointer to the CSiteList class used by this pick list
 	 */
 	void setSiteList(CSiteList* siteList);
 
 	/**
-	 * \brief nPick getter
-	 * \return the nPick
+	 * \brief Get the maximum allowed size of this pick list
+	 * \return Return an integer containing the maximum allowed size of this
+	 * pick list
 	 */
-	int getNPick() const;
+	int getMaxAllowablePickCount() const;
 
 	/**
-	 * \brief nPickMax getter
-	 * \return the nPickMax
+	 * \brief Set the maximum allowed size of this pick list
+	 * \param pickMax -  an integer containing the maximum allowed size of this
+	 * pick list
 	 */
-	int getNPickMax() const;
+	void setMaxAllowablePickCount(int pickMax);
 
 	/**
-	 * \brief nPickMax Setter
-	 * \param picknMax - the nPickMax
+	 * \brief Get the total number of picks processed by this list
+	 * \return Return an integer containing the total number of picks processed
+	 * by this list
 	 */
-	void setNPickMax(int picknMax);
+	int getCountOfTotalPicksProcessed() const;
 
 	/**
-	 * \brief nPickTotal getter
-	 * \return the nPickTotal
+	 * \brief Get the current number of picks contained in this list
+	 * \return Return an integer containing the current number of picks
+	 * contained in this list
 	 */
-	int getNPickTotal() const;
+	int length() const;
 
 	/**
-	 * \brief Get the current size of the pick list
+	 * \brief Get a vector of picks that fall within a time window
+	 *
+	 * Get a vector of picks that fall within the provided time window from t1
+	 * to t2
+	 *
+	 * \param t1 - A double value containing the beginning of the time window in
+	 * julian seconds
+	 * \param t2 - A double value containing the end of the time window in
+	 * julian seconds
+	 * \return Return a std::vector of std::weak_ptrs to the picks within the
+	 * time window
 	 */
-	int getVPickSize() const;
+	std::vector<std::weak_ptr<CPick>> getPicks(double t1, double t2);
 
- private:
 	/**
-	 * \brief Process the next pick on the queue
+	 * \brief PickList work function
 	 *
 	 * Attempts to associate and nuclate the next pick on the queue.
+	 * \return returns glass3::util::WorkState::OK if work was successful,
+	 * glass3::util::WorkState::Error if not.
 	 */
-	void processPick();
+	glass3::util::WorkState work() override;
 
-	/**
-	 * \brief the job sleep
-	 *
-	 * The function that performs the sleep between jobs
-	 */
-	void jobSleep();
-
-	/**
-	 * \brief thread status update function
-	 *
-	 * Updates the status for the current thread
-	 * \param status - A boolean flag containing the status to set
-	 */
-	void setStatus(bool status);
-
-	/**
-	 * \brief A pointer to the parent CGlass class, used to look up site
-	 * information, configuration values, call association functions, and debug
-	 * flags
-	 */
-	CGlass *pGlass;
-
+ private:
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites for
 	 * lookups
 	 */
-	CSiteList *pSiteList;
-
-	/**
-	 * \brief An integer containing the total number of picks ever added to
-	 * CPickList
-	 */
-	int nPickTotal;
+	CSiteList * m_pSiteList;
 
 	/**
 	 * \brief An integer containing the maximum number of picks allowed in
 	 * CPickList. This value is overridden by pGlass->nPickMax if provided.
 	 * Defaults to 10000.
 	 */
-	int nPickMax;
+	int m_iMaxAllowablePickCount;
 
 	/**
-	 * \brief An integer containing the current number of picks in CPickList.
-	 * Used to generate the pick id.
+	 * \brief An integer containing the total number of picks ever added to
+	 * CPickList
 	 */
-	int nPick;
+	int m_iCountOfTotalPicksProcessed;
 
 	/**
-	 * \brief A std::vector mapping the arrival time of each pick in CPickList
-	 * to it's integer pick id. The elements in this vector object are inserted
-	 * in a manner to keep it in sequential time order from oldest to youngest.
+	 * \brief A std::multiset containing each pick in the list in sequential
+	 * time order from oldest to youngest.
 	 */
-	std::vector<std::pair<double, int>> vPick;
-
-	/**
-	 * \brief A std::map containing a std::shared_ptr to each pick in CPickList
-	 * indexed by the integer pick id.
-	 */
-	std::map<int, std::shared_ptr<CPick>> mPick;
+	std::multiset<std::shared_ptr<CPick>, PickCompare> m_msPickList;
 
 	/**
 	 * \brief A std::queue containing a std::shared_ptr to each pick in that
 	 * needs to be processed
 	 */
-	std::queue<std::shared_ptr<CPick>> qProcessList;
+	std::queue<std::shared_ptr<CPick>> m_qPicksToProcess;
 
 	/**
-	 * \brief the std::mutex for qProcessList
+	 * \brief the std::mutex for m_qPicksToProcess
 	 */
-	std::mutex m_qProcessMutex;
-
-	/**
-	 * \brief the std::vector of std::threads
-	 */
-	std::vector<std::thread> vProcessThreads;
-
-	/**
-	 * \brief An integer containing the number of
-	 * threads in the pool.
-	 */
-	int m_iNumThreads;
-
-	/**
-	 * \brief A std::map containing the status of each thread
-	 */
-	std::map<std::thread::id, bool> m_ThreadStatusMap;
-
-	/**
-	 * \brief An integer containing the amount of
-	 * time to sleep in milliseconds between picks.
-	 */
-	int m_iSleepTimeMS;
-
-	/**
-	 * \brief the std::mutex for m_ThreadStatusMap
-	 */
-	std::mutex m_StatusMutex;
-
-	/**
-	 * \brief the integer interval in seconds after which the work thread
-	 * will be considered dead. A negative check interval disables thread
-	 * status checks
-	 */
-	int m_iStatusCheckInterval;
-
-	/**
-	 * \brief the time_t holding the last time the thread status was checked
-	 */
-	time_t tLastStatusCheck;
-
-	/**
-	 * \brief the boolean flags indicating that the process threads
-	 * should keep running.
-	 */
-	bool m_bRunProcessLoop;
-
-	/**
-	 * \brief A recursive_mutex to control threading access to vPick.
-	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
-	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
-	 * However a recursive_mutex allows us to maintain the original class
-	 * design as delivered by the contractor.
-	 */
-	mutable std::recursive_mutex m_vPickMutex;
+	std::mutex m_PicksToProcessMutex;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CPickList.
@@ -394,11 +264,6 @@ class CPickList {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_PickListMutex;
-
-	/**
-	 * \brief A random engine used to generate random numbers
-	 */
-	std::default_random_engine m_RandomGenerator;
 };
 }  // namespace glasscore
 #endif  // PICKLIST_H

@@ -3,21 +3,25 @@
 {
 	"Cmd": "Grid",
 	"Name": "ContinentalUS",
-	"Resolution": 50.0,
-	"Rows": 70,
-	"Cols": 132,
-	"Lat": 37.5,
-	"Lon": -97.0,
-	"Z": [ 10.0 ],
-	"Detect": 16,
-	"Nucleate": 7,
-	"Thresh": 5.5,
-	"Update":false, # False because glass-app does not do site lookups.
+	"NodeResolution": 50.0,
+	"NumberOfRows": 70,
+	"NumberOfColumns": 132,
+	"CenterLatitude": 37.5,
+	"CenterLongitude": -97.0,
+	"DepthLayers": [ 10.0 ],
+	"NumStationsPerNode": 16,
+	"NucleationDataThreshold": 7,
+	"NucleationStackThreshold": 0.5,
+	"UpdateGrid":false, # False because glass-app does not do site lookups.
 	"SaveGrid":false,
 	"NucleationPhases":{
 	    "Phase1": {
       		"PhaseName": "P",
       		"TravFile": "./P.trv"
+  		},
+	    "Phase2": {
+      		"PhaseName": "S",
+      		"TravFile": "./S.trv"
   		}
 	}
 }

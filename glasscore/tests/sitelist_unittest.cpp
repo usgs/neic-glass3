@@ -15,18 +15,18 @@
 TEST(SiteListTest, Construction) {
 	glassutil::CLogit::disable();
 
+	printf("[ startup  ]\n");
+
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
 
+	printf("[ construct]\n");
+
 	// assert default values
 	// lists
-	ASSERT_EQ(0, testSiteList->getVSiteSize())<< "vSite is empty";
+	ASSERT_EQ(0, testSiteList->size())<< "vSite is empty";
 
-	// pointers
-	ASSERT_EQ(NULL, testSiteList->getGlass())<< "pGlass null";
-
-	// cleanup
-	delete (testSiteList);
+	printf("[ shutdown ]\n");
 }
 
 // test various site operations
@@ -47,8 +47,8 @@ TEST(SiteListTest, SiteOperations) {
 				json::Object(json::Deserialize(std::string(SITE4JSON))));
 
 	// construct sites using JSON objects
-	glasscore::CSite * testSite = new glasscore::CSite(siteJSON, NULL);
-	glasscore::CSite * testSite4 = new glasscore::CSite(site4JSON, NULL);
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
+	glasscore::CSite * testSite4 = new glasscore::CSite(site4JSON);
 
 
 	// create new shared pointer to the sites
@@ -58,18 +58,15 @@ TEST(SiteListTest, SiteOperations) {
 	// test adding sites to site list via all three methods
 	// shared_ptr, json, and dispatch (also json)
 	testSiteList->addSite(sharedTestSite);
-	testSiteList->addSite(site2JSON);
-	testSiteList->dispatch(site3JSON);
+	testSiteList->addSiteFromJSON(site2JSON);
+	testSiteList->receiveExternalMessage(site3JSON);
 	int expectedSize = 3;
-	ASSERT_EQ(expectedSize, testSiteList->getSiteCount())<< "Added Sites";
+	ASSERT_EQ(expectedSize, testSiteList->size())<< "Added Sites";
 
 
 	// test updating a site, and get site
 	testSiteList->addSite(sharedTestSite4);
 	std::shared_ptr<glasscore::CSite> updatedSite = testSiteList->getSite(
-			sharedTestSite4->getScnl());
+			sharedTestSite4->getSCNL());
 	ASSERT_FALSE(updatedSite->getUse())<< "Updated site";
-
-	// cleanup
-	delete (testSiteList);
 }

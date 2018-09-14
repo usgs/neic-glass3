@@ -13,6 +13,8 @@
 #include <utility>
 #include <mutex>
 #include <tuple>
+#include <atomic>
+
 #include "Geo.h"
 #include "Link.h"
 
@@ -63,10 +65,9 @@ class CNode {
 	 * for this node in kilometers
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometers
-	 * \param nodeID - A std::string containing the node id.
 	 */
-	CNode(std::string name, double lat, double lon, double z, double resolution,
-			std::string nodeID);
+	CNode(std::string name, double lat, double lon, double z,
+			double resolution);
 
 	/**
 	 * \brief CNode destructor
@@ -99,16 +100,19 @@ class CNode {
 	 * for this node in kilometers
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometers
-	 * \param nodeID - A std::string containing the node id.
 	 */
 	bool initialize(std::string name, double lat, double lon, double z,
-					double resolution, std::string nodeID);
+					double resolution);
 
 	/**
 	 * \brief CNode node-site and site-node linker
 	 *
 	 * Add a link to/from this node to the provided site
 	 * using the provided travel time
+	 *
+	 * NOTE: The node is required as parameter because issues occurred linking
+	 * and unlinking (deleting) using this-> The solution was to pass a pointer
+	 * to the node in this function.
 	 *
 	 * \param travelTime1 - A double value containing the first travel time to
 	 * use for the link
@@ -132,9 +136,9 @@ class CNode {
 	bool unlinkSite(std::shared_ptr<CSite> site);
 
 	/**
-	 * \brief CNode unlink last site from node
+	 * \brief CNode unlink last by distance site from node
 	 *
-	 * Remove the last site to/from this node
+	 * Remove the last site by distance to/from this node
 	 *
 	 * \return - Returns true if successful, false otherwise
 	 */
@@ -157,26 +161,27 @@ class CNode {
 	/**
 	 * \brief CNode significance function
 	 *
-	 * Given an observed time and a like to a site, compute the best
-	 * significance value from the traveltime(s) contained in the link
+	 * Given an observed time and a link to a site, compute the best
+	 * significance value from the traveltime(s) contained in the link to this
+	 * node.
 	 *
 	 * \param tObservedTT - A double value containing the observed travel time
 	 * \param link - A SiteLink containing the travel times to use
 	 * \return Returns best significance if there is at least one valid travel
 	 * time, -1.0 otherwise
 	 */
-	double getBestSig(double tObservedTT, SiteLink link);
+	double getBestSignificance(double tObservedTT, SiteLink link);
 
 	/**
-	 * \brief CNode get site function
+	 * \brief CNode site used function
 	 *
-	 * Given a site id, get the site if it is used by the node
+	 * Given a site id, check to see if the site is used by the node
 	 *
-	 * \param sScnl - A string containing the id of the site to get
-	 * \return Returns a shared pointer to the CSite object if found, null
-	 * otherwise
+	 * \param siteID - A string containing the id of the site to get
+	 * \return Returns a shared_ptr to a the CSite used by the node, NULL if
+	 * not found
 	 */
-	std::shared_ptr<CSite> getSite(std::string sScnl);
+	std::shared_ptr<CSite> getSite(std::string siteID);
 
 	/**
 	 * \brief CNode get last site function
@@ -191,144 +196,151 @@ class CNode {
 	/**
 	 * \brief CNode site link sort function
 	 *
-	 * Sort the list of sites linked to this node
+	 * Sort the list of sites linked to this node by distance from node
 	 */
 	void sortSiteLinks();
 
 	/**
-	 * \brief Sites string getter
+	 * \brief Generates a string that contains each site link, including the
+	 * siteID, latitude, longitude, and depth. This string is generated when
+	 * optionally creating web files that are used for tuning the web using
+	 * third party programs.
 	 * \return the sites string
 	 */
 	std::string getSitesString();
 
 	/**
-	 * \brief Site links count getter
-	 * \return the site links count
+	 * \brief Gets the number of sites linked to this node
+	 * \return Returns an integer containing the count of sites linked to this
+	 * node
 	 */
 	int getSiteLinksCount() const;
 
 	/**
-	 * \brief Enabled flag getter
-	 * \return the enabled flag
+	 * \brief Gets a flag indicating that the node is enabled for nucleation.
+	 * Typically a node is only disabled when it is being reconfigured
+	 * \return Returns a boolean flag, true if the node is enabled, false
+	 * otherwise
 	 */
 	bool getEnabled() const;
 
 	/**
-	 * \brief Enabled flag setter
-	 * \param enabled - the enabled flag
+	 * \brief Sets a flag indicating that the node is enabled for nucleation.
+	 * Typically a node is only disabled when it is being reconfigured
+	 * \param enabled - a boolean flag, true if the node is enabled, false
+	 * otherwise
 	 */
 	void setEnabled(bool enabled);
 
 	/**
-	 * \brief Latitude getter
-	 * \return the latitude
+	 * \brief Get the latitude for this node
+	 * \return Returns a double containing the node latitude in degrees
 	 */
-	double getLat() const;
+	double getLatitude() const;
 
 	/**
-	 * \brief Longitude getter
-	 * \return the longitude
+	 * \brief Get the longitude for this node
+	 * \return Returns a double containing the node longitude in degrees
 	 */
-	double getLon() const;
+	double getLongitude() const;
 
 	/**
-	 * \brief Depth getter
-	 * \return the Depth
+	 * \brief Get the depth for this node
+	 * \return Returns a double containing the node depth in kilometers
 	 */
-	double getZ() const;
+	double getDepth() const;
 
 	/**
-	 * \brief CGeo getter
-	 * \return the node location as a glassutil::CGeo object.
+	 * \brief Get the combined node location (latitude, longitude, depth) as
+	 * a CGeo object
+	 * \return Returns a glassutil::CGeo object containing the combined location.
 	 */
 	glassutil::CGeo getGeo() const;
 
 	/**
-	 * \brief Resolution getter
-	 * \return the Resolution
+	 * \brief Gets the resolution of the web that created this node
+	 * \return Returns a double value containing the resolution of the web
+	 * that created this node in kilometers
 	 */
 	double getResolution() const;
 
 	/**
-	 * \brief CWeb pointer getter
-	 * \return the CWeb pointer
+	 * \brief Gets a pointer to the parent CWeb that created and holds this node
+	 * \return Returns a pointer to the parent CWeb
 	 */
 	CWeb* getWeb() const;
 
 	/**
-	 * \brief CWeb pointer setter
-	 * \param web - the CWeb pointer
+	 * \brief Sets a pointer to the parent CWeb that created and holds this node
+	 * \param web - a pointer to the parent CWeb
 	 */
 	void setWeb(CWeb* web);
 
 	/**
-	 * \brief Name getter
-	 * \return the name
+	 * \brief Gets the name of the parent CWeb that created and holds this node
+	 * This name is used to ensure that only one node triggers per web during
+	 * site nucleation
+	 * \return Returns a std::string containing the web name
 	 */
 	const std::string& getName() const;
 
 	/**
-	 * \brief Pid getter
-	 * \return the pid
+	 * \brief Get the unique id for this web
+	 * \return Returns a std::string containing the node web
 	 */
-	const std::string& getPid() const;
+	std::string getID() const;
 
  private:
 	/**
 	 * \brief A pointer to the parent CWeb class, used get configuration,
-	 * values, perform significance calculations, and debug flags
+	 * values
 	 */
-	CWeb *pWeb;
+	CWeb * m_pWeb;
 
 	/**
 	 * \brief Name of the web subnet that this node is associated with.
 	 * This attribute is used for web level tracking and dynamics such
 	 * as removing a named subnet with the 'RemoveWeb' command.
 	 */
-	std::string sName;
-
-	/**
-	 * \brief A std::string containing the string unique id of this node
-	 */
-	std::string sPid;
+	std::string m_sName;
 
 	/**
 	 * \brief A double value containing this node's latitude in degrees.
 	 */
-	double dLat;
+	std::atomic<double> m_dLatitude;
 
 	/**
 	 * \brief A double value containing this node's longitude in degrees.
 	 */
-	double dLon;
+	std::atomic<double> m_dLongitude;
 
 	/**
 	 * \brief A double value containing this node's depth in kilometers.
 	 */
-	double dZ;
+	std::atomic<double> m_dDepth;
 
 	/**
 	 * \brief A double value containing this node's spatial resolution
 	 * (to other nodes) in kilometers.
 	 */
-	double dResolution;
+	std::atomic<double> m_dResolution;
 
 	/**
 	 * \brief A boolean flag indicating whether this node is enabled for
-	 * nucleation
+	 * nucleation. Nodes are disabled when they are being reconfigured.
 	 */
-	bool bEnabled;
+	std::atomic<bool> m_bEnabled;
 
 	/**
 	 * \brief A std::vector of tuples linking node to site
 	 * {shared site pointer, travel time 1, travel time 2}
 	 */
-	std::vector<SiteLink> vSite;
+	std::vector<SiteLink> m_vSiteLinkList;
 
 	/**
 	 * \brief A mutex to control threading access to vSite.
 	 */
-	mutable std::mutex vSiteMutex;
+	mutable std::mutex m_SiteLinkListMutex;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CNode.
@@ -337,7 +349,7 @@ class CNode {
 	 * However a recursive_mutex allows us to maintain the original class
 	 * design as delivered by the contractor.
 	 */
-	mutable std::recursive_mutex nodeMutex;
+	mutable std::recursive_mutex m_NodeMutex;
 };
 }  // namespace glasscore
 #endif  // NODE_H

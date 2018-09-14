@@ -10,36 +10,44 @@
 #include <json.h>
 #include <memory>
 #include <string>
+#include <set>
 #include <vector>
-#include <map>
 #include <utility>
+#include <atomic>
+#include "Correlation.h"
 
 namespace glasscore {
 
 // forward declarations
 class CSite;
 class CSiteList;
-class CCorrelation;
 class CHypo;
-class CGlass;
+
+/**
+ * \brief CCorrelationList comparison function
+ *
+ * CorrelationCompare contains the comparison function used by std::multiset when
+ * inserting, sorting, and retrieving correlations.
+ */
+struct CorrelationCompare {
+	bool operator()(const std::shared_ptr<CCorrelation> &lhs,
+					const std::shared_ptr<CCorrelation> &rhs) const {
+		if (lhs->getTCorrelation() < rhs->getTCorrelation()) {
+			return (true);
+		}
+		return (false);
+	}
+};
 
 /**
  * \brief glasscore correlation list class
  *
- * The CCorrelationList class is the class that encapsulates everything
- * necessary to represent a waveform arrival correlation, including arrival
- * time, phase id,and an unique identifier.  The CCorrelationList class is also
- * a node in the detection graph database.
+ * The CCorrelationList class is the class that maintains a std::multiset of all
+ * the correlations being considered by glasscore.
  *
- * CCorrelationList contains functions to support nucleation of a new event
- * basedon the correlation.
+ * CCorrelationList contains functions to support correlation parsing,
+ * scavenging, and the creation of a new event hypocenter based on the correlation.
  *
- * CCorrelationList maintains a graph database link between it and the the site
- * (station)the correlation was made at.
- *
- * CCorrelationList also maintains a vector of CHypo objects represent the graph
- * database links between  this correlation and various hypocenters.  A single
- * correlation may belinked to multiple hypocenters
  *
  * CCorrelationList uses smart pointers (std::shared_ptr).
  */
@@ -61,13 +69,6 @@ class CCorrelationList {
 	void clear();
 
 	/**
-	 * \brief Remove all correlations from correlation list
-	 *
-	 * Clears all correlations from the vector and map
-	 */
-	void clearCorrelations();
-
-	/**
 	 * \brief CCorrelationList communication receiving function
 	 *
 	 * The function used by CCorrelationList to receive communication
@@ -81,19 +82,19 @@ class CCorrelationList {
 	 * \return Returns true if the communication was handled by CCorrelationList,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CCorrelationList add correlation function
 	 *
-	 * The function used by CCorrelationList to add a correlation to the vector
-	 * and map, if the new correlation causes the number of correlations in the
-	 * vector/map to exceed the configured maximum, remove the oldest
-	 * correlation from the list/map, as well as the list of correlations in
-	 * CSite.
+	 * The function used by CCorrelationList to add a correlation to multiset,
+	 * if the new correlation causes the number of correlations in the
+	 * multiset to exceed the configured maximum, remove the oldest
+	 * correlation from the multiset.
 	 *
 	 * This function will generate a json formatted request for site
-	 * (station) information if the correlation is from an unknown site.
+	 * (station) information if the correlation is from an unknown site via the
+	 * CSiteList getSite() function.
 	 *
 	 * This function will first attempt to associate the correlation with
 	 * an existing hypocenter via calling the CHypoList::associate()
@@ -104,193 +105,126 @@ class CCorrelationList {
 	 * \return Returns true if the correlation was usable and added by
 	 * CCorrelationList, false otherwise
 	 */
-	bool addCorrelation(std::shared_ptr<json::Object> com);
+	bool addCorrelationFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
-	 * \brief CCorrelationList get correlation function
+	 * \brief Checks if the provided correlation is sduplicate
 	 *
-	 * Given the integer id of a correlation get a shared_ptr to that correlation.
-	 *
-	 * \param idCorrelation - An integer value containing the id of the
-	 * correlation to get
-	 * \return Returns a shared_ptr to the found CCorrelation, or null if no
-	 * correlation found.
-	 */
-	std::shared_ptr<CCorrelation> getCorrelation(int idCorrelation);
-
-	/**
-	 * \brief Get insertion index for correlation
-	 *
-	 * This function looks up the proper insertion index for the vector given an
-	 * arrival time using a binary search to identify the index element
-	 * is less than the time provided, and the next element is greater.
-	 *
-	 * \param tCorrelation - A double value containing the arrival time to use, in
-	 * julian seconds of the correlation to add.
-	 * \return Returns the insertion index, if the insertion is before
-	 * the beginning, -1 is returned, if insertion is after the last element,
-	 * the id of the last element is returned, if the vector is empty,
-	 * -2 is returned.
-	 */
-	int indexCorrelation(double tCorrelation);
-
-	/**
-	 * \brief Checks if picks is duplicate
-	 *
-	 * Takes a new pick and compares with list of picks.
+	 * Compares the given correlation with the existing correlation list, in
+	 * order to determine whether the given correlation is a duplicate of an
+	 * existing correlation.
 	 *
 	 * \param newCorrelation - A shared pointer to the correlation to check
 	 * \param tWindow - A double containing the allowable matching time window
 	 * in seconds
 	 * \param xWindow - A double containing the allowable matching distance
 	 * window in degrees
-	 * True if pick is a duplicate
+	 * returns true if correlation is a duplicate, false otherwise
 	 */
 	bool checkDuplicate(CCorrelation * newCorrelation, double tWindow,
 						double xWindow);
 
 	/**
-	 * \brief Search for any associable picks that match hypo
+	 * \brief Search for any associable correlations that match hypo
 	 *
-	 * Search through all picks within a provided number seconds from the origin
-	 * time of the given hypocenter, adding any picks that meet association
-	 * criteria to the given hypocenter.
+	 * Search through all correlations within a provided number seconds from the
+	 * origin time of the given hypocenter, adding any correlations that meet
+	 * association criteria to the given hypocenter.
 	 *
 	 * \param hyp - A shared_ptr to a CHypo object containing the hypocenter
 	 * to attempt to associate to.
-	 * \param tDuration - A double value containing the duration to search picks
+	 * \param tWindow - A double value containing the window to search picks
 	 * from origin time in seconds, defaults to 2.5
 	 * \return Returns true if any picks were associated to the hypocenter,
 	 * false otherwise.
 	 */
-	bool scavenge(std::shared_ptr<CHypo> hyp, double tDuration = 2.5);
+	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2.5);
 
 	/**
-	 * \brief Generate rogue list for tuning process
-	 *
-	 * Search through all picks within a provided number of seconds from the
-	 * given origin time, creating a vector of all picks that could be
-	 * associated with given hypocenter ID, but are actually either unassociated
-	 * or associated with another hypocenter
-	 *
-	 * \param pidHyp - A std::string containing the id of the hypocenter to use
-	 * \param tOrg - A double value containing the origin time in julian seconds
-	 * of the hypocenter to use.
-	 * \param tDuration - A double value containing the duration to search picks
-	 * from origin time in seconds, defaults to 2.5
-	 */
-	std::vector<std::shared_ptr<CCorrelation>> rogues(std::string pidHyp,
-														double tOrg,
-														double tDuration = 2.5);
-
-	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
-	 */
-	const CGlass* getGlass() const;
-
-	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
-	 */
-	void setGlass(CGlass* glass);
-
-	/**
-	 * \brief CSiteList getter
-	 * \return the CSiteList pointer
+	 * \brief Get the CSiteList pointer used by this correlation list for site
+	 * lookups
+	 * \return Return a pointer to the CSiteList class used by this correlation
+	 * list
 	 */
 	const CSiteList* getSiteList() const;
 
 	/**
-	 * \brief CSiteList setter
-	 * \param siteList - the CSiteList pointer
+	 * \brief Set the CSiteList pointer used by this correlation list for site
+	 * lookups
+	 * \param siteList - a pointer to the CSiteList class used by this correlation
+	 * list
 	 */
 	void setSiteList(CSiteList* siteList);
 
 	/**
-	 * \brief nCorrelation getter
-	 * \return the nCorrelation
+	 * \brief Get the maximum allowed size of this correlation list
+	 * \return Return an integer containing the maximum allowed size of this
+	 * correlation list
 	 */
-	int getNCorrelation() const;
+	int getMaxAllowableCorrelationCount() const;
 
 	/**
-	 * \brief nCorrelationMax getter
-	 * \return the nCorrelationMax
+	 * \brief Set the maximum allowed size of this correlation list
+	 * \param correlationMax -  an integer containing the maximum allowed size
+	 * of this correlation list
 	 */
-	int getNCorrelationMax() const;
+	void setMaxAllowableCorrelationCount(int correlationMax);
 
 	/**
-	 * \brief nCorrelationMax Setter
-	 * \param correlationMax - the nCorrelationMax
+	 * \brief Get the total number of correlations processed by this list
+	 * \return Return an integer containing the total number of correlations
+	 * processed by this list
 	 */
-	void setNCorrelationMax(int correlationMax);
+	int getCountOfTotalCorrelationsProcessed() const;
 
 	/**
-	 * \brief nCorrelationTotal getter
-	 * \return the nCorrelationTotal
+	 * \brief Get the current number of correlations contained in this list
+	 * \return Return an integer containing the current number of correlations
+	 * contained in this list
 	 */
-	int getNCorrelationTotal() const;
+	int length() const;
 
 	/**
-	 * \brief Get the current size of the correlation list
+	 * \brief Get a vector of correlations that fall within a time window
+	 *
+	 * Get a vector of correlations that fall within the provided time window
+	 * from t1 to t2
+	 *
+	 * \param t1 - A double value containing the beginning of the time window in
+	 * julian seconds
+	 * \param t2 - A double value containing the end of the time window in
+	 * julian seconds
+	 * \return Return a std::vector of std::weak_ptrs to the correlations within
+	 * the time window
 	 */
-	int getVCorrelationSize() const;
+	std::vector<std::weak_ptr<CCorrelation>> getCorrelations(double t1,
+																double t2);
 
  private:
-	/**
-	 * \brief A pointer to the parent CGlass class, used to send output,
-	 * look up site information, encode/decode time, get configuration values,
-	 * call association functions, and debug flags
-	 */
-	CGlass *pGlass;
-
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites for
 	 * lookups
 	 */
-	CSiteList *pSiteList;
+	CSiteList * m_pSiteList;
 
 	/**
 	 * \brief An integer containing the maximum number of correlations allowed in
-	 * CCorrelationList. This value is overridden by pGlass->nPickMax if provided.
-	 * Defaults to 10000.
+	 * CCorrelationList. This value is overridden by pGlass->getMaxNumCorrelations()
+	 * if provided. Defaults to 10000.
 	 */
-	int nCorrelationMax;
-
-	/**
-	 * \brief An integer containing the current number of correlations in
-	 * CCorrelationList. Used to generate the correlation id.
-	 */
-	int nCorrelation;
+	std::atomic<int> m_iMaxAllowableCorrelationCount;
 
 	/**
 	 * \brief An integer containing the total number of correlations ever added
 	 * to CCorrelationList
 	 */
-	int nCorrelationTotal;
+	std::atomic<int> m_iCountOfTotalCorrelationsProcessed;
 
 	/**
-	 * \brief A std::vector mapping the arrival time of each correlation in
-	 * CCorrelationListto it's integer correlation id. The elements in this
-	 * vector object are inserted in a manner to keep it in sequential time
-	 * order from oldest to youngest.
+	 * \brief A std::multiset containing each correlation in the list in sequential
+	 * time order from oldest to youngest.
 	 */
-	std::vector<std::pair<double, int>> vCorrelation;
-
-	/**
-	 * \brief A std::map containing a std::shared_ptr to each correlation in
-	 * CCorrelationList indexed by the integer correlation id.
-	 */
-	std::map<int, std::shared_ptr<CCorrelation>> mCorrelation;
-
-	/**
-	 * \brief A recursive_mutex to control threading access to vCorrelation.
-	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
-	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
-	 * However a recursive_mutex allows us to maintain the original class
-	 * design as delivered by the contractor.
-	 */
-	mutable std::recursive_mutex m_vCorrelationMutex;
+	std::multiset<std::shared_ptr<CCorrelation>, CorrelationCompare> m_msCorrelationList;  // NOLINT
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CCorrelationList.

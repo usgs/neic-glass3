@@ -29,14 +29,7 @@ TEST(WebListTest, Construction) {
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
 
 	// lists
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
-
-	// pointers
-	ASSERT_EQ(NULL, testWebList->getGlass())<< "getGlass() null";
-
-	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
-
-	delete (testWebList);
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list empty";
 }
 
 // tests adding a web to the web list
@@ -69,25 +62,20 @@ TEST(WebListTest, AddWeb) {
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(siteList);
+	testSiteList->receiveExternalMessage(siteList);
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
 	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list empty";
 
 	// add a web
-	testWebList->dispatch(gridConfig);
+	testWebList->receiveExternalMessage(gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
-
-	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
-
-	delete (testSiteList);
-	delete (testWebList);
+	ASSERT_EQ(1, (int)testWebList->size())<< "web list added";
 }
 
 // tests removing a web from the web list
@@ -120,33 +108,30 @@ TEST(WebListTest, RemWeb) {
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(siteList);
+	testSiteList->receiveExternalMessage(siteList);
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
 	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list empty";
 
 	// add a web
-	testWebList->dispatch(gridConfig);
+	testWebList->receiveExternalMessage(gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
+	ASSERT_EQ(1, (int)testWebList->size())<< "web list added";
 
 	std::shared_ptr<json::Object> remGridConfig =
 			std::make_shared<json::Object>(
 					json::Deserialize(std::string(REMWEB)));
 
 	// remove a web
-	testWebList->dispatch(remGridConfig);
+	testWebList->receiveExternalMessage(remGridConfig);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list removed";
-
-	delete (testSiteList);
-	delete (testWebList);
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list removed";
 }
 
 // test various site operations (add, remove) with the web list
@@ -179,25 +164,25 @@ TEST(WebListTest, SiteOperations) {
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
-	testSiteList->dispatch(siteList);
+	testSiteList->receiveExternalMessage(siteList);
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
 	testWebList->setSiteList(testSiteList);
 
 	// web list
-	ASSERT_EQ(0, (int)testWebList->getVWebSize())<< "web list empty";
+	ASSERT_EQ(0, (int)testWebList->size())<< "web list empty";
 
 	// add a web
-	testWebList->dispatch(gridConfig);
+	testWebList->receiveExternalMessage(gridConfig);
 
 	// web list
-	ASSERT_EQ(1, (int)testWebList->getVWebSize())<< "web list added";
+	ASSERT_EQ(1, (int)testWebList->size())<< "web list added";
 
 	// create site to add
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(ADDSITE))));
-	glasscore::CSite * addSite = new glasscore::CSite(siteJSON, NULL);
+	glasscore::CSite * addSite = new glasscore::CSite(siteJSON);
 	std::shared_ptr<glasscore::CSite> sharedAddSite(addSite);
 
 	// add to site list
@@ -213,7 +198,7 @@ TEST(WebListTest, SiteOperations) {
 	// create site to remove
 	std::shared_ptr<json::Object> siteJSON2 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(REMOVESITE))));
-	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON2, NULL);
+	glasscore::CSite * removeSite = new glasscore::CSite(siteJSON2);
 	std::shared_ptr<glasscore::CSite> sharedRemoveSite(removeSite);
 
 	// update in site list
@@ -223,18 +208,13 @@ TEST(WebListTest, SiteOperations) {
 	ASSERT_TRUE(testWebList->hasSite(sharedRemoveSite))<< "site in weblist";
 
 	// remove
-	testWebList->remSite(sharedRemoveSite);
+	testWebList->removeSite(sharedRemoveSite);
 
 	// give time for site to remove
 	std::this_thread::sleep_for(std::chrono::seconds(2));
 
 	// check to see if this site is in grid
 	ASSERT_FALSE(testWebList->hasSite(sharedRemoveSite))<< "site removed";
-
-	ASSERT_TRUE(testWebList->statusCheck())<< "status check";
-
-	delete (testSiteList);
-	delete (testWebList);
 }
 
 // Tests various falure cases for weblist
@@ -244,11 +224,9 @@ TEST(WebListTest, FailTests) {
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
 
-	ASSERT_FALSE(testWebList->dispatch(NULL))<< "Null dispatch false";
+	ASSERT_FALSE(testWebList->receiveExternalMessage(NULL))<< "Null dispatch false";
 	ASSERT_FALSE(testWebList->addWeb(NULL))<< "Null addWeb false";
 	ASSERT_FALSE(testWebList->removeWeb(NULL))<< "Null removeWeb false";
-	testWebList->remSite(NULL);
+	testWebList->removeSite(NULL);
 	testWebList->addSite(NULL);
-
-	delete (testWebList);
 }

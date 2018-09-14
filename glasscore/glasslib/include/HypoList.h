@@ -7,10 +7,14 @@
 #ifndef HYPOLIST_H
 #define HYPOLIST_H
 
+#include <threadbaseclass.h>
+
 #include <json.h>
 #include <vector>
+#include <list>
 #include <queue>
 #include <map>
+#include <set>
 #include <memory>
 #include <utility>
 #include <string>
@@ -18,15 +22,31 @@
 #include <thread>
 #include <random>
 #include "Glass.h"
+#include "Hypo.h"
 
 namespace glasscore {
 
 // forward declarations
-class CGlass;
 class CSite;
-class CHypo;
 class CPick;
 class CCorrelation;
+
+/**
+ * \brief CHypoList comparison function
+ *
+ * HypoCompare contains the comparison function used by std::multiset when
+ * inserting, sorting, and retrieving hypos.
+ */
+struct HypoCompare {
+	bool operator()(const std::shared_ptr<CHypo> &lhs,
+					const std::shared_ptr<CHypo> &rhs) const {
+		// sort by tSort
+		if (lhs->getTSort() < rhs->getTSort()) {
+			return (true);
+		}
+		return (false);
+	}
+};
 
 /**
  * \brief glasscore hypocenter list class
@@ -45,7 +65,7 @@ class CCorrelation;
  *
  * CHypoList uses smart pointers (std::shared_ptr).
  */
-class CHypoList {
+class CHypoList : public glass3::util::ThreadBaseClass {
  public:
 	/**
 	 * \brief CHypoList constructor
@@ -76,7 +96,8 @@ class CHypoList {
 	 * to exceed the configured maximum, remove the oldest hypocenter
 	 * from the list/map.
 	 *
-	 * Adds the hypocenter to the processing queue, and calls darwin()
+	 * Adds the hypocenter to the processing queue, and optionally schedules it
+	 * for processing
 	 *
 	 * \param hypo - A std::shared_ptr to the hypocenter to add
 	 * \param scheduleProcessing - A boolean flag indicating whether to
@@ -91,59 +112,31 @@ class CHypoList {
 	 *
 	 * Attempt to associate the given pick to a hypocenter in the list
 	 *
-	 * Adds the hypocenter to the processing queue if a pick was associated,
-	 * but does not call darwin to perform processing.
+	 * Adds the hypocenter to the processing queue if a pick was associated.
 	 *
 	 * \param pk - A std::shared_ptr to the pick to associate.
-	 * \return Always returns true.
+	 * \return Returns true if the pick associated with a hypo, false otherwise
 	 */
-	bool associate(std::shared_ptr<CPick> pk);
+	bool associateData(std::shared_ptr<CPick> pk);
 
 	/**
 	 * \brief Try to associate correlation to a hypo in the list
 	 *
 	 * Attempt to associate the given correlation to a hypocenter in the list
 	 *
-	 * Adds the hypocenter to the processing queue if a correlation was associated,
-	 * but does not call darwin to perform processing.
+	 * Adds the hypocenter to the processing queue if a correlation was
+	 * associated.
 	 *
 	 * \param corr - A std::shared_ptr to the correlation to associate.
-	 * \return Always returns true.
+	 * \return  Returns true if the correlation associated with a hypo, false
+	 * otherwise
 	 */
-	bool associate(std::shared_ptr<CCorrelation> corr);
+	bool associateData(std::shared_ptr<CCorrelation> corr);
 
 	/**
 	 * \brief CHypoList clear function
 	 */
-	void clear();
-
-	/**
-	 * \brief Remove all hypos from hypo list
-	 *
-	 * Clears all hypo from the vector, map, and queue
-	 */
-	void clearHypos();
-
-	/**
-	 * \brief Process all hypocenters in the queue
-	 *
-	 * Refine any/all hypocenters in the list that are on the
-	 * processing queue.  Typically hypocenters are added to the
-	 * processing queue because they are either new, or have
-	 * been modified by another part of glasscore.  This function effectively
-	 * calls itself recursively as a result of calling CHypoList::evolve or
-	 * CPickList::resolve as part of the resolution of data associations which
-	 * adds hypocenters to the processing queue.
-	 *
-	 * A cycle count is set when a hypocenter is first scheduled (by addHypo()
-	 * or associate()). Hypocenters are only processed through the entire
-	 * cycle once each cycle, any additional processing is restricted
-	 * to localization and culling.
-	 *
-	 * Note that glasscore will not accept input data until all hypocenters
-	 * in the list have been refined, including the recursively scheduled calls
-	 */
-	void darwin();
+	void clear() override;
 
 	/**
 	 * \brief CHypoList communication receiving function
@@ -152,21 +145,19 @@ class CHypoList {
 	 * (such as configuration or input data), from outside the
 	 * glasscore library, or it's parent CGlass.
 	 *
-	 * Supports the Zombee (testing hypocenters), ClearGlass
-	 * (clear all hypocenter data), and ReqHypo (generate output hypocenter
-	 * message) inputs.
+	 * Supports the ReqHypo (generate output hypocenter message) input.
 	 *
 	 * \param com - A pointer to a json::object containing the
 	 * communication.
 	 * \return Returns true if the communication was handled by CGlass,
 	 * false otherwise
 	 */
-	bool dispatch(std::shared_ptr<json::Object> com);
+	bool receiveExternalMessage(std::shared_ptr<json::Object> com);
 
 	/**
-	 * \brief Evolve provided hypocenter
+	 * \brief Process provided hypocenter
 	 *
-	 * Evolve the provided hypocenter by localizing, scavenging, pruning,
+	 * Process the provided hypocenter by localizing, scavenging, pruning,
 	 * performing cancel checks, and output message generation. The hypocenter
 	 * is put back on the processing queue if the hypo is changed and not
 	 * canceled.
@@ -175,31 +166,14 @@ class CHypoList {
 	 * assocations resolved.
 	 * \return Returns true if hypocenter survives
 	 */
-	bool evolve(std::shared_ptr<CHypo> hyp);
+	bool processHypo(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Find CHypo in given time range
-	 *
-	 * Use a binary search to find a hypocenter in
-	 * vHypo with origin time within given range
-	 *
-	 * \param t1 - Starting time of selection range in gregorian seconds
-	 * \param t2 - Ending time of selection range in gregorian seconds
-	 * \return First CHypo in vHypo withing range,
-	 * or NULL if none fit in the time range.
+	 * \brief Get the current length of the hypocenter processing queue
+	 * \return Returns an integer value containing the current length of the
+	 * processing queue
 	 */
-	std::shared_ptr<CHypo> findHypo(double t1, double t2);
-
-	/**
-	 * \brief Get the current size of the hypocenter processing queue
-	 */
-	int getFifoSize();
-
-	/**
-	 * \brief CGlass getter
-	 * \return the CGlass pointer
-	 */
-	const CGlass* getGlass() const;
+	int getHypoProcessingQueueLength();
 
 	/**
 	 * \brief Get list of CHypos in given time range
@@ -214,94 +188,72 @@ class CHypoList {
 	std::vector<std::weak_ptr<CHypo>> getHypos(double t1, double t2);
 
 	/**
-	 * \brief nHypo getter
-	 * \return the nHypo
+	 * \brief Gets the maximum number of hypocenters this list will hold
+	 * \return Returns an integer containing the maximum number of hypocenters
+	 * this list will hold
 	 */
-	int getNHypo() const;
+	int getMaxAllowableHypoCount() const;
 
 	/**
-	 * \brief nHypoMax getter
-	 * \return the nHypoMax
+	 * \brief Get the total number of hypos processed by this list
+	 * \return Return an integer containing the total number of hypos processed
+	 * by this list
 	 */
-	int getNHypoMax() const;
+	int getCountOfTotalHyposProcessed() const;
 
 	/**
-	 * \brief nHypoTotal getter
-	 * \return the nHypoTotal
+	 * \brief Get the current number of hypos contained in this list
+	 * \return Return an integer containing the current number of hypos
+	 * contained in this list
 	 */
-	int getNHypoTotal() const;
+	int length() const;
 
 	/**
-	 * \brief Get the current size of the hypocenter list
+	 * \brief Merge hypos close in space time
+	 *
+	 * This function attempts to create a new hypo from picks of the given
+	 * hypo and other hypos within a time/distance range. If a new hypo can be
+	 * created, and the resultant stack value is high enough then the new merged
+	 * hypo is added to the list, and the original pair of hypos are canceled /
+	 * removed
+	 *
+	 * \param hyp - a shared_ptr to the CHypo to start the merge process with
+	 * \return Returns true if hypos were merged, false otherwise
 	 */
-	int getVHypoSize() const;
+	bool findAndMergeMatchingHypos(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Get insertion index for hypo
+	 * \brief Append hypo to processing queue
 	 *
-	 * This function looks up the proper insertion index for the vector given an
-	 * origin time using a binary search to identify the index element
-	 * is less than the time provided, and the next element is greater.
-	 *
-	 * \param tOrg - A double value containing the origin time to use, in
-	 * julian seconds of the hypo to add.
-	 * \return Returns the insertion index, if the insertion is before
-	 * the beginning, -1 is returned, if insertion is after the last element,
-	 * the index of the last element is returned, if the vector is empty,
-	 * -2 is returned.
-	 */
-	int indexHypo(double tOrg);
-
-	/**
-	 * \brief Print basic values to screen for hypocenter list
-	 *
-	 * Causes CHypoList to print basic values to the console for
-	 * each hypocenter in the list
-	 */
-	void listHypos();
-
-	/** \brief Try to merge events close in space time
-	 *
-	 * 	Tries to created a new event from picks of two nearby events
-	 * 	If it can merge, and the resultant stack value is high enough
-	 * 	then it creates a new event and cancels the two merged events
-	 *
-	 */
-	bool mergeCloseEvents(std::shared_ptr<CHypo> hyp);
-
-	/**
-	 * \brief Add hypo to processing queue
-	 *
-	 * Add the given hypocenter to the processing queue if it
-	 * is not already in the queue.
+	 * Append the given hypocenter to the processing queue if it is not already
+	 * in the queue.
 	 *
 	 * \param hyp - A std::shared_ptr to the hypocenter to add
 	 * \return Returns the current size of the processing queue
 	 */
-	int pushFifo(std::shared_ptr<CHypo> hyp);
+	int appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Get hypo from processing queue
+	 * \brief Get first hypo from processing queue
 	 *
-	 * Get the first hypocenter from the processing queue.
+	 * Get the first valid hypocenter from the processing queue.
 	 *
 	 * \return Returns a std::shared_ptr to the hypocenter retrieved
 	 * from the queue.
 	 */
-	std::shared_ptr<CHypo> popFifo();
+	std::shared_ptr<CHypo> getNextHypoFromProcessingQueue();
 
 	/**
 	 * \brief Remove hypo from list
 	 *
-	 * Remove given hypocenter to the vector and map. Also, unlink
-	 * any associated picks.
+	 * Remove given hypocenter from the underlying multiset. Also, unlink any
+	 * associated data, and optionally generate a cancelation message.
 	 *
 	 * \param hypo - A std::shared_ptr to the hypocenter to remove
-	 * \param reportCancel A boolean flag indicating whether to report a
-	 * cancel message when the hypo is removed
-	 * \return void.
+	 * \param reportCancel A boolean flag indicating whether to report a cancel
+	 * message when the hypo is removed
 	 */
-	void remHypo(std::shared_ptr<CHypo> hypo, bool reportCancel = true);
+	void removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel = true);
 
 	/**
 	 * \brief Cause CHypoList to generate a Hypo message for a hypocenter
@@ -312,126 +264,99 @@ class CHypoList {
 	 *
 	 * \param com - A pointer to a json::object containing the id of the
 	 * hypocenter to use
+	 * \return Returns true if the Hypo message was generated, false otherwise
 	 */
-	bool reqHypo(std::shared_ptr<json::Object> com);
+	bool requestHypo(std::shared_ptr<json::Object> com);
 
 	/**
-	 * \brief Ensure all picks in the hypo belong to hypo
+	 * \brief Ensure all supporting belong to hypo
 	 *
-	 * Search through all picks in the given hypocenter's pick list, using the
-	 * hypo's affinity function to determine whether the pick belongs to the
-	 * given hypocenter or not.
+	 * Search through all supporting data in the given hypocenter's lists,
+	 * using the hypo affinity functions to determine whether the data best
+	 * fits the hypocenter or not.
 	 *
+	 * Note that this function is in hypolist for threading deadlock reasons
+	 *
+	 * \param hypo - A shared_ptr to a CHypo to resolve
 	 * \return Returns true if the hypocenter's pick list was changed,
 	 * false otherwise.
 	 */
-	bool resolve(std::shared_ptr<CHypo> hyp);
+	bool resolveData(std::shared_ptr<CHypo> hypo);
 
 	/**
-	 * \brief CGlass setter
-	 * \param glass - the CGlass pointer
+	 * \brief Set the maximum number of hypos that this list will support
+	 * \param hypoMax - an integer containing the  maximum number of hypos that
+	 * this list will support
 	 */
-	void setGlass(CGlass* glass);
+	void setMaxAllowableHypoCount(int hypoMax);
 
 	/**
-	 * \brief nHypoMax Setter
-	 * \param hypoMax - the nHypoMax
-	 */
-	void setNHypoMax(int hypoMax);
-
-	/**
-	 * \brief check to see if each thread is still functional
+	 * \brief Hypolist work function
 	 *
-	 * Checks each thread to see if it is still responsive.
+	 * Process the next hypo on the processing queue.  Typically hypocenters are
+	 * added to the processing queue because they are either new, or have
+	 * been modified by another part of glasscore.
+	 *
+	 * A process count is set when a hypocenter is first scheduled (by addHypo()
+	 * or associate()) for processing. Hypocenters are only processed a limited
+	 * number of times, up to the overall glasscore process limit. Any
+	 * additional after this requires that new supporting data be added to the
+	 * hypo via associateData()
+	 *
+	 * \return returns glass3::util::WorkState::OK if work was successful,
+	 * glass3::util::WorkState::Error if not.
 	 */
-	bool statusCheck();
+	glass3::util::WorkState work() override;
 
  private:
 	/**
-	 * \brief the job sleep
-	 *
-	 * The function that performs the sleep between jobs
+	 * \brief A HypoList function that updates the position of the given hypo
+	 * in the multiset
+	 * \param hyp - A shared_ptr to the hypo that needs a position update
 	 */
-	void jobSleep();
+	void updatePosition(std::shared_ptr<CHypo> hyp);
 
 	/**
-	 * \brief Process the next pick on the queue
-	 *
-	 * Attempts to run evolve for every pending hypo.
+	 * \brief A HypoList function that removes the given hypo from the multiset
+	 * \param hyp - A shared_ptr to the hypo to be remvoed
 	 */
-	void processHypos();
-
-	/**
-	 * \brief thread status update function
-	 *
-	 * Updates the status for the current thread
-	 * \param status - A boolean flag containing the status to set
-	 */
-	void setStatus(bool status);
-
-	/**
-	 * \brief HypoList sort function
-	 */
-	void sort();
-
-	/**
-	 * \brief A pointer to the parent CGlass class, used to send output,
-	 * encode/decode time, get configuration values, and debug flags
-	 */
-	CGlass *pGlass;
-
-	/**
-	 * \brief An integer containing the total number of hypocenters
-	 * ever added to CHypoList
-	 */
-	int nHypoTotal;
+	void eraseFromMultiset(std::shared_ptr<CHypo> hyp);
 
 	/**
 	 * \brief An integer containing the maximum number of hypocenters stored by
 	 * CHypoList
 	 */
-	int nHypoMax;
+	std::atomic<int> m_iMaxAllowableHypoCount;
 
 	/**
-	 * \brief Also an integer containing the total number of hypocenters
-	 * ever added to CHypoList, but one larger
+	 * \brief An integer containing the total number of hypocenters
+	 * ever added to CHypoList
 	 */
-	int nHypo;
+	std::atomic<int> m_iCountOfTotalHyposProcessed;
 
 	/**
-	 * \brief A std::vector containing the queue of hypocenters that need
-	 * to be processed
+	 * \brief A std::list of weak_ptrs to the hypocenters that need to be
+	 * processed. This list is managed in a way to make it act as a FIFO
+	 * queue
 	 */
-	std::vector<std::string> qFifo;
+	std::list<std::weak_ptr<CHypo>> m_lHypoProcessingQueue;
 
 	/**
-	 * \brief the std::mutex for qFifo
+	 * \brief the std::mutex for accessing m_vHyposToProcess
 	 */
-	std::mutex m_QueueMutex;
+	std::mutex m_HypoProcessingQueueMutex;
 
 	/**
-	 * \brief A std::vector mapping the origin time of each hypocenter
-	 * in CHypoList to it's std::string hypo id.
-	 *
-	 * Note that the origin time is never updated after the hypocenter is
-	 * first added to CHypoList
+	 * \brief A std::multiset containing each hypo in the list in sequential
+	 * time order from oldest to youngest.
 	 */
-	std::vector<std::pair<double, std::string>> vHypo;
+	std::multiset<std::shared_ptr<CHypo>, HypoCompare> m_msHypoList;
 
 	/**
 	 * \brief A std::map containing a std::shared_ptr to each hypocenter
 	 * in CHypoList indexed by the std::string hypo id.
 	 */
-	std::map<std::string, std::shared_ptr<CHypo>> mHypo;
-
-	/**
-	 * \brief A recursive_mutex to control threading access to vHypo.
-	 * NOTE: recursive mutexes are frowned upon, so maybe redesign around it
-	 * see: http://www.codingstandard.com/rule/18-3-3-do-not-use-stdrecursive_mutex/
-	 * However a recursive_mutex allows us to maintain the original class
-	 * design as delivered by the contractor.
-	 */
-	mutable std::recursive_mutex m_vHypoMutex;
+	std::map<std::string, std::shared_ptr<CHypo>> m_mHypo;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypoList.
@@ -441,56 +366,6 @@ class CHypoList {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_HypoListMutex;
-
-	/**
-	 * \brief the std::vector of std::threads
-	 */
-	std::vector<std::thread> vProcessThreads;
-
-	/**
-	 * \brief An integer containing the number of
-	 * threads in the pool.
-	 */
-	int m_iNumThreads;
-
-	/**
-	 * \brief A std::map containing the status of each thread
-	 */
-	std::map<std::thread::id, bool> m_ThreadStatusMap;
-
-	/**
-	 * \brief An integer containing the amount of
-	 * time to sleep in milliseconds between picks.
-	 */
-	int m_iSleepTimeMS;
-
-	/**
-	 * \brief the std::mutex for m_ThreadStatusMap
-	 */
-	std::mutex m_StatusMutex;
-
-	/**
-	 * \brief the integer interval in seconds after which the work thread
-	 * will be considered dead. A negative check interval disables thread
-	 * status checks
-	 */
-	int m_iStatusCheckInterval;
-
-	/**
-	 * \brief the time_t holding the last time the thread status was checked
-	 */
-	time_t tLastStatusCheck;
-
-	/**
-	 * \brief the boolean flags indicating that the process threads
-	 * should keep running.
-	 */
-	bool m_bRunProcessLoop;
-
-	/**
-	 * \brief A random engine used to generate random numbers
-	 */
-	std::default_random_engine m_RandomGenerator;
 };
 }  // namespace glasscore
 #endif  // HYPOLIST_H

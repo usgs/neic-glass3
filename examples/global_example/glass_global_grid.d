@@ -3,10 +3,10 @@
 {
   "Cmd": "Global",
   "Name": "Global",
-  "Resolution": 100.0,
-  "Detect": 24,
-  "Nucleate": 6,
-  "Z": [
+  "NodeResolution": 100.0,
+  "NumStationsPerNode": 24,
+  "NucleationDataThreshold": 6,
+  "DepthLayers": [
       10.0,
       30.0,
       50.0,

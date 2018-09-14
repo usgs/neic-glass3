@@ -50,26 +50,6 @@
 #include <memory>
 
 /**
- * \brief glassutil::CLogit call back function
- *
- * A function bound to glassutil::CLogit (via glassutil::CLogit::setLogCallback)
- * to enable logging messages to be written to gen-travel-times-app's log file
- *
- * \param message - a glassutil::logMessageStruct containg the message to log
- */
-void logTravelTimes(glassutil::logMessageStruct message) {
-	if (message.level == glassutil::log_level::info) {
-		glass3::util::log("info", "traveltime: " + message.message);
-	} else if (message.level == glassutil::log_level::debug) {
-		glass3::util::log("debug", "traveltime: " + message.message);
-	} else if (message.level == glassutil::log_level::warn) {
-		glass3::util::log("warning", "traveltime: " + message.message);
-	} else if (message.level == glassutil::log_level::error) {
-		glass3::util::log("error", "traveltime: " + message.message);
-	}
-}
-
-/**
  * \brief gen-travel-times-app main function
  *
  * \param  argc An integer argument count of the command line arguments
@@ -186,10 +166,6 @@ int main(int argc, char* argv[]) {
 
 	// create generator
 	traveltime::CGenTrv *travelGenerator = new traveltime::CGenTrv();
-
-	// set up traveltime to use our logging
-	glassutil::CLogit::setLogCallback(
-			std::bind(logTravelTimes, std::placeholders::_1));
 
 	travelGenerator->setup(model, path, extension);
 
