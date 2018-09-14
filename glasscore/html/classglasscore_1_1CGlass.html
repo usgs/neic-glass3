@@ -63,6 +63,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -88,7 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classglasscore_1_1CGlass-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">glasscore::CGlass Class Reference</div>  </div>
@@ -104,7 +105,7 @@ Collaboration diagram for glasscore::CGlass:</div>
 <div class="dyncontent">
 <div class="center"><img src="classglasscore_1_1CGlass__coll__graph.png" border="0" usemap="#glasscore_1_1CGlass_coll__map" alt="Collaboration graph"/></div>
 <map name="glasscore_1_1CGlass_coll__map" id="glasscore_1_1CGlass_coll__map">
-<area shape="rect" id="node2" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="51,5,204,83"/></map>
+</map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -115,152 +116,164 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1a685d3066f1e23eaf47a73dca09ce93"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a1a685d3066f1e23eaf47a73dca09ce93">~CGlass</a> ()</td></tr>
 <tr class="memdesc:a1a685d3066f1e23eaf47a73dca09ce93"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> destructor.  <a href="#a1a685d3066f1e23eaf47a73dca09ce93">More...</a><br/></td></tr>
 <tr class="separator:a1a685d3066f1e23eaf47a73dca09ce93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96a77dda2867134f5cffcd943724c0b0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a96a77dda2867134f5cffcd943724c0b0">dispatch</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
-<tr class="memdesc:a96a77dda2867134f5cffcd943724c0b0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> communication receiving function.  <a href="#a96a77dda2867134f5cffcd943724c0b0">More...</a><br/></td></tr>
-<tr class="separator:a96a77dda2867134f5cffcd943724c0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af92a817318376810b08a801c94b5d209"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#af92a817318376810b08a801c94b5d209">send</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
-<tr class="memdesc:af92a817318376810b08a801c94b5d209"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> communication sending function.  <a href="#af92a817318376810b08a801c94b5d209">More...</a><br/></td></tr>
-<tr class="separator:af92a817318376810b08a801c94b5d209"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f76ece5c3f07e233be8c1a3b0ee0b81"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a8f76ece5c3f07e233be8c1a3b0ee0b81">initialize</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
-<tr class="memdesc:a8f76ece5c3f07e233be8c1a3b0ee0b81"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> initialization function.  <a href="#a8f76ece5c3f07e233be8c1a3b0ee0b81">More...</a><br/></td></tr>
-<tr class="separator:a8f76ece5c3f07e233be8c1a3b0ee0b81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6fd2c2742eed90a5730773fff5877e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ad6fd2c2742eed90a5730773fff5877e9">clear</a> ()</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ad6fd2c2742eed90a5730773fff5877e9"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ad6fd2c2742eed90a5730773fff5877e9">clear</a> ()</td></tr>
 <tr class="memdesc:ad6fd2c2742eed90a5730773fff5877e9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> clear function.  <a href="#ad6fd2c2742eed90a5730773fff5877e9">More...</a><br/></td></tr>
 <tr class="separator:ad6fd2c2742eed90a5730773fff5877e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37cb7d63e43f3ebe05462950b4a81a77"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a37cb7d63e43f3ebe05462950b4a81a77">sig</a> (double tdif, double sig)</td></tr>
-<tr class="memdesc:a37cb7d63e43f3ebe05462950b4a81a77"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> significance function.  <a href="#a37cb7d63e43f3ebe05462950b4a81a77">More...</a><br/></td></tr>
-<tr class="separator:a37cb7d63e43f3ebe05462950b4a81a77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9fd900a8137f98732b6e764d260c194a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a9fd900a8137f98732b6e764d260c194a">sig_laplace_pdf</a> (double tdif, double <a class="el" href="classglasscore_1_1CGlass.html#a37cb7d63e43f3ebe05462950b4a81a77">sig</a>)</td></tr>
-<tr class="memdesc:a9fd900a8137f98732b6e764d260c194a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> laplacian significance function (PDF)  <a href="#a9fd900a8137f98732b6e764d260c194a">More...</a><br/></td></tr>
-<tr class="separator:a9fd900a8137f98732b6e764d260c194a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ea55d662fafe7fb813a362173afb019"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a7ea55d662fafe7fb813a362173afb019">statusCheck</a> ()</td></tr>
-<tr class="memdesc:a7ea55d662fafe7fb813a362173afb019"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if each thread is still functional  <a href="#a7ea55d662fafe7fb813a362173afb019">More...</a><br/></td></tr>
-<tr class="separator:a7ea55d662fafe7fb813a362173afb019"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82e558ce6517496c54f55c52256b168e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a82e558ce6517496c54f55c52256b168e">getAvgDelta</a> () const </td></tr>
-<tr class="memdesc:a82e558ce6517496c54f55c52256b168e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Average delta getter.  <a href="#a82e558ce6517496c54f55c52256b168e">More...</a><br/></td></tr>
-<tr class="separator:a82e558ce6517496c54f55c52256b168e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63d6697b57dce41f5ba3bdb08ea22f15"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a63d6697b57dce41f5ba3bdb08ea22f15">getAvgSigma</a> () const </td></tr>
-<tr class="memdesc:a63d6697b57dce41f5ba3bdb08ea22f15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Average sigma getter.  <a href="#a63d6697b57dce41f5ba3bdb08ea22f15">More...</a><br/></td></tr>
-<tr class="separator:a63d6697b57dce41f5ba3bdb08ea22f15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c3d308f4c2d11cfe9295427cd03a5fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a2c3d308f4c2d11cfe9295427cd03a5fa">getBeamMatchingAzimuthWindow</a> () const </td></tr>
-<tr class="memdesc:a2c3d308f4c2d11cfe9295427cd03a5fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Beam matching azimuth window getter.  <a href="#a2c3d308f4c2d11cfe9295427cd03a5fa">More...</a><br/></td></tr>
-<tr class="separator:a2c3d308f4c2d11cfe9295427cd03a5fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66da507c22296a438570ebca670104bf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a66da507c22296a438570ebca670104bf">getBeamMatchingDistanceWindow</a> () const </td></tr>
-<tr class="memdesc:a66da507c22296a438570ebca670104bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Beam matching distance window getter.  <a href="#a66da507c22296a438570ebca670104bf">More...</a><br/></td></tr>
-<tr class="separator:a66da507c22296a438570ebca670104bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6668921f3751032665b63cee36dd35a4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a6668921f3751032665b63cee36dd35a4">getCorrelationCancelAge</a> () const </td></tr>
-<tr class="memdesc:a6668921f3751032665b63cee36dd35a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correlation cancel age getter.  <a href="#a6668921f3751032665b63cee36dd35a4">More...</a><br/></td></tr>
-<tr class="separator:a6668921f3751032665b63cee36dd35a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab68a010ef6c7eda372879c0182c4967b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ab68a010ef6c7eda372879c0182c4967b">getCorrelationMatchingTWindow</a> () const </td></tr>
-<tr class="memdesc:ab68a010ef6c7eda372879c0182c4967b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correlation matching time window getter.  <a href="#ab68a010ef6c7eda372879c0182c4967b">More...</a><br/></td></tr>
-<tr class="separator:ab68a010ef6c7eda372879c0182c4967b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa911eb4cbe210ee8443885a1882d302f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#aa911eb4cbe210ee8443885a1882d302f">getCorrelationMatchingXWindow</a> () const </td></tr>
-<tr class="memdesc:aa911eb4cbe210ee8443885a1882d302f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correlation matching distance window getter.  <a href="#aa911eb4cbe210ee8443885a1882d302f">More...</a><br/></td></tr>
-<tr class="separator:aa911eb4cbe210ee8443885a1882d302f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a248cf0d81b82710fd76bd71905d60939"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a248cf0d81b82710fd76bd71905d60939">getCutFactor</a> () const </td></tr>
-<tr class="memdesc:a248cf0d81b82710fd76bd71905d60939"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance cutoff factor getter.  <a href="#a248cf0d81b82710fd76bd71905d60939">More...</a><br/></td></tr>
-<tr class="separator:a248cf0d81b82710fd76bd71905d60939"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53b58b86f057cce9f08de156a9c2f48f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a53b58b86f057cce9f08de156a9c2f48f">getCutMin</a> () const </td></tr>
-<tr class="memdesc:a53b58b86f057cce9f08de156a9c2f48f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Average distance cutoff minimum getter.  <a href="#a53b58b86f057cce9f08de156a9c2f48f">More...</a><br/></td></tr>
-<tr class="separator:a53b58b86f057cce9f08de156a9c2f48f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc41cb04f7fcfdfdf16cfdb5e4f371bf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#abc41cb04f7fcfdfdf16cfdb5e4f371bf">getCutPercentage</a> () const </td></tr>
-<tr class="memdesc:abc41cb04f7fcfdfdf16cfdb5e4f371bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance cutoff percentage getter.  <a href="#abc41cb04f7fcfdfdf16cfdb5e4f371bf">More...</a><br/></td></tr>
-<tr class="separator:abc41cb04f7fcfdfdf16cfdb5e4f371bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa63f4dbe8f46f83781271bdd26934a98"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#aa63f4dbe8f46f83781271bdd26934a98">getReportThresh</a> () const </td></tr>
-<tr class="memdesc:aa63f4dbe8f46f83781271bdd26934a98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Report threshold getter.  <a href="#aa63f4dbe8f46f83781271bdd26934a98">More...</a><br/></td></tr>
-<tr class="separator:aa63f4dbe8f46f83781271bdd26934a98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc94b57c5f855b20e68f066fe283fdd2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#adc94b57c5f855b20e68f066fe283fdd2">getThresh</a> () const </td></tr>
-<tr class="memdesc:adc94b57c5f855b20e68f066fe283fdd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nucleation threshold getter.  <a href="#adc94b57c5f855b20e68f066fe283fdd2">More...</a><br/></td></tr>
-<tr class="separator:adc94b57c5f855b20e68f066fe283fdd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45b61147af0155cdcf3fa1ad1631431f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a45b61147af0155cdcf3fa1ad1631431f">getExpAffinity</a> () const </td></tr>
-<tr class="memdesc:a45b61147af0155cdcf3fa1ad1631431f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exponential Affinity getter.  <a href="#a45b61147af0155cdcf3fa1ad1631431f">More...</a><br/></td></tr>
-<tr class="separator:a45b61147af0155cdcf3fa1ad1631431f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8acfb36b09e9d0e3d339d749223d7ac7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a8acfb36b09e9d0e3d339d749223d7ac7">getGraphicsOut</a> () const </td></tr>
-<tr class="memdesc:a8acfb36b09e9d0e3d339d749223d7ac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Graphics output flag getter.  <a href="#a8acfb36b09e9d0e3d339d749223d7ac7">More...</a><br/></td></tr>
-<tr class="separator:a8acfb36b09e9d0e3d339d749223d7ac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0461ae0f4d76c4dc6176dd91942c2e94"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a0461ae0f4d76c4dc6176dd91942c2e94">getGraphicsOutFolder</a> () const </td></tr>
-<tr class="memdesc:a0461ae0f4d76c4dc6176dd91942c2e94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Graphics output folder getter.  <a href="#a0461ae0f4d76c4dc6176dd91942c2e94">More...</a><br/></td></tr>
-<tr class="separator:a0461ae0f4d76c4dc6176dd91942c2e94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15a08b653faa9892fc2f873ec75b5dc8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a15a08b653faa9892fc2f873ec75b5dc8">getGraphicsStepKm</a> () const </td></tr>
-<tr class="memdesc:a15a08b653faa9892fc2f873ec75b5dc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Graphics step getter.  <a href="#a15a08b653faa9892fc2f873ec75b5dc8">More...</a><br/></td></tr>
-<tr class="separator:a15a08b653faa9892fc2f873ec75b5dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ee991e0c4f09da6ddb7ce4b7c1e0988"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a5ee991e0c4f09da6ddb7ce4b7c1e0988">getGraphicsSteps</a> () const </td></tr>
-<tr class="memdesc:a5ee991e0c4f09da6ddb7ce4b7c1e0988"><td class="mdescLeft">&#160;</td><td class="mdescRight">Graphics steps getter.  <a href="#a5ee991e0c4f09da6ddb7ce4b7c1e0988">More...</a><br/></td></tr>
-<tr class="separator:a5ee991e0c4f09da6ddb7ce4b7c1e0988"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c1da1bec0016abf62fb616df74872ce"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a7c1da1bec0016abf62fb616df74872ce">getCycleLimit</a> () const </td></tr>
-<tr class="memdesc:a7c1da1bec0016abf62fb616df74872ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cycle limit getter.  <a href="#a7c1da1bec0016abf62fb616df74872ce">More...</a><br/></td></tr>
-<tr class="separator:a7c1da1bec0016abf62fb616df74872ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbd03755acda4a71bd9311c407e81d4b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#adbd03755acda4a71bd9311c407e81d4b">getMinimizeTtLocator</a> () const </td></tr>
-<tr class="memdesc:adbd03755acda4a71bd9311c407e81d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Graphics minimize TT locator getter.  <a href="#adbd03755acda4a71bd9311c407e81d4b">More...</a><br/></td></tr>
-<tr class="separator:adbd03755acda4a71bd9311c407e81d4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd82cd0256d5876f54fff5b79380c2eb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#abd82cd0256d5876f54fff5b79380c2eb">getCorrelationMax</a> () const </td></tr>
-<tr class="memdesc:abd82cd0256d5876f54fff5b79380c2eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of correlations getter.  <a href="#abd82cd0256d5876f54fff5b79380c2eb">More...</a><br/></td></tr>
-<tr class="separator:abd82cd0256d5876f54fff5b79380c2eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f87dec943038bee4988f7d1242df4da"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a0f87dec943038bee4988f7d1242df4da">getDetect</a> () const </td></tr>
-<tr class="memdesc:a0f87dec943038bee4988f7d1242df4da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of detection stations getter.  <a href="#a0f87dec943038bee4988f7d1242df4da">More...</a><br/></td></tr>
-<tr class="separator:a0f87dec943038bee4988f7d1242df4da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28e1817b7873c088b8ec1adb37748c1d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a28e1817b7873c088b8ec1adb37748c1d">getHypoMax</a> () const </td></tr>
-<tr class="memdesc:a28e1817b7873c088b8ec1adb37748c1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of hypocenters getter.  <a href="#a28e1817b7873c088b8ec1adb37748c1d">More...</a><br/></td></tr>
-<tr class="separator:a28e1817b7873c088b8ec1adb37748c1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9fefeebf0693bdde4c53ccff955d579"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#af9fefeebf0693bdde4c53ccff955d579">getNucleate</a> () const </td></tr>
-<tr class="memdesc:af9fefeebf0693bdde4c53ccff955d579"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of picks for nucleation getter.  <a href="#af9fefeebf0693bdde4c53ccff955d579">More...</a><br/></td></tr>
-<tr class="separator:af9fefeebf0693bdde4c53ccff955d579"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afab395d1b1f2d7f6da03dc1b2326e25e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#afab395d1b1f2d7f6da03dc1b2326e25e">getPickMax</a> () const </td></tr>
-<tr class="memdesc:afab395d1b1f2d7f6da03dc1b2326e25e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of picks getter.  <a href="#afab395d1b1f2d7f6da03dc1b2326e25e">More...</a><br/></td></tr>
-<tr class="separator:afab395d1b1f2d7f6da03dc1b2326e25e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac118fdd90a649efc19d90e374d1c055d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ac118fdd90a649efc19d90e374d1c055d">getReportCut</a> () const </td></tr>
-<tr class="memdesc:ac118fdd90a649efc19d90e374d1c055d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Report cutoff getter.  <a href="#ac118fdd90a649efc19d90e374d1c055d">More...</a><br/></td></tr>
-<tr class="separator:ac118fdd90a649efc19d90e374d1c055d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a765faa1e238cae279367110346fdc1d8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a765faa1e238cae279367110346fdc1d8">getSitePickMax</a> () const </td></tr>
-<tr class="memdesc:a765faa1e238cae279367110346fdc1d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of picks with a site getter.  <a href="#a765faa1e238cae279367110346fdc1d8">More...</a><br/></td></tr>
-<tr class="separator:a765faa1e238cae279367110346fdc1d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb1ae3f49b1339138150b44eaa00f691"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CCorrelationList.html">CCorrelationList</a> *&amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#aeb1ae3f49b1339138150b44eaa00f691">getCorrelationList</a> ()</td></tr>
-<tr class="memdesc:aeb1ae3f49b1339138150b44eaa00f691"><td class="mdescLeft">&#160;</td><td class="mdescRight">Correlation list getter.  <a href="#aeb1ae3f49b1339138150b44eaa00f691">More...</a><br/></td></tr>
-<tr class="separator:aeb1ae3f49b1339138150b44eaa00f691"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f4632a9700f5fdcb673b5fee83cf35a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CDetection.html">CDetection</a> *&amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a3f4632a9700f5fdcb673b5fee83cf35a">getDetection</a> ()</td></tr>
-<tr class="memdesc:a3f4632a9700f5fdcb673b5fee83cf35a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Detection getter.  <a href="#a3f4632a9700f5fdcb673b5fee83cf35a">More...</a><br/></td></tr>
-<tr class="separator:a3f4632a9700f5fdcb673b5fee83cf35a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a197aa747c787aa6e543611a86ab6a803"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CHypoList.html">CHypoList</a> *&amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a197aa747c787aa6e543611a86ab6a803">getHypoList</a> ()</td></tr>
-<tr class="memdesc:a197aa747c787aa6e543611a86ab6a803"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hypocenter list getter.  <a href="#a197aa747c787aa6e543611a86ab6a803">More...</a><br/></td></tr>
-<tr class="separator:a197aa747c787aa6e543611a86ab6a803"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f03d2ae27bc5cce49d3cd0d6ed0fc90"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a2f03d2ae27bc5cce49d3cd0d6ed0fc90">getPickDuplicateWindow</a> () const </td></tr>
-<tr class="memdesc:a2f03d2ae27bc5cce49d3cd0d6ed0fc90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pick duplicate time window getter.  <a href="#a2f03d2ae27bc5cce49d3cd0d6ed0fc90">More...</a><br/></td></tr>
-<tr class="separator:a2f03d2ae27bc5cce49d3cd0d6ed0fc90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12ec718009aab30b08d28dc809c7d414"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CPickList.html">CPickList</a> *&amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a12ec718009aab30b08d28dc809c7d414">getPickList</a> ()</td></tr>
-<tr class="memdesc:a12ec718009aab30b08d28dc809c7d414"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pick list getter.  <a href="#a12ec718009aab30b08d28dc809c7d414">More...</a><br/></td></tr>
-<tr class="separator:a12ec718009aab30b08d28dc809c7d414"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ac2b76bedcff655b16687a5fc9ca2b7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a2ac2b76bedcff655b16687a5fc9ca2b7">getSiteList</a> ()</td></tr>
-<tr class="memdesc:a2ac2b76bedcff655b16687a5fc9ca2b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Site list getter.  <a href="#a2ac2b76bedcff655b16687a5fc9ca2b7">More...</a><br/></td></tr>
-<tr class="separator:a2ac2b76bedcff655b16687a5fc9ca2b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a3487a6df1f1264f47c8a3e1a6eb8f8"><td class="memItemLeft" align="right" valign="top">std::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a1a3487a6df1f1264f47c8a3e1a6eb8f8">getTrvDefault</a> ()</td></tr>
-<tr class="memdesc:a1a3487a6df1f1264f47c8a3e1a6eb8f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default travel time getter.  <a href="#a1a3487a6df1f1264f47c8a3e1a6eb8f8">More...</a><br/></td></tr>
-<tr class="separator:a1a3487a6df1f1264f47c8a3e1a6eb8f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90bf27a3cb360fbb560ced16aab7e136"><td class="memItemLeft" align="right" valign="top">std::shared_ptr<br class="typebreak"/>
-&lt; <a class="el" href="classtraveltime_1_1CTTT.html">traveltime::CTTT</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a90bf27a3cb360fbb560ced16aab7e136">getTTT</a> ()</td></tr>
-<tr class="memdesc:a90bf27a3cb360fbb560ced16aab7e136"><td class="mdescLeft">&#160;</td><td class="mdescRight">Travel time list getter.  <a href="#a90bf27a3cb360fbb560ced16aab7e136">More...</a><br/></td></tr>
-<tr class="separator:a90bf27a3cb360fbb560ced16aab7e136"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c84a19ec87ad54521f6e71c5341b1ce"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglasscore_1_1CWebList.html">CWebList</a> *&amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a4c84a19ec87ad54521f6e71c5341b1ce">getWebList</a> ()</td></tr>
-<tr class="memdesc:a4c84a19ec87ad54521f6e71c5341b1ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Web list getter.  <a href="#a4c84a19ec87ad54521f6e71c5341b1ce">More...</a><br/></td></tr>
-<tr class="separator:a4c84a19ec87ad54521f6e71c5341b1ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abde8110999001ccf45ccbe69fb21a2a6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#abde8110999001ccf45ccbe69fb21a2a6">getSdAssociate</a> () const </td></tr>
-<tr class="memdesc:abde8110999001ccf45ccbe69fb21a2a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">SD associate getter.  <a href="#abde8110999001ccf45ccbe69fb21a2a6">More...</a><br/></td></tr>
-<tr class="separator:abde8110999001ccf45ccbe69fb21a2a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a886806fd2984436fc8f8d7e57da06e81"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a886806fd2984436fc8f8d7e57da06e81">getSdPrune</a> () const </td></tr>
-<tr class="memdesc:a886806fd2984436fc8f8d7e57da06e81"><td class="mdescLeft">&#160;</td><td class="mdescRight">SD prune getter.  <a href="#a886806fd2984436fc8f8d7e57da06e81">More...</a><br/></td></tr>
-<tr class="separator:a886806fd2984436fc8f8d7e57da06e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78a3cbca4fbbac1b24bd9394f4b5a081"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a78a3cbca4fbbac1b24bd9394f4b5a081">getTestLocator</a> () const </td></tr>
-<tr class="memdesc:a78a3cbca4fbbac1b24bd9394f4b5a081"><td class="mdescLeft">&#160;</td><td class="mdescRight">Testing locator flag getter.  <a href="#a78a3cbca4fbbac1b24bd9394f4b5a081">More...</a><br/></td></tr>
-<tr class="separator:a78a3cbca4fbbac1b24bd9394f4b5a081"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a465ceaf96b2b49286dcc873e91138406"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a465ceaf96b2b49286dcc873e91138406">getTestTimes</a> () const </td></tr>
-<tr class="memdesc:a465ceaf96b2b49286dcc873e91138406"><td class="mdescLeft">&#160;</td><td class="mdescRight">Testing travel times flag getter.  <a href="#a465ceaf96b2b49286dcc873e91138406">More...</a><br/></td></tr>
-<tr class="separator:a465ceaf96b2b49286dcc873e91138406"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a06449263936b7cbadb2a5765925c499b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structglasscore_1_1IGlassSend.html">glasscore::IGlassSend</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a06449263936b7cbadb2a5765925c499b">piSend</a></td></tr>
-<tr class="memdesc:a06449263936b7cbadb2a5765925c499b"><td class="mdescLeft">&#160;</td><td class="mdescRight">An <a class="el" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface ">IGlassSend</a> interface pointer used to send communication (such as output data), to outside the glasscore library.  <a href="#a06449263936b7cbadb2a5765925c499b">More...</a><br/></td></tr>
-<tr class="separator:a06449263936b7cbadb2a5765925c499b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac863c8937de4039b2d3d618b16dc5173"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ac863c8937de4039b2d3d618b16dc5173">receiveExternalMessage</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:ac863c8937de4039b2d3d618b16dc5173"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> communication receiving function.  <a href="#ac863c8937de4039b2d3d618b16dc5173">More...</a><br/></td></tr>
+<tr class="separator:ac863c8937de4039b2d3d618b16dc5173"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71825456c86b84b88c80eab868808568"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a71825456c86b84b88c80eab868808568">sendExternalMessage</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:a71825456c86b84b88c80eab868808568"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> communication sending function.  <a href="#a71825456c86b84b88c80eab868808568">More...</a><br/></td></tr>
+<tr class="separator:a71825456c86b84b88c80eab868808568"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf3461f8a69d2fe99e85c4897f25387f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#adf3461f8a69d2fe99e85c4897f25387f">setExternalInterface</a> (<a class="el" href="structglasscore_1_1IGlassSend.html">glasscore::IGlassSend</a> *newSend)</td></tr>
+<tr class="memdesc:adf3461f8a69d2fe99e85c4897f25387f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the <a class="el" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface ">IGlassSend</a> interface pointer used to send communication (such as output data), to outside the glasscore library.  <a href="#adf3461f8a69d2fe99e85c4897f25387f">More...</a><br/></td></tr>
+<tr class="separator:adf3461f8a69d2fe99e85c4897f25387f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f76ece5c3f07e233be8c1a3b0ee0b81"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a8f76ece5c3f07e233be8c1a3b0ee0b81">initialize</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
+<tr class="memdesc:a8f76ece5c3f07e233be8c1a3b0ee0b81"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> initialization function.  <a href="#a8f76ece5c3f07e233be8c1a3b0ee0b81">More...</a><br/></td></tr>
+<tr class="separator:a8f76ece5c3f07e233be8c1a3b0ee0b81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4b3a8793f589cc72d68dc681b5e4a97"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ad4b3a8793f589cc72d68dc681b5e4a97">healthCheck</a> ()</td></tr>
+<tr class="memdesc:ad4b3a8793f589cc72d68dc681b5e4a97"><td class="mdescLeft">&#160;</td><td class="mdescRight">check to see if each thread is still functional  <a href="#ad4b3a8793f589cc72d68dc681b5e4a97">More...</a><br/></td></tr>
+<tr class="separator:ad4b3a8793f589cc72d68dc681b5e4a97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83b0a274b877acdd15d58fa0969397e0"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a83b0a274b877acdd15d58fa0969397e0">getBeamMatchingAzimuthWindow</a> ()</td></tr>
+<tr class="memdesc:a83b0a274b877acdd15d58fa0969397e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the azimuth window used to determine whether a beam can be matched with an existing hypo.  <a href="#a83b0a274b877acdd15d58fa0969397e0">More...</a><br/></td></tr>
+<tr class="separator:a83b0a274b877acdd15d58fa0969397e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5dfad7b7c09a6f67f25e697781261544"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a5dfad7b7c09a6f67f25e697781261544">getBeamMatchingDistanceWindow</a> ()</td></tr>
+<tr class="memdesc:a5dfad7b7c09a6f67f25e697781261544"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the distance window used to determine whether a beam can be matched with an existing hypo.  <a href="#a5dfad7b7c09a6f67f25e697781261544">More...</a><br/></td></tr>
+<tr class="separator:a5dfad7b7c09a6f67f25e697781261544"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69393d50310b1eada9ca793b5fdd23c1"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a69393d50310b1eada9ca793b5fdd23c1">getCorrelationCancelAge</a> ()</td></tr>
+<tr class="memdesc:a69393d50310b1eada9ca793b5fdd23c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the correlation cancel age used to determine when a hypo created by a correlation can be canceled if no other supporting data exists.  <a href="#a69393d50310b1eada9ca793b5fdd23c1">More...</a><br/></td></tr>
+<tr class="separator:a69393d50310b1eada9ca793b5fdd23c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d17c721bc8a1736a6cca20e6ba7888f"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a5d17c721bc8a1736a6cca20e6ba7888f">getCorrelationMatchingTimeWindow</a> ()</td></tr>
+<tr class="memdesc:a5d17c721bc8a1736a6cca20e6ba7888f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the time window used to determine whether a correlation can be matched with an existing hypo.  <a href="#a5d17c721bc8a1736a6cca20e6ba7888f">More...</a><br/></td></tr>
+<tr class="separator:a5d17c721bc8a1736a6cca20e6ba7888f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1af3c338d952944814bf6ac8ab616aa9"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a1af3c338d952944814bf6ac8ab616aa9">getCorrelationMatchingDistanceWindow</a> ()</td></tr>
+<tr class="memdesc:a1af3c338d952944814bf6ac8ab616aa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the distance window used to determine whether a correlation can be matched with an existing hypo.  <a href="#a1af3c338d952944814bf6ac8ab616aa9">More...</a><br/></td></tr>
+<tr class="separator:a1af3c338d952944814bf6ac8ab616aa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af51b0ab18b60ad76ca58eb6d0c35b972"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#af51b0ab18b60ad76ca58eb6d0c35b972">getHypoMergingTimeWindow</a> ()</td></tr>
+<tr class="memdesc:af51b0ab18b60ad76ca58eb6d0c35b972"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the time window used to determine whether a hypo could be merged with an existing hypo.  <a href="#af51b0ab18b60ad76ca58eb6d0c35b972">More...</a><br/></td></tr>
+<tr class="separator:af51b0ab18b60ad76ca58eb6d0c35b972"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace7eea349d4dc88e60bbd6c3fe8d2461"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ace7eea349d4dc88e60bbd6c3fe8d2461">getHypoMergingDistanceWindow</a> ()</td></tr>
+<tr class="memdesc:ace7eea349d4dc88e60bbd6c3fe8d2461"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the distance window used to determine whether a hypo could be merged with an existing hypo.  <a href="#ace7eea349d4dc88e60bbd6c3fe8d2461">More...</a><br/></td></tr>
+<tr class="separator:ace7eea349d4dc88e60bbd6c3fe8d2461"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34b8eb84c78e1ff3dae4d29d2d0468b3"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a34b8eb84c78e1ff3dae4d29d2d0468b3">getDistanceCutoffFactor</a> ()</td></tr>
+<tr class="memdesc:a34b8eb84c78e1ff3dae4d29d2d0468b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the factor used in calculating the association distance cutoff factor for pick data.  <a href="#a34b8eb84c78e1ff3dae4d29d2d0468b3">More...</a><br/></td></tr>
+<tr class="separator:a34b8eb84c78e1ff3dae4d29d2d0468b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cefe6923fda6b38b73c82e2dc9787c7"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a3cefe6923fda6b38b73c82e2dc9787c7">getMinDistanceCutoff</a> ()</td></tr>
+<tr class="memdesc:a3cefe6923fda6b38b73c82e2dc9787c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the minimum allowed association distance cutoff.  <a href="#a3cefe6923fda6b38b73c82e2dc9787c7">More...</a><br/></td></tr>
+<tr class="separator:a3cefe6923fda6b38b73c82e2dc9787c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adff70a5c69bbba146d6cbcd14bf838ae"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#adff70a5c69bbba146d6cbcd14bf838ae">getDistanceCutoffRatio</a> ()</td></tr>
+<tr class="memdesc:adff70a5c69bbba146d6cbcd14bf838ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the percentage used in calculating the association distance cutoff factor for pick data.  <a href="#adff70a5c69bbba146d6cbcd14bf838ae">More...</a><br/></td></tr>
+<tr class="separator:adff70a5c69bbba146d6cbcd14bf838ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31817f3c77723679be203a82c8626b31"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a31817f3c77723679be203a82c8626b31">getReportingStackThreshold</a> ()</td></tr>
+<tr class="memdesc:a31817f3c77723679be203a82c8626b31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the minimum bayesian stack threshold needed to report a hypo out of glass.  <a href="#a31817f3c77723679be203a82c8626b31">More...</a><br/></td></tr>
+<tr class="separator:a31817f3c77723679be203a82c8626b31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89df1388e05ccdeecb13276b23fb10a8"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a89df1388e05ccdeecb13276b23fb10a8">getNucleationStackThreshold</a> ()</td></tr>
+<tr class="memdesc:a89df1388e05ccdeecb13276b23fb10a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the minimum bayesian stack threshold required to nucleate an event.  <a href="#a89df1388e05ccdeecb13276b23fb10a8">More...</a><br/></td></tr>
+<tr class="separator:a89df1388e05ccdeecb13276b23fb10a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd885e31183184ec51b1ab75049dbc63"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#abd885e31183184ec51b1ab75049dbc63">getPickAffinityExpFactor</a> ()</td></tr>
+<tr class="memdesc:abd885e31183184ec51b1ab75049dbc63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the exponential pick affinity factor used in association.  <a href="#abd885e31183184ec51b1ab75049dbc63">More...</a><br/></td></tr>
+<tr class="separator:abd885e31183184ec51b1ab75049dbc63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad13915c067a72c461d453bd87b8a8e64"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ad13915c067a72c461d453bd87b8a8e64">getGraphicsOut</a> ()</td></tr>
+<tr class="memdesc:ad13915c067a72c461d453bd87b8a8e64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a flag indicating whether to produce graphics files for location tuning.  <a href="#ad13915c067a72c461d453bd87b8a8e64">More...</a><br/></td></tr>
+<tr class="separator:ad13915c067a72c461d453bd87b8a8e64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a659705810951e25b3eea7cbd1398e453"><td class="memItemLeft" align="right" valign="top">static const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a659705810951e25b3eea7cbd1398e453">getGraphicsOutFolder</a> ()</td></tr>
+<tr class="memdesc:a659705810951e25b3eea7cbd1398e453"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a string indicating the desired graphics output folder.  <a href="#a659705810951e25b3eea7cbd1398e453">More...</a><br/></td></tr>
+<tr class="separator:a659705810951e25b3eea7cbd1398e453"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e3f12fe47352b59b01d27324740f6d3"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a1e3f12fe47352b59b01d27324740f6d3">getGraphicsStepKm</a> ()</td></tr>
+<tr class="memdesc:a1e3f12fe47352b59b01d27324740f6d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the size of the step used in generating graphic output files.  <a href="#a1e3f12fe47352b59b01d27324740f6d3">More...</a><br/></td></tr>
+<tr class="separator:a1e3f12fe47352b59b01d27324740f6d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33a9e5161b0df204363f53a9d5710001"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a33a9e5161b0df204363f53a9d5710001">getGraphicsSteps</a> ()</td></tr>
+<tr class="memdesc:a33a9e5161b0df204363f53a9d5710001"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number steps used in generating graphic output files.  <a href="#a33a9e5161b0df204363f53a9d5710001">More...</a><br/></td></tr>
+<tr class="separator:a33a9e5161b0df204363f53a9d5710001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaadf8df56c1af1de3ae50f4e06db1046"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#aaadf8df56c1af1de3ae50f4e06db1046">getProcessLimit</a> ()</td></tr>
+<tr class="memdesc:aaadf8df56c1af1de3ae50f4e06db1046"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the maximum number of times a hypocenter can reprocess without new data being associated to it.  <a href="#aaadf8df56c1af1de3ae50f4e06db1046">More...</a><br/></td></tr>
+<tr class="separator:aaadf8df56c1af1de3ae50f4e06db1046"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bf9b4cd68f65e334aba43927d729888"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a6bf9b4cd68f65e334aba43927d729888">getMinimizeTTLocator</a> ()</td></tr>
+<tr class="memdesc:a6bf9b4cd68f65e334aba43927d729888"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a flag indicating whether to use the minimizing travel time locator.  <a href="#a6bf9b4cd68f65e334aba43927d729888">More...</a><br/></td></tr>
+<tr class="separator:a6bf9b4cd68f65e334aba43927d729888"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02082de78853ab73d8ea78b542a620ee"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a02082de78853ab73d8ea78b542a620ee">getNumStationsPerNode</a> ()</td></tr>
+<tr class="memdesc:a02082de78853ab73d8ea78b542a620ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum number of sites link to a node.  <a href="#a02082de78853ab73d8ea78b542a620ee">More...</a><br/></td></tr>
+<tr class="separator:a02082de78853ab73d8ea78b542a620ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21ba7c0598bbee9e831d4d5abc4f9c16"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a21ba7c0598bbee9e831d4d5abc4f9c16">getNucleationDataThreshold</a> ()</td></tr>
+<tr class="memdesc:a21ba7c0598bbee9e831d4d5abc4f9c16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the minimum number of data required to nucleate an event.  <a href="#a21ba7c0598bbee9e831d4d5abc4f9c16">More...</a><br/></td></tr>
+<tr class="separator:a21ba7c0598bbee9e831d4d5abc4f9c16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afba4ae17b62bf3b5cb127fc4fc94b1c9"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#afba4ae17b62bf3b5cb127fc4fc94b1c9">getReportingDataThreshold</a> ()</td></tr>
+<tr class="memdesc:afba4ae17b62bf3b5cb127fc4fc94b1c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the minimum number of data required to report an event.  <a href="#afba4ae17b62bf3b5cb127fc4fc94b1c9">More...</a><br/></td></tr>
+<tr class="separator:afba4ae17b62bf3b5cb127fc4fc94b1c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ab593f3844712cb4d053cdc9110cdb2"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a1ab593f3844712cb4d053cdc9110cdb2">getPickDuplicateTimeWindow</a> ()</td></tr>
+<tr class="memdesc:a1ab593f3844712cb4d053cdc9110cdb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the time window used when checking whether an input pick is a duplicate of a pick already in the pick list.  <a href="#a1ab593f3844712cb4d053cdc9110cdb2">More...</a><br/></td></tr>
+<tr class="separator:a1ab593f3844712cb4d053cdc9110cdb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0c24e1fe2cc587971e0adbaf6b21740"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ae0c24e1fe2cc587971e0adbaf6b21740">getAssociationSDCutoff</a> ()</td></tr>
+<tr class="memdesc:ae0c24e1fe2cc587971e0adbaf6b21740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the cutoff threshold in terms of number of standard deviations for associating data (eg. Picks) with a hypocenter. The standard deviation is fixed to 1.  <a href="#ae0c24e1fe2cc587971e0adbaf6b21740">More...</a><br/></td></tr>
+<tr class="separator:ae0c24e1fe2cc587971e0adbaf6b21740"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d114ea03ecad2be5926a1334499c25e"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a6d114ea03ecad2be5926a1334499c25e">getPruningSDCutoff</a> ()</td></tr>
+<tr class="memdesc:a6d114ea03ecad2be5926a1334499c25e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the cutoff threshold in terms of number of standard deviations for pruning data (eg. Picks) from a hypocenter. The standard deviation is fixed to 1.  <a href="#a6d114ea03ecad2be5926a1334499c25e">More...</a><br/></td></tr>
+<tr class="separator:a6d114ea03ecad2be5926a1334499c25e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6904be8e3674b703805d16f6f3241e6"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#af6904be8e3674b703805d16f6f3241e6">getTestLocator</a> ()</td></tr>
+<tr class="memdesc:af6904be8e3674b703805d16f6f3241e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a flag indicating whether to output locator testing files.  <a href="#af6904be8e3674b703805d16f6f3241e6">More...</a><br/></td></tr>
+<tr class="separator:af6904be8e3674b703805d16f6f3241e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacd1eb036a31045ed1ab69af179388ec"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#aacd1eb036a31045ed1ab69af179388ec">getTestTravelTimes</a> ()</td></tr>
+<tr class="memdesc:aacd1eb036a31045ed1ab69af179388ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a flag indicating whether to test travel times.  <a href="#aacd1eb036a31045ed1ab69af179388ec">More...</a><br/></td></tr>
+<tr class="separator:aacd1eb036a31045ed1ab69af179388ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a657c54b35b52d523f8b0e3179aec626f"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a657c54b35b52d523f8b0e3179aec626f">getMaxNumPicks</a> ()</td></tr>
+<tr class="memdesc:a657c54b35b52d523f8b0e3179aec626f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum number of picks to store in glass.  <a href="#a657c54b35b52d523f8b0e3179aec626f">More...</a><br/></td></tr>
+<tr class="separator:a657c54b35b52d523f8b0e3179aec626f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af67d220f54505f7558fcd7c1c121ff5a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#af67d220f54505f7558fcd7c1c121ff5a">setMaxNumPicks</a> (int max)</td></tr>
+<tr class="memdesc:af67d220f54505f7558fcd7c1c121ff5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of picks to store in glass.  <a href="#af67d220f54505f7558fcd7c1c121ff5a">More...</a><br/></td></tr>
+<tr class="separator:af67d220f54505f7558fcd7c1c121ff5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8874c7a3bb49340e38a06b36268f0d8"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ad8874c7a3bb49340e38a06b36268f0d8">getMaxNumCorrelations</a> ()</td></tr>
+<tr class="memdesc:ad8874c7a3bb49340e38a06b36268f0d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum number of correlations to store in glass.  <a href="#ad8874c7a3bb49340e38a06b36268f0d8">More...</a><br/></td></tr>
+<tr class="separator:ad8874c7a3bb49340e38a06b36268f0d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa90bde703fc3b6d652db8082e02bb41"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#aaa90bde703fc3b6d652db8082e02bb41">setMaxNumCorrelations</a> (int max)</td></tr>
+<tr class="memdesc:aaa90bde703fc3b6d652db8082e02bb41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of correlations to store in glass.  <a href="#aaa90bde703fc3b6d652db8082e02bb41">More...</a><br/></td></tr>
+<tr class="separator:aaa90bde703fc3b6d652db8082e02bb41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8f164873eefc44539e7357593d508eb"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ae8f164873eefc44539e7357593d508eb">getMaxNumPicksPerSite</a> ()</td></tr>
+<tr class="memdesc:ae8f164873eefc44539e7357593d508eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum number of picks to store with a site.  <a href="#ae8f164873eefc44539e7357593d508eb">More...</a><br/></td></tr>
+<tr class="separator:ae8f164873eefc44539e7357593d508eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a4959197e22846ba8e384acd1f721e2"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a2a4959197e22846ba8e384acd1f721e2">setMaxNumPicksPerSite</a> (int max)</td></tr>
+<tr class="memdesc:a2a4959197e22846ba8e384acd1f721e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of picks to store with a site.  <a href="#a2a4959197e22846ba8e384acd1f721e2">More...</a><br/></td></tr>
+<tr class="separator:a2a4959197e22846ba8e384acd1f721e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d4f6f4ff0773b26631ef6c6eb90d943"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a0d4f6f4ff0773b26631ef6c6eb90d943">getMaxNumHypos</a> ()</td></tr>
+<tr class="memdesc:a0d4f6f4ff0773b26631ef6c6eb90d943"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum number of hypos to store in glass.  <a href="#a0d4f6f4ff0773b26631ef6c6eb90d943">More...</a><br/></td></tr>
+<tr class="separator:a0d4f6f4ff0773b26631ef6c6eb90d943"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8600168f638ad1c00952229dc0efc6af"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a8600168f638ad1c00952229dc0efc6af">setMaxNumHypos</a> (int max)</td></tr>
+<tr class="memdesc:a8600168f638ad1c00952229dc0efc6af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of hypos to store in glass.  <a href="#a8600168f638ad1c00952229dc0efc6af">More...</a><br/></td></tr>
+<tr class="separator:a8600168f638ad1c00952229dc0efc6af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad336c7c25acc68b482c30a3739754e84"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ad336c7c25acc68b482c30a3739754e84">getEventFragmentDepthThreshold</a> ()</td></tr>
+<tr class="memdesc:ad336c7c25acc68b482c30a3739754e84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the depth threshold used for declaring a hypo an event fragment, in combination with m_dEventFragmentAzimuthThreshold.  <a href="#ad336c7c25acc68b482c30a3739754e84">More...</a><br/></td></tr>
+<tr class="separator:ad336c7c25acc68b482c30a3739754e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9babf20376a9c52383b37d9f6dbc2bea"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a9babf20376a9c52383b37d9f6dbc2bea">getEventFragmentAzimuthThreshold</a> ()</td></tr>
+<tr class="memdesc:a9babf20376a9c52383b37d9f6dbc2bea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the azimuth threshold used for declaring a hypo an event fragment, in combination with m_dEventFragmentDepthThreshold.  <a href="#a9babf20376a9c52383b37d9f6dbc2bea">More...</a><br/></td></tr>
+<tr class="separator:a9babf20376a9c52383b37d9f6dbc2bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abad8877184214168796b6e4d0a8f00bf"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classglasscore_1_1CCorrelationList.html">CCorrelationList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#abad8877184214168796b6e4d0a8f00bf">getCorrelationList</a> ()</td></tr>
+<tr class="memdesc:abad8877184214168796b6e4d0a8f00bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a pointer to the Correlation list.  <a href="#abad8877184214168796b6e4d0a8f00bf">More...</a><br/></td></tr>
+<tr class="separator:abad8877184214168796b6e4d0a8f00bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6b5e8f360b5df51a3607aa83f74f157"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classglasscore_1_1CDetection.html">CDetection</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ae6b5e8f360b5df51a3607aa83f74f157">getDetectionProcessor</a> ()</td></tr>
+<tr class="memdesc:ae6b5e8f360b5df51a3607aa83f74f157"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a pointer to the <a class="el" href="classglasscore_1_1CDetection.html" title="glasscore detection class ">CDetection</a> object used to process detections made external to glasscore.  <a href="#ae6b5e8f360b5df51a3607aa83f74f157">More...</a><br/></td></tr>
+<tr class="separator:ae6b5e8f360b5df51a3607aa83f74f157"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73270a4d9f1cad1cd50bf94d0e094d0b"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classglasscore_1_1CHypoList.html">CHypoList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a73270a4d9f1cad1cd50bf94d0e094d0b">getHypoList</a> ()</td></tr>
+<tr class="memdesc:a73270a4d9f1cad1cd50bf94d0e094d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a pointer to the Hypo list.  <a href="#a73270a4d9f1cad1cd50bf94d0e094d0b">More...</a><br/></td></tr>
+<tr class="separator:a73270a4d9f1cad1cd50bf94d0e094d0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c5d2de5bb4c697a09cbc9889aefa8d1"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classglasscore_1_1CPickList.html">CPickList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a3c5d2de5bb4c697a09cbc9889aefa8d1">getPickList</a> ()</td></tr>
+<tr class="memdesc:a3c5d2de5bb4c697a09cbc9889aefa8d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a pointer to the Pick list.  <a href="#a3c5d2de5bb4c697a09cbc9889aefa8d1">More...</a><br/></td></tr>
+<tr class="separator:a3c5d2de5bb4c697a09cbc9889aefa8d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5cbc368d05611ea574ce5b9657d71373"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a5cbc368d05611ea574ce5b9657d71373">getSiteList</a> ()</td></tr>
+<tr class="memdesc:a5cbc368d05611ea574ce5b9657d71373"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a pointer to the Site list.  <a href="#a5cbc368d05611ea574ce5b9657d71373">More...</a><br/></td></tr>
+<tr class="separator:a5cbc368d05611ea574ce5b9657d71373"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb06d170b09c1b1d7340c35ef374d0a2"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classglasscore_1_1CWebList.html">CWebList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#adb06d170b09c1b1d7340c35ef374d0a2">getWebList</a> ()</td></tr>
+<tr class="memdesc:adb06d170b09c1b1d7340c35ef374d0a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a pointer to the Web list.  <a href="#adb06d170b09c1b1d7340c35ef374d0a2">More...</a><br/></td></tr>
+<tr class="separator:adb06d170b09c1b1d7340c35ef374d0a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d3342f53ffa26afc1f3024da2dd9e00"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a6d3342f53ffa26afc1f3024da2dd9e00">getDefaultNucleationTravelTime</a> ()</td></tr>
+<tr class="memdesc:a6d3342f53ffa26afc1f3024da2dd9e00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the default nucleation travel time.  <a href="#a6d3342f53ffa26afc1f3024da2dd9e00">More...</a><br/></td></tr>
+<tr class="separator:a6d3342f53ffa26afc1f3024da2dd9e00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b9ac4771173450bcdbfa74421352e06"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr<br class="typebreak"/>
+&lt; <a class="el" href="classtraveltime_1_1CTTT.html">traveltime::CTTT</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a4b9ac4771173450bcdbfa74421352e06">getAssociationTravelTimes</a> ()</td></tr>
+<tr class="memdesc:a4b9ac4771173450bcdbfa74421352e06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the list of association travel times.  <a href="#a4b9ac4771173450bcdbfa74421352e06">More...</a><br/></td></tr>
+<tr class="separator:a4b9ac4771173450bcdbfa74421352e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore interface class </p>
@@ -309,6 +322,9 @@ Public Attributes</h2></td></tr>
 <a class="anchor" id="ad6fd2c2742eed90a5730773fff5877e9"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void glasscore::CGlass::clear </td>
@@ -317,24 +333,1161 @@ Public Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> clear function. </p>
 
 </div>
 </div>
-<a class="anchor" id="a96a77dda2867134f5cffcd943724c0b0"></a>
+<a class="anchor" id="ae0c24e1fe2cc587971e0adbaf6b21740"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool glasscore::CGlass::dispatch </td>
+          <td class="memname">double glasscore::CGlass::getAssociationSDCutoff </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the cutoff threshold in terms of number of standard deviations for associating data (eg. Picks) with a hypocenter. The standard deviation is fixed to 1. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the standard deviation cutoff used for association </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4b9ac4771173450bcdbfa74421352e06"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTTT.html">traveltime::CTTT</a> &gt; &amp; glasscore::CGlass::getAssociationTravelTimes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the list of association travel times. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a shared_ptr to the CTTT containing the list of association travel times </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a83b0a274b877acdd15d58fa0969397e0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getBeamMatchingAzimuthWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the azimuth window used to determine whether a beam can be matched with an existing hypo. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the beam matching azimuth window in degrees </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5dfad7b7c09a6f67f25e697781261544"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getBeamMatchingDistanceWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the distance window used to determine whether a beam can be matched with an existing hypo. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the beam matching distance window in degrees </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a69393d50310b1eada9ca793b5fdd23c1"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getCorrelationCancelAge </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the correlation cancel age used to determine when a hypo created by a correlation can be canceled if no other supporting data exists. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the correlation cancel age in seconds </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="abad8877184214168796b6e4d0a8f00bf"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classglasscore_1_1CCorrelationList.html">CCorrelationList</a> * glasscore::CGlass::getCorrelationList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a pointer to the Correlation list. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the correlation list </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1af3c338d952944814bf6ac8ab616aa9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getCorrelationMatchingDistanceWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the distance window used to determine whether a correlation can be matched with an existing hypo. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the correlation matching distance window in degrees </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5d17c721bc8a1736a6cca20e6ba7888f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getCorrelationMatchingTimeWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the time window used to determine whether a correlation can be matched with an existing hypo. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the correlation matching time window in seconds </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6d3342f53ffa26afc1f3024da2dd9e00"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; &amp; glasscore::CGlass::getDefaultNucleationTravelTime </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the default nucleation travel time. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a shared_ptr to the CTravelTime containing the default nucleation travel time </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae6b5e8f360b5df51a3607aa83f74f157"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classglasscore_1_1CDetection.html">CDetection</a> * glasscore::CGlass::getDetectionProcessor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a pointer to the <a class="el" href="classglasscore_1_1CDetection.html" title="glasscore detection class ">CDetection</a> object used to process detections made external to glasscore. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the detection processor </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a34b8eb84c78e1ff3dae4d29d2d0468b3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getDistanceCutoffFactor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the factor used in calculating the association distance cutoff factor for pick data. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the distance cutoff factor </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="adff70a5c69bbba146d6cbcd14bf838ae"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getDistanceCutoffRatio </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the percentage used in calculating the association distance cutoff factor for pick data. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the distance cutoff percentage </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a9babf20376a9c52383b37d9f6dbc2bea"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getEventFragmentAzimuthThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the azimuth threshold used for declaring a hypo an event fragment, in combination with m_dEventFragmentDepthThreshold. </p>
+
+</div>
+</div>
+<a class="anchor" id="ad336c7c25acc68b482c30a3739754e84"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getEventFragmentDepthThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the depth threshold used for declaring a hypo an event fragment, in combination with m_dEventFragmentAzimuthThreshold. </p>
+
+</div>
+</div>
+<a class="anchor" id="ad13915c067a72c461d453bd87b8a8e64"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CGlass::getGraphicsOut </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a flag indicating whether to produce graphics files for location tuning. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a boolean flag indicating whether to output graphics files for location tuning </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a659705810951e25b3eea7cbd1398e453"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; glasscore::CGlass::getGraphicsOutFolder </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a string indicating the desired graphics output folder. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a std::string containing the folder to output graphics files to </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1e3f12fe47352b59b01d27324740f6d3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getGraphicsStepKm </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the size of the step used in generating graphic output files. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the graphics step size in kilometers </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a33a9e5161b0df204363f53a9d5710001"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getGraphicsSteps </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the number steps used in generating graphic output files. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the number of graphic steps </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a73270a4d9f1cad1cd50bf94d0e094d0b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classglasscore_1_1CHypoList.html">CHypoList</a> * glasscore::CGlass::getHypoList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a pointer to the Hypo list. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the hypo list </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ace7eea349d4dc88e60bbd6c3fe8d2461"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getHypoMergingDistanceWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the distance window used to determine whether a hypo could be merged with an existing hypo. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the hypo merging distance window in degrees </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af51b0ab18b60ad76ca58eb6d0c35b972"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getHypoMergingTimeWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the time window used to determine whether a hypo could be merged with an existing hypo. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the hypo merging time window in seconds </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad8874c7a3bb49340e38a06b36268f0d8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getMaxNumCorrelations </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the maximum number of correlations to store in glass. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the maximum number of correlations </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a0d4f6f4ff0773b26631ef6c6eb90d943"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getMaxNumHypos </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the maximum number of hypos to store in glass. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the maximum number of hypos </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a657c54b35b52d523f8b0e3179aec626f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getMaxNumPicks </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the maximum number of picks to store in glass. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the maximum number of picks </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae8f164873eefc44539e7357593d508eb"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getMaxNumPicksPerSite </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the maximum number of picks to store with a site. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the maximum number of picks to store with a site </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3cefe6923fda6b38b73c82e2dc9787c7"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getMinDistanceCutoff </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the minimum allowed association distance cutoff. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the minimum allowed association distance cutoff in degrees </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6bf9b4cd68f65e334aba43927d729888"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CGlass::getMinimizeTTLocator </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a flag indicating whether to use the minimizing travel time locator. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a boolean flag indicating whether to use the minimizing travel time locator </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a21ba7c0598bbee9e831d4d5abc4f9c16"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getNucleationDataThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the minimum number of data required to nucleate an event. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the minimum number of data required to nucleate an event </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a89df1388e05ccdeecb13276b23fb10a8"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getNucleationStackThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the minimum bayesian stack threshold required to nucleate an event. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the minimum nucleation stack threshold </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a02082de78853ab73d8ea78b542a620ee"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getNumStationsPerNode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the maximum number of sites link to a node. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the maximum number of sites link to a node </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="abd885e31183184ec51b1ab75049dbc63"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getPickAffinityExpFactor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the exponential pick affinity factor used in association. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the exponential factor used for pick affinity </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1ab593f3844712cb4d053cdc9110cdb2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getPickDuplicateTimeWindow </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the time window used when checking whether an input pick is a duplicate of a pick already in the pick list. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the pick duplication time window in seconds </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3c5d2de5bb4c697a09cbc9889aefa8d1"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classglasscore_1_1CPickList.html">CPickList</a> * glasscore::CGlass::getPickList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a pointer to the Pick list. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the pick list </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aaadf8df56c1af1de3ae50f4e06db1046"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getProcessLimit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the maximum number of times a hypocenter can reprocess without new data being associated to it. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the limit of hypo processing cycles </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6d114ea03ecad2be5926a1334499c25e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getPruningSDCutoff </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the cutoff threshold in terms of number of standard deviations for pruning data (eg. Picks) from a hypocenter. The standard deviation is fixed to 1. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the standard deviation cutoff used for pruning </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afba4ae17b62bf3b5cb127fc4fc94b1c9"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getReportingDataThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the minimum number of data required to report an event. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the minimum number of data required to report an event </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a31817f3c77723679be203a82c8626b31"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getReportingStackThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the minimum bayesian stack threshold needed to report a hypo out of glass. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the minimum reporting stack threshold </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5cbc368d05611ea574ce5b9657d71373"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> * glasscore::CGlass::getSiteList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a pointer to the Site list. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the site list </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af6904be8e3674b703805d16f6f3241e6"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CGlass::getTestLocator </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a flag indicating whether to output locator testing files. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a boolean flag indicating whether to output locator testing files </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aacd1eb036a31045ed1ab69af179388ec"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CGlass::getTestTravelTimes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a flag indicating whether to test travel times. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a boolean flag indicating whether to test travel times </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="adb06d170b09c1b1d7340c35ef374d0a2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classglasscore_1_1CWebList.html">CWebList</a> * glasscore::CGlass::getWebList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets a pointer to the Web list. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the web list </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad4b3a8793f589cc72d68dc681b5e4a97"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CGlass::healthCheck </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>check to see if each thread is still functional </p>
+<p>Checks each thread to see if it is still responsive. </p>
+
+</div>
+</div>
+<a class="anchor" id="a8f76ece5c3f07e233be8c1a3b0ee0b81"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CGlass::initialize </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> initialization function. </p>
+<p>The function used by <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> to initialize the glasscore library. This function loads the earth model, sets the association parameters, sets up the ray path calculator, creates the detection web configures and tests the phase and branch travel times used for association, creates the pick, site, and hypo lists, and sets up the output format</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">com</td><td>- A pointer to a json::object containing the configuration to use in initialization. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if the initialization was successful, false otherwise </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac863c8937de4039b2d3d618b16dc5173"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CGlass::receiveExternalMessage </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
+          <td class="paramname"><em>com</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> communication receiving function. </p>
@@ -350,746 +1503,26 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a82e558ce6517496c54f55c52256b168e"></a>
+<a class="anchor" id="a71825456c86b84b88c80eab868808568"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double glasscore::CGlass::getAvgDelta </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Average delta getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the average delta </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a63d6697b57dce41f5ba3bdb08ea22f15"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getAvgSigma </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Average sigma getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the average sigma </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a2c3d308f4c2d11cfe9295427cd03a5fa"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getBeamMatchingAzimuthWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Beam matching azimuth window getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the beam matching azimuth window in degrees </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a66da507c22296a438570ebca670104bf"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getBeamMatchingDistanceWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Beam matching distance window getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the beam matching distance window in degrees </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a6668921f3751032665b63cee36dd35a4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getCorrelationCancelAge </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Correlation cancel age getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the correlation cancel age in seconds </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="aeb1ae3f49b1339138150b44eaa00f691"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CCorrelationList.html">CCorrelationList</a> *&amp; glasscore::CGlass::getCorrelationList </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Correlation list getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a pointer to the correlation list </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ab68a010ef6c7eda372879c0182c4967b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getCorrelationMatchingTWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Correlation matching time window getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the correlation matching time window in seconds </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="aa911eb4cbe210ee8443885a1882d302f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getCorrelationMatchingXWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Correlation matching distance window getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the correlation matching distance window in degrees </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="abd82cd0256d5876f54fff5b79380c2eb"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getCorrelationMax </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Maximum number of correlations getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the maximum number of correlations </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a248cf0d81b82710fd76bd71905d60939"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getCutFactor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Distance cutoff factor getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the distance cutoff factor </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a53b58b86f057cce9f08de156a9c2f48f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getCutMin </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Average distance cutoff minimum getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the minimum distance cutoff in degrees </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="abc41cb04f7fcfdfdf16cfdb5e4f371bf"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getCutPercentage </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Distance cutoff percentage getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the distance cutoff percentage </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a7c1da1bec0016abf62fb616df74872ce"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getCycleLimit </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Cycle limit getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the limit of processing cycles </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a0f87dec943038bee4988f7d1242df4da"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getDetect </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Default number of detection stations getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the default number of detections used in a node </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a3f4632a9700f5fdcb673b5fee83cf35a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CDetection.html">CDetection</a> *&amp; glasscore::CGlass::getDetection </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Detection getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a pointer to the detection processor </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a45b61147af0155cdcf3fa1ad1631431f"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getExpAffinity </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Exponential Affinity getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the exponential factor used for pick affinity </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a8acfb36b09e9d0e3d339d749223d7ac7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CGlass::getGraphicsOut </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Graphics output flag getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a flag indicating whether to output graphics files </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a0461ae0f4d76c4dc6176dd91942c2e94"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::string &amp; glasscore::CGlass::getGraphicsOutFolder </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Graphics output folder getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the folder to output graphics files to </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a15a08b653faa9892fc2f873ec75b5dc8"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getGraphicsStepKm </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Graphics step getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the graphics step size in km </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a5ee991e0c4f09da6ddb7ce4b7c1e0988"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getGraphicsSteps </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Graphics steps getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the number of graphic steps </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a197aa747c787aa6e543611a86ab6a803"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CHypoList.html">CHypoList</a> *&amp; glasscore::CGlass::getHypoList </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Hypocenter list getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a pointer to the hypocenter list </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a28e1817b7873c088b8ec1adb37748c1d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getHypoMax </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Maximum number of hypocenters getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the maximum number of hypocenters </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="adbd03755acda4a71bd9311c407e81d4b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CGlass::getMinimizeTtLocator </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Graphics minimize TT locator getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the flag indicating whether to use the minimizing tt locator </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="af9fefeebf0693bdde4c53ccff955d579"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getNucleate </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Default number of picks for nucleation getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the default number of nucleations used in for a detection </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a2f03d2ae27bc5cce49d3cd0d6ed0fc90"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getPickDuplicateWindow </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Pick duplicate time window getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the pick duplication time window in seconds </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a12ec718009aab30b08d28dc809c7d414"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CPickList.html">CPickList</a> *&amp; glasscore::CGlass::getPickList </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Pick list getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a pointer to the pick list </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="afab395d1b1f2d7f6da03dc1b2326e25e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getPickMax </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Maximum number of picks getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the maximum number of picks </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ac118fdd90a649efc19d90e374d1c055d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getReportCut </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Report cutoff getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the reporting cutoff </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="aa63f4dbe8f46f83781271bdd26934a98"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getReportThresh </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Report threshold getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the reporting viability threshold </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="abde8110999001ccf45ccbe69fb21a2a6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getSdAssociate </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>SD associate getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the standard deviation cutoff used for association </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a886806fd2984436fc8f8d7e57da06e81"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getSdPrune </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>SD prune getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the standard deviation cutoff used for pruning </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a2ac2b76bedcff655b16687a5fc9ca2b7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&amp; glasscore::CGlass::getSiteList </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Site list getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a pointer to the site list </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a765faa1e238cae279367110346fdc1d8"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getSitePickMax </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Maximum number of picks with a site getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the maximum number of picks stored with a site </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a78a3cbca4fbbac1b24bd9394f4b5a081"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CGlass::getTestLocator </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Testing locator flag getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a flag indicating whether to output locator testing files </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a465ceaf96b2b49286dcc873e91138406"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CGlass::getTestTimes </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Testing travel times flag getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a flag indicating whether to output travel times testing files </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="adc94b57c5f855b20e68f066fe283fdd2"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double glasscore::CGlass::getThresh </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Nucleation threshold getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the nucleation viability threshold </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a1a3487a6df1f1264f47c8a3e1a6eb8f8"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; &amp; glasscore::CGlass::getTrvDefault </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Default travel time getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the default nucleation travel time </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a90bf27a3cb360fbb560ced16aab7e136"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTTT.html">traveltime::CTTT</a> &gt; &amp; glasscore::CGlass::getTTT </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Travel time list getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the list of association travel times </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a4c84a19ec87ad54521f6e71c5341b1ce"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglasscore_1_1CWebList.html">CWebList</a> *&amp; glasscore::CGlass::getWebList </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Web list getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>a pointer to the web list </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a8f76ece5c3f07e233be8c1a3b0ee0b81"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CGlass::initialize </td>
+          <td class="memname">bool glasscore::CGlass::sendExternalMessage </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>com</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-</div><div class="memdoc">
-
-<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> initialization function. </p>
-<p>The function used by <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> to initialize the glasscore library. This function loads the earth model, sets the association parameters, sets up the ray path calculator, creates the detection web configures and tests the phase and branch travel times used for association, creates the pick, site, and hypo lists, and sets up the output format</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">com</td><td>- A pointer to a json::object containing the configuration to use in initialization. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns true if the initialization was successful, false otherwise </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="af92a817318376810b08a801c94b5d209"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool glasscore::CGlass::send </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
-          <td class="paramname"><em>com</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> communication sending function. </p>
@@ -1104,110 +1537,163 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a37cb7d63e43f3ebe05462950b4a81a77"></a>
+<a class="anchor" id="adf3461f8a69d2fe99e85c4897f25387f"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double glasscore::CGlass::sig </td>
+          <td class="memname">void glasscore::CGlass::setExternalInterface </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tdif</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype"><a class="el" href="structglasscore_1_1IGlassSend.html">glasscore::IGlassSend</a> *&#160;</td>
+          <td class="paramname"><em>newSend</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>sig</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> significance function. </p>
-<p>This function calculates the significance function for glasscore, which is the bell shaped curve with sig(0, x) pinned to 0.</p>
+<p>Sets the <a class="el" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface ">IGlassSend</a> interface pointer used to send communication (such as output data), to outside the glasscore library. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tdif</td><td>- A double containing x value. </td></tr>
-    <tr><td class="paramname">sig</td><td>- A double value containing the sigma, </td></tr>
+    <tr><td class="paramname">newSend</td><td>- A pointer to a <a class="el" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface ">glasscore::IGlassSend</a> interrace to use to send communication (such as output data), to outside the glasscore library </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing significance function result </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a9fd900a8137f98732b6e764d260c194a"></a>
+<a class="anchor" id="aaa90bde703fc3b6d652db8082e02bb41"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double glasscore::CGlass::sig_laplace_pdf </td>
+          <td class="memname">void glasscore::CGlass::setMaxNumCorrelations </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tdif</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>max</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>sig</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> laplacian significance function (PDF) </p>
-<p>This function calculates a laplacian significance used in associator. This should have the affect of being L1 normish, instead of L2 normish. Unlike the other significance function, this returns the PDF value </p>
+<p>Set the maximum number of correlations to store in glass. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tdif</td><td>- A double containing x value. </td></tr>
-    <tr><td class="paramname">sig</td><td>- A double value containing the sigma, </td></tr>
+    <tr><td class="paramname">max</td><td>- an integer containing the maximum number of correlations </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing significance function result </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7ea55d662fafe7fb813a362173afb019"></a>
+<a class="anchor" id="a8600168f638ad1c00952229dc0efc6af"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool glasscore::CGlass::statusCheck </td>
+          <td class="memname">void glasscore::CGlass::setMaxNumHypos </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>max</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>check to see if each thread is still functional </p>
-<p>Checks each thread to see if it is still responsive. </p>
+<p>Set the maximum number of hypos to store in glass. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">max</td><td>- an integer containing the maximum number of hypos </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="a06449263936b7cbadb2a5765925c499b"></a>
+<a class="anchor" id="af67d220f54505f7558fcd7c1c121ff5a"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structglasscore_1_1IGlassSend.html">glasscore::IGlassSend</a>* glasscore::CGlass::piSend</td>
+          <td class="memname">void glasscore::CGlass::setMaxNumPicks </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>max</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>An <a class="el" href="structglasscore_1_1IGlassSend.html" title="glasscore messaging interface ">IGlassSend</a> interface pointer used to send communication (such as output data), to outside the glasscore library. </p>
+<p>Set the maximum number of picks to store in glass. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">max</td><td>- an integer containing the maximum number of picks </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a2a4959197e22846ba8e384acd1f721e2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CGlass::setMaxNumPicksPerSite </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>max</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the maximum number of picks to store with a site. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">max</td><td>- an integer containing the maximum number of picks to store with a site </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -1218,7 +1704,7 @@ Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 15 2018 18:39:40 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 14 2018 21:31:43 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

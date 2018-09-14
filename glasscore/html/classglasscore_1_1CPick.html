@@ -63,6 +63,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -88,6 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classglasscore_1_1CPick-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">glasscore::CPick Class Reference</div>  </div>
@@ -109,75 +111,66 @@ Collaboration diagram for glasscore::CPick:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a19862523e51e89687270b45fa4935b8f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a19862523e51e89687270b45fa4935b8f">CPick</a> ()</td></tr>
-<tr class="memdesc:a19862523e51e89687270b45fa4935b8f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> constructor.  <a href="#a19862523e51e89687270b45fa4935b8f">More...</a><br/></td></tr>
+<tr class="memdesc:a19862523e51e89687270b45fa4935b8f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> default constructor.  <a href="#a19862523e51e89687270b45fa4935b8f">More...</a><br/></td></tr>
 <tr class="separator:a19862523e51e89687270b45fa4935b8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62b482351790b16870cb08a59c7b78a7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a62b482351790b16870cb08a59c7b78a7">CPick</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; pickSite, double pickTime, int pickId, std::string pickIdString, double backAzimuth, double slowness)</td></tr>
-<tr class="memdesc:a62b482351790b16870cb08a59c7b78a7"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> alternate constructor.  <a href="#a62b482351790b16870cb08a59c7b78a7">More...</a><br/></td></tr>
-<tr class="separator:a62b482351790b16870cb08a59c7b78a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f844f806ac59f829b0d3ce107526b8b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a1f844f806ac59f829b0d3ce107526b8b">CPick</a> (std::shared_ptr&lt; json::Object &gt; pick, int pickId, <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *pSiteList)</td></tr>
-<tr class="memdesc:a1f844f806ac59f829b0d3ce107526b8b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> alternate constructor.  <a href="#a1f844f806ac59f829b0d3ce107526b8b">More...</a><br/></td></tr>
-<tr class="separator:a1f844f806ac59f829b0d3ce107526b8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab051735ec530ae433fd26538f36232bd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#ab051735ec530ae433fd26538f36232bd">CPick</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; pickSite, double pickTime, std::string pickIdString, double backAzimuth, double slowness)</td></tr>
+<tr class="memdesc:ab051735ec530ae433fd26538f36232bd"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> advanced constructor.  <a href="#ab051735ec530ae433fd26538f36232bd">More...</a><br/></td></tr>
+<tr class="separator:ab051735ec530ae433fd26538f36232bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4352187b84569e213697b24affc92b72"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a4352187b84569e213697b24affc92b72">CPick</a> (std::shared_ptr&lt; json::Object &gt; pick, <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *pSiteList)</td></tr>
+<tr class="memdesc:a4352187b84569e213697b24affc92b72"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> advanced constructor.  <a href="#a4352187b84569e213697b24affc92b72">More...</a><br/></td></tr>
+<tr class="separator:a4352187b84569e213697b24affc92b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe6f66dea6ff986d98775242bc937a8e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#abe6f66dea6ff986d98775242bc937a8e">~CPick</a> ()</td></tr>
 <tr class="memdesc:abe6f66dea6ff986d98775242bc937a8e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> destructor.  <a href="#abe6f66dea6ff986d98775242bc937a8e">More...</a><br/></td></tr>
 <tr class="separator:abe6f66dea6ff986d98775242bc937a8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a882621fb9fe9bb913af6f25ffb6ab8d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a882621fb9fe9bb913af6f25ffb6ab8d5">clear</a> ()</td></tr>
 <tr class="memdesc:a882621fb9fe9bb913af6f25ffb6ab8d5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> clear function.  <a href="#a882621fb9fe9bb913af6f25ffb6ab8d5">More...</a><br/></td></tr>
 <tr class="separator:a882621fb9fe9bb913af6f25ffb6ab8d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9ac60bde62a7974c728a2f56c070ae9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#af9ac60bde62a7974c728a2f56c070ae9">initialize</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; pickSite, double pickTime, int pickId, std::string pickIdString, double backAzimuth, double slowness)</td></tr>
-<tr class="memdesc:af9ac60bde62a7974c728a2f56c070ae9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> initialization function.  <a href="#af9ac60bde62a7974c728a2f56c070ae9">More...</a><br/></td></tr>
-<tr class="separator:af9ac60bde62a7974c728a2f56c070ae9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9afacc53aef41ce6af47cbc6815ebd7f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a9afacc53aef41ce6af47cbc6815ebd7f">addHypo</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp, std::string ass=&quot;&quot;, bool force=false)</td></tr>
-<tr class="memdesc:a9afacc53aef41ce6af47cbc6815ebd7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add hypo reference to this pick.  <a href="#a9afacc53aef41ce6af47cbc6815ebd7f">More...</a><br/></td></tr>
-<tr class="separator:a9afacc53aef41ce6af47cbc6815ebd7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7506f509f5b3377d62b5c4f9c3f381d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a7506f509f5b3377d62b5c4f9c3f381d5">remHypo</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp)</td></tr>
-<tr class="memdesc:a7506f509f5b3377d62b5c4f9c3f381d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this pick.  <a href="#a7506f509f5b3377d62b5c4f9c3f381d5">More...</a><br/></td></tr>
-<tr class="separator:a7506f509f5b3377d62b5c4f9c3f381d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee8c3319e85c1e65d01222a62e3d69d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#aee8c3319e85c1e65d01222a62e3d69d6">remHypo</a> (std::string pid)</td></tr>
-<tr class="memdesc:aee8c3319e85c1e65d01222a62e3d69d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo specific reference to this pick.  <a href="#aee8c3319e85c1e65d01222a62e3d69d6">More...</a><br/></td></tr>
-<tr class="separator:aee8c3319e85c1e65d01222a62e3d69d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74461201f2cd255097468fde4e6db7f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a74461201f2cd255097468fde4e6db7f4">clearHypo</a> ()</td></tr>
-<tr class="memdesc:a74461201f2cd255097468fde4e6db7f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this pick.  <a href="#a74461201f2cd255097468fde4e6db7f4">More...</a><br/></td></tr>
-<tr class="separator:a74461201f2cd255097468fde4e6db7f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afae1ff10dde76b5aad59b6cda9d647a1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#afae1ff10dde76b5aad59b6cda9d647a1">initialize</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; pickSite, double pickTime, std::string pickIdString, double backAzimuth, double slowness)</td></tr>
+<tr class="memdesc:afae1ff10dde76b5aad59b6cda9d647a1"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> initialization function.  <a href="#afae1ff10dde76b5aad59b6cda9d647a1">More...</a><br/></td></tr>
+<tr class="separator:afae1ff10dde76b5aad59b6cda9d647a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a459df86e0e01dfa4a8bee452ae8eeaab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a459df86e0e01dfa4a8bee452ae8eeaab">addHypoReference</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp, bool force=false)</td></tr>
+<tr class="memdesc:a459df86e0e01dfa4a8bee452ae8eeaab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add hypo reference to this pick.  <a href="#a459df86e0e01dfa4a8bee452ae8eeaab">More...</a><br/></td></tr>
+<tr class="separator:a459df86e0e01dfa4a8bee452ae8eeaab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abcb689471bd536d0a69d4063f2fa7b4a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#abcb689471bd536d0a69d4063f2fa7b4a">removeHypoReference</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp)</td></tr>
+<tr class="memdesc:abcb689471bd536d0a69d4063f2fa7b4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this pick.  <a href="#abcb689471bd536d0a69d4063f2fa7b4a">More...</a><br/></td></tr>
+<tr class="separator:abcb689471bd536d0a69d4063f2fa7b4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24f8b83c76a6609111f0ad56efa16565"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a24f8b83c76a6609111f0ad56efa16565">removeHypoReference</a> (std::string pid)</td></tr>
+<tr class="memdesc:a24f8b83c76a6609111f0ad56efa16565"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo specific reference to this pick by id.  <a href="#a24f8b83c76a6609111f0ad56efa16565">More...</a><br/></td></tr>
+<tr class="separator:a24f8b83c76a6609111f0ad56efa16565"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bc9730805c61733f67e4bba810c1099"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a7bc9730805c61733f67e4bba810c1099">nucleate</a> ()</td></tr>
-<tr class="memdesc:a7bc9730805c61733f67e4bba810c1099"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nucleate new event based on the addition of this pick.  <a href="#a7bc9730805c61733f67e4bba810c1099">More...</a><br/></td></tr>
+<tr class="memdesc:a7bc9730805c61733f67e4bba810c1099"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempt to nucleate new hypo based on the addition of this pick.  <a href="#a7bc9730805c61733f67e4bba810c1099">More...</a><br/></td></tr>
 <tr class="separator:a7bc9730805c61733f67e4bba810c1099"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29fadd7b6ab0570c6e85189b5098bfb5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a29fadd7b6ab0570c6e85189b5098bfb5">getBackAzimuth</a> () const </td></tr>
-<tr class="memdesc:a29fadd7b6ab0570c6e85189b5098bfb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Back azimuth getter.  <a href="#a29fadd7b6ab0570c6e85189b5098bfb5">More...</a><br/></td></tr>
+<tr class="memdesc:a29fadd7b6ab0570c6e85189b5098bfb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the optional back azimuth related to this pick.  <a href="#a29fadd7b6ab0570c6e85189b5098bfb5">More...</a><br/></td></tr>
 <tr class="separator:a29fadd7b6ab0570c6e85189b5098bfb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0b372f0a0820ef040f96127acc5a602"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#aa0b372f0a0820ef040f96127acc5a602">getSlowness</a> () const </td></tr>
-<tr class="memdesc:aa0b372f0a0820ef040f96127acc5a602"><td class="mdescLeft">&#160;</td><td class="mdescRight">Slowness getter.  <a href="#aa0b372f0a0820ef040f96127acc5a602">More...</a><br/></td></tr>
+<tr class="memdesc:aa0b372f0a0820ef040f96127acc5a602"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the optional slowness related to this pick.  <a href="#aa0b372f0a0820ef040f96127acc5a602">More...</a><br/></td></tr>
 <tr class="separator:aa0b372f0a0820ef040f96127acc5a602"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad673957653feb09cdfe3a9092201efb6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#ad673957653feb09cdfe3a9092201efb6">getIdPick</a> () const </td></tr>
-<tr class="memdesc:ad673957653feb09cdfe3a9092201efb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pick id getter.  <a href="#ad673957653feb09cdfe3a9092201efb6">More...</a><br/></td></tr>
-<tr class="separator:ad673957653feb09cdfe3a9092201efb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a303d6d74ceca00f9ad13cc0f425b70b2"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr<br class="typebreak"/>
-&lt; json::Object &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a303d6d74ceca00f9ad13cc0f425b70b2">getJPick</a> () const </td></tr>
-<tr class="memdesc:a303d6d74ceca00f9ad13cc0f425b70b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Json pick getter.  <a href="#a303d6d74ceca00f9ad13cc0f425b70b2">More...</a><br/></td></tr>
-<tr class="separator:a303d6d74ceca00f9ad13cc0f425b70b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a541fb2748a45fabbc507b6b6d9f894f2"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a541fb2748a45fabbc507b6b6d9f894f2">getHypo</a> () const </td></tr>
-<tr class="memdesc:a541fb2748a45fabbc507b6b6d9f894f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hypo getter.  <a href="#a541fb2748a45fabbc507b6b6d9f894f2">More...</a><br/></td></tr>
-<tr class="separator:a541fb2748a45fabbc507b6b6d9f894f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d3df53d16babbe4843624aba43cda90"><td class="memItemLeft" align="right" valign="top">const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a0d3df53d16babbe4843624aba43cda90">getHypoPid</a> () const </td></tr>
-<tr class="memdesc:a0d3df53d16babbe4843624aba43cda90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pid getter.  <a href="#a0d3df53d16babbe4843624aba43cda90">More...</a><br/></td></tr>
-<tr class="separator:a0d3df53d16babbe4843624aba43cda90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae34428447ff7f5be0916e0ba9fb664e7"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr<br class="typebreak"/>
+&lt; json::Object &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#ae34428447ff7f5be0916e0ba9fb664e7">getJSONPick</a> () const </td></tr>
+<tr class="memdesc:ae34428447ff7f5be0916e0ba9fb664e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get input JSON pick message.  <a href="#ae34428447ff7f5be0916e0ba9fb664e7">More...</a><br/></td></tr>
+<tr class="separator:ae34428447ff7f5be0916e0ba9fb664e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b1f7375c5eea7fd5fb52679e1bdb9ba"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a1b1f7375c5eea7fd5fb52679e1bdb9ba">getHypoReference</a> () const </td></tr>
+<tr class="memdesc:a1b1f7375c5eea7fd5fb52679e1bdb9ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current hypo referenced by this pick.  <a href="#a1b1f7375c5eea7fd5fb52679e1bdb9ba">More...</a><br/></td></tr>
+<tr class="separator:a1b1f7375c5eea7fd5fb52679e1bdb9ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb6b4e6e63daf0a761d7e42e845bbc0e"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#acb6b4e6e63daf0a761d7e42e845bbc0e">getSite</a> () const </td></tr>
-<tr class="memdesc:acb6b4e6e63daf0a761d7e42e845bbc0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Site getter.  <a href="#acb6b4e6e63daf0a761d7e42e845bbc0e">More...</a><br/></td></tr>
+<tr class="memdesc:acb6b4e6e63daf0a761d7e42e845bbc0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the site for this pick.  <a href="#acb6b4e6e63daf0a761d7e42e845bbc0e">More...</a><br/></td></tr>
 <tr class="separator:acb6b4e6e63daf0a761d7e42e845bbc0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ee6466e6d23ad085b27912c65b8b67c"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a6ee6466e6d23ad085b27912c65b8b67c">getAss</a> () const </td></tr>
-<tr class="memdesc:a6ee6466e6d23ad085b27912c65b8b67c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Association string getter.  <a href="#a6ee6466e6d23ad085b27912c65b8b67c">More...</a><br/></td></tr>
-<tr class="separator:a6ee6466e6d23ad085b27912c65b8b67c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad327d20728f4c09c1074701a926d7126"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#ad327d20728f4c09c1074701a926d7126">setAss</a> (std::string ass)</td></tr>
-<tr class="memdesc:ad327d20728f4c09c1074701a926d7126"><td class="mdescLeft">&#160;</td><td class="mdescRight">Association string setter.  <a href="#ad327d20728f4c09c1074701a926d7126">More...</a><br/></td></tr>
-<tr class="separator:ad327d20728f4c09c1074701a926d7126"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a018ec4067486443dc3bd8279b35754f1"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a018ec4067486443dc3bd8279b35754f1">getPhs</a> () const </td></tr>
-<tr class="memdesc:a018ec4067486443dc3bd8279b35754f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Phase getter.  <a href="#a018ec4067486443dc3bd8279b35754f1">More...</a><br/></td></tr>
-<tr class="separator:a018ec4067486443dc3bd8279b35754f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a551e0f12a8d6265b36865265e8194b08"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a551e0f12a8d6265b36865265e8194b08">getPid</a> () const </td></tr>
-<tr class="memdesc:a551e0f12a8d6265b36865265e8194b08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pid getter.  <a href="#a551e0f12a8d6265b36865265e8194b08">More...</a><br/></td></tr>
-<tr class="separator:a551e0f12a8d6265b36865265e8194b08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac33e6bd18d8cf9a941d0d1736d7ebe73"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#ac33e6bd18d8cf9a941d0d1736d7ebe73">getPhaseName</a> () const </td></tr>
+<tr class="memdesc:ac33e6bd18d8cf9a941d0d1736d7ebe73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the phase name for this pick.  <a href="#ac33e6bd18d8cf9a941d0d1736d7ebe73">More...</a><br/></td></tr>
+<tr class="separator:ac33e6bd18d8cf9a941d0d1736d7ebe73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84f62efbe7eb5f3b31a81ac973b315c6"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a84f62efbe7eb5f3b31a81ac973b315c6">getID</a> () const </td></tr>
+<tr class="memdesc:a84f62efbe7eb5f3b31a81ac973b315c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the ID of this pick.  <a href="#a84f62efbe7eb5f3b31a81ac973b315c6">More...</a><br/></td></tr>
+<tr class="separator:a84f62efbe7eb5f3b31a81ac973b315c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4bbd3255f2bb32887f45d12a39bc8d0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#ad4bbd3255f2bb32887f45d12a39bc8d0">getTPick</a> () const </td></tr>
-<tr class="memdesc:ad4bbd3255f2bb32887f45d12a39bc8d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pick time getter.  <a href="#ad4bbd3255f2bb32887f45d12a39bc8d0">More...</a><br/></td></tr>
+<tr class="memdesc:ad4bbd3255f2bb32887f45d12a39bc8d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the arrival time for this pick.  <a href="#ad4bbd3255f2bb32887f45d12a39bc8d0">More...</a><br/></td></tr>
 <tr class="separator:ad4bbd3255f2bb32887f45d12a39bc8d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a48a1ce425cebca3237a958f6f0d4fce5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPick.html#a48a1ce425cebca3237a958f6f0d4fce5">clearHypoReference</a> ()</td></tr>
+<tr class="memdesc:a48a1ce425cebca3237a958f6f0d4fce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove hypo reference to this pick.  <a href="#a48a1ce425cebca3237a958f6f0d4fce5">More...</a><br/></td></tr>
+<tr class="separator:a48a1ce425cebca3237a958f6f0d4fce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore pick class </p>
@@ -200,12 +193,12 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> constructor. </p>
-<p>Constructs an empty <a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> </p>
+<p><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> default constructor. </p>
+<p>The default constructor for the <a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> class. Initializes members to default values. </p>
 
 </div>
 </div>
-<a class="anchor" id="a62b482351790b16870cb08a59c7b78a7"></a>
+<a class="anchor" id="ab051735ec530ae433fd26538f36232bd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -220,12 +213,6 @@ Public Member Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>pickTime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>pickId</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -253,13 +240,12 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> alternate constructor. </p>
-<p>Constructs a <a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> using the provided values</p>
+<p><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> advanced constructor. </p>
+<p>An advanced constructor for the <a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> class. This function initializes members to the provided values.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pickSite</td><td>- A shared pointer to a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> object that the pick was made at </td></tr>
     <tr><td class="paramname">pickTime</td><td>- A double containing the pick arrival time </td></tr>
-    <tr><td class="paramname">pickId</td><td>- An integer containing the glass pick id (index) to use. </td></tr>
     <tr><td class="paramname">pickIdString</td><td>- A std::string containing the external pick id. </td></tr>
     <tr><td class="paramname">backAzimuth</td><td>- A double containing the optional back azimuth, -1 to omit </td></tr>
     <tr><td class="paramname">slowness</td><td>- A double containing the optional slowness, -1 to omit </td></tr>
@@ -269,7 +255,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1f844f806ac59f829b0d3ce107526b8b"></a>
+<a class="anchor" id="a4352187b84569e213697b24affc92b72"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -278,12 +264,6 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>pick</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>pickId</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -299,13 +279,12 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> alternate constructor. </p>
-<p>Constructs a <a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> class from the provided json object and id, using a <a class="el" href="classglasscore_1_1CGlass.html" title="glasscore interface class ">CGlass</a> pointer to convert times and lookup stations.</p>
+<p><a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> advanced constructor. </p>
+<p>An advanced constructor for the <a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> class. This function initializes members to the values parsed from the provided json object and using the provided pointer to a <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> class to lookup the pick station.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pick</td><td>- A pointer to a json::Object to construct the pick from </td></tr>
-    <tr><td class="paramname">pickId</td><td>- An integer containing the pick id to use. </td></tr>
-    <tr><td class="paramname">pSiteList</td><td>- A pointer to the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> class </td></tr>
+    <tr><td class="paramname">pick</td><td>- A shared pointer to a json::Object to containing the data to construct the pick from </td></tr>
+    <tr><td class="paramname">pSiteList</td><td>- A pointer to the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> class to use when looking up the pick station </td></tr>
   </table>
   </dd>
 </dl>
@@ -330,21 +309,15 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a9afacc53aef41ce6af47cbc6815ebd7f"></a>
+<a class="anchor" id="a459df86e0e01dfa4a8bee452ae8eeaab"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void glasscore::CPick::addHypo </td>
+          <td class="memname">void glasscore::CPick::addHypoReference </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt;&#160;</td>
           <td class="paramname"><em>hyp</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>ass</em> = <code>&quot;&quot;</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -361,12 +334,11 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Add hypo reference to this pick. </p>
-<p>Adds a shared_ptr reference to the given hypo to this pick, representing a graph database link between this pick and the hypocenters.</p>
-<p>Note that this pick may or may not also be linked to other hypocenters</p>
+<p>Adds a weak_ptr reference to the given hypo to this pick, representing a graph database link between this pick and a hypocenter. If the pick is already linked to a hypocenter, the new link will be ignored unless force is set to true.</p>
+<p>Note that this pick may or may not also be included in other hypocenter pick data lists, but this pick will only link to a single hypocenter</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hyp</td><td>- A std::shared_ptr to an object containing the hypocenter to link. </td></tr>
-    <tr><td class="paramname">ass</td><td>- A std::string containing a note about the association reason </td></tr>
     <tr><td class="paramname">force</td><td>- A boolean flag indicating whether to force the association, defaults to false. </td></tr>
   </table>
   </dd>
@@ -391,39 +363,30 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a74461201f2cd255097468fde4e6db7f4"></a>
+<a class="anchor" id="a48a1ce425cebca3237a958f6f0d4fce5"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void glasscore::CPick::clearHypo </td>
+          <td class="memname">void glasscore::CPick::clearHypoReference </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Remove hypo reference to this pick. </p>
-<p>Remove any shared_ptr reference from this pick, breaking the graph database link between this pick and any hypocenter. </p>
-
-</div>
-</div>
-<a class="anchor" id="a6ee6466e6d23ad085b27912c65b8b67c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::string &amp; glasscore::CPick::getAss </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Association string getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the association string </dd></dl>
+<p>Remove any existing weak_ptr reference to a hypo from this pick, breaking the graph database link between this pick and a hypocenter.</p>
+<p>Note that this pick may or may not still be included in other hypocenter pick data lists. </p>
 
 </div>
 </div>
@@ -440,17 +403,17 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Back azimuth getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the back azimuth </dd></dl>
+<p>Get the optional back azimuth related to this pick. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the optional back azimuth, or std::numeric_limits&lt;double&gt;::quiet_NaN() if no back azimuth was provided </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a541fb2748a45fabbc507b6b6d9f894f2"></a>
+<a class="anchor" id="a1b1f7375c5eea7fd5fb52679e1bdb9ba"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; glasscore::CPick::getHypo </td>
+          <td class="memname">const std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; glasscore::CPick::getHypoReference </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -458,17 +421,18 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Hypo getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the hypo </dd></dl>
+<p>Get the current hypo referenced by this pick. </p>
+<p>Note that this pick may or may not also be included in other hypocenter pick data lists, but this pick will only link to a single hypocenter</p>
+<dl class="section return"><dt>Returns</dt><dd>Return a shared_ptr to the <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> referenced by this pick, or NULL if no hypo is referenced </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a0d3df53d16babbe4843624aba43cda90"></a>
+<a class="anchor" id="a84f62efbe7eb5f3b31a81ac973b315c6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const std::string glasscore::CPick::getHypoPid </td>
+          <td class="memname">const std::string &amp; glasscore::CPick::getID </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -476,17 +440,17 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pid getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the pid </dd></dl>
+<p>Get the ID of this pick. </p>
+<dl class="section return"><dt>Returns</dt><dd>Return a std::string containing the pick ID </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ad673957653feb09cdfe3a9092201efb6"></a>
+<a class="anchor" id="ae34428447ff7f5be0916e0ba9fb664e7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int glasscore::CPick::getIdPick </td>
+          <td class="memname">const std::shared_ptr&lt; json::Object &gt; &amp; glasscore::CPick::getJSONPick </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -494,17 +458,17 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pick id getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the pick id </dd></dl>
+<p>Get input JSON pick message. </p>
+<dl class="section return"><dt>Returns</dt><dd>Return a shared_ptr to a json::Object containing the pick message </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a303d6d74ceca00f9ad13cc0f425b70b2"></a>
+<a class="anchor" id="ac33e6bd18d8cf9a941d0d1736d7ebe73"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const std::shared_ptr&lt; json::Object &gt; &amp; glasscore::CPick::getJPick </td>
+          <td class="memname">const std::string &amp; glasscore::CPick::getPhaseName </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -512,44 +476,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Json pick getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the json pick </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a018ec4067486443dc3bd8279b35754f1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::string &amp; glasscore::CPick::getPhs </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Phase getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the phase </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a551e0f12a8d6265b36865265e8194b08"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::string &amp; glasscore::CPick::getPid </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Pid getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the pid </dd></dl>
+<p>Get the phase name for this pick. </p>
+<dl class="section return"><dt>Returns</dt><dd>Return a std::string containing the pick phase name </dd></dl>
 
 </div>
 </div>
@@ -566,8 +494,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Site getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the site </dd></dl>
+<p>Get the site for this pick. </p>
+<dl class="section return"><dt>Returns</dt><dd>Return a shared_ptr to a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> object containing the site this pick was made at </dd></dl>
 
 </div>
 </div>
@@ -584,8 +512,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Slowness getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the slowness </dd></dl>
+<p>Get the optional slowness related to this pick. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the optional slowness, or std::numeric_limits&lt;double&gt;::quiet_NaN() if no slowness was provided </dd></dl>
 
 </div>
 </div>
@@ -602,12 +530,12 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Pick time getter. </p>
-<dl class="section return"><dt>Returns</dt><dd>the pick time </dd></dl>
+<p>Get the arrival time for this pick. </p>
+<dl class="section return"><dt>Returns</dt><dd>Return a double containing the pick arrival time </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="af9ac60bde62a7974c728a2f56c070ae9"></a>
+<a class="anchor" id="afae1ff10dde76b5aad59b6cda9d647a1"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -622,12 +550,6 @@ Public Member Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>pickTime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>pickId</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -661,7 +583,6 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">pickSite</td><td>- A shared pointer to a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> object that the pick was made at </td></tr>
     <tr><td class="paramname">pickTime</td><td>- A double containing the pick arrival time </td></tr>
-    <tr><td class="paramname">pickId</td><td>- An integer containing the glass pick id (index) to use. </td></tr>
     <tr><td class="paramname">pickIdString</td><td>- A std::string containing the external pick id. </td></tr>
     <tr><td class="paramname">backAzimuth</td><td>- A double containing the optional back azimuth, -1 to omit </td></tr>
     <tr><td class="paramname">slowness</td><td>- A double containing the optional slowness, -1 to omit </td></tr>
@@ -685,17 +606,18 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Nucleate new event based on the addition of this pick. </p>
-<p>Attempt to nucleate a new event based on the addition of this pick. First scan all nodes linked to this pick's site. Then, for each one, calculate the stacked agoric at that node. Then, for each node who's agoric surpassed the threhold, try to generate a new hypocenter. If that hypocenter survives, add it to the list. </p>
+<p>Attempt to nucleate new hypo based on the addition of this pick. </p>
+<p>Attempt to nucleate a new hypo based on the addition of this pick. By scanning all nodes linked to this pick's site, producing a list of triggers. Then, for the best trigger for each web, try to generate a new hypo, performing a fast location/prune using hypo-&gt;anneal </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if successful, false otherwise </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a7506f509f5b3377d62b5c4f9c3f381d5"></a>
+<a class="anchor" id="abcb689471bd536d0a69d4063f2fa7b4a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void glasscore::CPick::remHypo </td>
+          <td class="memname">void glasscore::CPick::removeHypoReference </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt;&#160;</td>
           <td class="paramname"><em>hyp</em></td><td>)</td>
@@ -705,8 +627,8 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Remove hypo reference to this pick. </p>
-<p>Remove a shared_ptr reference from the given hypo to this pick, breaking the graph database link between this pick and the hypocenter.</p>
-<p>Note that this pick may or may not be still linked to other hypocenters</p>
+<p>Remove a weak_ptr reference to the given hypo from this pick, breaking the graph database link between this pick and the hypocenter.</p>
+<p>Note that this pick may or may not still be included in other hypocenter pick data lists.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hyp</td><td>- A std::shared_ptr to an object containing the hypocenter to unlink. </td></tr>
@@ -716,12 +638,12 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aee8c3319e85c1e65d01222a62e3d69d6"></a>
+<a class="anchor" id="a24f8b83c76a6609111f0ad56efa16565"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void glasscore::CPick::remHypo </td>
+          <td class="memname">void glasscore::CPick::removeHypoReference </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
           <td class="paramname"><em>pid</em></td><td>)</td>
@@ -730,36 +652,12 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Remove hypo specific reference to this pick. </p>
-<p>Remove a shared_ptr reference from the given hypo id to this pick, breaking the graph database link between this pick and the hypocenter.</p>
-<p>Note that this pick may or may not be still linked to other hypocenters</p>
+<p>Remove hypo specific reference to this pick by id. </p>
+<p>Remove a weak_ptr reference to the given hypo id from this pick, breaking the graph database link between this pick and the hypocenter.</p>
+<p>Note that this pick may or may not still be included in other hypocenter pick data lists.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pid</td><td>- A std::string identifying the the hypocenter to unlink. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="ad327d20728f4c09c1074701a926d7126"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glasscore::CPick::setAss </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>ass</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Association string setter. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ass</td><td>- the association string </td></tr>
   </table>
   </dd>
 </dl>
@@ -773,7 +671,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 15 2018 18:39:40 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 14 2018 21:31:43 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

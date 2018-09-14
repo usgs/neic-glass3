@@ -1,6 +1,8 @@
 <map id="glasslib/include/Correlation.h" name="glasslib/include/Correlation.h">
-<area shape="rect" id="node2" href="$Correlation_8cpp.html" title="glasslib/src/Correlation.cpp" alt="" coords="5,88,184,115"/>
-<area shape="rect" id="node3" href="$CorrelationList_8cpp.html" title="glasslib/src/Correlation\lList.cpp" alt="" coords="209,81,363,122"/>
-<area shape="rect" id="node4" href="$Hypo_8cpp.html" title="glasslib/src/Hypo.cpp" alt="" coords="389,88,536,115"/>
-<area shape="rect" id="node5" href="$HypoList_8cpp.html" title="glasslib/src/HypoList.cpp" alt="" coords="561,88,729,115"/>
+<area shape="rect" id="node2" href="$CorrelationList_8h.html" title="glasslib/include/Correlation\lList.h" alt="" coords="171,81,349,122"/>
+<area shape="rect" id="node3" href="$CorrelationList_8cpp.html" title="glasslib/src/Correlation\lList.cpp" alt="" coords="5,171,159,213"/>
+<area shape="rect" id="node5" href="$HypoList_8cpp.html" title="glasslib/src/HypoList.cpp" alt="" coords="359,179,528,205"/>
+<area shape="rect" id="node6" href="$Correlation_8cpp.html" title="glasslib/src/Correlation.cpp" alt="" coords="425,88,604,115"/>
+<area shape="rect" id="node7" href="$Hypo_8cpp.html" title="glasslib/src/Hypo.cpp" alt="" coords="629,88,776,115"/>
+<area shape="rect" id="node4" href="$Glass_8cpp.html" title="glasslib/src/Glass.cpp" alt="" coords="185,179,335,205"/>
 </map>

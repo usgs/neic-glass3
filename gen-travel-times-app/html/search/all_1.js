@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['logtraveltimes',['logTravelTimes',['../gen-travel-times-app_8cpp.html#ababbf53d842ec50f923a22c1d55964b4',1,'gen-travel-times-app.cpp']]]
+  ['main',['main',['../gen-travel-times-app_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'gen-travel-times-app.cpp']]]
 ];

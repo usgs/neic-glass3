@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['logmessagestruct',['logMessageStruct',['../structglassutil_1_1logMessageStruct.html',1,'glassutil']]]
+  ['hypocompare',['HypoCompare',['../structglasscore_1_1HypoCompare.html',1,'glasscore']]]
 ];

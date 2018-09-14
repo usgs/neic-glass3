@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['findhypo',['findHypo',['../classglasscore_1_1CHypoList.html#a8af13b34599f83bde8a2cdc9e4803ded',1,'glasscore::CHypoList']]],
+  ['findandmergematchinghypos',['findAndMergeMatchingHypos',['../classglasscore_1_1CHypoList.html#a5834ef9dc0af85c23285aebbc622c7ee',1,'glasscore::CHypoList']]],
   ['fmax',['FMAX',['../Ray_8cpp.html#a985ff4ce447bced94342e89ab3766fdd',1,'Ray.cpp']]],
   ['fun_5fp_5fdelta',['FUN_P_DELTA',['../Terra_8h.html#a013d2914acc9911d5e25895a4537475c',1,'Terra.h']]],
   ['fun_5fp_5ftau',['FUN_P_TAU',['../Terra_8h.html#a3cddbf0737513fcd24f815c18ef30f80',1,'Terra.h']]],

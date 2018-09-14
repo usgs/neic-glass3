@@ -63,6 +63,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -125,9 +126,6 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a8e15d2d78c28737eb40693a40b442a89"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglassutil_1_1CLogit.html#a8e15d2d78c28737eb40693a40b442a89">enable</a> ()</td></tr>
 <tr class="memdesc:a8e15d2d78c28737eb40693a40b442a89"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglassutil_1_1CLogit.html" title="glassutil logging class ">CLogit</a> enable logging function.  <a href="#a8e15d2d78c28737eb40693a40b442a89">More...</a><br/></td></tr>
 <tr class="separator:a8e15d2d78c28737eb40693a40b442a89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f0339daea1c21ad656bc99746262d80"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglassutil_1_1CLogit.html#a5f0339daea1c21ad656bc99746262d80">setLogCallback</a> (std::function&lt; void(<a class="el" href="structglassutil_1_1logMessageStruct.html">logMessageStruct</a>)&gt; callback)</td></tr>
-<tr class="memdesc:a5f0339daea1c21ad656bc99746262d80"><td class="mdescLeft">&#160;</td><td class="mdescRight">optional logging callback setup function  <a href="#a5f0339daea1c21ad656bc99746262d80">More...</a><br/></td></tr>
-<tr class="separator:a5f0339daea1c21ad656bc99746262d80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab38f4b97f92594a0e60f1b0491a5446"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglassutil_1_1CLogit.html#aab38f4b97f92594a0e60f1b0491a5446">Out</a> (const char *s)</td></tr>
 <tr class="memdesc:aab38f4b97f92594a0e60f1b0491a5446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write log message.  <a href="#aab38f4b97f92594a0e60f1b0491a5446">More...</a><br/></td></tr>
 <tr class="separator:aab38f4b97f92594a0e60f1b0491a5446"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -146,9 +144,6 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:ad89fdada73467957c8adf72fb71ff43b"><td class="memItemLeft" align="right" valign="top">static std::function&lt; void(<a class="el" href="structglassutil_1_1logMessageStruct.html">logMessageStruct</a>)&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglassutil_1_1CLogit.html#ad89fdada73467957c8adf72fb71ff43b">m_logCallback</a> = NULL</td></tr>
-<tr class="memdesc:ad89fdada73467957c8adf72fb71ff43b"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::function&lt;void(logMessageStruct)&gt; containing the optional logging callback.  <a href="#ad89fdada73467957c8adf72fb71ff43b">More...</a><br/></td></tr>
-<tr class="separator:ad89fdada73467957c8adf72fb71ff43b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17ab1f54c2fbc146a2b9fa694542fdda"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglassutil_1_1CLogit.html#a17ab1f54c2fbc146a2b9fa694542fdda">bDisable</a> = false</td></tr>
 <tr class="memdesc:a17ab1f54c2fbc146a2b9fa694542fdda"><td class="mdescLeft">&#160;</td><td class="mdescRight">A boolean flag to disable all logging.  <a href="#a17ab1f54c2fbc146a2b9fa694542fdda">More...</a><br/></td></tr>
 <tr class="separator:a17ab1f54c2fbc146a2b9fa694542fdda"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -431,38 +426,6 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5f0339daea1c21ad656bc99746262d80"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glassutil::CLogit::setLogCallback </td>
-          <td>(</td>
-          <td class="paramtype">std::function&lt; void(<a class="el" href="structglassutil_1_1logMessageStruct.html">logMessageStruct</a>)&gt;&#160;</td>
-          <td class="paramname"><em>callback</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>optional logging callback setup function </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">callback</td><td>- A std::function&lt;void(std::string)&gt; containing the callback function </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a17ab1f54c2fbc146a2b9fa694542fdda"></a>
 <div class="memitem">
@@ -486,28 +449,6 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ad89fdada73467957c8adf72fb71ff43b"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::function&lt; void(<a class="el" href="structglassutil_1_1logMessageStruct.html">logMessageStruct</a>)&gt; glassutil::CLogit::m_logCallback = NULL</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>A std::function&lt;void(logMessageStruct)&gt; containing the optional logging callback. </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>glassutil/include/<a class="el" href="Logit_8h_source.html">Logit.h</a></li>
 <li>glassutil/src/<a class="el" href="Logit_8cpp.html">Logit.cpp</a></li>
@@ -515,7 +456,7 @@ Static Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 15 2018 18:39:40 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 14 2018 21:31:43 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

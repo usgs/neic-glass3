@@ -1,6 +1,6 @@
 <map id="glass3::util::BaseClass" name="glass3::util::BaseClass">
-<area shape="rect" id="node2" href="$classglass3_1_1util_1_1Cache.html" title="glass3::util::Cache class &#45; a thread safe in&#45;memory cache " alt="" coords="5,431,160,641"/>
-<area shape="rect" id="node3" href="$classglass3_1_1util_1_1Queue.html" title="glass3::util::Queue class " alt="" coords="185,461,340,611"/>
-<area shape="rect" id="node4" href="$classglass3_1_1util_1_1ThreadBaseClass.html" title="glass3::util::ThreadBaseClass class " alt="" coords="365,336,544,736"/>
-<area shape="rect" id="node5" href="$classglass3_1_1util_1_1ThreadPool.html" title="glass3::util::ThreadPool class " alt="" coords="375,785,533,935"/>
+<area shape="rect" id="node2" href="$classglass3_1_1util_1_1Cache.html" title="glass3::util::Cache class &#45; a thread safe in&#45;memory cache " alt="" coords="5,425,160,634"/>
+<area shape="rect" id="node3" href="$classglass3_1_1util_1_1Queue.html" title="glass3::util::Queue class " alt="" coords="185,454,340,605"/>
+<area shape="rect" id="node4" href="$classglass3_1_1util_1_1ThreadBaseClass.html" title="glass3::util::ThreadBaseClass class " alt="" coords="365,337,544,722"/>
+<area shape="rect" id="node5" href="$classglass3_1_1util_1_1ThreadPool.html" title="glass3::util::ThreadPool class " alt="" coords="375,771,533,922"/>
 </map>

@@ -98,32 +98,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define ASSOCIATOR_H</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;json.h&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;Glass.h&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;IGlassSend.h&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;Logit.h&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;inputinterface.h&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;outputinterface.h&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;associatorinterface.h&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;threadbaseclass.h&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;queue.h&gt;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="namespaceglass3.html">   22</a></span>&#160;<span class="keyword">namespace </span>glass3 {</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="namespaceglass3_1_1process.html">   23</a></span>&#160;<span class="keyword">namespace </span>process {</div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classglass3_1_1process_1_1Associator.html">   37</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1process_1_1Associator.html">Associator</a> : <span class="keyword">public</span> glasscore::IGlassSend,</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keyword">public</span> <a class="code" href="classglass3_1_1util_1_1iAssociator.html">glass3::util::iAssociator</a>, <span class="keyword">public</span> <a class="code" href="classglass3_1_1util_1_1ThreadBaseClass.html">glass3::util::ThreadBaseClass</a> {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="classglass3_1_1process_1_1Associator.html#ac9ebc38a23e12e74a8e9bb22c0b26621">Associator</a>(glass3::util::iInput* inputint,</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                glass3::util::iOutput* outputint);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="classglass3_1_1process_1_1Associator.html#a111d3d12a97c0ad17c7f209d68bcbfee">~Associator</a>();</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1process_1_1Associator.html#a34cfcbfa20851baeec215aa11b4345ed">setup</a>(std::shared_ptr&lt;const json::Object&gt; config) <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1process_1_1Associator.html#ac6dd542fa3fee3f635a486f397b5f3fc">clear</a>() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1process_1_1Associator.html#a85b371298a7a68fdb909e053a1cf6dc3">Send</a>(std::shared_ptr&lt;json::Object&gt; communication) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;IGlassSend.h&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;Logit.h&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;inputinterface.h&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;outputinterface.h&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;associatorinterface.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;threadbaseclass.h&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;queue.h&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="namespaceglass3.html">   21</a></span>&#160;<span class="keyword">namespace </span>glass3 {</div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="namespaceglass3_1_1process.html">   22</a></span>&#160;<span class="keyword">namespace </span>process {</div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classglass3_1_1process_1_1Associator.html">   36</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglass3_1_1process_1_1Associator.html">Associator</a> : <span class="keyword">public</span> glasscore::IGlassSend,</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">public</span> <a class="code" href="classglass3_1_1util_1_1iAssociator.html">glass3::util::iAssociator</a>, <span class="keyword">public</span> <a class="code" href="classglass3_1_1util_1_1ThreadBaseClass.html">glass3::util::ThreadBaseClass</a> {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <a class="code" href="classglass3_1_1process_1_1Associator.html#ac9ebc38a23e12e74a8e9bb22c0b26621">Associator</a>(glass3::util::iInput* inputint,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                glass3::util::iOutput* outputint);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <a class="code" href="classglass3_1_1process_1_1Associator.html#a111d3d12a97c0ad17c7f209d68bcbfee">~Associator</a>();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglass3_1_1process_1_1Associator.html#a34cfcbfa20851baeec215aa11b4345ed">setup</a>(std::shared_ptr&lt;const json::Object&gt; config) <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1process_1_1Associator.html#ac6dd542fa3fee3f635a486f397b5f3fc">clear</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1process_1_1Associator.html#ada81fc5b3e521625fceb0680b12d2ea9">recieveGlassMessage</a>(std::shared_ptr&lt;json::Object&gt; communication)</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1process_1_1Associator.html#a5a07b3217df038d5a984e0560124e1ef">sendToAssociator</a>(std::shared_ptr&lt;json::Object&gt; &amp;message) <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
@@ -132,50 +132,45 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; <span class="keyword">protected</span>:</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    glass3::util::WorkState <a class="code" href="classglass3_1_1process_1_1Associator.html#a98b190082ae570f09a1f11964a637d94">work</a>() <span class="keyword">override</span>;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglass3_1_1process_1_1Associator.html#a259e022fc6db7e82e7864122515190d9">logGlass</a>(glassutil::logMessageStruct message);</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    glasscore::CGlass *m_pGlass;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keywordtype">int</span> m_iInputCounter;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keywordtype">int</span> m_iTotalInputCounter;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">int</span> m_iRunningAverageCounter;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordtype">int</span> m_iInputCounter;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordtype">int</span> m_iTotalInputCounter;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordtype">int</span> m_iRunningAverageCounter;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordtype">double</span> m_dRunningDPSAverage;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    std::chrono::duration&lt;double&gt; tGlasscoreDuration;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    time_t tLastPerformanceReport;</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">double</span> m_dRunningDPSAverage;</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    std::chrono::duration&lt;double&gt; tGlasscoreDuration;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    time_t tLastPerformanceReport;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">int</span> m_iReportInterval;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    glass3::util::Queue* m_MessageQueue;</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    glass3::util::iInput* m_Input;</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    glass3::util::iOutput* m_Output;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;};</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;}  <span class="comment">// namespace process</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;}  <span class="comment">// namespace glass3</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="preprocessor">#endif  // ASSOCIATOR_H</span></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html_aa4657c056e69ad57955f6157973f1572"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#aa4657c056e69ad57955f6157973f1572">glass3::process::Associator::healthCheck</a></div><div class="ttdeci">bool healthCheck() override</div><div class="ttdoc">associator heath check function </div><div class="ttdef"><b>Definition:</b> associator.cpp:277</div></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html">glass3::process::Associator</a></div><div class="ttdoc">glass association l </div><div class="ttdef"><b>Definition:</b> associator.h:37</div></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keywordtype">int</span> m_iReportInterval;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    glass3::util::Queue* m_MessageQueue;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    glass3::util::iInput* m_Input;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    glass3::util::iOutput* m_Output;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;};</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;}  <span class="comment">// namespace process</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="preprocessor">#endif  // ASSOCIATOR_H</span></div>
+<div class="ttc" id="classglass3_1_1process_1_1Associator_html_aa4657c056e69ad57955f6157973f1572"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#aa4657c056e69ad57955f6157973f1572">glass3::process::Associator::healthCheck</a></div><div class="ttdeci">bool healthCheck() override</div><div class="ttdoc">associator heath check function </div><div class="ttdef"><b>Definition:</b> associator.cpp:250</div></div>
+<div class="ttc" id="classglass3_1_1process_1_1Associator_html"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html">glass3::process::Associator</a></div><div class="ttdoc">glass association l </div><div class="ttdef"><b>Definition:</b> associator.h:36</div></div>
+<div class="ttc" id="classglass3_1_1process_1_1Associator_html_ada81fc5b3e521625fceb0680b12d2ea9"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#ada81fc5b3e521625fceb0680b12d2ea9">glass3::process::Associator::recieveGlassMessage</a></div><div class="ttdeci">void recieveGlassMessage(std::shared_ptr&lt; json::Object &gt; communication) override</div><div class="ttdoc">glasscore message receiver function </div><div class="ttdef"><b>Definition:</b> associator.cpp:96</div></div>
 <div class="ttc" id="classglass3_1_1util_1_1iAssociator_html"><div class="ttname"><a href="classglass3_1_1util_1_1iAssociator.html">iAssociator</a></div></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a111d3d12a97c0ad17c7f209d68bcbfee"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a111d3d12a97c0ad17c7f209d68bcbfee">glass3::process::Associator::~Associator</a></div><div class="ttdeci">~Associator()</div><div class="ttdoc">associator destructor </div><div class="ttdef"><b>Definition:</b> associator.cpp:50</div></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html_ac6dd542fa3fee3f635a486f397b5f3fc"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#ac6dd542fa3fee3f635a486f397b5f3fc">glass3::process::Associator::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">associator clear function </div><div class="ttdef"><b>Definition:</b> associator.cpp:100</div></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a259e022fc6db7e82e7864122515190d9"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a259e022fc6db7e82e7864122515190d9">glass3::process::Associator::logGlass</a></div><div class="ttdeci">void logGlass(glassutil::logMessageStruct message)</div><div class="ttdoc">glasscore logging function </div><div class="ttdef"><b>Definition:</b> associator.cpp:108</div></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a98b190082ae570f09a1f11964a637d94"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a98b190082ae570f09a1f11964a637d94">glass3::process::Associator::work</a></div><div class="ttdeci">glass3::util::WorkState work() override</div><div class="ttdoc">associator work function </div><div class="ttdef"><b>Definition:</b> associator.cpp:153</div></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a34cfcbfa20851baeec215aa11b4345ed"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a34cfcbfa20851baeec215aa11b4345ed">glass3::process::Associator::setup</a></div><div class="ttdeci">bool setup(std::shared_ptr&lt; const json::Object &gt; config) override</div><div class="ttdoc">Associator configuration function. </div><div class="ttdef"><b>Definition:</b> associator.cpp:71</div></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a5a07b3217df038d5a984e0560124e1ef"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a5a07b3217df038d5a984e0560124e1ef">glass3::process::Associator::sendToAssociator</a></div><div class="ttdeci">void sendToAssociator(std::shared_ptr&lt; json::Object &gt; &amp;message) override</div><div class="ttdoc">glasscore message sending function </div><div class="ttdef"><b>Definition:</b> associator.cpp:146</div></div>
-<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a85b371298a7a68fdb909e053a1cf6dc3"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a85b371298a7a68fdb909e053a1cf6dc3">glass3::process::Associator::Send</a></div><div class="ttdeci">void Send(std::shared_ptr&lt; json::Object &gt; communication) override</div><div class="ttdoc">glasscore message receiver function </div><div class="ttdef"><b>Definition:</b> associator.cpp:121</div></div>
+<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a111d3d12a97c0ad17c7f209d68bcbfee"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a111d3d12a97c0ad17c7f209d68bcbfee">glass3::process::Associator::~Associator</a></div><div class="ttdeci">~Associator()</div><div class="ttdoc">associator destructor </div><div class="ttdef"><b>Definition:</b> associator.cpp:46</div></div>
+<div class="ttc" id="classglass3_1_1process_1_1Associator_html_ac6dd542fa3fee3f635a486f397b5f3fc"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#ac6dd542fa3fee3f635a486f397b5f3fc">glass3::process::Associator::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">associator clear function </div><div class="ttdef"><b>Definition:</b> associator.cpp:88</div></div>
+<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a98b190082ae570f09a1f11964a637d94"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a98b190082ae570f09a1f11964a637d94">glass3::process::Associator::work</a></div><div class="ttdeci">glass3::util::WorkState work() override</div><div class="ttdoc">associator work function </div><div class="ttdef"><b>Definition:</b> associator.cpp:129</div></div>
+<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a34cfcbfa20851baeec215aa11b4345ed"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a34cfcbfa20851baeec215aa11b4345ed">glass3::process::Associator::setup</a></div><div class="ttdeci">bool setup(std::shared_ptr&lt; const json::Object &gt; config) override</div><div class="ttdoc">Associator configuration function. </div><div class="ttdef"><b>Definition:</b> associator.cpp:63</div></div>
+<div class="ttc" id="classglass3_1_1process_1_1Associator_html_a5a07b3217df038d5a984e0560124e1ef"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#a5a07b3217df038d5a984e0560124e1ef">glass3::process::Associator::sendToAssociator</a></div><div class="ttdeci">void sendToAssociator(std::shared_ptr&lt; json::Object &gt; &amp;message) override</div><div class="ttdoc">glasscore message sending function </div><div class="ttdef"><b>Definition:</b> associator.cpp:122</div></div>
 <div class="ttc" id="classglass3_1_1process_1_1Associator_html_ac9ebc38a23e12e74a8e9bb22c0b26621"><div class="ttname"><a href="classglass3_1_1process_1_1Associator.html#ac9ebc38a23e12e74a8e9bb22c0b26621">glass3::process::Associator::Associator</a></div><div class="ttdeci">Associator(glass3::util::iInput *inputint, glass3::util::iOutput *outputint)</div><div class="ttdoc">associator constructor </div><div class="ttdef"><b>Definition:</b> associator.cpp:15</div></div>
 <div class="ttc" id="classglass3_1_1util_1_1ThreadBaseClass_html"><div class="ttname"><a href="classglass3_1_1util_1_1ThreadBaseClass.html">ThreadBaseClass</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 15 2018 18:42:19 for process by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 14 2018 21:33:22 for process by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

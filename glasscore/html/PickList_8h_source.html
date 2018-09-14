@@ -98,155 +98,114 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef PICKLIST_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define PICKLIST_H</span></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;json.h&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;map&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;mutex&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;queue&gt;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;random&gt;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Glass_8h.html">Glass.h</a>&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">namespace </span>glasscore {</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">// forward declarations</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">class </span>CGlass;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">class </span>CSite;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">class </span>CSiteList;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">class </span>CPick;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">class </span>CHypo;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classglasscore_1_1CPickList.html">   45</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglasscore_1_1CPickList.html">CPickList</a> {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglasscore_1_1CPickList.html#ad19cfc03d447155dd3893efbbdb9a825">CPickList</a>(<span class="keywordtype">int</span> numThreads = 1, <span class="keywordtype">int</span> sleepTime = 50,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                        <span class="keywordtype">int</span> checkInterval = 300);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <a class="code" href="classglasscore_1_1CPickList.html#a75be5c3c04d5f9ca8800cd183ee828e1">~CPickList</a>();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#a69039ab045a52c827835d536afcfe87f">clear</a>();</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#a8a8c458fdb17a5ee776ef078b5ba4c11">clearPicks</a>();</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#af45247dfc6af6fdf3934adf5d03a2afe">dispatch</a>(std::shared_ptr&lt;json::Object&gt; com);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#aaa442b0950031402230133340a0d0d94">addPick</a>(std::shared_ptr&lt;json::Object&gt; pick);</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    std::shared_ptr&lt;CPick&gt; <a class="code" href="classglasscore_1_1CPickList.html#ab4843ccb36b37ae31704187964c6a1db">getPick</a>(<span class="keywordtype">int</span> idPick);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CPickList.html#afb3f3dc3d59791dbb1a83e87f992dfbd">indexPick</a>(<span class="keywordtype">double</span> tPick);</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#a6741fd0e68da71a8b89ede3f78443afd">listPicks</a>();</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#abd50dfb7b3e026337d3573ce63d829e9">checkDuplicate</a>(<a class="code" href="classglasscore_1_1CPick.html">CPick</a> *newPick, <span class="keywordtype">double</span> window);</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#a38e7cc626ae749c6ef96a2b5dfed9a38">scavenge</a>(std::shared_ptr&lt;CHypo&gt; hyp, <span class="keywordtype">double</span> tDuration = 2400.0);</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    std::vector&lt;std::shared_ptr&lt;CPick&gt;&gt; <a class="code" href="classglasscore_1_1CPickList.html#aac5ae36e088de4ee62542c987ccb6174">rogues</a>(std::string pidHyp, <span class="keywordtype">double</span> tOrg,</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                                                <span class="keywordtype">double</span> tDuration = 2400.0);</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#a7b0ba9737ea5646502f047e356b823bf">statusCheck</a>();</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keyword">const</span> <a class="code" href="classglasscore_1_1CGlass.html">CGlass</a>* <a class="code" href="classglasscore_1_1CPickList.html#aa2aa5924f19f14c67de8b174e268fb72">getGlass</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#a7d843d54e7f236afa00f1e22e68d7f06">setGlass</a>(<a class="code" href="classglasscore_1_1CGlass.html">CGlass</a>* glass);</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    <span class="keyword">const</span> <a class="code" href="classglasscore_1_1CSiteList.html">CSiteList</a>* <a class="code" href="classglasscore_1_1CPickList.html#a9c556fe54732fdd395048f4763f5c2a4">getSiteList</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#a5c86c035e39fc3b68901e35bfff308ea">setSiteList</a>(<a class="code" href="classglasscore_1_1CSiteList.html">CSiteList</a>* siteList);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CPickList.html#a4af195951c0ba468ad79dad651ca8d6f">getNPick</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CPickList.html#aa7293dc8b7363ac680e0e73e86d01b1f">getNPickMax</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#ad7c8729dc5ae4226aa0b548e14a17d8c">setNPickMax</a>(<span class="keywordtype">int</span> picknMax);</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CPickList.html#a878d286b5c23c5a9c237fb730ddd2b7f">getNPickTotal</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CPickList.html#a9f48b0c2be31cf0e6fbca9b19c76a626">getVPickSize</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160; <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordtype">void</span> processPick();</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <span class="keywordtype">void</span> jobSleep();</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keywordtype">void</span> setStatus(<span class="keywordtype">bool</span> status);</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <a class="code" href="classglasscore_1_1CGlass.html">CGlass</a> *pGlass;</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    <a class="code" href="classglasscore_1_1CSiteList.html">CSiteList</a> *pSiteList;</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordtype">int</span> nPickTotal;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordtype">int</span> nPickMax;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="keywordtype">int</span> nPick;</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    std::vector&lt;std::pair&lt;double, int&gt;&gt; vPick;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    std::map&lt;int, std::shared_ptr&lt;CPick&gt;&gt; mPick;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    std::queue&lt;std::shared_ptr&lt;CPick&gt;&gt; qProcessList;</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    std::mutex m_qProcessMutex;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    std::vector&lt;std::thread&gt; vProcessThreads;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="keywordtype">int</span> m_iNumThreads;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    std::map&lt;std::thread::id, bool&gt; m_ThreadStatusMap;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keywordtype">int</span> m_iSleepTimeMS;</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    std::mutex m_StatusMutex;</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    <span class="keywordtype">int</span> m_iStatusCheckInterval;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    time_t tLastStatusCheck;</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="keywordtype">bool</span> m_bRunProcessLoop;</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex m_vPickMutex;</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex m_PickListMutex;</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    std::default_random_engine m_RandomGenerator;</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;};</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<span class="preprocessor">#endif  // PICKLIST_H</span></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a6741fd0e68da71a8b89ede3f78443afd"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a6741fd0e68da71a8b89ede3f78443afd">glasscore::CPickList::listPicks</a></div><div class="ttdeci">void listPicks()</div><div class="ttdoc">Print basic values to screen for pick list. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:413</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html"><div class="ttname"><a href="classglasscore_1_1CPickList.html">glasscore::CPickList</a></div><div class="ttdoc">glasscore pick list class </div><div class="ttdef"><b>Definition:</b> PickList.h:45</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a75be5c3c04d5f9ca8800cd183ee828e1"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a75be5c3c04d5f9ca8800cd183ee828e1">glasscore::CPickList::~CPickList</a></div><div class="ttdeci">~CPickList()</div><div class="ttdoc">CPickList destructor. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:64</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a8a8c458fdb17a5ee776ef078b5ba4c11"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a8a8c458fdb17a5ee776ef078b5ba4c11">glasscore::CPickList::clearPicks</a></div><div class="ttdeci">void clearPicks()</div><div class="ttdoc">Remove all picks from pick list. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:94</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_ad7c8729dc5ae4226aa0b548e14a17d8c"><div class="ttname"><a href="classglasscore_1_1CPickList.html#ad7c8729dc5ae4226aa0b548e14a17d8c">glasscore::CPickList::setNPickMax</a></div><div class="ttdeci">void setNPickMax(int picknMax)</div><div class="ttdoc">nPickMax Setter </div><div class="ttdef"><b>Definition:</b> PickList.cpp:841</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a878d286b5c23c5a9c237fb730ddd2b7f"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a878d286b5c23c5a9c237fb730ddd2b7f">glasscore::CPickList::getNPickTotal</a></div><div class="ttdeci">int getNPickTotal() const </div><div class="ttdoc">nPickTotal getter </div><div class="ttdef"><b>Definition:</b> PickList.cpp:846</div></div>
-<div class="ttc" id="classglasscore_1_1CSiteList_html"><div class="ttname"><a href="classglasscore_1_1CSiteList.html">glasscore::CSiteList</a></div><div class="ttdoc">glasscore site list class </div><div class="ttdef"><b>Definition:</b> SiteList.h:38</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_aac5ae36e088de4ee62542c987ccb6174"><div class="ttname"><a href="classglasscore_1_1CPickList.html#aac5ae36e088de4ee62542c987ccb6174">glasscore::CPickList::rogues</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; CPick &gt; &gt; rogues(std::string pidHyp, double tOrg, double tDuration=2400.0)</div><div class="ttdoc">Generate rogue list for tuning process. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:593</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a7d843d54e7f236afa00f1e22e68d7f06"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a7d843d54e7f236afa00f1e22e68d7f06">glasscore::CPickList::setGlass</a></div><div class="ttdeci">void setGlass(CGlass *glass)</div><div class="ttdoc">CGlass setter. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:826</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_ab4843ccb36b37ae31704187964c6a1db"><div class="ttname"><a href="classglasscore_1_1CPickList.html#ab4843ccb36b37ae31704187964c6a1db">glasscore::CPickList::getPick</a></div><div class="ttdeci">std::shared_ptr&lt; CPick &gt; getPick(int idPick)</div><div class="ttdoc">CPickList get pick function. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:396</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_aa2aa5924f19f14c67de8b174e268fb72"><div class="ttname"><a href="classglasscore_1_1CPickList.html#aa2aa5924f19f14c67de8b174e268fb72">glasscore::CPickList::getGlass</a></div><div class="ttdeci">const CGlass * getGlass() const </div><div class="ttdoc">CGlass getter. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:821</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a7b0ba9737ea5646502f047e356b823bf"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a7b0ba9737ea5646502f047e356b823bf">glasscore::CPickList::statusCheck</a></div><div class="ttdeci">bool statusCheck()</div><div class="ttdoc">check to see if each thread is still functional </div><div class="ttdef"><b>Definition:</b> PickList.cpp:757</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_ad19cfc03d447155dd3893efbbdb9a825"><div class="ttname"><a href="classglasscore_1_1CPickList.html#ad19cfc03d447155dd3893efbbdb9a825">glasscore::CPickList::CPickList</a></div><div class="ttdeci">CPickList(int numThreads=1, int sleepTime=50, int checkInterval=300)</div><div class="ttdoc">CPickList constructor. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:35</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a5c86c035e39fc3b68901e35bfff308ea"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a5c86c035e39fc3b68901e35bfff308ea">glasscore::CPickList::setSiteList</a></div><div class="ttdeci">void setSiteList(CSiteList *siteList)</div><div class="ttdoc">CSiteList setter. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:816</div></div>
-<div class="ttc" id="classglasscore_1_1CGlass_html"><div class="ttname"><a href="classglasscore_1_1CGlass.html">glasscore::CGlass</a></div><div class="ttdoc">glasscore interface class </div><div class="ttdef"><b>Definition:</b> Glass.h:49</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a69039ab045a52c827835d536afcfe87f"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a69039ab045a52c827835d536afcfe87f">glasscore::CPickList::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">CPickList clear function. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:83</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_abd50dfb7b3e026337d3573ce63d829e9"><div class="ttname"><a href="classglasscore_1_1CPickList.html#abd50dfb7b3e026337d3573ce63d829e9">glasscore::CPickList::checkDuplicate</a></div><div class="ttdeci">bool checkDuplicate(CPick *newPick, double window)</div><div class="ttdoc">Checks if picks is duplicate. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:428</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a38e7cc626ae749c6ef96a2b5dfed9a38"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a38e7cc626ae749c6ef96a2b5dfed9a38">glasscore::CPickList::scavenge</a></div><div class="ttdeci">bool scavenge(std::shared_ptr&lt; CHypo &gt; hyp, double tDuration=2400.0)</div><div class="ttdoc">Search for any associable picks that match hypo. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:489</div></div>
-<div class="ttc" id="classglasscore_1_1CPick_html"><div class="ttname"><a href="classglasscore_1_1CPick.html">glasscore::CPick</a></div><div class="ttdoc">glasscore pick class </div><div class="ttdef"><b>Definition:</b> Pick.h:43</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_af45247dfc6af6fdf3934adf5d03a2afe"><div class="ttname"><a href="classglasscore_1_1CPickList.html#af45247dfc6af6fdf3934adf5d03a2afe">glasscore::CPickList::dispatch</a></div><div class="ttdeci">bool dispatch(std::shared_ptr&lt; json::Object &gt; com)</div><div class="ttdoc">CPickList communication receiving function. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:114</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a9c556fe54732fdd395048f4763f5c2a4"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a9c556fe54732fdd395048f4763f5c2a4">glasscore::CPickList::getSiteList</a></div><div class="ttdeci">const CSiteList * getSiteList() const </div><div class="ttdoc">CSiteList getter. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:811</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_aaa442b0950031402230133340a0d0d94"><div class="ttname"><a href="classglasscore_1_1CPickList.html#aaa442b0950031402230133340a0d0d94">glasscore::CPickList::addPick</a></div><div class="ttdeci">bool addPick(std::shared_ptr&lt; json::Object &gt; pick)</div><div class="ttdoc">CPickList add pick function. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:162</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a4af195951c0ba468ad79dad651ca8d6f"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a4af195951c0ba468ad79dad651ca8d6f">glasscore::CPickList::getNPick</a></div><div class="ttdeci">int getNPick() const </div><div class="ttdoc">nPick getter </div><div class="ttdef"><b>Definition:</b> PickList.cpp:831</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_afb3f3dc3d59791dbb1a83e87f992dfbd"><div class="ttname"><a href="classglasscore_1_1CPickList.html#afb3f3dc3d59791dbb1a83e87f992dfbd">glasscore::CPickList::indexPick</a></div><div class="ttdeci">int indexPick(double tPick)</div><div class="ttdoc">Get insertion index for pick. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:342</div></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;threadbaseclass.h&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;json.h&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;set&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;utility&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;mutex&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;queue&gt;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;random&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;atomic&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Glass_8h.html">Glass.h</a>&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Pick_8h.html">Pick.h</a>&quot;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span>glasscore {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">// forward declarations</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">class </span>CSite;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">class </span>CSiteList;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">class </span>CHypo;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structglasscore_1_1PickCompare.html">   39</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structglasscore_1_1PickCompare.html">PickCompare</a> {</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structglasscore_1_1PickCompare.html#a4decbb8968e05786d1d595f71946d2e3">   40</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="structglasscore_1_1PickCompare.html#a4decbb8968e05786d1d595f71946d2e3">operator()</a>(<span class="keyword">const</span> std::shared_ptr&lt;CPick&gt; &amp;lhs,</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                    <span class="keyword">const</span> std::shared_ptr&lt;CPick&gt; &amp;rhs)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordflow">if</span> (lhs-&gt;getTPick() &lt; rhs-&gt;getTPick()) {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <span class="keywordflow">return</span>(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordflow">return</span> (<span class="keyword">false</span>);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;};</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="classglasscore_1_1CPickList.html">   60</a></span>&#160;<span class="keyword">class </span><a class="code" href="classglasscore_1_1CPickList.html">CPickList</a> : <span class="keyword">public</span> glass3::util::ThreadBaseClass {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classglasscore_1_1CPickList.html#ad19cfc03d447155dd3893efbbdb9a825">CPickList</a>(<span class="keywordtype">int</span> numThreads = 1, <span class="keywordtype">int</span> sleepTime = 50,</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                        <span class="keywordtype">int</span> checkInterval = 300);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <a class="code" href="classglasscore_1_1CPickList.html#a75be5c3c04d5f9ca8800cd183ee828e1">~CPickList</a>();</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#a37bb40350075671ab3e4d8024f2b4229">clear</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#a8c519296fe73f53dc724c54aeae08486">receiveExternalMessage</a>(std::shared_ptr&lt;json::Object&gt; com);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#aaa442b0950031402230133340a0d0d94">addPick</a>(std::shared_ptr&lt;json::Object&gt; pick);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#a5d09088426a49806756fb3f25f40a931">checkDuplicate</a>(<span class="keywordtype">double</span> newTPick, std::string newSCNL, <span class="keywordtype">double</span> tDuration);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classglasscore_1_1CPickList.html#a3c165b1590517b5a7177313d493a654f">scavenge</a>(std::shared_ptr&lt;CHypo&gt; hyp, <span class="keywordtype">double</span> tWindow = 2400.0);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keyword">const</span> <a class="code" href="classglasscore_1_1CSiteList.html">CSiteList</a>* <a class="code" href="classglasscore_1_1CPickList.html#a9c556fe54732fdd395048f4763f5c2a4">getSiteList</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#a5c86c035e39fc3b68901e35bfff308ea">setSiteList</a>(<a class="code" href="classglasscore_1_1CSiteList.html">CSiteList</a>* siteList);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CPickList.html#af12f404cc8ed1e5ba59830f5004b1520">getMaxAllowablePickCount</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classglasscore_1_1CPickList.html#ae8863d874d647440432beb13bfa693ab">setMaxAllowablePickCount</a>(<span class="keywordtype">int</span> pickMax);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CPickList.html#a9d3ef623fe99469be3674d00b6d9b9c2">getCountOfTotalPicksProcessed</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classglasscore_1_1CPickList.html#ae84638cdada83862d0b6fb2050d67ee1">length</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    std::vector&lt;std::weak_ptr&lt;CPick&gt;&gt; <a class="code" href="classglasscore_1_1CPickList.html#a70e94acc5e2ed9eb664e2c7bcd17a601">getPicks</a>(<span class="keywordtype">double</span> t1, <span class="keywordtype">double</span> t2);</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    glass3::util::WorkState <a class="code" href="classglasscore_1_1CPickList.html#ad2d7b8d1924a154c9e162158cc5a9039">work</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <a class="code" href="classglasscore_1_1CSiteList.html">CSiteList</a> * m_pSiteList;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;    <span class="keywordtype">int</span> m_iMaxAllowablePickCount;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordtype">int</span> m_iCountOfTotalPicksProcessed;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    std::multiset&lt;std::shared_ptr&lt;CPick&gt;, <a class="code" href="structglasscore_1_1PickCompare.html">PickCompare</a>&gt; m_msPickList;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    std::queue&lt;std::shared_ptr&lt;CPick&gt;&gt; m_qPicksToProcess;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    std::mutex m_PicksToProcessMutex;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keyword">mutable</span> std::recursive_mutex m_PickListMutex;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;};</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="preprocessor">#endif  // PICKLIST_H</span></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html"><div class="ttname"><a href="classglasscore_1_1CPickList.html">glasscore::CPickList</a></div><div class="ttdoc">glasscore pick list class </div><div class="ttdef"><b>Definition:</b> PickList.h:60</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a75be5c3c04d5f9ca8800cd183ee828e1"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a75be5c3c04d5f9ca8800cd183ee828e1">glasscore::CPickList::~CPickList</a></div><div class="ttdeci">~CPickList()</div><div class="ttdoc">CPickList destructor. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:38</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a70e94acc5e2ed9eb664e2c7bcd17a601"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a70e94acc5e2ed9eb664e2c7bcd17a601">glasscore::CPickList::getPicks</a></div><div class="ttdeci">std::vector&lt; std::weak_ptr&lt; CPick &gt; &gt; getPicks(double t1, double t2)</div><div class="ttdoc">Get a vector of picks that fall within a time window. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:233</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_ad2d7b8d1924a154c9e162158cc5a9039"><div class="ttname"><a href="classglasscore_1_1CPickList.html#ad2d7b8d1924a154c9e162158cc5a9039">glasscore::CPickList::work</a></div><div class="ttdeci">glass3::util::WorkState work() override</div><div class="ttdoc">PickList work function. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:449</div></div>
+<div class="ttc" id="classglasscore_1_1CSiteList_html"><div class="ttname"><a href="classglasscore_1_1CSiteList.html">glasscore::CSiteList</a></div><div class="ttdoc">glasscore site list class </div><div class="ttdef"><b>Definition:</b> SiteList.h:40</div></div>
+<div class="ttc" id="Pick_8h_html"><div class="ttname"><a href="Pick_8h.html">Pick.h</a></div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a9d3ef623fe99469be3674d00b6d9b9c2"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a9d3ef623fe99469be3674d00b6d9b9c2">glasscore::CPickList::getCountOfTotalPicksProcessed</a></div><div class="ttdeci">int getCountOfTotalPicksProcessed() const </div><div class="ttdoc">Get the total number of picks processed by this list. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:526</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_ad19cfc03d447155dd3893efbbdb9a825"><div class="ttname"><a href="classglasscore_1_1CPickList.html#ad19cfc03d447155dd3893efbbdb9a825">glasscore::CPickList::CPickList</a></div><div class="ttdeci">CPickList(int numThreads=1, int sleepTime=50, int checkInterval=300)</div><div class="ttdoc">CPickList constructor. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:28</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a5c86c035e39fc3b68901e35bfff308ea"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a5c86c035e39fc3b68901e35bfff308ea">glasscore::CPickList::setSiteList</a></div><div class="ttdeci">void setSiteList(CSiteList *siteList)</div><div class="ttdoc">Set the CSiteList pointer used by this pick list for site lookups. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:510</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_ae84638cdada83862d0b6fb2050d67ee1"><div class="ttname"><a href="classglasscore_1_1CPickList.html#ae84638cdada83862d0b6fb2050d67ee1">glasscore::CPickList::length</a></div><div class="ttdeci">int length() const </div><div class="ttdoc">Get the current number of picks contained in this list. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:531</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a5d09088426a49806756fb3f25f40a931"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a5d09088426a49806756fb3f25f40a931">glasscore::CPickList::checkDuplicate</a></div><div class="ttdeci">bool checkDuplicate(double newTPick, std::string newSCNL, double tDuration)</div><div class="ttdoc">Checks if the provided pick time is a duplicate. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:306</div></div>
+<div class="ttc" id="structglasscore_1_1PickCompare_html"><div class="ttname"><a href="structglasscore_1_1PickCompare.html">glasscore::PickCompare</a></div><div class="ttdoc">CPickList comparison function. </div><div class="ttdef"><b>Definition:</b> PickList.h:39</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a3c165b1590517b5a7177313d493a654f"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a3c165b1590517b5a7177313d493a654f">glasscore::CPickList::scavenge</a></div><div class="ttdeci">bool scavenge(std::shared_ptr&lt; CHypo &gt; hyp, double tWindow=2400.0)</div><div class="ttdoc">Search for any associable picks that match hypo. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:362</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a9c556fe54732fdd395048f4763f5c2a4"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a9c556fe54732fdd395048f4763f5c2a4">glasscore::CPickList::getSiteList</a></div><div class="ttdeci">const CSiteList * getSiteList() const </div><div class="ttdoc">Get the CSiteList pointer used by this pick list for site lookups. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:504</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a8c519296fe73f53dc724c54aeae08486"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a8c519296fe73f53dc724c54aeae08486">glasscore::CPickList::receiveExternalMessage</a></div><div class="ttdeci">bool receiveExternalMessage(std::shared_ptr&lt; json::Object &gt; com)</div><div class="ttdoc">CPickList communication receiving function. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:64</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_aaa442b0950031402230133340a0d0d94"><div class="ttname"><a href="classglasscore_1_1CPickList.html#aaa442b0950031402230133340a0d0d94">glasscore::CPickList::addPick</a></div><div class="ttdeci">bool addPick(std::shared_ptr&lt; json::Object &gt; pick)</div><div class="ttdoc">CPickList add pick function. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:90</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_af12f404cc8ed1e5ba59830f5004b1520"><div class="ttname"><a href="classglasscore_1_1CPickList.html#af12f404cc8ed1e5ba59830f5004b1520">glasscore::CPickList::getMaxAllowablePickCount</a></div><div class="ttdeci">int getMaxAllowablePickCount() const </div><div class="ttdoc">Get the maximum allowed size of this pick list. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:516</div></div>
 <div class="ttc" id="Glass_8h_html"><div class="ttname"><a href="Glass_8h.html">Glass.h</a></div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_aa7293dc8b7363ac680e0e73e86d01b1f"><div class="ttname"><a href="classglasscore_1_1CPickList.html#aa7293dc8b7363ac680e0e73e86d01b1f">glasscore::CPickList::getNPickMax</a></div><div class="ttdeci">int getNPickMax() const </div><div class="ttdoc">nPickMax getter </div><div class="ttdef"><b>Definition:</b> PickList.cpp:836</div></div>
-<div class="ttc" id="classglasscore_1_1CPickList_html_a9f48b0c2be31cf0e6fbca9b19c76a626"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a9f48b0c2be31cf0e6fbca9b19c76a626">glasscore::CPickList::getVPickSize</a></div><div class="ttdeci">int getVPickSize() const </div><div class="ttdoc">Get the current size of the pick list. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:851</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_a37bb40350075671ab3e4d8024f2b4229"><div class="ttname"><a href="classglasscore_1_1CPickList.html#a37bb40350075671ab3e4d8024f2b4229">glasscore::CPickList::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">CPickList clear function. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:44</div></div>
+<div class="ttc" id="structglasscore_1_1PickCompare_html_a4decbb8968e05786d1d595f71946d2e3"><div class="ttname"><a href="structglasscore_1_1PickCompare.html#a4decbb8968e05786d1d595f71946d2e3">glasscore::PickCompare::operator()</a></div><div class="ttdeci">bool operator()(const std::shared_ptr&lt; CPick &gt; &amp;lhs, const std::shared_ptr&lt; CPick &gt; &amp;rhs) const </div><div class="ttdef"><b>Definition:</b> PickList.h:40</div></div>
+<div class="ttc" id="classglasscore_1_1CPickList_html_ae8863d874d647440432beb13bfa693ab"><div class="ttname"><a href="classglasscore_1_1CPickList.html#ae8863d874d647440432beb13bfa693ab">glasscore::CPickList::setMaxAllowablePickCount</a></div><div class="ttdeci">void setMaxAllowablePickCount(int pickMax)</div><div class="ttdoc">Set the maximum allowed size of this pick list. </div><div class="ttdef"><b>Definition:</b> PickList.cpp:521</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 15 2018 18:39:40 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 14 2018 21:31:43 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

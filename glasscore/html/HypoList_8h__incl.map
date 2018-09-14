@@ -1,9 +1,8 @@
 <map id="glasslib/include/HypoList.h" name="glasslib/include/HypoList.h">
-<area shape="rect" id="node12" href="$Glass_8h.html" title="Glass.h" alt="" coords="287,80,353,107"/>
-<area shape="rect" id="node13" href="$Terra_8h.html" title="Terra.h" alt="" coords="67,229,129,256"/>
-<area shape="rect" id="node14" href="$Ray_8h.html" title="Ray.h" alt="" coords="250,155,307,181"/>
-<area shape="rect" id="node15" href="$TTT_8h.html" title="TTT.h" alt="" coords="331,155,388,181"/>
-<area shape="rect" id="node17" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="397,229,496,256"/>
-<area shape="rect" id="node16" href="$Geo_8h.html" title="Geo.h" alt="" coords="374,304,431,331"/>
-<area shape="rect" id="node18" href="$Taper_8h.html" title="Taper.h" alt="" coords="205,229,272,256"/>
+<area shape="rect" id="node15" href="$Glass_8h.html" title="Glass.h" alt="" coords="447,80,513,107"/>
+<area shape="rect" id="node21" href="$Hypo_8h.html" title="Hypo.h" alt="" coords="744,80,808,107"/>
+<area shape="rect" id="node17" href="$TTT_8h.html" title="TTT.h" alt="" coords="710,155,767,181"/>
+<area shape="rect" id="node19" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="461,229,560,256"/>
+<area shape="rect" id="node18" href="$Geo_8h.html" title="Geo.h" alt="" coords="581,304,637,331"/>
+<area shape="rect" id="node20" href="$Taper_8h.html" title="Taper.h" alt="" coords="635,229,701,256"/>
 </map>

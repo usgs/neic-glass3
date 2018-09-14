@@ -9,7 +9,6 @@ var searchData=
   ['setnumthreads',['setNumThreads',['../classglass3_1_1util_1_1ThreadBaseClass.html#a57832e16ffecdc613afbacfef709758f',1,'glass3::util::ThreadBaseClass']]],
   ['setsleeptime',['setSleepTime',['../classglass3_1_1util_1_1ThreadBaseClass.html#a1bd59890fd240cf982e0f37f2f67778b',1,'glass3::util::ThreadBaseClass']]],
   ['setthreadhealth',['setThreadHealth',['../classglass3_1_1util_1_1ThreadBaseClass.html#ad04ed0961ca30819b86b34f99d61f900',1,'glass3::util::ThreadBaseClass']]],
-  ['setthreadname',['setThreadName',['../classglass3_1_1util_1_1ThreadBaseClass.html#a9ddd450edda603967168c371b1bd6d3c',1,'glass3::util::ThreadBaseClass']]],
   ['setup',['setup',['../classglass3_1_1util_1_1BaseClass.html#aa1e2805cf2aa6a84e0deadc76d37928f',1,'glass3::util::BaseClass']]],
   ['setworkthreadsstate',['setWorkThreadsState',['../classglass3_1_1util_1_1ThreadBaseClass.html#a072472e306c363c4802aac3c18033b4f',1,'glass3::util::ThreadBaseClass']]],
   ['size',['size',['../classglass3_1_1util_1_1Cache.html#a323f078062ab57f213d57bd575af7fbb',1,'glass3::util::Cache::size()'],['../classglass3_1_1util_1_1Queue.html#a41321ac32c79ef16c5bcd5929588e824',1,'glass3::util::Queue::size()']]],

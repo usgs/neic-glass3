@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['deg2km',['DEG2KM',['../Geo_8h.html#a03c23556f6f61060e674956c74774851',1,'Geo.h']]],
-  ['deg2rad',['DEG2RAD',['../Geo_8h.html#af7e8592d0a634bd3642e9fd508ea8022',1,'Geo.h']]]
+  ['cgold',['CGOLD',['../Ray_8cpp.html#a84b6d4f75b738c61f98e4d28db6a8ad3',1,'Ray.cpp']]]
 ];

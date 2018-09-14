@@ -1,13 +1,16 @@
 <map id="glasslib/include/Pick.h" name="glasslib/include/Pick.h">
-<area shape="rect" id="node2" href="$Correlation_8cpp.html" title="glasslib/src/Correlation.cpp" alt="" coords="5,80,184,107"/>
-<area shape="rect" id="node3" href="$Detection_8cpp.html" title="glasslib/src/Detection.cpp" alt="" coords="209,80,383,107"/>
-<area shape="rect" id="node4" href="$Hypo_8cpp.html" title="glasslib/src/Hypo.cpp" alt="" coords="407,80,555,107"/>
-<area shape="rect" id="node5" href="$HypoList_8cpp.html" title="glasslib/src/HypoList.cpp" alt="" coords="579,80,748,107"/>
-<area shape="rect" id="node6" href="$Node_8cpp.html" title="glasslib/src/Node.cpp" alt="" coords="773,80,920,107"/>
-<area shape="rect" id="node7" href="$Pick_8cpp.html" title="glasslib/src/Pick.cpp" alt="" coords="945,80,1087,107"/>
-<area shape="rect" id="node8" href="$PickList_8cpp.html" title="glasslib/src/PickList.cpp" alt="" coords="1111,80,1275,107"/>
-<area shape="rect" id="node9" href="$Site_8cpp.html" title="glasslib/src/Site.cpp" alt="" coords="1299,80,1439,107"/>
-<area shape="rect" id="node10" href="$Trigger_8cpp.html" title="glasslib/src/Trigger.cpp" alt="" coords="1464,80,1621,107"/>
-<area shape="rect" id="node11" href="$Web_8cpp.html" title="glasslib/src/Web.cpp" alt="" coords="1645,80,1789,107"/>
-<area shape="rect" id="node12" href="$WebList_8cpp.html" title="glasslib/src/WebList.cpp" alt="" coords="1813,80,1977,107"/>
+<area shape="rect" id="node2" href="$PickList_8h.html" title="glasslib/include/PickList.h" alt="" coords="685,80,859,107"/>
+<area shape="rect" id="node3" href="$Correlation_8cpp.html" title="glasslib/src/Correlation.cpp" alt="" coords="5,163,184,189"/>
+<area shape="rect" id="node5" href="$Detection_8cpp.html" title="glasslib/src/Detection.cpp" alt="" coords="209,163,383,189"/>
+<area shape="rect" id="node7" href="$Hypo_8cpp.html" title="glasslib/src/Hypo.cpp" alt="" coords="761,163,908,189"/>
+<area shape="rect" id="node8" href="$HypoList_8cpp.html" title="glasslib/src/HypoList.cpp" alt="" coords="933,163,1101,189"/>
+<area shape="rect" id="node9" href="$Pick_8cpp.html" title="glasslib/src/Pick.cpp" alt="" coords="1126,163,1268,189"/>
+<area shape="rect" id="node10" href="$PickList_8cpp.html" title="glasslib/src/PickList.cpp" alt="" coords="1293,163,1456,189"/>
+<area shape="rect" id="node11" href="$Node_8cpp.html" title="glasslib/src/Node.cpp" alt="" coords="1086,80,1233,107"/>
+<area shape="rect" id="node12" href="$Site_8cpp.html" title="glasslib/src/Site.cpp" alt="" coords="1258,80,1397,107"/>
+<area shape="rect" id="node13" href="$Trigger_8cpp.html" title="glasslib/src/Trigger.cpp" alt="" coords="1423,80,1580,107"/>
+<area shape="rect" id="node14" href="$Web_8cpp.html" title="glasslib/src/Web.cpp" alt="" coords="1604,80,1748,107"/>
+<area shape="rect" id="node15" href="$WebList_8cpp.html" title="glasslib/src/WebList.cpp" alt="" coords="1772,80,1936,107"/>
+<area shape="rect" id="node4" href="$CorrelationList_8cpp.html" title="glasslib/src/Correlation\lList.cpp" alt="" coords="407,155,560,197"/>
+<area shape="rect" id="node6" href="$Glass_8cpp.html" title="glasslib/src/Glass.cpp" alt="" coords="586,163,736,189"/>
 </map>

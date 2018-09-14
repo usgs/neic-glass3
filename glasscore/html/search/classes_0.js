@@ -11,6 +11,7 @@ var searchData=
   ['chypolist',['CHypoList',['../classglasscore_1_1CHypoList.html',1,'glasscore']]],
   ['clogit',['CLogit',['../classglassutil_1_1CLogit.html',1,'glassutil']]],
   ['cnode',['CNode',['../classglasscore_1_1CNode.html',1,'glasscore']]],
+  ['correlationcompare',['CorrelationCompare',['../structglasscore_1_1CorrelationCompare.html',1,'glasscore']]],
   ['cpick',['CPick',['../classglasscore_1_1CPick.html',1,'glasscore']]],
   ['cpicklist',['CPickList',['../classglasscore_1_1CPickList.html',1,'glasscore']]],
   ['cpid',['CPid',['../classglassutil_1_1CPid.html',1,'glassutil']]],

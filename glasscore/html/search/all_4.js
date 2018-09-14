@@ -1,7 +1,6 @@
 var searchData=
 [
   ['d',['D',['../classtraveltime_1_1CRay.html#a8b624c8da360e3486b23b0a32305c71c',1,'traveltime::CRay::D()'],['../classtraveltime_1_1CTrav.html#ac9cc8fb3be8cab6963179be9dc68c8b5',1,'traveltime::CTrav::D()']]],
-  ['darwin',['darwin',['../classglasscore_1_1CHypoList.html#aabc4ae218e0e41cec24ff9cdf44479b0',1,'glasscore::CHypoList']]],
   ['dassmax',['dAssMax',['../classtraveltime_1_1CTTT.html#abf3d87af1f30fe6e3eb18fc4d3b76130',1,'traveltime::CTTT']]],
   ['dassmin',['dAssMin',['../classtraveltime_1_1CTTT.html#aa0c7101a9d9d6c19b1249938fd984868',1,'traveltime::CTTT']]],
   ['date_2ecpp',['Date.cpp',['../Date_8cpp.html',1,'']]],
@@ -29,7 +28,6 @@ var searchData=
   ['dgridmaximum',['dGridMaximum',['../classtraveltime_1_1CTimeWarp.html#af9eae251cf15e781b37bbc4e3a2baf2c',1,'traveltime::CTimeWarp']]],
   ['dgridminimum',['dGridMinimum',['../classtraveltime_1_1CTimeWarp.html#af156e0d7db11cf1041a165da057ce89b',1,'traveltime::CTimeWarp']]],
   ['disable',['disable',['../classglassutil_1_1CLogit.html#ae5ab9be66d2af96f24b41ad742544201',1,'glassutil::CLogit']]],
-  ['dispatch',['dispatch',['../classglasscore_1_1CCorrelationList.html#a72d85f5c292eeee2143d925e1e013a01',1,'glasscore::CCorrelationList::dispatch()'],['../classglasscore_1_1CDetection.html#ab998ec451ca2866a2f66d43e4a3ca080',1,'glasscore::CDetection::dispatch()'],['../classglasscore_1_1CGlass.html#a96a77dda2867134f5cffcd943724c0b0',1,'glasscore::CGlass::dispatch()'],['../classglasscore_1_1CHypoList.html#ab4a88788099fb10fbf84c1b9da42d503',1,'glasscore::CHypoList::dispatch()'],['../classglasscore_1_1CPickList.html#af45247dfc6af6fdf3934adf5d03a2afe',1,'glasscore::CPickList::dispatch()'],['../classglasscore_1_1CSiteList.html#ab778db4f9bf70faa897de151e5c8db50',1,'glasscore::CSiteList::dispatch()'],['../classglasscore_1_1CWeb.html#a05429c1946fd281dee8b4e17a789e3e3',1,'glasscore::CWeb::dispatch()'],['../classglasscore_1_1CWebList.html#af86f55b651f24b567e2964b55b106eee',1,'glasscore::CWebList::dispatch()']]],
   ['dlat',['dLat',['../classglassutil_1_1CGeo.html#ae31fdc484d3bfbad8f1729797264e7de',1,'glassutil::CGeo::dLat()'],['../classtraveltime_1_1CTTT.html#af53dfbb0ddbab17722e99e248dd78af8',1,'traveltime::CTTT::dLat()']]],
   ['dlayerpvel',['dLayerPVel',['../classtraveltime_1_1CTerra.html#af3db38b84a7adbad12883a8e28bd352a',1,'traveltime::CTerra']]],
   ['dlayerradii',['dLayerRadii',['../classtraveltime_1_1CTerra.html#af93f98935b169b53ac84cd576e8e39d6',1,'traveltime::CTerra']]],
@@ -37,7 +35,6 @@ var searchData=
   ['dlon',['dLon',['../classglassutil_1_1CGeo.html#ad467ce6856ab4658fc1b3ae7147c38c8',1,'glassutil::CGeo::dLon()'],['../classtraveltime_1_1CTTT.html#a8b232a619623bac594e1cbc835914dc2',1,'traveltime::CTTT::dLon()']]],
   ['dmaximumrayparam',['dMaximumRayParam',['../classtraveltime_1_1CRay.html#a170e58acb9e35846e7073f341bff65c0',1,'traveltime::CRay']]],
   ['dminimumrayparam',['dMinimumRayParam',['../classtraveltime_1_1CRay.html#a891b183c4c5d8e63ee5b54102b911375',1,'traveltime::CRay']]],
-  ['dosearch',['doSearch',['../classglasscore_1_1CHypo.html#aaf0959141be15c6d2e3df5a9b6f6fbc7',1,'glasscore::CHypo']]],
   ['drad',['dRad',['../classglassutil_1_1CGeo.html#acc0a924d488be815d0a1ce1357b2ae73',1,'glassutil::CGeo']]],
   ['dslopeinfinity',['dSlopeInfinity',['../classtraveltime_1_1CTimeWarp.html#a0ffe114e7136d92eb71e737572e2c203',1,'traveltime::CTimeWarp']]],
   ['dslopezero',['dSlopeZero',['../classtraveltime_1_1CTimeWarp.html#a628345c0feb264dbc83da9142822085d',1,'traveltime::CTimeWarp']]],

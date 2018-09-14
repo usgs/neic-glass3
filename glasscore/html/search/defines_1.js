@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['cgold',['CGOLD',['../Ray_8cpp.html#a84b6d4f75b738c61f98e4d28db6a8ad3',1,'Ray.cpp']]]
+  ['assoc_5fsigma_5fvalue_5fseconds',['ASSOC_SIGMA_VALUE_SECONDS',['../Glass_8h.html#addb8cd61274ea22b700fe4ff52c5025a',1,'Glass.h']]]
 ];

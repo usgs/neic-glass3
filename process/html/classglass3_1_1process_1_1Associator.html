@@ -129,9 +129,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac6dd542fa3fee3f635a486f397b5f3fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1process_1_1Associator.html#ac6dd542fa3fee3f635a486f397b5f3fc">clear</a> () override</td></tr>
 <tr class="memdesc:ac6dd542fa3fee3f635a486f397b5f3fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">associator clear function  <a href="#ac6dd542fa3fee3f635a486f397b5f3fc">More...</a><br/></td></tr>
 <tr class="separator:ac6dd542fa3fee3f635a486f397b5f3fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85b371298a7a68fdb909e053a1cf6dc3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1process_1_1Associator.html#a85b371298a7a68fdb909e053a1cf6dc3">Send</a> (std::shared_ptr&lt; json::Object &gt; communication) override</td></tr>
-<tr class="memdesc:a85b371298a7a68fdb909e053a1cf6dc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore message receiver function  <a href="#a85b371298a7a68fdb909e053a1cf6dc3">More...</a><br/></td></tr>
-<tr class="separator:a85b371298a7a68fdb909e053a1cf6dc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada81fc5b3e521625fceb0680b12d2ea9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1process_1_1Associator.html#ada81fc5b3e521625fceb0680b12d2ea9">recieveGlassMessage</a> (std::shared_ptr&lt; json::Object &gt; communication) override</td></tr>
+<tr class="memdesc:ada81fc5b3e521625fceb0680b12d2ea9"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore message receiver function  <a href="#ada81fc5b3e521625fceb0680b12d2ea9">More...</a><br/></td></tr>
+<tr class="separator:ada81fc5b3e521625fceb0680b12d2ea9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a07b3217df038d5a984e0560124e1ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1process_1_1Associator.html#a5a07b3217df038d5a984e0560124e1ef">sendToAssociator</a> (std::shared_ptr&lt; json::Object &gt; &amp;message) override</td></tr>
 <tr class="memdesc:a5a07b3217df038d5a984e0560124e1ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore message sending function  <a href="#a5a07b3217df038d5a984e0560124e1ef">More...</a><br/></td></tr>
 <tr class="separator:a5a07b3217df038d5a984e0560124e1ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,9 +144,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a98b190082ae570f09a1f11964a637d94"><td class="memItemLeft" align="right" valign="top">glass3::util::WorkState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1process_1_1Associator.html#a98b190082ae570f09a1f11964a637d94">work</a> () override</td></tr>
 <tr class="memdesc:a98b190082ae570f09a1f11964a637d94"><td class="mdescLeft">&#160;</td><td class="mdescRight">associator work function  <a href="#a98b190082ae570f09a1f11964a637d94">More...</a><br/></td></tr>
 <tr class="separator:a98b190082ae570f09a1f11964a637d94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a259e022fc6db7e82e7864122515190d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1process_1_1Associator.html#a259e022fc6db7e82e7864122515190d9">logGlass</a> (glassutil::logMessageStruct message)</td></tr>
-<tr class="memdesc:a259e022fc6db7e82e7864122515190d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">glasscore logging function  <a href="#a259e022fc6db7e82e7864122515190d9">More...</a><br/></td></tr>
-<tr class="separator:a259e022fc6db7e82e7864122515190d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glass association l </p>
@@ -262,7 +259,7 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a259e022fc6db7e82e7864122515190d9"></a>
+<a class="anchor" id="ada81fc5b3e521625fceb0680b12d2ea9"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -270,40 +267,7 @@ Protected Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void glass3::process::Associator::logGlass </td>
-          <td>(</td>
-          <td class="paramtype">glassutil::logMessageStruct&#160;</td>
-          <td class="paramname"><em>message</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>glasscore logging function </p>
-<p>The function the associator class uses to accept logging messages coming out of glasscore, and write those messages to the neic-glass3 logger.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">message</td><td>- A glasscore::logMessageStruct containing the message to log from glasscore. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a85b371298a7a68fdb909e053a1cf6dc3"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glass3::process::Associator::Send </td>
+          <td class="memname">void glass3::process::Associator::recieveGlassMessage </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
           <td class="paramname"><em>communication</em></td><td>)</td>
@@ -429,7 +393,7 @@ Protected Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Aug 15 2018 18:42:19 for process by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Sep 14 2018 21:33:22 for process by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

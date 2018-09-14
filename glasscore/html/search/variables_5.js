@@ -1,14 +1,10 @@
 var searchData=
 [
-  ['m_5fdseconds',['m_dSeconds',['../classglassutil_1_1CDate.html#a6eb53b0415f4a4f90b705bee41aa4e1e',1,'glassutil::CDate']]],
-  ['m_5fdtime',['m_dTime',['../classglassutil_1_1CDate.html#aff076ac62a98b57433e304b231a2d2f6',1,'glassutil::CDate']]],
-  ['m_5ffileextension',['m_FileExtension',['../classtraveltime_1_1CGenTrv.html#a5133f4ad4cc4105b18fdbec56c2bfdb3',1,'traveltime::CGenTrv']]],
-  ['m_5flogcallback',['m_logCallback',['../classglassutil_1_1CLogit.html#ad89fdada73467957c8adf72fb71ff43b',1,'glassutil::CLogit']]],
-  ['m_5fnday',['m_nDay',['../classglassutil_1_1CDate.html#a9b24446d312097d6cf521bbac6fabe77',1,'glassutil::CDate']]],
-  ['m_5fnhour',['m_nHour',['../classglassutil_1_1CDate.html#a19c001cf75430a2048c67bf03fb8ccdf',1,'glassutil::CDate']]],
-  ['m_5fnminute',['m_nMinute',['../classglassutil_1_1CDate.html#a8019d54fda8a3be118e18cacb8cbd9a4',1,'glassutil::CDate']]],
-  ['m_5fnmonth',['m_nMonth',['../classglassutil_1_1CDate.html#a329931df6665de0a601ec7d8d11a686f',1,'glassutil::CDate']]],
-  ['m_5fnyear',['m_nYear',['../classglassutil_1_1CDate.html#a4da62fb776960f5ddc72f18789935144',1,'glassutil::CDate']]],
-  ['m_5foutputpath',['m_OutputPath',['../classtraveltime_1_1CGenTrv.html#ae6380fc560f58f2989fe8031f56cb1ae',1,'traveltime::CGenTrv']]],
-  ['message',['message',['../structglassutil_1_1logMessageStruct.html#a00bece0e9b82680d19b2f1ff03b563fb',1,'glassutil::logMessageStruct']]]
+  ['ndepthwarp',['nDepthWarp',['../classtraveltime_1_1CGenTrv.html#a5d84a1d1340834793aa3cba8593b41c5',1,'traveltime::CGenTrv::nDepthWarp()'],['../classtraveltime_1_1CTravelTime.html#a5beebace3228cb12e8794e2ee5d1e025',1,'traveltime::CTravelTime::nDepthWarp()']]],
+  ['ndiscontinuities',['nDiscontinuities',['../classtraveltime_1_1CTerra.html#af89f7a01b79f2ce9c4d1edd5cf9f93e2',1,'traveltime::CTerra']]],
+  ['ndistancewarp',['nDistanceWarp',['../classtraveltime_1_1CGenTrv.html#a4236c7815308f912791adfa64e80d51d',1,'traveltime::CGenTrv::nDistanceWarp()'],['../classtraveltime_1_1CTravelTime.html#af6c4a38f51335dbdf1633c850ad26423',1,'traveltime::CTravelTime::nDistanceWarp()']]],
+  ['nlayer',['nLayer',['../classtraveltime_1_1CTerra.html#aa293dab64c42e435c1a9a2cc2ef2aa87',1,'traveltime::CTerra']]],
+  ['nrays',['nRays',['../classtraveltime_1_1CGenTrv.html#a84dde28f4413124f1454b734a47aa01f',1,'traveltime::CGenTrv']]],
+  ['ntrv',['nTrv',['../classtraveltime_1_1CTrav.html#af9e7e8121fa0dad455fda4534db92c83',1,'traveltime::CTrav::nTrv()'],['../classtraveltime_1_1CTTT.html#a9b26bf34ace2b93af8856e7b431e4d9f',1,'traveltime::CTTT::nTrv()']]],
+  ['nx',['nX',['../classtraveltime_1_1CSpline.html#a9fa65e71ac8bc3dc5d8895b4abc48223',1,'traveltime::CSpline']]]
 ];
