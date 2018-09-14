@@ -58,6 +58,9 @@ TEST(ThreadPoolTest, CombinedTest) {
 	glass3::util::ThreadPool * aThreadPool = new glass3::util::ThreadPool(
 			poolname, NUMTHREADS, SLEEPTIME, CHECKTIME);
 
+	// give time for thread startup
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+
 	// assert threads running
 	ASSERT_TRUE(aThreadPool->getWorkThreadsState() ==
 			glass3::util::ThreadState::Started)<< "check threads running";
