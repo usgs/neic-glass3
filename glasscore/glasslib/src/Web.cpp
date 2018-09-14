@@ -715,18 +715,13 @@ bool CWeb::loadGridConfiguration(
 
 	// grid definition variables and defaults
 	std::string name = "Nemo";
-	int detect = 20;
-	int nucleate = 7;
-	double thresh = 2.0;
-
-	// check pGlass
-	detect = CGlass::getNumStationsPerNode();
-	nucleate = CGlass::getNucleationDataThreshold();
-	thresh = CGlass::getNucleationStackThreshold();
+	int detect = CGlass::getNumStationsPerNode();
+	int nucleate  = CGlass::getNucleationDataThreshold();
+	double thresh = CGlass::getNucleationStackThreshold();
 
 	double resol = 0;
-	double aziTaper = 360.;
-	double maxDepth = 800.;
+	double aziTaper = 360.0;
+	double maxDepth = 800.0;
 	bool saveGrid = false;
 	bool update = false;
 

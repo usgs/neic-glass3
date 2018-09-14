@@ -244,6 +244,8 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	m_sLocation = loc;
 
 	// set geographic location
+	// convert site elevation in meters to surface depth in km (invert the sign
+	// and then divide by 1000)
 	setLocation(lat, lon, -0.001 * elv);
 
 	// quality
