@@ -25,8 +25,6 @@
 
 namespace glasscore {
 
-#define ASSOC_SIGMA_VALUE 1.0
-
 // ---------------------------------------------------------CHypoList
 CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval)
 		: glass3::util::ThreadBaseClass("HypoList", sleepTime, numThreads,
@@ -137,7 +135,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 			// check to see if the pick will associate with
 			// this hypo
 			// NOTE: The sigma value passed into associate is hard coded
-			if (hyp->canAssociate(pk, ASSOC_SIGMA_VALUE, sdassoc)) {
+			if (hyp->canAssociate(pk, ASSOC_SIGMA_VALUE_SECONDS, sdassoc)) {
 				// add to the list of hypos this pick can associate with
 				assocHypoList.push_back(hyp);
 
@@ -777,6 +775,11 @@ int CHypoList::length() const {
 
 // ---------------------------------------------------------mergeCloseEvents
 bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (hypo->getID() == "") {
+		return (false);
+	}
+
 	char sLog[1024];  // logging string
 	double distanceCut = CGlass::getHypoMergingDistanceWindow();
 	double timeCut = CGlass::getHypoMergingTimeWindow();

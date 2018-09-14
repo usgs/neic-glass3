@@ -85,7 +85,7 @@ bool CSiteList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 		}
 		// add a list of sites
 		if (v == "StationInfoList") {
-			return (addSiteListFromJSON(com));
+			return (addListOfSitesFromJSON(com));
 		}
 	}
 
@@ -137,7 +137,7 @@ bool CSiteList::addSiteFromJSON(std::shared_ptr<json::Object> com) {
 }
 
 // ---------------------------------------------------------addSiteListFromJSON
-bool CSiteList::addSiteListFromJSON(std::shared_ptr<json::Object> com) {
+bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
 		glassutil::CLogit::log(

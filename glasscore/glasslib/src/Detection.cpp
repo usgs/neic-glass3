@@ -185,6 +185,8 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 		std::shared_ptr<traveltime::CTravelTime> nullTrav;
 
 		// create new hypo
+		// Get primary nucleation TT from CGlass. Set secondary to NULL since
+		// CGLASS only supports a single default nucleation travel time.
 		hypo = std::make_shared<CHypo>(
 				lat, lon, z, torg, glassutil::CPid::pid(), "Detection", 0.0,
 				0.0, 0, CGlass::getDefaultNucleationTravelTime(), nullTrav,

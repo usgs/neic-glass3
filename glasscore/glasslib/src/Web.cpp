@@ -111,7 +111,7 @@ void CWeb::clear() {
 	// clear sites
 	try {
 		m_vSiteMutex.lock();
-		m_vNodeSites.clear();
+		m_vSitesSortedForCurrentNode.clear();
 	} catch (...) {
 		// ensure the vSite mutex is unlocked
 		m_vSiteMutex.unlock();
@@ -198,8 +198,8 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 	}
 
 	char sLog[1024];
-	std::vector<double> zzz;
-	int zs = 0;
+	std::vector<double> depthLayerArray;
+	int numDepthLayers = 0;
 
 	// load basic (common) grid configuration
 	if (loadGridConfiguration(gridConfiguration) == false) {
@@ -213,10 +213,10 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 		json::Array zarray = (*gridConfiguration)["DepthLayers"].ToArray();
 		for (auto v : zarray) {
 			if (v.GetType() == json::ValueType::DoubleVal) {
-				zzz.push_back(v.ToDouble());
+				depthLayerArray.push_back(v.ToDouble());
 			}
 		}
-		zs = static_cast<int>(zzz.size());
+		numDepthLayers = static_cast<int>(depthLayerArray.size());
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -227,9 +227,10 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 	// calculate the number of nodes from the desired resolution
 	// using a function that was empirically determined via using different
 	// numNode values and computing the average resolution from a node to
-	// the nearest other 6 nodes. The intention is to calculate the number
-	// of nodes to ensure the desired node resolution when the grid is
-	// generated below
+	// the nearest other 6 nodes. The spreadsheet used to calculate this function
+	// is located in NodesToResoultionCalculations.xlsx.
+	// The intention is to calculate the number of nodes to ensure the desired
+	// node resolution when the grid is generated below
 	int numNodes = 5.0E8 * std::pow(getNodeResolution(), -1.965);
 
 	// should have an odd number of nodes (see paper named below)
@@ -283,7 +284,7 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 		sortSiteListForNode(aLat, aLon);
 
 		// for each depth
-		for (auto z : zzz) {
+		for (auto z : depthLayerArray) {
 			// create node
 			std::shared_ptr<CNode> node = generateNode(aLat, aLon, z,
 														getNodeResolution());
@@ -326,9 +327,9 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			"CWeb::generateGlobalGrid sName:%s Phase(s):%s; nZ:%d; resol:%.2f;"
 			" nDetect:%d; nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
 			" vSitesFilter:%d; bUseOnlyTeleseismicStations:%d; iNodeCount:%d;",
-			m_sName.c_str(), phases.c_str(), zs, getNodeResolution(),
-			getNumStationsPerNode(), getNucleationDataThreshold(),
-			getNucleationStackThreshold(),
+			m_sName.c_str(), phases.c_str(), numDepthLayers,
+			getNodeResolution(), getNumStationsPerNode(),
+			getNucleationDataThreshold(), getNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
@@ -357,8 +358,8 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 	double lon = 0;
 	int rows = 0;
 	int cols = 0;
-	std::vector<double> zzz;
-	int zs = 0;
+	std::vector<double> depthLayerArray;
+	int numDepthLayers = 0;
 
 	// load basic (common) grid configuration
 	if (loadGridConfiguration(gridConfiguration) == false) {
@@ -393,13 +394,13 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 	if (((*gridConfiguration).HasKey("DepthLayers"))
 			&& ((*gridConfiguration)["DepthLayers"].GetType()
 					== json::ValueType::ArrayVal)) {
-		json::Array zarray = (*gridConfiguration)["DepthLayers"].ToArray();
-		for (auto v : zarray) {
-			if (v.GetType() == json::ValueType::DoubleVal) {
-				zzz.push_back(v.ToDouble());
+		json::Array jsonLayers = (*gridConfiguration)["DepthLayers"].ToArray();
+		for (auto aLayer : jsonLayers) {
+			if (aLayer.GetType() == json::ValueType::DoubleVal) {
+				depthLayerArray.push_back(aLayer.ToDouble());
 			}
 		}
-		zs = static_cast<int>(zzz.size());
+		numDepthLayers = static_cast<int>(depthLayerArray.size());
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
@@ -496,7 +497,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			sortSiteListForNode(latrow, loncol);
 
 			// for each depth at this generateLocalGrid point
-			for (auto z : zzz) {
+			for (auto z : depthLayerArray) {
 				// generate this node
 				std::shared_ptr<CNode> node = generateNode(
 						latrow, loncol, z, getNodeResolution());
@@ -545,7 +546,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			" iNodeCount:%d;",
 			m_sName.c_str(), phases.c_str(), lat0,
 			lat0 - (rows - 1) * latDistance, lon0,
-			lon0 + (cols - 1) * lonDistance, rows, cols, zs,
+			lon0 + (cols - 1) * lonDistance, rows, cols, numDepthLayers,
 			getNodeResolution(), getNumStationsPerNode(),
 			getNucleationDataThreshold(), getNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
@@ -1154,7 +1155,7 @@ bool CWeb::loadWebSiteList() {
 	glassutil::CLogit::log(glassutil::log_level::debug, sLog);
 
 	// clear web site list
-	m_vNodeSites.clear();
+	m_vSitesSortedForCurrentNode.clear();
 
 	std::vector<std::shared_ptr<CSite>> siteList =
 			m_pSiteList->getListOfSites();
@@ -1178,7 +1179,7 @@ bool CWeb::loadWebSiteList() {
 		}
 
 		if (isSiteAllowed(site)) {
-			m_vNodeSites.push_back(
+			m_vSitesSortedForCurrentNode.push_back(
 					std::pair<double, std::shared_ptr<CSite>>(0.0, site));
 		}
 	}
@@ -1186,7 +1187,8 @@ bool CWeb::loadWebSiteList() {
 	// log
 	snprintf(sLog, sizeof(sLog),
 				"CWeb::loadWebSiteList: %d sites selected for web %s",
-				static_cast<int>(m_vNodeSites.size()), m_sName.c_str());
+				static_cast<int>(m_vSitesSortedForCurrentNode.size()),
+				m_sName.c_str());
 	glassutil::CLogit::log(glassutil::log_level::info, sLog);
 
 	return (true);
@@ -1201,20 +1203,21 @@ void CWeb::sortSiteListForNode(double lat, double lon) {
 	geo.setGeographic(lat, lon, 6371.0);
 
 	// set the distance to each site
-	for (int i = 0; i < m_vNodeSites.size(); i++) {
+	for (int i = 0; i < m_vSitesSortedForCurrentNode.size(); i++) {
 		// get the site
-		auto p = m_vNodeSites[i];
+		auto p = m_vSitesSortedForCurrentNode[i];
 		std::shared_ptr<CSite> site = p.second;
 
 		// compute the distance
 		p.first = site->getDelta(&geo);
 
 		// set the distance in the vector
-		m_vNodeSites[i] = p;
+		m_vSitesSortedForCurrentNode[i] = p;
 	}
 
 	// sort sites
-	std::sort(m_vNodeSites.begin(), m_vNodeSites.end(), sortSite);
+	std::sort(m_vSitesSortedForCurrentNode.begin(),
+				m_vSitesSortedForCurrentNode.end(), sortSite);
 }
 
 // ---------------------------------------------------------generateNode
@@ -1236,7 +1239,7 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 
 	// return empty node if we don't
 	// have any sites
-	if (m_vNodeSites.size() == 0) {
+	if (m_vSitesSortedForCurrentNode.size() == 0) {
 		return (node);
 	}
 
@@ -1277,7 +1280,7 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 		return (NULL);
 	}
 	// check sites
-	if (m_vNodeSites.size() == 0) {
+	if (m_vSitesSortedForCurrentNode.size() == 0) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CWeb::genNodeSites: No sites.");
 		return (node);
@@ -1290,11 +1293,11 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 	}
 
 	int sitesAllowed = m_iNumStationsPerNode;
-	if (m_vNodeSites.size() < m_iNumStationsPerNode) {
+	if (m_vSitesSortedForCurrentNode.size() < m_iNumStationsPerNode) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CWeb::genNodeSites: nDetect is greater "
 								"than the number of sites.");
-		sitesAllowed = m_vNodeSites.size();
+		sitesAllowed = m_vSitesSortedForCurrentNode.size();
 	}
 
 	// setup traveltimes for this node
@@ -1315,7 +1318,7 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 	// for the number of allowed sites per node
 	for (int i = 0; i < sitesAllowed; i++) {
 		// get each site
-		auto aSite = m_vNodeSites[i];
+		auto aSite = m_vSitesSortedForCurrentNode[i];
 		std::shared_ptr<CSite> site = aSite.second;
 
 		// compute delta distance between site and node
@@ -1568,7 +1571,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 			bSiteList = true;
 
 			// make sure we've got enough sites for a node
-			if (m_vNodeSites.size() < m_iNumStationsPerNode) {
+			if (m_vSitesSortedForCurrentNode.size() < m_iNumStationsPerNode) {
 				node->setEnabled(true);
 				return;
 			}
@@ -1580,7 +1583,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		// remove site link
 		if (node->unlinkSite(foundSite) == true) {
 			// get new site
-			auto nextSite = m_vNodeSites[m_iNumStationsPerNode];
+			auto nextSite = m_vSitesSortedForCurrentNode[m_iNumStationsPerNode];
 			std::shared_ptr<CSite> newSite = nextSite.second;
 
 			// compute delta distance between site and node

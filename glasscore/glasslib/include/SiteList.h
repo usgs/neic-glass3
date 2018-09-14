@@ -101,7 +101,7 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * \return Returns true if the site was complete and added by CSiteList,
 	 * false otherwise
 	 */
-	bool addSiteListFromJSON(std::shared_ptr<json::Object> com);
+	bool addListOfSitesFromJSON(std::shared_ptr<json::Object> com);
 
 	/**
 	 * \brief CSiteList  add/update  site function

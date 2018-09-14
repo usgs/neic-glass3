@@ -503,7 +503,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * also fills in the distance), and used by genNode() during a Single(),
 	 * Shell(), Grid(), or Global() call
 	 */
-	std::vector<std::pair<double, std::shared_ptr<CSite>>> m_vNodeSites;
+	std::vector<std::pair<double, std::shared_ptr<CSite>>> m_vSitesSortedForCurrentNode; // NOLINT
 
 	/**
 	 * \brief A std::vector containing a std::shared_ptr to each node in this

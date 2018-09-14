@@ -7,6 +7,7 @@
 #include "Trigger.h"
 #include "Pick.h"
 #include "Logit.h"
+#include "Geo.h"
 
 namespace glasscore {
 
@@ -93,8 +94,9 @@ double CTrigger::getTOrigin() const {
 // ---------------------------------------------------------getGeo
 glassutil::CGeo CTrigger::getGeo() const {
 	glassutil::CGeo geoTrigger;
-	geoTrigger.setGeographic(m_dLatitude, m_dLongitude, 6371.0 - m_dDepth);
-	return(geoTrigger);
+	geoTrigger.setGeographic(m_dLatitude, m_dLongitude,
+								EARTHRADIUSKM - m_dDepth);
+	return (geoTrigger);
 }
 
 // ---------------------------------------------------------getResolution

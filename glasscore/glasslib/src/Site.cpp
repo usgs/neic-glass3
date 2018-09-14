@@ -293,7 +293,7 @@ void CSite::clear() {
 	m_vNodeMutex.unlock();
 
 	vPickMutex.lock();
-	m_vPick.clear();
+	m_msPickList.clear();
 	vPickMutex.unlock();
 
 	// reset max picks
@@ -417,14 +417,13 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 	}
 
 	// check to see if we're at the pick limit
-	if (m_vPick.size() == m_iPickMax) {
+	if (m_msPickList.size() >= m_iPickMax) {
 		// erase first pick from vector
-		m_vPick.erase(m_vPick.begin());
+		m_msPickList.erase(m_msPickList.end());
 	}
 
-	// add pick to site pick vector
-	// NOTE: Need to add duplicate pick protection
-	m_vPick.push_back(pck);
+	// add pick to site pick multiset
+	m_msPickList.insert(pck);
 
 	// remember the time the last pick was added
 	m_tLastPickAdded = std::time(NULL);
@@ -446,12 +445,17 @@ void CSite::removePick(std::shared_ptr<CPick> pck) {
 	}
 
 	// remove pick from site pick vector
-	for (auto it = m_vPick.begin(); it != m_vPick.end();) {
-		auto aPck = (*it);
+	for (auto it = m_msPickList.begin(); it != m_msPickList.end();) {
+		auto aPck = (*it).lock();
+
+		if (aPck == NULL) {
+			it = m_msPickList.erase(it);
+			continue;
+		}
 
 		// erase target pick
 		if (aPck->getID() == pck->getID()) {
-			it = m_vPick.erase(it);
+			it = m_msPickList.erase(it);
 		} else {
 			++it;
 		}
@@ -608,7 +612,7 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 
 // ---------------------------------------------------------addTrigger
 void CSite::addTriggerToList(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
-						std::shared_ptr<CTrigger> trigger) {
+								std::shared_ptr<CTrigger> trigger) {
 	if (trigger == NULL) {
 		return;
 	}
@@ -723,9 +727,21 @@ const std::string& CSite::getSite() const {
 }
 
 // ---------------------------------------------------------getVPick
-const std::vector<std::shared_ptr<CPick> > CSite::getVPick() const {
+const std::vector<std::shared_ptr<CPick>> CSite::getVPick() const {
 	std::lock_guard<std::mutex> guard(vPickMutex);
-	return (m_vPick);
+	std::vector<std::shared_ptr<CPick> > vPickList;
+
+	// loop through picks
+	for (auto it = m_msPickList.begin(); it != m_msPickList.end(); ++it) {
+		std::shared_ptr<CPick> aPick = (*it).lock();
+
+		if (aPick != NULL) {
+			// add to the list of picks
+			vPickList.push_back(aPick);
+		}
+	}
+
+	return (vPickList);
 }
 
 // ---------------------------------------------------------getTLastPickAdded

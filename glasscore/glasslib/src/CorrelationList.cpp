@@ -18,8 +18,8 @@
 #include "Site.h"
 #include "Glass.h"
 #include "Logit.h"
+#include "Geo.h"
 
-#define RAD2DEG  57.29577951308
 namespace glasscore {
 
 // ---------------------------------------------------------CCorrelationList

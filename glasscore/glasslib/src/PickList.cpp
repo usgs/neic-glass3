@@ -142,7 +142,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		 "PickList process queue size."); */
 
 		setThreadHealth();
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(getSleepTime()));
 
 		// check to see if the queue has changed size
 		m_PicksToProcessMutex.lock();
@@ -192,7 +192,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	m_PickListMutex.lock();
 
 	// check to see if we're at the pick limit
-	if (m_msPickList.size() == m_iMaxAllowablePickCount) {
+	if (m_msPickList.size() >= m_iMaxAllowablePickCount) {
 		std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator oldest =
 				m_msPickList.begin();
 
@@ -283,7 +283,7 @@ std::vector<std::weak_ptr<CPick>> CPickList::getPicks(double t1, double t2) {
 			picks.push_back(awPick);
 		}
 		return (picks);
-	}
+	}  // end found one
 
 	// loop through found picks
 	for (std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator it = lower;
@@ -406,7 +406,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 			}
 
 			// check to see if this pick can be associated with this hypo
-			if (!hyp->canAssociate(currentPick, 1.0, sdassoc)) {
+			if (!hyp->canAssociate(currentPick, ASSOC_SIGMA_VALUE_SECONDS, sdassoc)) {
 				// it can't, skip it
 				continue;
 			}
@@ -453,7 +453,8 @@ glass3::util::WorkState CPickList::work() {
 		return (glass3::util::WorkState::Idle);
 	}
 
-	// check to see that we've not run to far ahead of the hypo processing
+	// check to see that we've not run too far ahead of the hypo processing
+	// if we have, pause for a bit to allow for it to catch up.
 	if (CGlass::getHypoList()->getHypoProcessingQueueLength()
 			> (CGlass::getHypoList()->getNumThreads() * MAX_QUEUE_FACTOR)) {
 		glassutil::CLogit::log(glassutil::log_level::debug,
@@ -489,8 +490,7 @@ glass3::util::WorkState CPickList::work() {
 	}
 
 	// Attempt both association and nucleation of the new pick.
-	// If both succeed, the mess is sorted out in darwin/evolve
-	// associate
+	// If both succeed, the mess is sorted out in hypo processing/refinement
 	CGlass::getHypoList()->associateData(pck);
 
 	// nucleate

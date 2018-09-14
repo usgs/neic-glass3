@@ -26,7 +26,15 @@
 
 namespace glasscore {
 
-#define MAXLOCDEPTH 800.0  // The maximum allowed locator depth
+// The maximum allowed locator depth
+#define MAXLOCDEPTH 800.0
+
+// location algorithm constants
+#define LOCATION_MIN_DISTANCE_STEP_SIZE 1.0
+#define LOCATION_MIN_TIME_STEP_SIZE 0.1
+#define LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION 30.0
+#define LOCATION_TAPER_CONSTANT 0.0001
+#define LOCATION_MAX_TAPER_TRESH 30
 
 // ---------------------------------------------------------CHypo
 CHypo::CHypo() {
@@ -2008,20 +2016,31 @@ double CHypo::localize() {
 	// shrinks to 1/16 the node radius as picks are added
 	// note that the locator can extend past the input search radius
 	// these values were chosen by testing specific events
-
-	glassutil::CTaper taper;
-	taper = glassutil::CTaper(-0.0001, -0.0001, -0.0001, 30 + 0.0001);
+	// LOCATION_TAPER_CONSTANT is a taper constant to ensure that the taper
+	// starts at 0 and maxes at one when the m_vPickData size exceeds 30 picks
+	glassutil::CTaper taper(-LOCATION_TAPER_CONSTANT, -LOCATION_TAPER_CONSTANT,
+							-LOCATION_TAPER_CONSTANT,
+							LOCATION_MAX_TAPER_TRESH + LOCATION_TAPER_CONSTANT);
 	double searchR = (m_dWebResolution / 4.
-			+ taper.Val(m_vPickData.size()) * .75 * m_dWebResolution) / 2.;
+			+ taper.Val(m_vPickData.size()) * .75 * m_dWebResolution) / 2.0;
 
 	// This should be the default
 	if (CGlass::getMinimizeTTLocator() == false) {
 		if (npick < 50) {
-			annealingLocateBayes(5000, searchR, 1., searchR / 30.0, .1);
+			annealingLocateBayes(
+					5000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
+					LOCATION_MIN_TIME_STEP_SIZE);
 		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocateBayes(1250, searchR, 1., searchR / 30.0, .1);
+			annealingLocateBayes(
+					1250, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
+					LOCATION_MIN_TIME_STEP_SIZE);
 		} else if ((npick % 25) == 0) {
-			annealingLocateBayes(500, searchR, 1., searchR / 30.0, .1);
+			annealingLocateBayes(
+					500, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
+					LOCATION_MIN_TIME_STEP_SIZE);
 		} else {
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::localize: Skipping localize with %d picks",
@@ -2030,13 +2049,25 @@ double CHypo::localize() {
 		}
 	} else {
 		if (npick < 25) {
-			annealingLocateResidual(10000, searchR, 1., searchR / 10.0, .1);
+			annealingLocateResidual(
+					10000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
+					LOCATION_MIN_TIME_STEP_SIZE);
 		} else if (npick < 50 && (npick % 5) == 0) {
-			annealingLocateResidual(5000, searchR, 1., searchR / 10.0, .1);
+			annealingLocateResidual(
+					5000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
+					LOCATION_MIN_TIME_STEP_SIZE);
 		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocateResidual(1000, searchR / 2., 1., searchR / 10.0, .1);
+			annealingLocateResidual(
+					1000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
+					LOCATION_MIN_TIME_STEP_SIZE);
 		} else if ((npick % 25) == 0) {
-			annealingLocateResidual(500, searchR / 2., 1., searchR / 10.0, .1);
+			annealingLocateResidual(
+					500, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
+					LOCATION_MIN_TIME_STEP_SIZE);
 		} else {
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::localize: Skipping localize with %d picks",

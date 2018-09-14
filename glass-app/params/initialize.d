@@ -30,7 +30,9 @@
       "ReportingStackThreshold": 0.5,
       "ReportingDataThreshold":5,
       "EventFragmentDepthThreshold": 550.0,
-      "EventFragmentAzimuthThreshold": 270.0
+      "EventFragmentAzimuthThreshold": 270.0,
+      "HypocenterTimeWindow": 30,
+      "HypocenterDistanceWindow": 3
   },
   "DefaultNucleationPhase": {
       "PhaseName": "P",

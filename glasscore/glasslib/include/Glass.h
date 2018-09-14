@@ -16,6 +16,9 @@
 
 namespace glasscore {
 
+// global defines
+#define ASSOC_SIGMA_VALUE_SECONDS 1.0
+
 // forward declarations
 class CWebList;
 class CSiteList;

@@ -73,6 +73,12 @@ class CWebList {
 	 * This method creates a web and then configures it by passing the
 	 * configuration to the 'dispatch' message in the CWeb
 	 *
+	 * This capability is to add a local aftershock (or induced seismicity) web
+	 * quickly (and without restarting anything) after a main shock, and then to
+	 * remove it (again without a restart) once the seismicity dies down,
+	 * through some glass configuration control channel (i.e. kafka). The belief
+	 * going forward is that this will be a relatively common occurrence.
+	 *
 	 * \param com - A pointer to a json::object containing the web configuration
 	 *
 	 * \return Always returns true
@@ -84,6 +90,11 @@ class CWebList {
 	 *
 	 * This method removes a web from the list
 	 *
+	 * This capability is to add a local aftershock (or induced seismicity) web
+	 * quickly (and without restarting anything) after a main shock, and then to
+	 * remove it (again without a restart) once the seismicity dies down,
+	 * through some glass configuration control channel (i.e. kafka). The belief
+	 * going forward is that this will be a relatively common occurrence.
 	 * \param com - A pointer to a json::object containing name of the web
 	 * to be removed.
 	 *
