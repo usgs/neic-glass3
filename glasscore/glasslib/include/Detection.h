@@ -22,7 +22,7 @@ class CHypo;
  * \brief glasscore detection class
  *
  * The CDetection class is a class that encapsulates the processing of a
- * detection message from an external source, including parseing the message,
+ * detection message from an external source, including parsing the message,
  * creating a hypo from the message, and adding the hypo to the hypo list.
  */
 class CDetection {

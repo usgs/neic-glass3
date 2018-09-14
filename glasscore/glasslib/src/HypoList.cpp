@@ -304,7 +304,7 @@ bool CHypoList::associateData(std::shared_ptr<CCorrelation> corr) {
 
 // ---------------------------------------------------------clear
 void CHypoList::clear() {
-	std::lock_guard<std::mutex> queueGuard(m_vHyposToProcessMutex);
+	std::lock_guard<std::mutex> queueGuard(m_HypoProcessingQueueMutex);
 	m_lHypoProcessingQueue.clear();
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
@@ -669,7 +669,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 
 // -------------------------------------------------getHypoProcessingQueueLength
 int CHypoList::getHypoProcessingQueueLength() {
-	std::lock_guard<std::mutex> queueGuard(m_vHyposToProcessMutex);
+	std::lock_guard<std::mutex> queueGuard(m_HypoProcessingQueueMutex);
 
 	// return the current size of the queue
 	int size = m_lHypoProcessingQueue.size();
@@ -939,6 +939,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				// we've merged a hypo, move on to the next canidate
 				merged = true;
 			} else {
+				// the merged hypo (toHypo) was not better, revert toHypo.
 				snprintf(
 						sLog,
 						sizeof(sLog),
@@ -971,9 +972,9 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 int CHypoList::appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp) {
 	// don't use a lock guard for queue mutex and vhypolist mutex,
 	// to avoid a deadlock when both mutexes are locked
-	m_vHyposToProcessMutex.lock();
+	m_HypoProcessingQueueMutex.lock();
 	int size = m_lHypoProcessingQueue.size();
-	m_vHyposToProcessMutex.unlock();
+	m_HypoProcessingQueueMutex.unlock();
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -997,14 +998,14 @@ int CHypoList::appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp) {
 	m_HypoListMutex.unlock();
 
 	// is this id already on the queue?
-	m_vHyposToProcessMutex.lock();
+	m_HypoProcessingQueueMutex.lock();
 	for (std::list<std::weak_ptr<CHypo>>::iterator it = m_lHypoProcessingQueue
 			.begin(); it != m_lHypoProcessingQueue.end(); ++it) {
 		std::shared_ptr<CHypo> aHyp = (*it).lock();
 
 		if ((aHyp != NULL) && (aHyp->getID() == hyp->getID())) {
 			// found it, don't bother adding it again
-			m_vHyposToProcessMutex.unlock();
+			m_HypoProcessingQueueMutex.unlock();
 			return (size);
 		}
 	}
@@ -1014,7 +1015,7 @@ int CHypoList::appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp) {
 
 	// added one
 	size++;
-	m_vHyposToProcessMutex.unlock();
+	m_HypoProcessingQueueMutex.unlock();
 
 	glassutil::CLogit::log(
 			glassutil::log_level::debug,
@@ -1026,7 +1027,7 @@ int CHypoList::appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp) {
 
 // -----------------------------------------------getNextHypoFromProcessingQueue
 std::shared_ptr<CHypo> CHypoList::getNextHypoFromProcessingQueue() {
-	std::lock_guard<std::mutex> queueGuard(m_vHyposToProcessMutex);
+	std::lock_guard<std::mutex> queueGuard(m_HypoProcessingQueueMutex);
 
 	// is there anything on the queue?
 	if (m_lHypoProcessingQueue.size() == 0) {

@@ -178,7 +178,8 @@ class CNode {
 	 * Given a site id, check to see if the site is used by the node
 	 *
 	 * \param siteID - A string containing the id of the site to get
-	 * \return Returns a boolean flag, true if the site is used, false otherwise
+	 * \return Returns a shared_ptr to a the CSite used by the node, NULL if
+	 * not found
 	 */
 	std::shared_ptr<CSite> getSite(std::string siteID);
 

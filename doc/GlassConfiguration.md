@@ -128,9 +128,9 @@ needs to exceed for a nucleation to be declared. This threshold is also used to
 cancel a previously nucleated hypocenter. This value can be overridden in a
 detection grid (Web).
 * **NucleationDataThreshold** - The default threshold that the number of supporting  
-data (eg. Picks, Correlations) must exceed for a nucleation to be declared.  to
-This threshold is also used cancel a previously nucleated hypocenter. This value
-can be overridden in a detection grid (Web).
+data (eg. Picks, Correlations) must exceed for a nucleation to be declared.  
+This threshold is also used to cancel a previously nucleated hypocenter. This
+value can be overridden in a detection grid (Web).
 * **AssociationStandardDeviationCutoff** - The cutoff threshold in terms of number
 of standard deviations for associating data (eg. Picks) with a hypocenter. The
 standard deviation is fixed to 1.

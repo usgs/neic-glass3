@@ -762,21 +762,6 @@ class CHypo {
 	 */
 	double getDistanceCutoffFactor() const;
 
-	/**
-	 * \brief Gets the nucleation data minimum threshold used in determining
-	 * hypo viability in cancelCheck()
-	 * \return Returns an integer value containing the nucleation data minimum
-	 * threshold
-	 */
-	int getNucleationDataThreshold() const;
-
-	/**
-	 * \brief Sets the nucleation data minimum threshold used in determining
-	 * hypo viability in cancelCheck()
-	 * \param cut - an integer value containing the nucleation data minimum
-	 * threshold
-	 */
-	void setNucleationDataThreshold(int cut);
 
 	/**
 	 * \brief Gets the threshold that represents the minimum count of data
@@ -789,7 +774,8 @@ class CHypo {
 	 * \return Returns a double value containing the nucleation minimum stack
 	 * threshold
 	 */
-	double getNucleationStackThreshold() const;
+	int getNucleationDataThreshold() const;
+
 
 	/**
 	 * \brief Sets the threshold that represents the minimum count of data
@@ -799,7 +785,23 @@ class CHypo {
 	 * If threshold is 10, then 8 picks + 1 correlation + 1 beam would be
 	 * sufficient, but 9 picks would not be.
 	 *
-	 * \param thresh - a double value containing the nucleation minimum stack
+	 * \param cut - a double value containing the nucleation minimum stack
+	 * threshold
+	 */
+	void setNucleationDataThreshold(int cut);
+
+	/**
+	 * \brief Gets the nucleation stack minimum threshold used in determining
+	 * hypo viability in cancelCheck()
+	 * \return Returns an integer value containing the nucleation data minimum
+	 * threshold
+	 */
+	double getNucleationStackThreshold() const;
+
+	/**
+	 * \brief Sets the nucleation stack minimum threshold used in determining
+	 * hypo viability in cancelCheck()
+	 * \param thresh - an integer value containing the nucleation stack minimum
 	 * threshold
 	 */
 	void setNucleationStackThreshold(double thresh);

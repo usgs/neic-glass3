@@ -344,7 +344,7 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	/**
 	 * \brief the std::mutex for accessing m_vHyposToProcess
 	 */
-	std::mutex m_vHyposToProcessMutex;
+	std::mutex m_HypoProcessingQueueMutex;
 
 	/**
 	 * \brief A std::multiset containing each hypo in the list in sequential
