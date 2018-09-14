@@ -293,7 +293,7 @@ void CSite::clear() {
 	m_vNodeMutex.unlock();
 
 	vPickMutex.lock();
-	m_msPickList.clear();
+	m_vPickList.clear();
 	vPickMutex.unlock();
 
 	// reset max picks
@@ -417,13 +417,13 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 	}
 
 	// check to see if we're at the pick limit
-	if (m_msPickList.size() >= m_iPickMax) {
+	if (m_vPickList.size() >= m_iPickMax) {
 		// erase first pick from vector
-		m_msPickList.erase(m_msPickList.end());
+		m_vPickList.erase(m_vPickList.begin());
 	}
 
 	// add pick to site pick multiset
-	m_msPickList.insert(pck);
+	m_vPickList.push_back(pck);
 
 	// remember the time the last pick was added
 	m_tLastPickAdded = std::time(NULL);
@@ -445,17 +445,12 @@ void CSite::removePick(std::shared_ptr<CPick> pck) {
 	}
 
 	// remove pick from site pick vector
-	for (auto it = m_msPickList.begin(); it != m_msPickList.end();) {
-		auto aPck = (*it).lock();
-
-		if (aPck == NULL) {
-			it = m_msPickList.erase(it);
-			continue;
-		}
+	for (auto it = m_vPickList.begin(); it != m_vPickList.end();) {
+		auto aPck = *it;
 
 		// erase target pick
 		if (aPck->getID() == pck->getID()) {
-			it = m_msPickList.erase(it);
+			it = m_vPickList.erase(it);
 		} else {
 			++it;
 		}
@@ -729,19 +724,7 @@ const std::string& CSite::getSite() const {
 // ---------------------------------------------------------getVPick
 const std::vector<std::shared_ptr<CPick>> CSite::getVPick() const {
 	std::lock_guard<std::mutex> guard(vPickMutex);
-	std::vector<std::shared_ptr<CPick> > vPickList;
-
-	// loop through picks
-	for (auto it = m_msPickList.begin(); it != m_msPickList.end(); ++it) {
-		std::shared_ptr<CPick> aPick = (*it).lock();
-
-		if (aPick != NULL) {
-			// add to the list of picks
-			vPickList.push_back(aPick);
-		}
-	}
-
-	return (vPickList);
+	return (m_vPickList);
 }
 
 // ---------------------------------------------------------getTLastPickAdded

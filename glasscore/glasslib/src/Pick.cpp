@@ -442,7 +442,7 @@ bool CPick::nucleate() {
 		for (int ipass = 0; ipass < 3; ipass++) {
 			// get an initial location via synthetic annealing,
 			// which also prunes out any poorly fitting picks
-			// the search is based on the grid resolution, and the how
+			// the search is based on the grid resolution, and how
 			// far out the ot can change without losing the initial pick
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association

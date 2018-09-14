@@ -14,8 +14,10 @@
 	"ArchiveDirectory":"./archive",
 
 	# the format glass will accept
-	# glass currently understands the gpick, jsonpick,
-	# jsonhypo, and ccdata (dat) formats
+	# glass currently understands the gpick, json, and ccdata (dat) formats
+	# Note that the only way to use multiple inputs
+	# (Picks, Correlations, and Detections at the same time)
+	# is to use the json format 
 	"Format":"gpick",
 
 	# the maximum size of the input queue

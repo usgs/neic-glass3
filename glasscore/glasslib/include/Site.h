@@ -17,39 +17,16 @@
 #include <mutex>
 #include <atomic>
 
-#include "Pick.h"
 #include "Geo.h"
 #include "Link.h"
 
 namespace glasscore {
 
 // forward declarations
+class CPick;
 class CNode;
 class CTrigger;
 class CHypo;
-
-/**
- * \brief CSite pick comparison function
- *
- * SitePickCompare contains the comparison function used by std::multiset when
- * inserting, sorting, and retrieving picks.
- */
-struct SitePickCompare {
-    bool operator()(const std::weak_ptr<CPick> &wlhs,
-                    const std::weak_ptr<CPick> &wrhs) const {
-    	std::shared_ptr<CPick> lhs = wlhs.lock();
-    	std::shared_ptr<CPick> rhs = wrhs.lock();
-
-    	if ((lhs == NULL) || (rhs == NULL)) {
-    		return(false);
-    	}
-
-    	if (lhs->getTPick() > rhs->getTPick()) {
-    		return(true);
-    	}
-        return (false);
-    }
-};
 
 /**
  * \brief glasscore site (station) class
@@ -417,11 +394,11 @@ class CSite {
 	mutable std::mutex vPickMutex;
 
 	/**
-	 * \brief A std::multiset of std::shared_ptr to the picks made at this this
+	 * \brief A std::vector of std::shared_ptr to the picks made at this this
 	 * CSite. A shared_ptr is used here instead of a weak_ptr (to prevent a
 	 * cyclical reference between CPick and CSite) to improve performance
 	 */
-	std::multiset<std::weak_ptr<CPick>, SitePickCompare> m_msPickList;
+	std::vector<std::shared_ptr<CPick>> m_vPickList;
 
 	/**
 	 * \brief A std::string containing the SCNL (Site, Component, Network,
