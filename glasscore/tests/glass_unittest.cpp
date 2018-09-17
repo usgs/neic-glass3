@@ -56,8 +56,8 @@
 #define NUCTDATA 10
 #define STAPERNODE 20
 #define NUCTHRESH 0.5
-#define ASSOCSD 5.0
-#define PRUNESD 5.0
+#define ASSOCSD 3.0
+#define PRUNESD 3.0
 #define AFFEXP 2.5
 #define DISTCUTFACT 5
 #define DISTCUTPERC 0.8
