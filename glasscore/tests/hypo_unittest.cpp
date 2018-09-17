@@ -799,6 +799,5 @@ TEST(HypoTest, Messaging) {
 	std::shared_ptr<json::Object> expireMessage = sharedHypo
 			->generateExpireMessage();
 	ASSERT_TRUE(expireMessage != NULL)<< "expire message";
-
 }
 
