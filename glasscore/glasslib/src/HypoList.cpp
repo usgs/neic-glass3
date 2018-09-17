@@ -433,6 +433,11 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 		return (false);
 	}
 
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (hyp->getID() == "") {
+		return (false);
+	}
+
 	std::string pid = hyp->getID();
 	// int OriginalPicks = hyp->getPickDataSize();
 	std::chrono::high_resolution_clock::time_point tEvolveStartTime =
@@ -775,6 +780,11 @@ int CHypoList::length() const {
 
 // ---------------------------------------------------------mergeCloseEvents
 bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
+	// nullcheck
+	if (hypo == NULL) {
+		return(false);
+	}
+
 	// check to see if this is a valid hypo, a hypo must always have an id
 	if (hypo->getID() == "") {
 		return (false);
@@ -983,6 +993,11 @@ int CHypoList::appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp) {
 				"CHypoList::appendToHypoProcessingQueue: NULL hypo provided.");
 		return (size);
 	}
+
+	if (hyp->getID() == "") {
+		return (size);
+	}
+
 
 	// get this hypo's id
 	std::string pid = hyp->getID();

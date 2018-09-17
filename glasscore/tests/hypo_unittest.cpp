@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+
 #include "Site.h"
 #include "SiteList.h"
 #include "Pick.h"
@@ -467,7 +468,7 @@ TEST(HypoTest, Anneal) {
 	// check depth
 	double depth = testHypo->getDepth();
 	double expectedDepth = ANNEAL_DEPTH;
-	ASSERT_NEAR(depth, expectedDepth, 1.0);
+	ASSERT_NEAR(depth, expectedDepth, 10.0);
 
 	// check time
 	double time = testHypo->getTOrigin();

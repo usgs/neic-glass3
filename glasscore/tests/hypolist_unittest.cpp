@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+
 #include "Site.h"
 #include "SiteList.h"
 #include "Hypo.h"
@@ -8,6 +12,14 @@
 #include "Pick.h"
 #include "Logit.h"
 #include "Glass.h"
+#include "logger.h"
+
+#define TESTPATH "testdata"
+#define MERGE1FILENAME "merge1.json"
+#define MERGE2FILENAME "merge2.json"
+#define NOMERGEFILENAME "nomerge.json"
+#define STATIONFILENAME "teststationlist.json"
+#define INITFILENAME "initialize.d"
 
 #define TESTHYPOID "3"
 
@@ -127,5 +139,171 @@ TEST(HypoListTest, HypoOperations) {
 	// test clearing hypos
 	testHypoList->clear();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, (int)testHypoList->getCountOfTotalHyposProcessed())<< "Cleared Hypos";
+	ASSERT_EQ(expectedSize,
+			(int)testHypoList->getCountOfTotalHyposProcessed())<< "Cleared Hypos";
+}
+
+// test process
+TEST(HypoListTest, ProcessTest) {
+	//glass3::util::log_init("processtest", "debug", ".", true);
+	glassutil::CLogit::disable();
+
+	// load files
+	// stationlist
+	std::ifstream stationFile;
+	stationFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(STATIONFILENAME),
+			std::ios::in);
+	std::string stationLine = "";
+	std::getline(stationFile, stationLine);
+	stationFile.close();
+
+	// merge
+	std::ifstream mergeFile;
+	mergeFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(MERGE1FILENAME),
+			std::ios::in);
+	std::string mergeLine = "";
+	std::getline(mergeFile, mergeLine);
+	mergeFile.close();
+
+	// merge2
+	std::ifstream merge2File;
+	merge2File.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(MERGE2FILENAME),
+			std::ios::in);
+	std::string merge2Line = "";
+	std::getline(merge2File, merge2Line);
+	merge2File.close();
+
+	// nomerge
+	std::ifstream noMergeFile;
+	noMergeFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(NOMERGEFILENAME),
+			std::ios::in);
+	std::string noMergeLine = "";
+	std::getline(noMergeFile, noMergeLine);
+	noMergeFile.close();
+
+	// load config file
+	std::ifstream initFile;
+	initFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(INITFILENAME),
+			std::ios::in);
+	std::string initLine = "";
+	std::getline(initFile, initLine);
+	initFile.close();
+
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+			json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> mergeMessage = std::make_shared<json::Object>(
+			json::Deserialize(mergeLine));
+	std::shared_ptr<json::Object> merge2Message =
+			std::make_shared<json::Object>(json::Deserialize(merge2Line));
+	std::shared_ptr<json::Object> noMergeMessage =
+			std::make_shared<json::Object>(json::Deserialize(noMergeLine));
+	std::shared_ptr<json::Object> initConfig = std::make_shared<json::Object>(
+			json::Deserialize(initLine));
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+
+	// construct a sitelist
+	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
+	testSiteList->receiveExternalMessage(siteList);
+
+	// construct a glass
+	glasscore::CGlass * testGlass = new glasscore::CGlass();
+	testGlass->receiveExternalMessage(initConfig);
+
+	// construct hypos
+	glasscore::CHypo * mergeHypo = new glasscore::CHypo(
+			mergeMessage, testGlass->getNucleationStackThreshold(),
+			testGlass->getNucleationDataThreshold(),
+			testGlass->getDefaultNucleationTravelTime(), nullTrav,
+			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
+			testSiteList);
+
+	glasscore::CHypo * merge2Hypo = new glasscore::CHypo(
+			merge2Message, testGlass->getNucleationStackThreshold(),
+			testGlass->getNucleationDataThreshold(),
+			testGlass->getDefaultNucleationTravelTime(), nullTrav,
+			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
+			testSiteList);
+
+	glasscore::CHypo * noMergeHypo = new glasscore::CHypo(
+			noMergeMessage, testGlass->getNucleationStackThreshold(),
+			testGlass->getNucleationDataThreshold(),
+			testGlass->getDefaultNucleationTravelTime(), nullTrav,
+			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
+			testSiteList);
+
+	// make em shared
+	std::shared_ptr<glasscore::CHypo> sharedMerge = std::shared_ptr<
+			glasscore::CHypo>(mergeHypo);
+	std::shared_ptr<glasscore::CHypo> sharedMerge2 = std::shared_ptr<
+			glasscore::CHypo>(merge2Hypo);
+	std::shared_ptr<glasscore::CHypo> sharedNoMerge = std::shared_ptr<
+			glasscore::CHypo>(noMergeHypo);
+
+	// construct a hypolist
+	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
+
+	// add hypos
+	testHypoList->addHypo(sharedMerge, false);
+	testHypoList->addHypo(sharedMerge2, false);
+	testHypoList->addHypo(sharedNoMerge, false);
+	int expectedSize = 3;
+	ASSERT_EQ(expectedSize, testHypoList->length())<< "Added Hypos";
+
+	// process it
+	testHypoList->processHypo(sharedMerge);
+
+	// check
+	expectedSize = 2;
+	ASSERT_EQ(expectedSize, testHypoList->length())<< "processed Hypos";
+}
+
+// test various failure cases
+TEST(HypoListTest, FailTests) {
+	glassutil::CLogit::disable();
+
+	// construct a hypolist
+	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
+
+	// nulls
+	std::shared_ptr<glasscore::CHypo> nullHypo;
+	std::shared_ptr<glasscore::CPick> nullPick;
+	std::shared_ptr<glasscore::CCorrelation> nullCorrelation;
+	std::shared_ptr<json::Object> nullMessage;
+
+	// empty
+	std::shared_ptr<glasscore::CHypo> emptyHypo = std::make_shared<
+			glasscore::CHypo>();
+
+	// add failure
+	ASSERT_FALSE(testHypoList->addHypo(nullHypo));
+
+	// remove failure
+	testHypoList->removeHypo(nullHypo);
+	testHypoList->removeHypo(emptyHypo);
+
+	// associate failure
+	ASSERT_FALSE(testHypoList->associateData(nullPick));
+	ASSERT_FALSE(testHypoList->associateData(nullCorrelation));
+
+	// queue failures
+	ASSERT_FALSE(testHypoList->appendToHypoProcessingQueue(nullHypo));
+	ASSERT_FALSE(testHypoList->appendToHypoProcessingQueue(emptyHypo));
+	ASSERT_TRUE(testHypoList->getNextHypoFromProcessingQueue() == NULL);
+
+	// process failure
+	ASSERT_FALSE(testHypoList->processHypo(nullHypo));
+	ASSERT_FALSE(testHypoList->processHypo(emptyHypo));
+
+	// merge failure
+	ASSERT_FALSE(testHypoList->findAndMergeMatchingHypos(nullHypo));
+	ASSERT_FALSE(testHypoList->findAndMergeMatchingHypos(emptyHypo));
+
+	// messaging failures
+	ASSERT_FALSE(testHypoList->receiveExternalMessage(nullMessage));
+	ASSERT_FALSE(testHypoList->requestHypo(nullMessage));
 }
