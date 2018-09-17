@@ -1239,6 +1239,11 @@ bool CGlass::getMinimizeTTLocator() {
 	return (m_bMinimizeTTLocator);
 }
 
+// ------------------------------------------------setMinimizeTTLocator
+void CGlass::setMinimizeTTLocator(bool use) {
+	m_bMinimizeTTLocator = use;
+}
+
 // ------------------------------------------------getNumStationsPerNode
 int CGlass::getNumStationsPerNode() {
 	return (m_iNumStationsPerNode);

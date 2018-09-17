@@ -47,18 +47,8 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		return;
 	}
 
-	// check cmd
-	if (pick->HasKey("Cmd")
-			&& ((*pick)["Cmd"].GetType() == json::ValueType::StringVal)) {
-		std::string cmd = (*pick)["Cmd"].ToString();
-
-		if (cmd != "Pick") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
-					"CPick::CPick: Non-Pick message passed in.");
-			return;
-		}
-	} else if (pick->HasKey("Type")
+	// check type
+	if (pick->HasKey("Type")
 			&& ((*pick)["Type"].GetType() == json::ValueType::StringVal)) {
 		std::string type = (*pick)["Type"].ToString();
 
@@ -71,7 +61,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 	} else {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CPick::CPick: Missing required Cmd or Type Key.");
+				"CPick::CPick: Missing required Type Key.");
 		return;
 	}
 

@@ -21,6 +21,7 @@ namespace glasscore {
 class CPick;
 class CCorrelation;
 class CTrigger;
+class CSiteList;
 
 /**
  * \brief glasscore hypocenter class
@@ -56,6 +57,38 @@ class CHypo {
 	 * Initializes members to default values.
 	 */
 	CHypo();
+
+	/**
+	 * \brief CHypo advanced constructor
+	 *
+	 * An advanced constructor for the CHypo class. This function initializes
+	 * members to the provided values found in the json detection message.
+	 *
+	 * \param detection - A shared pointer to a json::Object to containing the
+	 * data to construct the hypo from
+	 * \param thresh - A double containing the threshold value for this hypo
+	 * \param cut - An integer containing the Bayesian stack threshold for this
+	 * hypo
+	 * \param firstTrav - A traveltime::CTravelTime containing the first travel
+	 * time used in creating this hypo
+	 * \param secondTrav - A traveltime::CTravelTime containing the second travel
+	 * time used in creating this hypo
+	 * \param ttt - A traveltime::CTTT to be used for association for this hypo
+	 * \param resolution - A double value containing the web resolution used
+	 * \param aziTaper = A double value containing the azimuth taper to be used,
+	 * defaults to 360
+	 * \param maxDepth = A double value containing the maximum allowed depth,
+	 * defaults to 800
+	 * \param pSiteList - A pointer to the CSiteList class to use when looking
+	 * up the pick station
+	 * \return Returns true if successful, false otherwise.
+	 */
+	CHypo(std::shared_ptr<json::Object> detection, double thresh, int cut,
+			std::shared_ptr<traveltime::CTravelTime> firstTrav,
+			std::shared_ptr<traveltime::CTravelTime> secondTrav,
+			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100,
+			double aziTaper = 360.0, double maxDepth = 800.0,
+			CSiteList *pSiteList = NULL);
 
 	/**
 	 * \brief CHypo advanced constructor
@@ -762,7 +795,6 @@ class CHypo {
 	 */
 	double getDistanceCutoffFactor() const;
 
-
 	/**
 	 * \brief Gets the threshold that represents the minimum count of data
 	 * required to successfully nucleate or maintain (via passing cancelCheck()
@@ -775,7 +807,6 @@ class CHypo {
 	 * threshold
 	 */
 	int getNucleationDataThreshold() const;
-
 
 	/**
 	 * \brief Sets the threshold that represents the minimum count of data
