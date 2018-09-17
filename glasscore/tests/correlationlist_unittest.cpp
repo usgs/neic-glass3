@@ -131,10 +131,6 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	ASSERT_EQ(expectedSize,
 			testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"Cleared Correlations";
-
-	// cleanup
-	delete (testCorrelationList);
-	delete (testSiteList);
 }
 
 // test various failure cases
