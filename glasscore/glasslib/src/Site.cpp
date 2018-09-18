@@ -424,28 +424,66 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 
 // ---------------------------------------------------------removePick
 void CSite::removePick(std::shared_ptr<CPick> pck) {
-	// lock for editing
-	std::lock_guard<std::mutex> guard(vPickMutex);
-
 	// nullcheck
 	if (pck == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
 								"CSite::removePick: NULL CPick provided.");
 		return;
 	}
+	if (pck->getID() == "") {
+		return;
+	}
 
-	// remove pick from site pick vector
-	for (auto it = m_msPickList.begin(); it != m_msPickList.end();) {
-		auto aPck = *it;
+	std::lock_guard<std::mutex> guard(vPickMutex);
 
-		// erase target pick
-		if (aPck->getID() == pck->getID()) {
+	if (m_msPickList.size() == 0) {
+		return;
+	}
+
+	// first, try to delete the pick the efficient way
+	// we need to be careful, because multiple picks in the mulitset
+	// can have the same tSort, and a simple erase would delete
+	// them all, which would be BAD, so we need to confirm the id
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator lower =
+			m_msPickList.lower_bound(pck);
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator upper =
+			m_msPickList.upper_bound(pck);
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator it;
+
+	// for all matching (tSort range) picks
+	for (it = lower; ((it != upper) && (it != m_msPickList.end())); ++it) {
+		std::shared_ptr<CPick> aPick = *it;
+
+		// only erase the correct one
+		if (aPick->getID() == pck->getID()) {
 			m_msPickList.erase(it);
 			return;
-		} else {
-			++it;
 		}
 	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::warn,
+			"CSite::removePick: efficient delete for pick " + pck->getID()
+					+ " didn't work.");
+
+	// if we didn't delete it efficiently, loop through all picks, I know this is
+	// brute force, but the efficient delete didn't work, and the pick list is
+	// relatively small and we want to be sure
+	// note: this may just be me being paranoid
+	for (it = m_msPickList.begin(); (it != m_msPickList.end()); ++it) {
+		std::shared_ptr<CPick> aPick = *it;
+
+		// only erase the correct one
+		if (aPick->getID() == pck->getID()) {
+			m_msPickList.erase(it);
+			return;
+		}
+	}
+
+	glassutil::CLogit::log(
+			glassutil::log_level::error,
+			"CSite::removePick: did not delete pick " + pck->getID()
+					+ " in multiset, id not found.");
 }
 
 // ---------------------------------------------------------getVPick
@@ -473,7 +511,7 @@ std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
 	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(nullSite, t2,
 																"", 0, 0);
 
-	std::lock_guard<std::recursive_mutex> listGuard(m_SiteMutex);
+	std::lock_guard<std::mutex> listGuard(vPickMutex);
 
 	// don't bother if the list is empty
 	if (m_msPickList.size() == 0) {

@@ -1274,7 +1274,7 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 
 	// if we didn't delete it efficently, loop through all hypos, I know this is
 	// brute force, but the efficient delete didn't work, and the hypo list is
-	// relativly small and we want to be sure
+	// relatively small and we want to be sure
 	// note: this may just be me being paranoid
 	for (it = m_msHypoList.begin(); (it != m_msHypoList.end()); ++it) {
 		std::shared_ptr<CHypo> aHyp = *it;
