@@ -23,7 +23,7 @@ fileOutput::fileOutput()
 	clear();
 }
 
-fileOutput::fileOutput(std::shared_ptr<json::Object> &config)
+fileOutput::fileOutput(std::shared_ptr<const json::Object> config)
 		: glass3::output::output() {
 	glass3::util::log("debug", "fileOutput::fileOutput(): Advanced Construction.");
 
