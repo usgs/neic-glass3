@@ -46,7 +46,10 @@ TEST(CorrelationListTest, Construction) {
 
 	// assert default values
 	ASSERT_EQ(0, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
-	"nCorrelationTotal is 0";
+	"getCountOfTotalCorrelationsProcessed is 0";
+	ASSERT_EQ(10000, testCorrelationList->getMaxAllowableCorrelationCount())<<
+	"getMaxAllowableCorrelationCount is 10000";
+
 
 	// lists
 	ASSERT_EQ(0, testCorrelationList->length())<<

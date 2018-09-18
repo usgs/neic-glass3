@@ -28,12 +28,11 @@ TEST(NodeTest, Construction) {
 	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
 	LATITUDE,
 														LONGITUDE, DEPTH,
-														RESOLUTION
-														);
+														RESOLUTION);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testNode->getName().c_str())<<
-			"Node Name Matches";
+	"Node Name Matches";
 
 	// latitude
 	ASSERT_EQ(LATITUDE, testNode->getLatitude())<< "Node Latitude Check";
@@ -49,11 +48,20 @@ TEST(NodeTest, Construction) {
 
 	// id
 	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->getID().c_str())<<
-			"Node ID Matches";
+	"Node ID Matches";
+
+	// web name
+	ASSERT_TRUE(testNode->getWeb() == NULL)<< "Web null";
+
+	// enabled
+	ASSERT_TRUE(testNode->getEnabled())<< "enabled";
 
 	// site list
 	int expectedSize = 0;
 	ASSERT_EQ(expectedSize, testNode->getSiteLinksCount())<< "sitelist empty";
+
+	// geo
+	ASSERT_EQ(LONGITUDE, testNode->getGeo().dLon)<< "geo";
 }
 
 // tests to see if sites can be added to the node
@@ -68,7 +76,7 @@ TEST(NodeTest, SiteOperations) {
 
 	// create json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
-					json::Object(json::Deserialize(std::string(SITEJSON))));
+			json::Object(json::Deserialize(std::string(SITEJSON))));
 
 	// construct sites using JSON objects
 	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
@@ -80,7 +88,7 @@ TEST(NodeTest, SiteOperations) {
 	std::shared_ptr<glasscore::CSite> sharedTestSite(testSite);
 
 	// add the site to the node
-	testNode->linkSite(sharedTestSite, sharedTestNode, TRAVELTIME);
+	ASSERT_TRUE(testNode->linkSite(sharedTestSite, sharedTestNode, TRAVELTIME));
 
 	// check to see if the site was added
 	int expectedSize = 1;
@@ -92,4 +100,40 @@ TEST(NodeTest, SiteOperations) {
 	// check to see if the site list was cleared
 	expectedSize = 0;
 	ASSERT_EQ(expectedSize, testNode->getSiteLinksCount())<< "sitelist cleared";
+}
+
+// test various failure cases
+TEST(NodeTest, FailTests) {
+	glassutil::CLogit::disable();
+
+	// null pointers
+	std::shared_ptr<glasscore::CNode> nullNode;
+	std::shared_ptr<glasscore::CSite> nullSite;
+
+	// construct a node
+	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
+	LATITUDE,
+														LONGITUDE, DEPTH,
+														RESOLUTION);
+
+	// create json object from the string
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
+
+	// construct sites using JSON objects
+	glasscore::CSite * testSite = new glasscore::CSite(siteJSON);
+
+	// make shared
+	std::shared_ptr<glasscore::CNode> sharedTestNode(testNode);
+	std::shared_ptr<glasscore::CSite> sharedTestSite(testSite);
+
+	// link fails
+	ASSERT_FALSE(testNode->linkSite(nullSite, sharedTestNode, TRAVELTIME));
+	ASSERT_FALSE(testNode->linkSite(sharedTestSite, nullNode, TRAVELTIME));
+
+	// unlink fails
+	ASSERT_FALSE(testNode->unlinkSite(nullSite));
+
+	// nucleate
+	ASSERT_TRUE(testNode->nucleate(-1) == NULL);
 }
