@@ -33,6 +33,7 @@
 #define MAXNHYPO 5
 
 #define ASSOCPICKJSON "{\"Type\":\"Pick\",\"ID\":\"96499\",\"Site\":{\"Station\":\"BERG\",\"Network\":\"AK\",\"Channel\":\"BHZ\",\"Location\":\"--\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T00:39:08.527Z\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Picker\":\"raypicker\",\"Filter\":[{\"HighPass\":1.05,\"LowPass\":2.65}],\"Amplitude\":{\"Amplitude\":0.0,\"Period\":0.0,\"SNR\":3.81},\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":4.522347499827323,\"Azimuth\":80.51195539508707,\"Residual\":-0.07935762576066452,\"Sigma\":0.9968561359397737}}"  // NOLINT
+#define ASSOCPICK2JSON "{\"Type\":\"Pick\",\"ID\":\"96386\",\"Site\":{\"Station\":\"HOM\",\"Network\":\"AK\",\"Channel\":\"BHZ\",\"Location\":\"--\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"228041013\"},\"Time\":\"2015-08-14T00:38:18.207Z\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Picker\":\"raypicker\",\"Filter\":[{\"HighPass\":1.05,\"LowPass\":2.65}],\"Amplitude\":{\"Amplitude\":0.0,\"Period\":0.0,\"SNR\":5.0},\"AssociationInfo\":{\"Phase\":\"P\",\"Distance\":0.6123794730349522,\"Azimuth\":118.57193866082869,\"Residual\":-1.1292614242197293,\"Sigma\":0.5285511568133225}}"  // NOLINT
 
 // test to see if the hypolist can be constructed
 TEST(HypoListTest, Construction) {
@@ -261,7 +262,7 @@ TEST(HypoListTest, ProcessTest) {
 
 // test process
 TEST(HypoListTest, AssociateTest) {
-	//glass3::util::log_init("assoctest", "debug", ".", true);
+	// glass3::util::log_init("assoctest", "debug", ".", true);
 	glassutil::CLogit::disable();
 
 	// load files
@@ -321,7 +322,10 @@ TEST(HypoListTest, AssociateTest) {
 	std::shared_ptr<json::Object> initConfig = std::make_shared<json::Object>(
 			json::Deserialize(initLine));
 	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
-				json::Object(json::Deserialize(std::string(ASSOCPICKJSON))));
+			json::Object(json::Deserialize(std::string(ASSOCPICKJSON))));
+	std::shared_ptr<json::Object> pick2JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(ASSOCPICK2JSON))));
+
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
 
 	// construct a sitelist
@@ -332,8 +336,10 @@ TEST(HypoListTest, AssociateTest) {
 	glasscore::CGlass * testGlass = new glasscore::CGlass();
 	testGlass->receiveExternalMessage(initConfig);
 
-	// construct pick
+	// construct picks
 	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, testSiteList);
+	glasscore::CPick * testPick2 = new glasscore::CPick(pick2JSON,
+														testSiteList);
 
 	// construct hypos
 	glasscore::CHypo * mergeHypo = new glasscore::CHypo(
@@ -365,6 +371,7 @@ TEST(HypoListTest, AssociateTest) {
 	std::shared_ptr<glasscore::CHypo> sharedNoMerge = std::shared_ptr<
 			glasscore::CHypo>(noMergeHypo);
 	std::shared_ptr<glasscore::CPick> sharedPick(testPick);
+	std::shared_ptr<glasscore::CPick> sharedPick2(testPick2);
 
 	// construct a hypolist
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
@@ -375,6 +382,128 @@ TEST(HypoListTest, AssociateTest) {
 	testHypoList->addHypo(sharedNoMerge, false);
 
 	ASSERT_FALSE(testHypoList->associateData(sharedPick));
+
+	// update statistics
+	sharedMerge->calculateStatistics();
+
+	// test assoc 1
+	ASSERT_TRUE(testHypoList->associateData(sharedPick));
+
+	// update statistics
+	sharedMerge2->calculateStatistics();
+
+	// test assoc multiple
+	ASSERT_TRUE(testHypoList->associateData(sharedPick2));
+}
+
+// test process
+TEST(HypoListTest, WorkTest) {
+	//glass3::util::log_init("assoctest", "debug", ".", true);
+	glassutil::CLogit::disable();
+
+	// load files
+	// stationlist
+	std::ifstream stationFile;
+	stationFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(STATIONFILENAME),
+			std::ios::in);
+	std::string stationLine = "";
+	std::getline(stationFile, stationLine);
+	stationFile.close();
+
+	// merge
+	std::ifstream mergeFile;
+	mergeFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(MERGE1FILENAME),
+			std::ios::in);
+	std::string mergeLine = "";
+	std::getline(mergeFile, mergeLine);
+	mergeFile.close();
+
+	// nomerge
+	std::ifstream noMergeFile;
+	noMergeFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(NOMERGEFILENAME),
+			std::ios::in);
+	std::string noMergeLine = "";
+	std::getline(noMergeFile, noMergeLine);
+	noMergeFile.close();
+
+	// load config file
+	std::ifstream initFile;
+	initFile.open(
+			"./" + std::string(TESTPATH) + "/" + std::string(INITFILENAME),
+			std::ios::in);
+	std::string initLine = "";
+	std::getline(initFile, initLine);
+	initFile.close();
+
+	std::shared_ptr<json::Object> siteList = std::make_shared<json::Object>(
+			json::Deserialize(stationLine));
+	std::shared_ptr<json::Object> mergeMessage = std::make_shared<json::Object>(
+			json::Deserialize(mergeLine));
+	std::shared_ptr<json::Object> noMergeMessage =
+			std::make_shared<json::Object>(json::Deserialize(noMergeLine));
+	std::shared_ptr<json::Object> initConfig = std::make_shared<json::Object>(
+			json::Deserialize(initLine));
+	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(ASSOCPICKJSON))));
+	std::shared_ptr<traveltime::CTravelTime> nullTrav;
+
+	// construct a sitelist
+	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
+	testSiteList->receiveExternalMessage(siteList);
+
+	// construct a glass
+	glasscore::CGlass * testGlass = new glasscore::CGlass();
+	testGlass->receiveExternalMessage(initConfig);
+
+	// construct pick
+	glasscore::CPick * testPick = new glasscore::CPick(pickJSON, testSiteList);
+
+	// construct hypos
+	glasscore::CHypo * mergeHypo = new glasscore::CHypo(
+			mergeMessage, testGlass->getNucleationStackThreshold(),
+			testGlass->getNucleationDataThreshold(),
+			testGlass->getDefaultNucleationTravelTime(), nullTrav,
+			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
+			testSiteList);
+
+	glasscore::CHypo * noMergeHypo = new glasscore::CHypo(
+			noMergeMessage, testGlass->getNucleationStackThreshold(),
+			testGlass->getNucleationDataThreshold(),
+			testGlass->getDefaultNucleationTravelTime(), nullTrav,
+			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
+			testSiteList);
+
+	glasscore::CHypo * cancelHypo = new glasscore::CHypo(
+			46.84, 135.03, 42.0, 3648585211.926340, "cancel", "Test", 0,
+			testGlass->getNucleationStackThreshold(),
+			testGlass->getNucleationDataThreshold(),
+			testGlass->getDefaultNucleationTravelTime(), nullTrav,
+			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0);
+
+	// make em shared
+	std::shared_ptr<glasscore::CHypo> sharedMerge = std::shared_ptr<
+			glasscore::CHypo>(mergeHypo);
+	std::shared_ptr<glasscore::CHypo> sharedNoMerge = std::shared_ptr<
+			glasscore::CHypo>(noMergeHypo);
+	std::shared_ptr<glasscore::CHypo> sharedCancel = std::shared_ptr<
+			glasscore::CHypo>(cancelHypo);
+	std::shared_ptr<glasscore::CPick> sharedPick(testPick);
+
+	// construct a hypolist
+	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
+
+	// add hypos
+	testHypoList->addHypo(sharedMerge, true);
+	testHypoList->addHypo(sharedNoMerge, true);
+	testHypoList->addHypo(sharedCancel, true);
+
+	// give time for work
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+
+	ASSERT_EQ(0, testHypoList->getHypoProcessingQueueLength());
 }
 
 // test various failure cases

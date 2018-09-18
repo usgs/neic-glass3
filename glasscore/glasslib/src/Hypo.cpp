@@ -866,6 +866,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 								"CHypo::associate: NULL pick.");
 		return (false);
 	}
+
 	if (m_pTravelTimeTables == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::associate: NULL pTTT.");
@@ -946,10 +947,11 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		 snprintf(
 		 sLog, sizeof(sLog),
 		 "CHypo::associate: NOASSOC Hypo:%s Time:%s Station:%s Pick:%s"
-		 " stdev:%.2f>sdassoc:%.2f)",
-		 sPid.c_str(),
+		 " Res:%.2f stdev:%.2f>sdassoc:%.2f)",
+		 m_sID.c_str(),
 		 glassutil::CDate::encodeDateTime(pick->getTPick()).c_str(),
-		 pick->getSite()->getScnl().c_str(), pick->getPid().c_str(), stdev, sdassoc);
+		 pick->getSite()->getSCNL().c_str(), pick->getID().c_str(), tRes,
+		 stdev, sdassoc);
 		 glassutil::CLogit::log(sLog);
 		 */
 
