@@ -19,14 +19,30 @@
 
 #include "Geo.h"
 #include "Link.h"
+#include "Pick.h"
 
 namespace glasscore {
 
 // forward declarations
-class CPick;
 class CNode;
 class CTrigger;
 class CHypo;
+
+/**
+ * \brief CSite comparison function
+ *
+ * PickCompare contains the comparison function used by std::multiset when
+ * SitePickCompare, sorting, and retrieving picks.
+ */
+struct SitePickCompare {
+	bool operator()(const std::shared_ptr<CPick> &lhs,
+					const std::shared_ptr<CPick> &rhs) const {
+		if (lhs->getTPick() < rhs->getTPick()) {
+			return (true);
+		}
+		return (false);
+	}
+};
 
 /**
  * \brief glasscore site (station) class
@@ -193,6 +209,21 @@ class CSite {
 	void removePick(std::shared_ptr<CPick> pck);
 
 	/**
+	 * \brief Get a vector of picks that fall within a time window
+	 *
+	 * Get a vector of picks that fall within the provided time window from t1
+	 * to t2
+	 *
+	 * \param t1 - A double value containing the beginning of the time window in
+	 * julian seconds
+	 * \param t2 - A double value containing the end of the time window in
+	 * julian seconds
+	 * \return Return a std::vector of std::weak_ptrs to the picks within the
+	 * time window
+	 */
+	std::vector<std::shared_ptr<CPick>> getPicks(double t1, double t2);
+
+	/**
 	 * \brief Add node to this site
 	 * This function adds the given pick to the list of nodes serviced by this
 	 * site
@@ -316,13 +347,6 @@ class CSite {
 	glassutil::CGeo &getGeo();
 
 	/**
-	 * \brief Get the maximum allowed size of the pick list for this site
-	 * \return Return an integer containing the maximum allowed size of this
-	 * pick list
-	 */
-	int getPickMax() const;
-
-	/**
 	 * \brief Get the SCNL identifier for this site
 	 * \return Returns a std::string containing the SCNL identifier for this
 	 * site
@@ -354,12 +378,6 @@ class CSite {
 	const std::string& getLocation() const;
 
 	/**
-	 * \brief Get the current vector of picks at this site
-	 * \return Returns a vector of shared_ptr's to the picks at this site
-	 */
-	const std::vector<std::shared_ptr<CPick>> getVPick() const;
-
-	/**
 	 * \brief Get the time the last pick was added to this site
 	 * \return Returns a time_t containing the time that the last pick was
 	 * added to this site in epoch seconds
@@ -387,6 +405,13 @@ class CSite {
 	 */
 	void setPickCountSinceCheck(int count);
 
+	/**
+	 * \brief Gets the number of picks made at this site
+	 * \return Returns an integer containing the number of picks made at this
+	 * site
+	 */
+	int getPickCount() const;
+
  private:
 	/**
 	 * \brief A mutex to control threading access to vPick.
@@ -394,11 +419,10 @@ class CSite {
 	mutable std::mutex vPickMutex;
 
 	/**
-	 * \brief A std::vector of std::shared_ptr to the picks made at this this
-	 * CSite. A shared_ptr is used here instead of a weak_ptr (to prevent a
-	 * cyclical reference between CPick and CSite) to improve performance
+	 * \brief A std::multiset containing each pick made at this site in sequential
+	 * time order from oldest to youngest.
 	 */
-	std::vector<std::shared_ptr<CPick>> m_vPickList;
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare> m_msPickList;
 
 	/**
 	 * \brief A std::string containing the SCNL (Site, Component, Network,
@@ -459,12 +483,6 @@ class CSite {
 	 * \brief A double value containing the quality estimate of the station.
 	 */
 	std::atomic<double> m_dQuality;
-
-	/**
-	 * \brief An integer containing the maximum number of picks stored by
-	 * the vector in this site
-	 */
-	std::atomic<int> m_iPickMax;
 
 	/**
 	 * \brief An integer containing the number of picks made at this site since

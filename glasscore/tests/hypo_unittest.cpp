@@ -458,12 +458,12 @@ TEST(HypoTest, Anneal) {
 	// check lat
 	double latitude = testHypo->getLatitude();
 	double expectedLatitude = ANNEAL_LATITUDE;
-	ASSERT_NEAR(latitude, expectedLatitude, 0.5);
+	ASSERT_NEAR(latitude, expectedLatitude, 1.0);
 
 	// check lon
 	double longitude = testHypo->getLongitude();
 	double expectedLongitude = ANNEAL_LONGITUDE;
-	ASSERT_NEAR(longitude, expectedLongitude, 0.5);
+	ASSERT_NEAR(longitude, expectedLongitude, 1.0);
 
 	// check depth
 	double depth = testHypo->getDepth();
@@ -473,12 +473,12 @@ TEST(HypoTest, Anneal) {
 	// check time
 	double time = testHypo->getTOrigin();
 	double expectedTime = ANNEAL_TIME;
-	ASSERT_NEAR(time, expectedTime, 0.5);
+	ASSERT_NEAR(time, expectedTime, 1.0);
 
 	// check bayes
 	double bayes = testHypo->getBayesValue();
 	double expectedBayes = ANNEAL_BAYES;
-	ASSERT_NEAR(bayes, expectedBayes, 0.5);
+	ASSERT_NEAR(bayes, expectedBayes, 1.0);
 }
 
 // test to see if the localize operation works
@@ -544,12 +544,12 @@ TEST(HypoTest, Localize) {
 	// check lat
 	double latitude = testHypo->getLatitude();
 	double expectedLatitude = LOCALIZE_LATITUDE;
-	ASSERT_NEAR(latitude, expectedLatitude, 0.1);
+	ASSERT_NEAR(latitude, expectedLatitude, 1.0);
 
 	// check lon
 	double longitude = testHypo->getLongitude();
 	double expectedLongitude = LOCALIZE_LONGITUDE;
-	ASSERT_NEAR(longitude, expectedLongitude, 0.1);
+	ASSERT_NEAR(longitude, expectedLongitude, 1.0);
 
 	// check depth
 	double depth = testHypo->getDepth();
@@ -559,12 +559,12 @@ TEST(HypoTest, Localize) {
 	// check time
 	double time = testHypo->getTOrigin();
 	double expectedTime = LOCALIZE_TIME;
-	ASSERT_NEAR(time, expectedTime, 0.1);
+	ASSERT_NEAR(time, expectedTime, 1.0);
 
 	// check bayes
 	double bayes = testHypo->getBayesValue();
 	double expectedBayes = LOCALIZE_BAYES;
-	ASSERT_NEAR(bayes, expectedBayes, 0.1);
+	ASSERT_NEAR(bayes, expectedBayes, 1.0);
 
 	// switch to residual locator
 	testGlass->setMinimizeTTLocator(true);

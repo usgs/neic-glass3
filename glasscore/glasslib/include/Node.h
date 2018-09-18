@@ -166,11 +166,15 @@ class CNode {
 	 * node.
 	 *
 	 * \param tObservedTT - A double value containing the observed travel time
-	 * \param link - A SiteLink containing the travel times to use
+	 * \param travelTime1 - A double value containing the first calculated
+	 * travel time
+	 * \param travelTime2 - A double value containing the first calculated
+	 * travel time
 	 * \return Returns best significance if there is at least one valid travel
 	 * time, -1.0 otherwise
 	 */
-	double getBestSignificance(double tObservedTT, SiteLink link);
+	double getBestSignificance(double tObservedTT, double travelTime1,
+								double travelTime2);
 
 	/**
 	 * \brief CNode site used function

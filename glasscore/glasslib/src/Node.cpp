@@ -17,6 +17,8 @@
 #include "Logit.h"
 #include "GlassMath.h"
 
+#define NUCLEATION_SLOP_FACTOR_SECONDS 60.0
+
 namespace glasscore {
 
 // site Link sorting function
@@ -282,9 +284,38 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			continue;
 		}
 
-		std::vector<std::shared_ptr<CPick>> vSitePicks = site->getVPick();
+		// get traveltime(s) to site
+		double travelTime1 = std::get< LINK_TT1>(link);
+		double travelTime2 = std::get< LINK_TT2>(link);
 
-		// search through each pick at this site
+		// compute pick time window from travelime(s)
+		double t1 = 0;
+		double t2 = 0;
+		if ((travelTime1 > 0) && (travelTime2 > 0)) {
+			// both travel times are valid
+			t1 = tOrigin
+					+ std::min(travelTime1,
+								travelTime2) - NUCLEATION_SLOP_FACTOR_SECONDS;
+			t2 = tOrigin
+					+ std::max(travelTime1,
+								travelTime2) + NUCLEATION_SLOP_FACTOR_SECONDS;
+		} else if ((travelTime1 > 0) && (travelTime2 < 0)) {
+			// only tt1 is valid
+			t1 = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
+			t2 = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
+		} else if ((travelTime1 < 0) && (travelTime2 > 0)) {
+			// only tt2 is valid
+			t1 = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
+			t2 = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
+		} else {
+			// no valid tt
+			continue;
+		}
+
+		// get the picks
+		std::vector<std::shared_ptr<CPick>> vSitePicks = site->getPicks(t1, t2);
+
+		// search through each pick in the window
 		for (const auto &pick : vSitePicks) {
 			if (pick == NULL) {
 				continue;
@@ -300,19 +331,12 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// the provided origin time
 			double tObs = tPick - tOrigin;
 
-			// Ignore arrivals past earlier than this potential origin and
-			// past 1000 seconds (about 100 degrees)
-			// NOTE: Time cutoff is hard coded
-			if (tObs < 0 || tObs > 1000.0) {
-				continue;
-			}
-
 			// check backazimuth if present
 			if (backAzimuth > 0) {
 				// set up a geo for distance calculations
 				glassutil::CGeo nodeGeo;
 				nodeGeo.setGeographic(m_dLatitude, m_dLongitude,
-									  EARTHRADIUSKM - m_dDepth);
+				EARTHRADIUSKM - m_dDepth);
 
 				// compute azimith from the site to the node
 				double siteAzimuth = pick->getSite()->getGeo().azimuth(
@@ -350,7 +374,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 			// get the best significance from the observed time and the
 			// link
-			double dSig = getBestSignificance(tObs, link);
+			double dSig = getBestSignificance(tObs, travelTime1, travelTime2);
 
 			// only count if this pick is significant (better than
 			// previous)
@@ -409,13 +433,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 }
 
 // ---------------------------------------------------------getBestSignificance
-double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
-	// get traveltime1 to site
-	double travelTime1 = std::get< LINK_TT1>(link);
-
-	// get traveltime2 to site
-	double travelTime2 = std::get< LINK_TT2>(link);
-
+double CNode::getBestSignificance(double tObservedTT, double travelTime1,
+									double travelTime2) {
 	// use observed travel time, travel times to site
 	double tRes1 = -1;
 	if (travelTime1 > 0) {

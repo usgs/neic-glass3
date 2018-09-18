@@ -6,6 +6,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <mutex>
 #include <ctime>
@@ -256,10 +257,6 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	m_bUse = true;
 	m_bUseForTeleseismic = useTele;
 
-	if (CGlass::getMaxNumPicksPerSite() > -1) {
-		m_iPickMax = CGlass::getMaxNumPicksPerSite();
-	}
-
 	return (true);
 }
 
@@ -295,11 +292,8 @@ void CSite::clear() {
 	m_vNodeMutex.unlock();
 
 	vPickMutex.lock();
-	m_vPickList.clear();
+	m_msPickList.clear();
 	vPickMutex.unlock();
-
-	// reset max picks
-	m_iPickMax = 200;
 
 	// reset last pick added time
 	m_tLastPickAdded = std::time(NULL);
@@ -418,14 +412,8 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 		return;
 	}
 
-	// check to see if we're at the pick limit
-	if (m_vPickList.size() >= m_iPickMax) {
-		// erase first pick from vector
-		m_vPickList.erase(m_vPickList.begin());
-	}
-
 	// add pick to site pick multiset
-	m_vPickList.push_back(pck);
+	m_msPickList.insert(pck);
 
 	// remember the time the last pick was added
 	m_tLastPickAdded = std::time(NULL);
@@ -447,16 +435,82 @@ void CSite::removePick(std::shared_ptr<CPick> pck) {
 	}
 
 	// remove pick from site pick vector
-	for (auto it = m_vPickList.begin(); it != m_vPickList.end();) {
+	for (auto it = m_msPickList.begin(); it != m_msPickList.end();) {
 		auto aPck = *it;
 
 		// erase target pick
 		if (aPck->getID() == pck->getID()) {
-			it = m_vPickList.erase(it);
+			m_msPickList.erase(it);
+			return;
 		} else {
 			++it;
 		}
 	}
+}
+
+// ---------------------------------------------------------getVPick
+std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
+	std::vector<std::shared_ptr<CPick>> picks;
+
+	if (t1 == t2) {
+		return (picks);
+	}
+	if (t1 > t2) {
+		double temp = t2;
+		t2 = t1;
+		t1 = temp;
+	}
+
+	std::shared_ptr<CSite> nullSite;
+
+	// construct the lower bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(nullSite, t1,
+																"", 0, 0);
+
+	// construct the upper bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(nullSite, t2,
+																"", 0, 0);
+
+	std::lock_guard<std::recursive_mutex> listGuard(m_SiteMutex);
+
+	// don't bother if the list is empty
+	if (m_msPickList.size() == 0) {
+		return (picks);
+	}
+
+	// get the bounds for this window
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator lower =
+			m_msPickList.lower_bound(lowerValue);
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator upper =
+			m_msPickList.upper_bound(upperValue);
+
+	// found nothing
+	if (lower == m_msPickList.end()) {
+		return (picks);
+	}
+
+	// found one
+	if ((lower == upper) && (lower != m_msPickList.end())) {
+		std::shared_ptr<CPick> aPick = *lower;
+
+		// add to the list of picks
+		picks.push_back(aPick);
+
+		return (picks);
+	}  // end found one
+
+	// loop through found picks
+	for (std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator it =
+			lower; ((it != upper) && (it != m_msPickList.end())); ++it) {
+		std::shared_ptr<CPick> aPick = *it;
+		// add to the list of hypos
+		picks.push_back(aPick);
+	}
+
+	// return the list of picks we found
+	return (picks);
 }
 
 // ---------------------------------------------------------addNode
@@ -643,9 +697,7 @@ void CSite::addTriggerToList(std::vector<std::shared_ptr<CTrigger>> *vTrigger,
 // ---------------------------------------------------------getNodeLinksCount
 int CSite::getNodeLinksCount() const {
 	std::lock_guard<std::mutex> guard(m_vNodeMutex);
-	int size = m_vNode.size();
-
-	return (size);
+	return (m_vNode.size());
 }
 
 // ---------------------------------------------------------getEnable
@@ -693,11 +745,6 @@ glassutil::CGeo &CSite::getGeo() {
 	return (m_Geo);
 }
 
-// ---------------------------------------------------------getPickMax
-int CSite::getPickMax() const {
-	return (m_iPickMax);
-}
-
 // ---------------------------------------------------------getComponent
 const std::string& CSite::getComponent() const {
 	return (m_sComponent);
@@ -723,12 +770,6 @@ const std::string& CSite::getSite() const {
 	return (m_sSite);
 }
 
-// ---------------------------------------------------------getVPick
-const std::vector<std::shared_ptr<CPick>> CSite::getVPick() const {
-	std::lock_guard<std::mutex> guard(vPickMutex);
-	return (m_vPickList);
-}
-
 // ---------------------------------------------------------getTLastPickAdded
 time_t CSite::getTLastPickAdded() const {
 	return (m_tLastPickAdded);
@@ -742,6 +783,12 @@ void CSite::setPickCountSinceCheck(int count) {
 // ------------------------------------------------------getPickCountSinceCheck
 int CSite::getPickCountSinceCheck() const {
 	return (m_iPickCountSinceCheck);
+}
+
+// ------------------------------------------------------getPickCount
+int CSite::getPickCount() const {
+	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
+	return (m_msPickList.size());
 }
 
 }  // namespace glasscore
