@@ -207,26 +207,6 @@ class OutputTest : public ::testing::Test {
 		// get json formatted configuration
 		output_config_json = OutputConfig->getJSON();
 
-		OutputThread = new glass::fileOutput();
-
-		AssocThread = new AssociatorStub();
-		AssocThread->Output = OutputThread;
-		OutputThread->setAssociator(AssocThread);
-
-		// configure output
-		return (OutputThread->setup(output_config_json));
-	}
-
-	bool configure2() {
-		// create configfilestring
-		std::string configfile = std::string(CONFIGFILENAME);
-
-		// load configuration
-		OutputConfig = new glass3::util::Config(configdirectory, configfile);
-
-		// get json formatted configuration
-		output_config_json = OutputConfig->getJSON();
-
 		OutputThread = new glass::fileOutput(output_config_json);
 
 		AssocThread = new AssociatorStub();
@@ -422,36 +402,6 @@ TEST_F(OutputTest, Configuration) {
 
 	// configure output
 	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
-
-	// assert class is set up
-	ASSERT_TRUE(OutputThread->getSetup()) << "input thread is set up";
-
-	// assert class has config
-	ASSERT_TRUE(OutputThread->getConfig() != NULL) << "input config is notnull";
-
-	// check input directory
-	ASSERT_STREQ(OutputThread->getSOutputDir().c_str(),
-			outputdirectory.c_str()) << "check output thread output directory";
-
-	// check input directory
-	std::string outputformat = std::string(OUTPUTFORMAT);
-	ASSERT_STREQ(OutputThread->getSOutputFormat().c_str(),
-			outputformat.c_str()) << "check output thread output format";
-
-	// check agency id
-	std::string agencyid = std::string(TESTAGENCYID);
-	ASSERT_STREQ(OutputThread->getDefaultAgencyId().c_str(),
-			agencyid.c_str()) << "check agency id";
-
-	// check author
-	std::string author = std::string(TESTAUTHOR);
-	ASSERT_STREQ(OutputThread->getDefaultAuthor().c_str(),
-			author.c_str()) << "check author";
-}
-
-TEST_F(OutputTest, Configuration2) {
-	// configure output
-	ASSERT_TRUE(configure2())<< "OutputThread->setup returned true";
 
 	// assert class is set up
 	ASSERT_TRUE(OutputThread->getSetup()) << "input thread is set up";
