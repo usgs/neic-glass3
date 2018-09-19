@@ -412,6 +412,13 @@ class CSite {
 	 */
 	int getPickCount() const;
 
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator getLower(
+			double min);
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator getUpper(
+			double max);
+	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator getEnd();
+	std::mutex & getPickMutex();
+
  private:
 	/**
 	 * \brief A mutex to control threading access to vPick.

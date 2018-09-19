@@ -495,9 +495,6 @@ void CSite::removePick(std::shared_ptr<CPick> pck) {
 std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
 	std::vector<std::shared_ptr<CPick>> picks;
 
-	if (t1 == t2) {
-		return (picks);
-	}
 	if (t1 > t2) {
 		double temp = t2;
 		t2 = t1;
@@ -560,6 +557,26 @@ std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
 
 	// return the list of picks we found
 	return (picks);
+}
+
+std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getLower( // NOLINT
+		double min) {
+	m_LowerValue->setTPick(min);
+	return (m_msPickList.lower_bound(m_LowerValue));
+}
+
+std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getUpper( // NOLINT
+		double max) {
+	m_UpperValue->setTPick(max);
+	return (m_msPickList.upper_bound(m_UpperValue));
+}
+
+std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getEnd() { // NOLINT
+	return (m_msPickList.end());
+}
+
+std::mutex & CSite::getPickMutex() {
+	return (vPickMutex);
 }
 
 // ---------------------------------------------------------addNode

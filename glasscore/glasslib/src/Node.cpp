@@ -352,12 +352,22 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			continue;
 		}
 
+		site->getPickMutex().lock();
+
+		// compute bounds
+		auto lower = site->getLower(min);
+		auto upper = site->getUpper(max);
+
 		// get the picks
-		std::vector<std::shared_ptr<CPick>> vSitePicks = site->getPicks(min,
-																		max);
+		// std::vector<std::shared_ptr<CPick>> vSitePicks = site->getPicks(min,
+		// max);
 
 		// search through each pick in the window
-		for (const auto &pick : vSitePicks) {
+		// for (const auto &pick : vSitePicks) {
+
+		for (auto it = lower; ((it != upper) && (it != site->getEnd())); ++it) {
+			auto pick = *it;
+
 			if (pick == NULL) {
 				continue;
 			}
@@ -427,6 +437,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 				pickBest = pick;
 			}
 		}  // ---- end search through each pick at this site ----
+
+		site->getPickMutex().unlock();
 
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site
