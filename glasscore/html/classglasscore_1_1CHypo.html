@@ -112,6 +112,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aaa52e4eef3fbd2bc345b6a90ad575f69"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#aaa52e4eef3fbd2bc345b6a90ad575f69">CHypo</a> ()</td></tr>
 <tr class="memdesc:aaa52e4eef3fbd2bc345b6a90ad575f69"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> constructor.  <a href="#aaa52e4eef3fbd2bc345b6a90ad575f69">More...</a><br/></td></tr>
 <tr class="separator:aaa52e4eef3fbd2bc345b6a90ad575f69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea13378967f7af1ee3b6b6e4ce700db7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#aea13378967f7af1ee3b6b6e4ce700db7">CHypo</a> (std::shared_ptr&lt; json::Object &gt; detection, double thresh, int cut, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; firstTrav, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; secondTrav, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTTT.html">traveltime::CTTT</a> &gt; ttt, double resolution=100, double aziTaper=360.0, double maxDepth=800.0, <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *pSiteList=NULL)</td></tr>
+<tr class="memdesc:aea13378967f7af1ee3b6b6e4ce700db7"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> advanced constructor.  <a href="#aea13378967f7af1ee3b6b6e4ce700db7">More...</a><br/></td></tr>
+<tr class="separator:aea13378967f7af1ee3b6b6e4ce700db7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac631363d3092ccffa2eef8c7fc5c8537"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#ac631363d3092ccffa2eef8c7fc5c8537">CHypo</a> (double lat, double lon, double z, double time, std::string pid, std::string web, double bayes, double thresh, int cut, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; firstTrav, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt; secondTrav, std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTTT.html">traveltime::CTTT</a> &gt; ttt, double resolution=100, double aziTaper=360.0, double maxDepth=800.0)</td></tr>
 <tr class="memdesc:ac631363d3092ccffa2eef8c7fc5c8537"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> advanced constructor.  <a href="#ac631363d3092ccffa2eef8c7fc5c8537">More...</a><br/></td></tr>
 <tr class="separator:ac631363d3092ccffa2eef8c7fc5c8537"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -395,6 +398,99 @@ Public Member Functions</h2></td></tr>
 
 <p><a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> constructor. </p>
 <p>The constructor for the <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> class. Sets allocated objects to null. Initializes members to default values. </p>
+
+</div>
+</div>
+<a class="anchor" id="aea13378967f7af1ee3b6b6e4ce700db7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">glasscore::CHypo::CHypo </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; json::Object &gt;&#160;</td>
+          <td class="paramname"><em>detection</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>thresh</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>cut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt;&#160;</td>
+          <td class="paramname"><em>firstTrav</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTravelTime.html">traveltime::CTravelTime</a> &gt;&#160;</td>
+          <td class="paramname"><em>secondTrav</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTTT.html">traveltime::CTTT</a> &gt;&#160;</td>
+          <td class="paramname"><em>ttt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>resolution</em> = <code>100</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>aziTaper</em> = <code>360.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>maxDepth</em> = <code>800.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td>
+          <td class="paramname"><em>pSiteList</em> = <code>NULL</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> advanced constructor. </p>
+<p>An advanced constructor for the <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> class. This function initializes members to the provided values found in the json detection message.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">detection</td><td>- A shared pointer to a json::Object to containing the data to construct the hypo from </td></tr>
+    <tr><td class="paramname">thresh</td><td>- A double containing the threshold value for this hypo </td></tr>
+    <tr><td class="paramname">cut</td><td>- An integer containing the Bayesian stack threshold for this hypo </td></tr>
+    <tr><td class="paramname">firstTrav</td><td>- A <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">traveltime::CTravelTime</a> containing the first travel time used in creating this hypo </td></tr>
+    <tr><td class="paramname">secondTrav</td><td>- A <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">traveltime::CTravelTime</a> containing the second travel time used in creating this hypo </td></tr>
+    <tr><td class="paramname">ttt</td><td>- A <a class="el" href="classtraveltime_1_1CTTT.html" title="travel time interface class ">traveltime::CTTT</a> to be used for association for this hypo </td></tr>
+    <tr><td class="paramname">resolution</td><td>- A double value containing the web resolution used </td></tr>
+    <tr><td class="paramname">aziTaper</td><td>= A double value containing the azimuth taper to be used, defaults to 360 </td></tr>
+    <tr><td class="paramname">maxDepth</td><td>= A double value containing the maximum allowed depth, defaults to 800 </td></tr>
+    <tr><td class="paramname">pSiteList</td><td>- A pointer to the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> class to use when looking up the pick station </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns true if successful, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -2683,7 +2779,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Sep 14 2018 21:31:43 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Sep 19 2018 22:54:27 for glasscore by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

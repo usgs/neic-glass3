@@ -26,6 +26,7 @@ var searchData=
   ['setmaxnumpicks',['setMaxNumPicks',['../classglasscore_1_1CGlass.html#af67d220f54505f7558fcd7c1c121ff5a',1,'glasscore::CGlass']]],
   ['setmaxnumpickspersite',['setMaxNumPicksPerSite',['../classglasscore_1_1CGlass.html#a2a4959197e22846ba8e384acd1f721e2',1,'glasscore::CGlass']]],
   ['setmaxpicksperhour',['setMaxPicksPerHour',['../classglasscore_1_1CSiteList.html#a42ddc3658068e663bf38384867cc061b',1,'glasscore::CSiteList']]],
+  ['setminimizettlocator',['setMinimizeTTLocator',['../classglasscore_1_1CGlass.html#a0ed93b3de310a3f2487c07904f3c463b',1,'glasscore::CGlass']]],
   ['setnucleationdatathreshold',['setNucleationDataThreshold',['../classglasscore_1_1CHypo.html#abd40e069f970d97c46804d1b52347b3c',1,'glasscore::CHypo']]],
   ['setnucleationstackthreshold',['setNucleationStackThreshold',['../classglasscore_1_1CHypo.html#a4df0054b7e2143bf90784c9a835e280f',1,'glasscore::CHypo']]],
   ['setorigin',['setOrigin',['../classtraveltime_1_1CTravelTime.html#a13e13ee7c37bc0f027d2a7f6401c16f2',1,'traveltime::CTravelTime::setOrigin()'],['../classtraveltime_1_1CTTT.html#a94d7fa445900c2819f8d307742f6050c',1,'traveltime::CTTT::setOrigin()']]],
