@@ -382,6 +382,11 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// the provided origin time
 			double tObs = tPick - tOrigin;
 
+			// Ignore arrivals past earlier than this potential origin
+			if (tObs < 0) {
+				continue;
+			}
+
 			// check backazimuth if present
 			if (backAzimuth > 0) {
 				// set up a geo for distance calculations

@@ -417,6 +417,14 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 		return;
 	}
 
+	// check to see if we're at the pick limit
+	if (m_msPickList.size() >= 30) {
+		auto oldest = m_msPickList.begin();
+
+		// remove from from multiset
+		m_msPickList.erase(oldest);
+	}
+
 	// add pick to site pick multiset
 	m_msPickList.insert(pck);
 
@@ -559,19 +567,19 @@ std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
 	return (picks);
 }
 
-std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getLower( // NOLINT
+std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getLower(  // NOLINT
 		double min) {
 	m_LowerValue->setTPick(min);
 	return (m_msPickList.lower_bound(m_LowerValue));
 }
 
-std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getUpper( // NOLINT
+std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getUpper(  // NOLINT
 		double max) {
 	m_UpperValue->setTPick(max);
 	return (m_msPickList.upper_bound(m_UpperValue));
 }
 
-std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getEnd() { // NOLINT
+std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator CSite::getEnd() {  // NOLINT
 	return (m_msPickList.end());
 }
 
