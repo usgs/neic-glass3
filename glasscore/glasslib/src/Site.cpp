@@ -533,8 +533,10 @@ std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
 	if ((lower == upper) && (lower != m_msPickList.end())) {
 		std::shared_ptr<CPick> aPick = *lower;
 
-		// add to the list of picks
-		picks.push_back(aPick);
+		if (aPick != NULL) {
+			// add to the list of picks
+			picks.push_back(aPick);
+		}
 
 		return (picks);
 	}  // end found one
@@ -543,8 +545,11 @@ std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
 	for (std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator it =
 			lower; ((it != upper) && (it != m_msPickList.end())); ++it) {
 		std::shared_ptr<CPick> aPick = *it;
-		// add to the list of hypos
-		picks.push_back(aPick);
+
+		if (aPick != NULL) {
+			// add to the list of picks
+			picks.push_back(aPick);
+		}
 	}
 
 	// return the list of picks we found

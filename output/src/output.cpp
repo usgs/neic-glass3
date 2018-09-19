@@ -658,8 +658,9 @@ glass3::util::WorkState output::work() {
 	} else {
 		glass3::util::log(
 				"critical",
-				"output::work(): BAD message passed in, no Cmd/Type found.");
-		return (glass3::util::WorkState::Error);
+				"output::work(): BAD message: " + json::Serialize(*message) +
+				" passed in, no Cmd/Type found.");
+		return (glass3::util::WorkState::OK);
 	}
 
 	std::string messageid;
@@ -680,9 +681,11 @@ glass3::util::WorkState output::work() {
 		std::shared_ptr<const json::Object> trackingData = getTrackingData(
 				messageid);
 		if (trackingData == NULL) {
-			glass3::util::log("critical",
-								"output::work(): NULL tracking data for Hypo.");
-			return (glass3::util::WorkState::Error);
+			glass3::util::log(
+					"critical",
+					"output::work(): NULL tracking data for Hypo: "
+							+ json::Serialize(*message));
+			return (glass3::util::WorkState::OK);
 		}
 
 		glass3::util::log(
