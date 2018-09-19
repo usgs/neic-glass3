@@ -313,11 +313,11 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		 continue;
 		 }
 		 */
-		double min = 0;
-		double max = 0;
+		double min = std::numeric_limits<double>::max();
+		double max = std::numeric_limits<double>::max();
 
 		double t1Min = std::numeric_limits<double>::max();
-		double t1Max = std::numeric_limits<double>::min();
+		double t1Max = std::numeric_limits<double>::max();
 		if (travelTime1 > 0) {
 			t1Min = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
 			t1Max = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
@@ -330,7 +330,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			t2Max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
 		}
 
-		// if t1 is smaller, and not -1
+		// if t1 is smaller than t2
 		if (t1Min < t2Min) {
 			min = t1Min;
 		} else {

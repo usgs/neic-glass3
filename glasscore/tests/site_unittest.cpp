@@ -200,10 +200,34 @@ TEST(SiteTest, PickOperations) {
 														"1", -1, -1);
 	glasscore::CPick * testPick2 = new glasscore::CPick(sharedTestSite2, 11.1,
 														"2", -1, -1);
+	glasscore::CPick * testPick3 = new glasscore::CPick(sharedTestSite, 12.2,
+														"3", -1, -1);
+	glasscore::CPick * testPick4 = new glasscore::CPick(sharedTestSite, 13.3,
+														"4", -1, -1);
+	glasscore::CPick * testPick5 = new glasscore::CPick(sharedTestSite, 14.4,
+														"5", -1, -1);
+	glasscore::CPick * testPick6 = new glasscore::CPick(sharedTestSite, 15.5,
+														"6", -1, -1);
+	glasscore::CPick * testPick7 = new glasscore::CPick(sharedTestSite, 16.6,
+														"7", -1, -1);
+	glasscore::CPick * testPick8 = new glasscore::CPick(sharedTestSite, 17.7,
+														"8", -1, -1);
+	glasscore::CPick * testPick9 = new glasscore::CPick(sharedTestSite, 18.8,
+														"9", -1, -1);
+	glasscore::CPick * testPick10 = new glasscore::CPick(sharedTestSite, 19.9,
+															"10", -1, -1);
 
 	// create new shared pointers to the picks
 	std::shared_ptr<glasscore::CPick> sharedTestPick(testPick);
 	std::shared_ptr<glasscore::CPick> sharedTestPick2(testPick2);
+	std::shared_ptr<glasscore::CPick> sharedTestPick3(testPick3);
+	std::shared_ptr<glasscore::CPick> sharedTestPick4(testPick4);
+	std::shared_ptr<glasscore::CPick> sharedTestPick5(testPick5);
+	std::shared_ptr<glasscore::CPick> sharedTestPick6(testPick6);
+	std::shared_ptr<glasscore::CPick> sharedTestPick7(testPick7);
+	std::shared_ptr<glasscore::CPick> sharedTestPick8(testPick8);
+	std::shared_ptr<glasscore::CPick> sharedTestPick9(testPick9);
+	std::shared_ptr<glasscore::CPick> sharedTestPick10(testPick10);
 
 	// test adding pick to site
 	testSite->addPick(sharedTestPick);
@@ -215,9 +239,32 @@ TEST(SiteTest, PickOperations) {
 	ASSERT_EQ(expectedSize, testSite->getPickCount())<<
 	"Added pick from different station";
 
+	// add more sites
+	testSite->addPick(sharedTestPick3);
+	testSite->addPick(sharedTestPick4);
+	testSite->addPick(sharedTestPick5);
+	testSite->addPick(sharedTestPick6);
+	testSite->addPick(sharedTestPick7);
+	testSite->addPick(sharedTestPick8);
+	testSite->addPick(sharedTestPick9);
+	testSite->addPick(sharedTestPick10);
+	expectedSize = 9;
+	ASSERT_EQ(expectedSize, testSite->getPickCount())<< "Added more Picks";
+
+	double min = 12.5;
+	double max = 17.0;
+
+	// get the picks
+	std::vector<std::shared_ptr<glasscore::CPick>> testPicks = testSite
+			->getPicks(min, max);
+	expectedSize = 4;
+	ASSERT_EQ(expectedSize, testPicks.size())<< "test pick vector size";
+	ASSERT_STREQ("4", testPicks[0]->getID().c_str())<< "start pick vector";
+	ASSERT_STREQ("7", testPicks[3]->getID().c_str())<< "end pick vector";
+
 	// test removing pick
 	testSite->removePick(sharedTestPick);
-	expectedSize = 0;
+	expectedSize = 8;
 	ASSERT_EQ(expectedSize, testSite->getPickCount())<< "Removed pick";
 }
 

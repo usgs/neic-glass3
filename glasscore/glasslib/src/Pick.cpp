@@ -28,11 +28,6 @@ CPick::CPick() {
 // ---------------------------------------------------------CPick
 CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
 				std::string pickIdString, double backAzimuth, double slowness) {
-	// nullcheck
-	if (pickSite == NULL) {
-		return;
-	}
-
 	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness);
 }
 
