@@ -552,4 +552,10 @@ double CPick::getSlowness() const {
 double CPick::getTPick() const {
 	return (m_tPick);
 }
+
+// ---------------------------------------------------------setTPick
+void CPick::setTPick(double tPick) {
+	m_tPick = tPick;
+}
+
 }  // namespace glasscore

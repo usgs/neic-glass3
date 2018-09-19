@@ -36,8 +36,6 @@ CSite::CSite(std::string sta, std::string comp, std::string net,
 
 // ---------------------------------------------------------CSite
 CSite::CSite(std::shared_ptr<json::Object> site) {
-	clear();
-
 	// null check json
 	if (site == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
@@ -292,7 +290,14 @@ void CSite::clear() {
 	m_vNodeMutex.unlock();
 
 	vPickMutex.lock();
+
+	// init the upper and lower values
+	std::shared_ptr<CSite> nullSite;
+	m_LowerValue = std::make_shared<CPick>(nullSite, 0, "lower", 0, 0);
+	m_UpperValue = std::make_shared<CPick>(nullSite, 0, "upper", 0, 0);
+
 	m_msPickList.clear();
+
 	vPickMutex.unlock();
 
 	// reset last pick added time
@@ -499,19 +504,20 @@ std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
 		t1 = temp;
 	}
 
-	std::shared_ptr<CSite> nullSite;
-
-	// construct the lower bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(nullSite, t1,
-																"", 0, 0);
-
-	// construct the upper bound value. std::multiset requires
-	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(nullSite, t2,
-																"", 0, 0);
+	// nullcheck
+	if ((m_LowerValue == NULL) || (m_UpperValue == NULL)) {
+		return (picks);
+	}
 
 	std::lock_guard<std::mutex> listGuard(vPickMutex);
+
+	// set the lower bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	m_LowerValue->setTPick(t1);
+
+	// set the upper bound value. std::multiset requires
+	// that this be in the form of a std::shared_ptr<CPick>
+	m_UpperValue->setTPick(t2);
 
 	// don't bother if the list is empty
 	if (m_msPickList.size() == 0) {
@@ -520,9 +526,9 @@ std::vector<std::shared_ptr<CPick>> CSite::getPicks(double t1, double t2) {
 
 	// get the bounds for this window
 	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator lower =
-			m_msPickList.lower_bound(lowerValue);
+			m_msPickList.lower_bound(m_LowerValue);
 	std::multiset<std::shared_ptr<CPick>, SitePickCompare>::iterator upper =
-			m_msPickList.upper_bound(upperValue);
+			m_msPickList.upper_bound(m_UpperValue);
 
 	// found nothing
 	if (lower == m_msPickList.end()) {

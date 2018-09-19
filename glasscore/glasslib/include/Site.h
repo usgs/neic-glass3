@@ -515,6 +515,18 @@ class CSite {
 	 * site in epoch seconds
 	 */
 	std::atomic<double> m_tLastPickAdded;
+
+	/**
+	 * \brief A shared_ptr to a pick used to represent the lower value in
+	 * getPicks() calls
+	 */
+	std::shared_ptr<CPick> m_LowerValue;
+
+	/**
+	 * \brief A shared_ptr to a pick used to represent the upper value in
+	 * getPicks() calls
+	 */
+	std::shared_ptr<CPick> m_UpperValue;
 };
 }  // namespace glasscore
 #endif  // SITE_H

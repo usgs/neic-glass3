@@ -224,6 +224,12 @@ class CPick {
 	 */
 	double getTPick() const;
 
+	/**
+	 * \brief Set the arrival time for this pick
+	 * \parem tPick -  a double containing the pick arrival time
+	 */
+	void setTPick(double tPick);
+
  protected:
 	/**
 	 * \brief Remove hypo reference to this pick
