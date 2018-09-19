@@ -281,6 +281,14 @@ class CGlass {
 	static bool getMinimizeTTLocator();
 
 	/**
+	 * \brief Sets a flag indicating whether to use the minimizing travel time
+	 * locator
+	 * \param use - A boolean flag indicating whether to use the minimizing
+	 * travel time locator
+	 */
+	static void setMinimizeTTLocator(bool use);
+
+	/**
 	 * \brief Get the maximum number of sites link to a node
 	 * \return Returns an integer containing the maximum number of sites link to
 	 * a node

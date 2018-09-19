@@ -19,6 +19,9 @@
 #define CORRELATION5JSON "{\"ID\":\"20682835\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"HRY\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Time\":\"2014-12-23T00:05:43.599Z\",\"Type\":\"Correlation\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2014-12-23T00:05::44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\"}"  // NOLINT
 #define CORRELATION6JSON "{\"ID\":\"20682836\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"BHZ\",\"Location\":\"00\",\"Network\":\"US\",\"Station\":\"BOZ\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Time\":\"2014-12-23T00:00:43.599Z\",\"Type\":\"Correlation\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2014-12-23T00:00:44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\"}"  // NOLINT
 
+#define BADCORRELATION "{\"ID\":\"20682831\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2014-12-23T00:01:55.599Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\"}"  // NOLINT
+#define BADCORRELATION2 "{\"ID\":\"20682831\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Type\":\"FEH\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2014-12-23T00:01:55.599Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\"}"  // NOLINT
+
 #define SCNL "LRM.EHZ.MB"
 #define SCNL2 "BOZ.BHZ.US.00"
 
@@ -43,7 +46,10 @@ TEST(CorrelationListTest, Construction) {
 
 	// assert default values
 	ASSERT_EQ(0, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
-	"nCorrelationTotal is 0";
+	"getCountOfTotalCorrelationsProcessed is 0";
+	ASSERT_EQ(10000, testCorrelationList->getMaxAllowableCorrelationCount())<<
+	"getMaxAllowableCorrelationCount is 10000";
+
 
 	// lists
 	ASSERT_EQ(0, testCorrelationList->length())<<
@@ -107,7 +113,8 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	testCorrelationList->addCorrelationFromJSON(correlationJSON);
 	testCorrelationList->receiveExternalMessage(correlation3JSON);
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
+	ASSERT_EQ(expectedSize,
+			testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"Added Correlations";
 
 	// add more correlations
@@ -124,10 +131,32 @@ TEST(CorrelationListTest, CorrelationOperations) {
 	// test clearing correlations
 	testCorrelationList->clear();
 	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
+	ASSERT_EQ(expectedSize,
+			testCorrelationList->getCountOfTotalCorrelationsProcessed())<<
 	"Cleared Correlations";
+}
 
-	// cleanup
-	delete (testCorrelationList);
-	delete (testSiteList);
+// test various failure cases
+TEST(CorrelationListTest, FailTests) {
+	glassutil::CLogit::disable();
+
+	std::shared_ptr<json::Object> correlationJSON = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(CORRELATIONJSON))));
+	std::shared_ptr<json::Object> badCorrelation =
+			std::make_shared<json::Object>(
+					json::Object(
+							json::Deserialize(std::string(BADCORRELATION))));
+	std::shared_ptr<json::Object> badCorrelation2 = std::make_shared<
+			json::Object>(
+			json::Object(json::Deserialize(std::string(BADCORRELATION2))));
+	std::shared_ptr<json::Object> nullMessage;
+
+	glasscore::CCorrelationList * testCorrelationList =
+			new glasscore::CCorrelationList();
+
+	// add failures
+	ASSERT_FALSE(testCorrelationList->receiveExternalMessage(nullMessage));
+	ASSERT_FALSE(testCorrelationList->addCorrelationFromJSON(nullMessage));
+	ASSERT_FALSE(testCorrelationList->addCorrelationFromJSON(correlationJSON));
 }

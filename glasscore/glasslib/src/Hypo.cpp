@@ -21,6 +21,7 @@
 #include "Logit.h"
 #include "Taper.h"
 #include "GlassMath.h"
+#include "SiteList.h"
 #include <fstream>
 #include <limits>
 
@@ -52,6 +53,180 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 					secondTrav, ttt, resolution, aziTap, maxDep)) {
 		clear();
 	}
+}
+
+// ---------------------------------------------------------CHypo
+CHypo::CHypo(std::shared_ptr<json::Object> detection, double thresh, int cut,
+				std::shared_ptr<traveltime::CTravelTime> firstTrav,
+				std::shared_ptr<traveltime::CTravelTime> secondTrav,
+				std::shared_ptr<traveltime::CTTT> ttt, double resolution,
+				double aziTap, double maxDep, CSiteList *pSiteList) {
+	// null check json
+	if (detection == NULL) {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::CHypo: NULL json communication.");
+		return;
+	}
+
+	// check type
+	if (detection->HasKey("Type")
+			&& ((*detection)["Type"].GetType() == json::ValueType::StringVal)) {
+		std::string type = (*detection)["Type"].ToString();
+
+		if (type != "Detection") {
+			glassutil::CLogit::log(
+					glassutil::log_level::warn,
+					"CHypo::CHypo: Non-Detection message passed in.");
+			return;
+		}
+	} else {
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CHypo::CHypo: Missing required Type Key.");
+		return;
+	}
+
+	// detection definition variables
+	double time = 0;
+	double lat = 0;
+	double lon = 0;
+	double z = 0;
+	double bayes = 0;
+
+	// Get information from hypocenter
+	if (detection->HasKey("Hypocenter")
+			&& ((*detection)["Hypocenter"].GetType()
+					== json::ValueType::ObjectVal)) {
+		json::Object hypocenter = (*detection)["Hypocenter"].ToObject();
+
+		// get time from hypocenter
+		if (hypocenter.HasKey("Time")
+				&& (hypocenter["Time"].GetType() == json::ValueType::StringVal)) {
+			// get time string
+			std::string tiso = hypocenter["Time"].ToString();
+
+			// convert time
+			glassutil::CDate dt = glassutil::CDate();
+			time = dt.decodeISO8601Time(tiso);
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::error,
+					"CHypo::CHypo: Missing required Hypocenter Time Key.");
+
+			return;
+		}
+
+		// get latitude from hypocenter
+		if (hypocenter.HasKey("Latitude")
+				&& (hypocenter["Latitude"].GetType()
+						== json::ValueType::DoubleVal)) {
+			lat = hypocenter["Latitude"].ToDouble();
+
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::error,
+					"CHypo::CHypo: Missing required Hypocenter Latitude"
+					" Key.");
+
+			return;
+		}
+
+		// get longitude from hypocenter
+		if (hypocenter.HasKey("Longitude")
+				&& (hypocenter["Longitude"].GetType()
+						== json::ValueType::DoubleVal)) {
+			lon = hypocenter["Longitude"].ToDouble();
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::error,
+					"CHypo::CHypo: Missing required Hypocenter Longitude"
+					" Key.");
+
+			return;
+		}
+
+		// get depth from hypocenter
+		if (hypocenter.HasKey("Depth")
+				&& (hypocenter["Depth"].GetType() == json::ValueType::DoubleVal)) {
+			z = hypocenter["Depth"].ToDouble();
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::error,
+					"CHypo::CHypo: Missing required Hypocenter Depth"
+					" Key.");
+
+			return;
+		}
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CHypo::CHypo: Missing required Hypocenter Key.");
+
+		return;
+	}
+
+	// get bayes
+	if (detection->HasKey("Bayes")
+			&& ((*detection)["Bayes"].GetType() == json::ValueType::DoubleVal)) {
+		bayes = (*detection)["Bayes"].ToDouble();
+
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CHypo::CHypo: Missing required Hypocenter Latitude"
+				" Key.");
+
+		return;
+	}
+
+	if (!initialize(lat, lon, z, time, glassutil::CPid::pid(), "Detection",
+					bayes, thresh, cut, firstTrav, secondTrav, ttt, resolution,
+					aziTap, maxDep)) {
+		clear();
+	}
+
+	// if we have a sitelist
+	if (pSiteList != NULL) {
+		// if we have supporting data
+		if (detection->HasKey("Data")
+				&& ((*detection)["Data"].GetType() == json::ValueType::ArrayVal)) {
+			json::Array data = (*detection)["Data"].ToArray();
+
+			// for cach data we dound
+			for (int i = 0; i < data.size(); i++) {
+				std::shared_ptr<json::Object> aData = std::make_shared<
+						json::Object>(json::Object(data[i]));
+
+				// check for type
+				std::string type = "";
+				if (aData->HasKey("Type")
+						&& ((*aData)["Type"].GetType()
+								== json::ValueType::StringVal)) {
+					type = (*aData)["Type"].ToString();
+				} else {
+					continue;
+				}
+
+				// convert by type
+				if (type == "Pick") {
+					CPick * newPick = new CPick(aData, pSiteList);
+
+					// create new shared pointer to this pick
+					std::shared_ptr<CPick> pck(newPick);
+
+					// add to hypo
+					addPickReference(pck);
+				} else if (type == "Correlation") {
+					CCorrelation * newCorr = new CCorrelation(aData, pSiteList);
+
+					// create new shared pointer to this correlation
+					std::shared_ptr<CCorrelation> cor(newCorr);
+
+					// add to hypo
+					addCorrelationReference(cor);
+				}  // convert by type
+			}  // for each data
+		}  // if we have data
+	}  // if we have a sitelist
 }
 
 // ---------------------------------------------------------CHypo
@@ -691,6 +866,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 								"CHypo::associate: NULL pick.");
 		return (false);
 	}
+
 	if (m_pTravelTimeTables == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::error,
 								"CHypo::associate: NULL pTTT.");
@@ -771,10 +947,11 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		 snprintf(
 		 sLog, sizeof(sLog),
 		 "CHypo::associate: NOASSOC Hypo:%s Time:%s Station:%s Pick:%s"
-		 " stdev:%.2f>sdassoc:%.2f)",
-		 sPid.c_str(),
+		 " Res:%.2f stdev:%.2f>sdassoc:%.2f)",
+		 m_sID.c_str(),
 		 glassutil::CDate::encodeDateTime(pick->getTPick()).c_str(),
-		 pick->getSite()->getScnl().c_str(), pick->getPid().c_str(), stdev, sdassoc);
+		 pick->getSite()->getSCNL().c_str(), pick->getID().c_str(), tRes,
+		 stdev, sdassoc);
 		 glassutil::CLogit::log(sLog);
 		 */
 

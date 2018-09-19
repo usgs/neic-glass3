@@ -10,6 +10,8 @@
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
 #define PICKJSON "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Type\":\"Pick\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
+#define BADPICK "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Type\":\"FEH\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
+#define BADPICK2 "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
 
 #define SCNL "LRM.EHZ.MB"
 #define SITE "LRM"
@@ -177,4 +179,40 @@ TEST(PickTest, HypoOperations) {
 
 	// check hypo
 	ASSERT_TRUE(testPick->getHypoReference() == NULL)<< "pHypo null";
+}
+
+// test various failure cases
+TEST(PickTest, FailTests) {
+	glassutil::CLogit::disable();
+
+	std::shared_ptr<json::Object> pickJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(PICKJSON))));
+	std::shared_ptr<json::Object> badPick = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADPICK))));
+	std::shared_ptr<json::Object> badPick2 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADPICK2))));
+	std::shared_ptr<json::Object> nullMessage;
+
+	// construct a sitelist
+	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
+
+	// create json objects from the strings
+	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(SITEJSON))));
+
+	// add site to site list
+	testSiteList->addSiteFromJSON(siteJSON);
+
+	// create failures
+	glasscore::CPick testPick(pickJSON, NULL);
+	ASSERT_STREQ("", testPick.getID().c_str());
+
+	glasscore::CPick aNullPick(nullMessage, testSiteList);
+	ASSERT_STREQ("", aNullPick.getID().c_str());
+
+	glasscore::CPick aBadPick(badPick, NULL);
+	ASSERT_STREQ("", aBadPick.getID().c_str());
+
+	glasscore::CPick aBadPick2(badPick2, NULL);
+	ASSERT_STREQ("", aBadPick2.getID().c_str());
 }

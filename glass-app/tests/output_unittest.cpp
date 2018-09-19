@@ -154,7 +154,7 @@ class OutputTest : public ::testing::Test {
 		// glass3::util::log_init("outputtest", spdlog::level::debug, testpath, true);
 
 		// create input test
-		OutputThread = new glass::fileOutput();
+		OutputThread = NULL;
 		OutputConfig = NULL;
 		output_config_json = NULL;
 		AssocThread = NULL;
@@ -207,33 +207,39 @@ class OutputTest : public ::testing::Test {
 		// get json formatted configuration
 		output_config_json = OutputConfig->getJSON();
 
+		OutputThread = new glass::fileOutput(output_config_json);
+
 		AssocThread = new AssociatorStub();
 		AssocThread->Output = OutputThread;
 		OutputThread->setAssociator(AssocThread);
 
-		// configure input
-		return (OutputThread->setup(output_config_json));
+		// configure output
+		return (true);
 	}
 
 	bool configurefail1() {
 		// configure fail
+		OutputThread = new glass::fileOutput();
 		return (OutputThread->setup(NULL));
 	}
 
 	bool configurefail2() {
 		// configure fail
+		OutputThread = new glass::fileOutput();
 		return (OutputThread->setup(
 				std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL1))));
 	}
 
 	bool configurefail3() {
 		// configure fail
+		OutputThread = new glass::fileOutput();
 		return (OutputThread->setup(
 				std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL2))));
 	}
 
 	bool emptyconfig() {
 		// configure empty
+		OutputThread = new glass::fileOutput();
 		return (OutputThread->setup(
 				std::make_shared<json::Object>(json::Deserialize(EMPTYCONFIG))));
 	}
@@ -323,9 +329,10 @@ class OutputTest : public ::testing::Test {
 #endif
 
 		// cleanup output thread
+		if (OutputThread != NULL)
 		delete (OutputThread);
 		if (OutputConfig != NULL)
-			delete(OutputConfig);
+		delete(OutputConfig);
 
 	}
 
@@ -362,6 +369,8 @@ class OutputTest : public ::testing::Test {
 // tests to see if correlation can successfully
 // write json output
 TEST_F(OutputTest, Construction) {
+	OutputThread = new glass::fileOutput();
+
 	// assert that this is an input thread
 	ASSERT_STREQ(OutputThread->getThreadName().c_str(), "output")<< "check output thread name";
 
@@ -419,37 +428,45 @@ TEST_F(OutputTest, Configuration) {
 	ASSERT_STREQ(OutputThread->getDefaultAuthor().c_str(),
 			author.c_str()) << "check author";
 }
+
+TEST_F(OutputTest, Output) {
+	// configure output
+	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
+
+	// start input thread
+	OutputThread->start();
+	OutputThread->clearTrackingData();
+
+	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
+	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
+			glassutil::CDate::now());
+	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
+			glassutil::CDate::now());
+
+	// add data to output
+	OutputThread->sendToOutput(outputevent);
+
+	// give time for file to write
+	std::this_thread::sleep_for(std::chrono::seconds(4));
+
+	// assert that the file is there
+	ASSERT_TRUE(std::ifstream(output3file).good())
+	<< "output file created";
+
+	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
+
+	// send cancel to output
+	OutputThread->sendToOutput(cancelmessage);
+
+	// give time for files to write
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+
+	// assert that the file is not there
+	ASSERT_TRUE(std::ifstream(retract3file).good())
+	<< "retract output file created";
+}
+
 /*
- TEST_F(OutputTest, Output) {
- // configure output
- ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
-
- // start input thread
- OutputThread->start();
- OutputThread->clearTrackingData();
-
- std::shared_ptr<json::Object> outputevent = GetDataFromFile(eventfile);
- (*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
- glassutil::CDate::now());
- (*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
- glassutil::CDate::now());
-
- // add data to output
- OutputThread->sendToOutput(outputevent);
-
- // give time for file to write
- std::this_thread::sleep_for(std::chrono::seconds(4));
-
- // assert that the file is there
- ASSERT_TRUE(std::ifstream(outputfile).good()) << "hypo output file created";
-
- // get the data
- std::shared_ptr<json::Object> senthypo = GetDataFromFile(hypofile);
- std::shared_ptr<json::Object> outputorigin = GetDataFromFile(outputfile);
-
- // check the output data against the input
- CheckData(senthypo, outputorigin);
- }
 
  TEST_F(OutputTest, Update) {
  // configure output
@@ -577,4 +594,5 @@ TEST_F(OutputTest, Configuration) {
  ASSERT_TRUE(std::ifstream(retract3file).good())
  << "retract output file created";
  }
+
  */
