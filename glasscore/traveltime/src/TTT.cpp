@@ -19,9 +19,7 @@ CTTT::CTTT(const CTTT &ttt) {
 	clear();
 
 	nTrv = ttt.nTrv;
-	dLat = ttt.dLat;
-	dLon = ttt.dLon;
-	dZ = ttt.dZ;
+	geoOrg = ttt.geoOrg;
 	dWeight = ttt.dWeight;
 
 	for (int i = 0; i < ttt.nTrv; i++) {
@@ -37,8 +35,8 @@ CTTT::CTTT(const CTTT &ttt) {
 			pTaper[i] = NULL;
 		}
 
-		dAssMin[i] = ttt.dAssMin[i];
-		dAssMax[i] = ttt.dAssMax[i];
+		dAssocMin[i] = ttt.dAssocMin[i];
+		dAssocMax[i] = ttt.dAssocMax[i];
 	}
 }
 
@@ -55,16 +53,14 @@ CTTT::~CTTT() {
 
 void CTTT::clear() {
 	nTrv = 0;
-	dLat = 0;
-	dLon = 0;
-	dZ = 0;
+	geoOrg.clear();
 	dWeight = 0;
 
 	for (int i = 0; i < MAX_TRAV; i++) {
 		pTrv[i] = NULL;
 		pTaper[i] = NULL;
-		dAssMin[i] = -1.0;
-		dAssMax[i] = -1.0;
+		dAssocMin[i] = -1.0;
+		dAssocMax[i] = -1.0;
 	}
 }
 
@@ -96,8 +92,8 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 	}
 	// set up association range
 	if (assocRange != NULL) {
-		dAssMin[nTrv] = assocRange[0];
-		dAssMax[nTrv] = assocRange[1];
+		dAssocMin[nTrv] = assocRange[0];
+		dAssocMax[nTrv] = assocRange[1];
 	}
 
 	return (true);
@@ -105,10 +101,13 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 
 // ---------------------------------------------------------setOrigin
 void CTTT::setOrigin(double lat, double lon, double z) {
-	// Set hypocenter for calculations
-	dLat = lat;
-	dLon = lon;
-	dZ = z;
+	// this should go ahead and update the CGeo
+	geoOrg.setGeographic(lat, lon, EARTHRADIUSKM - z);
+}
+
+// ---------------------------------------------------------setOrigin
+void CTTT::setOrigin(const glassutil::CGeo &geoOrigin) {
+  geoOrg = geoOrigin;
 }
 
 // ---------------------------------------------------------T
@@ -119,7 +118,7 @@ double CTTT::T(glassutil::CGeo *geo, std::string phase) {
 		// is this the phase we're looking for
 		if (pTrv[i]->sPhase == phase) {
 			// set origin
-			pTrv[i]->setOrigin(dLat, dLon, dZ);
+			pTrv[i]->setOrigin(geoOrg);
 
 			// get travel time and phase
 			double traveltime = pTrv[i]->T(geo);
@@ -144,13 +143,14 @@ double CTTT::T(glassutil::CGeo *geo, std::string phase) {
 
 // ---------------------------------------------------------T
 double CTTT::Td(double delta, std::string phase, double depth) {
+	geoOrg.dRad = EARTHRADIUSKM - depth;
 	// Calculate time from delta (degrees) and depth
 	// for each phase
 	for (int i = 0; i < nTrv; i++) {
 		// is this the phase we're looking for
 		if (pTrv[i]->sPhase == phase) {
 			// set origin and depth
-			pTrv[i]->setOrigin(dLat, dLon, depth);
+			pTrv[i]->setOrigin(geoOrg);
 
 			// get travel time and phase
 			double traveltime = pTrv[i]->T(delta);
@@ -180,7 +180,7 @@ double CTTT::T(double delta, std::string phase) {
 		// is this the phase we're looking for
 		if (pTrv[i]->sPhase == phase) {
 			// set origin
-			pTrv[i]->setOrigin(dLat, dLon, dZ);
+			pTrv[i]->setOrigin(geoOrg);
 
 			// get travel time and phase
 			double traveltime = pTrv[i]->T(delta);
@@ -252,7 +252,7 @@ double CTTT::T(glassutil::CGeo *geo, double tObserved) {
 		CTravelTime * aTrv = pTrv[i];
 
 		// set origin
-		aTrv->setOrigin(dLat, dLon, dZ);
+		aTrv->setOrigin(geoOrg);
 
 		// get traveltime
 		double traveltime = aTrv->T(geo);
@@ -264,8 +264,8 @@ double CTTT::T(glassutil::CGeo *geo, double tObserved) {
 
 		// check to see if phase is associable
 		// based on minimum assoc distance, if present
-		if (dAssMin[i] >= 0) {
-			if (aTrv->dDelta < dAssMin[i]) {
+		if (dAssocMin[i] >= 0) {
+			if (aTrv->dDelta < dAssocMin[i]) {
 				// this phase is not associable  at this distance
 				continue;
 			}
@@ -273,8 +273,8 @@ double CTTT::T(glassutil::CGeo *geo, double tObserved) {
 
 		// check to see if phase is associable
 		// based on maximum assoc distance, if present
-		if (dAssMax[i] > 0) {
-			if (aTrv->dDelta > dAssMax[i]) {
+		if (dAssocMax[i] > 0) {
+			if (aTrv->dDelta > dAssocMax[i]) {
 				// this phase is not associable  at this distance
 				continue;
 			}

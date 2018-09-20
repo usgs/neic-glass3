@@ -93,6 +93,19 @@ class CTravelTime {
 	void setOrigin(double lat, double lon, double depth);
 
 	/**
+	 * \brief Set current geographic location
+	 *
+	 * Set the current geographic location using the provided CGeo.
+	 * This will set the source location used for source/receiver
+	 * traveltime calculations.
+	 *
+	 * \param geoOrigin - A CGeo representing the lat/lon and surface depth
+	 * (or elev) of the source, along with already computed concentric lat/lon
+	 * and vector coordinates.
+	 */
+	void setOrigin(const glassutil::CGeo &geoOrigin);
+
+	/**
 	 * \brief Calculate travel time in seconds
 	 *
 	 * Calculate travel time in seconds given geographic location

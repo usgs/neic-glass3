@@ -86,6 +86,19 @@ class CTTT {
 	void setOrigin(double lat, double lon, double z);
 
 	/**
+	 * \brief Set current geographic location
+	 *
+	 * Set the current geographic location using the provided CGeo.
+	 * This will set the source location used for source/receiver
+	 * traveltime calculations.
+	 *
+	 * \param geoOrigin - A CGeo representing the lat/lon and surface depth (or
+	 * elev) of the source, along with already computed concentric lat/lon and
+	 * vector coordinates.
+	 */
+	void setOrigin(const glassutil::CGeo &geoOrigin);
+
+	/**
 	 * \brief Calculate travel time in seconds
 	 *
 	 * Calculate travel time in seconds given geographic location and
@@ -165,22 +178,10 @@ class CTTT {
 	double dWeight;
 
 	/**
-	 * \brief A double value containing the latitude of the hypocenter used for
-	 * calculations, set by setOrigin()
+	 * \brief glassutil::CGeo object containing current
+	 * geographic location of source(as in source/receiver). Set by setOrigin()
 	 */
-	double dLat;
-
-	/**
-	 * \brief A double value containing the longitude of the hypocenter used for
-	 * calculations, set by setOrigin()
-	 */
-	double dLon;
-
-	/**
-	 * \brief A double value containing the depth of the hypocenter used for
-	 * calculations, set by setOrigin()
-	 */
-	double dZ;
+	glassutil::CGeo geoOrg;
 
 	/**
 	 * \brief An integer variable containing number of CTravelTime objects in
@@ -202,12 +203,12 @@ class CTTT {
 	/**
 	 * \brief An array of doubles containing the minimum values for association
 	 */
-	double dAssMin[MAX_TRAV];
+	double dAssocMin[MAX_TRAV];
 
 	/**
 	 * \brief  An array of doubles containing the maximum values for association
 	 */
-	double dAssMax[MAX_TRAV];
+	double dAssocMax[MAX_TRAV];
 
 	// std::mutex m_TTTMutex;
 };

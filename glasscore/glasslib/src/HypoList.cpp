@@ -935,8 +935,8 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 						sLog, sizeof(sLog),
 						"CHypoList::findAndMergeMatchingHypos: merged fromHypo "
 						"%s into toHypo %s because toHypo significantly better "
-						"than fromHypo, newBayes:%.3f > toHypo Bayes:%.3f, "
-						"fromHypo bayes:%.3f",
+						"than fromHypo and original toHypo, newBayes:%.3f > "
+						"toHypo Bayes:%.3f, fromHypo bayes:%.3f",
 						fromHypo->getID().c_str(), toHypo->getID().c_str(),
 						newBayes, toBayes, fromBayes);
 				glassutil::CLogit::log(sLog);

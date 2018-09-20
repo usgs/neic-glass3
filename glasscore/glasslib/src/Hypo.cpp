@@ -1460,13 +1460,13 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 
 	// This sets the travel-time look up location
 	if (m_pNucleationTravelTime1) {
-		m_pNucleationTravelTime1->setOrigin(xlat, xlon, xZ);
+		m_pNucleationTravelTime1->setOrigin(geo);
 	}
 	if (m_pNucleationTravelTime2) {
-		m_pNucleationTravelTime2->setOrigin(xlat, xlon, xZ);
+		m_pNucleationTravelTime2->setOrigin(geo);
 	}
 
-	m_pTravelTimeTables->setOrigin(xlat, xlon, xZ);
+	m_pTravelTimeTables->setOrigin(geo);
 
 	// The number of picks associated with the hypocenter
 	int npick = m_vPickData.size();

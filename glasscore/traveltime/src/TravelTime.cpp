@@ -209,8 +209,15 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 
 // ---------------------------------------------------------setOrigin
 void CTravelTime::setOrigin(double lat, double lon, double depth) {
-	geoOrg.setGeographic(lat, lon, 6371.0 - depth);
+	geoOrg.setGeographic(lat, lon, EARTHRADIUSKM - depth);
 	dDepth = depth;
+}
+
+// ---------------------------------------------------------setOrigin
+void CTravelTime::setOrigin(const glassutil::CGeo &geoOrigin) {
+	geoOrg = geoOrigin;
+	// ditch dDepth in favor or
+	dDepth = EARTHRADIUSKM - geoOrg.dRad;
 }
 
 // ---------------------------------------------------------T

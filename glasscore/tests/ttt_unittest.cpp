@@ -11,8 +11,10 @@
 #define PHASE2FILENAME "S.trv"
 
 #define LATITUDE 10.0
+#define GEOLATITUDE 9.93411
 #define LONGITUDE 20.0
 #define DEPTH 50.0
+#define GEODEPTH 1090.47
 #define DISTANCE 20.0
 #define BADDISTANCE 160.0
 #define BADDEPTH 800
@@ -33,13 +35,13 @@ TEST(TTTTest, Construction) {
 	ASSERT_EQ(0, ttt.nTrv)<< "nTrv Check";
 
 	// dLat
-	ASSERT_EQ(0, ttt.dLat)<< "dLat Check";
+	ASSERT_EQ(0, ttt.geoOrg.dLat)<< "dLat Check";
 
 	// dLon
-	ASSERT_EQ(0, ttt.dLon)<< "dLon Check";
+	ASSERT_EQ(0, ttt.geoOrg.dLon)<< "dLon Check";
 
 	// dZ
-	ASSERT_EQ(0, ttt.dZ)<< "dZ Check";
+	ASSERT_EQ(0, ttt.geoOrg.dZ)<< "dZ Check";
 
 	// dWeight
 	ASSERT_EQ(0, ttt.dWeight)<< "dWeight Check";
@@ -104,13 +106,13 @@ TEST(TTTTest, SetOrigin) {
 	ttt.setOrigin(LATITUDE, LONGITUDE, DEPTH);
 
 	// dLat
-	ASSERT_EQ(LATITUDE, ttt.dLat)<< "dLat Check";
+	ASSERT_NEAR(GEOLATITUDE, ttt.geoOrg.dLat, 0.001)<< "dLat Check";
 
 	// dLon
-	ASSERT_EQ(LONGITUDE, ttt.dLon)<< "dLon Check";
+	ASSERT_EQ(LONGITUDE, ttt.geoOrg.dLon)<< "dLon Check";
 
 	// dZ
-	ASSERT_EQ(DEPTH, ttt.dZ)<< "dZ Check";
+	ASSERT_NEAR(GEODEPTH, ttt.geoOrg.dZ, 0.01)<< "dZ Check";
 }
 
 // tests to see if copy constructor works
@@ -158,13 +160,13 @@ TEST(TTTTest, Copy) {
 	ASSERT_STREQ(ttt.pTrv[ttt.nTrv - 1]->sPhase.c_str(), phase2name.c_str());
 
 	// dLat
-	ASSERT_EQ(LATITUDE, ttt.dLat)<< "dLat Check";
+	ASSERT_NEAR(GEOLATITUDE, ttt.geoOrg.dLat, 0.001)<< "dLat Check";
 
 	// dLon
-	ASSERT_EQ(LONGITUDE, ttt.dLon)<< "dLon Check";
+	ASSERT_EQ(LONGITUDE, ttt.geoOrg.dLon)<< "dLon Check";
 
 	// dZ
-	ASSERT_EQ(DEPTH, ttt.dZ)<< "dZ Check";
+	ASSERT_NEAR(GEODEPTH, ttt.geoOrg.dZ, 0.01)<< "dZ Check";
 
 	delete[] (weightRange);
 	delete[] (assocRange);

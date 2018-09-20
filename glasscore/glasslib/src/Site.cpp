@@ -417,14 +417,6 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 		return;
 	}
 
-	// check to see if we're at the pick limit
-	if (m_msPickList.size() >= 30) {
-		auto oldest = m_msPickList.begin();
-
-		// remove from from multiset
-		m_msPickList.erase(oldest);
-	}
-
 	// add pick to site pick multiset
 	m_msPickList.insert(pck);
 

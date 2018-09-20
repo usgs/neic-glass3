@@ -289,64 +289,29 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		double travelTime1 = std::get< LINK_TT1>(link);
 		double travelTime2 = std::get< LINK_TT2>(link);
 
-		/*		// compute pick time window from travelime(s)
-		 double t1 = 0;
-		 double t2 = 0;
-		 if ((travelTime1 > 0) && (travelTime2 > 0)) {
-		 // both travel times are valid
-		 t1 = tOrigin
-		 + std::min(travelTime1,
-		 travelTime2) - NUCLEATION_SLOP_FACTOR_SECONDS;
-		 t2 = tOrigin
-		 + std::max(travelTime1,
-		 travelTime2) + NUCLEATION_SLOP_FACTOR_SECONDS;
-		 } else if ((travelTime1 > 0) && (travelTime2 < 0)) {
-		 // only tt1 is valid
-		 t1 = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
-		 t2 = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
-		 } else if ((travelTime1 < 0) && (travelTime2 > 0)) {
-		 // only tt2 is valid
-		 t1 = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
-		 t2 = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
-		 } else {
-		 // no valid tt
-		 continue;
-		 }
-		 */
-		double min = std::numeric_limits<double>::max();
-		double max = std::numeric_limits<double>::max();
+		double min, max = -1;
 
-		double t1Min = std::numeric_limits<double>::max();
-		double t1Max = std::numeric_limits<double>::max();
-		if (travelTime1 > 0) {
-			t1Min = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
-			t1Max = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
-		}
-
-		double t2Min = std::numeric_limits<double>::max();
-		double t2Max = std::numeric_limits<double>::min();
-		if (travelTime2 > 0) {
-			t2Min = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
-			t2Max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
-		}
-
-		// if t1 is smaller than t2
-		if (t1Min < t2Min) {
-			min = t1Min;
+		if ((travelTime1 >= 0) && (travelTime2 >= 0)) {
+			// both travel times are valid
+			if (travelTime1 <= travelTime2) {
+				// TT1 smaller/shorter/faster
+				min = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
+				max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
+			} else {
+				// TT2 smaller/shorter/faster
+				min = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
+				max = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
+			}
+		} else if (travelTime1 >= 0) {
+			// Only TT1 valid
+			min = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
+			max = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
+		} else if (travelTime2 >= 0) {
+			// Only TT2 valid
+			min = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
+			max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
 		} else {
-			min = t2Min;
-		}
-
-		// if t1 is larger than t2
-		if (t1Max > t2Max) {
-			max = t1Max;
-		} else {
-			max = t2Max;
-		}
-
-		// check range
-		if ((min == std::numeric_limits<double>::max())
-				|| (max == std::numeric_limits<double>::min())) {
+			// no valid TTs
 			glassutil::CLogit::log(glassutil::log_level::error,
 									"CNode::nucleate: Bad Pick SearchRange.");
 			continue;
