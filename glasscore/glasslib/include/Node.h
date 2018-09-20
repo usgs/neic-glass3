@@ -173,8 +173,9 @@ class CNode {
 	 * \return Returns best significance if there is at least one valid travel
 	 * time, -1.0 otherwise
 	 */
-	double getBestSignificance(double tObservedTT, double travelTime1,
-								double travelTime2);
+	double getBestSignificance(std::shared_ptr<CPick> pPick,
+								double travelTime, double dAzimuthRange,
+								double tOrigin);
 
 	/**
 	 * \brief CNode site used function
