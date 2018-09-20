@@ -278,10 +278,12 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * Note that this function is in hypolist for threading deadlock reasons
 	 *
 	 * \param hypo - A shared_ptr to a CHypo to resolve
+	 * \param allowStealing - A boolean flag indicating whether to allow
+	 * resolveData to steal data, defaults to true
 	 * \return Returns true if the hypocenter's pick list was changed,
 	 * false otherwise.
 	 */
-	bool resolveData(std::shared_ptr<CHypo> hypo);
+	bool resolveData(std::shared_ptr<CHypo> hypo, bool allowStealing = true);
 
 	/**
 	 * \brief Set the maximum number of hypos that this list will support

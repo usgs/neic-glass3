@@ -2500,7 +2500,7 @@ bool CHypo::reportCheck() {
 }
 
 // ---------------------------------------------------------resolveData
-bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
+bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 	// lock the hypo since we're iterating through it's lists
 	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
 
@@ -2566,27 +2566,32 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
 
 		// check which affinity is better
 		if (aff1 > aff2) {
-			// this pick has a higher affinity with the provided hypo
-			// remove the pick from it's original hypo
-			pickHyp->removePickReference(pck);
+			if (allowStealing == true) {
+				// this pick has a higher affinity with this hypo than it's
+				// currently linked hypo
+				// remove the pick from it's original hypo
+				pickHyp->removePickReference(pck);
 
-			// link pick to the provided hypo
-			pck->addHypoReference(hyp, true);
+				// link pick to the this hypo
+				pck->addHypoReference(hyp, true);
 
-			// add provided hypo to the processing queue
-			// NOTE: this puts provided hypo before original hypo in FIFO,
-			// we want this hypo to keep this pick, rather than the original
-			// just stealing it back, which is why we do it here
-			// NOTE: why add it at all? we're gonna locate before we finish
-			// is it to see if we can get more next time
-			CGlass::getHypoList()->appendToHypoProcessingQueue(hyp);
+				// add provided hypo to the processing queue
+				// NOTE: this puts provided hypo before original hypo in FIFO,
+				// we want this hypo to keep this pick, rather than the original
+				// just stealing it back, which is why we do it here
+				// NOTE: why add it at all? we're gonna locate before we finish
+				// is it to see if we can get more next time
+				CGlass::getHypoList()->appendToHypoProcessingQueue(hyp);
 
-			// add the original hypo the pick was linked to the processing queue
-			CGlass::getHypoList()->appendToHypoProcessingQueue(pickHyp);
+				// add the original hypo the pick was linked to the processing
+				// queue
+				CGlass::getHypoList()->appendToHypoProcessingQueue(pickHyp);
 
-			// we've made a change to the hypo (grabbed a pick)
-			bAss = true;
-			keptCount++;
+				// we've made a change to the hypo (grabbed a pick)
+				bAss = true;
+				keptCount++;
+			}
+
 		} else {
 			// this pick has higher affinity with the original hypo
 			// remove pick from provided hypo
@@ -2646,24 +2651,26 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp) {
 
 		// check which affinity is better
 		if (aff1 > aff2) {
-			// this correlation has a higher affinity with the provided hypo
-			// remove the correlation from it's original hypo
-			corrHyp->removeCorrelationReference(corr);
+			if (allowStealing == true) {
+				// this correlation has a higher affinity with the provided hypo
+				// remove the correlation from it's original hypo
+				corrHyp->removeCorrelationReference(corr);
 
-			// link pick to the provided hypo
-			corr->addHypoReference(hyp, true);
+				// link pick to the provided hypo
+				corr->addHypoReference(hyp, true);
 
-			// add provided hypo to the processing queue
-			// NOTE: this puts provided hypo before original hypo in FIFO,
-			// we want this hypo to keep this pick, rather than the original
-			// just stealing it back, which is why we do it here
-			CGlass::getHypoList()->appendToHypoProcessingQueue(hyp);
+				// add provided hypo to the processing queue
+				// NOTE: this puts provided hypo before original hypo in FIFO,
+				// we want this hypo to keep this pick, rather than the original
+				// just stealing it back, which is why we do it here
+				CGlass::getHypoList()->appendToHypoProcessingQueue(hyp);
 
-			// add the original hypo the pick was linked to the processing queue
-			CGlass::getHypoList()->appendToHypoProcessingQueue(corrHyp);
+				// add the original hypo the pick was linked to the processing queue
+				CGlass::getHypoList()->appendToHypoProcessingQueue(corrHyp);
 
-			// we've made a change to the hypo (grabbed a pick)
-			bAss = true;
+				// we've made a change to the hypo (grabbed a pick)
+				bAss = true;
+			}
 		} else {
 			// this pick has higher affinity with the original hypo
 			// remove pick from provided hypo

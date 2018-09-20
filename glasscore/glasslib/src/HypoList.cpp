@@ -567,9 +567,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 					tCancelEndTime - tPruneEndTime).count();
 
 	// if event is all good check if proximal events can be merged.
-	if (findAndMergeMatchingHypos(hyp)) {
-		return (false);
-	}
+	findAndMergeMatchingHypos(hyp);
 
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -782,7 +780,7 @@ int CHypoList::length() const {
 bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 	// nullcheck
 	if (hypo == NULL) {
-		return(false);
+		return (false);
 	}
 
 	// check to see if this is a valid hypo, a hypo must always have an id
@@ -803,12 +801,10 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 	// make sure we got hypos returned
 	if (mergeList.size() == 0) {
 		// print not events to merge message
-		snprintf(
-				sLog,
-				sizeof(sLog),
-				"CHypoList::findAndMergeMatchingHypos: No events returned in ot "
-				"time frame for merger of %s, Skipping",
-				hypo->getID().c_str());
+		snprintf(sLog, sizeof(sLog),
+					"CHypoList::findAndMergeMatchingHypos: No hypos in merge "
+					"window for %s",
+					hypo->getID().c_str());
 		glassutil::CLogit::log(sLog);
 		return (merged);
 	}
@@ -820,9 +816,9 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		snprintf(
 				sLog,
 				sizeof(sLog),
-				"CHypoList::findAndMergeMatchingHypos: Only event returned in ot "
-				"time frame for merger of %s was %s, Skipping",
-				hypo->getID().c_str(), thypo->getID().c_str());
+				"CHypoList::findAndMergeMatchingHypos: No other hypos available "
+				"to merge with %s",
+				hypo->getID().c_str());
 		glassutil::CLogit::log(sLog);
 		return (merged);
 	}
@@ -843,6 +839,13 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 			// lock aHypo so it doesn't change while we're considering it
 			std::lock_guard<std::mutex> hypoGuard(aHypo->getProcessingMutex());
+
+			snprintf(
+					sLog, sizeof(sLog),
+					"CHypoList::findAndMergeMatchingHypos: Testing merger of"
+					"hypo %s and %s\n",
+					aHypo->getID().c_str(), hypo->getID().c_str());
+			glassutil::CLogit::log(sLog);
 
 			// prefer to merge into the hypo that has already been published
 			std::shared_ptr<CHypo> toHypo;
@@ -886,27 +889,23 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			snprintf(
 					sLog,
 					sizeof(sLog),
-					"CHypoList::findAndMergeMatchingHypos: Testing merger of %s "
-					"into %s\n",
-					fromHypo->getID().c_str(), toHypo->getID().c_str());
-			glassutil::CLogit::log(sLog);
-
-			snprintf(
-					sLog, sizeof(sLog),
-					"CHypoList::findAndMergeMatchingHypos: fromHypo %s: %.3f, "
-					"%.3f, %.3f, %.3f\n",
+					"CHypoList::findAndMergeMatchingHypos: fromHypo:%s lat:%.3f, "
+					"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d\n",
 					fromHypo->getID().c_str(), fromHypo->getLatitude(),
 					fromHypo->getLongitude(), fromHypo->getDepth(),
-					fromHypo->getTOrigin());
+					fromHypo->getTOrigin(), fromHypo->getBayesValue(),
+					static_cast<int>(fromPicks.size()));
 			glassutil::CLogit::log(sLog);
 
 			snprintf(
-					sLog, sizeof(sLog),
-					"CHypoList::findAndMergeMatchingHypos: toHypo %s: %.3f, "
-					"%.3f, %.3f, %.3f\n",
+					sLog,
+					sizeof(sLog),
+					"CHypoList::findAndMergeMatchingHypos: toHypo:%s lat:%.3f, "
+					"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d\n",
 					toHypo->getID().c_str(), toHypo->getLatitude(),
 					toHypo->getLongitude(), toHypo->getDepth(),
-					toHypo->getTOrigin());
+					toHypo->getTOrigin(), toHypo->getBayesValue(),
+					static_cast<int>(toPicks.size()));
 			glassutil::CLogit::log(sLog);
 
 			// add all picks from fromHypo into toHypo
@@ -933,29 +932,98 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 					> (std::max(toBayes, fromBayes))
 							+ (.1 * std::min(toBayes, fromBayes))) {
 				snprintf(
-						sLog,
-						sizeof(sLog),
-						"CHypoList::findAndMergeMatchingHypos: removing fromHypo "
-						" %s, %.3f > toHypo Bayes %.3f, fromHypo bayes"
-						" %.3f",
-						fromHypo->getID().c_str(), newBayes, toBayes,
-						fromBayes);
+						sLog, sizeof(sLog),
+						"CHypoList::findAndMergeMatchingHypos: merged fromHypo "
+						"%s into toHypo %s because toHypo significantly better "
+						"than fromHypo, newBayes:%.3f > toHypo Bayes:%.3f, "
+						"fromHypo bayes:%.3f",
+						fromHypo->getID().c_str(), toHypo->getID().c_str(),
+						newBayes, toBayes, fromBayes);
 				glassutil::CLogit::log(sLog);
 
 				// toHypo has effectively been replaced, so now remove
 				// fromHypo, since it was successfully merged
 				removeHypo(fromHypo);
 
-				// we've merged a hypo, move on to the next canidate
+				// we've merged a hypo, move on to the next candidate
 				merged = true;
+			} else if (newBayes >= toBayes * 0.99) {  // protect against rounding
+				// error or minor issue in location?
+				// the new Hypo is at least as good as the old toHypo but it
+				// hasn't improved significantly. This could be because either
+				// from Hypo has a subset of the picks of the toHypo, or because
+				// the two hypos are unrelated and share no picks. Resolve
+				// duplicate picks and see if the weaker hypo can still stand.
+				if (resolveData(toHypo)) {
+					// relocate the toHypo if we resolved to get an updated
+					// bayes value
+					toHypo->localize();
+				}
+
+				// relocate and more importantly re-calc statistics for the
+				// fromHypo, now that we've potentially ripped picks away from
+				// it.
+				fromHypo->localize();
+
+				// Resolve duplicate picks, using our increased relative
+				// strength as we've stripped dup's away from fromHypo.
+				if (resolveData(toHypo)) {
+					// relocate the toHypo if we resolved to get an updated
+					// bayes value
+					toHypo->localize();
+				}
+
+				// check to see if fromHypo is still healthy
+				if (fromHypo->cancelCheck()) {
+					snprintf(
+							sLog,
+							sizeof(sLog),
+							"CHypoList::findAndMergeMatchingHypos: merged "
+							"fromHypo %s into toHypo %s because fromHypo failed "
+							"cancelCheck, toHypo:Bayes %.3f, fromHypo:bayes %.3f",
+							fromHypo->getID().c_str(), toHypo->getID().c_str(),
+							toHypo->getBayesValue(), fromHypo->getBayesValue());
+					glassutil::CLogit::log(sLog);
+
+					// fromHypo isn't strong enough to stand on it's own after
+					// we've resolved picks with toHypo.  Merge essentially
+					// successful, make fromHypo go away.
+					removeHypo(fromHypo);
+
+					// we've merged a hypo, move on to the next candidate
+					merged = true;
+				} else {
+					// uh oh.  We were wrong.  fromHypo is still good.
+					// What to do now? do we just leave it as is.  We really
+					// haven't done anything evil to it, we just resolved
+					// picks multiple times... We potentially stole a bunch of
+					// picks from it, but not without merit, and the picks can't
+					// belong to both it and toHypo forever, so...
+					// And if there were NO overlapping picks between the two
+					// events, then we haven't done anything to fromHypo at
+					// all...
+					// log something here?
+
+					// the merged hypo (toHypo) was not better, revert toHypo.
+					// and fromHypo
+					snprintf(
+							sLog, sizeof(sLog),
+							"CHypoList::findAndMergeMatchingHypos: keeping "
+							"modified hypos %s and %s because fromHypo passed "
+							"cancelCheck, toHypo Bayes:%.3f, fromHypo "
+							"bayes:%.3f",
+							toHypo->getID().c_str(), fromHypo->getID().c_str(),
+							toHypo->getBayesValue(), fromHypo->getBayesValue());
+					glassutil::CLogit::log(sLog);
+				}  // end else (fromHypo->cancelCheck())
 			} else {
 				// the merged hypo (toHypo) was not better, revert toHypo.
 				snprintf(
 						sLog,
 						sizeof(sLog),
 						"CHypoList::findAndMergeMatchingHypos: keeping original "
-						"hypos %s and %s, %.3f < toHypo Bayes %.3f, fromHypo "
-						"bayes %.3f",
+						"hypos %s and %s, newBayes:%.3f toHypo Bayes:%.3f, "
+						"fromHypo bayes:%.3f",
 						toHypo->getID().c_str(), fromHypo->getID().c_str(),
 						newBayes, toBayes, fromBayes);
 				glassutil::CLogit::log(sLog);
@@ -970,7 +1038,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 				// relocate toHypo
 				toHypo->localize();
-			}
+			}  // end else is toHypoBetter
 		}
 	}
 
@@ -997,7 +1065,6 @@ int CHypoList::appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp) {
 	if (hyp->getID() == "") {
 		return (size);
 	}
-
 
 	// get this hypo's id
 	std::string pid = hyp->getID();
@@ -1180,7 +1247,7 @@ bool CHypoList::requestHypo(std::shared_ptr<json::Object> com) {
 }
 
 // ---------------------------------------------------------resolve
-bool CHypoList::resolveData(std::shared_ptr<CHypo> hyp) {
+bool CHypoList::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 	// null checks
 	if (hyp == NULL) {
 		glassutil::CLogit::log(glassutil::log_level::warn,
@@ -1194,7 +1261,7 @@ bool CHypoList::resolveData(std::shared_ptr<CHypo> hyp) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 
 	// return whether we've changed the pick set
-	return (hyp->resolveData(hyp));
+	return (hyp->resolveData(hyp, allowStealing));
 }
 
 // ---------------------------------------------------------setNHypoMax

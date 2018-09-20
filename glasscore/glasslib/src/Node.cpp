@@ -382,8 +382,10 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// the provided origin time
 			double tObs = tPick - tOrigin;
 
-			// Ignore arrivals past earlier than this potential origin
-			if (tObs < 0) {
+			// Ignore arrivals earlier than this potential origin and
+			// past 1000 seconds (about 100 degrees)
+			// NOTE: Time cutoff is hard coded
+			if (tObs < 0 || tObs > 1000.0) {
 				continue;
 			}
 

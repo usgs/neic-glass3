@@ -629,10 +629,12 @@ class CHypo {
 	 * \param hypo - A shared_ptr to a CHypo to use when adding references to
 	 * this hypo. This parameter is passed because issues occurred using
 	 * this-> to reference data.
+	 * \param allowStealing - A boolean flag indicating whether to allow
+	 * resolveData to steal data, defaults to true
 	 * \return Returns true if the hypocenter's pick list was changed,
 	 * false otherwise.
 	 */
-	bool resolveData(std::shared_ptr<CHypo> hypo);
+	bool resolveData(std::shared_ptr<CHypo> hypo, bool allowStealing = true);
 
 	/**
 	 * \brief Supporting data link checking function
