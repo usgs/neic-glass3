@@ -1476,7 +1476,7 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 	// Currently only P, S, and nucleation phases added to stack.
 	for (int ipick = 0; ipick < npick; ipick++) {
 		auto pick = m_vPickData[ipick];
-		double resi = 99999999;
+		double resi = std::numeric_limits<double>::quiet_NaN();
 
 		// calculate residual
 		double tobs = pick->getTPick() - oT;
@@ -1528,6 +1528,13 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 			// calculate the residual using the phase name
 			resi = calculateWeightedResidual(m_pTravelTimeTables->sPhase, tobs,
 												tcal);
+		}
+
+		// make sure residual is valid
+		if (resi == std::numeric_limits<double>::quiet_NaN()) {
+			glassutil::CLogit::log(glassutil::log_level::warn,
+									"CHypo::getBayes: invalid residual.");
+			continue;
 		}
 
 		// calculate distance to station to get sigma
@@ -1773,6 +1780,10 @@ int64_t CHypo::getTSort() const {
 // ----------------------------------------------------calculateWeightedResidual
 double CHypo::calculateWeightedResidual(std::string sPhase, double tObs,
 										double tCal) {
+	if (tCal < 0) {
+		return (std::numeric_limits<double>::quiet_NaN());
+	}
+
 	if (sPhase == "P") {
 		return (tObs - tCal);
 	} else if (sPhase == "S") {

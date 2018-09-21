@@ -28,7 +28,7 @@ class CTrigger;
 
 #define NUC_DEPTH_SHELL_RESOLUTION_KM 10
 #define NUC_SECONDS_PER_SIGMA 3.0
-
+#define FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO .7071  // sqrt(2)/2)
 /**
  * \brief glasscore detection node class
  *
