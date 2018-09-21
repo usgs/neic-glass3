@@ -290,8 +290,8 @@ TEST(SiteTest, NodeOperations) {
 	std::shared_ptr<glasscore::CNode> sharedNode2(testNode2);
 
 	// test adding nodes to site
-	testSite->addNode(sharedNode, 10.0);
-	testSite->addNode(sharedNode2, 12.0);
+	testSite->addNode(sharedNode, 5.0, 10.0);
+	testSite->addNode(sharedNode2, 6.0, 12.0);
 	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Added Nodes";
 

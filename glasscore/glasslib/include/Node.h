@@ -26,6 +26,9 @@ class CSite;
 class CWeb;
 class CTrigger;
 
+#define NUC_DEPTH_SHELL_RESOLUTION_KM 10
+#define NUC_SECONDS_PER_SIGMA 3.0
+
 /**
  * \brief glasscore detection node class
  *
@@ -123,7 +126,8 @@ class CNode {
 	 * \return - Returns true if successful, false otherwise
 	 */
 	bool linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
-					double travelTime1, double travelTime2 = -1);
+					double distDeg, double travelTime1,
+					double travelTime2 = -1);
 
 	/**
 	 * \brief CNode node-site and site-node unlinker
@@ -173,9 +177,8 @@ class CNode {
 	 * \return Returns best significance if there is at least one valid travel
 	 * time, -1.0 otherwise
 	 */
-	double getBestSignificance(std::shared_ptr<CPick> pPick,
-								double travelTime, double dAzimuthRange,
-								double tOrigin);
+	double getBestSignificance(double tObservedTT, double travelTime1,
+								double travelTime2, double distDeg);
 
 	/**
 	 * \brief CNode site used function

@@ -406,7 +406,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 			}
 
 			// check to see if this pick can be associated with this hypo
-			if (!hyp->canAssociate(currentPick, ASSOC_SIGMA_VALUE_SECONDS, sdassoc)) {
+			if (!hyp->canAssociate(currentPick, ASSOC_SIGMA_VALUE_SECONDS,
+									sdassoc)) {
 				// it can't, skip it
 				continue;
 			}
@@ -447,6 +448,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 // ---------------------------------------------------------work
 glass3::util::WorkState CPickList::work() {
+	bool bNucleateThisPick = true;
+
 	// make sure we have a HypoList
 	if (CGlass::getHypoList() == NULL) {
 		// on to the next loop
@@ -489,12 +492,36 @@ glass3::util::WorkState CPickList::work() {
 		return (glass3::util::WorkState::Idle);
 	}
 
-	// Attempt both association and nucleation of the new pick.
-	// If both succeed, the mess is sorted out in hypo processing/refinement
+	// Attempt to associate the pick
 	CGlass::getHypoList()->associateData(pck);
 
-	// nucleate
-	pck->nucleate();
+	// check to see if the pick is currently associated to a hypo
+	std::shared_ptr<CHypo> pHypo = pck->getHypoReference();
+	if (pHypo != NULL) {
+		// compute ratio
+		double adBayesRatio = (pHypo->getBayesValue())
+				/ (pHypo->getNucleationStackThreshold());
+
+		std::string pt = glassutil::CDate::encodeDateTime(pck->getTPick());
+
+		// check to see if the ratio is high enough to not bother
+		// NOTE: Hardcoded ratio threshold
+		if (adBayesRatio > 2.0) {
+			glassutil::CLogit::log(
+					glassutil::log_level::debug,
+					"CPickList::work(): SKIPNUC tPick:" + pt
+							+ "; idPick:" + pck->getID() + " due to "
+							"association with a hypo with stack twice "
+									"threshold ("
+							+ std::to_string(pHypo->getBayesValue()) + ")");
+			bNucleateThisPick = false;
+		}
+	}
+
+	// Attempt nucleation unless we were told not to.
+	if (bNucleateThisPick) {
+		pck->nucleate();
+	}
 
 	// give up some time at the end of the loop
 	return (glass3::util::WorkState::OK);

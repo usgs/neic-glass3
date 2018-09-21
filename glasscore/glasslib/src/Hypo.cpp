@@ -2227,12 +2227,12 @@ double CHypo::localize() {
 	} else {
 		if (npick < 25) {
 			annealingLocateResidual(
-					10000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					2000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
 					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
 					LOCATION_MIN_TIME_STEP_SIZE);
 		} else if (npick < 50 && (npick % 5) == 0) {
 			annealingLocateResidual(
-					5000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
+					1000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
 					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
 					LOCATION_MIN_TIME_STEP_SIZE);
 		} else if (npick < 150 && (npick % 10) == 0) {

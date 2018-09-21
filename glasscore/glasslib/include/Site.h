@@ -234,7 +234,7 @@ class CSite {
 	 * \param travelTime2 - A double value containing the optional second travel
 	 * time to use for the link, defaults to -1 (no travel time)
 	 */
-	void addNode(std::shared_ptr<CNode> node, double travelTime1,
+	void addNode(std::shared_ptr<CNode> node, double distDeg, double travelTime1,
 					double travelTime2 = -1);
 
 	/**

@@ -914,7 +914,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			}
 
 			// initial localization attempt of toHypo after adding picks
-			toHypo->anneal(10000, (distanceCut / 2.) * DEG2KM,
+			toHypo->anneal(2000, (distanceCut / 2.) * DEG2KM,
 							(distanceCut / 100.) * DEG2KM, (timeCut / 2.), .01);
 
 			// Remove picks from toHypo that do not fit initial location

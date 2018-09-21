@@ -716,7 +716,7 @@ bool CWeb::loadGridConfiguration(
 	// grid definition variables and defaults
 	std::string name = "Nemo";
 	int detect = CGlass::getNumStationsPerNode();
-	int nucleate  = CGlass::getNucleationDataThreshold();
+	int nucleate = CGlass::getNucleationDataThreshold();
 	double thresh = CGlass::getNucleationStackThreshold();
 
 	double resol = 0;
@@ -1336,7 +1336,7 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 		}
 
 		// Link node to site using traveltimes
-		node->linkSite(site, node, travelTime1, travelTime2);
+		node->linkSite(site, node, delta, travelTime1, travelTime2);
 	}
 
 	// sort the site links
@@ -1459,7 +1459,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		// check to see if we're at the limit
 		if (node->getSiteLinksCount() < m_iNumStationsPerNode) {
 			// Link node to site using traveltimes
-			node->linkSite(site, node, travelTime1, travelTime2);
+			node->linkSite(site, node, newDistance, travelTime1, travelTime2);
 
 		} else {
 			// remove last site
@@ -1468,7 +1468,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 			node->unlinkLastSite();
 
 			// Link node to site using traveltimes
-			node->linkSite(site, node, travelTime1, travelTime2);
+			node->linkSite(site, node, newDistance, travelTime1, travelTime2);
 		}
 
 		// resort site links
@@ -1595,8 +1595,8 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 			}
 
 			// Link node to new site using traveltimes
-			if (node->linkSite(newSite, node, travelTime1, travelTime2)
-					== false) {
+			if (node->linkSite(newSite, node, newDistance, travelTime1,
+								travelTime2) == false) {
 				glassutil::CLogit::log(
 						glassutil::log_level::error,
 						"CWeb::remSite: Failed to add station "

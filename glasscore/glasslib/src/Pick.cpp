@@ -332,30 +332,6 @@ bool CPick::nucleate() {
 	std::string pt = glassutil::CDate::encodeDateTime(m_tPick);
 	char sLog[1024];
 
-	// check to see if the pick is currently associated to a hypo
-	if (m_wpHypo.expired() == false) {
-		// get the hypo and compute ratio
-		std::shared_ptr<CHypo> pHypo = m_wpHypo.lock();
-		if (pHypo != NULL) {
-			double adBayesRatio = (pHypo->getBayesValue())
-					/ (pHypo->getNucleationStackThreshold());
-
-			// check to see if the ratio is high enough to not
-			// bother
-			// NOTE: Hardcoded
-			if (adBayesRatio > 2.0) {
-				glassutil::CLogit::log(
-						glassutil::log_level::debug,
-						"CPick::nucleate: SKIPTRG due to large event association "
-								+ pickSite->getSCNL() + "; tPick:" + pt
-								+ "; idPick:" + m_sID+ " associated with an event "
-										"with stack twice threshold ("
-								+ std::to_string(pHypo->getBayesValue()) + ")");
-				return (false);
-			}
-		}
-	}
-
 	// Use site nucleate to scan all nodes
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
@@ -432,7 +408,7 @@ bool CPick::nucleate() {
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
 			double bayes = hypo->anneal(
-					10000, trigger->getWebResolution() / 2.,
+					2000, trigger->getWebResolution() / 2.,
 					trigger->getWebResolution() / 100.,
 					std::max(trigger->getWebResolution() / 10.0, 5.0), .1);
 

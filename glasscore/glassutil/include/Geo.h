@@ -24,8 +24,8 @@ namespace glassutil {
 
 // geographic defines
 #define EARTHRADIUSKM 6371.0  // average
-#define DEG2KM 111.319  // at equator
-
+#define DEG2KM 111.19  // based on 6371 as the average radius
+#define KM2DEG 0.00899  // based on 6371 as the average radius
 /**
  * \brief glassutil geographic coordinate conversion class
  *
