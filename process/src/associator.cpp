@@ -152,25 +152,22 @@ glass3::util::WorkState Associator::work() {
 	std::shared_ptr<json::Object> data = m_Input->getInputData();
 
 	// was there anything
-	if (data == NULL) {
-		// no
-		return (glass3::util::WorkState::Idle);
+	if (data != NULL) {
+		// glass can sort things out from here
+		// note that if this takes too long, we may need to adjust
+		// thread monitoring, or add a call to setworkcheck()
+		std::chrono::high_resolution_clock::time_point tGlassStartTime =
+				std::chrono::high_resolution_clock::now();
+		glasscore::CGlass::receiveExternalMessage(data);
+		std::chrono::high_resolution_clock::time_point tGlassEndTime =
+				std::chrono::high_resolution_clock::now();
+
+		m_iInputCounter++;
+
+		// keep track of the time we spent in glassland
+		tGlasscoreDuration += std::chrono::duration_cast<
+				std::chrono::duration<double>>(tGlassEndTime - tGlassStartTime);
 	}
-
-	// glass can sort things out from here
-	// note that if this takes too long, we may need to adjust
-	// thread monitoring, or add a call to setworkcheck()
-	std::chrono::high_resolution_clock::time_point tGlassStartTime =
-			std::chrono::high_resolution_clock::now();
-	glasscore::CGlass::receiveExternalMessage(data);
-	std::chrono::high_resolution_clock::time_point tGlassEndTime =
-			std::chrono::high_resolution_clock::now();
-
-	m_iInputCounter++;
-
-	// keep track of the time we spent in glassland
-	tGlasscoreDuration += std::chrono::duration_cast<
-			std::chrono::duration<double>>(tGlassEndTime - tGlassStartTime);
 
 	// generate periodic performance reports, reporting our pending input
 	// queue size, data sent to glasscore, average glasscore processing time,
@@ -199,7 +196,7 @@ glass3::util::WorkState Associator::work() {
 			}
 
 			// update the total input count with the input count
-			// since hte last report
+			// since the last report
 			m_iTotalInputCounter += m_iInputCounter;
 
 			// calculate data per second average since the last report
@@ -239,6 +236,12 @@ glass3::util::WorkState Associator::work() {
 		tLastPerformanceReport = tNow;
 		m_iInputCounter = 0;
 		tGlasscoreDuration = std::chrono::duration<double>::zero();
+	}
+
+	// return idle if there was no data
+	if (data == NULL) {
+		// no
+		return (glass3::util::WorkState::Idle);
 	}
 
 	// we only send in one item per work loop
