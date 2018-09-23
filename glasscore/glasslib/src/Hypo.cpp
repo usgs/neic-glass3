@@ -1149,8 +1149,9 @@ bool CHypo::cancelCheck() {
 		}
 	}
 
-	// check data
-	// NOTE: Is this a good idea?? JMP
+	// check to see if we still have enough picks for this hypo to
+	// survive.
+	// NOTE: Is this a good idea, combining correlations and picks?? JMP
 	if ((m_vPickData.size() + m_vCorrelationData.size()) < ncut) {
 		// there isn't
 		snprintf(sLog, sizeof(sLog), "CHypo::cancel: Insufficient data "
@@ -1163,7 +1164,8 @@ bool CHypo::cancelCheck() {
 		return (true);
 	}
 
-	// baysian threshold check
+	// check to see if we still have a high enough bayes value for this
+	// hypo to survive.
 	double thresh = m_dNucleationStackThreshold;
 	if (m_dBayesValue < thresh) {
 		// failure

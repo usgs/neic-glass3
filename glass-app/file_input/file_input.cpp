@@ -242,8 +242,7 @@ std::string fileInput::fetchRawData(std::string* pOutType) {
 
 			glass3::util::log(
 					"info",
-					"fileInput::fetchRawData(): Opened file: "
-							+ m_sFileName);
+					"fileInput::fetchRawData(): Opened file: " + m_sFileName);
 
 			// reset performance counters
 			m_tFileStartTime = std::chrono::high_resolution_clock::now();
@@ -257,7 +256,7 @@ std::string fileInput::fetchRawData(std::string* pOutType) {
 				glass3::util::log(
 						"warning",
 						"fileInput::fetchRawData(): No more input files and/or "
-								"pending data in queue, shutting down after "
+								"pending data in queue, shutting down in "
 								+ std::to_string(getShutdownWait())
 								+ " seconds.");
 
@@ -270,6 +269,11 @@ std::string fileInput::fetchRawData(std::string* pOutType) {
 					std::this_thread::sleep_for(
 							std::chrono::milliseconds(1000));
 				}
+
+				// times up
+				glass3::util::log(
+						"warning",
+						"fileInput::fetchRawData(): shutting down.");
 
 				// shut it down
 				setWorkThreadsState(glass3::util::ThreadState::Stopping);

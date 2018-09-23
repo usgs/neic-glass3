@@ -54,9 +54,8 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 			return;
 		}
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CPick::CPick: Missing required Type Key.");
+		glassutil::CLogit::log(glassutil::log_level::error,
+								"CPick::CPick: Missing required Type Key.");
 		return;
 	}
 
@@ -373,8 +372,8 @@ bool CPick::nucleate() {
 							glassutil::log_level::debug,
 							"CPick::nucleate: SKIPTRG because pick proximal hypo ("
 									+ std::to_string(dist) + " < "
-									+ std::to_string(trigger->getWebResolution())
-									+ ")");
+									+ std::to_string(
+											trigger->getWebResolution()) + ")");
 					continue;
 				}
 			}
@@ -421,22 +420,6 @@ bool CPick::nucleate() {
 						hypo->getID().c_str());
 			glassutil::CLogit::log(sLog);
 
-			// check to see if we still have a high enough bayes value for this
-			// hypo to survive.
-			if (bayes < thresh) {
-				// it isn't
-				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning solution %s "
-							"due to low bayes value "
-							"(bayes:%f/thresh:%f)",
-							hypo->getID().c_str(), bayes, thresh);
-				glassutil::CLogit::log(sLog);
-
-				// don't bother making additional passes
-				bad = true;
-				break;
-			}
-
 			// check to see if we still have enough picks for this hypo to
 			// survive.
 			// NOTE, in Node, ncut is used as a threshold for the number of
@@ -449,6 +432,22 @@ bool CPick::nucleate() {
 							"due to lack of picks "
 							"(npick:%d/ncut:%d)",
 							hypo->getID().c_str(), npick, ncut);
+				glassutil::CLogit::log(sLog);
+
+				// don't bother making additional passes
+				bad = true;
+				break;
+			}
+
+			// check to see if we still have a high enough bayes value for this
+			// hypo to survive.
+			if (bayes < thresh) {
+				// it isn't
+				snprintf(sLog, sizeof(sLog),
+							"CPick::nucleate: -- Abandoning solution %s "
+							"due to low bayes value "
+							"(bayes:%f/thresh:%f)",
+							hypo->getID().c_str(), bayes, thresh);
 				glassutil::CLogit::log(sLog);
 
 				// don't bother making additional passes
