@@ -257,7 +257,8 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 
 	clear();
 
-	m_tPick = pickTime;
+	setTPick(pickTime);
+	setTSort(pickTime);
 	m_sID = pickIdString;
 	m_dBackAzimuth = backAzimuth;
 	m_dSlowness = slowness;
@@ -531,6 +532,16 @@ double CPick::getTPick() const {
 // ---------------------------------------------------------setTPick
 void CPick::setTPick(double tPick) {
 	m_tPick = tPick;
+}
+
+// --------------------------------------------------getTSort
+int64_t CPick::getTSort() const {
+	return (m_tSort);
+}
+
+// --------------------------------------------------setTSort
+void CPick::setTSort(double newTSort) {
+	m_tSort = std::floor(newTSort);
 }
 
 }  // namespace glasscore

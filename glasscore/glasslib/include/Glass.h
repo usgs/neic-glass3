@@ -398,7 +398,6 @@ class CGlass {
 	 */
 	static void setMaxNumHypos(int max);
 
-
 	/**
 	 * \brief Gets the depth threshold used for declaring a hypo an event
 	 * fragment, in combination with m_dEventFragmentAzimuthThreshold.
@@ -410,6 +409,12 @@ class CGlass {
 	 * fragment, in combination with m_dEventFragmentDepthThreshold.
 	 */
 	static double getEventFragmentAzimuthThreshold();
+
+	/**
+	 * \brief Gets a boolean flag indicating whether to allow picks in the
+	 * pick list to be updated
+	 */
+	static bool getAllowPickUpdates();
 
 	/**
 	 * \brief Gets a pointer to the Correlation list
@@ -461,6 +466,12 @@ class CGlass {
 	 * association travel times
 	 */
 	static std::shared_ptr<traveltime::CTTT>& getAssociationTravelTimes();
+
+	/**
+	 * \brief The factor used to scale thread count to implement maximum
+	 * queue lengths for processing
+	 */
+	static const int iMaxQueueLenPerThreadFactor = 10;
 
  private:
 	/**
@@ -661,6 +672,12 @@ class CGlass {
 	 * combination with m_dEventFragmentDepthThreshold.
 	 */
 	static std::atomic<double> m_dEventFragmentAzimuthThreshold;
+
+	/**
+	 * \brief The boolean flag indicating whether to allow picks in the
+	 * pick list to be updated
+	 */
+	static std::atomic<bool> m_bAllowPickUpdates;
 
 	/**
 	 * \brief An IGlassSend interface pointer used to send communication

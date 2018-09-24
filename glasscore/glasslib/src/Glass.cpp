@@ -65,6 +65,7 @@ std::atomic<double> CGlass::m_dHypoMergingTimeWindow { 30.0 };
 std::atomic<double> CGlass::m_dHypoMergingDistanceWindow { 3.0 };
 std::atomic<double> CGlass::m_dEventFragmentDepthThreshold { 550.0 };
 std::atomic<double> CGlass::m_dEventFragmentAzimuthThreshold { 270.0 };
+std::atomic<bool> CGlass::m_bAllowPickUpdates { false };
 std::mutex CGlass::m_TTTMutex;
 
 // ---------------------------------------------------------CGlass
@@ -205,6 +206,7 @@ void CGlass::clear() {
 	m_dHypoMergingDistanceWindow = 3.0;
 	m_dEventFragmentDepthThreshold = 550.0;
 	m_dEventFragmentAzimuthThreshold = 270.0;
+	m_bAllowPickUpdates = false;
 }
 
 // ---------------------------------------------------------Initialize
@@ -1073,6 +1075,17 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						+ std::to_string(iMaxPicksPerHour));
 	}
 
+	// set whether to allow pick updates
+	if ((com->HasKey("AllowPickUpdates"))
+			&& ((*com)["AllowPickUpdates"].GetType() == json::ValueType::BoolVal)) {  // NOLINT
+		m_bAllowPickUpdates = (*com)["AllowPickUpdates"].ToBool();
+
+		glassutil::CLogit::log(
+				glassutil::log_level::info,
+				"CGlass::initialize: Using AllowPickUpdates: "
+						+ std::to_string(m_bAllowPickUpdates));
+	}
+
 	// create site list
 	if (m_pSiteList == NULL) {
 		m_pSiteList = new CSiteList();
@@ -1376,6 +1389,10 @@ bool CGlass::getTestTravelTimes() {
 	return (m_bTestTravelTimes);
 }
 
+// ------------------------------------------------getAllowPickUpdates
+bool CGlass::getAllowPickUpdates() {
+	return (m_bAllowPickUpdates);
+}
 /* NOTE: Leave these in place as examples for Travel Time unit tests.
  *
  // ---------------------------------------------------------Test

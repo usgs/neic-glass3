@@ -230,6 +230,18 @@ class CPick {
 	 */
 	void setTPick(double tPick);
 
+	/**
+	 * \brief Get the sorting time for this pick
+	 * \return Returns an int64_t containing the pick sort time in julian seconds
+	 */
+	int64_t getTSort() const;
+
+	/**
+	 * \brief Set the sorting time for this pick
+	 * \param newTSort - a double containing the pick sort time in julian seconds
+	 */
+	void setTSort(double newTSort);
+
  protected:
 	/**
 	 * \brief Remove hypo reference to this pick
@@ -291,6 +303,18 @@ class CPick {
 	 * not relevant to glass that are needed for generating outputs.
 	 */
 	std::shared_ptr<json::Object> m_JSONPick;
+
+	/**
+	 * \brief An int64_t value containing this pick's sort time in julian
+	 * seconds, this is a cached copy of tPick as an integer that is
+	 * guaranteed to not change during the lifetime of the pick in a PickList's
+	 * internal multiset, ensuring that sort order won't change, even when
+	 * tPick changes because of an update. Resorting is accomplished by
+	 * removing the pick from the internal multiset (NOT the PickList), updating
+	 * tSort to equal the current tPick, and then reinserting the pick into
+	 * the internal multiset. /see PickList.
+	 */
+	std::atomic<int64_t> m_tSort;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CPick.

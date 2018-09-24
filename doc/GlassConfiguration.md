@@ -16,6 +16,7 @@ An example `glass_init.d` configuration file:
   "SiteHoursWithoutPicking": 36,
   "SiteLookupInterval": 24,
   "SiteMaximumPicksPerHour": 200,
+  "AllowPickUpdates": false,
   "Params": {
       "NucleationStackThreshold": 0.5,
       "NucleationDataThreshold": 10,
@@ -117,6 +118,9 @@ to -1, sites will not request information, even new ones.
 * **SiteMaximumPicksPerHour** - The number of picks per hour, above which a site
 will be removed from the detection webs  If set to -1, sites will not be removed
 from the detection webs due to pick rate.
+* **AllowPickUpdates** - A boolean flag indicating whether glass should glass
+should reject new duplicate picks of an existing pick (false) or update an
+existing pick with the latest duplicate pick (true).
 
 ## Nucleation Configuration
 These configuration parameters define and control glasscore nucleation and

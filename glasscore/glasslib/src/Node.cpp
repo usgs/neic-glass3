@@ -171,7 +171,7 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 
 		// if the new station would be before
 		// the current station
-		if (currentSite->getSCNL() == site->getSCNL()) {
+		if (currentSite == site) {
 			found = true;
 			foundLink = link;
 			foundSite = currentSite;
