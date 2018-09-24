@@ -55,7 +55,8 @@ class CTrigger {
 	 * for this trigger in seconds
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometer
-	 * \param sum - A double value containing the bayesian sum for this trigger
+	 * \param maxZ - A double value containing the node maximum depth
+	 * 	 * \param sum - A double value containing the bayesian sum for this trigger
 	 * \param count - An integer value containing the site count for this
 	 * trigger
 	 * \param picks - A std::vector<std::shared_ptr<CPick> containing the picks
@@ -63,7 +64,7 @@ class CTrigger {
 	 * \param web - A pointer to the creating node's CWeb
 	 */
 	CTrigger(double lat, double lon, double z, double ot, double resolution,
-				double sum, int count,
+				double maxZ, double sum, int count,
 				std::vector<std::shared_ptr<CPick>> picks, CWeb *web);
 
 	/**
@@ -86,6 +87,7 @@ class CTrigger {
 	 * for this trigger in seconds
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometer
+	 * \param maxZ - A double value containing the node maximum depth
 	 * \param sum - A double value containing the bayesian sum for this trigger
 	 * \param count - An integer value containing the site count for this
 	 * trigger
@@ -94,7 +96,7 @@ class CTrigger {
 	 * \param web - A pointer to the creating node's web
 	 */
 	bool initialize(double lat, double lon, double z, double ot,
-					double resolution, double sum, int count,
+					double resolution, double maxZ, double sum, int count,
 					std::vector<std::shared_ptr<CPick>> picks, CWeb *web);
 
 	/**
@@ -139,6 +141,12 @@ class CTrigger {
 	 * that nucleated this trigger in kilometers
 	 */
 	double getWebResolution() const;
+
+	/**
+	 * \brief Get the node max depth for this trigger
+	 * \return Return a double containing the node max depth in kilometers
+	 */
+	double getNodeMaxDepth() const;
 
 	/**
 	 * \brief Gets the current bayes stack value for this trigger
@@ -193,6 +201,11 @@ class CTrigger {
 	 * (between nodes) in kilometers.
 	 */
 	std::atomic<double> m_dWebResolution;
+
+	/**
+	 * \brief A double value containing the node max depth in kilometers.
+	 */
+	std::atomic<double> m_dNodeMaxDepth;
 
 	/**
 	 * \brief A double value that accumulates the Bayesian

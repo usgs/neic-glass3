@@ -13,6 +13,7 @@
 #define LONGITUDE -112.79
 #define DEPTH 10
 #define RESOLUTION 25
+#define MAXDEPTH 20
 #define NODEID "testNode.45.900000.-112.790000.10.000000"
 
 #define SITEJSON "{\"Cmd\":\"Site\",\"Elv\":2326.000000,\"Lat\":45.822170,\"Lon\":-112.451000,\"Site\":\"LRM.EHZ.MB.--\",\"Use\":true}"  // NOLINT
@@ -31,7 +32,8 @@ TEST(NodeTest, Construction) {
 	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
 	LATITUDE,
 														LONGITUDE, DEPTH,
-														RESOLUTION);
+														RESOLUTION,
+														MAXDEPTH);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testNode->getName().c_str())<<
@@ -48,6 +50,9 @@ TEST(NodeTest, Construction) {
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testNode->getResolution())<< "Node Resolution Check";
+
+	// max depth
+	ASSERT_EQ(MAXDEPTH, testNode->getMaxDepth())<< "Node max depth Check";
 
 	// id
 	ASSERT_STREQ(std::string(NODEID).c_str(), testNode->getID().c_str())<<
@@ -75,7 +80,8 @@ TEST(NodeTest, SiteOperations) {
 	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
 	LATITUDE,
 														LONGITUDE, DEPTH,
-														RESOLUTION);
+														RESOLUTION,
+														MAXDEPTH);
 
 	// create json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -92,7 +98,7 @@ TEST(NodeTest, SiteOperations) {
 
 	// add the site to the node
 	ASSERT_TRUE(
-			testNode->linkSite(sharedTestSite, sharedTestNode, DISTANCE_FOR_TT, TRAVELTIME)); // NOLINT
+			testNode->linkSite(sharedTestSite, sharedTestNode, DISTANCE_FOR_TT, TRAVELTIME));  // NOLINT
 
 	// check to see if the site was added
 	int expectedSize = 1;
@@ -118,7 +124,8 @@ TEST(NodeTest, FailTests) {
 	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
 	LATITUDE,
 														LONGITUDE, DEPTH,
-														RESOLUTION);
+														RESOLUTION,
+														MAXDEPTH);
 
 	// create json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(

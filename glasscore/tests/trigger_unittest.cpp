@@ -17,6 +17,7 @@
 #define TIME 3648585210.926340
 #define SUM 3.5
 #define COUNT 1
+#define MAXDEPTH 10.0
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}" // NOLINT
 
@@ -84,6 +85,9 @@ TEST(TriggerTest, Construction) {
 	// resolution
 	ASSERT_EQ(0, testTrigger->getWebResolution())<< "Trigger Resolution 0";
 
+	// maxDepth
+	ASSERT_EQ(0, testTrigger->getNodeMaxDepth())<< "Max Depth 0";
+
 	// Sum
 	ASSERT_EQ(0, testTrigger->getBayesValue())<< "Trigger Sum 0";
 
@@ -102,8 +106,10 @@ TEST(TriggerTest, Construction) {
 							DEPTH,
 							TIME,
 							RESOLUTION,
+							MAXDEPTH,
 							SUM,
-							COUNT, picks, testWeb);
+							COUNT,
+							picks, testWeb);
 
 	// latitude
 	ASSERT_EQ(LATITUDE, testTrigger->getLatitude())<< "Trigger Latitude Check";
@@ -120,6 +126,9 @@ TEST(TriggerTest, Construction) {
 	// resolution
 	ASSERT_EQ(RESOLUTION, testTrigger->getWebResolution())<< "Trigger Resolution "
 	"Check";
+
+	// maxDepth
+	ASSERT_EQ(MAXDEPTH, testTrigger->getNodeMaxDepth())<< "Max Depth check";
 
 	// Sum
 	ASSERT_EQ(SUM, testTrigger->getBayesValue())<< "Trigger Sum Check";
@@ -153,6 +162,9 @@ TEST(TriggerTest, Construction) {
 
 	// resolution
 	ASSERT_EQ(0, testTrigger->getWebResolution())<< "Trigger Resolution 0";
+
+	// maxDepth
+	ASSERT_EQ(0, testTrigger->getNodeMaxDepth())<< "Max Depth 0";
 
 	// Sum
 	ASSERT_EQ(0, testTrigger->getBayesValue())<< "Trigger Sum 0";

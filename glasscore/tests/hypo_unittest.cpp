@@ -37,6 +37,7 @@
 #define TRIGGER_TIME 3648585210.926340
 #define TRIGGER_SUM 3.5
 #define TRIGGER_COUNT 1
+#define TRIGGER_MAXDEPTH 15
 
 #define TRIGGER_SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}" // NOLINT
 
@@ -297,6 +298,7 @@ TEST(HypoTest, TriggerConstruction) {
 			TRIGGER_DEPTH,
 			TRIGGER_TIME,
 			TRIGGER_WEB_RESOLUTION,
+			TRIGGER_MAXDEPTH,
 			TRIGGER_SUM,
 			TRIGGER_COUNT, picks, testWeb);
 	std::shared_ptr<glasscore::CTrigger> sharedTrigger(testTrigger);

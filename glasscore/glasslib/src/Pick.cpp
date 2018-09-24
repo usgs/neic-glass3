@@ -389,6 +389,7 @@ bool CPick::nucleate() {
 		// web's nucleation threshold
 		int ncut = hypo->getNucleationDataThreshold();
 		double thresh = hypo->getNucleationStackThreshold();
+		double maxDepth = trigger->getNodeMaxDepth();
 		bool bad = false;
 
 		// First localization attempt after nucleation
@@ -407,6 +408,7 @@ bool CPick::nucleate() {
 
 			// get the number of picks we have now
 			int npick = hypo->getPickDataSize();
+			double depth = hypo->getDepth();
 
 			/*
 			 snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass:%d; nPick:%d"
@@ -445,6 +447,22 @@ bool CPick::nucleate() {
 							"(bayes:%f/thresh:%f)",
 							hypo->getID().c_str(), bayes, thresh);
 				glass3::util::Logger::log(sLog);
+
+				// don't bother making additional passes
+				bad = true;
+				break;
+			}
+
+			// check to see if we are not below the maximum allowed depth for
+			// the trigger's node
+			if (depth > maxDepth) {
+				// it isn't
+				snprintf(sLog, sizeof(sLog),
+							"CPick::nucleate: -- Abandoning solution %s "
+							"due to depth greater than max depth "
+							"(depth:%f/maxDepth:%f)",
+							hypo->getID().c_str(), depth, maxDepth);
+				glassutil::CLogit::log(sLog);
 
 				// don't bother making additional passes
 				bad = true;

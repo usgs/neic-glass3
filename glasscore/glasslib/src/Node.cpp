@@ -51,8 +51,8 @@ CNode::CNode() {
 
 // ---------------------------------------------------------CNode
 CNode::CNode(std::string name, double lat, double lon, double z,
-				double resolution) {
-	if (!initialize(name, lat, lon, z, resolution)) {
+				double resolution, double maxDepth) {
+	if (!initialize(name, lat, lon, z, resolution, maxDepth)) {
 		clear();
 	}
 }
@@ -74,6 +74,7 @@ void CNode::clear() {
 	m_dLongitude = 0;
 	m_dDepth = 0;
 	m_dResolution = 0;
+	m_dMaxDepth = 0;
 	m_bEnabled = false;
 }
 
@@ -98,7 +99,7 @@ void CNode::clearSiteLinks() {
 
 // ---------------------------------------------------------initialize
 bool CNode::initialize(std::string name, double lat, double lon, double z,
-						double resolution) {
+						double resolution, double maxDepth) {
 	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
 
 	clear();
@@ -108,6 +109,7 @@ bool CNode::initialize(std::string name, double lat, double lon, double z,
 	m_dLongitude = lon;
 	m_dDepth = z;
 	m_dResolution = resolution;
+	m_dMaxDepth = maxDepth;
 	m_bEnabled = true;
 
 	return (true);
@@ -464,7 +466,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	// create trigger
 	std::shared_ptr<CTrigger> trigger(
 			new CTrigger(m_dLatitude, m_dLongitude, m_dDepth, tOrigin,
-							m_dResolution, dSum, nCount, vPick, m_pWeb));
+							m_dResolution, m_dMaxDepth, dSum, nCount, vPick,
+							m_pWeb));
 
 	// the node nucleated an event
 	return (trigger);
@@ -650,6 +653,11 @@ double CNode::getResolution() const {
 // ---------------------------------------------------------getDepth
 double CNode::getDepth() const {
 	return (m_dDepth);
+}
+
+// ---------------------------------------------------------getMaxTriggerDepth
+double CNode::getMaxDepth() const {
+	return (m_dMaxDepth);
 }
 
 // ---------------------------------------------------------getGeo

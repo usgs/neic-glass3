@@ -67,9 +67,11 @@ class CNode {
 	 * for this node in kilometers
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometers
+	 * \param maxDepth - A double value containing the maximum trigger depth
+	 * in kilometers
 	 */
-	CNode(std::string name, double lat, double lon, double z,
-			double resolution);
+	CNode(std::string name, double lat, double lon, double z, double resolution,
+			double maxDepth);
 
 	/**
 	 * \brief CNode destructor
@@ -102,9 +104,11 @@ class CNode {
 	 * for this node in kilometers
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometers
+	 * \param maxDepth - A double value containing the maximum trigger depth
+	 * in kilometers
 	 */
 	bool initialize(std::string name, double lat, double lon, double z,
-					double resolution);
+					double resolution, double maxDepth);
 
 	/**
 	 * \brief CNode node-site and site-node linker
@@ -258,6 +262,13 @@ class CNode {
 	double getDepth() const;
 
 	/**
+	 * \brief Get the maximum depth for triggers made at this node
+	 * \return Returns a double containing the maximum depth for triggers made
+	 * in kilometers
+	 */
+	double getMaxDepth() const;
+
+	/**
 	 * \brief Get the combined node location (latitude, longitude, depth) as
 	 * a CGeo object
 	 * \return Returns a glass3::util::Geo object containing the combined location.
@@ -325,6 +336,12 @@ class CNode {
 	 * \brief A double value containing this node's depth in kilometers.
 	 */
 	std::atomic<double> m_dDepth;
+
+	/**
+	 * \brief A double value containing this node's maximum trigger depth in
+	 * kilometers.
+	 */
+	std::atomic<double> m_dMaxDepth;
 
 	/**
 	 * \brief A double value containing this node's spatial resolution

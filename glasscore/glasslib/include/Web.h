@@ -561,6 +561,11 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	std::atomic<double> m_dMaxDepth;
 
 	/**
+	 * \brief A double which describes the web depth layer resolution
+	 **/
+	std::atomic<double> m_dDepthResolution;
+
+	/**
 	 * \brief A boolean flag that stores whether to update this web when a
 	 * station has changed.
 	 */

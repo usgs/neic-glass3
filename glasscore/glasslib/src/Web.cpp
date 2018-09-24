@@ -79,6 +79,7 @@ void CWeb::clear() {
 	m_iNucleationDataThreshold = 5;
 	m_dNucleationStackThreshold = 2.5;
 	m_dNodeResolution = 100;
+	m_dDepthResolution = 100;
 	m_sName = "Nemo";
 	m_pSiteList = NULL;
 	m_bUpdate = false;
@@ -221,6 +222,17 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 				"CWeb::generateGlobalGrid: Missing required DepthLayers Array.");
 		return (false);
 	}
+
+	// generate depth resolution
+	// get the deepest layer
+	double maxZ = -1000;
+	for (auto z : depthLayerArray) {
+		if (z > maxZ) {
+			maxZ = z;
+		}
+	}
+	// calculate depth resolution
+	m_dDepthResolution = maxZ / numDepthLayers;
 
 	// calculate the number of nodes from the desired resolution
 	// using a function that was empirically determined via using different
@@ -405,6 +417,17 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 				"CWeb::generateLocalGrid: Missing required DepthLayers Array.");
 		return (false);
 	}
+
+	// generate depth resolution
+	// get the deepest layer
+	double maxZ = -1000;
+	for (auto z : depthLayerArray) {
+		if (z > maxZ) {
+			maxZ = z;
+		}
+	}
+	// calculate depth resolution
+	m_dDepthResolution = maxZ / numDepthLayers;
 
 	// the number of rows in this generateLocalGrid
 	if (((*gridConfiguration).HasKey("NumberOfRows"))
@@ -625,6 +648,19 @@ bool CWeb::generateExplicitGrid(
 		glass3::util::Logger::log(
 				"error",
 				"CWeb::generateExplicitGrid: Missing required NodeList Key.");
+		return (false);
+	}
+
+	// the depth resolution for this explicit grid
+	if (((*gridConfiguration).HasKey("DepthResolution"))
+			&& ((*gridConfiguration)["DepthResolution"].GetType()
+					== json::ValueType::DoubleVal)) {
+		m_dDepthResolution = (*gridConfiguration)["DepthResolution"].ToDouble();
+	} else {
+		glassutil::CLogit::log(
+				glassutil::log_level::error,
+				"CWeb::generateExplicitGrid: Missing required DepthResolution "
+				"Key.");
 		return (false);
 	}
 
@@ -1225,7 +1261,8 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 	}
 
 	// create node
-	std::shared_ptr<CNode> node(new CNode(m_sName, lat, lon, z, resol));
+	std::shared_ptr<CNode> node(
+			new CNode(m_sName, lat, lon, z, resol, (z + m_dDepthResolution)));
 
 	// set parent web
 	node->setWeb(this);
