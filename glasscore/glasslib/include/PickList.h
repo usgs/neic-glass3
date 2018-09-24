@@ -279,6 +279,18 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_PickListMutex;
+
+	/**
+	 * \brief A shared_ptr to a pick used to represent the lower value in
+	 * getPicks() calls
+	 */
+	std::shared_ptr<CPick> m_LowerValue;
+
+	/**
+	 * \brief A shared_ptr to a pick used to represent the upper value in
+	 * getPicks() calls
+	 */
+	std::shared_ptr<CPick> m_UpperValue;
 };
 }  // namespace glasscore
 #endif  // PICKLIST_H

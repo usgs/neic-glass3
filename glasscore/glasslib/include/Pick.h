@@ -234,7 +234,7 @@ class CPick {
 	 * \brief Get the sorting time for this pick
 	 * \return Returns an int64_t containing the pick sort time in julian seconds
 	 */
-	int64_t getTSort() const;
+	double getTSort() const;
 
 	/**
 	 * \brief Set the sorting time for this pick
@@ -314,7 +314,7 @@ class CPick {
 	 * tSort to equal the current tPick, and then reinserting the pick into
 	 * the internal multiset. /see PickList.
 	 */
-	std::atomic<int64_t> m_tSort;
+	std::atomic<double> m_tSort;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CPick.

@@ -56,6 +56,15 @@ void CPickList::clear() {
 	// reset nPick
 	m_iCountOfTotalPicksProcessed = 0;
 	m_iMaxAllowablePickCount = 10000;
+
+	// init the upper and lower values
+	std::shared_ptr<CSite> nullSite;
+	if (m_LowerValue == NULL) {
+		m_LowerValue = std::make_shared<CPick>(nullSite, 0, "lower", 0, 0);
+	}
+	if (m_UpperValue == NULL) {
+		m_UpperValue = std::make_shared<CPick>(nullSite, 0, "upper", 0, 0);
+	}
 }
 
 // -------------------------------------------------------receiveExternalMessage
@@ -186,6 +195,14 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 			if (hypo != NULL) {
 				CGlass::getHypoList()->appendToHypoProcessingQueue(hypo);
 			}
+
+			glassutil::CLogit::log(
+					glassutil::log_level::warn,
+					"CPickList::addPick: Updated existing pick.");
+		} else {
+			glassutil::CLogit::log(
+					glassutil::log_level::warn,
+					"CPickList::addPick: Duplicate pick not passed in.");
 		}
 
 		// delete new pick
@@ -259,17 +276,18 @@ std::vector<std::weak_ptr<CPick>> CPickList::getPicks(double t1, double t2) {
 		t1 = temp;
 	}
 
-	std::shared_ptr<CSite> nullSite;
+	// nullcheck
+	if ((m_LowerValue == NULL) || (m_UpperValue == NULL)) {
+		return (picks);
+	}
 
-	// construct the lower bound value. std::multiset requires
+	// set the lower bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> lowerValue = std::make_shared<CPick>(nullSite, t1,
-																"", 0, 0);
+	m_LowerValue->setTSort(t1);
 
-	// construct the upper bound value. std::multiset requires
+	// set the upper bound value. std::multiset requires
 	// that this be in the form of a std::shared_ptr<CPick>
-	std::shared_ptr<CPick> upperValue = std::make_shared<CPick>(nullSite, t2,
-																"", 0, 0);
+	m_UpperValue->setTSort(t2);
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
@@ -280,9 +298,9 @@ std::vector<std::weak_ptr<CPick>> CPickList::getPicks(double t1, double t2) {
 
 	// get the bounds for this window
 	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator lower =
-			m_msPickList.lower_bound(lowerValue);
+			m_msPickList.lower_bound(m_LowerValue);
 	std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator upper =
-			m_msPickList.upper_bound(upperValue);
+			m_msPickList.upper_bound(m_UpperValue);
 
 	// found nothing
 	if (lower == m_msPickList.end()) {
@@ -589,8 +607,8 @@ void CPickList::updatePosition(std::shared_ptr<CPick> pick) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_PickListMutex);
 
 	// from my research, the best way to "update" the position of an item
-	// in a multiset when the key value has changed (in this case, the hypo
-	// origin time) is to remove and re-add the item. This will give us O(log n)
+	// in a multiset when the key value has changed (in this case, the pick
+	// time) is to remove and re-add the item. This will give us O(log n)
 	// complexity for updating one item, which is better than a full sort
 	// (which I'm not really sure how to do on a multiset)
 	// erase
@@ -603,7 +621,7 @@ void CPickList::updatePosition(std::shared_ptr<CPick> pick) {
 	m_msPickList.insert(pick);
 }
 
-// ---------------------------------------------------------updatePosition
+// ---------------------------------------------------------eraseFromMultiset
 void CPickList::eraseFromMultiset(std::shared_ptr<CPick> pick) {
 	// nullchecks
 	if (pick == NULL) {
@@ -620,10 +638,8 @@ void CPickList::eraseFromMultiset(std::shared_ptr<CPick> pick) {
 	// we need to be careful, because multiple hypos in the mulitset
 	// can have the same tSort, and a simple erase would delete
 	// them all, which would be BAD, so we need to confirm the id
-	auto lower =
-			m_msPickList.lower_bound(pick);
-	auto upper =
-			m_msPickList.upper_bound(pick);
+	auto lower = m_msPickList.lower_bound(pick);
+	auto upper = m_msPickList.upper_bound(pick);
 
 	// for all matching (tSort range) hypos
 	for (auto it = lower; ((it != upper) && (it != m_msPickList.end())); ++it) {

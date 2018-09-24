@@ -507,29 +507,31 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 	if (tRes1 > 0) {
 		// calculate the PDF based on the number of SDs we are from mean, by
 		// allowing for WEb Resolution slop converted to seconds
-		dSig1 = glassutil::GlassMath::sig(
-				std::max(
-						0.0,
-						(tRes1
-								- travelTime1 / distDeg
-										* (m_dResolution
-												+ NUC_DEPTH_SHELL_RESOLUTION_KM)  // NOLINT
-										* KM2DEG)),
-				//  * FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO)),  // NOLINT
-				NUC_SECONDS_PER_SIGMA);
+		dSig1 =
+				glassutil::GlassMath::sig(
+						std::max(
+								0.0,
+								(tRes1
+										- travelTime1 / distDeg
+												* (m_dResolution
+														+ NUC_DEPTH_SHELL_RESOLUTION_KM)  // NOLINT
+												* KM2DEG
+												* FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO)),  // NOLINT
+						NUC_SECONDS_PER_SIGMA);
 	}
 	double dSig2 = 0;
 	if (tRes2 > 0) {
-		dSig2 = glassutil::GlassMath::sig(
-				std::max(
-						0.0,
-						(tRes2
-								- travelTime2 / distDeg
-										* (m_dResolution
-												+ NUC_DEPTH_SHELL_RESOLUTION_KM)  // NOLINT
-										* KM2DEG)),
-				//  * FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO)),  // NOLINT
-				NUC_SECONDS_PER_SIGMA);
+		dSig2 =
+				glassutil::GlassMath::sig(
+						std::max(
+								0.0,
+								(tRes2
+										- travelTime2 / distDeg
+												* (m_dResolution
+														+ NUC_DEPTH_SHELL_RESOLUTION_KM)  // NOLINT
+												* KM2DEG
+												* FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO)),  // NOLINT
+						NUC_SECONDS_PER_SIGMA);
 	}
 
 	// return the higher of the two significances

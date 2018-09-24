@@ -535,13 +535,13 @@ void CPick::setTPick(double tPick) {
 }
 
 // --------------------------------------------------getTSort
-int64_t CPick::getTSort() const {
+double CPick::getTSort() const {
 	return (m_tSort);
 }
 
 // --------------------------------------------------setTSort
 void CPick::setTSort(double newTSort) {
-	m_tSort = std::floor(newTSort);
+	m_tSort = newTSort;
 }
 
 }  // namespace glasscore
