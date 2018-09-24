@@ -196,7 +196,7 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 		hypo->setNucleationStackThreshold(
 				CGlass::getNucleationStackThreshold());
 
-		// process hypo using evolve
+		// process hypo using hypolist
 		if (CGlass::getHypoList()->processHypo(hypo)) {
 			// add to hypo list
 			CGlass::getHypoList()->addHypo(hypo);

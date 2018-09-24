@@ -343,7 +343,7 @@ glass3::util::WorkState CHypoList::work() {
 		// log the hypo we're working on
 		glassutil::CLogit::log(
 				glassutil::log_level::debug,
-				"CHypoList::darwin Processing Hypo sPid:" + hyp->getID()
+				"CHypoList::work Processing Hypo sPid:" + hyp->getID()
 						+ " Cycle:" + std::to_string(hyp->getProcessCount())
 						+ " Fifo Size:"
 						+ std::to_string(getHypoProcessingQueueLength()));
@@ -354,7 +354,7 @@ glass3::util::WorkState CHypoList::work() {
 			// log
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
-					"CHypoList::darwin canceling sPid:" + hyp->getID()
+					"CHypoList::work canceling sPid:" + hyp->getID()
 							+ " processCount:"
 							+ std::to_string(hyp->getTotalProcessCount()));
 
@@ -371,7 +371,7 @@ glass3::util::WorkState CHypoList::work() {
 			// log
 			glassutil::CLogit::log(
 					glassutil::log_level::debug,
-					"CHypoList::darwin skipping sPid:" + hyp->getID()
+					"CHypoList::work skipping sPid:" + hyp->getID()
 							+ " at cycle limit:"
 							+ std::to_string(hyp->getProcessCount())
 							+ +" processCount:"
@@ -389,7 +389,7 @@ glass3::util::WorkState CHypoList::work() {
 	} catch (const std::exception &e) {
 		glassutil::CLogit::log(
 				glassutil::log_level::error,
-				"CHypoList::processHypos: Exception during work(): "
+				"CHypoList::work: Exception during processing: "
 						+ std::string(e.what()));
 		return (glass3::util::WorkState::Error);
 	}
@@ -832,13 +832,14 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
-			// check to see if aHypo is locked
-			if (aHypo->isLockedForProcessing()) {
+			// try to lock for this scope
+			std::unique_lock<std::mutex> lock(aHypo->getProcessingMutex(),
+												std::try_to_lock);
+			if (!lock.owns_lock()) {
+				// we don't have this hypo locked
+				// move on
 				continue;
 			}
-
-			// lock aHypo so it doesn't change while we're considering it
-			std::lock_guard<std::mutex> hypoGuard(aHypo->getProcessingMutex());
 
 			snprintf(
 					sLog, sizeof(sLog),
@@ -859,14 +860,6 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				fromHypo = aHypo;
 			}
 
-			// get picks
-			auto fromPicks = fromHypo->getPickData();
-			auto toPicks = toHypo->getPickData();
-
-			// get bayes values
-			double fromBayes = fromHypo->getBayesValue();
-			double toBayes = toHypo->getBayesValue();
-
 			// get geo objects
 			glassutil::CGeo fromGeo;
 			fromGeo.setGeographic(fromHypo->getLatitude(),
@@ -885,6 +878,14 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 
+			// get picks
+			auto fromPicks = fromHypo->getPickData();
+			auto toPicks = toHypo->getPickData();
+
+			// get bayes values
+			double fromBayes = fromHypo->getBayesValue();
+			double toBayes = toHypo->getBayesValue();
+
 			// Log info on two events
 			snprintf(
 					sLog,
@@ -898,8 +899,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			glassutil::CLogit::log(sLog);
 
 			snprintf(
-					sLog,
-					sizeof(sLog),
+					sLog, sizeof(sLog),
 					"CHypoList::findAndMergeMatchingHypos: toHypo:%s lat:%.3f, "
 					"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d\n",
 					toHypo->getID().c_str(), toHypo->getLatitude(),
@@ -948,12 +948,12 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				// we've merged a hypo, move on to the next candidate
 				merged = true;
 			} else if (newBayes >= toBayes * 0.99) {  // protect against rounding
-				// error or minor issue in location?
-				// the new Hypo is at least as good as the old toHypo but it
-				// hasn't improved significantly. This could be because either
-				// from Hypo has a subset of the picks of the toHypo, or because
-				// the two hypos are unrelated and share no picks. Resolve
-				// duplicate picks and see if the weaker hypo can still stand.
+			// error or minor issue in location?
+			// the new Hypo is at least as good as the old toHypo but it
+			// hasn't improved significantly. This could be because either
+			// from Hypo has a subset of the picks of the toHypo, or because
+			// the two hypos are unrelated and share no picks. Resolve
+			// duplicate picks and see if the weaker hypo can still stand.
 				if (resolveData(toHypo)) {
 					// relocate the toHypo if we resolved to get an updated
 					// bayes value
