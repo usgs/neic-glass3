@@ -94,14 +94,22 @@ TEST(PickListTest, PickOperations) {
 	// test adding picks by addPick and dispatch
 	testPickList->addPick(pickJSON);
 	testPickList->receiveExternalMessage(pick3JSON);
+
+	// give time for work
+	std::this_thread::sleep_for(std::chrono::seconds(1));
+
 	int expectedSize = 2;
-	ASSERT_EQ(expectedSize, testPickList->getCountOfTotalPicksProcessed())<< "Added Picks";
+	ASSERT_EQ(expectedSize, testPickList->getCountOfTotalPicksProcessed())<<
+			"Added Picks";
 
 	// add more picks
 	testPickList->addPick(pick2JSON);
 	testPickList->addPick(pick4JSON);
 	testPickList->addPick(pick5JSON);
 	testPickList->addPick(pick6JSON);
+
+	// give time for work
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 
 	// check to make sure the size isn't any larger than our max
 	expectedSize = MAXNPICK;

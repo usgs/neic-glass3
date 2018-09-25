@@ -265,7 +265,7 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * \brief A std::queue containing a std::shared_ptr to each pick in that
 	 * needs to be processed
 	 */
-	std::queue<std::shared_ptr<CPick>> m_qPicksToProcess;
+	std::queue<std::shared_ptr<json::Object>> m_qPicksToProcess;
 
 	/**
 	 * \brief the std::mutex for m_qPicksToProcess

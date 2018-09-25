@@ -18,7 +18,6 @@
 #include "SiteList.h"
 #include "HypoList.h"
 
-
 namespace glasscore {
 
 // ---------------------------------------------------------CPickList
@@ -97,14 +96,14 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// null check json
 	if (pick == NULL) {
 		glass3::util::Logger::log("error",
-								"CPickList::addPick: NULL json pick.");
+									"CPickList::addPick: NULL json pick.");
 		return (false);
 	}
 
 	// null check pSiteList
 	if (m_pSiteList == NULL) {
 		glass3::util::Logger::log("error",
-								"CPickList::addPick: NULL pSiteList.");
+									"CPickList::addPick: NULL pSiteList.");
 		return (false);
 	}
 
@@ -132,8 +131,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	} else {
 		// no command or type
 		glass3::util::Logger::log(
-				"error",
-				"CPickList::addPick: Missing required Cmd/Type Key.");
+				"error", "CPickList::addPick: Missing required Cmd/Type Key.");
 		return (false);
 	}
 
@@ -142,8 +140,9 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	int queueSize = m_qPicksToProcess.size();
 	m_PicksToProcessMutex.unlock();
 
-	while (queueSize >= (getNumThreads() * CGlass::iMaxQueueLenPerThreadFactor)) {
-		/* glass3::util::Logger::log("debug",
+	// don't let the queue get too large
+	while (queueSize >= 1000) {
+		/* glassutil::CLogit::log(glassutil::log_level::debug,
 		 "CPickList::addPick. Delaying work due to "
 		 "PickList process queue size."); */
 
@@ -156,107 +155,10 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		m_PicksToProcessMutex.unlock();
 	}
 
-	// create new pick from json message
-	CPick * newPick = new CPick(pick, m_pSiteList);
-
-	// check to see if we got a valid pick
-	if ((newPick->getSite() == NULL) || (newPick->getTPick() == 0)
-			|| (newPick->getID() == "")) {
-		// cleanup
-		delete (newPick);
-		// message was processed
-		return (true);
-	}
-
-	// check if pick is duplicate, if pGlass exists
-	std::shared_ptr<CPick> existingPick = getDuplicate(
-			newPick->getTPick(), newPick->getSite()->getSCNL(),
-			CGlass::getPickDuplicateTimeWindow());
-
-	// it is a duplicate
-	if (existingPick != NULL) {
-		// do we allow updates (latest pick wins rather than
-		// first pick wins)
-		if (CGlass::getAllowPickUpdates()) {
-			// update exiting pick, we update rather than replace
-			// because the pick might be linked to a hypo
-			existingPick->initialize(existingPick->getSite(),
-										newPick->getTPick(), newPick->getID(),
-										newPick->getBackAzimuth(),
-										newPick->getSlowness());
-
-			// update the position of the pick in the sort
-			updatePosition(existingPick);
-
-			// if the pick was associated to a hypo,
-			// reprocess that hypo
-			std::shared_ptr<CHypo> hypo = existingPick->getHypoReference();
-			if (hypo != NULL) {
-				CGlass::getHypoList()->appendToHypoProcessingQueue(hypo);
-			}
-
-			glass3::util::Logger::log(
-					"warning",
-					"CPickList::addPick: Updated existing pick.");
-		} else {
-			glass3::util::Logger::log(
-					"warning",
-					"CPickList::addPick: Duplicate pick not passed in.");
-		}
-
-		// delete new pick
-		delete (newPick);
-		// message was processed
-		return (true);
-	}
-
-	// create new shared pointer to this pick
-	std::shared_ptr<CPick> pck(newPick);
-
-	m_iCountOfTotalPicksProcessed++;
-
-	// get maximum number of picks
-	// use max picks from pGlass if we have it
-	if (CGlass::getMaxNumPicks() > 0) {
-		m_iMaxAllowablePickCount = CGlass::getMaxNumPicks();
-	}
-
-	// lock while we're modifying the multiset
-	m_PickListMutex.lock();
-
-	// check to see if we're at the pick limit
-	if (m_msPickList.size() >= m_iMaxAllowablePickCount) {
-		std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator oldest =
-				m_msPickList.begin();
-
-		// find first pick in multiset
-		std::shared_ptr<CPick> oldestPick = *oldest;
-
-		// remove from site specific pick list
-		oldestPick->getSite()->removePick(oldestPick);
-
-		// remove from from multiset
-		m_msPickList.erase(oldest);
-	}
-
-	// add to site specific pick list
-	pck->getSite()->addPick(pck);
-
-	// add to multiset
-	m_msPickList.insert(pck);
-
-	// done modifying the multiset
-	m_PickListMutex.unlock();
-
-	// wait until there's space in the queue
-	// we don't want to build up a huge queue of unprocessed
-	// picks
-	if (CGlass::getHypoList()) {
-		// add pick to processing list
-		m_PicksToProcessMutex.lock();
-		m_qPicksToProcess.push(pck);
-		m_PicksToProcessMutex.unlock();
-	}
+	// add pick to processing list, work() will do the rest
+	m_PicksToProcessMutex.lock();
+	m_qPicksToProcess.push(pick);
+	m_PicksToProcessMutex.unlock();
 
 	// we're done, message was processed
 	return (true);
@@ -401,15 +303,14 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	// null check
 	if (hyp == NULL) {
-		glass3::util::Logger::log("error",
-								"CPickList::scavenge: NULL CHypo provided.");
+		glass3::util::Logger::log(
+				"error", "CPickList::scavenge: NULL CHypo provided.");
 		return (false);
 	}
 
 	char sLog[1024];
 
-	glass3::util::Logger::log("debug",
-							"CPickList::scavenge. " + hyp->getID());
+	glass3::util::Logger::log("debug", "CPickList::scavenge. " + hyp->getID());
 
 	// Calculate range for possible associations
 	double sdassoc = CGlass::getAssociationSDCutoff();
@@ -497,8 +398,8 @@ glass3::util::WorkState CPickList::work() {
 			> (CGlass::getHypoList()->getNumThreads()
 					* CGlass::iMaxQueueLenPerThreadFactor)) {
 		glass3::util::Logger::log("debug",
-								"CPickList::work. Delaying work due to "
-								"HypoList process queue size.");
+									"CPickList::work. Delaying work due to "
+									"HypoList process queue size.");
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}
@@ -506,7 +407,7 @@ glass3::util::WorkState CPickList::work() {
 	// lock for queue access
 	m_PicksToProcessMutex.lock();
 
-	// are there any jobs
+	// are there any picks to process
 	if (m_qPicksToProcess.empty() == true) {
 		// unlock and skip until next time
 		m_PicksToProcessMutex.unlock();
@@ -516,29 +417,118 @@ glass3::util::WorkState CPickList::work() {
 	}
 
 	// get the next pick
-	std::shared_ptr<CPick> pck = m_qPicksToProcess.front();
+	std::shared_ptr<json::Object> jsonPick = m_qPicksToProcess.front();
 	m_qPicksToProcess.pop();
 
 	// done with queue
 	m_PicksToProcessMutex.unlock();
 
 	// check the pick
-	if (pck == NULL) {
+	if (jsonPick == NULL) {
 		// on to the next loop
 		return (glass3::util::WorkState::Idle);
 	}
 
+	// create new pick from json message
+	CPick * newPick = new CPick(jsonPick, m_pSiteList);
+
+	// check to see if we got a valid pick
+	if ((newPick->getSite() == NULL) || (newPick->getTPick() == 0)
+			|| (newPick->getID() == "")) {
+		// cleanup
+		delete (newPick);
+
+		// message was processed
+		return (glass3::util::WorkState::OK);
+	}
+
+	// create new shared pointer to this pick
+	std::shared_ptr<CPick> pick(newPick);
+
+	// check if pick is duplicate
+	std::shared_ptr<CPick> existingPick = getDuplicate(
+			pick->getTPick(), pick->getSite()->getSCNL(),
+			CGlass::getPickDuplicateTimeWindow());
+
+	// it is a duplicate
+	if (existingPick != NULL) {
+		// do we allow updates (latest pick wins rather than
+		// first pick wins)
+		if (CGlass::getAllowPickUpdates()) {
+			// update exiting pick, we update rather than replace
+			// because the pick might be linked to a hypo
+			existingPick->initialize(existingPick->getSite(), pick->getTPick(),
+										pick->getID(), pick->getBackAzimuth(),
+										pick->getSlowness());
+
+			// update the position of the pick in the sort
+			updatePosition(existingPick);
+
+			// if the pick was associated to a hypo,
+			// reprocess that hypo
+			std::shared_ptr<CHypo> hypo = existingPick->getHypoReference();
+			if (hypo != NULL) {
+				CGlass::getHypoList()->appendToHypoProcessingQueue(hypo);
+			}
+
+			glass3::util::Logger::log(
+					"warning", "CPickList::work: Updated existing pick.");
+		} else {
+			glass3::util::Logger::log(
+					"warning",
+					"CPickList::work: Duplicate pick not passed in.");
+		}
+
+		// we're done
+		return (glass3::util::WorkState::OK);
+	}
+
+	m_iCountOfTotalPicksProcessed++;
+
+	// get maximum number of picks
+	// use max picks from pGlass if we have it
+	if (CGlass::getMaxNumPicks() > 0) {
+		m_iMaxAllowablePickCount = CGlass::getMaxNumPicks();
+	}
+
+	// lock while we're modifying the multiset
+	m_PickListMutex.lock();
+
+	// check to see if we're at the pick limit
+	if (m_msPickList.size() >= m_iMaxAllowablePickCount) {
+		std::multiset<std::shared_ptr<CPick>, PickCompare>::iterator oldest =
+				m_msPickList.begin();
+
+		// find first pick in multiset
+		std::shared_ptr<CPick> oldestPick = *oldest;
+
+		// remove from site specific pick list
+		oldestPick->getSite()->removePick(oldestPick);
+
+		// remove from from multiset
+		m_msPickList.erase(oldest);
+	}
+
+	// add to site specific pick list
+	pick->getSite()->addPick(pick);
+
+	// add to multiset
+	m_msPickList.insert(pick);
+
+	// done modifying the multiset
+	m_PickListMutex.unlock();
+
 	// Attempt to associate the pick
-	CGlass::getHypoList()->associateData(pck);
+	CGlass::getHypoList()->associateData(pick);
 
 	// check to see if the pick is currently associated to a hypo
-	std::shared_ptr<CHypo> pHypo = pck->getHypoReference();
+	std::shared_ptr<CHypo> pHypo = pick->getHypoReference();
 	if (pHypo != NULL) {
 		// compute ratio
 		double adBayesRatio = (pHypo->getBayesValue())
 				/ (pHypo->getNucleationStackThreshold());
 
-		std::string pt = glass3::util::Date::encodeDateTime(pck->getTPick());
+		std::string pt = glass3::util::Date::encodeDateTime(pick->getTPick());
 
 		// check to see if the ratio is high enough to not bother
 		// NOTE: Hardcoded ratio threshold
@@ -546,7 +536,7 @@ glass3::util::WorkState CPickList::work() {
 			glass3::util::Logger::log(
 					"debug",
 					"CPickList::work(): SKIPNUC tPick:" + pt + "; idPick:"
-							+ pck->getID() + " due to "
+							+ pick->getID() + " due to "
 									"association with a hypo with stack twice "
 									"threshold ("
 							+ std::to_string(pHypo->getBayesValue()) + ")");
@@ -555,8 +545,8 @@ glass3::util::WorkState CPickList::work() {
 	}
 
 	// Attempt nucleation unless we were told not to.
-	if (bNucleateThisPick) {
-		pck->nucleate();
+	if (bNucleateThisPick == true) {
+		pick->nucleate();
 	}
 
 	// give up some time at the end of the loop
