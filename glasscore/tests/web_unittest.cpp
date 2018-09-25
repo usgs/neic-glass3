@@ -5,11 +5,13 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+
+#include <logger.h>
+
 #include "Node.h"
 #include "Web.h"
 #include "Site.h"
 #include "SiteList.h"
-#include "Logit.h"
 
 #define TESTPATH "testdata"
 
@@ -73,7 +75,7 @@
 
 // tests to see if the web can be constructed
 TEST(WebTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// default constructor
 	glasscore::CWeb aWeb(NOTHREADS, 10, 10);
@@ -167,7 +169,7 @@ TEST(WebTest, Construction) {
 
 // tests to see if the web can be initialized
 TEST(WebTest, Initialize) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	printf("[ startup  ]\n");
 
@@ -224,7 +226,7 @@ TEST(WebTest, Initialize) {
 
 // test constructing a global grid
 TEST(WebTest, GlobalTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasename1 = std::string(PHASE1);
 	std::string phasename2 = std::string(PHASE2);
@@ -317,7 +319,7 @@ TEST(WebTest, GlobalTest) {
 // test creating a regional/local grid
 // NOTE: Need to check that grid boundries are as expected.
 TEST(WebTest, GridTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasename1 = std::string(PHASE1);
 	std::string phasename2 = std::string(PHASE2);
@@ -406,7 +408,7 @@ TEST(WebTest, GridTest) {
 
 // test creating an explcit grid
 TEST(WebTest, GridExplicitTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasename1 = std::string(PHASE1);
 
@@ -493,7 +495,7 @@ TEST(WebTest, GridExplicitTest) {
 
 // test adding a station to a grid
 TEST(WebTest, AddTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -552,7 +554,7 @@ TEST(WebTest, AddTest) {
 
 // test removing a station from a grid
 TEST(WebTest, RemoveTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -611,7 +613,7 @@ TEST(WebTest, RemoveTest) {
 
 // test various failure cases for web
 TEST(WebTest, FailTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	printf("[ startup  ]\n");
 

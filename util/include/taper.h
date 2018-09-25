@@ -7,29 +7,30 @@
 #ifndef TAPER_H
 #define TAPER_H
 
-namespace glassutil {
+namespace glass3 {
+namespace util {
 
 /**
  * \brief glassutil taper class
  *
- * The CTaper class represents a simple function used for averaging over an
+ * The Taper class represents a simple function used for averaging over an
  * interval. It uses a cosine based ramp up and ramp down at both ends for
  * stability.
  */
-class CTaper {
+class Taper {
  public:
 	/**
-	 * \brief CTaper constructor
+	 * \brief Taper constructor
 	 *
-	 * The constructor for the CTaper class.
+	 * The constructor for the Taper class.
 	 * Initializes members to default values.
 	 */
-	CTaper();
+	Taper();
 
 	/**
-	 * \brief CTaper constructor
+	 * \brief Taper constructor
 	 *
-	 * The constructor for the CTaper class.
+	 * The constructor for the Taper class.
 	 * Initializes members to provided values.
 	 *
 	 * \param x1 - A double value representing the start point of the averaging
@@ -40,21 +41,21 @@ class CTaper {
 	 * \param x4 - A double value representing the end point of the averaging
 	 * function
 	 */
-	CTaper(double x1, double x2, double x3, double x4);
+	Taper(double x1, double x2, double x3, double x4);
 
 	/**
-	 * \brief CTaper copy constructor
+	 * \brief Taper copy constructor
 	 *
-	 * The copy constructor for the CTaper class.
+	 * The copy constructor for the Taper class.
 	 */
-	CTaper(const CTaper &taper);
+	Taper(const Taper &taper);
 
 	/**
-	 * \brief CTaper destructor
+	 * \brief Taper destructor
 	 *
-	 * The destructor for the CTaper class.
+	 * The destructor for the Taper class.
 	 */
-	~CTaper();
+	~Taper();
 
 	/**
 	 * \brief Calculate the value of the function
@@ -69,29 +70,30 @@ class CTaper {
 	 * \param x - A double value to calculate the taper value from.
 	 * \return Returns a double value containing the calculated taper value.
 	 */
-	double Val(double x);
+	double calculateValue(double x);
 
 	/**
 	 * \brief A double value representing the start point of the averaging
 	 * function and cosine ramp up
 	 */
-	double dX1;
+	double m_dX1;
 
 	/**
 	 * \brief A double value representing the end of the cosine ramp up
 	 */
-	double dX2;
+	double m_dX2;
 
 	/**
 	 * \brief A double value representing the start of the cosine ramp down
 	 */
-	double dX3;
+	double m_dX3;
 
 	/**
 	 * \brief A double value representing the end point of the averaging
 	 * function and cosine ramp down
 	 */
-	double dX4;
+	double m_dX4;
 };
-}  // namespace glassutil
+}  // namespace util
+}  // namespace glass3
 #endif  // TAPER_H

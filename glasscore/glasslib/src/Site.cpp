@@ -1,4 +1,7 @@
+#include "Site.h"
 #include <json.h>
+#include <logger.h>
+#include <geo.h>
 #include <sstream>
 #include <cmath>
 #include <utility>
@@ -12,8 +15,6 @@
 #include <ctime>
 #include "Glass.h"
 #include "Pick.h"
-#include "Site.h"
-#include "Logit.h"
 #include "Node.h"
 #include "Trigger.h"
 #include "Hypo.h"
@@ -38,7 +39,7 @@ CSite::CSite(std::string sta, std::string comp, std::string net,
 CSite::CSite(std::shared_ptr<json::Object> site) {
 	// null check json
 	if (site == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSite::CSite: NULL json site.");
 		return;
 	}
@@ -49,13 +50,13 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 		std::string type = (*site)["Type"].ToString();
 
 		if (type != "StationInfo") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CSite::CSite: Non-StationInfo message passed in.");
 			return;
 		}
 	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSite::CSite: Missing required Type Key.");
 		return;
 	}
@@ -85,8 +86,8 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 				&& (siteobj["Station"].GetType() == json::ValueType::StringVal)) {
 			station = siteobj["Station"].ToString();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CSite::CSite: Missing required Station Key.");
 
 			return;
@@ -105,8 +106,8 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 				&& (siteobj["Network"].GetType() == json::ValueType::StringVal)) {
 			network = siteobj["Network"].ToString();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CSite::CSite: Missing required Network Key.");
 
 			return;
@@ -126,7 +127,7 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 			location = "";
 		}
 	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSite::CSite: Missing required Site Object.");
 
 		return;
@@ -137,7 +138,7 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 			&& ((*site)["Latitude"].GetType() == json::ValueType::DoubleVal)) {
 		latitude = (*site)["Latitude"].ToDouble();
 	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSite::CSite: Missing required Latitude Key.");
 
 		return;
@@ -148,8 +149,8 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 			&& ((*site)["Longitude"].GetType() == json::ValueType::DoubleVal)) {
 		longitude = (*site)["Longitude"].ToDouble();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CSite::CSite: Missing required Longitude Key.");
 
 		return;
@@ -160,8 +161,8 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 			&& ((*site)["Elevation"].GetType() == json::ValueType::DoubleVal)) {
 		elevation = (*site)["Elevation"].ToDouble();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CSite::CSite: Missing required Elevation Key.");
 
 		return;
@@ -212,7 +213,7 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	if (sta != "") {
 		m_sSCNL += sta;
 	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSite::initialize: missing sSite.");
 		return (false);
 	}
@@ -226,7 +227,7 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	if (net != "") {
 		m_sSCNL += "." + net;
 	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSite::initialize: missing sNet.");
 		return (false);
 	}
@@ -243,8 +244,9 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	m_sLocation = loc;
 
 	// set geographic location
-	// convert site elevation in meters to surface depth in km (invert the sign
-	// and then divide by 1000)
+	// convert site elevation in meters to surface depth in km
+	// (invert the sign to get positive (above earth radius)
+	// and then divide by 1000 (meters to km))
 	setLocation(lat, lon, -0.001 * elv);
 
 	// quality
@@ -279,7 +281,7 @@ void CSite::clear() {
 	m_dQuality = 1.0;
 
 	// clear geographic
-	m_Geo = glassutil::CGeo();
+	m_Geo = glass3::util::Geo();
 	m_daUnitVectors[0] = 0;
 	m_daUnitVectors[1] = 0;
 	m_daUnitVectors[2] = 0;
@@ -325,7 +327,7 @@ void CSite::update(CSite *aSite) {
 	m_dQuality = aSite->getQuality();
 
 	// update location
-	m_Geo = glassutil::CGeo(aSite->getGeo());
+	m_Geo = glass3::util::Geo(aSite->getGeo());
 	double vec[3];
 	aSite->getUnitVectors(vec);
 
@@ -362,14 +364,14 @@ void CSite::setLocation(double lat, double lon, double z) {
 	m_daUnitVectors[2] = sin(DEG2RAD * lat);
 
 	// set geographic object
-	m_Geo.setGeographic(lat, lon, 6371.0 - z);
+	m_Geo.setGeographic(lat, lon, EARTHRADIUSKM - z);
 }
 
 // ---------------------------------------------------------getDelta
-double CSite::getDelta(glassutil::CGeo *geo2) {
+double CSite::getDelta(glass3::util::Geo *geo2) {
 	// nullcheck
 	if (geo2 == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CSite::getDelta: NULL CGeo provided.");
 		return (0);
 	}
@@ -382,7 +384,7 @@ double CSite::getDelta(glassutil::CGeo *geo2) {
 double CSite::getDistance(std::shared_ptr<CSite> site) {
 	// nullcheck
 	if (site == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CSite::getDistance: NULL CSite provided.");
 		return (0);
 	}
@@ -407,15 +409,15 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 
 	// nullcheck
 	if (pck == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CSite::addPick: NULL CPick provided.");
 		return;
 	}
 
 	// ensure this pick is for this site
 	if (pck->getSite()->m_sSCNL != m_sSCNL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
+		glass3::util::Logger::log(
+				"warning",
 				"CSite::addPick: CPick for different site: (" + m_sSCNL + "!="
 						+ pck->getSite()->m_sSCNL + ")");
 		return;
@@ -435,7 +437,7 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 void CSite::removePick(std::shared_ptr<CPick> pck) {
 	// nullcheck
 	if (pck == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CSite::removePick: NULL CPick provided.");
 		return;
 	}
@@ -541,14 +543,14 @@ void CSite::addNode(std::shared_ptr<CNode> node, double distDeg,
 
 	// nullcheck
 	if (node == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CSite::addNode: NULL CNode provided.");
 		return;
 	}
 	// check travel times
 	/*
 	 if ((travelTime1 < 0) && (travelTime2 < 0)) {
-	 glassutil::CLogit::log(glassutil::log_level::error,
+	 glass3::util::Logger::log("error",
 	 "CSite::addNode: No valid travel times.");
 	 return;
 	 }
@@ -568,7 +570,7 @@ void CSite::removeNode(std::string nodeID) {
 
 	// nullcheck
 	if (nodeID == "") {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CSite::removeNode: empty web name provided.");
 		return;
 	}
@@ -669,8 +671,8 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 		}
 
 		if ((tOrigin1 < 0) && (tOrigin2 < 0)) {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CSite::nucleate: " + m_sSCNL + " No valid travel times. ("
 							+ std::to_string(travelTime1) + ", "
 							+ std::to_string(travelTime2) + ") web: "
@@ -761,7 +763,7 @@ void CSite::setQuality(double qual) {
 }
 
 // ---------------------------------------------------------getGeo
-glassutil::CGeo &CSite::getGeo() {
+glass3::util::Geo &CSite::getGeo() {
 	return (m_Geo);
 }
 
@@ -872,8 +874,8 @@ void CSite::eraseFromMultiset(std::shared_ptr<CPick> pick) {
 		}
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::warn,
+	glass3::util::Logger::log(
+			"warning",
 			"CSite::eraseFromMultiset: efficient delete for pick "
 					+ pick->getID() + " didn't work.");
 
@@ -890,8 +892,8 @@ void CSite::eraseFromMultiset(std::shared_ptr<CPick> pick) {
 		}
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::error,
+	glass3::util::Logger::log(
+			"error",
 			"CSite::eraseFromMultiset: did not delete pick " + pick->getID()
 					+ " in multiset, id not found.");
 }

@@ -2,10 +2,13 @@
 #include <memory>
 #include <string>
 #include <cmath>
+
+#include <logger.h>
+#include <geo.h>
+
 #include "Site.h"
 #include "Pick.h"
 #include "Node.h"
-#include "Logit.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
 #define SITE2JSON "{\"Type\":\"StationInfo\",\"Elevation\":1342.000000,\"Latitude\":46.711330,\"Longitude\":-111.831200,\"Site\":{\"Station\":\"HRY\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
@@ -20,7 +23,7 @@
 #define ELEVATION 2326.000000
 #define QUALITY 1.0
 #define GEOCENTRIC_LATITUDE 45.628982
-#define GEOCENTRID_ELEVATION 4555.822336
+#define GEOCENTRID_ELEVATION 6373.326
 #define SITE2DISTANCE 109.66700963282658
 #define SITE2DELTA 0.017241728546897175
 #define USE true
@@ -58,20 +61,20 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 
 	// check latitude
-	double sitelatitude = siteobject->getGeo().dLat;
+	double sitelatitude = siteobject->getGeo().m_dGeocentricLatitude;
 	// NOTE: expected latitude is in geocentric coordinates
 	double expectedlatitude = GEOCENTRIC_LATITUDE;
 	ASSERT_NEAR(sitelatitude, expectedlatitude, 0.000001);
 
 	// check longitude
-	double sitelongitude = siteobject->getGeo().dLon;
+	double sitelongitude = siteobject->getGeo().m_dGeocentricLongitude;
 	// NOTE: expected longitude is the same in geocentric and geographic
 	// coordinates
 	double expectedlongitude = LONGITUDE;
 	ASSERT_NEAR(sitelongitude, expectedlongitude, 0.000001);
 
 	// check elevation
-	double siteelevation = siteobject->getGeo().dZ;
+	double siteelevation = siteobject->getGeo().m_dGeocentricRadius;
 	// NOTE: expected elevation is in geocentric coordinates
 	double expectedelevation = GEOCENTRID_ELEVATION;
 	ASSERT_NEAR(siteelevation, expectedelevation, 0.000001);
@@ -94,7 +97,7 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 
 // tests to see if the site can be constructed
 TEST(SiteTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a site
 	glasscore::CSite * testSite = new glasscore::CSite();
@@ -112,9 +115,12 @@ TEST(SiteTest, Construction) {
 	ASSERT_EQ(1, testSite->getQuality())<< "dQual one";
 
 	// geographic
-	ASSERT_EQ(0, testSite->getGeo().dLat)<< "geo.dLat 0";
-	ASSERT_EQ(0, testSite->getGeo().dLon)<< "geo.dLon 0";
-	ASSERT_EQ(0, testSite->getGeo().dZ)<< "geo.dZ 0";
+	ASSERT_EQ(0, testSite->getGeo().m_dGeocentricLatitude)<<
+			"geo.m_dGeocentricLatitude 0";
+	ASSERT_EQ(0, testSite->getGeo().m_dGeocentricLongitude)<<
+			"geo.m_dGeocentricLongitude 0";
+	ASSERT_EQ(0, testSite->getGeo().m_dGeocentricRadius)<<
+			"geo.m_dGeocentricRadius 0";
 
 	// lists
 	ASSERT_EQ(0, testSite->getNodeLinksCount())<< "vNode.size() 0";
@@ -136,7 +142,7 @@ TEST(SiteTest, Construction) {
 
 // tests to see if the site can be constructed from JSON
 TEST(SiteTest, JSONConstruction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -154,7 +160,7 @@ TEST(SiteTest, JSONConstruction) {
 
 // tests to see if the distance functions are working
 TEST(SiteTest, Distance) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -180,7 +186,7 @@ TEST(SiteTest, Distance) {
 
 // tests to see if picks can be added to and removed from the site
 TEST(SiteTest, PickOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -270,7 +276,7 @@ TEST(SiteTest, PickOperations) {
 
 // tests to see if nodes can be added to and removed from the site
 TEST(SiteTest, NodeOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(

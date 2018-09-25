@@ -5,14 +5,15 @@
 #include <iostream>
 #include <fstream>
 
+#include <logger.h>
+
 #include "Site.h"
 #include "SiteList.h"
 #include "Hypo.h"
 #include "HypoList.h"
 #include "Pick.h"
-#include "Logit.h"
 #include "Glass.h"
-#include "logger.h"
+
 
 #define TESTPATH "testdata"
 #define MERGE1FILENAME "merge1.json"
@@ -37,7 +38,7 @@
 
 // test to see if the hypolist can be constructed
 TEST(HypoListTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a hypolist
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();
@@ -52,7 +53,7 @@ TEST(HypoListTest, Construction) {
 
 // test various hypo operations
 TEST(HypoListTest, HypoOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create hypo objects
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -144,7 +145,7 @@ TEST(HypoListTest, HypoOperations) {
 // test process
 TEST(HypoListTest, ProcessTest) {
 	//glass3::util::log_init("processtest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -263,7 +264,7 @@ TEST(HypoListTest, ProcessTest) {
 // test process
 TEST(HypoListTest, AssociateTest) {
 	// glass3::util::log_init("assoctest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -399,7 +400,7 @@ TEST(HypoListTest, AssociateTest) {
 // test process
 TEST(HypoListTest, WorkTest) {
 	//glass3::util::log_init("assoctest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -508,7 +509,7 @@ TEST(HypoListTest, WorkTest) {
 
 // test various failure cases
 TEST(HypoListTest, FailTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a hypolist
 	glasscore::CHypoList * testHypoList = new glasscore::CHypoList();

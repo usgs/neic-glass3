@@ -1,13 +1,13 @@
+#include "Trigger.h"
+#include <logger.h>
+#include <geo.h>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 #include <mutex>
 #include <algorithm>
-#include "Trigger.h"
 #include "Pick.h"
-#include "Logit.h"
-#include "Geo.h"
 
 namespace glasscore {
 
@@ -92,8 +92,8 @@ double CTrigger::getTOrigin() const {
 }
 
 // ---------------------------------------------------------getGeo
-glassutil::CGeo CTrigger::getGeo() const {
-	glassutil::CGeo geoTrigger;
+glass3::util::Geo CTrigger::getGeo() const {
+	glass3::util::Geo geoTrigger;
 	geoTrigger.setGeographic(m_dLatitude, m_dLongitude,
 								EARTHRADIUSKM - m_dDepth);
 	return (geoTrigger);

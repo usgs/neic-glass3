@@ -1,4 +1,8 @@
+#include "CorrelationList.h"
 #include <json.h>
+#include <date.h>
+#include <logger.h>
+#include <geo.h>
 #include <string>
 #include <utility>
 #include <memory>
@@ -6,19 +10,14 @@
 #include <set>
 #include <vector>
 #include <algorithm>
-#include "Date.h"
-#include "Pid.h"
 #include "Web.h"
 #include "Node.h"
 #include "PickList.h"
 #include "HypoList.h"
 #include "Hypo.h"
 #include "Correlation.h"
-#include "CorrelationList.h"
 #include "Site.h"
 #include "Glass.h"
-#include "Logit.h"
-#include "Geo.h"
 
 namespace glasscore {
 
@@ -51,8 +50,8 @@ bool CCorrelationList::receiveExternalMessage(
 		std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelationList::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
@@ -80,16 +79,16 @@ bool CCorrelationList::addCorrelationFromJSON(
 
 	// null check json
 	if (correlation == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelationList::addCorrelationFromJSON: NULL json correlation.");
 		return (false);
 	}
 
 	// null check pSiteList
 	if (m_pSiteList == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelationList::addCorrelationFromJSON: NULL m_pSiteList.");
 		return (false);
 	}
@@ -100,16 +99,16 @@ bool CCorrelationList::addCorrelationFromJSON(
 		std::string type = (*correlation)["Type"].ToString();
 
 		if (type != "Correlation") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CCorrelationList::addCorrelationFromJSON: Non-Correlation "
 					"message passed in.");
 			return (false);
 		}
 	} else {
 		// no command or type
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelationList::addCorrelationFromJSON: Missing required Type "
 				"Key.");
 		return (false);
@@ -135,8 +134,8 @@ bool CCorrelationList::addCorrelationFromJSON(
 
 	// it is a duplicate, log and don't add correlation
 	if (duplicate) {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
+		glass3::util::Logger::log(
+				"warning",
 				"CCorrelationList::addCorrelationFromJSON: Duplicate correlation "
 				"not passed in.");
 		delete (newCorrelation);
@@ -334,11 +333,11 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 				// check if sites match
 				if (newCorrelation->getSite()->getSCNL()
 						== currentCorrelation->getSite()->getSCNL()) {
-					glassutil::CGeo geo1;
+					glass3::util::Geo geo1;
 					geo1.setGeographic(newCorrelation->getLatitude(),
 										newCorrelation->getLongitude(),
 										newCorrelation->getDepth());
-					glassutil::CGeo geo2;
+					glass3::util::Geo geo2;
 					geo2.setGeographic(currentCorrelation->getLatitude(),
 										currentCorrelation->getLongitude(),
 										currentCorrelation->getDepth());
@@ -347,8 +346,8 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 					// check if distance difference is within window
 					if (delta < xWindow) {
 						// if match is found, log, and return
-						glassutil::CLogit::log(
-								glassutil::log_level::warn,
+						glass3::util::Logger::log(
+								"warning",
 								"CCorrelationList::checkDuplicate: Duplicate "
 										"(tWindow = " + std::to_string(tWindow)
 										+ ", xWindow = "
@@ -381,14 +380,13 @@ bool CCorrelationList::scavenge(std::shared_ptr<CHypo> hyp, double tWindow) {
 	// Returns true if any associated.
 	// null check
 	if (hyp == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CCorrelationList::scavenge: NULL CHypo provided.");
+		glass3::util::Logger::log(
+				"error", "CCorrelationList::scavenge: NULL CHypo provided.");
 		return (false);
 	}
 
-	glassutil::CLogit::log(glassutil::log_level::debug,
-							"CCorrelationList::scavenge. " + hyp->getID());
+	glass3::util::Logger::log("debug",
+								"CCorrelationList::scavenge. " + hyp->getID());
 
 	bool associated = false;
 

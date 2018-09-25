@@ -2,12 +2,14 @@
 #include <memory>
 #include <string>
 #include <vector>
+
+#include <logger.h>
+
 #include "Trigger.h"
 #include "Web.h"
 #include "Pick.h"
 #include "Site.h"
 #include "SiteList.h"
-#include "Logit.h"
 
 #define LATITUDE -21.849968
 #define LONGITUDE 170.034750
@@ -30,7 +32,7 @@
 
 // tests to see if the node can be constructed
 TEST(TriggerTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a web
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;

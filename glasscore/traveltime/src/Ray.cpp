@@ -1,8 +1,8 @@
+#include "Ray.h"
+#include <geo.h>
+#include <logger.h>
 #include <cmath>
 #include <cstring>
-#include "Geo.h"
-#include "Logit.h"
-#include "Ray.h"
 #include "Terra.h"
 
 namespace traveltime {
@@ -220,8 +220,8 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 	double rturn;
 	int nbranch;
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CRay::travel: delta:" + std::to_string(delta)
 					+ " earthRadius:" + std::to_string(earthRadius));
 

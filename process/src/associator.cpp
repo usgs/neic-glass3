@@ -3,7 +3,6 @@
 #include <ctime>
 #include <string>
 #include <memory>
-#include <Logit.h>
 #include <Glass.h>
 #include <HypoList.h>
 #include <PickList.h>
@@ -15,8 +14,8 @@ namespace process {
 Associator::Associator(glass3::util::iInput* inputint,
 						glass3::util::iOutput* outputint)
 		: glass3::util::ThreadBaseClass("Associator") {
-	glass3::util::log("debug",
-						"associator::associator(...): Advanced Construction.");
+	glass3::util::Logger::log(
+			"debug", "associator::associator(...): Advanced Construction.");
 
 	m_iInputCounter = 0;
 	m_iTotalInputCounter = 0;
@@ -44,7 +43,8 @@ Associator::Associator(glass3::util::iInput* inputint,
 
 // ---------------------------------------------------------~Associator
 Associator::~Associator() {
-	glass3::util::log("debug", "associator::~Associator(): Destruction.");
+	glass3::util::Logger::log("debug",
+								"associator::~Associator(): Destruction.");
 
 	// stop the processing thread
 	stop();
@@ -62,13 +62,13 @@ Associator::~Associator() {
 // ---------------------------------------------------------setup
 bool Associator::setup(std::shared_ptr<const json::Object> config) {
 	if (m_Input == NULL) {
-		glass3::util::log("error",
-							"associator::setup(): m_Input interface is NULL .");
+		glass3::util::Logger::log(
+				"error", "associator::setup(): m_Input interface is NULL .");
 		return (false);
 	}
 
 	if (m_Output == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "associator::setup(): m_Output interface is NULL .");
 		return (false);
 	}
@@ -78,7 +78,7 @@ bool Associator::setup(std::shared_ptr<const json::Object> config) {
 
 	// send the config to glass
 	glasscore::CGlass::receiveExternalMessage(pConfig);
-	glass3::util::log(
+	glass3::util::Logger::log(
 			"debug", "associator::setup(): Done Passing in provided config.");
 
 	return (true);
@@ -86,7 +86,8 @@ bool Associator::setup(std::shared_ptr<const json::Object> config) {
 
 // ---------------------------------------------------------clear
 void Associator::clear() {
-	glass3::util::log("debug", "associator::clear(): clearing configuration.");
+	glass3::util::Logger::log("debug",
+								"associator::clear(): clearing configuration.");
 
 	// finally do baseclass clear
 	glass3::util::ThreadBaseClass::clear();
@@ -99,8 +100,8 @@ void Associator::recieveGlassMessage(
 	ThreadBaseClass::setThreadHealth();
 
 	if (communication == NULL) {
-		glass3::util::log("critical",
-							"associator::dispatch(): NULL message passed in.");
+		glass3::util::Logger::log(
+				"critical", "associator::dispatch(): NULL message passed in.");
 		return;
 	}
 
@@ -108,7 +109,7 @@ void Associator::recieveGlassMessage(
 	if (m_Output != NULL) {
 		m_Output->sendToOutput(communication);
 	} else {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"associator::dispatch(): m_Output interface is NULL, nothing "
 				"to dispatch to.");
@@ -178,7 +179,7 @@ glass3::util::WorkState Associator::work() {
 		double averageglasstime = tGlasscoreDuration.count() / m_iInputCounter;
 
 		if (m_iInputCounter == 0) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"warning",
 					"associator::work(): Sent NO data to glass in the last "
 							+ std::to_string(
@@ -213,7 +214,7 @@ glass3::util::WorkState Associator::work() {
 					/ m_iRunningAverageCounter;
 
 			// log the report
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"info",
 					"Associator::work(): Sent "
 							+ std::to_string(m_iInputCounter)
@@ -254,7 +255,7 @@ bool Associator::healthCheck() {
 	// check glass
 	// check glass thread status
 	if (glasscore::CGlass::healthCheck() == false) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"Associator::statusCheck(): GlassLib statusCheck() returned false!.");
 		return (false);

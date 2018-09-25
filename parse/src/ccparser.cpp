@@ -1,7 +1,7 @@
 #include <ccparser.h>
 #include <json.h>
 #include <logger.h>
-#include <timeutil.h>
+#include <date.h>
 #include <stringutil.h>
 #include <detection-formats.h>
 #include <string>
@@ -70,7 +70,8 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		return (NULL);
 	}
 
-	glass3::util::log("trace", "ccparser::parse: Input String: " + input + ".");
+	glass3::util::Logger::log(
+			"trace", "ccparser::parse: Input String: " + input + ".");
 
 	try {
 		// split the ccpick, the format is space delimited
@@ -80,7 +81,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		// least as many elements as we need (16 since the pick is on the
 		// end of the message)
 		if (splitInput.size() < CC_MSG_MAX_INDEX) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"error",
 					"ccparser::parse: ccpick did not split into at least 15 "
 					"elements, returning.");
@@ -119,7 +120,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 
 		// convert the phase time into epoch time
 		// if you remove the spaces, '/', and ':' you get "DateTime"
-		newCorrelation.time = glass3::util::convertDateTimeToEpochTime(
+		newCorrelation.time = glass3::util::Date::convertDateTimeToEpochTime(
 				glass3::util::removeChars(splitInput[ARRIVALDATE_INDEX], "/")
 						+ glass3::util::removeChars(
 								splitInput[ARRIVALTIME_INDEX], ":"));
@@ -139,7 +140,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		// convert the origin time into epoch time
 		// if you remove the spaces, '/', and ':' you get "DateTime"
 		newCorrelation.hypocenter.time =
-				glass3::util::convertDateTimeToEpochTime(
+				glass3::util::Date::convertDateTimeToEpochTime(
 						glass3::util::removeChars(splitInput[ORIGINDATE_INDEX],
 													"/")
 								+ glass3::util::removeChars(
@@ -156,8 +157,8 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 
 		// validate
 		if (newCorrelation.isvalid() == false) {
-			glass3::util::log("warning",
-								"ccparser::parse: Correlation invalid.");
+			glass3::util::Logger::log(
+					"warning", "ccparser::parse: Correlation invalid.");
 			return (NULL);
 		}
 
@@ -176,7 +177,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 			std::shared_ptr<json::Object> newjsoncorrelation = std::make_shared<
 					json::Object>(json::Object(deserializedJSON.ToObject()));
 
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"trace",
 					"ccparser::parse: Output JSON: "
 							+ json::Serialize(*newjsoncorrelation) + ".");
@@ -184,7 +185,7 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 			return (newjsoncorrelation);
 		}
 	} catch (const std::exception &) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"warning",
 				"ccparser::parse: exception parsing correlation data.");
 	}

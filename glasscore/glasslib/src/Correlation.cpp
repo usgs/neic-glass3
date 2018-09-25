@@ -1,19 +1,18 @@
+#include "Correlation.h"
 #include <json.h>
+#include <date.h>
+#include <logger.h>
 #include <memory>
 #include <string>
-#include "Date.h"
-#include "Pid.h"
 #include "Web.h"
 #include "Node.h"
 #include "PickList.h"
 #include "HypoList.h"
 #include "Hypo.h"
 #include "Pick.h"
-#include "Correlation.h"
 #include "Site.h"
 #include "SiteList.h"
 #include "Glass.h"
-#include "Logit.h"
 
 namespace glasscore {
 
@@ -42,8 +41,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 
 	// null check json
 	if (correlation == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelation::CCorrelation: NULL json correlation message.");
 		return;
 	}
@@ -54,15 +53,15 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 		std::string type = (*correlation)["Type"].ToString();
 
 		if (type != "Correlation") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CCorrelation::CCorrelation: Non-Correlation type message"
 					" passed in.");
 			return;
 		}
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelation::CCorrelation: Missing required Type Key.");
 		return;
 	}
@@ -95,8 +94,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 				&& (siteobj["Station"].GetType() == json::ValueType::StringVal)) {
 			sta = siteobj["Station"].ToString();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CCorrelation::CCorrelation: Missing required Station Key.");
 
 			return;
@@ -115,8 +114,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 				&& (siteobj["Network"].GetType() == json::ValueType::StringVal)) {
 			net = siteobj["Network"].ToString();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CCorrelation::CCorrelation: Missing required Network Key.");
 
 			return;
@@ -131,8 +130,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 		}
 	} else {
 		// no site key
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelation::CCorrelation: Missing required Site Key.");
 
 		return;
@@ -145,7 +144,7 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 
 	// check to see if we got a site
 	if (site == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CCorrelation::CCorrelation: site is null.");
 
 		return;
@@ -161,11 +160,11 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 			&& ((*correlation)["Time"].GetType() == json::ValueType::StringVal)) {
 		// Time is formatted in iso8601, convert to julian seconds
 		ttt = (*correlation)["Time"].ToString();
-		glassutil::CDate dt = glassutil::CDate();
+		glass3::util::Date dt = glass3::util::Date();
 		tcorr = dt.decodeISO8601Time(ttt);
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelation::CCorrelation: Missing required Time Key.");
 
 		return;
@@ -177,8 +176,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 			&& ((*correlation)["ID"].GetType() == json::ValueType::StringVal)) {
 		pid = (*correlation)["ID"].ToString();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
+		glass3::util::Logger::log(
+				"warning",
 				"CCorrelation::CCorrelation: Missing required ID Key.");
 
 		return;
@@ -189,8 +188,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 			&& ((*correlation)["Phase"].GetType() == json::ValueType::StringVal)) {
 		phs = (*correlation)["Phase"].ToString();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelation::CCorrelation: Missing required Phase Key.");
 
 		return;
@@ -209,8 +208,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 				&& (hypoobj["Latitude"].GetType() == json::ValueType::DoubleVal)) {
 			lat = hypoobj["Latitude"].ToDouble();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Latitude Key.");
 
@@ -222,8 +221,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 				&& (hypoobj["Longitude"].GetType() == json::ValueType::DoubleVal)) {
 			lon = hypoobj["Longitude"].ToDouble();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Longitude Key.");
 
@@ -235,8 +234,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 				&& (hypoobj["Depth"].GetType() == json::ValueType::DoubleVal)) {
 			z = hypoobj["Depth"].ToDouble();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Depth Key.");
 
@@ -249,11 +248,11 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 				&& (hypoobj["Time"].GetType() == json::ValueType::StringVal)) {
 			// Time is formatted in iso8601, convert to julian seconds
 			ttt = hypoobj["Time"].ToString();
-			glassutil::CDate dt = glassutil::CDate();
+			glass3::util::Date dt = glass3::util::Date();
 			tori = dt.decodeISO8601Time(ttt);
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CCorrelation::CCorrelation: Missing required Hypocenter"
 					" Time Key.");
 
@@ -262,8 +261,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 
 	} else {
 		// no hypocenter key
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelation::CCorrelation: Missing required Hypocenter Key.");
 
 		return;
@@ -275,8 +274,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 					== json::ValueType::DoubleVal)) {
 		corr = (*correlation)["Correlation"].ToDouble();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
+		glass3::util::Logger::log(
+				"warning",
 				"CCorrelation::CCorrelation: Missing required Correlation Key.");
 
 		return;
@@ -285,8 +284,8 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 	// pass to initialization function
 	if (!initialize(site, tcorr, pid, phs, tori, lat, lon, z,
 					corr)) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelation::CCorrelation: Failed to initialize correlation.");
 
 		return;
@@ -321,7 +320,7 @@ void CCorrelation::clear() {
 	m_dDepth = 0;
 	m_dCorrelation = 0;
 
-	m_tCreate = glassutil::CDate::now();
+	m_tCreate = glass3::util::Date::now();
 }
 
 // ---------------------------------------------------------initialize
@@ -362,8 +361,8 @@ void CCorrelation::addHypoReference(std::shared_ptr<CHypo> hyp, bool force) {
 
 	// nullcheck
 	if (hyp == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CCorrelation::addHypo: NULL hypo " "provided.");
 		return;
 	}
@@ -380,7 +379,7 @@ void CCorrelation::addHypoReference(std::shared_ptr<CHypo> hyp, bool force) {
 void CCorrelation::removeHypoReference(std::shared_ptr<CHypo> hyp) {
 	// nullcheck
 	if (hyp == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CCorrelation::remHypo: NULL hypo provided.");
 		return;
 	}
@@ -479,12 +478,12 @@ double CCorrelation::getTOrigin() const {
 
  // null check json
  if (com == NULL) {
- glassutil::CLogit::log(glassutil::log_level::error,
+ glass3::util::Logger::log("error",
  "CCorrelation::process: NULL json communication.");
  return (false);
  }
  if (pGlass == NULL) {
- glassutil::CLogit::log(glassutil::log_level::error, "CCorrelation::process: NULL pGlass.");
+ glass3::util::Logger::log("error", "CCorrelation::process: NULL pGlass.");
  return (false);
  }
 
@@ -512,7 +511,7 @@ double CCorrelation::getTOrigin() const {
  torg = dt.decodeISO8601Time(tiso);
 
  } else {
- glassutil::CLogit::log(glassutil::log_level::error,
+ glass3::util::Logger::log("error",
  "CCorrelation::process: Missing required Hypocenter Time Key.");
  return (false);
  }
@@ -525,7 +524,7 @@ double CCorrelation::getTOrigin() const {
  lat = hypocenter["Latitude"].ToDouble();
 
  } else {
- glassutil::CLogit::log(glassutil::log_level::error,
+ glass3::util::Logger::log("error",
  "CCorrelation::process: Missing required Hypocenter Latitude Key.");
  return (false);
  }
@@ -538,7 +537,7 @@ double CCorrelation::getTOrigin() const {
  lon = hypocenter["Longitude"].ToDouble();
 
  } else {
- glassutil::CLogit::log(glassutil::log_level::error,
+ glass3::util::Logger::log("error",
  "CCorrelation::process: Missing required Hypocenter Longitude Key.");
  return (false);
  }
@@ -550,13 +549,13 @@ double CCorrelation::getTOrigin() const {
  z = hypocenter["Depth"].ToDouble();
 
  } else {
- glassutil::CLogit::log(glassutil::log_level::error,
+ glass3::util::Logger::log("error",
  "CCorrelation::process: Missing required Hypocenter Depth Key.");
  return (false);
  }
 
  } else {
- glassutil::CLogit::log(glassutil::log_level::error,
+ glass3::util::Logger::log("error",
  "CCorrelation::process: Missing required Hypocenter Key.");
  return (false);
  }

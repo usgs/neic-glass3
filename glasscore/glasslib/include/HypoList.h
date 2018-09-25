@@ -7,9 +7,8 @@
 #ifndef HYPOLIST_H
 #define HYPOLIST_H
 
-#include <threadbaseclass.h>
-
 #include <json.h>
+#include <threadbaseclass.h>
 #include <vector>
 #include <list>
 #include <queue>

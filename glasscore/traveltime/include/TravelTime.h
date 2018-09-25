@@ -6,8 +6,9 @@
  ****************************************/
 #ifndef TRAVELTIME_H
 #define TRAVELTIME_H
+
 #include <json.h>
-#include "Geo.h"
+#include <geo.h>
 #include <memory>
 #include <vector>
 #include <string>
@@ -103,19 +104,19 @@ class CTravelTime {
 	 * (or elev) of the source, along with already computed concentric lat/lon
 	 * and vector coordinates.
 	 */
-	void setOrigin(const glassutil::CGeo &geoOrigin);
+	void setOrigin(const glass3::util::Geo &geoOrigin);
 
 	/**
 	 * \brief Calculate travel time in seconds
 	 *
 	 * Calculate travel time in seconds given geographic location
 	 *
-	 * \param geo - A pointer to a glassutil::CGeo object representing the
+	 * \param geo - A pointer to a glass3::util::Geo object representing the
 	 * location to calculate the travel time from
 	 * \return Returns the travel time in seconds, or -1.0 if there is
 	 * no valid travel time
 	 */
-	double T(glassutil::CGeo *geo);
+	double T(glass3::util::Geo *geo);
 
 	/**
 	 * \brief Calculate travel time in seconds
@@ -213,10 +214,10 @@ class CTravelTime {
 	double dDepth;
 
 	/**
-	 * \brief Ephemeral (temporary) glassutil::CGeo object containing current
+	 * \brief Ephemeral (temporary) glass3::util::Geo object containing current
 	 * geographic location. Set by setOrigin()
 	 */
-	glassutil::CGeo geoOrg;
+	glass3::util::Geo geoOrg;
 };
 }  // namespace traveltime
 #endif  // TRAVELTIME_H

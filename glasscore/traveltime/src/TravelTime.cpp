@@ -1,11 +1,11 @@
+#include "TravelTime.h"
+#include <geo.h>
+#include <logger.h>
 #include <string>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
-#include "Geo.h"
-#include "Logit.h"
 #include "TimeWarp.h"
-#include "TravelTime.h"
 
 namespace traveltime {
 
@@ -93,7 +93,7 @@ void CTravelTime::clear() {
 bool CTravelTime::setup(std::string phase, std::string file) {
 	// nullcheck
 	if (phase == "") {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CTravelTime::Setup: empty phase provided");
 		return (false);
 	} else {
@@ -105,14 +105,14 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 		file = phase + ".trv";
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CTravelTime::Setup: phase:" + phase + " file:" + file);
 
 	// open file
 	FILE *inFile = fopen(file.c_str(), "rb");
 	if (!inFile) {
-		glassutil::CLogit::log(glassutil::log_level::debug,
+		glass3::util::Logger::log("debug",
 								"CTravelTime::Setup: Cannot open file:" + file);
 		return (false);
 	}
@@ -125,8 +125,8 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 
 	// check file type
 	if (strcmp(fileType, "TRAV") != 0) {
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CTravelTime::Setup: File is not .trv file:" + file);
 
 		fclose(inFile);
@@ -164,7 +164,7 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	snprintf(sLog, sizeof(sLog),
 				"CTravelTime::Setup: pDistanceWarp %d %.2f %.2f %.2f %.2f %.2f",
 				nDistanceWarp, vlow, vhigh, alpha, bzero, binf);
-	glassutil::CLogit::log(sLog);
+	glass3::util::Logger::log(sLog);
 
 	// create distance warp
 	pDistanceWarp = new CTimeWarp(vlow, vhigh, alpha, bzero, binf);
@@ -186,7 +186,7 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	snprintf(sLog, sizeof(sLog),
 				"CTravelTime::Setup: pDepthWarp %d %.2f %.2f %.2f %.2f %.2f",
 				nDepthWarp, vlow, vhigh, alpha, bzero, binf);
-	glassutil::CLogit::log(sLog);
+	glass3::util::Logger::log(sLog);
 
 	// create depth warp
 	pDepthWarp = new CTimeWarp(vlow, vhigh, alpha, bzero, binf);
@@ -214,14 +214,14 @@ void CTravelTime::setOrigin(double lat, double lon, double depth) {
 }
 
 // ---------------------------------------------------------setOrigin
-void CTravelTime::setOrigin(const glassutil::CGeo &geoOrigin) {
+void CTravelTime::setOrigin(const glass3::util::Geo &geoOrigin) {
 	geoOrg = geoOrigin;
 	// ditch dDepth in favor or
-	dDepth = EARTHRADIUSKM - geoOrg.dRad;
+	dDepth = EARTHRADIUSKM - geoOrg.m_dGeocentricRadius;
 }
 
 // ---------------------------------------------------------T
-double CTravelTime::T(glassutil::CGeo *geo) {
+double CTravelTime::T(glass3::util::Geo *geo) {
 	// Calculate travel time given CGeo
 	dDelta = RAD2DEG * geoOrg.delta(geo);
 

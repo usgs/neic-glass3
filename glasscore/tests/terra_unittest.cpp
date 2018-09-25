@@ -1,7 +1,10 @@
 #include <gtest/gtest.h>
 #include <string>
+
+#include <logger.h>
+
 #include "Terra.h"
-#include "Logit.h"
+
 
 #define TESTPATH "testdata"
 #define MODELFILE "ak135_mod.d"
@@ -52,7 +55,7 @@
 
 // test to see if the hypo can be constructed
 TEST(TerraTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a Terra object
 	traveltime::CTerra * testTerra = new traveltime::CTerra();
@@ -67,7 +70,7 @@ TEST(TerraTest, Construction) {
 
 // test to see if the hypo can be constructed
 TEST(TerraTest, Load) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a Terra object
 	traveltime::CTerra * testTerra = new traveltime::CTerra();
@@ -161,7 +164,7 @@ TEST(TerraTest, Parse) {
 
 // test Interpolate velocity for P
 TEST(TerraTest, PTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a Terra object
 	traveltime::CTerra * testTerra = new traveltime::CTerra();
@@ -184,7 +187,7 @@ TEST(TerraTest, PTest) {
 
 // test Interpolate velocity for S
 TEST(TerraTest, STest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a Terra object
 	traveltime::CTerra * testTerra = new traveltime::CTerra();
@@ -210,7 +213,7 @@ TEST(TerraTest, STest) {
 
 // test calcuating turning radius
 TEST(TerraTest, TurnRadius) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a Terra object
 	traveltime::CTerra * testTerra = new traveltime::CTerra();
@@ -242,7 +245,7 @@ TEST(TerraTest, TurnRadius) {
 
 // test calcuating evaluate function
 TEST(TerraTest, EvaluateFunction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a Terra object
 	traveltime::CTerra * testTerra = new traveltime::CTerra();
@@ -310,7 +313,7 @@ TEST(TerraTest, EvaluateFunction) {
 
 // test integrating ray segment
 TEST(TerraTest, IntegrateRaySegment) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a Terra object
 	traveltime::CTerra * testTerra = new traveltime::CTerra();
@@ -381,7 +384,7 @@ TEST(TerraTest, IntegrateRaySegment) {
 
 // test integrating ray segment
 TEST(TerraTest, RombergIntegration) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a Terra object
 	traveltime::CTerra * testTerra = new traveltime::CTerra();

@@ -4,7 +4,7 @@
 #include <detection-formats.h>
 #include <logger.h>
 #include <fileutil.h>
-#include <timeutil.h>
+#include <date.h>
 
 #include <thread>
 #include <mutex>
@@ -31,7 +31,7 @@ namespace output {
 // ---------------------------------------------------------output
 output::output()
 		: glass3::util::ThreadBaseClass("output") {
-	glass3::util::log("debug", "output::output(): Construction.");
+	glass3::util::Logger::log("debug", "output::output(): Construction.");
 
 	std::time(&tLastWorkReport);
 	std::time(&m_tLastSiteRequest);
@@ -64,7 +64,7 @@ output::output()
 
 // ---------------------------------------------------------~output
 output::~output() {
-	glass3::util::log("debug", "output::~output(): Destruction.");
+	glass3::util::Logger::log("debug", "output::~output(): Destruction.");
 
 	// stop the output threads
 	stop();
@@ -100,23 +100,23 @@ output::~output() {
 // configuration
 bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		glass3::util::log("error",
-							"output::setup(): NULL configuration passed in.");
+		glass3::util::Logger::log(
+				"error", "output::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
-	glass3::util::log("debug", "output::setup(): Setting Up.");
+	glass3::util::Logger::log("debug", "output::setup(): Setting Up.");
 
 	// Cmd
 	if (!(config->HasKey(CONFIG_KEY)
 			&& ((*config)[CONFIG_KEY].GetType() == json::ValueType::StringVal))) {
-		glass3::util::log("error",
-							"output::setup(): BAD configuration passed in.");
+		glass3::util::Logger::log(
+				"error", "output::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)[CONFIG_KEY];
 		if (configtype != "GlassOutput") {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"error", "output::setup(): Wrong configuration provided, "
 							"configuration is for: " + configtype + ".");
 			return (false);
@@ -129,14 +129,14 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 					== json::ValueType::BoolVal))) {
 		// publish on expiration is optional, default to false
 		setPubOnExpiration(false);
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"output::setup(): PublishOnExpiration not specified, using default "
 				"of false.");
 	} else {
 		setPubOnExpiration((*config)["PublishOnExpiration"].ToBool());
 
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"output::setup(): Using PublishOnExpiration: "
 						+ std::to_string(getPubOnExpiration()) + " .");
@@ -149,7 +149,7 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 		// PublicationTimes is optional, default to 0
 		clearPubTimes();
 		addPubTime(0);
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"output::setup(): PublicationTimes not specified, using default "
 				"of 0.");
@@ -160,7 +160,7 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 			int pubTime = dataarray[i].ToInt();
 			addPubTime(pubTime);
 
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"info",
 					"output::setup(): Using Publication Time #"
 							+ std::to_string(i) + ": " + std::to_string(pubTime)
@@ -172,12 +172,12 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputAgencyID")
 			&& ((*config)["OutputAgencyID"].GetType()
 					== json::ValueType::StringVal))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "output::setup(): Missing required OutputAgencyID.");
 		return (false);
 	} else {
 		setDefaultAgencyId((*config)["OutputAgencyID"].ToString());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"output::setup(): Using AgencyID: " + getDefaultAgencyId()
 						+ " for output.");
@@ -187,12 +187,12 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputAuthor")
 			&& ((*config)["OutputAuthor"].GetType()
 					== json::ValueType::StringVal))) {
-		glass3::util::log("error",
-							"output::setup(): Missing required OutputAuthor.");
+		glass3::util::Logger::log(
+				"error", "output::setup(): Missing required OutputAuthor.");
 		return (false);
 	} else {
 		setDefaultAuthor((*config)["OutputAuthor"].ToString());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"output::setup(): Using Author: " + getDefaultAuthor()
 						+ " for output.");
@@ -202,7 +202,7 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("SiteListRequestInterval")
 			&& ((*config)["SiteListRequestInterval"].GetType()
 					== json::ValueType::IntVal))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"output::setup(): SiteListRequestInterval not specified.");
 		setSiteListRequestInterval(-1);
@@ -210,13 +210,13 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 		setSiteListRequestInterval(
 				(*config)["SiteListRequestInterval"].ToInt());
 
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"output::setup(): Using SiteListRequestInterval: "
 						+ std::to_string(getSiteListRequestInterval()) + ".");
 	}
 
-	glass3::util::log("debug", "output::setup(): Done Setting Up.");
+	glass3::util::Logger::log("debug", "output::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	// mostly remembering our config object
@@ -228,7 +228,8 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 
 // ---------------------------------------------------------clear
 void output::clear() {
-	glass3::util::log("debug", "output::clear(): clearing configuration.");
+	glass3::util::Logger::log("debug",
+								"output::clear(): clearing configuration.");
 
 	setPubOnExpiration(false);
 	clearPubTimes();
@@ -251,7 +252,7 @@ void output::sendToOutput(std::shared_ptr<json::Object> message) {
 	} else if (message->HasKey(TYPE_KEY)) {
 		messagetype = (*message)[TYPE_KEY].ToString();
 	} else {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"critical",
 				"output::sendToOutput(): BAD message passed in, no Cmd/Type found.");
 		return;
@@ -311,7 +312,7 @@ bool output::healthCheck() {
 bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (data == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::addtrackingdata(): Bad json object passed in.");
 		return (false);
@@ -324,14 +325,14 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 	} else if ((*data).HasKey(PID_KEY)) {
 		id = (*data)[PID_KEY].ToString();
 	} else {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "output::addtrackingdata(): No ID found data json.");
 		return (false);
 	}
 
 	// don't do anything if we didn't get an ID
 	if (id == "") {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "output::addtrackingdata(): Bad ID from data json.");
 		return (false);
 	}
@@ -342,7 +343,7 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 	if (existingdata != NULL) {
 		// it is, copy the pub log for an existing event
 		if (!(*existingdata).HasKey(PUBLOG_KEY)) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"error",
 					"output::addtrackingdata(): existing event missing pub log! :"
 							+ json::Serialize(*existingdata));
@@ -364,7 +365,7 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 		(*data)[PUBLOG_KEY] = pubLog;
 	}
 
-	glass3::util::log(
+	glass3::util::Logger::log(
 			"debug",
 			"output::addTrackingData(): New tracking data: "
 					+ json::Serialize(*data));
@@ -377,7 +378,7 @@ bool output::addTrackingData(std::shared_ptr<json::Object> data) {
 // ---------------------------------------------------------removeTrackingData
 bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::removetrackingdata(): Bad json object passed in.");
 		return (false);
@@ -389,7 +390,7 @@ bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 	} else if ((*data).HasKey(PID_KEY)) {
 		ID = (*data)[PID_KEY].ToString();
 	} else {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::removetrackingdata(): Bad json hypo object passed in.");
 
@@ -403,7 +404,7 @@ bool output::removeTrackingData(std::shared_ptr<const json::Object> data) {
 bool output::removeTrackingData(std::string ID) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "output::removetrackingdata(): Empty ID passed in.");
 		return (false);
 	}
@@ -419,7 +420,7 @@ bool output::removeTrackingData(std::string ID) {
 std::shared_ptr<const json::Object> output::getTrackingData(std::string id) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (id == "") {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "output::removetrackingdata(): Empty ID passed in.");
 		return (NULL);
 	}
@@ -454,7 +455,7 @@ std::shared_ptr<const json::Object> output::getNextTrackingData() {
 // ---------------------------------------------------------haveTrackingData
 bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::havetrackingdata(): Bad json object passed in.");
 		return (false);
@@ -466,7 +467,7 @@ bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 	} else if ((*data).HasKey(PID_KEY)) {
 		ID = (*data)[PID_KEY].ToString();
 	} else {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::havetrackingdata(): Bad json hypo object passed in.");
 		return (false);
@@ -479,8 +480,8 @@ bool output::haveTrackingData(std::shared_ptr<json::Object> data) {
 bool output::haveTrackingData(std::string ID) {
 	std::lock_guard<std::mutex> guard(m_TrackingCacheMutex);
 	if (ID == "") {
-		glass3::util::log("error",
-							"output::haveTrackingData(): Empty ID passed in.");
+		glass3::util::Logger::log(
+				"error", "output::haveTrackingData(): Empty ID passed in.");
 		return (false);
 	}
 
@@ -495,7 +496,7 @@ void output::clearTrackingData() {
 
 // ---------------------------------------------------------checkEventsLoop
 void output::checkEventsLoop() {
-	glass3::util::log(
+	glass3::util::Logger::log(
 			"debug",
 			"output::checkEventsLoop():  Check Events Thread Startup. ("
 					+ getThreadName() + ")");
@@ -510,7 +511,7 @@ void output::checkEventsLoop() {
 
 		// make sure we should still be running
 		if (getWorkThreadsState() != glass3::util::ThreadState::Started) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"info",
 					"output::checkEventsLoop(): Non-Starting thread "
 							"status detected ("
@@ -537,7 +538,7 @@ void output::checkEventsLoop() {
 		} else if ((*data).HasKey(PID_KEY)) {
 			id = (*data)[PID_KEY].ToString();
 		} else {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"warning",
 					"output::checkEventsLoop(): Bad data object received from "
 					"getNextTrackingData(), no ID, skipping data.");
@@ -554,7 +555,7 @@ void output::checkEventsLoop() {
 		if ((*data).HasKey(CMD_KEY)) {
 			command = (*data)[CMD_KEY].ToString();
 		} else {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"warning",
 					"output::checkEventsLoop(): Bad data object received from "
 					"getNextTrackingData(), no Cmd, skipping data.");
@@ -584,7 +585,8 @@ void output::checkEventsLoop() {
 		}
 	}
 
-	glass3::util::log("info", "output::checkEventsLoop(): Stopped thread.");
+	glass3::util::Logger::log("info",
+								"output::checkEventsLoop(): Stopped thread.");
 
 	setWorkThreadsState(glass3::util::ThreadState::Stopped);
 
@@ -611,8 +613,8 @@ glass3::util::WorkState output::work() {
 						json::Object>(json::Object());
 				(*datarequest)[CMD_KEY] = "ReqSiteList";
 
-				glass3::util::log("debug",
-									"output::work(): Requesting site list.");
+				glass3::util::Logger::log(
+						"debug", "output::work(): Requesting site list.");
 
 				// send the request to glasscore
 				getAssociator()->sendToAssociator(datarequest);
@@ -626,7 +628,7 @@ glass3::util::WorkState output::work() {
 	// null check
 	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
 		// no message queues means we've got big problems
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"critical",
 				"output::work(): No m_OutputQueue and/or m_LookupQueue.");
 		return (glass3::util::WorkState::Error);
@@ -656,10 +658,10 @@ glass3::util::WorkState output::work() {
 	} else if (message->HasKey(TYPE_KEY)) {
 		messagetype = (*message)[TYPE_KEY].ToString();
 	} else {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"critical",
-				"output::work(): BAD message: " + json::Serialize(*message) +
-				" passed in, no Cmd/Type found.");
+				"output::work(): BAD message: " + json::Serialize(*message)
+						+ " passed in, no Cmd/Type found.");
 		return (glass3::util::WorkState::OK);
 	}
 
@@ -681,14 +683,14 @@ glass3::util::WorkState output::work() {
 		std::shared_ptr<const json::Object> trackingData = getTrackingData(
 				messageid);
 		if (trackingData == NULL) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"critical",
 					"output::work(): NULL tracking data for Hypo: "
 							+ json::Serialize(*message));
 			return (glass3::util::WorkState::OK);
 		}
 
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"debug",
 				"output::work(): Outputting a " + messagetype + " message"
 						+ " for " + messageid + " tracking: "
@@ -709,7 +711,7 @@ glass3::util::WorkState output::work() {
 		m_iHypoCounter++;
 	} else if (messagetype == "SiteList") {
 		// glass has a stationlist to write to disk
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"debug",
 				"output::work(): Outputting a " + messagetype + " message.");
 
@@ -729,7 +731,7 @@ glass3::util::WorkState output::work() {
 		// see if we've tracked this event
 		if (trackingData != NULL) {
 			// we have
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"debug",
 					"output::work(): Canceling event " + messageid
 							+ " and removing it from tracking.");
@@ -742,7 +744,7 @@ glass3::util::WorkState output::work() {
 				if (!((*message).HasKey(TYPE_KEY)))
 					(*message)[TYPE_KEY] = messagetype;
 
-				glass3::util::log(
+				glass3::util::Logger::log(
 						"debug",
 						"output::work(): Generating retraction message for"
 								" published event " + messageid + ".");
@@ -763,7 +765,7 @@ glass3::util::WorkState output::work() {
 		if (trackingData != NULL) {
 			// we have
 			// glass has expired an event we have tracked
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"debug",
 					"output::work(): Expiring event " + messageid
 							+ " and removing it from tracking.");
@@ -791,7 +793,7 @@ glass3::util::WorkState output::work() {
 						(*hypo)["IsUpdate"] = false;
 					}
 
-					glass3::util::log(
+					glass3::util::Logger::log(
 							"debug",
 							"output::work(): Writing final hypo for expiring event "
 									+ messageid);
@@ -809,15 +811,15 @@ glass3::util::WorkState output::work() {
 		m_iExpireCounter++;
 	} else if (messagetype == "SiteLookup") {
 		// station info request
-		glass3::util::log("debug",
-							"output::work(): Writing site lookup message");
+		glass3::util::Logger::log(
+				"debug", "output::work(): Writing site lookup message");
 		// output immediately
 		writeOutput(message);
 
 		m_iLookupCounter++;
 	} else {
 		// got some other message
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"warning",
 				"output::work(): Unknown message from glasslib: "
 						+ json::Serialize(*message) + ".");
@@ -826,7 +828,7 @@ glass3::util::WorkState output::work() {
 	// reporting
 	if ((tNow - tLastWorkReport) >= getReportInterval()) {
 		if (m_iMessageCounter == 0)
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"warning",
 					"output::work(): Received NO messages from associator "
 							"thread in "
@@ -834,7 +836,7 @@ glass3::util::WorkState output::work() {
 									static_cast<int>(tNow) - tLastWorkReport)
 							+ " seconds.");
 		else
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"info",
 					"output::work(): Received "
 							+ std::to_string(m_iMessageCounter)
@@ -871,7 +873,7 @@ glass3::util::WorkState output::work() {
 // ---------------------------------------------------------writeOutput
 void output::writeOutput(std::shared_ptr<json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "output::writeoutput(): Null json object passed in.");
 		return;
 	}
@@ -929,21 +931,21 @@ void output::writeOutput(std::shared_ptr<json::Object> data) {
 // ---------------------------------------------------------isDataReady
 bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isdataready(): Null tracking object passed in.");
 		return (false);
 	}
 
 	if (!(data->HasKey(CMD_KEY))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isdataready(): Bad tracking object passed in, "
 						" missing cmd: " + json::Serialize(*data));
 		return (false);
 	} else if ((!(data->HasKey(PUBLOG_KEY)))
 			|| (!(data->HasKey(VERSION_KEY)))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isdataready(): Bad tracking object passed in, "
 						" missing PubLog or Version:" + json::Serialize(*data));
@@ -962,7 +964,8 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 
 	// get the time the hypo was created
 	std::string createTimeString = (*data)["CreateTime"].ToString();
-	int createTime = glass3::util::convertISO8601ToEpochTime(createTimeString);
+	int createTime = glass3::util::Date::convertISO8601ToEpochTime(
+			createTimeString);
 
 	// get the pub log
 	json::Array pubLog = (*data)[PUBLOG_KEY].ToArray();
@@ -1003,14 +1006,14 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 		// update data in cache
 		m_TrackingCache->addToCache(newData, id);
 
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"debug",
 				"output::isDataReady(): Updated data: "
 						+ json::Serialize(*m_TrackingCache->getFromCache(id)));
 
 		// depending on whether this version has already been changed
 		if (changed == true) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"debug",
 					"output::isdataready(): Publishing " + id + " version:"
 							+ std::to_string(currentVersion) + " tNow:"
@@ -1027,7 +1030,7 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 			// ready to publish
 			return (true);
 		} else {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"debug",
 					"output::isdataready(): Skipping " + id + " version:"
 							+ std::to_string(currentVersion)
@@ -1045,21 +1048,21 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 // ---------------------------------------------------------isDataChanged
 bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isDataChanged(): Null tracking object passed in.");
 		return (false);
 	}
 
 	if (!(data->HasKey(CMD_KEY))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isDataChanged(): Bad tracking object passed in, "
 						" missing cmd: " + json::Serialize(*data));
 		return (false);
 	} else if ((!(data->HasKey(PUBLOG_KEY)))
 			|| (!(data->HasKey(VERSION_KEY)))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isDataChanged(): Bad tracking object passed in, "
 						" missing PubLog or Version:" + json::Serialize(*data));
@@ -1092,7 +1095,7 @@ bool output::isDataChanged(std::shared_ptr<const json::Object> data) {
 bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 								bool ignoreVersion) {
 	if (data == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isDataPublished(): Null json data object passed in.");
 		return (false);
@@ -1100,7 +1103,7 @@ bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 
 	if ((!(data->HasKey(CMD_KEY))) || (!(data->HasKey(PUBLOG_KEY)))
 			|| (!(data->HasKey(VERSION_KEY)))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isDataPublished(): Bad json hypo object passed in "
 						" missing Cmd, PubLog or Version "
@@ -1143,7 +1146,7 @@ bool output::isDataPublished(std::shared_ptr<const json::Object> data,
 // ---------------------------------------------------------isDataFinished
 bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	if (data == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isDataFinished(): Null json data object passed in.");
 		return (false);
@@ -1151,7 +1154,7 @@ bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 
 	if ((!(data->HasKey(CMD_KEY))) || (!(data->HasKey(PUBLOG_KEY)))
 			|| (!(data->HasKey(VERSION_KEY)))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"output::isDataFinished(): Bad json hypo object passed in "
 						" missing Cmd, PubLog or Version "

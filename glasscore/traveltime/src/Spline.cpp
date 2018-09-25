@@ -1,6 +1,6 @@
-#include <cmath>
 #include "Spline.h"
-#include "Logit.h"
+#include <logger.h>
+#include <cmath>
 
 namespace traveltime {
 
@@ -43,17 +43,17 @@ void CSpline::setup(int n, double *x, double *y) {
 
 	// nullchecks
 	if (n == 0) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSpline::setup: n is 0.");
 		return;
 	}
 	if (x == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSpline::setup: NULL x");
 		return;
 	}
 	if (y == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSpline::setup: NULL y.");
 		return;
 	}
@@ -100,22 +100,22 @@ void CSpline::setup(int n, double *x, double *y) {
 double CSpline::Y(double x) {
 	// nullchecks
 	if (nX == 0) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSpline::Y: nX is 0.");
 		return (0);
 	}
 	if (dX == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSpline::Y: NULL dX");
 		return (0);
 	}
 	if (dY == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSpline::Y: NULL dY.");
 		return (0);
 	}
 	if (dY2 == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSpline::Y: NULL dY2.");
 		return (0);
 	}

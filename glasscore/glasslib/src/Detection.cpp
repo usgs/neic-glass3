@@ -1,20 +1,20 @@
+#include "Detection.h"
 #include <json.h>
+#include <date.h>
+#include <geo.h>
+#include <logger.h>
 #include <string>
 #include <memory>
 #include <vector>
-
-#include "Date.h"
-#include "Pid.h"
+#include <mutex>
 #include "Web.h"
 #include "Node.h"
 #include "PickList.h"
 #include "HypoList.h"
 #include "Hypo.h"
 #include "Pick.h"
-#include "Detection.h"
 #include "Site.h"
 #include "Glass.h"
-#include "Logit.h"
 
 namespace glasscore {
 
@@ -30,8 +30,8 @@ CDetection::~CDetection() {
 bool CDetection::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CDetection::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
@@ -56,9 +56,8 @@ bool CDetection::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
-				"CDetection::process: NULL json communication.");
+		glass3::util::Logger::log(
+				"error", "CDetection::process: NULL json communication.");
 		return (false);
 	}
 
@@ -82,11 +81,11 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 			std::string tiso = hypocenter["Time"].ToString();
 
 			// convert time
-			glassutil::CDate dt = glassutil::CDate();
+			glass3::util::Date dt = glass3::util::Date();
 			torg = dt.decodeISO8601Time(tiso);
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CDetection::process: Missing required Hypocenter Time Key.");
 
 			return (false);
@@ -99,8 +98,8 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 			lat = hypocenter["Latitude"].ToDouble();
 
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CDetection::process: Missing required Hypocenter Latitude"
 					" Key.");
 
@@ -113,8 +112,8 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 						== json::ValueType::DoubleVal)) {
 			lon = hypocenter["Longitude"].ToDouble();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CDetection::process: Missing required Hypocenter Longitude"
 					" Key.");
 
@@ -126,16 +125,16 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 				&& (hypocenter["Depth"].GetType() == json::ValueType::DoubleVal)) {
 			z = hypocenter["Depth"].ToDouble();
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CDetection::process: Missing required Hypocenter Depth"
 					" Key.");
 
 			return (false);
 		}
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CDetection::process: Missing required Hypocenter Key.");
 
 		return (false);
@@ -162,9 +161,9 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 		if (hypo != NULL) {
 			// found a hypo
 			// calculate distance
-			glassutil::CGeo geo1;
+			glass3::util::Geo geo1;
 			geo1.setGeographic(lat, lon, z);
-			glassutil::CGeo geo2;
+			glass3::util::Geo geo2;
 			geo2.setGeographic(hypo->getLatitude(), hypo->getLongitude(),
 								hypo->getDepth());
 			double delta = RAD2DEG * geo1.delta(&geo2);

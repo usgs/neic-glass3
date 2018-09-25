@@ -1,11 +1,13 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
+
+#include <logger.h>
+
 #include "Pick.h"
 #include "PickList.h"
 #include "Site.h"
 #include "SiteList.h"
-#include "Logit.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
 #define SITE2JSON "{\"Type\":\"StationInfo\",\"Elevation\":1342.000000,\"Latitude\":46.711330,\"Longitude\":-111.831200,\"Site\":{\"Station\":\"HRY\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
@@ -34,7 +36,7 @@
 
 // test to see if the picklist can be constructed
 TEST(PickListTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a picklist
 	glasscore::CPickList * testPickList = new glasscore::CPickList();
@@ -51,7 +53,7 @@ TEST(PickListTest, Construction) {
 
 // test various pick operations
 TEST(PickListTest, PickOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(

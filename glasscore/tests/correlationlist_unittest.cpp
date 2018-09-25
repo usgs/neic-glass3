@@ -1,11 +1,13 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
+
+#include <logger.h>
+
 #include "Correlation.h"
 #include "CorrelationList.h"
 #include "Site.h"
 #include "SiteList.h"
-#include "Logit.h"
 #include "Glass.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
@@ -38,7 +40,7 @@
 
 // test to see if the correlationlist can be constructed
 TEST(CorrelationListTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a correlationlist
 	glasscore::CCorrelationList * testCorrelationList =
@@ -64,7 +66,7 @@ TEST(CorrelationListTest, Construction) {
 
 // test various correlation operations
 TEST(CorrelationListTest, CorrelationOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -138,7 +140,7 @@ TEST(CorrelationListTest, CorrelationOperations) {
 
 // test various failure cases
 TEST(CorrelationListTest, FailTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::shared_ptr<json::Object> correlationJSON = std::make_shared<
 			json::Object>(

@@ -1,4 +1,7 @@
+#include "PickList.h"
 #include <json.h>
+#include <date.h>
+#include <logger.h>
 #include <string>
 #include <utility>
 #include <memory>
@@ -7,18 +10,14 @@
 #include <set>
 #include <vector>
 #include <ctime>
-#include <random>
-#include "Date.h"
-#include "Pid.h"
 #include "Site.h"
 #include "Pick.h"
 #include "Glass.h"
 #include "Web.h"
 #include "Hypo.h"
 #include "SiteList.h"
-#include "PickList.h"
 #include "HypoList.h"
-#include "Logit.h"
+
 
 namespace glasscore {
 
@@ -71,8 +70,8 @@ void CPickList::clear() {
 bool CPickList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CPickList::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
@@ -97,14 +96,14 @@ bool CPickList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	// null check json
 	if (pick == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CPickList::addPick: NULL json pick.");
 		return (false);
 	}
 
 	// null check pSiteList
 	if (m_pSiteList == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CPickList::addPick: NULL pSiteList.");
 		return (false);
 	}
@@ -115,8 +114,8 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		std::string cmd = (*pick)["Cmd"].ToString();
 
 		if (cmd != "Pick") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CPickList::addPick: Non-Pick message passed in.");
 			return (false);
 		}
@@ -125,15 +124,15 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 		std::string type = (*pick)["Type"].ToString();
 
 		if (type != "Pick") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CPickList::addPick: Non-Pick message passed in.");
 			return (false);
 		}
 	} else {
 		// no command or type
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CPickList::addPick: Missing required Cmd/Type Key.");
 		return (false);
 	}
@@ -144,7 +143,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	m_PicksToProcessMutex.unlock();
 
 	while (queueSize >= (getNumThreads() * CGlass::iMaxQueueLenPerThreadFactor)) {
-		/* glassutil::CLogit::log(glassutil::log_level::debug,
+		/* glass3::util::Logger::log("debug",
 		 "CPickList::addPick. Delaying work due to "
 		 "PickList process queue size."); */
 
@@ -196,12 +195,12 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 				CGlass::getHypoList()->appendToHypoProcessingQueue(hypo);
 			}
 
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CPickList::addPick: Updated existing pick.");
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CPickList::addPick: Duplicate pick not passed in.");
 		}
 
@@ -377,8 +376,8 @@ std::shared_ptr<CPick> CPickList::getDuplicate(double newTPick,
 				// check if sites match
 				if (newSCNL == currentSCNL) {
 					// if match is found, log and return true
-					glassutil::CLogit::log(
-							glassutil::log_level::warn,
+					glass3::util::Logger::log(
+							"warning",
 							"CPickList::checkDuplicate: Duplicate (window = "
 									+ std::to_string(tWindow) + ") : old:"
 									+ currentSCNL + " "
@@ -402,14 +401,14 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	// null check
 	if (hyp == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CPickList::scavenge: NULL CHypo provided.");
 		return (false);
 	}
 
 	char sLog[1024];
 
-	glassutil::CLogit::log(glassutil::log_level::debug,
+	glass3::util::Logger::log("debug",
 							"CPickList::scavenge. " + hyp->getID());
 
 	// Calculate range for possible associations
@@ -473,8 +472,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 		}
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CPickList::scavenge " + hyp->getID() + " added:"
 					+ std::to_string(addCount));
 
@@ -497,7 +496,7 @@ glass3::util::WorkState CPickList::work() {
 	if (CGlass::getHypoList()->getHypoProcessingQueueLength()
 			> (CGlass::getHypoList()->getNumThreads()
 					* CGlass::iMaxQueueLenPerThreadFactor)) {
-		glassutil::CLogit::log(glassutil::log_level::debug,
+		glass3::util::Logger::log("debug",
 								"CPickList::work. Delaying work due to "
 								"HypoList process queue size.");
 		// on to the next loop
@@ -539,13 +538,13 @@ glass3::util::WorkState CPickList::work() {
 		double adBayesRatio = (pHypo->getBayesValue())
 				/ (pHypo->getNucleationStackThreshold());
 
-		std::string pt = glassutil::CDate::encodeDateTime(pck->getTPick());
+		std::string pt = glass3::util::Date::encodeDateTime(pck->getTPick());
 
 		// check to see if the ratio is high enough to not bother
 		// NOTE: Hardcoded ratio threshold
 		if (adBayesRatio > 2.0) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
+			glass3::util::Logger::log(
+					"debug",
 					"CPickList::work(): SKIPNUC tPick:" + pt + "; idPick:"
 							+ pck->getID() + " due to "
 									"association with a hypo with stack twice "
@@ -652,8 +651,8 @@ void CPickList::eraseFromMultiset(std::shared_ptr<CPick> pick) {
 		}
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::warn,
+	glass3::util::Logger::log(
+			"warning",
 			"CPickList::eraseFromMultiset: efficient delete for pick "
 					+ pick->getID() + " didn't work.");
 
@@ -670,8 +669,8 @@ void CPickList::eraseFromMultiset(std::shared_ptr<CPick> pick) {
 		}
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::error,
+	glass3::util::Logger::log(
+			"error",
 			"CPickList::eraseFromMultiset: did not delete pick " + pick->getID()
 					+ " in multiset, id not found.");
 }

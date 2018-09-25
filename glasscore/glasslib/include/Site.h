@@ -8,6 +8,7 @@
 #define SITE_H
 
 #include <json.h>
+#include <geo.h>
 #include <set>
 #include <string>
 #include <vector>
@@ -16,8 +17,6 @@
 #include <tuple>
 #include <mutex>
 #include <atomic>
-
-#include "Geo.h"
 #include "Link.h"
 #include "Pick.h"
 
@@ -180,7 +179,7 @@ class CSite {
 	 * location
 	 * \return Returns a double value containing the distance in radians
 	 */
-	double getDelta(glassutil::CGeo *geo2);
+	double getDelta(glass3::util::Geo *geo2);
 
 	/**
 	 * \brief Get the distance between this site and another in km
@@ -342,9 +341,9 @@ class CSite {
 	/**
 	 * \brief Get the combined site location (latitude, longitude, elevation) as
 	 * a CGeo object
-	 * \return Returns a glassutil::CGeo object containing the combined location.
+	 * \return Returns a glass3::util::Geo object containing the combined location.
 	 */
-	glassutil::CGeo &getGeo();
+	glass3::util::Geo &getGeo();
 
 	/**
 	 * \brief Get the SCNL identifier for this site
@@ -498,7 +497,7 @@ class CSite {
 	/**
 	 * \brief A CGeo object containing the geographic location of this site
 	 */
-	glassutil::CGeo m_Geo;
+	glass3::util::Geo m_Geo;
 
 	/**
 	 * \brief A unit vector in Cartesian earth coordinates used to do a quick

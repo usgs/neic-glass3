@@ -7,6 +7,7 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
+#include <geo.h>
 #include <vector>
 #include <memory>
 #include <string>
@@ -14,8 +15,6 @@
 #include <mutex>
 #include <tuple>
 #include <atomic>
-
-#include "Geo.h"
 #include "Link.h"
 
 namespace glasscore {
@@ -124,9 +123,9 @@ class CTrigger {
 	/**
 	 * \brief Get the combined trigger location (latitude, longitude, depth) as
 	 * a CGeo object
-	 * \return Returns a glassutil::CGeo object containing the combined location.
+	 * \return Returns a glass3::util::Geo object containing the combined location.
 	 */
-	glassutil::CGeo getGeo() const;
+	glass3::util::Geo getGeo() const;
 
 	/**
 	 * \brief Get the origin time for this trigger

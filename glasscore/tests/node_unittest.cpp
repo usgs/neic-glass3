@@ -1,9 +1,11 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
+
+#include <logger.h>
+
 #include "Node.h"
 #include "Site.h"
-#include "Logit.h"
 
 // test data
 #define NAME "testNode"
@@ -23,7 +25,7 @@
 
 // tests to see if the node can be constructed
 TEST(NodeTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a node
 	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
@@ -62,12 +64,12 @@ TEST(NodeTest, Construction) {
 	ASSERT_EQ(expectedSize, testNode->getSiteLinksCount())<< "sitelist empty";
 
 	// geo
-	ASSERT_EQ(LONGITUDE, testNode->getGeo().dLon)<< "geo";
+	ASSERT_EQ(LONGITUDE, testNode->getGeo().m_dGeocentricLongitude)<< "geo";
 }
 
 // tests to see if sites can be added to the node
 TEST(NodeTest, SiteOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a node
 	glasscore::CNode * testNode = new glasscore::CNode(std::string(NAME),
@@ -106,7 +108,7 @@ TEST(NodeTest, SiteOperations) {
 
 // test various failure cases
 TEST(NodeTest, FailTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// null pointers
 	std::shared_ptr<glasscore::CNode> nullNode;

@@ -1,4 +1,8 @@
+#include "Node.h"
 #include <json.h>
+#include <logger.h>
+#include <glassmath.h>
+#include <geo.h>
 #include <memory>
 #include <string>
 #include <utility>
@@ -8,15 +12,11 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
-#include "Node.h"
 #include "Glass.h"
 #include "Web.h"
 #include "Trigger.h"
 #include "Site.h"
 #include "Pick.h"
-#include "Date.h"
-#include "Logit.h"
-#include "GlassMath.h"
 
 #define NUCLEATION_SLOP_FACTOR_SECONDS 60.0
 
@@ -120,14 +120,14 @@ bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 	// nullchecks
 	// check site
 	if (site == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::linkSite: NULL site pointer.");
+		glass3::util::Logger::log("error",
+									"CNode::linkSite: NULL site pointer.");
 		return (false);
 	}
 	// check node
 	if (node == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::linkSite: NULL node pointer.");
+		glass3::util::Logger::log("error",
+									"CNode::linkSite: NULL node pointer.");
 		return (false);
 	}
 
@@ -153,8 +153,8 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 	// nullchecks
 	// check site
 	if (site == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::unlinkSite: NULL site pointer.");
+		glass3::util::Logger::log("error",
+									"CNode::unlinkSite: NULL site pointer.");
 		return (false);
 	}
 
@@ -239,8 +239,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	// nullchecks
 	// check web
 	if (m_pWeb == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::nucleate: NULL web pointer.");
+		glass3::util::Logger::log("error",
+									"CNode::nucleate: NULL web pointer.");
 		return (NULL);
 	}
 	// don't nucleate if this node is disabled
@@ -316,8 +316,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
 		} else {
 			// no valid TTs
-			glassutil::CLogit::log(glassutil::log_level::error,
-									"CNode::nucleate: Bad Pick SearchRange.");
+			glass3::util::Logger::log(
+					"error", "CNode::nucleate: Bad Pick SearchRange.");
 			continue;
 		}
 
@@ -375,7 +375,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// check backazimuth if present
 			if (backAzimuth > 0) {
 				// set up a geo for distance calculations
-				glassutil::CGeo nodeGeo;
+				glass3::util::Geo nodeGeo;
 				nodeGeo.setGeographic(m_dLatitude, m_dLongitude,
 				EARTHRADIUSKM - m_dDepth);
 
@@ -508,7 +508,7 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 		// calculate the PDF based on the number of SDs we are from mean, by
 		// allowing for WEb Resolution slop converted to seconds
 		dSig1 =
-				glassutil::GlassMath::sig(
+				glass3::util::GlassMath::sig(
 						std::max(
 								0.0,
 								(tRes1
@@ -522,7 +522,7 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 	double dSig2 = 0;
 	if (tRes2 > 0) {
 		dSig2 =
-				glassutil::GlassMath::sig(
+				glass3::util::GlassMath::sig(
 						std::max(
 								0.0,
 								(tRes2
@@ -653,8 +653,8 @@ double CNode::getDepth() const {
 }
 
 // ---------------------------------------------------------getGeo
-glassutil::CGeo CNode::getGeo() const {
-	glassutil::CGeo geoNode;
+glass3::util::Geo CNode::getGeo() const {
+	glass3::util::Geo geoNode;
 	geoNode.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
 	return (geoNode);
 }

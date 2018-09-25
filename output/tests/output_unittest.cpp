@@ -2,7 +2,7 @@
 #include <output.h>
 #include <config.h>
 #include <logger.h>
-#include <timeutil.h>
+#include <date.h>
 
 #include <string>
 #include <ctime>
@@ -412,20 +412,26 @@ TEST(Output, TrackingTests) {
 	std::shared_ptr<json::Object> tracking1 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING1)));
 
-	(*tracking1)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
-	(*tracking1)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
+	(*tracking1)["CreateTime"] = glass3::util::Date::convertEpochTimeToISO8601(
+			tNow);
+	(*tracking1)["ReportTime"] = glass3::util::Date::convertEpochTimeToISO8601(
+			tNow);
 
 	std::shared_ptr<json::Object> tracking2 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING2)));
 
-	(*tracking2)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
-	(*tracking2)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
+	(*tracking2)["CreateTime"] = glass3::util::Date::convertEpochTimeToISO8601(
+			tNow);
+	(*tracking2)["ReportTime"] = glass3::util::Date::convertEpochTimeToISO8601(
+			tNow);
 
 	std::shared_ptr<json::Object> tracking3 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(TRACKING3)));
 
-	(*tracking3)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
-	(*tracking3)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(tNow);
+	(*tracking3)["CreateTime"] = glass3::util::Date::convertEpochTimeToISO8601(
+			tNow);
+	(*tracking3)["ReportTime"] = glass3::util::Date::convertEpochTimeToISO8601(
+			tNow);
 
 	// add success
 	ASSERT_TRUE(outputThread.addTrackingData(tracking1));
@@ -502,10 +508,10 @@ TEST(Output, OutputTest) {
 	std::time(&tNow);
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(eventfile);
-	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
-	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
+	(*outputevent)["CreateTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
+	(*outputevent)["ReportTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
 
 	// add data to output
 	outputObject->sendToOutput(outputevent);
@@ -558,10 +564,10 @@ TEST(Output, UpdateTest) {
 	std::time(&tNow);
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event2file);
-	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
-	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
+	(*outputevent)["CreateTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
+	(*outputevent)["ReportTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
 
 	// add data to output
 	outputObject->sendToOutput(outputevent);
@@ -588,10 +594,10 @@ TEST(Output, UpdateTest) {
 
 	std::shared_ptr<json::Object> updateevent = GetDataFromFile(
 			event2updatefile);
-	(*updateevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
-	(*updateevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
+	(*updateevent)["CreateTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
+	(*updateevent)["ReportTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
 
 	// send update to output
 	outputObject->sendToOutput(updateevent);
@@ -618,10 +624,10 @@ TEST(Output, UpdateTest) {
 
 	std::shared_ptr<json::Object> updateevent2 = GetDataFromFile(
 			event2update2file);
-	(*updateevent2)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
-	(*updateevent2)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
+	(*updateevent2)["CreateTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
+	(*updateevent2)["ReportTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
 
 	// send update to output
 	outputObject->sendToOutput(updateevent2);
@@ -667,10 +673,10 @@ TEST(Output, CancelTest) {
 	std::time(&tNow);
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
-	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
-	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
+	(*outputevent)["CreateTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
+	(*outputevent)["ReportTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
 
 	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
 
@@ -720,10 +726,10 @@ TEST(Output, RetractTest) {
 	std::time(&tNow);
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
-	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
-	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
+	(*outputevent)["CreateTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
+	(*outputevent)["ReportTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
 
 	std::shared_ptr<json::Object> cancelmessage = GetDataFromFile(cancel3file);
 
@@ -779,10 +785,10 @@ TEST(Output, ExpireTest) {
 	std::time(&tNow);
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event2file);
-	(*outputevent)["CreateTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
-	(*outputevent)["ReportTime"] = glass3::util::convertEpochTimeToISO8601(
-			tNow);
+	(*outputevent)["CreateTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
+	(*outputevent)["ReportTime"] =
+			glass3::util::Date::convertEpochTimeToISO8601(tNow);
 
 	// add data to output
 	outputObject->sendToOutput(outputevent);

@@ -2,7 +2,6 @@
 #include <json.h>
 #include <logger.h>
 #include <fileutil.h>
-#include <timeutil.h>
 
 #include <vector>
 #include <queue>
@@ -18,7 +17,7 @@ namespace glass {
 // Construction/Destruction
 fileInput::fileInput()
 		: glass3::input::Input() {
-	glass3::util::log("debug", "fileInput::fileInput(): Construction.");
+	glass3::util::Logger::log("debug", "fileInput::fileInput(): Construction.");
 
 	// init config to defaults and allocate
 	clear();
@@ -26,8 +25,8 @@ fileInput::fileInput()
 
 fileInput::fileInput(std::shared_ptr<const json::Object> &config)
 		: glass3::input::Input() {
-	glass3::util::log("debug",
-						"fileInput::fileInput(): Advanced Construction.");
+	glass3::util::Logger::log(
+			"debug", "fileInput::fileInput(): Advanced Construction.");
 	// do basic construction
 	clear();
 
@@ -39,7 +38,7 @@ fileInput::fileInput(std::shared_ptr<const json::Object> &config)
 }
 
 fileInput::~fileInput() {
-	glass3::util::log("debug", "fileInput::~fileInput(): Destruction.");
+	glass3::util::Logger::log("debug", "fileInput::~fileInput(): Destruction.");
 
 	// stop the input thread
 	stop();
@@ -48,22 +47,22 @@ fileInput::~fileInput() {
 // configuration
 bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "fileInput::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
-	glass3::util::log("debug", "fileInput::setup(): Setting Up.");
+	glass3::util::Logger::log("debug", "fileInput::setup(): Setting Up.");
 
 	// Cmd
 	if (!(config->HasKey("Configuration"))) {
-		glass3::util::log("error",
-							"fileInput::setup(): BAD configuration passed in.");
+		glass3::util::Logger::log(
+				"error", "fileInput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Configuration"].ToString();
 		if (configtype != "GlassInput") {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"error",
 					"fileInput::setup(): Wrong configuration provided, configuration "
 							"is for: " + configtype + ".");
@@ -75,14 +74,14 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("InputDirectory"))) {
 		// fileInputdir is required
 		setInputDir("");
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"fileInput::setup(): Required configuration value InputDirectory not "
 				"specified.");
 		return (false);
 	} else {
 		setInputDir((*config)["InputDirectory"].ToString());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileInput::setup(): Using Input Directory: " + getInputDir()
 						+ ".");
@@ -92,11 +91,11 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("ArchiveDirectory"))) {
 		// archive is optional
 		setArchiveDir("");
-		glass3::util::log("info",
-							"fileInput::setup(): Not Archiving fileInput.");
+		glass3::util::Logger::log(
+				"info", "fileInput::setup(): Not Archiving fileInput.");
 	} else {
 		setArchiveDir((*config)["ArchiveDirectory"].ToString());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileInput::setup(): Using Archive Directory: "
 						+ getArchiveDir() + " to archive fileInput.");
@@ -106,13 +105,13 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("Format"))) {
 		// formats is required
 		setFormat("gpick");
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"warning",
 				"fileInput::setup(): No formats specified in configuration, "
 				"defaulting to gpick.");
 	} else {
 		setFormat((*config)["Format"].ToString());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileInput::setup(): Using Format: " + getFormat() + ".");
 	}
@@ -121,12 +120,12 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("ShutdownWhenNoData"))) {
 		// m_bShutdownWhenNoData is optional
 		setShutdownWhenNoData(true);
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileInput::setup(): Defaulting to true for ShutdownWhenNoData");
 	} else {
 		setShutdownWhenNoData((*config)["ShutdownWhenNoData"].ToBool());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileInput::setup(): Using ShutdownWhenNoData: = "
 						+ std::to_string(getShutdownWhenNoData()));
@@ -136,12 +135,12 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("ShutdownWait"))) {
 		// m_iShutdownWait is optional
 		setShutdownWait(60);
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileInput::setup(): Defaulting to 60 for ShutdownWait");
 	} else {
 		setShutdownWait((*config)["ShutdownWait"].ToInt());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileInput::setup(): Using ShutdownWait: "
 						+ std::to_string(getShutdownWait()));
@@ -156,7 +155,8 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 }
 
 void fileInput::clear() {
-	glass3::util::log("debug", "fileInput::clear(): clearing configuration.");
+	glass3::util::Logger::log("debug",
+								"fileInput::clear(): clearing configuration.");
 
 	setInputDir("");
 	setArchiveDir("");
@@ -210,7 +210,7 @@ std::string fileInput::fetchRawData(std::string* pOutType) {
 							tFileEndTime - m_tFileStartTime);
 			double tAverageTime = tFileProcDuration.count() / m_iDataCount;
 
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"info",
 					"fileInput::fetchRawData(): Processed "
 							+ std::to_string(m_iDataCount) + " data from file: "
@@ -240,7 +240,7 @@ std::string fileInput::fetchRawData(std::string* pOutType) {
 			// next time we'll start reading from the file
 			m_InputFile.open(m_sFileName, std::ios::in);
 
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"info",
 					"fileInput::fetchRawData(): Opened file: " + m_sFileName);
 
@@ -253,7 +253,7 @@ std::string fileInput::fetchRawData(std::string* pOutType) {
 			if ((getInputDataCount() <= 0)
 					&& (getShutdownWhenNoData() == true)) {
 				// we don't
-				glass3::util::log(
+				glass3::util::Logger::log(
 						"warning",
 						"fileInput::fetchRawData(): No more input files and/or "
 								"pending data in queue, shutting down in "
@@ -271,9 +271,8 @@ std::string fileInput::fetchRawData(std::string* pOutType) {
 				}
 
 				// times up
-				glass3::util::log(
-						"warning",
-						"fileInput::fetchRawData(): shutting down.");
+				glass3::util::Logger::log(
+						"warning", "fileInput::fetchRawData(): shutting down.");
 
 				// shut it down
 				setWorkThreadsState(glass3::util::ThreadState::Stopping);
@@ -295,7 +294,7 @@ void fileInput::cleanupFile(std::string filename, bool move,
 	} else {
 		// delete the file
 		if (!glass3::util::deleteFileFrom(filename)) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"error",
 					"fileInput::archivefile(): Unable to delete file: "
 							+ filename + ".");

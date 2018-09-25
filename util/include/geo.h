@@ -7,43 +7,34 @@
 #ifndef GEO_H
 #define GEO_H
 
-/**
- * \namespace glassutil
- * \brief glassutil namespace general glass utility functions
- *
- * The glassutil namespace contains various classes and functions used
- * in both the traveltime and glasslib libraries
- */
-namespace glassutil {
-
-// mathmatical defines
-#define RAD2DEG 57.29577951308
-#define DEG2RAD	0.01745329251994
-#define TWOPI 6.283185307179586
-#define PI 3.14159265359
+#include <glassmath.h>
 
 // geographic defines
 #define EARTHRADIUSKM 6371.0  // average
 #define DEG2KM 111.19  // based on 6371 as the average radius
 #define KM2DEG 0.00899  // based on 6371 as the average radius
+
+namespace glass3 {
+namespace util {
+
 /**
- * \brief glassutil geographic coordinate conversion class
+ * \brief geographic coordinate conversion class
  *
- * The glassutil CGeo class is a class that encapsulates the
+ * The CGeo class is a class that encapsulates the
  * logic necessary to convert geographic, geocentric,
  * and Cartesian coordinates to geographic and geocentric
  * coordinates.  The class also computes the distance and
  * azimuth between coordinates, and intersections between
  * geographic (or geocentric) spheres.
  */
-class CGeo {
+class Geo {
  public:
 	/**
 	 * \brief CGeo constructor
 	 *
 	 * The constructor for the CGeo class.
 	 */
-	CGeo();
+	Geo();
 
 	/**
 	 * \brief CGeo alternate constructor
@@ -56,16 +47,12 @@ class CGeo {
 	 * \param cartX - The Cartesian x coordinate.
 	 * \param cartY - The Cartesian y coordinate.
 	 * \param cartZ - The Cartesian z coordinate.
-	 * \param cartT - The associated time to the Cartesian point (if CGeo
-	 * represents a space-time point) in decimal seconds.
-	 * \param tag - an Optional user information tag
 	 * \param unitX - The x unit vector
 	 * \param unitY - The y unit vector
 	 * \param unitZ - The z unit vector
 	 */
-	CGeo(double lat, double lon, double rad, double cartX, double cartY,
-			double cartZ, double cartT, int tag, double unitX, double unitY,
-			double unitZ);
+	Geo(double lat, double lon, double rad, double cartX, double cartY,
+			double cartZ, double unitX, double unitY, double unitZ);
 
 	/**
 	 * \brief CGeo copy constructor
@@ -74,14 +61,14 @@ class CGeo {
 	 *
 	 * \param geo - A pointer to a CGeo object to copy from
 	 */
-	explicit CGeo(CGeo *geo);
+	explicit Geo(Geo *geo);
 
 	/**
 	 * \brief CGeo destructor
 	 *
 	 * The destructor for the CGeo class.
 	 */
-	virtual ~CGeo();
+	virtual ~Geo();
 
 	/**
 	 * \brief CGeo init method
@@ -94,16 +81,13 @@ class CGeo {
 	 * \param cartX - The Cartesian x coordinate.
 	 * \param cartY - The Cartesian y coordinate.
 	 * \param cartZ - The Cartesian z coordinate.
-	 * \param cartT - The associated time to the Cartesian point (if CGeo
-	 * represents a space-time point) in decimal seconds.
-	 * \param tag - an Optional user information tag
 	 * \param unitX - The x unit vector
 	 * \param unitY - The y unit vector
 	 * \param unitZ - The z unit vector
 	 */
 	void initialize(double lat, double lon, double rad, double cartX,
-					double cartY, double cartZ, double cartT, int tag,
-					double unitX, double unitY, double unitZ);
+					double cartY, double cartZ, double unitX, double unitY,
+					double unitZ);
 
 	/**
 	 * \brief CGeo clone method
@@ -112,7 +96,7 @@ class CGeo {
 	 *
 	 * \param geo - A pointer to a CGeo object to clone from
 	 */
-	virtual void clone(CGeo *geo);
+	virtual void clone(Geo *geo);
 
 	/**
 	 * \brief CGeo clear function
@@ -184,7 +168,7 @@ class CGeo {
 	 * \param y - The Cartesian y coordinate
 	 * \param z - The Cartesian z coordinate
 	 */
-	virtual void setCart(double x, double y, double z);
+	virtual void setCartesian(double x, double y, double z);
 
 	/**
 	 * \brief Calculate the distance to a given CGeo object
@@ -195,7 +179,7 @@ class CGeo {
 	 * \param geo - A pointer to the CGeo object to calculate distance to
 	 * \return Returns the distance in radians between the two CGeo objects.
 	 */
-	virtual double delta(CGeo *geo);
+	virtual double delta(Geo *geo);
 
 	/**
 	 * \brief Calculate the azimuth to a given CGeo object
@@ -206,72 +190,62 @@ class CGeo {
 	 * \param geo - A pointer to the CGeo object to calculate azimuth to
 	 * \return Returns the azimuth in radians between the two CGeo objects.
 	 */
-	virtual double azimuth(CGeo *geo);
+	virtual double azimuth(Geo *geo);
 
 	/**
 	 * \brief the double value containing the geocentric latitude
 	 * in degrees.
 	 */
-	double dLat;
+	double m_dGeocentricLatitude;
 
 	/**
 	 * \brief the double value containing the geocentric longitude
 	 * in degrees.
 	 */
-	double dLon;
+	double m_dGeocentricLongitude;
 
 	/**
 	 * \brief the double value containing the geocentric radius
 	 * in kilometers.
 	 */
-	double dRad;
+	double m_dGeocentricRadius;
 
 	/**
 	 * \brief the double value containing the Cartesian x
 	 * coordinate.
 	 */
-	double dX;
+	double m_dCartesianX;
 
 	/**
 	 * \brief the double value containing the Cartesian y
 	 * coordinate.
 	 */
-	double dY;
+	double m_dCartesianY;
 
 	/**
 	 * \brief the double value containing the Cartesian z
 	 * coordinate.
 	 */
-	double dZ;
-
-	/**
-	 * \brief the double value containing the associated time
-	 * (if CGeo represents a space-time point) in decimal seconds.
-	 */
-	double dT;
+	double m_dCartesianZ;
 
 	/**
 	 * \brief the double value containing the x unit vector
 	 * used in delta calculations
 	 */
-	double uX;
+	double m_dUnitVectorX;
 
 	/**
 	 * \brief the double value containing the y unit vector
 	 * used in delta calculations
 	 */
-	double uY;
+	double m_dUnitVectorY;
 
 	/**
 	 * \brief the double value containing the z unit vector
 	 * used in delta calculations
 	 */
-	double uZ;
-
-	/**
-	 * \brief Optional user information tag.
-	 */
-	int iTag;
+	double m_dUnitVectorZ;
 };
-}  // namespace glassutil
+}  // namespace util
+}  // namespace glass3
 #endif  // GEO_H

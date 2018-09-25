@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
 
+#include <logger.h>
+
 #include <string>
 #include "TTT.h"
-#include "Logit.h"
 
 #define TESTPATH "testdata"
 #define PHASE1 "P"
@@ -14,7 +15,7 @@
 #define GEOLATITUDE 9.93411
 #define LONGITUDE 20.0
 #define DEPTH 50.0
-#define GEODEPTH 1090.47
+#define GEODEPTH 6321.0
 #define DISTANCE 20.0
 #define BADDISTANCE 160.0
 #define BADDEPTH 800
@@ -26,7 +27,7 @@
 
 // tests to see if the ttt can be constructed
 TEST(TTTTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a traveltime
 	traveltime::CTTT ttt;
@@ -34,14 +35,17 @@ TEST(TTTTest, Construction) {
 	// nTrv
 	ASSERT_EQ(0, ttt.nTrv)<< "nTrv Check";
 
-	// dLat
-	ASSERT_EQ(0, ttt.geoOrg.dLat)<< "dLat Check";
+	// m_dGeocentricLatitude
+	ASSERT_EQ(0, ttt.geoOrg.m_dGeocentricLatitude)<<
+			"m_dGeocentricLatitude Check";
 
-	// dLon
-	ASSERT_EQ(0, ttt.geoOrg.dLon)<< "dLon Check";
+	// m_dGeocentricLongitude
+	ASSERT_EQ(0, ttt.geoOrg.m_dGeocentricLongitude)<<
+			"m_dGeocentricLongitude Check";
 
-	// dZ
-	ASSERT_EQ(0, ttt.geoOrg.dZ)<< "dZ Check";
+	// m_dGeocentricRadius
+	ASSERT_EQ(0, ttt.geoOrg.m_dGeocentricRadius)<<
+			"m_dGeocentricRadius Check";
 
 	// dWeight
 	ASSERT_EQ(0, ttt.dWeight)<< "dWeight Check";
@@ -49,7 +53,7 @@ TEST(TTTTest, Construction) {
 
 // tests to see if phases can be added to the ttt
 TEST(TTTTest, AddPhase) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phase1file = "./" + std::string(TESTPATH) + "/"
 			+ std::string(PHASE1FILENAME);
@@ -97,7 +101,7 @@ TEST(TTTTest, AddPhase) {
 
 // tests to see if set origin works
 TEST(TTTTest, SetOrigin) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a traveltime
 	traveltime::CTTT ttt;
@@ -105,19 +109,22 @@ TEST(TTTTest, SetOrigin) {
 	// call setorigin
 	ttt.setOrigin(LATITUDE, LONGITUDE, DEPTH);
 
-	// dLat
-	ASSERT_NEAR(GEOLATITUDE, ttt.geoOrg.dLat, 0.001)<< "dLat Check";
+	// m_dGeocentricLatitude
+	ASSERT_NEAR(GEOLATITUDE, ttt.geoOrg.m_dGeocentricLatitude, 0.001)<<
+			"m_dGeocentricLatitude Check";
 
-	// dLon
-	ASSERT_EQ(LONGITUDE, ttt.geoOrg.dLon)<< "dLon Check";
+	// m_dGeocentricLongitude
+	ASSERT_EQ(LONGITUDE, ttt.geoOrg.m_dGeocentricLongitude)<<
+			"m_dGeocentricLongitude Check";
 
-	// dZ
-	ASSERT_NEAR(GEODEPTH, ttt.geoOrg.dZ, 0.01)<< "dZ Check";
+	// m_dGeocentricRadius
+	ASSERT_NEAR(GEODEPTH, ttt.geoOrg.m_dGeocentricRadius, 0.01)<<
+			"m_dGeocentricRadius Check";
 }
 
 // tests to see if copy constructor works
 TEST(TTTTest, Copy) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phase1file = "./" + std::string(TESTPATH) + "/"
 			+ std::string(PHASE1FILENAME);
@@ -159,14 +166,17 @@ TEST(TTTTest, Copy) {
 	// phase2 name
 	ASSERT_STREQ(ttt.pTrv[ttt.nTrv - 1]->sPhase.c_str(), phase2name.c_str());
 
-	// dLat
-	ASSERT_NEAR(GEOLATITUDE, ttt.geoOrg.dLat, 0.001)<< "dLat Check";
+	// m_dGeocentricLatitude
+	ASSERT_NEAR(GEOLATITUDE, ttt.geoOrg.m_dGeocentricLatitude, 0.001)<<
+			"m_dGeocentricLatitude Check";
 
-	// dLon
-	ASSERT_EQ(LONGITUDE, ttt.geoOrg.dLon)<< "dLon Check";
+	// m_dGeocentricLongitude
+	ASSERT_EQ(LONGITUDE, ttt.geoOrg.m_dGeocentricLongitude)<<
+			"m_dGeocentricLongitude Check";
 
-	// dZ
-	ASSERT_NEAR(GEODEPTH, ttt.geoOrg.dZ, 0.01)<< "dZ Check";
+	// m_dGeocentricRadius
+	ASSERT_NEAR(GEODEPTH, ttt.geoOrg.m_dGeocentricRadius, 0.01)<<
+			"m_dGeocentricRadius Check";
 
 	delete[] (weightRange);
 	delete[] (assocRange);
@@ -174,7 +184,7 @@ TEST(TTTTest, Copy) {
 
 // tests to see if various T functions work
 TEST(TTTTest, TTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phase1file = "./" + std::string(TESTPATH) + "/"
 			+ std::string(PHASE1FILENAME);
@@ -205,7 +215,7 @@ TEST(TTTTest, TTests) {
 	// set origin
 	ttt.setOrigin(LATITUDE, LONGITUDE, DEPTH);
 
-	glassutil::CGeo testGeo;
+	glass3::util::Geo testGeo;
 	testGeo.setGeographic(LATITUDE, LONGITUDE + DISTANCE, DEPTH);
 
 	// t(geo, phase)
@@ -229,7 +239,7 @@ TEST(TTTTest, TTests) {
 
 // tests to see if various T functions work
 TEST(TTTTest, TFailTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phase1file = "./" + std::string(TESTPATH) + "/"
 			+ std::string(PHASE1FILENAME);
@@ -260,7 +270,7 @@ TEST(TTTTest, TFailTests) {
 	// set origin
 	ttt.setOrigin(LATITUDE, LONGITUDE, BADDEPTH);
 
-	glassutil::CGeo testGeo;
+	glass3::util::Geo testGeo;
 	testGeo.setGeographic(LATITUDE, LONGITUDE + BADDISTANCE, DEPTH);
 
 	// t(geo, phase)

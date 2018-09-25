@@ -36,7 +36,6 @@
 #include <json.h>
 #include <logger.h>
 #include <config.h>
-#include <Logit.h>
 #include <GenTrv.h>
 #include <Terra.h>
 #include <Ray.h>
@@ -60,10 +59,11 @@ int main(int argc, char* argv[]) {
 	// check our arguments
 	if ((argc < 2) || (argc > 3)) {
 		std::cout << "gen-travel-times-app version "
-				<< std::to_string(PROJECT_VERSION_MAJOR) << "."
-				<< std::to_string(PROJECT_VERSION_MINOR) << "."
-				<< std::to_string(PROJECT_VERSION_PATCH) << "; Usage: "
-				<< "gen-travel-times-app <configfile> [logname]" << std::endl;
+					<< std::to_string(PROJECT_VERSION_MAJOR) << "."
+					<< std::to_string(PROJECT_VERSION_MINOR) << "."
+					<< std::to_string(PROJECT_VERSION_PATCH) << "; Usage: "
+					<< "gen-travel-times-app <configfile> [logname]"
+					<< std::endl;
 		return 1;
 	}
 
@@ -85,9 +85,9 @@ int main(int argc, char* argv[]) {
 	}
 
 	// now set up our logging
-	glass3::util::log_init(logName, "debug", logpath, true);
+	glass3::util::Logger::log_init(logName, "debug", logpath, true);
 
-	glass3::util::log(
+	glass3::util::Logger::log(
 			"info",
 			"gen-travel-times-app: Version "
 					+ std::to_string(PROJECT_VERSION_MAJOR) + "."
@@ -97,8 +97,8 @@ int main(int argc, char* argv[]) {
 	// get our config file location from the arguments
 	std::string configFile = argv[1];
 
-	glass3::util::log("info",
-				"gen-travel-times-app: using config file: " + configFile);
+	glass3::util::Logger::log(
+			"info", "gen-travel-times-app: using config file: " + configFile);
 
 	// load our basic config
 	glass3::util::Config * genConfig = new glass3::util::Config("", configFile);
@@ -107,19 +107,19 @@ int main(int argc, char* argv[]) {
 	if (jsonConfig->HasKey("Configuration")
 			&& ((*jsonConfig)["Configuration"].GetType()
 					== json::ValueType::StringVal)) {
-		std::string configType = (*jsonConfig)["Configuration"]
-				.ToString();
+		std::string configType = (*jsonConfig)["Configuration"].ToString();
 
 		if (configType != "gen-travel-times-app") {
-			glass3::util::log("critical",
-						"gen-travel-times-app: Wrong configuration, exiting.");
+			glass3::util::Logger::log(
+					"critical",
+					"gen-travel-times-app: Wrong configuration, exiting.");
 
 			delete (genConfig);
 			return (1);
 		}
 	} else {
 		// no command or type
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"critical",
 				"gen-travel-times-app: Missing required Configuration Key.");
 
@@ -130,13 +130,13 @@ int main(int argc, char* argv[]) {
 	// model
 	std::string model = "";
 	if (jsonConfig->HasKey("Model")
-			&& ((*jsonConfig)["Model"].GetType()
-					== json::ValueType::StringVal)) {
+			&& ((*jsonConfig)["Model"].GetType() == json::ValueType::StringVal)) {
 		model = (*jsonConfig)["Model"].ToString();
-		glass3::util::log("info",
-								"gen-travel-times-app: Using Model: " + model);
+		glass3::util::Logger::log(
+				"info", "gen-travel-times-app: Using Model: " + model);
 	} else {
-		glass3::util::log("critical",
+		glass3::util::Logger::log(
+				"critical",
 				"gen-travel-times-app: Missing required Model Key.");
 
 		delete (genConfig);
@@ -150,7 +150,8 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::StringVal)) {
 		path = (*jsonConfig)["OutputPath"].ToString();
 	}
-	glass3::util::log("info", "gen-travel-times-app: Using OutputPath: " + path);
+	glass3::util::Logger::log(
+			"info", "gen-travel-times-app: Using OutputPath: " + path);
 
 	// file extension
 	std::string extension = ".trv";
@@ -159,21 +160,20 @@ int main(int argc, char* argv[]) {
 					== json::ValueType::StringVal)) {
 		extension = (*jsonConfig)["FileExtension"].ToString();
 	}
-	glass3::util::log("info",
-				"gen-travel-times-app: Using FileExtension: " + extension);
+	glass3::util::Logger::log(
+			"info", "gen-travel-times-app: Using FileExtension: " + extension);
 
-	glass3::util::log("info", "gen-travel-times-app: Setup.");
+	glass3::util::Logger::log("info", "gen-travel-times-app: Setup.");
 
 	// create generator
 	traveltime::CGenTrv *travelGenerator = new traveltime::CGenTrv();
 
 	travelGenerator->setup(model, path, extension);
 
-	glass3::util::log("info", "gen-travel-times-app: Startup.");
+	glass3::util::Logger::log("info", "gen-travel-times-app: Startup.");
 
 	if (jsonConfig->HasKey("Branches")
-			&& ((*jsonConfig)["Branches"].GetType()
-					== json::ValueType::ArrayVal)) {
+			&& ((*jsonConfig)["Branches"].GetType() == json::ValueType::ArrayVal)) {
 		// get the array of phase entries
 		json::Array branches = (*jsonConfig)["Branches"].ToArray();
 
@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
 			json::Object branchObj = branchVal.ToObject();
 
 			if (travelGenerator->generate(&branchObj) != true) {
-				glass3::util::log(
+				glass3::util::Logger::log(
 						"error",
 						"gen-travel-times-app: Failed to generate travel time "
 						"file.");
@@ -201,7 +201,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	glass3::util::log("info", "gen-travel-times-app: Shutdown.");
+	glass3::util::Logger::log("info", "gen-travel-times-app: Shutdown.");
 
 	// cleanup
 	delete (genConfig);

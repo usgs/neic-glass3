@@ -9,7 +9,14 @@
 
 #include <random>
 
-namespace glassutil {
+// mathmatical defines
+#define RAD2DEG 57.29577951308
+#define DEG2RAD	0.01745329251994
+#define TWOPI 6.283185307179586
+#define PI 3.14159265359
+
+namespace glass3 {
+namespace util {
 
 /**
  * \brief glassutil logging class
@@ -87,5 +94,6 @@ class GlassMath {
 	 */
 	static std::default_random_engine m_RandomGenerator;
 };
-}  // namespace glassutil
-#endif  // LOGIT_H
+}  // namespace util
+}  // namespace glass3
+#endif  // GLASSMATH_H

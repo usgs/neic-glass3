@@ -1,14 +1,14 @@
+#include "GenTrv.h"
+#include <logger.h>
+#include <glassmath.h>
 #include <json.h>
 #include <cmath>
 #include <cstdio>
 #include <string>
-#include "Logit.h"
 #include "Spline.h"
 #include "Terra.h"
 #include "Ray.h"
 #include "TimeWarp.h"
-#include "Geo.h"
-#include "GenTrv.h"
 
 namespace traveltime {
 
@@ -89,14 +89,14 @@ bool CGenTrv::setup(std::string modelFile, std::string outputPath,
 
 	// load earth model
 	if (pTerra->load(modelFile.c_str())) {
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CGenTrv::setup: Terra nLayer: "
 						+ std::to_string(pTerra->nLayer) + " dEarthRadius: "
 						+ std::to_string(pTerra->dEarthRadius));
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CGenTrv::setup: Unable to load Model: " + modelFile);
 		return (false);
 	}
@@ -115,7 +115,7 @@ bool CGenTrv::setup(std::string modelFile, std::string outputPath,
 // ---------------------------------------------------------generate
 bool CGenTrv::generate(json::Object *com) {
 	if (bSetup == false) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 										"CGenTrv::generate: Call setup before "
 										"generate.");
 		return(false);
@@ -123,7 +123,7 @@ bool CGenTrv::generate(json::Object *com) {
 
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CGenTrv::generate: NULL json communication.");
 		return (false);
 	}
@@ -136,15 +136,15 @@ bool CGenTrv::generate(json::Object *com) {
 		std::string command = (*com)["Cmd"].ToString();
 
 		if (command != "GenerateTraveltime") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CGenTrv::generate: Non-Correlation message "
 					"passed in.");
 			return (false);
 		}
 	} else {
 		// no command or type
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CGenTrv::generate: Missing required Cmd Key.");
 		return (false);
 	}
@@ -157,12 +157,12 @@ bool CGenTrv::generate(json::Object *com) {
 	if (com->HasKey("Branch")
 			&& ((*com)["Branch"].GetType() == json::ValueType::StringVal)) {
 		branchName = (*com)["Branch"].ToString();
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
+		glass3::util::Logger::log(
+				"info",
 				"CGenTrv::generate: Using Branch: " + branchName);
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CGenTrv::generate: Missing required Branch Key.");
 		return (false);
 	}
@@ -190,12 +190,12 @@ bool CGenTrv::generate(json::Object *com) {
 			nRays++;
 			vRays.push_back(ray);
 
-			glassutil::CLogit::log(glassutil::log_level::info,
+			glass3::util::Logger::log("info",
 									"CGenTrv::generate: Using ray: " + ray);
 		}
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CGenTrv::generate: Missing required Phases key");
 		return (false);
 	}
@@ -219,13 +219,13 @@ bool CGenTrv::generate(json::Object *com) {
 						== json::ValueType::DoubleVal)) {
 			gridMin = delta["MinimumDistance"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DeltaTimeWarp MinimumDistance: "
 							+ std::to_string(gridMin));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DeltaTimeWarp MinimumDistance key.");
 			return (false);
 		}
@@ -236,13 +236,13 @@ bool CGenTrv::generate(json::Object *com) {
 						== json::ValueType::DoubleVal)) {
 			gridMax = delta["MaximumDistance"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DeltaTimeWarp MaximumDistance: "
 							+ std::to_string(gridMax));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DeltaTimeWarp MaximumDistance key.");
 			return (false);
 		}
@@ -253,13 +253,13 @@ bool CGenTrv::generate(json::Object *com) {
 						== json::ValueType::DoubleVal)) {
 			decayConst = delta["SlopeDecayConstant"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DeltaTimeWarp SlopeDecayConstant: "
 							+ std::to_string(decayConst));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DeltaTimeWarp "
 					"SlopeDecayConstant key.");
 			return (false);
@@ -270,13 +270,13 @@ bool CGenTrv::generate(json::Object *com) {
 				&& (delta["SlopeZero"].GetType() == json::ValueType::DoubleVal)) {
 			slopeZero = delta["SlopeZero"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DeltaTimeWarp SlopeZero: "
 							+ std::to_string(slopeZero));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DeltaTimeWarp "
 					"SlopeZero key.");
 			return (false);
@@ -288,13 +288,13 @@ bool CGenTrv::generate(json::Object *com) {
 						== json::ValueType::DoubleVal)) {
 			slopeInf = delta["SlopeInfinite"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DeltaTimeWarp SlopeInfinite: "
 							+ std::to_string(slopeInf));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DeltaTimeWarp "
 					"SlopeInfinite key.");
 			return (false);
@@ -305,8 +305,8 @@ bool CGenTrv::generate(json::Object *com) {
 										slopeInf);
 		nDistanceWarp = pDistanceWarp->grid(gridMax);
 
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CGenTrv::generate: pDistanceWarp: minDistance: "
 						+ std::to_string(
 								pDistanceWarp->value(
@@ -316,8 +316,8 @@ bool CGenTrv::generate(json::Object *com) {
 								pDistanceWarp->value(
 										pDistanceWarp->grid(gridMax))));
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CGenTrv::generate: Missing required DeltaTimeWarp key");
 		return (false);
 	}
@@ -341,13 +341,13 @@ bool CGenTrv::generate(json::Object *com) {
 						== json::ValueType::DoubleVal)) {
 			gridMin = delta["MinimumDepth"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DepthTimeWarp MinimumDepth: "
 							+ std::to_string(gridMin));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DepthTimeWarp "
 					"MinimumDepth key.");
 			return (false);
@@ -359,13 +359,13 @@ bool CGenTrv::generate(json::Object *com) {
 						== json::ValueType::DoubleVal)) {
 			gridMax = delta["MaximumDepth"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DepthTimeWarp MaximumDepth: "
 							+ std::to_string(gridMax));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DepthTimeWarp "
 					"MaximumDepth key.");
 			return (false);
@@ -377,13 +377,13 @@ bool CGenTrv::generate(json::Object *com) {
 						== json::ValueType::DoubleVal)) {
 			decayConst = delta["SlopeDecayConstant"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DepthTimeWarp SlopeDecayConstant: "
 							+ std::to_string(decayConst));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DepthTimeWarp "
 					"SlopeDecayConstant key.");
 			return (false);
@@ -394,13 +394,13 @@ bool CGenTrv::generate(json::Object *com) {
 				&& (delta["SlopeZero"].GetType() == json::ValueType::DoubleVal)) {
 			slopeZero = delta["SlopeZero"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DepthTimeWarp SlopeZero: "
 							+ std::to_string(slopeZero));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DepthTimeWarp SlopeZero key.");
 			return (false);
 		}
@@ -411,13 +411,13 @@ bool CGenTrv::generate(json::Object *com) {
 						== json::ValueType::DoubleVal)) {
 			slopeInf = delta["SlopeInfinite"].ToDouble();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CGenTrv::generate: Using DepthTimeWarp SlopeInfinite: "
 							+ std::to_string(slopeInf));
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CGenTrv::generate: Missing required DepthTimeWarp SlopeInfinite key.");
 			return (false);
 		}
@@ -427,8 +427,8 @@ bool CGenTrv::generate(json::Object *com) {
 									slopeInf);
 		nDepthWarp = pDepthWarp->grid(gridMax);
 
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CGenTrv::generate: pDepthWarp: minDepth: "
 						+ std::to_string(
 								pDepthWarp->value(pDepthWarp->grid(gridMin)))
@@ -436,14 +436,14 @@ bool CGenTrv::generate(json::Object *com) {
 						+ std::to_string(
 								pDepthWarp->value(pDepthWarp->grid(gridMax))));
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CGenTrv::generate: Missing required DepthTimeWarp key");
 		return (false);
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CGenTrv::generate: nDistanceWarp: " + std::to_string(nDistanceWarp)
 					+ " nDepthWarp: " + std::to_string(nDepthWarp));
 
@@ -453,7 +453,7 @@ bool CGenTrv::generate(json::Object *com) {
 	// UnitTest("P", 50, 250, 509.04);
 	// UnitTest("P", 90, 100, 768.24);
 
-	glassutil::CLogit::log(glassutil::log_level::info,
+	glass3::util::Logger::log("info",
 							"CGenTrv::generate: Generating depth layers.");
 
 	// set up for interpolation
@@ -478,8 +478,8 @@ bool CGenTrv::generate(json::Object *com) {
 
 		// for each distance at this depth
 		for (int iDelta = 0; iDelta < nDistanceWarp; iDelta++) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
+			glass3::util::Logger::log(
+					"debug",
 					"CGenTrv::generate: iDelta: " + std::to_string(iDelta)
 							+ " distance: "
 							+ std::to_string(pDistanceWarp->value(iDelta)));
@@ -499,8 +499,8 @@ bool CGenTrv::generate(json::Object *com) {
 
 		// check to see if there was a valid travel time for this depth
 		if (maxDelta < 0) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
+			glass3::util::Logger::log(
+					"debug",
 					"CGenTrv::generate: iDepth:" + std::to_string(iDepth)
 							+ " depth:"
 							+ std::to_string(pDepthWarp->value(iDepth))
@@ -555,7 +555,7 @@ bool CGenTrv::generate(json::Object *com) {
 	// open file
 	std::string outFileName = m_OutputPath + branchName + m_FileExtension;
 
-	glassutil::CLogit::log(glassutil::log_level::info,
+	glass3::util::Logger::log("info",
 							"CGenTrv::generate: writing file: " + outFileName);
 
 	FILE *outFile = fopen(outFileName.c_str(), "wb");
@@ -590,7 +590,7 @@ bool CGenTrv::generate(json::Object *com) {
 	// done with file
 	fclose(outFile);
 
-	glassutil::CLogit::log(glassutil::log_level::info,
+	glass3::util::Logger::log("info",
 							"CGenTrv::generate: file writing complete.");
 
 	// cleanup
@@ -604,8 +604,8 @@ bool CGenTrv::generate(json::Object *com) {
 // ---------------------------------------------------------Row
 int CGenTrv::Row(int iDepth, double *travelTimeArray,
 					double *depthDistanceArray, char *phaseArray) {
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CGenTrv::Row: iDepth: " + std::to_string(iDepth) + +" depth:"
 					+ std::to_string(pDepthWarp->value(iDepth)));
 
@@ -626,7 +626,7 @@ int CGenTrv::Row(int iDepth, double *travelTimeArray,
 		// get the current phase
 		std::string phase = vRays[phaseIndex];
 
-		glassutil::CLogit::log(glassutil::log_level::debug,
+		glass3::util::Logger::log("debug",
 								"CGenTrv::Row: Phase:" + phase);
 
 		// for each distance at this depth
@@ -722,8 +722,8 @@ int CGenTrv::Row(int iDepth, double *travelTimeArray,
 		}
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CGenTrv::Row: Patched: " + std::to_string(nHoles) + " holes.");
 
 	// cleanup

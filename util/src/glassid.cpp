@@ -1,4 +1,4 @@
-#include "Pid.h"
+#include <glassid.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -11,18 +11,19 @@ typedef unsigned char byte;
 #include <memory.h>
 #include <string>
 
-namespace glassutil {
+namespace glass3 {
+namespace util {
 
-// ---------------------------------------------------------CPid
-CPid::CPid() {
+// ---------------------------------------------------------GlassID
+GlassID::GlassID() {
 }
 
-// ---------------------------------------------------------~CPid
-CPid::~CPid() {
+// ---------------------------------------------------------~GlassID
+GlassID::~GlassID() {
 }
 
-// ---------------------------------------------------------Pid
-std::string CPid::pid() {
+// ---------------------------------------------------------getID
+std::string GlassID::getID() {
 	// get guid (also known as uuid in linux)
 #ifdef _WIN32
 	GUID guid;
@@ -54,8 +55,8 @@ std::string CPid::pid() {
 	return (pid);
 }
 
-// ---------------------------------------------------------Pid
-unsigned int CPid::random() {
+// ---------------------------------------------------------random
+unsigned int GlassID::random() {
 	// get guid (also known as uuid in linux)
 #ifdef _WIN32
 	GUID guid;
@@ -75,4 +76,5 @@ unsigned int CPid::random() {
 	// return integer id
 	return (random);
 }
-}  // namespace glassutil
+}  // namespace util
+}  // namespace glass3

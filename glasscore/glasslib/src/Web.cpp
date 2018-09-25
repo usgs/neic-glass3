@@ -1,4 +1,7 @@
+#include "Web.h"
 #include <json.h>
+#include <logger.h>
+#include <geo.h>
 #include <cmath>
 #include <algorithm>
 #include <string>
@@ -13,17 +16,12 @@
 #include <limits>
 #include <map>
 #include <sstream>
-#include "Web.h"
-#include "IGlassSend.h"
 #include "Glass.h"
 #include "Terra.h"
-#include "Date.h"
 #include "Pick.h"
 #include "Node.h"
 #include "SiteList.h"
 #include "Site.h"
-#include "Logit.h"
-#include "Pid.h"
 
 #define _USE_MATH_DEFINES
 
@@ -151,8 +149,8 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 bool CWeb::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
@@ -185,14 +183,14 @@ bool CWeb::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 
 // ---------------------------------------------------------generateGlobalGrid
 bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
-	glassutil::CLogit::log(glassutil::log_level::debug,
+	glass3::util::Logger::log("debug",
 							"CWeb::generateGlobalGrid");
 
 	// nullchecks
 	// check json
 	if (gridConfiguration == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateGlobalGrid: NULL json configuration.");
 		return (false);
 	}
@@ -218,8 +216,8 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 		}
 		numDepthLayers = static_cast<int>(depthLayerArray.size());
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateGlobalGrid: Missing required DepthLayers Array.");
 		return (false);
 	}
@@ -240,7 +238,7 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 	snprintf(sLog, sizeof(sLog),
 				"CWeb::generateGlobalGrid: Calculated numNodes:%d;", numNodes);
-	glassutil::CLogit::log(sLog);
+	glass3::util::Logger::log(sLog);
 
 	// create / open gridfile for saving
 	std::ofstream outfile;
@@ -333,7 +331,7 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
-	glassutil::CLogit::log(glassutil::log_level::info, sLog);
+	glass3::util::Logger::log("info", sLog);
 
 	// success
 	return (true);
@@ -341,14 +339,14 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 // ---------------------------------------------------------generateLocalGrid
 bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
-	glassutil::CLogit::log(glassutil::log_level::debug,
+	glass3::util::Logger::log("debug",
 							"CWeb::generateLocalGrid");
 
 	// nullchecks
 	// check json
 	if (gridConfiguration == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateLocalGrid: NULL json configuration.");
 		return (false);
 	}
@@ -372,8 +370,8 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					== json::ValueType::DoubleVal)) {
 		lat = (*gridConfiguration)["CenterLatitude"].ToDouble();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateLocalGrid: Missing required CenterLatitude Key.");
 		return (false);
 	}
@@ -384,8 +382,8 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					== json::ValueType::DoubleVal)) {
 		lon = (*gridConfiguration)["CenterLongitude"].ToDouble();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateLocalGrid: Missing required Lon Key.");
 		return (false);
 	}
@@ -402,8 +400,8 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 		}
 		numDepthLayers = static_cast<int>(depthLayerArray.size());
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateLocalGrid: Missing required DepthLayers Array.");
 		return (false);
 	}
@@ -414,8 +412,8 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					== json::ValueType::IntVal)) {
 		rows = (*gridConfiguration)["NumberOfRows"].ToInt();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateLocalGrid: Missing required NumberOfRows Key.");
 		return (false);
 	}
@@ -426,8 +424,8 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					== json::ValueType::IntVal)) {
 		cols = (*gridConfiguration)["NumberOfColumns"].ToInt();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateLocalGrid: Missing required NumberOfColumns Key.");
 		return (false);
 	}
@@ -483,7 +481,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 		// log the latitude
 		snprintf(sLog, sizeof(sLog), "LatRow:%.2f", latrow);
-		glassutil::CLogit::log(glassutil::log_level::debug, sLog);
+		glass3::util::Logger::log("debug", sLog);
 		// for each col
 		for (int icol = 0; icol < cols; icol++) {
 			// compute the current column longitude by adding the
@@ -552,7 +550,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
-	glassutil::CLogit::log(glassutil::log_level::info, sLog);
+	glass3::util::Logger::log("info", sLog);
 
 	// success
 	return (true);
@@ -561,14 +559,14 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 // ---------------------------------------------------------generateExplicitGrid
 bool CWeb::generateExplicitGrid(
 		std::shared_ptr<json::Object> gridConfiguration) {
-	glassutil::CLogit::log(glassutil::log_level::debug,
+	glass3::util::Logger::log("debug",
 							"CWeb::generateExplicitGrid");
 
 	// nullchecks
 	// check json
 	if (gridConfiguration == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateExplicitGrid: NULL json configuration.");
 		return (false);
 	}
@@ -598,8 +596,8 @@ bool CWeb::generateExplicitGrid(
 		int i = 0;
 		for (const auto &val : nodeList) {
 			if (val.GetType() != json::ValueType::ObjectVal) {
-				glassutil::CLogit::log(
-						glassutil::log_level::error,
+				glass3::util::Logger::log(
+						"error",
 						"CWeb::generateExplicitGrid: Bad Node Definition found"
 						" in Node List.");
 				continue;
@@ -608,8 +606,8 @@ bool CWeb::generateExplicitGrid(
 			if (obj["Latitude"].GetType() != json::ValueType::DoubleVal
 					|| obj["Longitude"].GetType() != json::ValueType::DoubleVal
 					|| obj["Depth"].GetType() != json::ValueType::DoubleVal) {
-				glassutil::CLogit::log(
-						glassutil::log_level::error,
+				glass3::util::Logger::log(
+						"error",
 						"CWeb::generateExplicitGrid: Node Lat, Lon, or Depth not"
 						" a  double in param file.");
 				return (false);
@@ -624,8 +622,8 @@ bool CWeb::generateExplicitGrid(
 			i++;
 		}
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateExplicitGrid: Missing required NodeList Key.");
 		return (false);
 	}
@@ -695,7 +693,7 @@ bool CWeb::generateExplicitGrid(
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
-	glassutil::CLogit::log(glassutil::log_level::info, sLog);
+	glass3::util::Logger::log("info", sLog);
 
 	// success
 	return (true);
@@ -707,8 +705,8 @@ bool CWeb::loadGridConfiguration(
 	// nullchecks
 	// check json
 	if (gridConfiguration == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::loadGridConfiguration: NULL json configuration.");
 		return (false);
 	}
@@ -741,15 +739,15 @@ bool CWeb::loadGridConfiguration(
 				.ToObject();
 
 		if (loadTravelTimes(&nucleationPhases) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CWeb::loadGridConfiguration: Error Loading NucleationPhases");
 			return (false);
 		}
 	} else {
 		if (loadTravelTimes((json::Object *) NULL) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CWeb::loadGridConfiguration: Error Loading default "
 					"NucleationPhases");
 			return (false);
@@ -783,8 +781,8 @@ bool CWeb::loadGridConfiguration(
 					== json::ValueType::DoubleVal)) {
 		resol = (*gridConfiguration)["NodeResolution"].ToDouble();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::loadGridConfiguration: Missing required Resolution Key.");
 		return (false);
 	}
@@ -836,8 +834,8 @@ bool CWeb::loadGridConfiguration(
 bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 	// check json
 	if (gridConfiguration == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
+		glass3::util::Logger::log(
+				"info",
 				"CWeb::loadTravelTimes: NULL json configuration "
 				"Using default first phase and no second phase");
 
@@ -889,21 +887,21 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 		if (phsObj.HasKey("TravFile")) {
 			file = phsObj["TravFile"].ToString();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CWeb::loadTravelTimes: Using file location: " + file
 							+ " for first phase: " + phs);
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CWeb::loadTravelTimes: Using default file location for "
 							"first phase: " + phs);
 		}
 
 		// set up the first phase travel time
 		if (m_pNucleationTravelTime1->setup(phs, file) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CWeb::loadTravelTimes: Failed to load file "
 							"location " + file + " for first phase: " + phs);
 			return (false);
@@ -925,8 +923,8 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 			m_pNucleationTravelTime1->setup("P");
 		}
 
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
+		glass3::util::Logger::log(
+				"info",
 				"CWeb::loadTravelTimes: Using default first phase");
 	}
 
@@ -955,21 +953,21 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 		if (phsObj.HasKey("TravFile")) {
 			file = phsObj["TravFile"].ToString();
 
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CWeb::loadTravelTimes: Using file location: " + file
 							+ " for second phase: " + phs);
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::info,
+			glass3::util::Logger::log(
+					"info",
 					"CWeb::loadTravelTimes: Using default file location for "
 							"second phase: " + phs);
 		}
 
 		// set up the second phase travel time
 		if (m_pNucleationTravelTime2->setup(phs, file) == false) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CWeb::loadTravelTimes: Failed to load file "
 							"location " + file + " for second phase: " + phs);
 			return (false);
@@ -979,8 +977,8 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 		// clean out old phase if any
 		m_pNucleationTravelTime2.reset();
 
-		glassutil::CLogit::log(
-				glassutil::log_level::info,
+		glass3::util::Logger::log(
+				"info",
 				"CWeb::loadTravelTimes: Not using secondary nucleation phase");
 	}
 
@@ -992,7 +990,7 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 	// nullchecks
 	// check json
 	if (gridConfiguration == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"genSiteFilters: NULL json configuration.");
 		return (false);
 	}
@@ -1023,8 +1021,8 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 		}
 
 		if (netFilterCount > 0) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
+			glass3::util::Logger::log(
+					"debug",
 					"CWeb::genSiteFilters: " + std::to_string(netFilterCount)
 							+ " network filters configured.");
 		}
@@ -1054,8 +1052,8 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 		}
 
 		if (staFilterCount > 0) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
+			glass3::util::Logger::log(
+					"debug",
 					"CWeb::genSiteFilters: " + std::to_string(staFilterCount)
 							+ " SCNL filters configured.");
 		}
@@ -1068,8 +1066,8 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 		m_bUseOnlyTeleseismicStations =
 				(*gridConfiguration)["UseOnlyTeleseismicStations"].ToBool();
 
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CWeb::genSiteFilters: bUseOnlyTeleseismicStations is "
 						+ std::to_string(m_bUseOnlyTeleseismicStations) + ".");
 	}
@@ -1125,8 +1123,8 @@ bool CWeb::loadWebSiteList() {
 	// nullchecks
 	// check pSiteList
 	if (m_pSiteList == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::loadWebSiteList: NULL pSiteList pointer.");
 		return (false);
 	}
@@ -1136,8 +1134,8 @@ bool CWeb::loadWebSiteList() {
 
 	// don't bother continuing if we have no sites
 	if (nsite <= 0) {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
+		glass3::util::Logger::log(
+				"warning",
 				"CWeb::loadWebSiteList: No sites in site list.");
 		return (false);
 	}
@@ -1147,7 +1145,7 @@ bool CWeb::loadWebSiteList() {
 	snprintf(sLog, sizeof(sLog),
 				"CWeb::loadWebSiteList: %d sites available for web %s", nsite,
 				m_sName.c_str());
-	glassutil::CLogit::log(glassutil::log_level::debug, sLog);
+	glass3::util::Logger::log("debug", sLog);
 
 	// clear web site list
 	m_vSitesSortedForCurrentNode.clear();
@@ -1184,7 +1182,7 @@ bool CWeb::loadWebSiteList() {
 				"CWeb::loadWebSiteList: %d sites selected for web %s",
 				static_cast<int>(m_vSitesSortedForCurrentNode.size()),
 				m_sName.c_str());
-	glassutil::CLogit::log(glassutil::log_level::info, sLog);
+	glass3::util::Logger::log("info", sLog);
 
 	return (true);
 }
@@ -1192,7 +1190,7 @@ bool CWeb::loadWebSiteList() {
 // ---------------------------------------------------------sortSiteListForNode
 void CWeb::sortSiteListForNode(double lat, double lon) {
 	// set to provided geographic location
-	glassutil::CGeo geo;
+	glass3::util::Geo geo;
 
 	// NOTE: node depth is ignored here
 	geo.setGeographic(lat, lon, 6371.0);
@@ -1221,7 +1219,7 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 	// nullcheck
 	if ((m_pNucleationTravelTime1 == NULL)
 			&& (m_pNucleationTravelTime2 == NULL)) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CWeb::genNode: No valid trav pointers.");
 		return (NULL);
 	}
@@ -1263,33 +1261,33 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 	// nullchecks
 	// check node
 	if (node == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CWeb::genNodeSites: NULL node pointer.");
 		return (NULL);
 	}
 	// check trav
 	if ((m_pNucleationTravelTime1 == NULL)
 			&& (m_pNucleationTravelTime2 == NULL)) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CWeb::genNodeSites: No valid trav pointers.");
 		return (NULL);
 	}
 	// check sites
 	if (m_vSitesSortedForCurrentNode.size() == 0) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CWeb::genNodeSites: No sites.");
 		return (node);
 	}
 	// check nDetect
 	if (m_iNumStationsPerNode == 0) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CWeb::genNodeSites: nDetect is 0.");
 		return (node);
 	}
 
 	int sitesAllowed = m_iNumStationsPerNode;
 	if (m_vSitesSortedForCurrentNode.size() < m_iNumStationsPerNode) {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CWeb::genNodeSites: nDetect is greater "
 								"than the number of sites.");
 		sitesAllowed = m_vSitesSortedForCurrentNode.size();
@@ -1364,15 +1362,15 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CWeb::addSite: New potential station " + site->getSCNL()
 					+ " for web: " + m_sName + ".");
 
 	// don't bother if this site isn't allowed
 	if (isSiteAllowed(site) == false) {
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CWeb::addSite: Station " + site->getSCNL()
 						+ " not allowed in web " + m_sName + ".");
 		return;
@@ -1391,8 +1389,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		node->setEnabled(false);
 
 		if (nodeCount % 1000 == 0) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
+			glass3::util::Logger::log(
+					"debug",
 					"CWeb::addSite: Station " + site->getSCNL() + " processed "
 							+ std::to_string(nodeCount) + " out of "
 							+ std::to_string(totalNodes) + " nodes in web: "
@@ -1413,7 +1411,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 
 		// set to node geographic location
 		// NOTE: node depth is ignored here
-		glassutil::CGeo geo;
+		glass3::util::Geo geo;
 		geo.setGeographic(node->getLatitude(), node->getLongitude(), 6371.0);
 
 		// compute delta distance between site and node
@@ -1486,10 +1484,10 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		snprintf(sLog, sizeof(sLog), "CWeb::addSite: Added site: %s to %d "
 					"node(s) in web: %s",
 					site->getSCNL().c_str(), nodeModCount, m_sName.c_str());
-		glassutil::CLogit::log(glassutil::log_level::info, sLog);
+		glass3::util::Logger::log("info", sLog);
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CWeb::addSite: Station " + site->getSCNL()
 						+ " not added to any "
 								"nodes in web: " + m_sName + ".");
@@ -1510,15 +1508,15 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 
 	// don't bother if this site isn't allowed
 	if (isSiteAllowed(site) == false) {
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CWeb::remSite: Station " + site->getSCNL()
 						+ " not allowed in web " + m_sName + ".");
 		return;
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CWeb::remSite: Trying to remove station " + site->getSCNL()
 					+ " from web " + m_sName + ".");
 
@@ -1546,8 +1544,8 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		node->setEnabled(false);
 
 		if (nodeCount % 1000 == 0) {
-			glassutil::CLogit::log(
-					glassutil::log_level::debug,
+			glass3::util::Logger::log(
+					"debug",
 					"CWeb::remSite: Station " + site->getSCNL() + " processed "
 							+ std::to_string(nodeCount) + " out of "
 							+ std::to_string(totalNodes) + " nodes in web: "
@@ -1597,8 +1595,8 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 			// Link node to new site using traveltimes
 			if (node->linkSite(newSite, node, newDistance, travelTime1,
 								travelTime2) == false) {
-				glassutil::CLogit::log(
-						glassutil::log_level::error,
+				glass3::util::Logger::log(
+						"error",
 						"CWeb::remSite: Failed to add station "
 								+ newSite->getSCNL() + " to web " + m_sName
 								+ ".");
@@ -1610,8 +1608,8 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 			// we've removed a site
 			nodeModCount++;
 		} else {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CWeb::remSite: Failed to remove station " + site->getSCNL()
 							+ " from web " + m_sName + ".");
 		}
@@ -1626,10 +1624,10 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 				sLog, sizeof(sLog),
 				"CWeb::remSite: Removed site: %s from %d node(s) in web: %s",
 				site->getSCNL().c_str(), nodeModCount, m_sName.c_str());
-		glassutil::CLogit::log(glassutil::log_level::info, sLog);
+		glass3::util::Logger::log("info", sLog);
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::debug,
+		glass3::util::Logger::log(
+				"debug",
 				"CWeb::remSite: Station " + site->getSCNL()
 						+ " not removed from any nodes in web: " + m_sName
 						+ ".");
@@ -1643,8 +1641,8 @@ void CWeb::addJob(std::function<void()> newjob) {
 		try {
 			newjob();
 		} catch (const std::exception &e) {
-			glassutil::CLogit::log(
-					glassutil::log_level::error,
+			glass3::util::Logger::log(
+					"error",
 					"CWeb::jobLoop: Exception during job(): "
 							+ std::string(e.what()));
 		}
@@ -1659,7 +1657,7 @@ void CWeb::addJob(std::function<void()> newjob) {
 
 // ---------------------------------------------------------work
 glass3::util::WorkState CWeb::work() {
-	glassutil::CLogit::log(glassutil::log_level::debug,
+	glass3::util::Logger::log("debug",
 							"CWeb::jobLoop: startup");
 	// lock for queue access
 	m_QueueMutex.lock();
@@ -1683,8 +1681,8 @@ glass3::util::WorkState CWeb::work() {
 	try {
 		newjob();
 	} catch (const std::exception &e) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::workLoop: Exception during job(): "
 						+ std::string(e.what()));
 		return (glass3::util::WorkState::Error);

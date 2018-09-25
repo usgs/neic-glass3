@@ -1,6 +1,6 @@
-#include <cmath>
 #include "TimeWarp.h"
-#include "Logit.h"
+#include <logger.h>
+#include <cmath>
 
 namespace traveltime {
 
@@ -59,7 +59,7 @@ void CTimeWarp::setup(double gridMin, double gridMax, double decayConst,
 double CTimeWarp::grid(double val) {
 	// Calculate grid index from value
 	if (bSetup == false) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CTimeWarp::grid: Time Warp is not set up.");
 	}
 
@@ -79,7 +79,7 @@ double CTimeWarp::grid(double val) {
 double CTimeWarp::value(double gridIndex) {
 	// Calculate interpolated value at given grid point
 	if (bSetup == false) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CTimeWarp::value: Time Warp is not set up.");
 	}
 

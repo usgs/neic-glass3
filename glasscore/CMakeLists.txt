@@ -28,25 +28,22 @@ include(${CMAKE_DIR}/uuid.cmake)
 include(${CMAKE_DIR}/include_neic-glass3_util.cmake)
 
 # ----- SET PROJECT INCLUDE DIRECTORIES ----- #
-include_directories(${PROJECT_SOURCE_DIR}/glassutil/include)
 include_directories(${PROJECT_SOURCE_DIR}/traveltime/include)
 include_directories(${PROJECT_SOURCE_DIR}/glasslib/include)
 
 # ----- SET SOURCE FILES ----- #
-file(GLOB SRCS "${PROJECT_SOURCE_DIR}/glassutil/src/*.cpp"
-               "${PROJECT_SOURCE_DIR}/traveltime/src/*.cpp"
+file(GLOB SRCS "${PROJECT_SOURCE_DIR}/traveltime/src/*.cpp"
                "${PROJECT_SOURCE_DIR}/glasslib/src/*.cpp")
 
 # ----- SET HEADER FILES ----- #
-file(GLOB HDRS "${PROJECT_SOURCE_DIR}/glassutil/include/*.h"
-               "${PROJECT_SOURCE_DIR}/traveltime/include/*.h"
+file(GLOB HDRS "${PROJECT_SOURCE_DIR}/traveltime/include/*.h"
                "${PROJECT_SOURCE_DIR}/glasslib/include/*.h")
 
 # ----- BUILD LIBRARY ----- #
 include(${CMAKE_DIR}/build_lib.cmake)
 
 # ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/glassutil ${PROJECT_SOURCE_DIR}/traveltime ${PROJECT_SOURCE_DIR}/glasslib")
+set(DOC_DIRS "${PROJECT_SOURCE_DIR}/traveltime ${PROJECT_SOURCE_DIR}/glasslib")
 include(${CMAKE_DIR}/documentation.cmake)
 
 # ----- RUN CPPCHECK ----- #

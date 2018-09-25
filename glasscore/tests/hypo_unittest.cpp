@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <logger.h>
+
 #include "Site.h"
 #include "SiteList.h"
 #include "Pick.h"
@@ -13,8 +15,6 @@
 #include "Web.h"
 #include "Trigger.h"
 #include "Glass.h"
-#include "Logit.h"
-#include "logger.h"
 
 #define TESTPATH "testdata"
 #define STATIONFILENAME "teststationlist.json"
@@ -143,7 +143,7 @@ void checkdata(glasscore::CHypo *hypoobject, const std::string &testinfo) {
 
 // test to see if the hypo can be constructed
 TEST(HypoTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo();
@@ -183,7 +183,7 @@ TEST(HypoTest, Construction) {
 
 // test to see if the hypo can be constructed from a correlation
 TEST(HypoTest, CorrelationConstruction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -255,7 +255,7 @@ TEST(HypoTest, CorrelationConstruction) {
 
 // test to see if the hypo can be constructed from a correlation
 TEST(HypoTest, TriggerConstruction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a web
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -328,7 +328,7 @@ TEST(HypoTest, TriggerConstruction) {
 
 // test to see if the hypopick operations work
 TEST(HypoTest, PickOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a hypo
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -398,7 +398,7 @@ TEST(HypoTest, PickOperations) {
 // test to see if the localize operation works
 TEST(HypoTest, Anneal) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -484,7 +484,7 @@ TEST(HypoTest, Anneal) {
 // test to see if the localize operation works
 TEST(HypoTest, Localize) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -601,7 +601,7 @@ TEST(HypoTest, Localize) {
 // test to see if the localize operation works
 TEST(HypoTest, Prune) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -664,7 +664,7 @@ TEST(HypoTest, Prune) {
 // test to see if the localize operation works
 TEST(HypoTest, Resolve) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -729,7 +729,7 @@ TEST(HypoTest, Resolve) {
 // test to see if the localize operation works
 TEST(HypoTest, Messaging) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist

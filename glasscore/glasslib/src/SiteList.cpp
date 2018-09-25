@@ -1,4 +1,6 @@
+#include "SiteList.h"
 #include <json.h>
+#include <logger.h>
 #include <cmath>
 #include <string>
 #include <memory>
@@ -8,10 +10,8 @@
 #include "Glass.h"
 #include "Site.h"
 #include "WebList.h"
-#include "SiteList.h"
 #include "Node.h"
 #include "Web.h"
-#include "Logit.h"
 
 namespace glasscore {
 
@@ -54,8 +54,8 @@ void CSiteList::clear() {
 bool CSiteList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CSiteList::receiveExternalMessage: NULL json communication.");
 		return (false);
 	}
@@ -97,7 +97,7 @@ bool CSiteList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 bool CSiteList::addSiteFromJSON(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSiteList::addSite: NULL json configuration.");
 		return (false);
 	}
@@ -108,14 +108,14 @@ bool CSiteList::addSiteFromJSON(std::shared_ptr<json::Object> com) {
 		std::string type = (*com)["Type"].ToString();
 
 		if (type != "StationInfo") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CSiteList::addSite: Non-StationInfo message passed in.");
 			return (false);
 		}
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CSiteList::addSite: Missing required Cmd Key.");
 	}
 
@@ -124,7 +124,7 @@ bool CSiteList::addSiteFromJSON(std::shared_ptr<json::Object> com) {
 
 	// make sure a site was actually created
 	if (site->getSCNL() == "") {
-		glassutil::CLogit::log(glassutil::log_level::warn,
+		glass3::util::Logger::log("warning",
 								"CSiteList::addSite: Site not created.");
 		delete (site);
 		return (false);
@@ -140,8 +140,8 @@ bool CSiteList::addSiteFromJSON(std::shared_ptr<json::Object> com) {
 bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CSiteList::addSiteList: NULL json configuration.");
 		return (false);
 	}
@@ -152,15 +152,15 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 		std::string type = (*com)["Type"].ToString();
 
 		if (type != "StationInfoList") {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CSiteList::addSite: Non-StationInfoList message passed"
 					" in.");
 			return (false);
 		}
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CSiteList::addSite: Missing required Type Key.");
 	}
 
@@ -180,8 +180,8 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 
 				// make sure a site was actually created
 				if (site->getSCNL() == "") {
-					glassutil::CLogit::log(
-							glassutil::log_level::warn,
+					glass3::util::Logger::log(
+							"warning",
 							"CSiteList::addSiteList: Site not created.");
 					delete (site);
 					continue;
@@ -191,8 +191,8 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 				std::shared_ptr<CSite> newSite(site);
 
 				if (addSite(newSite) == false) {
-					glassutil::CLogit::log(
-							glassutil::log_level::warn,
+					glass3::util::Logger::log(
+							"warning",
 							"CSiteList::addSiteList: Site not added.");
 					delete (site);
 					continue;
@@ -208,7 +208,7 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 	// null check
 	if (site == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSiteList::addSite: NULL CSite provided.");
 		return (false);
 	}
@@ -252,7 +252,7 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 // ---------------------------------------------------------getSite
 std::shared_ptr<CSite> CSiteList::getSite(std::string scnl) {
 	if (scnl == "") {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSiteList::getSite: Empty site passed in.");
 		return (NULL);
 	}
@@ -273,13 +273,13 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string scnl) {
 std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 											std::string net, std::string loc) {
 	if (site == "") {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSiteList::getSite: Empty site passed in.");
 		return (NULL);
 	}
 
 	if (net == "") {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSiteList::getSite: Empty network passed in.");
 		return (NULL);
 	}
@@ -291,7 +291,7 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 	if (site != "") {
 		scnl += site;
 	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSiteList::getSite: missing sSite.");
 		return (NULL);
 	}
@@ -305,7 +305,7 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 	if (net != "") {
 		scnl += "." + net;
 	} else {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CSiteList::getSite: missing sNet.");
 		return (NULL);
 	}
@@ -351,7 +351,7 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 			snprintf(sLog, sizeof(sLog), "CSiteList::getSite: SCNL:%s, "
 						"requesting information.",
 						scnl.c_str());
-			glassutil::CLogit::log(sLog);
+			glass3::util::Logger::log(sLog);
 
 			// send request
 			CGlass::sendExternalMessage(request);
@@ -475,7 +475,7 @@ glass3::util::WorkState CSiteList::work() {
 	// remember when we last checked
 	m_tLastChecked = tNow;
 
-	glassutil::CLogit::log(glassutil::log_level::debug,
+	glass3::util::Logger::log("debug",
 							"CSiteList::work: checking for sites not picking");
 
 	// for each used site in the site list
@@ -499,8 +499,8 @@ glass3::util::WorkState CSiteList::work() {
 			// have we not seen data?
 			if ((tNow - tLastPickAdded)
 					> (60 * 60 * m_iMaxHoursWithoutPicking)) {
-				glassutil::CLogit::log(
-						glassutil::log_level::debug,
+				glass3::util::Logger::log(
+						"debug",
 						"CSiteList::work: Removing " + aSite->getSCNL()
 								+ " for not picking in "
 								+ std::to_string(tNow - tLastPickAdded)
@@ -516,8 +516,8 @@ glass3::util::WorkState CSiteList::work() {
 
 			// we check every hour, so picks since check is picks per hour
 			if (picksSinceCheck > m_iMaxPicksPerHour) {
-				glassutil::CLogit::log(
-						glassutil::log_level::debug,
+				glass3::util::Logger::log(
+						"debug",
 						"CSiteList::work: Removing " + aSite->getSCNL()
 								+ " for picking more than "
 								+ std::to_string(m_iMaxPicksPerHour)
@@ -565,8 +565,8 @@ glass3::util::WorkState CSiteList::work() {
 			// have we seen data?
 			if ((tNow - tLastPickAdded)
 					< (60 * 60 * m_iMaxHoursWithoutPicking)) {
-				glassutil::CLogit::log(
-						glassutil::log_level::debug,
+				glass3::util::Logger::log(
+						"debug",
 						"CSiteList::work: Added " + aSite->getSCNL()
 								+ " because it has picked within "
 								+ std::to_string(tNow - tLastPickAdded)
@@ -583,8 +583,8 @@ glass3::util::WorkState CSiteList::work() {
 
 			// we check every hour, so picks since check is picks per hour
 			if (picksSinceCheck < m_iMaxPicksPerHour) {
-				glassutil::CLogit::log(
-						glassutil::log_level::debug,
+				glass3::util::Logger::log(
+						"debug",
 						"CSiteList::work: Added " + aSite->getSCNL()
 								+ " for picking less than "
 								+ std::to_string(m_iMaxPicksPerHour)

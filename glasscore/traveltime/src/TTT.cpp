@@ -1,11 +1,12 @@
+#include "TTT.h"
+#include <logger.h>
+#include <taper.h>
+#include <geo.h>
 #include <fstream>
 #include <string>
 #include <cmath>
-#include "Taper.h"
-#include "TTT.h"
 #include "TravelTime.h"
 #include "Ray.h"
-#include "Logit.h"
 
 namespace traveltime {
 
@@ -30,7 +31,7 @@ CTTT::CTTT(const CTTT &ttt) {
 		}
 
 		if (ttt.pTaper[i] != NULL) {
-			pTaper[i] = new glassutil::CTaper(*ttt.pTaper[i]);
+			pTaper[i] = new glass3::util::Taper(*ttt.pTaper[i]);
 		} else {
 			pTaper[i] = NULL;
 		}
@@ -70,8 +71,8 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 					std::string file) {
 	// bounds check
 	if ((nTrv + 1) > MAX_TRAV) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CTTT::addPhase: Maximum number of phases ("
 						+ std::to_string(MAX_TRAV) + ") reached");
 		return (false);
@@ -87,7 +88,7 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 
 	// setup taper for phase weighting
 	if (weightRange != NULL) {
-		pTaper[nTrv] = new glassutil::CTaper(weightRange[0], weightRange[1],
+		pTaper[nTrv] = new glass3::util::Taper(weightRange[0], weightRange[1],
 												weightRange[2], weightRange[3]);
 	}
 	// set up association range
@@ -106,12 +107,12 @@ void CTTT::setOrigin(double lat, double lon, double z) {
 }
 
 // ---------------------------------------------------------setOrigin
-void CTTT::setOrigin(const glassutil::CGeo &geoOrigin) {
+void CTTT::setOrigin(const glass3::util::Geo &geoOrigin) {
   geoOrg = geoOrigin;
 }
 
 // ---------------------------------------------------------T
-double CTTT::T(glassutil::CGeo *geo, std::string phase) {
+double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 	// Calculate travel time from distance in degrees
 	// for each phase
 	for (int i = 0; i < nTrv; i++) {
@@ -126,7 +127,7 @@ double CTTT::T(glassutil::CGeo *geo, std::string phase) {
 
 			// use taper to compute weight if present
 			if (pTaper[i] != NULL) {
-				dWeight = pTaper[i]->Val(pTrv[i]->dDelta);
+				dWeight = pTaper[i]->calculateValue(pTrv[i]->dDelta);
 			} else {
 				dWeight = 0.0;
 			}
@@ -143,7 +144,7 @@ double CTTT::T(glassutil::CGeo *geo, std::string phase) {
 
 // ---------------------------------------------------------T
 double CTTT::Td(double delta, std::string phase, double depth) {
-	geoOrg.dRad = EARTHRADIUSKM - depth;
+	geoOrg.m_dGeocentricRadius = EARTHRADIUSKM - depth;
 	// Calculate time from delta (degrees) and depth
 	// for each phase
 	for (int i = 0; i < nTrv; i++) {
@@ -158,7 +159,7 @@ double CTTT::Td(double delta, std::string phase, double depth) {
 
 			// use taper to compute weight if present
 			if (pTaper[i] != NULL) {
-				dWeight = pTaper[i]->Val(delta);
+				dWeight = pTaper[i]->calculateValue(delta);
 			} else {
 				dWeight = 0.0;
 			}
@@ -188,7 +189,7 @@ double CTTT::T(double delta, std::string phase) {
 
 			// use taper to compute weight if present
 			if (pTaper[i] != NULL) {
-				dWeight = pTaper[i]->Val(delta);
+				dWeight = pTaper[i]->calculateValue(delta);
 			} else {
 				dWeight = 0.0;
 			}
@@ -238,7 +239,7 @@ double CTTT::testTravelTimes(std::string phase) {
 }
 
 // ---------------------------------------------------------T
-double CTTT::T(glassutil::CGeo *geo, double tObserved) {
+double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 	// Find Phase with least residual, returns time
 
 	double bestTraveltime;
@@ -293,7 +294,7 @@ double CTTT::T(glassutil::CGeo *geo, double tObserved) {
 
 			// use taper to compute weight if present
 			if (pTaper[i] != NULL) {
-				weight = pTaper[i]->Val(aTrv->dDelta);
+				weight = pTaper[i]->calculateValue(aTrv->dDelta);
 			} else {
 				weight = 0.0;
 			}

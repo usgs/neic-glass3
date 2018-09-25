@@ -7,28 +7,30 @@
 #ifndef DATE_H
 #define DATE_H
 
+#include <ctime>
 #include <string>
 
-namespace glassutil {
+namespace glass3 {
+namespace util {
 
 /**
- * \brief glassutil time translation class
+ * \brief time translation class
  *
- * The glassutil CDate class is a class that stores
+ * The date class is a class that stores
  * time/date information and supports converting time/
  * date information between various formats external (human)
  * and internal (epoch time, ISO8601, etc.) storing date
  * internally as a double containing julian seconds.
  *
  */
-class CDate {
+class Date {
  public:
 	/**
 	 * \brief CDate default constructor
 	 *
 	 * The default constructor for the CDate class.
 	 */
-	CDate();
+	Date();
 
 	/**
 	 * \brief CDate advanced constructor
@@ -38,7 +40,7 @@ class CDate {
 	 *
 	 * \param time - A double value containing the time in julian seconds
 	 */
-	explicit CDate(double time);
+	explicit Date(double time);
 
 	/**
 	 * \brief CDate advanced constructor
@@ -53,7 +55,7 @@ class CDate {
 	 * \param minutes - An unsigned integer value containing the minutes
 	 * \param seconds - A double value containing the seconds
 	 */
-	CDate(unsigned int year, unsigned int month, unsigned int day,
+	Date(unsigned int year, unsigned int month, unsigned int day,
 			unsigned int hour, unsigned int minutes, double seconds);
 
 	/**
@@ -64,14 +66,14 @@ class CDate {
 	 *
 	 * \param time - A string value containing the time
 	 */
-	explicit CDate(std::string time);
+	explicit Date(std::string time);
 
 	/**
 	 * \brief CDate destructor
 	 *
 	 * The destructor for the CDate class.
 	 */
-	~CDate();
+	~Date();
 
 	/**
 	 * \brief CDate clear function
@@ -259,6 +261,96 @@ class CDate {
 	 */
 	static std::string encodeISO8601Time(double t);
 
+	/**
+	 * \brief Convert time from epoch time to ISO8601
+	 *
+	 * Convert the given epoch time (seconds from 1970) from decimal seconds to an
+	 * ISO8601 time string in the format YYYY-MM-DDTHH:MM:SS.SSSZ
+	 *
+	 * For more information on epoch time, see
+	 * https://en.wikipedia.org/wiki/Unix_time
+	 *
+	 * For more information on ISO8601, see
+	 * https://en.wikipedia.org/wiki/ISO_8601
+	 *
+	 * \param epochTime - A double containing the epoch time (seconds from 1970)
+	 * \return returns a std::string containing the ISO8601 time string in the format
+	 * YYYY-MM-DDTHH:MM:SS.SSSZ
+	 */
+	static std::string convertEpochTimeToISO8601(double epochTime);
+
+	/**
+	 * \brief Convert time from epoch time to ISO8601
+	 *
+	 * Convert the given epoch time (seconds from 1970) from decimal seconds to an
+	 * ISO8601 time string
+	 *
+	 * For more information on epoch time, see
+	 * https://en.wikipedia.org/wiki/Unix_time
+	 *
+	 * For more information on ISO8601, see
+	 * https://en.wikipedia.org/wiki/ISO_8601
+	 *
+	 * \param epochTime - A time_t containing the epoch time (seconds from 1970)
+	 * \param decimalSeconds - A an optional double containing the decimal seconds,
+	 * default is 0
+	 * \return returns a std::string containing the ISO8601 time string in the format
+	 * YYYY-MM-DDTHH:MM:SS.SSSZ
+	 */
+	static std::string convertEpochTimeToISO8601(std::time_t epochTime,
+											double decimalSeconds = 0);
+
+	/**
+	 * \brief Convert time from date time format to ISO8601 format
+	 *
+	 * Convert the given DateTime time string in the format YYYYMMDDHHMMSS.SSS to an
+	 * ISO8601 time string in the format YYYY-MM-DDTHH:MM:SS.SSSZ
+	  *
+	 * For more information on ISO8601, see
+	 * https://en.wikipedia.org/wiki/ISO_8601
+	 *
+	 * \param timeString - A std::string containing the date time in the format
+	 * YYYYMMDDHHMMSS.SS
+	 * \return returns a std::string containing the ISO8601 time string in the format
+	 * YYYY-MM-DDTHH:MM:SS.SSSZ
+	 */
+	static std::string convertDateTimeToISO8601(const std::string &timeString);
+
+	/**
+	 * \brief Convert time from date time to epoch time
+	 *
+	 * Convert the given DateTime time string in the format YYYYMMDDHHMMSS.SSS to an
+	 * epoch time (seconds from 1970)
+	 *
+	 * For more information on epoch time, see
+	 * https://en.wikipedia.org/wiki/Unix_time
+	 *
+	 * \param timeString - A std::string containing the date time in the format
+	 * YYYYMMDDHHMMSS.SSS
+	 * \return returns a double variable containing the epoch time (seconds from
+	 * 1970)
+	 */
+	static double convertDateTimeToEpochTime(const std::string &timeString);
+
+	/**
+	 * \brief Convert time from ISO8601 time to epoch time
+	 *
+	 * Convert the given ISO8601 string in the format YYYY-MM-DDTHH:MM:SS.SSSZ to an
+	 * epoch time
+	 *
+	 * For more information on epoch time, see
+	 * https://en.wikipedia.org/wiki/Unix_time
+	 *
+	 * For more information on ISO8601, see
+	 * https://en.wikipedia.org/wiki/ISO_8601
+	 *
+	 * \param timeString - A std::string containing the ISO8601 time in the format
+	 * YYYY-MM-DDTHH:MM:SS.SSSZ
+	 * \return returns a double variable containing the epoch time (seconds from
+	 * 1970)
+	 */
+	static double convertISO8601ToEpochTime(const std::string &timeString);
+
  protected:
 	/**
 	 * \brief An unsigned integer variable containing the gregorian year.
@@ -295,5 +387,6 @@ class CDate {
 	 */
 	double m_dTime;
 };
-}  // namespace glassutil
+}  // namespace util
+}  // namespace glass3
 #endif  // DATE_H

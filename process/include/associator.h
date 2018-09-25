@@ -9,7 +9,6 @@
 
 #include <json.h>
 #include <IGlassSend.h>
-#include <Logit.h>
 #include <inputinterface.h>
 #include <outputinterface.h>
 #include <associatorinterface.h>

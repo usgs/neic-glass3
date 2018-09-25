@@ -4,36 +4,37 @@
  * the comments so that Doxygen will still
  * be able to work.
  ****************************************/
-#ifndef PID_H
-#define PID_H
+#ifndef GLASSID_H
+#define GLASSID_H
 #include <string>
 
-namespace glassutil {
+namespace glass3 {
+namespace util {
 
 /**
  * \brief glassutil id generation class
  *
- * The CPid class is the class that generates unique identifiers for data used
- * or created by glassutil.
+ * The GlassID class is the class that generates unique identifiers for data used
+ * or created by glass3.
  *
- * CPid uses CoCreateGuid (windows) or uuid_generate_random (linux) to generate
+ * GlassID uses CoCreateGuid (windows) or uuid_generate_random (linux) to generate
  * Practically globally/universally unique identifiers.
  */
-class CPid {
+class GlassID {
  public:
 	/**
-	 * \brief CPid constructor
+	 * \brief GlassID constructor
 	 *
-	 * The constructor for the CPid class.
+	 * The constructor for the GlassID class.
 	 */
-	CPid();
+	GlassID();
 
 	/**
-	 * \brief CPid destructor
+	 * \brief GlassID destructor
 	 *
-	 * The destructor for the CPid class.
+	 * The destructor for the GlassID class.
 	 */
-	virtual ~CPid();
+	virtual ~GlassID();
 
 	/**
 	 * \brief Generate an unique string identifier
@@ -43,7 +44,7 @@ class CPid {
 	 * \return Returns a std::string containing the generated
 	 * identifier.
 	 */
-	static std::string pid();
+	static std::string getID();
 
 	/**
 	 * \brief Generate an unique integer identifier
@@ -55,5 +56,6 @@ class CPid {
 	 */
 	static unsigned int random();
 };
-}  // namespace glassutil
-#endif  // PID_H
+}  // namespace util
+}  // namespace glass3
+#endif  // GLASSID_H

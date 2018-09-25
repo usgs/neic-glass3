@@ -1,8 +1,9 @@
 #include <logger.h>
-#include "GlassMath.h"
+#include <glassmath.h>
 #include <random>
 
-namespace glassutil {
+namespace glass3 {
+namespace util {
 
 bool GlassMath::m_bInitialized = false;
 std::default_random_engine GlassMath::m_RandomGenerator;
@@ -66,5 +67,5 @@ void GlassMath::initializeRandom() {
 		m_bInitialized = true;
 	}
 }
-}  // namespace glassutil
-
+}  // namespace util
+}  // namespace glass3

@@ -17,7 +17,8 @@ namespace glass {
 
 fileOutput::fileOutput()
 		: glass3::output::output() {
-	glass3::util::log("debug", "fileOutput::fileOutput(): Construction.");
+	glass3::util::Logger::log("debug",
+								"fileOutput::fileOutput(): Construction.");
 
 	// init config to defaults and allocate
 	clear();
@@ -25,7 +26,8 @@ fileOutput::fileOutput()
 
 fileOutput::fileOutput(std::shared_ptr<const json::Object> config)
 		: glass3::output::output() {
-	glass3::util::log("debug", "fileOutput::fileOutput(): Advanced Construction.");
+	glass3::util::Logger::log(
+			"debug", "fileOutput::fileOutput(): Advanced Construction.");
 
 	// init config to defaults and allocate
 	clear();
@@ -38,7 +40,8 @@ fileOutput::fileOutput(std::shared_ptr<const json::Object> config)
 }
 
 fileOutput::~fileOutput() {
-	glass3::util::log("debug", "fileOutput::~fileOutput(): Destruction.");
+	glass3::util::Logger::log("debug",
+								"fileOutput::~fileOutput(): Destruction.");
 
 	// stop the input thread
 	stop();
@@ -47,24 +50,25 @@ fileOutput::~fileOutput() {
 // configuration
 bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		glass3::util::log("error",
-					"fileOutput::setup(): NULL configuration passed in.");
+		glass3::util::Logger::log(
+				"error", "fileOutput::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
-	glass3::util::log("debug", "fileOutput::setup(): Setting Up.");
+	glass3::util::Logger::log("debug", "fileOutput::setup(): Setting Up.");
 
 	// Cmd
 	if (!(config->HasKey("Configuration"))) {
-		glass3::util::log("error",
-					"fileOutput::setup(): BAD configuration passed in.");
+		glass3::util::Logger::log(
+				"error", "fileOutput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Configuration"];
 		if (configtype != "GlassOutput") {
-			glass3::util::log("error",
-						"fileOutput::setup(): Wrong configuration provided, "
-								"configuration is for: " + configtype + ".");
+			glass3::util::Logger::log(
+					"error",
+					"fileOutput::setup(): Wrong configuration provided, "
+							"configuration is for: " + configtype + ".");
 			return (false);
 		}
 	}
@@ -77,12 +81,12 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputDirectory"))) {
 		// fileOutputdir is required
 		m_sOutputDir = "";
-		glass3::util::log("error",
-					"fileOutput::setup(): OutputDirectory not specified.");
+		glass3::util::Logger::log(
+				"error", "fileOutput::setup(): OutputDirectory not specified.");
 		return (false);
 	} else {
 		m_sOutputDir = (*config)["OutputDirectory"].ToString();
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileOutput::setup(): Using Output Directory: " + m_sOutputDir
 						+ " .");
@@ -92,13 +96,13 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputFormat"))) {
 		// fileOutputformat is optional, default to JSON
 		m_sOutputFormat = "json";
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileOutput::setup(): OutputMethod not specified, defaulting to "
 				"json fileOutput.");
 	} else {
 		m_sOutputFormat = (*config)["OutputFormat"].ToString();
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileOutput::setup(): Using Output format: " + m_sOutputFormat
 						+ " .");
@@ -108,13 +112,13 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("TimeStampFileName"))) {
 		// TimeStampFileName is optional
 		m_bTimestampFileName = true;
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileOutput::setup(): Defaulting to including a time stamp in "
 				"fileOutput file names.");
 	} else {
 		m_bTimestampFileName = (*config)["TimeStampFileName"].ToBool();
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"fileOutput::setup(): Including a time stamp in fileOutput file names "
 						"is: " + std::to_string(m_bTimestampFileName) + ".");
@@ -123,7 +127,7 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	// unlock our configuration
 	m_FileOutputConfigMutex.unlock();
 
-	glass3::util::log("debug", "fileOutput::setup(): Done Setting Up.");
+	glass3::util::Logger::log("debug", "fileOutput::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	glass3::output::output::setup(config);
@@ -133,7 +137,8 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 }
 
 void fileOutput::clear() {
-	glass3::util::log("debug", "fileOutput::clear(): clearing configuration.");
+	glass3::util::Logger::log("debug",
+								"fileOutput::clear(): clearing configuration.");
 
 	// lock our configuration while we're updating it
 	// this mutex may be pointless
@@ -155,22 +160,20 @@ void fileOutput::clear() {
 void fileOutput::sendOutput(const std::string &type, const std::string &id,
 							const std::string &message) {
 	if (type == "") {
-		glass3::util::log(
-				"error",
-				"fileOutput::sendOutput(): empty type passed in.");
+		glass3::util::Logger::log(
+				"error", "fileOutput::sendOutput(): empty type passed in.");
 		return;
 	}
 
 	if (id == "") {
-		glass3::util::log("error",
-					"fileOutput::sendOutput(): empty id passed in.");
+		glass3::util::Logger::log(
+				"error", "fileOutput::sendOutput(): empty id passed in.");
 		return;
 	}
 
 	if (message == "") {
-		glass3::util::log(
-				"error",
-				"fileOutput::sendOutput(): empty message passed in.");
+		glass3::util::Logger::log(
+				"error", "fileOutput::sendOutput(): empty message passed in.");
 		return;
 	}
 
@@ -182,10 +185,10 @@ void fileOutput::sendOutput(const std::string &type, const std::string &id,
 	std::string fileOutputdir = getSOutputDir();
 	bool timeStampName = getBTimestampFileName();
 
-	glass3::util::log(
+	glass3::util::Logger::log(
 			"info",
-			"fileOutput::sendOutput(): Writing to output file a "
-					+ type + " message with id: " + id + ".");
+			"fileOutput::sendOutput(): Writing to output file a " + type
+					+ " message with id: " + id + ".");
 
 	std::string OutputData = "";
 	std::string Extension = "";
@@ -242,13 +245,13 @@ void fileOutput::sendOutput(const std::string &type, const std::string &id,
 		// try again
 		outfile.open(filename, std::ios::out);
 		if ((outfile.rdstate() & std::ifstream::failbit) != 0) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"error",
-					"fileOutput::sendOutput: Failed to create file "
-							+ filename + "; Second try.");
+					"fileOutput::sendOutput: Failed to create file " + filename
+							+ "; Second try.");
 			return;
 		} else {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"debug",
 					"fileOutput::sendOutput: Created file " + filename
 							+ "; Second Try.");
@@ -259,14 +262,12 @@ void fileOutput::sendOutput(const std::string &type, const std::string &id,
 	try {
 		outfile << OutputData;
 	} catch (const std::exception &e) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"fileOutput::sendOutput: Problem writing json data to disk: "
 						+ std::string(e.what()));
-		glass3::util::log(
-				"error",
-				"fileOutput::sendOutput: Problem Data: "
-						+ OutputData);
+		glass3::util::Logger::log(
+				"error", "fileOutput::sendOutput: Problem Data: " + OutputData);
 		return;
 	}
 

@@ -2,8 +2,8 @@
 #include <file_output.h>
 #include <config.h>
 #include <logger.h>
+#include <date.h>
 #include <associatorinterface.h>
-#include <Date.h>
 #include <string>
 
 #define CONFIGFILENAME "outputtest.d"
@@ -375,22 +375,20 @@ TEST_F(OutputTest, Construction) {
 	ASSERT_STREQ(OutputThread->getThreadName().c_str(), "output")<< "check output thread name";
 
 	// assert the thread sleeptime
-	ASSERT_EQ(OutputThread->getSleepTime(), SLEEPTIME)
-	<< "check output thread sleep time";
+	ASSERT_EQ(OutputThread->getSleepTime(), SLEEPTIME)<< "check output thread sleep time";
 
 	// assert class is not set up
-	ASSERT_FALSE(OutputThread->getSetup()) << "output thread is not set up";
+	ASSERT_FALSE(OutputThread->getSetup())<< "output thread is not set up";
 
 	// assert class has no config
-	ASSERT_TRUE(OutputThread->getConfig() == NULL) << "output config is null";
+	ASSERT_TRUE(OutputThread->getConfig() == NULL)<< "output config is null";
 
 	// assert class is not running
 	ASSERT_FALSE(OutputThread->getWorkThreadsState() ==
-			glass3::util::ThreadState::Started) << "output thread is not running";
+			glass3::util::ThreadState::Started)<< "output thread is not running";
 
 	// assert no data in class
-	ASSERT_EQ(OutputThread->getReportInterval(), REPORTINTERVAL)
-	<< "output thread report interval";
+	ASSERT_EQ(OutputThread->getReportInterval(), REPORTINTERVAL)<< "output thread report interval";
 }
 
 TEST_F(OutputTest, Configuration) {
@@ -438,10 +436,10 @@ TEST_F(OutputTest, Output) {
 	OutputThread->clearTrackingData();
 
 	std::shared_ptr<json::Object> outputevent = GetDataFromFile(event3file);
-	(*outputevent)["CreateTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
-	(*outputevent)["ReportTime"] = glassutil::CDate::encodeISO8601Time(
-			glassutil::CDate::now());
+	(*outputevent)["CreateTime"] = glass3::util::Date::encodeISO8601Time(
+			glass3::util::Date::now());
+	(*outputevent)["ReportTime"] = glass3::util::Date::encodeISO8601Time(
+			glass3::util::Date::now());
 
 	// add data to output
 	OutputThread->sendToOutput(outputevent);

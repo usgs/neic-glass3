@@ -18,7 +18,8 @@ namespace glass {
 
 brokerOutput::brokerOutput()
 		: glass3::output::output() {
-	glass3::util::log("debug", "brokerOutput::brokerOutput(): Construction.");
+	glass3::util::Logger::log("debug",
+								"brokerOutput::brokerOutput(): Construction.");
 
 	m_OutputProducer = NULL;
 	m_StationRequestProducer = NULL;
@@ -31,8 +32,8 @@ brokerOutput::brokerOutput()
 
 brokerOutput::brokerOutput(std::shared_ptr<json::Object> &config)
 		: glass3::output::output() {
-	glass3::util::log("debug",
-						"brokerOutput::brokerOutput(): Advanced Construction.");
+	glass3::util::Logger::log(
+			"debug", "brokerOutput::brokerOutput(): Advanced Construction.");
 
 	m_OutputProducer = NULL;
 	m_StationRequestProducer = NULL;
@@ -50,7 +51,8 @@ brokerOutput::brokerOutput(std::shared_ptr<json::Object> &config)
 }
 
 brokerOutput::~brokerOutput() {
-	glass3::util::log("debug", "brokerOutput::~brokerOutput(): Destruction.");
+	glass3::util::Logger::log("debug",
+								"brokerOutput::~brokerOutput(): Destruction.");
 
 	// stop the input thread
 	stop();
@@ -59,23 +61,23 @@ brokerOutput::~brokerOutput() {
 // configuration
 bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"brokerOutput::setup(): NULL configuration passed in.");
 		return (false);
 	}
 
-	glass3::util::log("debug", "brokerOutput::setup(): Setting Up.");
+	glass3::util::Logger::log("debug", "brokerOutput::setup(): Setting Up.");
 
 	// Configuration
 	if (!(config->HasKey("Configuration"))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "brokerOutput::setup(): BAD configuration passed in.");
 		return (false);
 	} else {
 		std::string configtype = (*config)["Configuration"];
 		if (configtype != "GlassOutput") {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"error",
 					"brokerOutput::setup(): Wrong configuration provided, "
 							"configuration is for: " + configtype + ".");
@@ -91,14 +93,14 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("StationFileName")
 			&& ((*config)["StationFileName"].GetType()
 					== json::ValueType::StringVal))) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"brokerOutput::setup(): StationFileName not specified.");
 		setStationFileName("");
 	} else {
 		setStationFileName((*config)["StationFileName"].ToString());
 
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"brokerOutput::setup(): Using StationFileName: "
 						+ getStationFileName() + ".");
@@ -109,14 +111,14 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("HazdevBrokerConfig"))) {
 		// consumer config is required
 		producerConfig = "";
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "brokerOutput::setup(): Required configuration value "
 				"HazdevBrokerConfig not specified.");
 		return (false);
 	} else {
 		producerConfig = json::Serialize(
 				(*config)["HazdevBrokerConfig"].ToObject());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"brokerOutput::setup(): Using HazdevBrokerConfig: "
 						+ producerConfig + ".");
@@ -127,13 +129,13 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("HazdevBrokerTopicConfig"))) {
 		// consumer config is required
 		topicConfig = "";
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"brokerOutput::setup(): Using default topic configuration.");
 	} else {
 		topicConfig = json::Serialize(
 				(*config)["HazdevBrokerTopicConfig"].ToObject());
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"brokerOutput::setup(): Using HazdevBrokerTopicConfig: "
 						+ topicConfig + ".");
@@ -145,7 +147,7 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("OutputTopic"))) {
 		// topics are required
 		brokerOutputTopic = "";
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"brokerOutput::setup(): Required configuration value OutputTopic not "
 				"specified.");
@@ -153,7 +155,7 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	} else {
 		brokerOutputTopic = (*config)["OutputTopic"].ToString();
 
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"brokerOutput::setup(): Using OutputTopic: " + brokerOutputTopic
 						+ ".");
@@ -164,14 +166,14 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("StationRequestTopic"))) {
 		// topics are required
 		stationRequestTopic = "";
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"brokerOutput::setup(): StationRequestTopic not specified, will not "
 				"request station lookups.");
 	} else {
 		stationRequestTopic = (*config)["StationRequestTopic"].ToString();
 
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"info",
 				"brokerOutput::setup(): Using StationRequestTopic: "
 						+ stationRequestTopic + ".");
@@ -227,7 +229,8 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 		m_StationRequestTopic = NULL;
 	}
 
-	glass3::util::log("debug", "brokerOutput::setup(): Done Setting Up.");
+	glass3::util::Logger::log("debug",
+								"brokerOutput::setup(): Done Setting Up.");
 
 	// finally do baseclass setup;
 	glass3::output::output::setup(config);
@@ -237,8 +240,8 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 }
 
 void brokerOutput::clear() {
-	glass3::util::log("debug",
-						"brokerOutput::clear(): clearing configuration.");
+	glass3::util::Logger::log(
+			"debug", "brokerOutput::clear(): clearing configuration.");
 
 	setStationFileName("");
 
@@ -250,19 +253,19 @@ void brokerOutput::clear() {
 void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 								const std::string &message) {
 	if (type == "") {
-		glass3::util::log("error",
-							"fileOutput::sendOutput(): empty type passed in.");
+		glass3::util::Logger::log(
+				"error", "fileOutput::sendOutput(): empty type passed in.");
 		return;
 	}
 
 	if (id == "") {
-		glass3::util::log("error",
-							"fileOutput::sendOutput(): empty id passed in.");
+		glass3::util::Logger::log(
+				"error", "fileOutput::sendOutput(): empty id passed in.");
 		return;
 	}
 
 	if (message == "") {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error", "fileOutput::sendOutput(): empty message passed in.");
 		return;
 	}
@@ -307,7 +310,7 @@ void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 			try {
 				outfile << message;
 			} catch (const std::exception &e) {
-				glass3::util::log(
+				glass3::util::Logger::log(
 						"error",
 						"brokerOutput::writebrokerOutput: Problem writing "
 								"station list data to disk: "
@@ -326,7 +329,8 @@ void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 }
 
 void brokerOutput::logProducer(const std::string &message) {
-	glass3::util::log("debug", "brokerOutput::logProducer(): " + message);
+	glass3::util::Logger::log("debug",
+								"brokerOutput::logProducer(): " + message);
 }
 
 // ---------------------------------------------------------setStationFileName

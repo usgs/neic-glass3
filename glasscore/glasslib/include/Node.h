@@ -7,6 +7,7 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <geo.h>
 #include <vector>
 #include <memory>
 #include <string>
@@ -14,8 +15,6 @@
 #include <mutex>
 #include <tuple>
 #include <atomic>
-
-#include "Geo.h"
 #include "Link.h"
 
 namespace glasscore {
@@ -261,9 +260,9 @@ class CNode {
 	/**
 	 * \brief Get the combined node location (latitude, longitude, depth) as
 	 * a CGeo object
-	 * \return Returns a glassutil::CGeo object containing the combined location.
+	 * \return Returns a glass3::util::Geo object containing the combined location.
 	 */
-	glassutil::CGeo getGeo() const;
+	glass3::util::Geo getGeo() const;
 
 	/**
 	 * \brief Gets the resolution of the web that created this node
