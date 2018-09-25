@@ -22,6 +22,7 @@
 #include <atomic>
 
 #include "TravelTime.h"
+#include "ZoneStats.h"
 
 namespace glasscore {
 
@@ -503,7 +504,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * also fills in the distance), and used by genNode() during a Single(),
 	 * Shell(), Grid(), or Global() call
 	 */
-	std::vector<std::pair<double, std::shared_ptr<CSite>>> m_vSitesSortedForCurrentNode; // NOLINT
+	std::vector<std::pair<double, std::shared_ptr<CSite>>>m_vSitesSortedForCurrentNode;  // NOLINT
 
 	/**
 	 * \brief A std::vector containing a std::shared_ptr to each node in this
@@ -603,6 +604,16 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief the std::mutex for m_QueueMutex
 	 */
 	std::mutex m_QueueMutex;
+
+	/**
+	 * \brief string containing the filename of ZoneStats file.  Empty = no
+	 * zonestats
+	 */
+	std::string m_sZoneStatsFileName;
+	/**
+	 * \brief shared pointer to ZoneStats info
+	 */
+	std::shared_ptr<traveltime::CZoneStats> m_pZoneStats;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CWeb.

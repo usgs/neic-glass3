@@ -121,6 +121,10 @@ void CWeb::clear() {
 
 	m_pNucleationTravelTime1 = NULL;
 	m_pNucleationTravelTime2 = NULL;
+
+	// reset zonestats info
+	m_pZoneStats = NULL;
+	m_sZoneStatsFileName.clear();
 }
 
 // ---------------------------------------------------------initialize
@@ -184,15 +188,13 @@ bool CWeb::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 
 // ---------------------------------------------------------generateGlobalGrid
 bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
-	glass3::util::Logger::log("debug",
-							"CWeb::generateGlobalGrid");
+	glass3::util::Logger::log("debug", "CWeb::generateGlobalGrid");
 
 	// nullchecks
 	// check json
 	if (gridConfiguration == NULL) {
 		glass3::util::Logger::log(
-				"error",
-				"CWeb::generateGlobalGrid: NULL json configuration.");
+				"error", "CWeb::generateGlobalGrid: NULL json configuration.");
 		return (false);
 	}
 
@@ -293,8 +295,41 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 		// sort site list for this vertex
 		sortSiteListForNode(aLat, aLon);
 
+		// use zonestats to get the max depth for this node, if we have
+		// zonestats available, otherwise defailt to the configured
+		// max depth for the grid
+		double dMaxNodeDepth = m_dMaxDepth;
+		bool bReachedMaxDepth = false;
+		if (m_pZoneStats != NULL) {
+			double aDepth = m_pZoneStats->getMaxDepthForLatLon(aLat, aLon);
+			if (aDepth != m_pZoneStats->depthInvalid) {
+				dMaxNodeDepth = aDepth;
+			}
+		}
+
 		// for each depth
 		for (auto z : depthLayerArray) {
+			// check to see if Z is below the maximum depth
+			if (z >= dMaxNodeDepth) {
+				bReachedMaxDepth = true;
+				/*
+				 glass3::util::Logger::log(
+				 "debug",
+				 "CWeb::generateGlobalGrid:  Truncated shell depth to "
+				 + std::to_string(dMaxNodeDepth)
+				 + " for Lat/Lon " + std::to_string(aLat) + "/"
+				 + std::to_string(aLon));
+				 */
+				z = dMaxNodeDepth;
+			}
+
+			// it would make a certain amount of sense here, to track
+			// the depth delta between this node and the vertically
+			// adjacent ones (ones above and below it), and save
+			// the max of those as the Vertical Resolution, which
+			// could be used to set boundaries during nucleation,
+			// and POSSIBLY also constrain the solution post-nucleation,
+			// during initial location.
 			// create node
 			std::shared_ptr<CNode> node = generateNode(aLat, aLon, z,
 														getNodeResolution());
@@ -313,9 +348,13 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					// write to station file
 					outstafile << node->getSitesString();
 				}
+			}  // end if addNode()
+
+			if (bReachedMaxDepth) {
+				break;
 			}
-		}
-	}
+		}  // end for each depth in depthLayerArray
+	}  // end for each sample
 
 	// close generateLocalGrid file
 	if (getSaveGrid()) {
@@ -351,15 +390,13 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 // ---------------------------------------------------------generateLocalGrid
 bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
-	glass3::util::Logger::log("debug",
-							"CWeb::generateLocalGrid");
+	glass3::util::Logger::log("debug", "CWeb::generateLocalGrid");
 
 	// nullchecks
 	// check json
 	if (gridConfiguration == NULL) {
 		glass3::util::Logger::log(
-				"error",
-				"CWeb::generateLocalGrid: NULL json configuration.");
+				"error", "CWeb::generateLocalGrid: NULL json configuration.");
 		return (false);
 	}
 
@@ -395,8 +432,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 		lon = (*gridConfiguration)["CenterLongitude"].ToDouble();
 	} else {
 		glass3::util::Logger::log(
-				"error",
-				"CWeb::generateLocalGrid: Missing required Lon Key.");
+				"error", "CWeb::generateLocalGrid: Missing required Lon Key.");
 		return (false);
 	}
 
@@ -517,8 +553,34 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			// sort site list for this generateLocalGrid point
 			sortSiteListForNode(latrow, loncol);
 
+			// use zonestats to get the max depth for this node, if we have
+			// zonestats available, otherwise defailt to the configured
+			// max depth for the grid
+			double dMaxNodeDepth = m_dMaxDepth;
+			bool bReachedMaxDepth = false;
+			if (m_pZoneStats != NULL) {
+				double aDepth = m_pZoneStats->getMaxDepthForLatLon(latrow,
+																	loncol);
+				if (aDepth != m_pZoneStats->depthInvalid) {
+					dMaxNodeDepth = aDepth;
+				}
+			}
+
 			// for each depth at this generateLocalGrid point
 			for (auto z : depthLayerArray) {
+				// check to see if Z is below the maximum depth
+				if (z >= dMaxNodeDepth) {
+					bReachedMaxDepth = true;
+					/*
+					 glass3::util::Logger::log(
+					 "debug",
+					 "CWeb::generateLocalGrid:  Truncated layer depth to "
+					 + std::to_string(dMaxNodeDepth)
+					 + " for Lat/Lon " + std::to_string(aLat) + "/"
+					 + std::to_string(aLon));
+					 */
+					z = dMaxNodeDepth;
+				}
 				// generate this node
 				std::shared_ptr<CNode> node = generateNode(
 						latrow, loncol, z, getNodeResolution());
@@ -526,7 +588,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 				// if we got a valid node, add it
 				if (addNode(node) == true) {
 					iNodeCount++;
-				}
+				}  // end if addNode()
 
 				// write node to generateLocalGrid file
 				if (getSaveGrid()) {
@@ -537,10 +599,14 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 					// write to station file
 					outstafile << node->getSitesString();
+				}  // end if getSaveGrid()
+
+				if (bReachedMaxDepth) {
+					break;
 				}
-			}
-		}
-	}
+			}  // end for each depth layer
+		}  // end for each lon-column in grid
+	}  // end for each lat-row in grid
 
 	// close generateLocalGrid file
 	if (getSaveGrid()) {
@@ -582,8 +648,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 // ---------------------------------------------------------generateExplicitGrid
 bool CWeb::generateExplicitGrid(
 		std::shared_ptr<json::Object> gridConfiguration) {
-	glass3::util::Logger::log("debug",
-							"CWeb::generateExplicitGrid");
+	glass3::util::Logger::log("debug", "CWeb::generateExplicitGrid");
 
 	// nullchecks
 	// check json
@@ -657,8 +722,8 @@ bool CWeb::generateExplicitGrid(
 					== json::ValueType::DoubleVal)) {
 		m_dDepthResolution = (*gridConfiguration)["DepthResolution"].ToDouble();
 	} else {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWeb::generateExplicitGrid: Missing required DepthResolution "
 				"Key.");
 		return (false);
@@ -692,6 +757,9 @@ bool CWeb::generateExplicitGrid(
 
 		// sort site list
 		sortSiteListForNode(lat, lon);
+
+		// don't do any maxdepth/zonestats checks here, since this grid is
+		// explicit
 
 		// create node, note resolution set to 0
 		std::shared_ptr<CNode> node = generateNode(lat, lon, Z,
@@ -852,6 +920,15 @@ bool CWeb::loadGridConfiguration(
 		update = (*gridConfiguration)["UpdateGrid"].ToBool();
 	}
 
+	// set whether to use a zonestats file
+	if ((gridConfiguration->HasKey("ZoneStatsFile"))
+			&& ((*gridConfiguration)["ZoneStatsFile"].GetType()
+					== json::ValueType::StringVal)) {
+		m_sZoneStatsFileName = (*gridConfiguration)["ZoneStatsFile"].ToString();
+	} else {
+		m_sZoneStatsFileName = "";
+	}
+
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, update, saveGrid,
 				m_pNucleationTravelTime1, m_pNucleationTravelTime2, aziTaper,
@@ -863,6 +940,19 @@ bool CWeb::loadGridConfiguration(
 	// Generate eligible station list
 	loadWebSiteList();
 
+	// Load zone statistics
+	if (!m_sZoneStatsFileName.empty()) {
+		m_pZoneStats = std::make_shared<traveltime::CZoneStats>();
+		if (!m_pZoneStats->setup(&m_sZoneStatsFileName)) {
+			glass3::util::Logger::log(
+					"error",
+					"CWeb::loadGridConfiguration: ZoneStats filename specified, "
+							"but unable to load valid data from"
+							+ m_sZoneStatsFileName);
+			return (false);
+		}
+	}  // end if m_sZoneStatsFileName
+
 	return (true);
 }
 
@@ -871,8 +961,7 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 	// check json
 	if (gridConfiguration == NULL) {
 		glass3::util::Logger::log(
-				"info",
-				"CWeb::loadTravelTimes: NULL json configuration "
+				"info", "CWeb::loadTravelTimes: NULL json configuration "
 				"Using default first phase and no second phase");
 
 		// if no json object, default to P
@@ -937,8 +1026,7 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 		// set up the first phase travel time
 		if (m_pNucleationTravelTime1->setup(phs, file) == false) {
 			glass3::util::Logger::log(
-					"error",
-					"CWeb::loadTravelTimes: Failed to load file "
+					"error", "CWeb::loadTravelTimes: Failed to load file "
 							"location " + file + " for first phase: " + phs);
 			return (false);
 		}
@@ -960,8 +1048,7 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 		}
 
 		glass3::util::Logger::log(
-				"info",
-				"CWeb::loadTravelTimes: Using default first phase");
+				"info", "CWeb::loadTravelTimes: Using default first phase");
 	}
 
 	// load the second travel time
@@ -1003,8 +1090,7 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 		// set up the second phase travel time
 		if (m_pNucleationTravelTime2->setup(phs, file) == false) {
 			glass3::util::Logger::log(
-					"error",
-					"CWeb::loadTravelTimes: Failed to load file "
+					"error", "CWeb::loadTravelTimes: Failed to load file "
 							"location " + file + " for second phase: " + phs);
 			return (false);
 		}
@@ -1027,7 +1113,7 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 	// check json
 	if (gridConfiguration == NULL) {
 		glass3::util::Logger::log("error",
-								"genSiteFilters: NULL json configuration.");
+									"genSiteFilters: NULL json configuration.");
 		return (false);
 	}
 
@@ -1160,8 +1246,7 @@ bool CWeb::loadWebSiteList() {
 	// check pSiteList
 	if (m_pSiteList == NULL) {
 		glass3::util::Logger::log(
-				"error",
-				"CWeb::loadWebSiteList: NULL pSiteList pointer.");
+				"error", "CWeb::loadWebSiteList: NULL pSiteList pointer.");
 		return (false);
 	}
 
@@ -1171,8 +1256,7 @@ bool CWeb::loadWebSiteList() {
 	// don't bother continuing if we have no sites
 	if (nsite <= 0) {
 		glass3::util::Logger::log(
-				"warning",
-				"CWeb::loadWebSiteList: No sites in site list.");
+				"warning", "CWeb::loadWebSiteList: No sites in site list.");
 		return (false);
 	}
 
@@ -1256,7 +1340,7 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 	if ((m_pNucleationTravelTime1 == NULL)
 			&& (m_pNucleationTravelTime2 == NULL)) {
 		glass3::util::Logger::log("error",
-								"CWeb::genNode: No valid trav pointers.");
+									"CWeb::genNode: No valid trav pointers.");
 		return (NULL);
 	}
 
@@ -1299,34 +1383,32 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 	// check node
 	if (node == NULL) {
 		glass3::util::Logger::log("error",
-								"CWeb::genNodeSites: NULL node pointer.");
+									"CWeb::genNodeSites: NULL node pointer.");
 		return (NULL);
 	}
 	// check trav
 	if ((m_pNucleationTravelTime1 == NULL)
 			&& (m_pNucleationTravelTime2 == NULL)) {
-		glass3::util::Logger::log("error",
-								"CWeb::genNodeSites: No valid trav pointers.");
+		glass3::util::Logger::log(
+				"error", "CWeb::genNodeSites: No valid trav pointers.");
 		return (NULL);
 	}
 	// check sites
 	if (m_vSitesSortedForCurrentNode.size() == 0) {
-		glass3::util::Logger::log("error",
-								"CWeb::genNodeSites: No sites.");
+		glass3::util::Logger::log("error", "CWeb::genNodeSites: No sites.");
 		return (node);
 	}
 	// check nDetect
 	if (m_iNumStationsPerNode == 0) {
-		glass3::util::Logger::log("error",
-								"CWeb::genNodeSites: nDetect is 0.");
+		glass3::util::Logger::log("error", "CWeb::genNodeSites: nDetect is 0.");
 		return (node);
 	}
 
 	int sitesAllowed = m_iNumStationsPerNode;
 	if (m_vSitesSortedForCurrentNode.size() < m_iNumStationsPerNode) {
 		glass3::util::Logger::log("warning",
-								"CWeb::genNodeSites: nDetect is greater "
-								"than the number of sites.");
+									"CWeb::genNodeSites: nDetect is greater "
+									"than the number of sites.");
 		sitesAllowed = m_vSitesSortedForCurrentNode.size();
 	}
 
@@ -1694,8 +1776,7 @@ void CWeb::addJob(std::function<void()> newjob) {
 
 // ---------------------------------------------------------work
 glass3::util::WorkState CWeb::work() {
-	glass3::util::Logger::log("debug",
-							"CWeb::jobLoop: startup");
+	glass3::util::Logger::log("debug", "CWeb::jobLoop: startup");
 	// lock for queue access
 	m_QueueMutex.lock();
 

@@ -462,7 +462,7 @@ bool CPick::nucleate() {
 							"due to depth greater than max depth "
 							"(depth:%f/maxDepth:%f)",
 							hypo->getID().c_str(), depth, maxDepth);
-				glassutil::CLogit::log(sLog);
+				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
 				bad = true;
