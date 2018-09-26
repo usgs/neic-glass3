@@ -426,7 +426,7 @@ glass3::util::WorkState CPickList::work() {
 	// check the pick
 	if (jsonPick == NULL) {
 		// on to the next loop
-		return (glass3::util::WorkState::Idle);
+		return (glass3::util::WorkState::OK);
 	}
 
 	// create new pick from json message
@@ -442,12 +442,9 @@ glass3::util::WorkState CPickList::work() {
 		return (glass3::util::WorkState::OK);
 	}
 
-	// create new shared pointer to this pick
-	std::shared_ptr<CPick> pick(newPick);
-
 	// check if pick is duplicate
 	std::shared_ptr<CPick> existingPick = getDuplicate(
-			pick->getTPick(), pick->getSite()->getSCNL(),
+			newPick->getTPick(), newPick->getSite()->getSCNL(),
 			CGlass::getPickDuplicateTimeWindow());
 
 	// it is a duplicate
@@ -457,9 +454,10 @@ glass3::util::WorkState CPickList::work() {
 		if (CGlass::getAllowPickUpdates()) {
 			// update exiting pick, we update rather than replace
 			// because the pick might be linked to a hypo
-			existingPick->initialize(existingPick->getSite(), pick->getTPick(),
-										pick->getID(), pick->getBackAzimuth(),
-										pick->getSlowness());
+			existingPick->initialize(existingPick->getSite(),
+										newPick->getTPick(), newPick->getID(),
+										newPick->getBackAzimuth(),
+										newPick->getSlowness());
 
 			// update the position of the pick in the sort
 			updatePosition(existingPick);
@@ -482,6 +480,9 @@ glass3::util::WorkState CPickList::work() {
 		// we're done
 		return (glass3::util::WorkState::OK);
 	}
+
+	// create new shared pointer to this pick
+	std::shared_ptr<CPick> pick(newPick);
 
 	m_iCountOfTotalPicksProcessed++;
 

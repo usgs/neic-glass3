@@ -485,8 +485,9 @@ bool CPick::nucleate() {
 						+ hypo->getWebName() + "; hyp: " + hypo->getID()
 						+ "; lat:" + std::to_string(hypo->getLatitude())
 						+ "; lon:" + std::to_string(hypo->getLongitude())
-						+ "; z:" + std::to_string(hypo->getDepth()) + "; tOrg:"
-						+ st);
+						+ "; z:" + std::to_string(hypo->getDepth())
+						+ "; bayes:" + std::to_string(hypo->getBayesValue())
+						+ "; tOrg:" + st);
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit adding it to the hypo list

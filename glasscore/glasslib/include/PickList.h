@@ -262,8 +262,8 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	std::multiset<std::shared_ptr<CPick>, PickCompare> m_msPickList;
 
 	/**
-	 * \brief A std::queue containing a std::shared_ptr to each pick in that
-	 * needs to be processed
+	 * \brief A std::queue containing a std::shared_ptr to each json::Object
+	 * containing a pick that needs to be processed
 	 */
 	std::queue<std::shared_ptr<json::Object>> m_qPicksToProcess;
 
