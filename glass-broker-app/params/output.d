@@ -23,7 +23,22 @@
 	},
 
 	# the topic the producer will produce to
-	"OutputTopic":"Glass3-Default",
+	"OutputTopics":[
+		{	"Name":"OK",
+			"TopLatitude":38.0,
+			"LeftLongitude":-101.0,
+			"BottomLatitude":33.0,
+			"RightLongitude":-94.0
+		},
+		{	"Name":"CEUS",
+			"TopLatitude":50.0,
+			"LeftLongitude":-105.0,
+			"BottomLatitude":25.0,
+			"RightLongitude":-67.0
+		},
+		{	"Name":"DefaultWorld"
+		}
+	],
 
 	# optional station lookup topic
 	"StationRequestTopic":"Station-Lookup",
@@ -34,7 +49,7 @@
 
 	# The optional file name of the stationlist to create from the sitelist from
 	# glasscore
-	"StationFile":"./params/stationlist.d",
+	"StationFileName":"./params/stationlist.d",
 
 	# The  source to use when outputting data
 	"OutputAgencyID":"US",

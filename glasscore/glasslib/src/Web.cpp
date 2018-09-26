@@ -1754,7 +1754,6 @@ void CWeb::addJob(std::function<void()> newjob) {
 
 // ---------------------------------------------------------work
 glass3::util::WorkState CWeb::work() {
-	glass3::util::Logger::log("debug", "CWeb::jobLoop: startup");
 	// lock for queue access
 	m_QueueMutex.lock();
 

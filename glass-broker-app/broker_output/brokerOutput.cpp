@@ -5,6 +5,7 @@
 #include <logger.h>
 #include <fileutil.h>
 #include <output.h>
+#include <Producer.h>
 
 #include <thread>
 #include <mutex>
@@ -13,17 +14,195 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <limits>
+#include <cmath>
 
 namespace glass {
+
+outputTopic::outputTopic(hazdevbroker::Producer * producer) {
+	m_OutputTopic = NULL;
+
+	clear();
+	m_OutputProducer = producer;
+}
+
+outputTopic::~outputTopic() {
+	clear();
+}
+
+bool outputTopic::setup(json::Value &config) {
+	glass3::util::Logger::log("debug",
+								"outputTopic::setup(): Setting up a topic.");
+
+	if (config.GetType() != json::ValueType::ObjectVal) {
+		return (false);
+	}
+
+	json::Object configuration = config.ToObject();
+
+	// name
+	if (configuration.HasKey("Name")
+			&& (configuration["Name"].GetType() == json::ValueType::StringVal)) {
+		m_sTopicName = configuration["Name"].ToString();
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ ".");
+	} else {
+		glass3::util::Logger::log(
+				"error", "outputTopic::setup(): Missing required topic name.");
+		return (false);
+	}
+
+	// check producer
+	if (m_OutputProducer == NULL) {
+		glass3::util::Logger::log(
+				"error",
+				"outputTopic::setup(): invalid producer " + m_sTopicName);
+		return (false);
+	}
+
+	// create topic
+	m_OutputTopic = m_OutputProducer->createTopic(m_sTopicName);
+	if (m_OutputTopic == NULL) {
+		glass3::util::Logger::log(
+				"error",
+				"outputTopic::setup(): failed to create topic " + m_sTopicName);
+		return (false);
+	}
+
+	glass3::util::Logger::log("debug", "outputTopic::setup(): created topic.");
+
+	// top lat
+	if (configuration.HasKey("TopLatitude")
+			&& (configuration["TopLatitude"].GetType()
+					== json::ValueType::DoubleVal)) {
+		m_dTopLatitude = configuration["TopLatitude"].ToDouble();
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ " TopLatitude: " + std::to_string(m_dTopLatitude)
+						+ ".");
+	} else {
+		m_dTopLatitude = 90.0;
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ " TopLatitude: " + std::to_string(m_dTopLatitude)
+						+ ".");
+	}
+
+	// left lon
+	if (configuration.HasKey("LeftLongitude")
+			&& (configuration["LeftLongitude"].GetType()
+					== json::ValueType::DoubleVal)) {
+		m_dLeftLongitude = configuration["LeftLongitude"].ToDouble();
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ " LeftLongitude: " + std::to_string(m_dLeftLongitude)
+						+ ".");
+	} else {
+		m_dLeftLongitude = -180.0;
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ " LeftLongitude: " + std::to_string(m_dLeftLongitude)
+						+ ".");
+	}
+
+	// bottom lat
+	if (configuration.HasKey("BottomLatitude")
+			&& (configuration["BottomLatitude"].GetType()
+					== json::ValueType::DoubleVal)) {
+		m_dBottomLatitude = configuration["BottomLatitude"].ToDouble();
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ " BottomLatitude: "
+						+ std::to_string(m_dBottomLatitude) + ".");
+	} else {
+		m_dBottomLatitude = -90.0;
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ " BottomLatitude: "
+						+ std::to_string(m_dBottomLatitude) + ".");
+	}
+
+	// right lon
+	if (configuration.HasKey("RightLongitude")
+			&& (configuration["RightLongitude"].GetType()
+					== json::ValueType::DoubleVal)) {
+		m_dRightLongitude = configuration["RightLongitude"].ToDouble();
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ " RightLongitude: "
+						+ std::to_string(m_dRightLongitude) + ".");
+	} else {
+		m_dRightLongitude = 180.0;
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::setup(): Setting up topic: " + m_sTopicName
+						+ " RightLongitude: "
+						+ std::to_string(m_dRightLongitude) + ".");
+	}
+
+	glass3::util::Logger::log(
+			"debug", "outputTopic::setup(): Done Setting up a topic.");
+
+	return (true);
+}
+
+void outputTopic::clear() {
+	m_dTopLatitude = 90.0;
+	m_dBottomLatitude = -90.0;
+	m_dLeftLongitude = -180.0;
+	m_dRightLongitude = 180.0;
+
+	m_sTopicName = "";
+	if (m_OutputTopic != NULL) {
+		delete (m_OutputTopic);
+		m_OutputTopic = NULL;
+	}
+
+	m_OutputProducer = NULL;
+}
+
+bool outputTopic::isInBounds(double lat, double lon) {
+	// check bounds
+	if ((lat >= m_dBottomLatitude) && (lon >= m_dLeftLongitude)
+			&& (lat <= m_dTopLatitude) && (lon <= m_dRightLongitude)) {
+		return (true);
+	}
+	return (false);
+}
+
+void outputTopic::send(const std::string &message) {
+	if (m_OutputProducer == NULL) {
+		return;
+	}
+	if (m_OutputTopic == NULL) {
+		return;
+	}
+	if (message == "") {
+		return;
+	}
+	glass3::util::Logger::log(
+			"debug",
+			"outputTopic::send(): Sending to topic: " + m_sTopicName + ".");
+
+	m_OutputProducer->sendString(m_OutputTopic, message);
+}
 
 brokerOutput::brokerOutput()
 		: glass3::output::output() {
 	glass3::util::Logger::log("debug",
 								"brokerOutput::brokerOutput(): Construction.");
 
-	m_OutputProducer = NULL;
 	m_StationRequestProducer = NULL;
-	m_OutputTopic = NULL;
+	m_OutputProducer = NULL;
 	m_StationRequestTopic = NULL;
 
 	// init config to defaults and allocate
@@ -35,9 +214,8 @@ brokerOutput::brokerOutput(std::shared_ptr<json::Object> &config)
 	glass3::util::Logger::log(
 			"debug", "brokerOutput::brokerOutput(): Advanced Construction.");
 
-	m_OutputProducer = NULL;
 	m_StationRequestProducer = NULL;
-	m_OutputTopic = NULL;
+	m_OutputProducer = NULL;
 	m_StationRequestTopic = NULL;
 
 	// init config to defaults and allocate
@@ -141,24 +319,71 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 						+ topicConfig + ".");
 	}
 
+	// clear out any old
+	if (m_OutputProducer != NULL) {
+		delete (m_OutputProducer);
+	}
+
+	// create new producer
+	m_OutputProducer = new hazdevbroker::Producer();
+
+	// set up logging
+	m_OutputProducer->setLogCallback(
+			std::bind(&brokerOutput::logProducer, this, std::placeholders::_1));
+
+	// set up producer
+	m_OutputProducer->setup(producerConfig, topicConfig);
+
 	// producer topics
-	// brokerOutput
-	std::string brokerOutputTopic = "";
-	if (!(config->HasKey("OutputTopic"))) {
-		// topics are required
-		brokerOutputTopic = "";
+	// output
+	for (auto aTopic : m_vOutputTopics) {
+		if (aTopic != NULL) {
+			delete (aTopic);
+		}
+	}
+	m_vOutputTopics.clear();
+
+	if ((config->HasKey("OutputTopics"))
+			&& ((*config)["OutputTopics"].GetType() == json::ValueType::ArrayVal)) {
+		json::Array topics = (*config)["OutputTopics"].ToArray();
+
+		// check that there are topics
+		if (topics.size() == 0) {
+			glass3::util::Logger::log(
+					"error",
+					"brokerOutput::setup(): No OutputTopics specified.");
+			return (false);
+		}
+
+		// parse topics
+		for (auto aTopicConfig : topics) {
+			glass3::util::Logger::log(
+					"debug", "brokerOutput::setup(): got output topic.");
+
+			// create output topic
+			outputTopic* newTopic = new outputTopic(m_OutputProducer);
+
+			// setup output topic
+			if (newTopic->setup(aTopicConfig) == true) {
+
+				// add output tpic to list
+				m_vOutputTopics.push_back(newTopic);
+
+				glass3::util::Logger::log(
+						"debug", "brokerOutput::setup(): added output topic.");
+			} else {
+				glass3::util::Logger::log(
+						"error",
+						"brokerOutput::setup(): Failed set up output topic.");
+				return (false);
+			}
+		}
+	} else {
 		glass3::util::Logger::log(
 				"error",
-				"brokerOutput::setup(): Required configuration value OutputTopic not "
+				"brokerOutput::setup(): Required configuration value OutputTopics not "
 				"specified.");
 		return (false);
-	} else {
-		brokerOutputTopic = (*config)["OutputTopic"].ToString();
-
-		glass3::util::Logger::log(
-				"info",
-				"brokerOutput::setup(): Using OutputTopic: " + brokerOutputTopic
-						+ ".");
 	}
 
 	// optional station lookup
@@ -181,25 +406,6 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 
 	// unlock our configuration
 	m_BrokerOutputConfigMutex.unlock();
-
-	// set up brokerOutput producer
-	if (m_OutputProducer != NULL)
-		delete (m_OutputProducer);
-	if (m_OutputTopic != NULL)
-		delete (m_OutputTopic);
-
-	// create new producer
-	m_OutputProducer = new hazdevbroker::Producer();
-
-	// set up logging
-	m_OutputProducer->setLogCallback(
-			std::bind(&brokerOutput::logProducer, this, std::placeholders::_1));
-
-	// set up producer
-	m_OutputProducer->setup(producerConfig, topicConfig);
-
-	// create topic
-	m_OutputTopic = m_OutputProducer->createTopic(brokerOutputTopic);
 
 	// set up station request producer if wanted
 	if (stationRequestTopic != "") {
@@ -270,21 +476,15 @@ void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 		return;
 	}
 
-	if (type == "Detection") {
-		if ((m_OutputProducer != NULL) && (m_OutputTopic != NULL)) {
-			m_OutputProducer->sendString(m_OutputTopic, message);
-		}
-	} else if (type == "Retraction") {
-		if ((m_OutputProducer != NULL) && (m_OutputTopic != NULL)) {
-			m_OutputProducer->sendString(m_OutputTopic, message);
-		}
-	} else if (type == "StationInfoRequest") {
+	if (type == "StationInfoRequest") {
+		// station info requests get their own special topic
 		if ((m_StationRequestProducer != NULL)
 				&& (m_StationRequestTopic != NULL)) {
 			m_StationRequestProducer->sendString(m_StationRequestTopic,
 													message);
 		}
 	} else if (type == "StationList") {
+		// station lists are written to disk
 		std::string filename = getStationFileName();
 
 		if (filename != "") {
@@ -324,13 +524,104 @@ void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 		}
 
 	} else {
+		sendToOutputTopics(message);
+	}
+}
+
+void brokerOutput::sendToOutputTopics(const std::string &message) {
+	// nullchecks
+	if (message == "") {
 		return;
+	}
+
+	// deserialize the string into JSON
+	json::Value deserializedJSON = json::Deserialize(message);
+
+	// make sure we got valid json
+	if (deserializedJSON.GetType() == json::ValueType::NULLVal) {
+		return;
+	}
+	json::Object messageObject = deserializedJSON.ToObject();
+
+	// check type
+	std::string type = "";
+	if (messageObject.HasKey("Type")
+			&& ((messageObject)["Type"].GetType() == json::ValueType::StringVal)) {
+		type = (messageObject)["Type"].ToString();
+	} else {
+		glass3::util::Logger::log(
+				"error",
+				"brokerOutput::sendToOutputTopics: Message missing type.");
+		return;
+	}
+
+	// handle based on type
+	if (type == "Detection") {
+		// detections have a lat/lon to filter which topic to send to
+		if ((messageObject.HasKey("Hypocenter"))
+				&& ((messageObject)["Hypocenter"].GetType()
+						== json::ValueType::ObjectVal)) {
+			// get object
+			json::Object hypocenter = (messageObject)["Hypocenter"].ToObject();
+
+			// get latitude from hypocenter
+			double lat = 0;
+			if (hypocenter.HasKey("Latitude")
+					&& (hypocenter["Latitude"].GetType()
+							== json::ValueType::DoubleVal)) {
+				lat = hypocenter["Latitude"].ToDouble();
+			} else {
+				glass3::util::Logger::log(
+						"error",
+						"brokerOutput::sendToOutputTopics: Detection Message "
+						"Hypocenter Latitude");
+
+				return;
+			}
+
+			// get longitude from hypocenter
+			double lon = 0;
+			if (hypocenter.HasKey("Longitude")
+					&& (hypocenter["Longitude"].GetType()
+							== json::ValueType::DoubleVal)) {
+				lon = hypocenter["Longitude"].ToDouble();
+			} else {
+				glass3::util::Logger::log(
+						"error",
+						"brokerOutput::sendToOutputTopics: Detection Message "
+						"Hypocenter Longitude");
+
+				return;
+			}
+			// for each output topic
+			for (auto aTopic : m_vOutputTopics) {
+				// does this topic want this detection
+				if (aTopic->isInBounds(lat, lon) == true) {
+					// send it
+					aTopic->send(message);
+				}
+			}
+		} else {
+			glass3::util::Logger::log(
+					"error",
+					"brokerOutput::sendToOutputTopics: Detection Message missing "
+					"Hypocenter");
+			return;
+		}
+
+	} else if (type == "Retraction") {
+		// retractions don't have a lat/lon, so just send to all topics
+		// for each topic
+		for (auto aTopic : m_vOutputTopics) {
+			// send it
+			aTopic->send(message);
+		}
 	}
 }
 
 void brokerOutput::logProducer(const std::string &message) {
 	glass3::util::Logger::log("debug",
-								"brokerOutput::logProducer(): " + message);
+								"outputTopic::logProducer(): " + message);
 }
 
 // ---------------------------------------------------------setStationFileName

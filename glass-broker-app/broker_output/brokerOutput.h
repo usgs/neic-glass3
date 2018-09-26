@@ -15,6 +15,29 @@
 #include <string>
 
 namespace glass {
+
+class outputTopic {
+ public:
+	outputTopic(hazdevbroker::Producer * producer);
+	~outputTopic();
+
+	bool setup(json::Value &config);
+	void clear();
+
+	bool isInBounds(double lat, double lon);
+
+	void send(const std::string &message);
+
+	double m_dTopLatitude;
+	double m_dBottomLatitude;
+	double m_dLeftLongitude;
+	double m_dRightLongitude;
+
+	std::string m_sTopicName;
+	RdKafka::Topic * m_OutputTopic;
+	hazdevbroker::Producer * m_OutputProducer;
+};
+
 /**
  * \brief glass output class
  *
@@ -80,6 +103,12 @@ class brokerOutput : public glass3::output::output {
 
 	const std::string getStationFileName();
 
+	/**
+	 * \brief the function for producer logging
+	 * \param message - A string containing the logging message
+	 */
+	void logProducer(const std::string &message);
+
  protected:
 	/**
 	 * \brief output file writing function
@@ -92,11 +121,7 @@ class brokerOutput : public glass3::output::output {
 	void sendOutput(const std::string &type, const std::string &id,
 					const std::string &message) override;
 
-	/**
-	 * \brief the function for producer logging
-	 * \param message - A string containing the logging message
-	 */
-	void logProducer(const std::string &message);
+	void sendToOutputTopics(const std::string &message);
 
  private:
 	/**
@@ -106,9 +131,9 @@ class brokerOutput : public glass3::output::output {
 	glass3::util::ThreadPool * m_ThreadPool;
 
 	hazdevbroker::Producer * m_OutputProducer;
-	hazdevbroker::Producer * m_StationRequestProducer;
+	std::vector<outputTopic*> m_vOutputTopics;
 
-	RdKafka::Topic * m_OutputTopic;
+	hazdevbroker::Producer * m_StationRequestProducer;
 	RdKafka::Topic * m_StationRequestTopic;
 
 	/**
