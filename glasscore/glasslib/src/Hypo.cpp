@@ -669,6 +669,32 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 										/ (500. / dkm)))) {
 			// then this is the new best value
 			valBest = bayes;
+
+			// check to see if this is a "BIG" move.  If so, update audit
+			// information.
+			if ((sqrt(
+					(xlat - m_dLatitude) * (xlat - m_dLatitude)
+							+ (xlon - m_dLongitude) * cos(DEG2RAD * xlat)
+									* (xlon - m_dLongitude)
+									* cos(DEG2RAD * xlat)) * DEG2KM
+					> m_dWebResolution / 2.0)
+					|| (fabs(m_dDepth - xz) > 7.5
+							&& fabs(m_dDepth - xz) > m_dDepth * 0.25)) {
+				// this represents a LARGE movement (currently
+				// m_dWebResolution / 2).  Update auditing information
+				this->m_hapsAudit.dtLastBigMove = glass3::util::Date::now();
+				this->m_hapsAudit.dtOrigin = oT;
+				this->m_hapsAudit.dMaxStackBeforeMove = this->m_hapsAudit
+						.dMaxStackSinceMove;
+				this->m_hapsAudit.nMaxPhasesBeforeMove = this->m_hapsAudit
+						.nMaxPhasesSinceMove;
+				this->m_hapsAudit.dMaxStackSinceMove = valBest;
+				this->m_hapsAudit.nMaxPhasesSinceMove = m_vPickData.size();
+				this->m_hapsAudit.dLatPrev = m_dLatitude;
+				this->m_hapsAudit.dLonPrev = m_dLongitude;
+				this->m_hapsAudit.dDepthPrev = m_dDepth;
+			}
+
 			// set the hypo location/depth/time from the new best
 			// locaton/depth/time
 			setLatitude(xlat);
@@ -812,6 +838,34 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 		if (calculateValue < valBest) {
 			// this is the new minimized residual
 			valBest = calculateValue;
+
+			// set the hypo location/depth/time from the new best
+			// locaton/depth/time
+			// check to see if this is a "BIG" move.  If so, update audit
+			// information.
+			if ((sqrt(
+					(xlat - m_dLatitude) * (xlat - m_dLatitude)
+							+ (xlon - m_dLongitude) * cos(DEG2RAD * xlat)
+									* (xlon - m_dLongitude)
+									* cos(DEG2RAD * xlat)) * DEG2KM
+					> m_dWebResolution / 2.0)
+					|| (fabs(m_dDepth - xz) > 7.5
+							&& fabs(m_dDepth - xz) > m_dDepth * 0.25)) {
+				// this represents a LARGE movement (currently m_dWebResolution
+				// / 2).  Update auditing information
+				this->m_hapsAudit.dtLastBigMove = glass3::util::Date::now();
+				this->m_hapsAudit.dtOrigin = oT;
+				this->m_hapsAudit.dMaxStackBeforeMove = this->m_hapsAudit
+						.dMaxStackSinceMove;
+				this->m_hapsAudit.nMaxPhasesBeforeMove = this->m_hapsAudit
+						.nMaxPhasesSinceMove;
+				this->m_hapsAudit.dMaxStackSinceMove = valBest;
+				this->m_hapsAudit.nMaxPhasesSinceMove = m_vPickData.size();
+				this->m_hapsAudit.dLatPrev = m_dLatitude;
+				this->m_hapsAudit.dLonPrev = m_dLongitude;
+				this->m_hapsAudit.dDepthPrev = m_dDepth;
+			}
+
 			// set the hypo location/depth/time from the new best
 			// locaton/depth/time
 			setLatitude(xlat);
@@ -878,7 +932,8 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 
 	// set up a geographic object for this hypo
 	glass3::util::Geo hypoGeo;
-	hypoGeo.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
+	hypoGeo.setGeographic(m_dLatitude, m_dLongitude,
+	EARTHRADIUSKM - m_dDepth);
 
 	// check backazimuth if present
 	if (pick->getBackAzimuth() != std::numeric_limits<double>::quiet_NaN()) {
@@ -998,7 +1053,8 @@ bool CHypo::canAssociate(std::shared_ptr<CCorrelation> corr, double tWindow,
 	tDist = std::abs(m_tOrigin - corr->getTCorrelation());
 	if (tDist < tWindow) {
 		glass3::util::Geo geo1;
-		geo1.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
+		geo1.setGeographic(m_dLatitude, m_dLongitude,
+		EARTHRADIUSKM - m_dDepth);
 		glass3::util::Geo geo2;
 		geo2.setGeographic(corr->getLatitude(), corr->getLongitude(),
 		EARTHRADIUSKM - corr->getDepth());
@@ -1285,6 +1341,10 @@ void CHypo::clearPickReferences() {
 std::shared_ptr<json::Object> CHypo::generateEventMessage() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
+
+	if (m_bEventGenerated == false) {
+		m_hapsAudit.dtFirstEventMessage = glass3::util::Date::now();
+	}
 
 	m_bEventGenerated = true;
 	m_iReportCount++;
@@ -1597,7 +1657,8 @@ double CHypo::getGap() const {
 glass3::util::Geo CHypo::getGeo() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
 	glass3::util::Geo geoHypo;
-	geoHypo.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
+	geoHypo.setGeographic(m_dLatitude, m_dLongitude,
+	EARTHRADIUSKM - m_dDepth);
 	return (geoHypo);
 }
 
@@ -1935,21 +1996,24 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 	// null check
 	if (m_pTravelTimeTables == NULL) {
-		glass3::util::Logger::log("warning", "CHypo::Hypo: NULL pTTT.");
+		glass3::util::Logger::log("warning",
+									"CHypo::generateHypoMessage: NULL pTTT.");
 		return (hypo);
 	}
 
 	// make sure this event is still reportable
 	if (reportCheck() == false) {
 		glass3::util::Logger::log(
-				"debug", "CHypo::Hypo: hypo:" + m_sID + " is not reportable.");
+				"debug",
+				"CHypo::generateHypoMessage: hypo:" + m_sID
+						+ " is not reportable.");
 		return (hypo);
 	}
 
 	glass3::util::Logger::log(
 			"debug",
-			"CHypo::Hypo: generating hypo message for sPid:" + m_sID
-					+ " sWebName:" + m_sWebName);
+			"CHypo::generateHypoMessage: generating hypo message for sPid:"
+					+ m_sID + " sWebName:" + m_sWebName);
 
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
@@ -1994,7 +2058,8 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 	// set up geo for distance calculations
 	glass3::util::Geo geo;
-	geo.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
+	geo.setGeographic(m_dLatitude, m_dLongitude,
+	EARTHRADIUSKM - m_dDepth);
 
 	// array to hold data
 	json::Array data;
@@ -2090,6 +2155,41 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 	// add data array to object
 	(*hypo)["Data"] = data;
 
+	// create auditing report when first hypo message is generated for this
+	// hypo
+	if (m_bHypoGenerated == false) {
+		m_hapsAudit.dtFirstHypoMessage = glass3::util::Date::now();
+		glass3::util::Logger::log(
+				"info",
+				"CHypo:generateHypoMessage Auditing info for: " + m_sID + " "
+						+ std::to_string(m_dLatitude) + " "
+						+ std::to_string(m_dLongitude) + " "
+						+ std::to_string(m_dDepth) + " "
+						+ std::to_string(m_tOrigin) + " "
+						+ std::to_string(m_hapsAudit.dtOrigin) + " "
+						+ std::to_string(m_hapsAudit.dtNucleated) + " "
+						+ std::to_string(m_hapsAudit.dtNucleationPickInsertion)
+						+ " " + std::to_string(m_hapsAudit.dtLastBigMove) + " "
+						+ std::to_string(m_hapsAudit.nMaxPhasesBeforeMove) + " "
+						+ std::to_string(m_hapsAudit.dMaxStackBeforeMove) + " "
+						+ std::to_string(m_hapsAudit.nMaxPhasesSinceMove) + " "
+						+ std::to_string(m_hapsAudit.dMaxStackSinceMove) + " "
+						+ std::to_string(m_hapsAudit.dtFirstEventMessage) + " "
+						+ std::to_string(m_hapsAudit.dtFirstHypoMessage) + " "
+						+ std::to_string(m_hapsAudit.dLatPrev) + " "
+						+ std::to_string(m_hapsAudit.dLonPrev) + " "
+						+ std::to_string(m_hapsAudit.dDepthPrev) + " "
+						+ std::to_string(m_iProcessCount) + " "
+						+ std::to_string(m_dBayesValue) + " "
+						+ std::to_string(m_dInitialBayesValue) + " "
+						+ std::to_string(m_dMinDistance) + " "
+						+ std::to_string(m_dMedianDistance) + " "
+						+ std::to_string(m_dGap) + " "
+						+ std::to_string(m_dDistanceSD) + " "
+						+ std::to_string(m_dAssociationDistanceCutoff) + " "
+						+ std::to_string(m_dWebResolution) + "  ABC");
+	}
+
 	m_bHypoGenerated = true;
 
 	// done
@@ -2133,6 +2233,14 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	if (m_dWebResolution == 0.0) {
 		m_dWebResolution = 100.0;
 	}
+
+	// init the performance timing audit struct to 0's
+	memset(&m_hapsAudit, 0, sizeof(m_hapsAudit));
+	m_hapsAudit.dtOrigin = time;
+	m_hapsAudit.dtCreated = glass3::util::Date::now();
+	m_hapsAudit.dLatPrev = lat;
+	m_hapsAudit.dLonPrev = lon;
+	m_hapsAudit.dDepthPrev = z;
 
 	// make local copies of the travel times so that we don't
 	// have cross-thread contention for them between hypos
@@ -2713,7 +2821,8 @@ void CHypo::calculateStatistics() {
 
 	// set up a geographic object for this hypo
 	glass3::util::Geo geo;
-	geo.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
+	geo.setGeographic(m_dLatitude, m_dLongitude,
+	EARTHRADIUSKM - m_dDepth);
 
 	// create and populate vectors containing the
 	// pick distances and azimuths
@@ -2880,5 +2989,25 @@ void CHypo::setTSort(double newTSort) {
 // --------------------------------------------------setNucleationStackThreshold
 void CHypo::setNucleationStackThreshold(double thresh) {
 	m_dNucleationStackThreshold = thresh;
+}
+
+// --------------------------------------------------setNucleationAuditingInfo
+void CHypo::setNucleationAuditingInfo(double tNucleation,
+										double tNucleationKeyPickInsertion) {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
+
+	if (!m_hapsAudit.dtNucleated) {
+		m_hapsAudit.dtNucleated = tNucleation;
+		m_hapsAudit.dtNucleationPickInsertion = tNucleationKeyPickInsertion;
+	}
+}
+
+// ----------------------------------------------getHypoAuditingPerformanceInfo
+const HypoAuditingPerformanceStruct * CHypo::getHypoAuditingPerformanceInfo() {
+	// lock mutex for this scope
+	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
+
+	return (&m_hapsAudit);
 }
 }  // namespace glasscore

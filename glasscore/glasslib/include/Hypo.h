@@ -25,6 +25,29 @@ class CTrigger;
 class CSiteList;
 
 /**
+ * \brief glasscore hypo auditing structure
+ *
+ * The HypoAuditingPerformanceStruct struct is used to keep track of information
+ * used to audit the detection performance of glasscore
+ */
+typedef struct _HypoAuditingPerformanceStruct {
+	double dtOrigin;
+	double dtCreated;
+	double dtNucleated;
+	double dtNucleationPickInsertion;
+	double dtLastBigMove;
+	int nMaxPhasesBeforeMove;
+	int nMaxPhasesSinceMove;
+	double dMaxStackBeforeMove;
+	double dMaxStackSinceMove;
+	double dtFirstEventMessage;
+	double dtFirstHypoMessage;
+	double dLatPrev;
+	double dLonPrev;
+	double dDepthPrev;
+} HypoAuditingPerformanceStruct;
+
+/**
  * \brief glasscore hypocenter class
  *
  * The CHypo class is the class that encapsulates everything necessary
@@ -1002,6 +1025,20 @@ class CHypo {
 	 */
 	void setTSort(double newTSort);
 
+	/**
+	 * \brief Set nucleation auditing info for this hypo
+	 * \param tNucleation - time this hypo was nucleated(julian seconds).
+	 * \param tNucleationKeyPickInsertion - time the key pick for nucleating
+	 * this hypo was inserted into Glass3(julian seconds).
+	 */
+	void setNucleationAuditingInfo(double tNucleation,
+									double tNucleationKeyPickInsertion);
+	/**
+	 * \brief Returns performance-auditing information for the hypo via a const
+	 * HypoAuditingPerformanceStruct pointer
+	 **/
+	const HypoAuditingPerformanceStruct * getHypoAuditingPerformanceInfo();
+
  private:
 	/**
 	 * \brief  A std::string with the name of the web used during the nucleation
@@ -1216,6 +1253,11 @@ class CHypo {
 	 * \brief A mutex to control processing access to CHypo.
 	 */
 	std::mutex m_ProcessingMutex;
+
+	/**
+	 * \brief The auditing structure for this hypo
+	 */
+	HypoAuditingPerformanceStruct m_hapsAudit;
 };
 }  // namespace glasscore
 #endif  // HYPO_H

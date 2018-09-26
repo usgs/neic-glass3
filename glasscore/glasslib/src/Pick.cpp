@@ -236,9 +236,12 @@ void CPick::clear() {
 
 	m_sPhaseName = "";
 	m_sID = "";
-	m_tPick = 0;
+	m_tPick = 0.0;
 	m_dBackAzimuth = std::numeric_limits<double>::quiet_NaN();
 	m_dSlowness = std::numeric_limits<double>::quiet_NaN();
+	m_tInsertion = 0.0;
+	m_tFirstAssociation = 0.0;
+	m_tNucleation = 0.0;
 }
 
 // ---------------------------------------------------------initialize
@@ -262,10 +265,12 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 		m_wpSite = pickSite;
 	}
 
+	m_tInsertion = glass3::util::Date::now();
+
 	return (true);
 }
 
-// ---------------------------------------------------------addHypo
+// ---------------------------------------------------------addHypoReference
 void CPick::addHypoReference(std::shared_ptr<CHypo> hyp, bool force) {
 	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
 
@@ -282,9 +287,13 @@ void CPick::addHypoReference(std::shared_ptr<CHypo> hyp, bool force) {
 	} else if (m_wpHypo.expired() == true) {
 		m_wpHypo = hyp;
 	}
+
+	if (getTFirstAssociation() == 0.0) {
+		setTFirstAssociation();
+	}
 }
 
-// ---------------------------------------------------------remHypo
+// ---------------------------------------------------------removeHypoReference
 void CPick::removeHypoReference(std::shared_ptr<CHypo> hyp) {
 	// nullcheck
 	if (hyp == NULL) {
@@ -296,6 +305,7 @@ void CPick::removeHypoReference(std::shared_ptr<CHypo> hyp) {
 	removeHypoReference(hyp->getID());
 }
 
+// ---------------------------------------------------------removeHypoReference
 void CPick::removeHypoReference(std::string pid) {
 	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
 
@@ -311,7 +321,7 @@ void CPick::removeHypoReference(std::string pid) {
 	}
 }
 
-// ---------------------------------------------------------clearHypo
+// ---------------------------------------------------------clearHypoReference
 void CPick::clearHypoReference() {
 	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
 	m_wpHypo.reset();
@@ -323,6 +333,8 @@ bool CPick::nucleate() {
 	std::shared_ptr<CSite> pickSite = m_wpSite.lock();
 	std::string pt = glass3::util::Date::encodeDateTime(m_tPick);
 	char sLog[1024];
+
+	setTNucleation();
 
 	// Use site nucleate to scan all nodes
 	// linked to this pick's site and calculate
@@ -376,6 +388,10 @@ bool CPick::nucleate() {
 		// create the hypo using the node
 		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
 				trigger, CGlass::getAssociationTravelTimes());
+
+		// set nuclation auditing info
+		hypo->setNucleationAuditingInfo(glass3::util::Date::now(),
+										this->getTInsertion());
 
 		// add links to all the picks that support the hypo
 		std::vector<std::shared_ptr<CPick>> vTriggerPicks = trigger->getVPick();
@@ -485,9 +501,9 @@ bool CPick::nucleate() {
 						+ hypo->getWebName() + "; hyp: " + hypo->getID()
 						+ "; lat:" + std::to_string(hypo->getLatitude())
 						+ "; lon:" + std::to_string(hypo->getLongitude())
-						+ "; z:" + std::to_string(hypo->getDepth())
-						+ "; bayes:" + std::to_string(hypo->getBayesValue())
-						+ "; tOrg:" + st);
+						+ "; z:" + std::to_string(hypo->getDepth()) + "; bayes:"
+						+ std::to_string(hypo->getBayesValue()) + "; tOrg:"
+						+ st);
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit adding it to the hypo list
@@ -556,6 +572,31 @@ double CPick::getTSort() const {
 // --------------------------------------------------setTSort
 void CPick::setTSort(double newTSort) {
 	m_tSort = newTSort;
+}
+
+// --------------------------------------------------getTInsertion
+double CPick::getTInsertion() const {
+	return (m_tInsertion);
+}
+
+// --------------------------------------------------getTFirstAssociation
+double CPick::getTFirstAssociation() const {
+	return (m_tFirstAssociation);
+}
+
+// --------------------------------------------------setTFirstAssociation
+void CPick::setTFirstAssociation() {
+	m_tFirstAssociation = glass3::util::Date::now();
+}
+
+// --------------------------------------------------getTNucleation
+double CPick::getTNucleation() const {
+	return (m_tNucleation);
+}
+
+// --------------------------------------------------setTNucleation
+void CPick::setTNucleation() {
+	m_tNucleation = glass3::util::Date::now();
 }
 
 }  // namespace glasscore

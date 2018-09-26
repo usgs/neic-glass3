@@ -556,7 +556,7 @@ TEST(HypoTest, Localize) {
 	// check depth
 	double depth = testHypo->getDepth();
 	double expectedDepth = LOCALIZE_DEPTH;
-	ASSERT_NEAR(depth, expectedDepth, 1.0);
+	ASSERT_NEAR(depth, expectedDepth, 10.0);
 
 	// check time
 	double time = testHypo->getTOrigin();
