@@ -9,6 +9,7 @@ addons:
       - g++-5
       - gcc-5
       - uuid-dev
+      - libssl-dev
       - libgtest-dev
       - lcov
       - cppcheck
