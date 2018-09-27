@@ -50,7 +50,7 @@ install:
     - cd librdkafka
     - ./configure
     - make
-    - make install
+    - sudo make install
     # set compilers
     - export CXX="g++-5"
     - export CC="gcc-5"
