@@ -25,6 +25,10 @@ install:
     - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
     - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 
+    # set compilers
+    - export CXX="g++-5"
+    - export CC="gcc-5"
+    - export LD_LIBRARY_PATH=/usr/local/lib64/
     # Install a recent CMake (unless already installed on OS X)
     - |
       if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
@@ -43,10 +47,12 @@ install:
     - cp -r /usr/src/gtest/* ./
     - cmake -D CMAKE_INSTALL_PREFIX:PATH=./ ./
     - make
-    # set compilers
-    - export CXX="g++-5"
-    - export CC="gcc-5"
-    - export LD_LIBRARY_PATH=/usr/local/lib64/
+    # Build rdkafka
+    - cd ${DEPS_DIR}
+    - unzip ${TRAVIS_BUILD_DIR}/lib/librdkafka.zip ./
+    - cd librdkafka
+    - ./configure
+    - make install
 
 before_script:
     - uname -a
@@ -59,7 +65,8 @@ script:
   - mkdir build
   - mkdir dist
   - cd build
-  - cmake -DBUILD_GEN-TRAVELTMES-APP=1 -DGIT_CLONE_PUBLIC=1 -DRUN_TESTS=1 -DSUPPORT_COVERAGE=1 -DRUN_COVERAGE=1 -DRUN_CPPCHECK=1 -DRUN_CPPLINT=1 -DGENERATE_DOCUMENTATION=1 -DCMAKE_INSTALL_PREFIX=../dist -DRAPIDJSON_PATH=../lib/rapidjson -DCPPLINT_PATH=../lib/cpplint/cpplint.py -DCPPCHECK_PATH=/usr/bin/cppcheck .. && make
+  # build everything
+  - cmake -DBUILD_GLASS-APP=1 -DBUILD_GEN-TRAVELTMES-APP=1 -DBUILD_GLASS-BROKER-APP=1 -DGIT_CLONE_PUBLIC=1 -DRUN_TESTS=1 -DSUPPORT_COVERAGE=1 -DRUN_COVERAGE=1 -DRUN_CPPCHECK=1 -DRUN_CPPLINT=1 -DGENERATE_DOCUMENTATION=1 -DCMAKE_INSTALL_PREFIX=../dist -DRAPIDJSON_PATH=../lib/rapidjson -DLIBRDKAFKA_C_LIB=/usr/local/lib/librdkafka.a -DLIBRDKAFKA_CPP_LIB=/usr/local/lib/librdkafka++.a -DLIBRDKAFKA_PATH=/usr/local/include/librdkafka -DCPPLINT_PATH=../lib/cpplint/cpplint.py -DCPPCHECK_PATH=/usr/bin/cppcheck .. && make
   # copy documentation index.md to doxygen documentation directory
   - cd ${TRAVIS_BUILD_DIR}
   - cp -r ${TRAVIS_BUILD_DIR}/doc/* ${TRAVIS_BUILD_DIR}/dist/doc
