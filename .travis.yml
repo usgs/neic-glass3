@@ -1,7 +1,7 @@
 # travis file for c++, does not include doxygen.
 language: c++
+sudo: required
 
-sudo: false
 # add modern c++ and gtest
 addons:
   apt:
