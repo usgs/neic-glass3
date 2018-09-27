@@ -49,6 +49,7 @@ install:
     - unzip ${TRAVIS_BUILD_DIR}/lib/librdkafka.zip
     - cd librdkafka
     - ./configure
+    - make
     - make install
     # set compilers
     - export CXX="g++-5"
