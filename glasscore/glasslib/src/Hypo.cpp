@@ -769,10 +769,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 
 	m_pTravelTimeTables->setOrigin(m_dLatitude, m_dLongitude, m_dDepth);
 
-	double calculateValue = 0;
-	double valStart = 0;
-
-	valStart = calculateAbsResidualSum(m_dLatitude, m_dLongitude, m_dDepth,
+	double valStart = calculateAbsResidualSum(m_dLatitude, m_dLongitude, m_dDepth,
 										m_tOrigin, nucleate);
 	m_dBayesValue = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
 									m_tOrigin, nucleate);
@@ -838,7 +835,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 		double oT = m_tOrigin + dt;
 
 		m_pTravelTimeTables->setOrigin(xlat, xlon, xz);
-		calculateValue = calculateAbsResidualSum(xlat, xlon, xz, oT, nucleate);
+		double calculateValue = calculateAbsResidualSum(xlat, xlon, xz, oT, nucleate);
 		// geo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
 
 		// is this stacked bayesian value better than the previous one

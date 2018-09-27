@@ -104,7 +104,6 @@ double Date::now() {
 bool Date::initialize(double time) {
 	int leap;
 	int yr;
-	int days;
 
 	// Elapsed days
 	int64_t jul = static_cast<int64_t>(time / 86400.0);
@@ -113,7 +112,7 @@ bool Date::initialize(double time) {
 	double secs = time - jul * 86400.0;
 
 	for (yr = base; yr < 2100; yr++) {
-		days = 365;
+		int days = 365;
 
 		// handle leap year
 		if (yr % 4 == 0) {

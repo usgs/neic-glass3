@@ -142,28 +142,28 @@ class CZoneStats {
 	/**
 	 * \brief An integer constant containing the number of fields for parsing
 	 */
-	static const int nNumExpectedFields = 9;
+	static const int nNumExpectedFields;
 
 	/**
 	 * \brief An integer constant defining the state for getting sz records
 	 */
-	static const int iParseStateGetSZRecords = 3;
+	static const int iParseStateGetSZRecords;
 
 	/**
 	 * \brief An integer constant defining the state for getting lat gbs
 	 */
-	static const int iParseStateGetLatGBS = 0;
+	static const int iParseStateGetLatGBS;
 
 	/**
 	 * \brief An integer constant defining the state for getting lon gbs
 	 */
-	static const int iParseStateGetLonGBS = 1;
+	static const int iParseStateGetLonGBS;
 
 	/**
 	 * \brief An integer constant defining the state for getting the record
 	 * header
 	 */
-	static const int iParseStateGetRecordHeader = 2;
+	static const int iParseStateGetRecordHeader;
 
 	/**
 	 * \brief A float constant containing the invalid depth value

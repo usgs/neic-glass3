@@ -328,13 +328,6 @@ class OutputTest : public ::testing::Test {
 #else
 		rmdir(outputdirectory.c_str());
 #endif
-
-		// cleanup output thread
-		if (OutputThread != NULL)
-		delete (OutputThread);
-		if (OutputConfig != NULL)
-		delete(OutputConfig);
-
 	}
 
 	glass3::fileOutput * OutputThread;

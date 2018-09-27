@@ -13,6 +13,11 @@ const char* traveltime::CZoneStats::szLatGridBinSize = "LatGridBinSize";
 const char* traveltime::CZoneStats::szLonGridBinSize = "LonGridBinSize";
 const char* traveltime::CZoneStats::szLatLonHeader = "LAT  LON ";
 const float traveltime::CZoneStats::depthInvalid = -999.0;
+const int traveltime::CZoneStats::nNumExpectedFields = 9;
+const int traveltime::CZoneStats::iParseStateGetSZRecords = 3;
+const int traveltime::CZoneStats::iParseStateGetLatGBS = 0;
+const int traveltime::CZoneStats::iParseStateGetLonGBS = 1;
+const int traveltime::CZoneStats::iParseStateGetRecordHeader = 2;
 
 // -----------------------------------------------------ZSLatLonCompareLessThan
 bool ZSLatLonCompareLessThan(const ZoneStatsInfoStruct & zs1,
@@ -70,10 +75,7 @@ bool CZoneStats::setup(const std::string * pConfigFileName) {
 		iLineNum++;
 		if (sLine.length() == 0 || sLine[0] == '#')
 			continue;
-		static const int iParseStateGetSZRecords = 3;
-		static const int iParseStateGetLatGBS = 0;
-		static const int iParseStateGetLonGBS = 1;
-		static const int iParseStateGetRecordHeader = 2;
+
 		if (iState == this->iParseStateGetSZRecords) {
 			// parse data line.
 			// found the sLine we expected, parse the value.
