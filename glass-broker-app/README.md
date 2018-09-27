@@ -28,5 +28,3 @@ An example configuration for **glass-broker-app** is available in the [glass-bro
 ## Running
 
 To run **glass-broker-app**, use the following command: `glass-broker-app <configfile> [logname] [noconsole]` where `<configfile>` is the required path the the glass.d configuration file, `[logname]` is an optional command that when present specifies the log file name and enables logging, and `[noconsole]` is an optional string specifying that glass-broker-app should not write messages to the console.
-
-For more information, please see the [glass-broker-app DOxygen documentation](https://usgs.github.io/neic-glass3/glass-broker-app/html/glass-broker-app_8cpp.html)
