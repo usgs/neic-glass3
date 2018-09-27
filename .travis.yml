@@ -21,14 +21,10 @@ addons:
       - ubuntu-toolchain-r-test
 
 install:
-    # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/deps/
+     # All the dependencies are installed in ${TRAVIS_BUILD_DIR}/deps/
     - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
     - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 
-    # set compilers
-    - export CXX="g++-5"
-    - export CC="gcc-5"
-    - export LD_LIBRARY_PATH=/usr/local/lib64/
     # Install a recent CMake (unless already installed on OS X)
     - |
       if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
@@ -53,6 +49,10 @@ install:
     - cd librdkafka
     - ./configure
     - make install
+    # set compilers
+    - export CXX="g++-5"
+    - export CC="gcc-5"
+    - export LD_LIBRARY_PATH=/usr/local/lib64/
 
 before_script:
     - uname -a
