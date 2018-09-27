@@ -10,7 +10,7 @@
 	"CenterLongitude": -97.5,
 	"DepthLayers": [ 10.0 ],
 	"NumStationsPerNode": 10,
-	"NucleationDataThreshold": 6,
+	"NucleationDataCountThreshold": 6,
 	"NucleationStackThreshold": 5.0,
 	"UpdateGrid":true,
 	"SaveGrid":false,

@@ -1,8 +1,7 @@
-#include <file_input.h>
-#include <json.h>
+#include <fileInput.h>
+#include <json.h>  // NOLINT(build/include)
 #include <logger.h>
 #include <fileutil.h>
-
 #include <vector>
 #include <queue>
 #include <sstream>
@@ -13,8 +12,9 @@
 #include <string>
 #include <memory>
 
-namespace glass {
-// Construction/Destruction
+namespace glass3 {
+
+// ---------------------------------------------------------fileInput
 fileInput::fileInput()
 		: glass3::input::Input() {
 	glass3::util::Logger::log("debug", "fileInput::fileInput(): Construction.");
@@ -23,7 +23,8 @@ fileInput::fileInput()
 	clear();
 }
 
-fileInput::fileInput(std::shared_ptr<const json::Object> &config)
+// ---------------------------------------------------------fileInput
+fileInput::fileInput(const std::shared_ptr<const json::Object> &config)
 		: glass3::input::Input() {
 	glass3::util::Logger::log(
 			"debug", "fileInput::fileInput(): Advanced Construction.");
@@ -37,6 +38,7 @@ fileInput::fileInput(std::shared_ptr<const json::Object> &config)
 	start();
 }
 
+// ---------------------------------------------------------~fileInput
 fileInput::~fileInput() {
 	glass3::util::Logger::log("debug", "fileInput::~fileInput(): Destruction.");
 
@@ -44,7 +46,7 @@ fileInput::~fileInput() {
 	stop();
 }
 
-// configuration
+// ---------------------------------------------------------setup
 bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		glass3::util::Logger::log(
@@ -64,8 +66,8 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 		if (configtype != "GlassInput") {
 			glass3::util::Logger::log(
 					"error",
-					"fileInput::setup(): Wrong configuration provided, configuration "
-							"is for: " + configtype + ".");
+					"fileInput::setup(): Wrong configuration provided, "
+					"configuration is for: " + configtype + ".");
 			return (false);
 		}
 	}
@@ -76,8 +78,8 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 		setInputDir("");
 		glass3::util::Logger::log(
 				"error",
-				"fileInput::setup(): Required configuration value InputDirectory not "
-				"specified.");
+				"fileInput::setup(): Required configuration value InputDirectory "
+				" not specified.");
 		return (false);
 	} else {
 		setInputDir((*config)["InputDirectory"].ToString());
@@ -154,6 +156,7 @@ bool fileInput::setup(std::shared_ptr<const json::Object> config) {
 	return (true);
 }
 
+// ---------------------------------------------------------clear
 void fileInput::clear() {
 	glass3::util::Logger::log("debug",
 								"fileInput::clear(): clearing configuration.");
@@ -169,6 +172,7 @@ void fileInput::clear() {
 	glass3::input::Input::clear();
 }
 
+// ---------------------------------------------------------fetchRawData
 std::string fileInput::fetchRawData(std::string* pOutType) {
 	// our pOutType is our format (extension)
 	*pOutType = getFormat();
@@ -284,7 +288,7 @@ std::string fileInput::fetchRawData(std::string* pOutType) {
 	return ("");
 }
 
-// file cleanup
+// ---------------------------------------------------------cleanupFile
 void fileInput::cleanupFile(std::string filename, bool move,
 							std::string destinationdir) {
 	// if we are archiving our fileInput
@@ -302,50 +306,59 @@ void fileInput::cleanupFile(std::string filename, bool move,
 	}
 }
 
+// ---------------------------------------------------------getInputDir
 const std::string fileInput::getInputDir() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_sInputDir);
 }
 
-void fileInput::setInputDir(std::string dir) {
+// ---------------------------------------------------------setInputDir
+void fileInput::setInputDir(const std::string &dir) {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_sInputDir = dir;
 }
 
+// ---------------------------------------------------------getArchiveDir
 const std::string fileInput::getArchiveDir() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_sArchiveDir);
 }
 
-void fileInput::setArchiveDir(std::string dir) {
+// ---------------------------------------------------------setArchiveDir
+void fileInput::setArchiveDir(const std::string &dir) {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_sArchiveDir = dir;
 }
 
+// ---------------------------------------------------------getFormat
 const std::string fileInput::getFormat() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_sFormat);
 }
 
-void fileInput::setFormat(std::string format) {
+// ---------------------------------------------------------setFormat
+void fileInput::setFormat(const std::string &format) {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_sFormat = format;
 }
 
+// --------------------------------------------------------setShutdownWhenNoData
 void fileInput::setShutdownWhenNoData(bool shutdown) {
 	m_bShutdownWhenNoData = shutdown;
 }
 
+// --------------------------------------------------------getShutdownWhenNoData
 bool fileInput::getShutdownWhenNoData() {
 	return (m_bShutdownWhenNoData);
 }
 
+// --------------------------------------------------------setShutdownWait
 void fileInput::setShutdownWait(int waitTime) {
 	m_iShutdownWait = waitTime;
 }
 
+// --------------------------------------------------------getShutdownWait
 int fileInput::getShutdownWait() {
 	return (m_iShutdownWait);
 }
-
-}  // namespace glass
+}  // namespace glass3

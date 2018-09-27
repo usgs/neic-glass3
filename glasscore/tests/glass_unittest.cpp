@@ -123,7 +123,7 @@ TEST(GlassTest, Construction) {
 	"getNumStationsPerNode";
 	ASSERT_EQ(DEFAULT_MAXNUMHYPOS, testGlass->getMaxNumHypos())<<
 	"getMaxNumHypos";
-	ASSERT_EQ(DEFAULT_NUCTDATA, testGlass->getNucleationDataThreshold())<<
+	ASSERT_EQ(DEFAULT_NUCTDATA, testGlass->getNucleationDataCountThreshold())<<
 	"getNucleationDataThreshold";
 	ASSERT_EQ(DEFAULT_MAXNUMPICKS, testGlass->getMaxNumPicks())<<
 	"getMaxNumPicks";
@@ -220,7 +220,7 @@ TEST(GlassTest, Init) {
 	"getNumStationsPerNode";
 	ASSERT_EQ(MAXNUMHYPOS, testGlass->getMaxNumHypos())<<
 	"getMaxNumHypos";
-	ASSERT_EQ(NUCTDATA, testGlass->getNucleationDataThreshold())<<
+	ASSERT_EQ(NUCTDATA, testGlass->getNucleationDataCountThreshold())<<
 	"getNucleationDataThreshold";
 	ASSERT_EQ(MAXNUMPICKS, testGlass->getMaxNumPicks())<<
 	"getMaxNumPicks";

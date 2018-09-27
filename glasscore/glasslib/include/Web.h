@@ -412,7 +412,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \return Returns an integer value containing the nucleation data minimum
 	 * threshold
 	 */
-	int getNucleationDataThreshold() const;
+	int getNucleationDataCountThreshold() const;
 
 	/**
 	 * \brief Gets the name of this web
@@ -534,7 +534,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * gathered to trigger the nucleation of an event. This number overrides the
 	 * default Glass parameter if it is provided
 	 */
-	std::atomic<int> m_iNucleationDataThreshold;
+	std::atomic<int> m_iNucleationDataCountThreshold;
 
 	/**
 	 * \brief A double value containing the viability threshold needed to

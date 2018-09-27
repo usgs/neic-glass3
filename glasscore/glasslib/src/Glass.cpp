@@ -36,7 +36,7 @@ std::atomic<int> CGlass::m_iMaxNumPicks { -1 };
 std::atomic<int> CGlass::m_iMaxNumCorrelations { -1 };
 std::atomic<int> CGlass::m_iMaxNumPicksPerSite { -1 };
 std::atomic<int> CGlass::m_iMaxNumHypos { -1 };
-std::atomic<int> CGlass::m_iNucleationDataThreshold { 7 };
+std::atomic<int> CGlass::m_iNucleationDataCountThreshold { 7 };
 std::atomic<int> CGlass::m_iNumStationsPerNode { 20 };
 std::atomic<double> CGlass::m_dNucleationStackThreshold { 2.5 };
 std::atomic<double> CGlass::m_dAssociationSDCutoff { 3.0 };
@@ -176,9 +176,8 @@ void CGlass::clear() {
 	m_iMaxNumCorrelations = -1;
 	m_iMaxNumPicksPerSite = -1;
 	m_iMaxNumHypos = -1;
-	m_iNucleationDataThreshold = 7;
+	m_iNucleationDataCountThreshold = 7;
 	m_iNumStationsPerNode = 20;
-	m_iNucleationDataThreshold = 7;
 	m_dNucleationStackThreshold = 2.5;
 	m_dAssociationSDCutoff = 3.0;
 	m_dPruningSDCutoff = 3.0;
@@ -523,21 +522,21 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		}
 
 		// Nucleate
-		if ((params.HasKey("NucleationDataThreshold"))
-				&& (params["NucleationDataThreshold"].GetType()
+		if ((params.HasKey("NucleationDataCountThreshold"))
+				&& (params["NucleationDataCountThreshold"].GetType()
 						== json::ValueType::IntVal)) {
-			m_iNucleationDataThreshold =
-					params["NucleationDataThreshold"].ToInt();
+			m_iNucleationDataCountThreshold =
+					params["NucleationDataCountThreshold"].ToInt();
 
 			glass3::util::Logger::log(
 					"info",
-					"CGlass::initialize: Using NucleationDataThreshold: "
-							+ std::to_string(m_iNucleationDataThreshold));
+					"CGlass::initialize: Using NucleationDataCountThreshold: "
+							+ std::to_string(m_iNucleationDataCountThreshold));
 		} else {
 			glass3::util::Logger::log(
 					"info",
-					"CGlass::initialize: Using default NucleationDataThreshold: "
-							+ std::to_string(m_iNucleationDataThreshold));
+					"CGlass::initialize: Using default NucleationDataCountThreshold: "
+							+ std::to_string(m_iNucleationDataCountThreshold));
 		}
 
 		// sdAssociate
@@ -1257,8 +1256,8 @@ int CGlass::getNumStationsPerNode() {
 }
 
 // ------------------------------------------------getNucleationDataThreshold
-int CGlass::getNucleationDataThreshold() {
-	return (m_iNucleationDataThreshold);
+int CGlass::getNucleationDataCountThreshold() {
+	return (m_iNucleationDataCountThreshold);
 }
 
 // ------------------------------------------------getReportingDataThreshold

@@ -1,6 +1,5 @@
-#include <file_output.h>
-#include <json.h>
-
+#include <fileOutput.h>
+#include <json.h>  // NOLINT(build/include)
 #include <detection-formats.h>
 #include <logger.h>
 #include <fileutil.h>
@@ -8,13 +7,14 @@
 
 #include <thread>
 #include <mutex>
-#include <future>
+#include <memory>
 #include <string>
 #include <sstream>
 #include <fstream>
 
-namespace glass {
+namespace glass3 {
 
+// ---------------------------------------------------------fileOutput
 fileOutput::fileOutput()
 		: glass3::output::output() {
 	glass3::util::Logger::log("debug",
@@ -24,7 +24,8 @@ fileOutput::fileOutput()
 	clear();
 }
 
-fileOutput::fileOutput(std::shared_ptr<const json::Object> config)
+// ---------------------------------------------------------fileOutput
+fileOutput::fileOutput(const std::shared_ptr<const json::Object> &config)
 		: glass3::output::output() {
 	glass3::util::Logger::log(
 			"debug", "fileOutput::fileOutput(): Advanced Construction.");
@@ -39,6 +40,7 @@ fileOutput::fileOutput(std::shared_ptr<const json::Object> config)
 	start();
 }
 
+// ---------------------------------------------------------~fileOutput
 fileOutput::~fileOutput() {
 	glass3::util::Logger::log("debug",
 								"fileOutput::~fileOutput(): Destruction.");
@@ -47,7 +49,7 @@ fileOutput::~fileOutput() {
 	stop();
 }
 
-// configuration
+// ---------------------------------------------------------setup
 bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		glass3::util::Logger::log(
@@ -74,8 +76,7 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	}
 
 	// lock our configuration while we're updating it
-	// this mutex may be pointless
-	m_FileOutputConfigMutex.lock();
+	getMutex().lock();
 
 	// fileOutputdir
 	if (!(config->HasKey("OutputDirectory"))) {
@@ -124,8 +125,7 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 						"is: " + std::to_string(m_bTimestampFileName) + ".");
 	}
 
-	// unlock our configuration
-	m_FileOutputConfigMutex.unlock();
+	getMutex().unlock();
 
 	glass3::util::Logger::log("debug", "fileOutput::setup(): Done Setting Up.");
 
@@ -136,27 +136,20 @@ bool fileOutput::setup(std::shared_ptr<const json::Object> config) {
 	return (true);
 }
 
+// ---------------------------------------------------------clear
 void fileOutput::clear() {
-	glass3::util::Logger::log("debug",
-								"fileOutput::clear(): clearing configuration.");
-
-	// lock our configuration while we're updating it
-	// this mutex may be pointless
-	m_FileOutputConfigMutex.lock();
-
+	getMutex().lock();
 	m_sOutputDir = "";
 	m_sOutputFormat = "";
+	getMutex().unlock();
 
 	m_bTimestampFileName = true;
-
-	// unlock our configuration
-	m_FileOutputConfigMutex.unlock();
 
 	// finally do baseclass clear
 	glass3::output::output::clear();
 }
 
-// send output
+// ---------------------------------------------------------sendOutput
 void fileOutput::sendOutput(const std::string &type, const std::string &id,
 							const std::string &message) {
 	if (type == "") {
@@ -182,8 +175,8 @@ void fileOutput::sendOutput(const std::string &type, const std::string &id,
 		return;
 	}
 
-	std::string fileOutputdir = getSOutputDir();
-	bool timeStampName = getBTimestampFileName();
+	std::string fileOutputdir = getOutputDir();
+	bool timeStampName = getTimestampFileName();
 
 	glass3::util::Logger::log(
 			"info",
@@ -277,4 +270,22 @@ void fileOutput::sendOutput(const std::string &type, const std::string &id,
 	// done
 	return;
 }
-}  // namespace glass
+
+// ---------------------------------------------------------getOutputDir
+const std::string fileOutput::getOutputDir() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return (m_sOutputDir);
+}
+
+// ---------------------------------------------------------getOutputFormat
+const std::string fileOutput::getOutputFormat() {
+	std::lock_guard<std::mutex> guard(getMutex());
+	return(m_sOutputFormat);
+}
+
+// ---------------------------------------------------------getTimestampFileName
+bool fileOutput::getTimestampFileName() {
+	return (m_bTimestampFileName);
+}
+
+}  // namespace glass3

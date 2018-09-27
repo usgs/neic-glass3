@@ -13,23 +13,21 @@
 
 #include <thread>
 #include <mutex>
-#include <future>
+#include <memory>
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <fstream>
 #include <vector>
 
-namespace glass {
+namespace glass3 {
 /**
  * \brief glass fileOutput class
  *
- * The glass fileOutput class is a thread class encapsulating the detection fileOutput
- * logic.  The fileOutput class handles fileOutput messages from from glasscore,
- * and writes the messages out to disk.
+ * The glass fileOutput class is a class encapsulating the file output logic.
+ * The fileOutput class handles writing messages from glasscore out to disk.
  *
- * fileOutput inherits from the threadbaseclass class.
- * fileOutput implements the ifileOutput interface.
+ * fileOutput inherits from the glass3::output::output  class.
  */
 class fileOutput : public glass3::output::output {
  public:
@@ -51,7 +49,7 @@ class fileOutput : public glass3::output::output {
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	explicit fileOutput(std::shared_ptr<const json::Object> config);
+	explicit fileOutput(const std::shared_ptr<const json::Object> &config);
 
 	/**
 	 * \brief fileOutput destructor
@@ -77,31 +75,33 @@ class fileOutput : public glass3::output::output {
 	 * \brief fileOutput clear function
 	 *
 	 * The clear function for the fileOutput class.
-	 * Clears all configuration, clears and reallocates the message queue and
-	 * cache
+	 * Clears all configuration
 	 */
 	void clear() override;
 
-	const std::string getSOutputDir() {
-		m_FileOutputConfigMutex.lock();
-		std::string fileOutputdir = m_sOutputDir;
-		m_FileOutputConfigMutex.unlock();
-		return fileOutputdir;
-	}
+	/**
+	 * \brief Function to retrieve the output directory
+	 *
+	 * This function retrieves the output directory
+	 * \return A std::string containing the output directory
+	 */
+	const std::string getOutputDir();
 
-	const std::string getSOutputFormat() {
-		m_FileOutputConfigMutex.lock();
-		std::string fileOutputformat = m_sOutputFormat;
-		m_FileOutputConfigMutex.unlock();
-		return fileOutputformat;
-	}
+	/**
+	 * \brief Function to retrieve the output format
+	 *
+	 * This function retrieves the output format
+	 * \return A std::string containing the output format
+	 */
+	const std::string getOutputFormat();
 
-	bool getBTimestampFileName() {
-		m_FileOutputConfigMutex.lock();
-		bool timestamp = m_bTimestampFileName;
-		m_FileOutputConfigMutex.unlock();
-		return timestamp;
-	}
+	/**
+	 * \brief Get whether to timestamp output file names
+	 *
+	 * This function retrieves whether to timestamp output file names
+	 * \return A boolean flag indicating whether to timestamp output file names
+	 */
+	bool getTimestampFileName();
 
  protected:
 	/**
@@ -130,15 +130,10 @@ class fileOutput : public glass3::output::output {
 	std::string m_sOutputFormat;
 
 	/**
-	 * \brief the mutex for configuration
-	 */
-	std::mutex m_FileOutputConfigMutex;
-
-	/**
 	 * \brief the boolean configuration flag determining whether to include
 	 * an epoch timestamp in the file name.
 	 */
-	bool m_bTimestampFileName;
+	std::atomic<bool> m_bTimestampFileName;
 };
-}  // namespace glass
+}  // namespace glass3
 #endif  // FILEOUTPUT_H

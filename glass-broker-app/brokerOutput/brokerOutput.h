@@ -13,40 +13,22 @@
 
 #include <mutex>
 #include <string>
+#include <vector>
+#include <memory>
 
-namespace glass {
+#include "outputTopic.h"
 
-class outputTopic {
- public:
-	outputTopic(hazdevbroker::Producer * producer);
-	~outputTopic();
-
-	bool setup(json::Value &config);
-	void clear();
-
-	bool isInBounds(double lat, double lon);
-
-	void send(const std::string &message);
-
-	double m_dTopLatitude;
-	double m_dBottomLatitude;
-	double m_dLeftLongitude;
-	double m_dRightLongitude;
-
-	std::string m_sTopicName;
-	RdKafka::Topic * m_OutputTopic;
-	hazdevbroker::Producer * m_OutputProducer;
-};
+namespace glass3 {
 
 /**
- * \brief glass output class
+ * \brief glass3 broker output class
  *
- * The glass output class is a thread class encapsulating the detection output
- * logic.  The output class handles output messages from from glasscore,
- * and writes the messages out to disk.
+ * The glass3 broker output class is a class encapsulating the broker output
+ * logic.  The output class handles setting up a hazdevbroker producer,
+ * configuring output topic(s) and sending messages from glasscore, to
+ * kafka via the hazdevbroker producer
  *
- * output inherits from the threadbaseclass class.
- * output implements the ioutput interface.
+ * brokerOutput inherits from the glass3::output::output class.
  */
 class brokerOutput : public glass3::output::output {
  public:
@@ -68,7 +50,7 @@ class brokerOutput : public glass3::output::output {
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	explicit brokerOutput(std::shared_ptr<json::Object> &config);
+	explicit brokerOutput(const std::shared_ptr<json::Object> &config);
 
 	/**
 	 * \brief brokerOutput destructor
@@ -81,8 +63,7 @@ class brokerOutput : public glass3::output::output {
 	/**
 	 * \brief brokerOutput configuration function
 	 *
-	 * The this function configures the brokerOutput class, and the tracking cache it
-	 * contains.
+	 * The this function configures the brokerOutput class.
 	 *
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use
@@ -94,13 +75,20 @@ class brokerOutput : public glass3::output::output {
 	 * \brief brokerOutput clear function
 	 *
 	 * The clear function for the brokerOutput class.
-	 * Clears all configuration, clears and reallocates the message queue and
-	 * cache
+	 * Clears all configuration
 	 */
 	void clear() override;
 
+	/**
+	 * \brief Sets the station file name
+	 * \param filename - A string containing the file name
+	 */
 	void setStationFileName(const std::string &filename);
 
+	/**
+	 * \brief Gets the station file name
+	 * \return Returns A string containing the file name
+	 */
 	const std::string getStationFileName();
 
 	/**
@@ -121,30 +109,32 @@ class brokerOutput : public glass3::output::output {
 	void sendOutput(const std::string &type, const std::string &id,
 					const std::string &message) override;
 
+	/**
+	 * \brief Sends the provided message to each of the output topics
+	 * \param message - A string containing the message
+	 */
 	void sendToOutputTopics(const std::string &message);
 
  private:
 	/**
-	 * \brief pointer to the glass3::util::threadpool used to queue and
-	 * perform output.
+	 * \brief The hazdevbroker producer used to send messages to kafka
 	 */
-	glass3::util::ThreadPool * m_ThreadPool;
-
 	hazdevbroker::Producer * m_OutputProducer;
-	std::vector<outputTopic*> m_vOutputTopics;
 
-	hazdevbroker::Producer * m_StationRequestProducer;
+	/**
+	 * \brief A vector containing the output topics
+	 */
+	std::vector<glass3::outputTopic*> m_vOutputTopics;
+
+	/**
+	 * \brief The optional station request topic
+	 */
 	RdKafka::Topic * m_StationRequestTopic;
 
 	/**
 	 * \brief the std::string containing the station file name.
 	 */
 	std::string m_sStationFileName;
-
-	/**
-	 * \brief the mutex for configuration
-	 */
-	std::mutex m_BrokerOutputConfigMutex;
 };
-}  // namespace glass
+}  // namespace glass3
 #endif  // BROKEROUTPUT_H

@@ -250,7 +250,7 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 					glass3::util::GlassID::getID(),
 					trigger->getWeb()->getName(), trigger->getBayesValue(),
 					trigger->getWeb()->getNucleationStackThreshold(),
-					trigger->getWeb()->getNucleationDataThreshold(),
+					trigger->getWeb()->getNucleationDataCountThreshold(),
 					trigger->getWeb()->getNucleationTravelTime1(),
 					trigger->getWeb()->getNucleationTravelTime2(), ttt,
 					trigger->getWebResolution(),
@@ -1224,6 +1224,7 @@ void CHypo::clear() {
 
 	m_bFixed = false;
 	m_bEventGenerated = false;
+	m_bHypoGenerated = false;
 
 	m_pTravelTimeTables.reset();
 	m_pNucleationTravelTime1.reset();

@@ -187,7 +187,7 @@ bool CCorrelationList::addCorrelationFromJSON(
 
 			// set thresholds
 			hypo->setNucleationDataThreshold(
-					CGlass::getNucleationDataThreshold());
+					CGlass::getNucleationDataCountThreshold());
 			hypo->setNucleationStackThreshold(
 					CGlass::getNucleationStackThreshold());
 

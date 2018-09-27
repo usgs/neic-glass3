@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <file_output.h>
+#include <fileOutput.h>
 #include <config.h>
 #include <logger.h>
 #include <date.h>
@@ -20,6 +20,7 @@
 #define TESTAUTHOR "glass"
 #define REPORTINTERVAL 60
 #define OUTPUTFORMAT "json"
+#define TIMESTAMP false
 
 #define OUTPUTID "DB277841F26BB84089FE877BAAB85084"
 #define HYPOFILE "hypo.txt"
@@ -207,7 +208,7 @@ class OutputTest : public ::testing::Test {
 		// get json formatted configuration
 		output_config_json = OutputConfig->getJSON();
 
-		OutputThread = new glass::fileOutput(output_config_json);
+		OutputThread = new glass3::fileOutput(output_config_json);
 
 		AssocThread = new AssociatorStub();
 		AssocThread->Output = OutputThread;
@@ -219,27 +220,27 @@ class OutputTest : public ::testing::Test {
 
 	bool configurefail1() {
 		// configure fail
-		OutputThread = new glass::fileOutput();
+		OutputThread = new glass3::fileOutput();
 		return (OutputThread->setup(NULL));
 	}
 
 	bool configurefail2() {
 		// configure fail
-		OutputThread = new glass::fileOutput();
+		OutputThread = new glass3::fileOutput();
 		return (OutputThread->setup(
 				std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL1))));
 	}
 
 	bool configurefail3() {
 		// configure fail
-		OutputThread = new glass::fileOutput();
+		OutputThread = new glass3::fileOutput();
 		return (OutputThread->setup(
 				std::make_shared<json::Object>(json::Deserialize(CONFIGFAIL2))));
 	}
 
 	bool emptyconfig() {
 		// configure empty
-		OutputThread = new glass::fileOutput();
+		OutputThread = new glass3::fileOutput();
 		return (OutputThread->setup(
 				std::make_shared<json::Object>(json::Deserialize(EMPTYCONFIG))));
 	}
@@ -336,7 +337,7 @@ class OutputTest : public ::testing::Test {
 
 	}
 
-	glass::fileOutput * OutputThread;
+	glass3::fileOutput * OutputThread;
 	AssociatorStub * AssocThread;
 
 	glass3::util::Config * OutputConfig;
@@ -369,13 +370,15 @@ class OutputTest : public ::testing::Test {
 // tests to see if correlation can successfully
 // write json output
 TEST_F(OutputTest, Construction) {
-	OutputThread = new glass::fileOutput();
+	OutputThread = new glass3::fileOutput();
 
 	// assert that this is an input thread
-	ASSERT_STREQ(OutputThread->getThreadName().c_str(), "output")<< "check output thread name";
+	ASSERT_STREQ(OutputThread->getThreadName().c_str(),
+				 "output")<< "check output thread name";
 
 	// assert the thread sleeptime
-	ASSERT_EQ(OutputThread->getSleepTime(), SLEEPTIME)<< "check output thread sleep time";
+	ASSERT_EQ(OutputThread->getSleepTime(), SLEEPTIME)<<
+			"check output thread sleep time";
 
 	// assert class is not set up
 	ASSERT_FALSE(OutputThread->getSetup())<< "output thread is not set up";
@@ -388,7 +391,8 @@ TEST_F(OutputTest, Construction) {
 			glass3::util::ThreadState::Started)<< "output thread is not running";
 
 	// assert no data in class
-	ASSERT_EQ(OutputThread->getReportInterval(), REPORTINTERVAL)<< "output thread report interval";
+	ASSERT_EQ(OutputThread->getReportInterval(), REPORTINTERVAL)<<
+			"output thread report interval";
 }
 
 TEST_F(OutputTest, Configuration) {
@@ -402,18 +406,18 @@ TEST_F(OutputTest, Configuration) {
 	ASSERT_TRUE(configure())<< "OutputThread->setup returned true";
 
 	// assert class is set up
-	ASSERT_TRUE(OutputThread->getSetup()) << "input thread is set up";
+	ASSERT_TRUE(OutputThread->getSetup()) << "output thread is set up";
 
 	// assert class has config
-	ASSERT_TRUE(OutputThread->getConfig() != NULL) << "input config is notnull";
+	ASSERT_TRUE(OutputThread->getConfig() != NULL) << "output config is notnull";
 
 	// check input directory
-	ASSERT_STREQ(OutputThread->getSOutputDir().c_str(),
+	ASSERT_STREQ(OutputThread->getOutputDir().c_str(),
 			outputdirectory.c_str()) << "check output thread output directory";
 
 	// check input directory
 	std::string outputformat = std::string(OUTPUTFORMAT);
-	ASSERT_STREQ(OutputThread->getSOutputFormat().c_str(),
+	ASSERT_STREQ(OutputThread->getOutputFormat().c_str(),
 			outputformat.c_str()) << "check output thread output format";
 
 	// check agency id
@@ -425,6 +429,10 @@ TEST_F(OutputTest, Configuration) {
 	std::string author = std::string(TESTAUTHOR);
 	ASSERT_STREQ(OutputThread->getDefaultAuthor().c_str(),
 			author.c_str()) << "check author";
+
+	// check timestamp
+	ASSERT_EQ(OutputThread->getTimestampFileName(), TIMESTAMP) <<
+			"check timestamp";
 }
 
 TEST_F(OutputTest, Output) {

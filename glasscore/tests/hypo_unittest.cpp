@@ -449,7 +449,7 @@ TEST(HypoTest, Anneal) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			hypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -535,7 +535,7 @@ TEST(HypoTest, Localize) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			hypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -652,7 +652,7 @@ TEST(HypoTest, Prune) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			hypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -715,7 +715,7 @@ TEST(HypoTest, Resolve) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			hypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -780,7 +780,7 @@ TEST(HypoTest, Messaging) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			sharedHypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);

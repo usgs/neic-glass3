@@ -191,7 +191,7 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 				CGlass::getAssociationTravelTimes());
 
 		// set thresholds
-		hypo->setNucleationDataThreshold(CGlass::getNucleationDataThreshold());
+		hypo->setNucleationDataThreshold(CGlass::getNucleationDataCountThreshold());
 		hypo->setNucleationStackThreshold(
 				CGlass::getNucleationStackThreshold());
 

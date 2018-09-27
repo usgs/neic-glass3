@@ -55,25 +55,23 @@ include(${CMAKE_DIR}/include_HazdevBroker.cmake)
 include(${CMAKE_DIR}/include_librdkafka.cmake)
 
 # ----- SET PROJECT INCLUDE DIRECTORIES ----- #
-include_directories(${PROJECT_SOURCE_DIR}/broker_input)
-include_directories(${PROJECT_SOURCE_DIR}/broker_output)
-
-# ----- APPLICATION LIBRARIES ----- #
-# input
-add_library (broker_input STATIC ${PROJECT_SOURCE_DIR}/broker_input/broker_input.cpp ${PROJECT_SOURCE_DIR}/broker_input/broker_input.h)
-
-# output
-add_library (broker_output STATIC  ${PROJECT_SOURCE_DIR}/broker_output/brokerOutput.cpp ${PROJECT_SOURCE_DIR}/broker_output/brokerOutput.h)
+include_directories(${PROJECT_SOURCE_DIR}/brokerInput)
+include_directories(${PROJECT_SOURCE_DIR}/brokerOutput)
 
 # ----- SET SOURCE FILES ----- #
-set(SRCS "${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
+file(GLOB SRCS "${PROJECT_SOURCE_DIR}/brokerInput/*.cpp"
+               "${PROJECT_SOURCE_DIR}/brokerOutput/*.cpp"
+               "${PROJECT_SOURCE_DIR}/*.cpp")
 
 # ----- SET HEADER FILES ----- #
-# no headers
+file(GLOB HDRS "${PROJECT_SOURCE_DIR}/brokerInput/*.h"
+               "${PROJECT_SOURCE_DIR}/brokerOutput/*.h")
+
 
 # ----- BUILD EXECUTABLE ----- #
 # WARNING: linking order of libraries matters for G++
-set(EXE_LIBRARIES broker_input ${input_LIBRARIES} broker_output ${HazdevBroker_LIBRARIES} ${LIBRDKAFKA_CPP_LIB} ${LIBRDKAFKA_C_LIB} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
+set(EXE_LIBRARIES ${input_LIBRARIES} ${HazdevBroker_LIBRARIES} ${LIBRDKAFKA_CPP_LIB} ${LIBRDKAFKA_C_LIB} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
+
 if (UNIX AND NOT APPLE)
     set(ZLIB -lz)
     set(LIBDL -ldl)
@@ -81,7 +79,7 @@ endif (UNIX AND NOT APPLE)
 include(${CMAKE_DIR}/build_exe.cmake)
 
 # ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/broker_input ${PROJECT_SOURCE_DIR}/broker_output ${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
+set(DOC_DIRS "${PROJECT_SOURCE_DIR}/brokerInput ${PROJECT_SOURCE_DIR}/brokerOutput ${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
 include(${CMAKE_DIR}/documentation.cmake)
 
 # ----- RUN CPPCHECK ----- #

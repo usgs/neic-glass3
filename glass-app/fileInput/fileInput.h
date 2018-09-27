@@ -21,16 +21,15 @@
 #define JSON_EXTENSION "json"
 #define CC_EXTENSION "dat"
 
-namespace glass {
+namespace glass3 {
 /**
  * \brief glass fileInput class
  *
- * The glass fileInput class is a thread class encapsulating the data fileInput logic
- * The fileInput class handles reading fileInput data from disk, parsing it, validating
- * it, and queuing it for later use by the associator class
+ * The glass fileInput class is a class encapsulating the file input logic.
+ * The fileInput class handles reading data from disk, and sending the
+ * data to glasscore via the associator class.
  *
- * fileInput inherits from the glass3::input class.
- * fileInput implements the iinput interface.
+ * fileInput inherits from the glass3::input::Input class.
  */
 class fileInput : public glass3::input::Input {
  public:
@@ -52,7 +51,7 @@ class fileInput : public glass3::input::Input {
 	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	fileInput(std::shared_ptr<const json::Object> &config);
+	explicit fileInput(const std::shared_ptr<const json::Object> &config);
 
 	/**
 	 * \brief fileInput destructor
@@ -78,8 +77,7 @@ class fileInput : public glass3::input::Input {
 	 * \brief output clear function
 	 *
 	 * The clear function for the output class.
-	 * Clears all configuration, clears and reallocates the data queue and
-	 * parsing objects
+	 * Clears all configuration.
 	 */
 	void clear() override;
 
@@ -87,7 +85,6 @@ class fileInput : public glass3::input::Input {
 	 * \brief Function to retrieve the name of the input directory
 	 *
 	 * This function retrieves the name of the input directory
-	 *
 	 * \return A std::string containing the input directory name
 	 */
 	const std::string getInputDir();
@@ -96,10 +93,9 @@ class fileInput : public glass3::input::Input {
 	 * \brief Function to set the name of  the input directory
 	 *
 	 * This function sets the name of of the input directory
-	 *
 	 * \param dir = A std::string containing the input directory to set
 	 */
-	void setInputDir(std::string dir);
+	void setInputDir(const std::string &dir);
 
 	/**
 	 * \brief Function to retrieve the name of the archive directory
@@ -114,10 +110,9 @@ class fileInput : public glass3::input::Input {
 	 * \brief Function to set the name of  the archive directory
 	 *
 	 * This function sets the name of of the archive directory
-	 *
 	 * \param dir = A std::string containing the archive directory to set
 	 */
-	void setArchiveDir(std::string dir);
+	void setArchiveDir(const std::string &dir);
 
 	/**
 	 * \brief Function to retrieve the format type (extension)
@@ -132,17 +127,15 @@ class fileInput : public glass3::input::Input {
 	 * \brief Function to set the format type (extension)
 	 *
 	 * This function sets the format type (extension)
-	 *
 	 * \param format = A std::string containing the format type
 	 */
-	void setFormat(std::string format);
+	void setFormat(const std::string &format);
 
 	/**
 	 * \brief Function to set whether to shutdown when no data
 	 *
 	 * This function sets the boolean flag indicating whether to shutdown when
 	 * there is no data
-	 *
 	 * \param shutdown = A boolean flag indicating whether to shut down
 	 */
 	void setShutdownWhenNoData(bool shutdown);
@@ -162,7 +155,6 @@ class fileInput : public glass3::input::Input {
 	 *
 	 * This function sets the wait time before shutting down due to no
 	 * data
-	 *
 	 * \param waitTime = An integer value containing the shutdown wait in seconds
 	 */
 	void setShutdownWait(int waitTime);
@@ -172,7 +164,6 @@ class fileInput : public glass3::input::Input {
 	 *
 	 * This function retrieves the wait time before shutting down due to no
 	 * data
-	 *
 	 * \return Returns an integer value containing the shutdown wait in seconds
 	 */
 	int getShutdownWait();
@@ -183,19 +174,17 @@ class fileInput : public glass3::input::Input {
 	 *
 	 * A function (overridden from glass3::input) that that retrieves the next
 	 * data message and type from an input source
-	 *
 	 * \param pOutType - A pointer to a std::string used to pass out the type of
 	 * the data
 	 * \return returns a std::string containing the input data message
 	 */
-	virtual std::string fetchRawData(std::string* pOutType) override;
+	std::string fetchRawData(std::string* pOutType) override;
 
 	/**
 	 * \brief cleanup file function
 	 *
 	 * The function that moves the file identified by filename to the
 	 * destination directory, or deletes it if move is false
-	 *
 	 * \param filename - A std::string containing the file to clean up
 	 * \param move - A boolean flag indicating whether to move or delete the
 	 * file
@@ -255,5 +244,5 @@ class fileInput : public glass3::input::Input {
 	 */
 	int m_iDataCount;
 };
-}  // namespace glass
+}  // namespace glass3
 #endif  // FILEINPUT_H

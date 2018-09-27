@@ -15,7 +15,7 @@
   "SiteMaximumPicksPerHour": -1,   # Disabled because glass-app does not do site lookups.
   "Params": {
       "NucleationStackThreshold": 0.5,
-      "NucleationDataThreshold": 10,
+      "NucleationDataCountThreshold": 10,
       "AssociationStandardDeviationCutoff": 5.0,
       "PruningStandardDeviationCutoff": 5.0,
       "PickAffinityExponentialFactor": 2.5,

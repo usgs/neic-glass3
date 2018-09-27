@@ -76,7 +76,7 @@ CWeb::~CWeb() {
 void CWeb::clear() {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 	m_iNumStationsPerNode = 10;
-	m_iNucleationDataThreshold = 5;
+	m_iNucleationDataCountThreshold = 5;
 	m_dNucleationStackThreshold = 2.5;
 	m_dNodeResolution = 100;
 	m_dDepthResolution = -1;
@@ -138,7 +138,7 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	m_sName = name;
 	m_dNucleationStackThreshold = thresh;
 	m_iNumStationsPerNode = numDetect;
-	m_iNucleationDataThreshold = numNucleate;
+	m_iNucleationDataCountThreshold = numNucleate;
 	m_dNodeResolution = resolution;
 	m_bUpdate = update;
 	m_bSaveGrid = save;
@@ -367,7 +367,7 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			" vSitesFilter:%d; bUseOnlyTeleseismicStations:%d; iNodeCount:%d;",
 			m_sName.c_str(), phases.c_str(), numDepthLayers,
 			getNodeResolution(), getNumStationsPerNode(),
-			getNucleationDataThreshold(), getNucleationStackThreshold(),
+			getNucleationDataCountThreshold(), getNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
@@ -613,7 +613,7 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			lat0 - (rows - 1) * latDistance, lon0,
 			lon0 + (cols - 1) * lonDistance, rows, cols, numDepthLayers,
 			getNodeResolution(), getNumStationsPerNode(),
-			getNucleationDataThreshold(), getNucleationStackThreshold(),
+			getNucleationDataCountThreshold(), getNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
@@ -758,7 +758,7 @@ bool CWeb::generateExplicitGrid(
 			" nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
 			" bUseOnlyTeleseismicStations:%d; vSitesFilter:%d; iNodeCount:%d;",
 			m_sName.c_str(), phases.c_str(), getNumStationsPerNode(),
-			getNucleationDataThreshold(), getNucleationStackThreshold(),
+			getNucleationDataCountThreshold(), getNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
@@ -783,7 +783,7 @@ bool CWeb::loadGridConfiguration(
 	// grid definition variables and defaults
 	std::string name = "Nemo";
 	int detect = CGlass::getNumStationsPerNode();
-	int nucleate = CGlass::getNucleationDataThreshold();
+	int nucleate = CGlass::getNucleationDataCountThreshold();
 	double thresh = CGlass::getNucleationStackThreshold();
 
 	double resol = 0;
@@ -831,10 +831,10 @@ bool CWeb::loadGridConfiguration(
 	}
 
 	// number of picks that need to associate to start an event
-	if (((*gridConfiguration).HasKey("NucleationDataThreshold"))
-			&& ((*gridConfiguration)["NucleationDataThreshold"].GetType()
+	if (((*gridConfiguration).HasKey("NucleationDataCountThreshold"))
+			&& ((*gridConfiguration)["NucleationDataCountThreshold"].GetType()
 					== json::ValueType::IntVal)) {
-		nucleate = (*gridConfiguration)["NucleationDataThreshold"].ToInt();
+		nucleate = (*gridConfiguration)["NucleationDataCountThreshold"].ToInt();
 	}
 
 	// viability threshold needed to exceed for a nucleation to be successful.
@@ -899,7 +899,7 @@ bool CWeb::loadGridConfiguration(
 			&& ((*gridConfiguration)["DepthResolution"].GetType()
 					== json::ValueType::DoubleVal)) {
 		m_dDepthResolution = (*gridConfiguration)["DepthResolution"].ToDouble();
-	}	 else {
+	} else {
 		m_dDepthResolution = -1;
 	}
 
@@ -1323,8 +1323,7 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 	}
 
 	// create node
-	std::shared_ptr<CNode> node(
-			new CNode(m_sName, lat, lon, z, resol, maxZ));
+	std::shared_ptr<CNode> node(new CNode(m_sName, lat, lon, z, resol, maxZ));
 
 	// set parent web
 	node->setWeb(this);
@@ -1856,8 +1855,8 @@ int CWeb::getNumStationsPerNode() const {
 }
 
 // ---------------------------------------------------getNucleationDataThreshold
-int CWeb::getNucleationDataThreshold() const {
-	return (m_iNucleationDataThreshold);
+int CWeb::getNucleationDataCountThreshold() const {
+	return (m_iNucleationDataCountThreshold);
 }
 
 // ---------------------------------------------------------getName

@@ -101,7 +101,7 @@ TEST(WebTest, Construction) {
 	ASSERT_EQ(NUMDETECT, testWeb->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataThreshold())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataCountThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb->getNodeResolution())<< "Web resolution Check";
@@ -143,7 +143,7 @@ TEST(WebTest, Construction) {
 	ASSERT_EQ(NUMDETECT, testWeb2->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb2->getNucleationDataThreshold())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb2->getNucleationDataCountThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb2->getNodeResolution())<< "Web resolution Check";
@@ -200,7 +200,7 @@ TEST(WebTest, Initialize) {
 	ASSERT_EQ(NUMDETECT, testWeb->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataThreshold())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataCountThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb->getNodeResolution())<< "Web resolution Check";
@@ -278,7 +278,7 @@ TEST(WebTest, GlobalTest) {
 	"Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.getNucleationDataThreshold())<<
+	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.getNucleationDataCountThreshold())<<
 	"Web getNucleate() Check";
 
 	// getResolution()
@@ -368,7 +368,7 @@ TEST(WebTest, GridTest) {
 	ASSERT_EQ(GRIDNUMDETECT, testGridWeb.getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.getNucleationDataThreshold())<<
+	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.getNucleationDataCountThreshold())<<
 	"Web getNucleate() Check";
 
 	// getResolution()
@@ -460,7 +460,7 @@ TEST(WebTest, GridExplicitTest) {
 
 	// getNucleate()
 	ASSERT_EQ(GRIDEXPLICITNUMNUCLEATE,
-			testGridWeb.getNucleationDataThreshold())<< "Web getNucleate() Check";
+			testGridWeb.getNucleationDataCountThreshold())<< "Web getNucleate() Check";
 
 	// getResolution()
 	ASSERT_EQ(GRIDEXPLICITRESOLUTION,

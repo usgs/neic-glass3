@@ -3,8 +3,8 @@
 #include <json.h>
 #include <logger.h>
 #include <config.h>
-#include <file_input.h>
-#include <file_output.h>
+#include <fileInput.h>
+#include <fileOutput.h>
 #include <associator.h>
 
 #include <cstdio>
@@ -90,12 +90,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	// check to see if our config is of the right format
-	if (glassConfig.getJSON()->HasKey("Cmd")
-			&& ((*glassConfig.getJSON())["Cmd"].GetType()
+	if (glassConfig.getJSON()->HasKey("Configuration")
+			&& ((*glassConfig.getJSON())["Configuration"].GetType()
 					== json::ValueType::StringVal)) {
-		std::string configType = (*glassConfig.getJSON())["Cmd"].ToString();
+		std::string configType = (*glassConfig.getJSON())["Configuration"]
+				.ToString();
 
-		if (configType != "Glass") {
+		if (configType != "glass-app") {
 			glass3::util::Logger::log(
 					"critical", "glass-app: Wrong configuration, exiting.");
 
@@ -103,8 +104,8 @@ int main(int argc, char* argv[]) {
 		}
 	} else {
 		// no command
-		glass3::util::Logger::log("critical",
-									"glass-app: Missing required Cmd Key.");
+		glass3::util::Logger::log(
+				"critical", "glass-app: Missing required Configuration Key.");
 
 		return (0);
 	}
@@ -258,8 +259,8 @@ int main(int argc, char* argv[]) {
 	}
 
 	// create our objects
-	glass::fileInput InputThread;
-	glass::fileOutput OutputThread;
+	glass3::fileInput InputThread;
+	glass3::fileOutput OutputThread;
 	glass3::process::Associator AssocThread(&InputThread, &OutputThread);
 
 	// input setup
@@ -305,7 +306,7 @@ int main(int argc, char* argv[]) {
 	OutputThread.start();
 	AssocThread.start();
 
-	glass3::util::Logger::log("info", "glass-app: glass3 is running.");
+	glass3::util::Logger::log("info", "glass-app: neic-glass3 is running.");
 
 	// run until stopped
 	while (true) {
@@ -331,7 +332,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	glass3::util::Logger::log("info", "glass-app: glass3 is shutting down.");
+	glass3::util::Logger::log("info", "glass-app: neic-glass3 is shutting down.");
 
 	// shutdown
 	InputThread.stop();

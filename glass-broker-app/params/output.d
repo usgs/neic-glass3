@@ -24,19 +24,19 @@
 
 	# the topic the producer will produce to
 	"OutputTopics":[
-		{	"Name":"OK",
+		{	"TopicName":"OK",
 			"TopLatitude":38.0,
 			"LeftLongitude":-101.0,
 			"BottomLatitude":33.0,
 			"RightLongitude":-94.0
 		},
-		{	"Name":"CEUS",
+		{	"TopicName":"CEUS",
 			"TopLatitude":50.0,
 			"LeftLongitude":-105.0,
 			"BottomLatitude":25.0,
 			"RightLongitude":-67.0
 		},
-		{	"Name":"DefaultWorld"
+		{	"TopicName":"DefaultWorld"
 		}
 	],
 

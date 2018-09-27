@@ -216,21 +216,21 @@ TEST(HypoListTest, ProcessTest) {
 	// construct hypos
 	glasscore::CHypo * mergeHypo = new glasscore::CHypo(
 			mergeMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
 
 	glasscore::CHypo * merge2Hypo = new glasscore::CHypo(
 			merge2Message, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
 
 	glasscore::CHypo * noMergeHypo = new glasscore::CHypo(
 			noMergeMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -345,21 +345,21 @@ TEST(HypoListTest, AssociateTest) {
 	// construct hypos
 	glasscore::CHypo * mergeHypo = new glasscore::CHypo(
 			mergeMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
 
 	glasscore::CHypo * merge2Hypo = new glasscore::CHypo(
 			merge2Message, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
 
 	glasscore::CHypo * noMergeHypo = new glasscore::CHypo(
 			noMergeMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -465,14 +465,14 @@ TEST(HypoListTest, WorkTest) {
 	// construct hypos
 	glasscore::CHypo * mergeHypo = new glasscore::CHypo(
 			mergeMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
 
 	glasscore::CHypo * noMergeHypo = new glasscore::CHypo(
 			noMergeMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -480,7 +480,7 @@ TEST(HypoListTest, WorkTest) {
 	glasscore::CHypo * cancelHypo = new glasscore::CHypo(
 			46.84, 135.03, 42.0, 3648585211.926340, "cancel", "Test", 0,
 			testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0);
 

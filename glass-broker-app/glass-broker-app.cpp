@@ -4,16 +4,14 @@
 #include <json.h>
 #include <logger.h>
 #include <config.h>
-#include <input.h>
+#include <brokerInput.h>
+#include <brokerOutput.h>
 #include <associator.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <string>
 #include <memory>
-
-#include "broker_input/broker_input.h"
-#include "broker_output/brokerOutput.h"
 
 int main(int argc, char* argv[]) {
 	std::string configdir = "";
@@ -67,7 +65,7 @@ int main(int argc, char* argv[]) {
 
 	glass3::util::Logger::log(
 			"info",
-			"glass-broker-app: Glass Version "
+			"glass-broker-app: neic-glass3 version "
 					+ std::to_string(PROJECT_VERSION_MAJOR) + "."
 					+ std::to_string(PROJECT_VERSION_MINOR) + "."
 					+ std::to_string(PROJECT_VERSION_PATCH) + " startup.");
@@ -263,8 +261,8 @@ int main(int argc, char* argv[]) {
 	}
 
 	// create our objects
-	glass::brokerInput InputThread;
-	glass::brokerOutput OutputThread;
+	glass3::brokerInput InputThread;
+	glass3::brokerOutput OutputThread;
 	glass3::process::Associator AssocThread(&InputThread, &OutputThread);
 
 	// input setup
@@ -310,7 +308,7 @@ int main(int argc, char* argv[]) {
 	OutputThread.start();
 	AssocThread.start();
 
-	glass3::util::Logger::log("info", "glass-broker-app: glass3 is running.");
+	glass3::util::Logger::log("info", "glass-broker-app: neic-glass3 is running.");
 
 	// run until stopped
 	while (true) {
@@ -338,7 +336,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	glass3::util::Logger::log("info",
-								"glass-broker-app: glass3 is shutting down.");
+								"glass-broker-app: neic-glass3 is shutting down.");
 
 	// shutdown
 	InputThread.stop();

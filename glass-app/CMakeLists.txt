@@ -47,25 +47,25 @@ include(${CMAKE_DIR}/include_neic-glass3_output.cmake)
 include(${CMAKE_DIR}/include_neic-glass3_input.cmake)
 
 # ----- SET INCLUDE DIRECTORIES ----- #
-include_directories(${PROJECT_SOURCE_DIR}/file_input)
-include_directories(${PROJECT_SOURCE_DIR}/file_output)
-
-# ----- LIBRARIES ----- #
-# input
-add_library (file_input STATIC ${PROJECT_SOURCE_DIR}/file_input/file_input.cpp ${PROJECT_SOURCE_DIR}/file_input/file_input.h)
-
-# output
-add_library (file_output STATIC  ${PROJECT_SOURCE_DIR}/file_output/file_output.cpp ${PROJECT_SOURCE_DIR}/file_output/file_output.h)
+include_directories(${PROJECT_SOURCE_DIR}/fileInput)
+include_directories(${PROJECT_SOURCE_DIR}/fileOutput)
 
 # ----- SET SOURCE FILES ----- #
-set(SRCS "${PROJECT_SOURCE_DIR}/glass-app.cpp")
+file(GLOB SRCS "${PROJECT_SOURCE_DIR}/fileInput/*.cpp"
+               "${PROJECT_SOURCE_DIR}/fileOutput/*.cpp"
+               "${PROJECT_SOURCE_DIR}/*.cpp")
 
 # ----- SET HEADER FILES ----- #
-# no headers
+file(GLOB HDRS "${PROJECT_SOURCE_DIR}/fileInput/*.h"
+               "${PROJECT_SOURCE_DIR}/fileOutput/*.h")
+
+# ----- (testing) LIBRARY ----- #
+# testingLib
+add_library (testingLib STATIC ${SRCS} ${HDRS})
 
 # ----- BUILD EXECUTABLE ----- #
 # WARNING: linking order of libraries matters for G++
-set(EXE_LIBRARIES file_input ${input_LIBRARIES} file_output ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
+set(EXE_LIBRARIES ${input_LIBRARIES} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
 include(${CMAKE_DIR}/build_exe.cmake)
 
 # ----- GENERATE DOCUMENTATION ----- #
@@ -81,7 +81,7 @@ include(${CMAKE_DIR}/cpplint.cmake)
 # ----- RUN UNIT TESTS ----- #
 file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
 # Just use the exe libraries
-set(TEST_LIBRARIES ${EXE_LIBRARIES})
+set(TEST_LIBRARIES testingLib ${EXE_LIBRARIES})
 include(${CMAKE_DIR}/test.cmake)
 
 # ----- INSTALL EXECUTABLE ----- #

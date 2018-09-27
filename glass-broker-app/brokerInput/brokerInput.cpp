@@ -1,17 +1,17 @@
-#include <broker_input.h>
+#include <brokerInput.h>
+#include <json.h>  // NOLINT(build/include)
 #include <logger.h>
 #include <fileutil.h>
 #include <vector>
 #include <queue>
-#include <sstream>
-#include <iostream>
-#include <fstream>
+#include <memory>
 #include <chrono>
 #include <mutex>
 #include <string>
 
-namespace glass {
+namespace glass3 {
 
+// ---------------------------------------------------------brokerInput
 brokerInput::brokerInput()
 		: glass3::input::Input() {
 	glass3::util::Logger::log("debug",
@@ -22,7 +22,8 @@ brokerInput::brokerInput()
 	clear();
 }
 
-brokerInput::brokerInput(std::shared_ptr<const json::Object> &config)
+// ---------------------------------------------------------brokerInput
+brokerInput::brokerInput(const std::shared_ptr<const json::Object> &config)
 		: glass3::input::Input() {
 	m_Consumer = NULL;
 
@@ -36,6 +37,7 @@ brokerInput::brokerInput(std::shared_ptr<const json::Object> &config)
 	start();
 }
 
+// ---------------------------------------------------------~brokerInput
 brokerInput::~brokerInput() {
 	glass3::util::Logger::log("debug",
 								"brokerInput::~brokerInput(): Destruction.");
@@ -48,7 +50,7 @@ brokerInput::~brokerInput() {
 	}
 }
 
-// configuration
+// ---------------------------------------------------------setup
 bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	if (config == NULL) {
 		glass3::util::Logger::log(
@@ -68,8 +70,8 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 		if (configtype != "GlassInput") {
 			glass3::util::Logger::log(
 					"error",
-					"brokerInput::setup(): Wrong configuration provided, configuration "
-							"is for: " + configtype + ".");
+					"brokerInput::setup(): Wrong configuration provided, "
+					"configuration is for: " + configtype + ".");
 			return (false);
 		}
 	}
@@ -81,8 +83,8 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 		consumerConfig = "";
 		glass3::util::Logger::log(
 				"error",
-				"brokerInput::setup(): Required configuration value HazdevBrokerConfig not "
-				"specified.");
+				"brokerInput::setup(): Required configuration value "
+				"HazdevBrokerConfig not specified.");
 		return (false);
 	} else {
 		consumerConfig = json::Serialize(
@@ -155,6 +157,7 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 	return (true);
 }
 
+// ---------------------------------------------------------clear
 void brokerInput::clear() {
 	glass3::util::Logger::log(
 			"debug", "brokerInput::clear(): clearing configuration.");
@@ -163,6 +166,7 @@ void brokerInput::clear() {
 	glass3::input::Input::clear();
 }
 
+// ---------------------------------------------------------fetchRawData
 std::string brokerInput::fetchRawData(std::string* pOutType) {
 	// we only expect json messages from the broker
 	*pOutType = std::string(JSON_TYPE);
@@ -183,8 +187,9 @@ std::string brokerInput::fetchRawData(std::string* pOutType) {
 	return ("");
 }
 
+// ---------------------------------------------------------logConsumer
 void brokerInput::logConsumer(const std::string &message) {
 	glass3::util::Logger::log("debug",
 								"brokerInput::logConsumer(): " + message);
 }
-}  // namespace glass
+}  // namespace glass3

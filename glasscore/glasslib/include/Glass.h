@@ -300,7 +300,7 @@ class CGlass {
 	 * \return Returns an integer containing the minimum number of data required
 	 * to nucleate an event
 	 */
-	static int getNucleationDataThreshold();
+	static int getNucleationDataCountThreshold();
 
 	/**
 	 * \brief Gets the minimum number of data required to report an event
@@ -480,7 +480,7 @@ class CGlass {
 	 * event. This value can be overridden in a detection grid (Web) if provided
 	 * as part of a specific grid setup.
 	 */
-	static std::atomic<int> m_iNucleationDataThreshold;
+	static std::atomic<int> m_iNucleationDataCountThreshold;
 
 	/**
 	 * \brief A double value containing the default viability threshold needed

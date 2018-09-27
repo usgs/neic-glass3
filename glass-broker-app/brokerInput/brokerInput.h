@@ -18,16 +18,17 @@
 #include <string>
 #include <memory>
 
-namespace glass {
+namespace glass3 {
+
 /**
- * \brief glass brokerInput class
+ * \brief glass3 broker input class
  *
- * The glass brokerInput class is a thread class encapsulating the data brokerInput logic
- * The brokerInput class handles reading brokerInput data from disk, parsing it, validating
- * it, and queuing it for later use by the associator class
+ * The glass3 broker input class is a class encapsulating the broker input
+ * logic.  The output class handles setting up a hazdevbroker consumer,
+ * configuring input topic(s) and getting messages from kafka via the
+ * hazdevbroker consumer to glasscore via the associator class.
  *
- * brokerInput inherits from the glass3::brokerInput class.
- * brokerInput implements the ibrokerInput interface.
+ * brokerInput inherits from the glass3::input::Input class.
  */
 class brokerInput : public glass3::input::Input {
  public:
@@ -46,10 +47,9 @@ class brokerInput : public glass3::input::Input {
 	 * Initializes members to default values.
 	 * Calls setup to configure the class
 	 * Starts the work thread
-	 *
 	 * \param config - A json::Object pointer to the configuration to use
 	 */
-	brokerInput(std::shared_ptr<const json::Object> &config);
+	explicit brokerInput(const std::shared_ptr<const json::Object> &config);
 
 	/**
 	 * \brief brokerInput destructor
@@ -62,9 +62,7 @@ class brokerInput : public glass3::input::Input {
 	/**
 	 * \brief brokerInput configuration function
 	 *
-	 * The this function configures the brokerInput class, and allocates the parsing
-	 * objects and data queue.
-	 *
+	 * The this function configures the brokerInput class.
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use
 	 * \return returns true if successful.
@@ -75,8 +73,7 @@ class brokerInput : public glass3::input::Input {
 	 * \brief output clear function
 	 *
 	 * The clear function for the output class.
-	 * Clears all configuration, clears and reallocates the data queue and
-	 * parsing objects
+	 * Clears all configuration
 	 */
 	void clear() override;
 
@@ -86,12 +83,11 @@ class brokerInput : public glass3::input::Input {
 	 *
 	 * A function (overridden from glass3::input) that that retrieves the next
 	 * data message and type from an input source
-	 *
 	 * \param pOutType - A pointer to a std::string used to pass out the type of
 	 * the data
 	 * \return returns a std::string containing the input data message
 	 */
-	virtual std::string fetchRawData(std::string* pOutType) override;
+	std::string fetchRawData(std::string* pOutType) override;
 
 	/**
 	 * \brief the function for consumer logging
@@ -101,9 +97,9 @@ class brokerInput : public glass3::input::Input {
 
  private:
 	/**
-	 * \brief the consumer object to get messages from
+	 * \brief the hazdevbroker consumer object to get messages from kafka
 	 */
 	hazdevbroker::Consumer * m_Consumer;
 };
-}  // namespace glass
+}  // namespace glass3
 #endif  // BROKERINPUT_H
