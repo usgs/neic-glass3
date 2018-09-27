@@ -46,7 +46,7 @@ install:
     - make
     # Build rdkafka
     - cd ${DEPS_DIR}
-    - unzip ${TRAVIS_BUILD_DIR}/lib/librdkafka.zip .
+    - unzip ${TRAVIS_BUILD_DIR}/lib/librdkafka.zip
     - cd librdkafka
     - ./configure
     - make install
