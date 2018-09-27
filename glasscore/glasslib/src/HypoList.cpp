@@ -1147,6 +1147,39 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		return;
 	}
 
+	// log performance info
+	const HypoAuditingPerformanceStruct * perfInfo = hypo
+			->getHypoAuditingPerformanceInfo();
+	glass3::util::Logger::log(
+			"info",
+			"CHypoList::removeHypo Final Audit for: " + hypo->getID() + " "
+					+ std::to_string(hypo->getLatitude()) + " "
+					+ std::to_string(hypo->getLongitude()) + " "
+					+ std::to_string(hypo->getDepth()) + " "
+					+ std::to_string(hypo->getTOrigin()) + " "
+					+ std::to_string(perfInfo->dtOrigin) + " "
+					+ std::to_string(perfInfo->dtNucleated) + " "
+					+ std::to_string(perfInfo->dtNucleationPickInsertion) + " "
+					+ std::to_string(perfInfo->dtLastBigMove) + " "
+					+ std::to_string(perfInfo->nMaxPhasesBeforeMove) + " "
+					+ std::to_string(perfInfo->dMaxStackBeforeMove) + " "
+					+ std::to_string(perfInfo->nMaxPhasesSinceMove) + " "
+					+ std::to_string(perfInfo->dMaxStackSinceMove) + " "
+					+ std::to_string(perfInfo->dtFirstEventMessage) + " "
+					+ std::to_string(perfInfo->dtFirstHypoMessage) + " "
+					+ std::to_string(perfInfo->dLatPrev) + " "
+					+ std::to_string(perfInfo->dLonPrev) + " "
+					+ std::to_string(perfInfo->dDepthPrev) + " "
+					+ std::to_string(hypo->getProcessCount()) + " "
+					+ std::to_string(hypo->getBayesValue()) + " "
+					+ std::to_string(hypo->getInitialBayesValue()) + " "
+					+ std::to_string(hypo->getMinDistance()) + " "
+					+ std::to_string(hypo->getMedianDistance()) + " "
+					+ std::to_string(hypo->getGap()) + " "
+					+ std::to_string(hypo->getDistanceSD()) + " "
+					+ std::to_string(hypo->getAssociationDistanceCutoff()) + " "
+					+ std::to_string(hypo->getWebResolution()) + "  ABC");
+
 	// Send cancellation message for this hypo
 	if (reportCancel == true) {
 		// only if we've sent an event message

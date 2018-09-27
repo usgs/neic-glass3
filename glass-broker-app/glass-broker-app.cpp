@@ -1,4 +1,43 @@
-// glass-broker-app.cpp : Defines the entry point for the console application.
+/*****************************************
+ * This file is documented for Doxygen.
+ * If you modify this file please update
+ * the comments so that Doxygen will still
+ * be able to work.
+ ****************************************/
+/**
+ * \file
+ * \brief glass-broker-app.cpp
+ *
+ * glass-broker-app is an application that uses the glasscore libraries and the
+ * rest of the glass3 infrastructure to generate seismic event detections based
+ * on an input dataset of picks, correlations, and detections.
+ *
+ * glass-broker-app reads it's input data from various kafka input topics
+ * accessed via the hazdevbroker library.
+ *
+ * glass-broker-app writes it's output detections to various kafka output topics
+ * accessed via the hazdevbroker library.
+ *
+ * glass-broker-app uses the environment variable GLASS_LOG to define the
+ * location to write log files
+ *
+ * \par Usage
+ * \parblock
+ * <tt>glass-broker-app <configfile> [logname] [noconsole]</tt>
+ *
+ * \par Where
+ * \parblock
+ *    \b configfile is the required path to the configuration file for
+ * glass-broker-app
+ *
+ *    \b logname is an optional string defining an alternate
+ * name for the glass-broker-app log file.
+ *
+ *    \b noconsole is an optional string specifying that glass-broker-app should
+ * not write messages to the console.
+ * \endparblock
+ * \endparblock
+ */
 //
 #include <project_version.h>
 #include <json.h>

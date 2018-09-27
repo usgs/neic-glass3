@@ -226,7 +226,7 @@ class CPick {
 
 	/**
 	 * \brief Set the arrival time for this pick
-	 * \parem tPick -  a double containing the pick arrival time
+	 * \param tPick -  a double containing the pick arrival time
 	 */
 	void setTPick(double tPick);
 

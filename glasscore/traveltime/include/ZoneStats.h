@@ -92,51 +92,117 @@ class CZoneStats {
 	/**
 	 * \brief CZoneStats retrieval function
 	 *
-	 * This function calculates the significance function for glasscore,
-	 * which is the bell shaped curve with sig(0, x) pinned to 0.
-	 *
-	 * \param tdif - A double containing x value.
-	 * \param sig - A double value containing the sigma,
-	 * \return Returns a double value containing significance function result
+	 * This function gets the zone stats information for a given latitude and
+	 * longitude
+	 * \param dLat - A double containing the latitude to use
+	 * \param dLon - A double containing the longitude to use
+	 * \return Returns pointer to a ZoneStatsInfoStruct containing the zone
+	 * stats information
 	 */
 	const ZoneStatsInfoStruct * getZonestatsInfoForLatLon(double dLat,
 															double dLon);
 
+	/**
+	 * \brief Max Depth retrieval function
+	 *
+	 * This function gets the maximum depth for a given latitude and longitude
+	 * \param dLat - A double containing the latitude to use
+	 * \param dLon - A double containing the longitude to use
+	 * \return Returns a double value containing the maximum depth
+	 */
 	float getMaxDepthForLatLon(double dLat, double dLon);
 
+	/**
+	 * \brief relative observability retrieval function
+	 *
+	 * This function gets the relative observability for a given latitude and
+	 * longitude
+	 * \param dLat - A double containing the latitude to use
+	 * \param dLon - A double containing the longitude to use
+	 * \return Returns a double value containing the relative observability
+	 */
 	float getRelativeObservabilityOfSeismicEventsAtLocation(double dLat,
 															double dLon);
 
+	/**
+	 * \brief A const char array representing the Lat grid bin string size
+	 */
 	static const char* szLatGridBinSize;
 
+	/**
+	 * \brief A const char array representing the Lon grid bin string size
+	 */
 	static const char* szLonGridBinSize;
 
+	/**
+	 * \brief A const char array representing the Lat/Lon header string size
+	 */
 	static const char* szLatLonHeader;
 
+	/**
+	 * \brief An integer constant containing the number of fields for parsing
+	 */
 	static const int nNumExpectedFields = 9;
 
+	/**
+	 * \brief An integer constant defining the state for getting sz records
+	 */
 	static const int iParseStateGetSZRecords = 3;
 
+	/**
+	 * \brief An integer constant defining the state for getting lat gbs
+	 */
 	static const int iParseStateGetLatGBS = 0;
 
+	/**
+	 * \brief An integer constant defining the state for getting lon gbs
+	 */
 	static const int iParseStateGetLonGBS = 1;
 
+	/**
+	 * \brief An integer constant defining the state for getting the record
+	 * header
+	 */
 	static const int iParseStateGetRecordHeader = 2;
 
+	/**
+	 * \brief A float constant containing the invalid depth value
+	 */
 	static const float depthInvalid;
 
  protected:
+	/**
+	 * \brief a std::vector of ZoneStatsInfoStruct's containing the zone stats
+	 * information
+	 */
 	std::vector<ZoneStatsInfoStruct> m_vZSData;
 
+	/**
+	 * \brief An integer containing the total number of events in the zone stats
+	 * information
+	 */
 	int m_nTotalNumEvents;
 
+	/**
+	 * \brief A double containing the average observability per bin
+	 */
 	double m_dAvgObservabilityPerBin;
 
+	/**
+	 * \brief A float containing the laititude bin size in degrees
+	 */
 	float fLatBinSizeDeg;
 
+	/**
+	 * \brief A float containing the longitude bin size in degrees
+	 */
 	float fLonBinSizeDeg;
 
+	/**
+	 * \brief a ZoneStatsInfoStruct containing the default zone stats
+	 * information
+	 */
 	ZoneStatsInfoStruct m_ZSDefault;
-};  // CZoneStats class
+};  // End CZoneStats class
 }  // namespace traveltime
 #endif  // ZONESTATS_H

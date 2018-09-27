@@ -99,12 +99,13 @@ class brokerOutput : public glass3::output::output {
 
  protected:
 	/**
-	 * \brief output file writing function
+	 * \brief output sending function
 	 *
 	 * The function used output detection data
 	 *
-	 * \param data - A pointer to a json::Object containing the data to be
-	 * output.
+	 * \param type - A std::string containing the type of the data message
+	 * \param id - A std::string containing the id of the data message
+	 * \param message - A std::string containing the data message
 	 */
 	void sendOutput(const std::string &type, const std::string &id,
 					const std::string &message) override;

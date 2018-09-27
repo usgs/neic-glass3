@@ -120,6 +120,8 @@ class CNode {
 	 * and unlinking (deleting) using this-> The solution was to pass a pointer
 	 * to the node in this function.
 	 *
+	 * \param distDeg - A double value containing the distance in degrees
+	 * between the node and the site.
 	 * \param travelTime1 - A double value containing the first travel time to
 	 * use for the link
 	 * \param travelTime2 - A double value containing the optional second travel
@@ -177,6 +179,8 @@ class CNode {
 	 * travel time
 	 * \param travelTime2 - A double value containing the first calculated
 	 * travel time
+	 * \param distDeg - A double value containing the distance between the
+	 * station and the node in degrees
 	 * \return Returns best significance if there is at least one valid travel
 	 * time, -1.0 otherwise
 	 */

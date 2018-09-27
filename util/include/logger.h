@@ -135,7 +135,9 @@ class Logger {
 	 *
 	 * Function to log error and status messages.  If the optional logging
 	 * callback is not set up, this function will use printf
-	 * \param logLevel - A log_level enum containing the desired logging level.
+	 * \param level - A std::string representing the desired log level.
+	 * Supported levels are: "info", "trace", "debug", "warning", "error",
+	 * and "criticalerror"
 	 * \param logMessage - A char * containing the logging message
 	 */
 	static void log(const std::string &level, const char * logMessage);

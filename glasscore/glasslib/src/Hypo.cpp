@@ -673,13 +673,16 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 			// check to see if this is a "BIG" move.  If so, update audit
 			// information.
 			if ((sqrt(
-					(xlat - m_dLatitude) * (xlat - m_dLatitude)
-							+ (xlon - m_dLongitude) * cos(DEG2RAD * xlat)
-									* (xlon - m_dLongitude)
+					(xlat - this->m_hapsAudit.dLatPrev)
+							* (xlat - this->m_hapsAudit.dLatPrev)
+							+ (xlon - this->m_hapsAudit.dLonPrev)
+									* cos(DEG2RAD * xlat)
+									* (xlon - this->m_hapsAudit.dLonPrev)
 									* cos(DEG2RAD * xlat)) * DEG2KM
 					> m_dWebResolution / 2.0)
-					|| (fabs(m_dDepth - xz) > 7.5
-							&& fabs(m_dDepth - xz) > m_dDepth * 0.25)) {
+					|| (fabs(this->m_hapsAudit.dDepthPrev - xz) > 7.5
+							&& fabs(m_dDepth - xz)
+									> this->m_hapsAudit.dDepthPrev * 0.25)) {
 				// this represents a LARGE movement (currently
 				// m_dWebResolution / 2).  Update auditing information
 				this->m_hapsAudit.dtLastBigMove = glass3::util::Date::now();
@@ -688,11 +691,15 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 						.dMaxStackSinceMove;
 				this->m_hapsAudit.nMaxPhasesBeforeMove = this->m_hapsAudit
 						.nMaxPhasesSinceMove;
-				this->m_hapsAudit.dMaxStackSinceMove = valBest;
-				this->m_hapsAudit.nMaxPhasesSinceMove = m_vPickData.size();
 				this->m_hapsAudit.dLatPrev = m_dLatitude;
 				this->m_hapsAudit.dLonPrev = m_dLongitude;
 				this->m_hapsAudit.dDepthPrev = m_dDepth;
+			}
+
+			this->m_hapsAudit.dMaxStackSinceMove = valBest;
+			double dCurrDataCount = m_vPickData.size();
+			if (dCurrDataCount > this->m_hapsAudit.nMaxPhasesSinceMove) {
+				this->m_hapsAudit.nMaxPhasesSinceMove = dCurrDataCount;
 			}
 
 			// set the hypo location/depth/time from the new best
@@ -2161,7 +2168,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		m_hapsAudit.dtFirstHypoMessage = glass3::util::Date::now();
 		glass3::util::Logger::log(
 				"info",
-				"CHypo:generateHypoMessage Auditing info for: " + m_sID + " "
+				"CHypo::generateHypoMessage Auditing info for: " + m_sID + " "
 						+ std::to_string(m_dLatitude) + " "
 						+ std::to_string(m_dLongitude) + " "
 						+ std::to_string(m_dDepth) + " "
@@ -2175,7 +2182,6 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 						+ std::to_string(m_hapsAudit.nMaxPhasesSinceMove) + " "
 						+ std::to_string(m_hapsAudit.dMaxStackSinceMove) + " "
 						+ std::to_string(m_hapsAudit.dtFirstEventMessage) + " "
-						+ std::to_string(m_hapsAudit.dtFirstHypoMessage) + " "
 						+ std::to_string(m_hapsAudit.dLatPrev) + " "
 						+ std::to_string(m_hapsAudit.dLonPrev) + " "
 						+ std::to_string(m_hapsAudit.dDepthPrev) + " "

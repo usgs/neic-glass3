@@ -228,6 +228,8 @@ class CSite {
 	 * site
 	 *
 	 * \param node - A shared_ptr to a CNode object containing the node to add
+	 * \param distDeg - A double value containing the distance between the node
+	 * and this site in degrees
 	 * \param travelTime1 - A double value containing the first travel time
 	 * to use
 	 * \param travelTime2 - A double value containing the optional second travel
