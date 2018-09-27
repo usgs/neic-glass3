@@ -17,6 +17,7 @@ addons:
       - doxygen-latex
       - doxygen-gui
       - graphviz
+      - unzip
     sources:
       - ubuntu-toolchain-r-test
 
