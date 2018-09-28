@@ -23,7 +23,7 @@
 #define ELEVATION 2326.000000
 #define QUALITY 1.0
 #define GEOCENTRIC_LATITUDE 45.628982
-#define GEOCENTRID_ELEVATION 6373.326
+#define GEOCENTRIC_ELEVATION 6373.326
 #define SITE2DISTANCE 109.66700963282658
 #define SITE2DELTA 0.017241728546897175
 #define USE true
@@ -76,7 +76,7 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	// check elevation
 	double siteelevation = siteobject->getGeo().m_dGeocentricRadius;
 	// NOTE: expected elevation is in geocentric coordinates
-	double expectedelevation = GEOCENTRID_ELEVATION;
+	double expectedelevation = GEOCENTRIC_ELEVATION;
 	ASSERT_NEAR(siteelevation, expectedelevation, 0.000001);
 
 	// check use
