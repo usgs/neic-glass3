@@ -29,7 +29,7 @@ namespace glass3 {
 
 /**
  * \namespace glass3::output
- * \brief The neic-glass3 namespace containing output class and functions
+ * \brief The neic-glass3 project namespace containing output class and functions
  *
  * The neic-glass3 output namespace contains the class, and functions used
  * by other components of neic-glass3 to output data.

@@ -19,8 +19,8 @@ const int traveltime::CZoneStats::iParseStateGetLatGBS = 0;
 const int traveltime::CZoneStats::iParseStateGetLonGBS = 1;
 const int traveltime::CZoneStats::iParseStateGetRecordHeader = 2;
 
-// -----------------------------------------------------ZSLatLonCompareLessThan
-bool ZSLatLonCompareLessThan(const ZoneStatsInfoStruct & zs1,
+// -----------------------------------------------------ZSCompareByLatLon
+bool ZSCompareByLatLon(const ZoneStatsInfoStruct & zs1,
 								const ZoneStatsInfoStruct & zs2) {
 	if (zs1.fLat + std::numeric_limits<float>::epsilon() < zs2.fLat) {
 		return (true);
@@ -31,13 +31,8 @@ bool ZSLatLonCompareLessThan(const ZoneStatsInfoStruct & zs1,
 	} else {
 		return (true);
 	}
-}  // end ZSLatLonCompareLessThan()
+}  // end ZSCompareByLatLon()
 
-// -----------------------------------------------------------ZSCompareByLatLon
-bool ZSCompareByLatLon(const ZoneStatsInfoStruct &lhs,
-						const ZoneStatsInfoStruct &rhs) {
-	return (ZSLatLonCompareLessThan(lhs, rhs));
-}
 
 // ------------------------------------------------------------------CZoneStats
 CZoneStats::CZoneStats() {
@@ -256,7 +251,7 @@ bool CZoneStats::setup(const std::string * pConfigFileName) {
 	}
 
 	// sort data by lat/lon
-	std::sort(m_vZSData.begin(), m_vZSData.end(), ZSLatLonCompareLessThan);
+	std::sort(m_vZSData.begin(), m_vZSData.end(), ZSCompareByLatLon);
 	m_dAvgObservabilityPerBin = m_nTotalNumEvents
 			/ (180.0 / fLatBinSizeDeg * 360.0 / this->fLonBinSizeDeg);
 

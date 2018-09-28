@@ -237,7 +237,7 @@ glass3::util::WorkState Associator::work() {
 		tLastPerformanceReport = tNow;
 		m_iInputCounter = 0;
 		tGlasscoreDuration = std::chrono::duration<double>::zero();
-	}
+	}  // end if it is time to generate a performance report
 
 	// return idle if there was no data
 	if (data == NULL) {

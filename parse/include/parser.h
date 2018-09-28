@@ -16,7 +16,8 @@ namespace glass3 {
 
 /**
  * \namespace glass3::parse
- * \brief The neic-glass3 namespace containing parsing classes and functions
+ * \brief The neic-glass3 project namespace containing parsing classes and
+ * functions
  *
  * The neic-glass3 parse namespace contains various classes, and functions used
  * by other components of neic-glass3 to parse data.

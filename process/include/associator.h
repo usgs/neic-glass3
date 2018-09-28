@@ -21,7 +21,8 @@ namespace glass3 {
 
 /**
  * \namespace glass3::process
- * \brief The neic-glass3 namespace containing processing class and functions
+ * \brief The neic-glass3 project namespace containing processing class and
+ * functions
  *
  * The neic-glass3 process namespace contains the class, and functions used
  * by other components of neic-glass3 to host glasscore.

@@ -33,14 +33,6 @@ typedef struct _ZoneStatsInfoStruct {
 } ZoneStatsInfoStruct;
 
 /**
- * \brief ZoneStatsInfoStruct comparison function
- *
- * ZSLatLonCompareLessThan contains the comparison function for sorting the
- * CZoneStats vector.
- */
-bool ZSLatLonCompareLessThan(const ZoneStatsInfoStruct & zs1,
-								const ZoneStatsInfoStruct & zs2);
-/**
  * \brief ZoneStatsInfoStruct Latitude/Longitude comparison function
  *
  * ZSCompareByLatLon contains the comparison function used by lower_bound when
