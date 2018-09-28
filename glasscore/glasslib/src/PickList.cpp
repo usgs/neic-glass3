@@ -624,14 +624,14 @@ void CPickList::eraseFromMultiset(std::shared_ptr<CPick> pick) {
 		return;
 	}
 
-	// first, try to delete the hypo the efficient way
-	// we need to be careful, because multiple hypos in the mulitset
+	// first, try to delete the pick the efficient way
+	// we need to be careful, because multiple picks in the mulitset
 	// can have the same tSort, and a simple erase would delete
 	// them all, which would be BAD, so we need to confirm the id
 	auto lower = m_msPickList.lower_bound(pick);
 	auto upper = m_msPickList.upper_bound(pick);
 
-	// for all matching (tSort range) hypos
+	// for all matching (tSort range) picks
 	for (auto it = lower; ((it != upper) && (it != m_msPickList.end())); ++it) {
 		std::shared_ptr<CPick> aPick = *it;
 
