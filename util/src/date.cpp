@@ -106,10 +106,10 @@ bool Date::initialize(double time) {
 	int yr;
 
 	// Elapsed days
-	int64_t jul = static_cast<int64_t>(time / 86400.0);
+	int64_t greg = static_cast<int64_t>(time / 86400.0);
 
 	// compute seconds
-	double secs = time - jul * 86400.0;
+	double secs = time - greg * 86400.0;
 
 	for (yr = base; yr < 2100; yr++) {
 		int days = 365;
@@ -124,10 +124,10 @@ bool Date::initialize(double time) {
 		if (yr % 400 == 0) {
 			days = 366;
 		}
-		if (days > jul) {
+		if (days > greg) {
 			break;
 		}
-		jul -= days;
+		greg -= days;
 	}
 
 	// handle leap year
@@ -145,13 +145,13 @@ bool Date::initialize(double time) {
 	// compute month
 	int mon = 0;
 	for (int i = 0; i < 12; i++) {
-		if (mo[mon + leap] <= jul) {
+		if (mo[mon + leap] <= greg) {
 			mon++;
 		}
 	}
 
 	// compute day
-	int day = static_cast<int>((jul - mo[mon + leap - 1] + 1));
+	int day = static_cast<int>((greg - mo[mon + leap - 1] + 1));
 
 	// compute hour
 	int hr = static_cast<int>((secs / 3600.0));
@@ -181,12 +181,12 @@ bool Date::initialize(double time) {
 // ---------------------------------------------------------initialize
 bool Date::initialize(unsigned int year, unsigned int month, unsigned int day,
 						unsigned int hour, unsigned int minute, double second) {
-	int64_t jul = 0;
+	int64_t greg = 0;
 	int leap;
 
 	// Calculate days from base year
 	for (unsigned int yr = base; yr < year; yr++) {
-		jul += 365;
+		greg += 365;
 
 		// handle leap year
 		leap = 0;
@@ -199,7 +199,7 @@ bool Date::initialize(unsigned int year, unsigned int month, unsigned int day,
 		if (yr % 400 == 0) {
 			leap = 1;
 		}
-		jul += leap;
+		greg += leap;
 	}
 
 	// handle leap year
@@ -214,13 +214,13 @@ bool Date::initialize(unsigned int year, unsigned int month, unsigned int day,
 		leap = 12;
 	}
 
-	// calculate julian days
-	jul += mo[month + leap - 1] + day - 1;
+	// calculate Gregorian days
+	greg += mo[month + leap - 1] + day - 1;
 
-	// calculate julian minutes
-	int64_t jmin = 1440L * jul + 60L * hour + minute;
+	// calculate Gregorian minutes
+	int64_t jmin = 1440L * greg + 60L * hour + minute;
 
-	// calculate julian seconds
+	// calculate Gregorian seconds
 	m_dTime = 60.0 * jmin + second;
 
 	// store values
@@ -304,7 +304,7 @@ std::string Date::date18() {
 	}
 
 	// Generate 18 char date in the form 88Jan23 1234 12.21
-	// from the julian seconds.  Remember to leave space for the
+	// from the Gregorian seconds.  Remember to leave space for the
 	// string termination (NUL).
 	snprintf(c18, sizeof(c18), "%02d%3s%02d %04d%6.2f", y2k, cmo[m_nMonth - 1],
 				m_nDay, hrmn, m_dSeconds);
@@ -319,7 +319,7 @@ std::string Date::date20() {
 	int hrmn = 100 * m_nHour + m_nMinute;
 
 	// Generate 20 char date in the form 1988Jan23 1234 12.21
-	// from the julian seconds.  Remember to leave space for the
+	// from the Gregorian seconds.  Remember to leave space for the
 	// string termination (NUL).
 	snprintf(c20, sizeof(c20), "%04d%3s%02d %04d %6.2f", m_nYear,
 				cmo[m_nMonth - 1], m_nDay, hrmn, m_dSeconds);

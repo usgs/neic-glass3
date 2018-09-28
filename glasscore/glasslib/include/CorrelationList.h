@@ -191,9 +191,9 @@ class CCorrelationList {
 	 * from t1 to t2
 	 *
 	 * \param t1 - A double value containing the beginning of the time window in
-	 * julian seconds
+	 * Gregorian seconds
 	 * \param t2 - A double value containing the end of the time window in
-	 * julian seconds
+	 * Gregorian seconds
 	 * \return Return a std::vector of std::weak_ptrs to the correlations within
 	 * the time window
 	 */

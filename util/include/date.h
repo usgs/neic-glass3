@@ -20,7 +20,7 @@ namespace util {
  * time/date information and supports converting time/
  * date information between various formats external (human)
  * and internal (epoch time, ISO8601, etc.) storing date
- * internally as a double containing julian seconds.
+ * internally as a double containing Gregorian seconds.
  *
  */
 class Date {
@@ -36,9 +36,9 @@ class Date {
 	 * \brief CDate advanced constructor
 	 *
 	 * An advanced constructor for the CDate class, initializes
-	 * the class from a provided time in julian seconds.
+	 * the class from a provided time in Gregorian seconds.
 	 *
-	 * \param time - A double value containing the time in julian seconds
+	 * \param time - A double value containing the time in Gregorian seconds
 	 */
 	explicit Date(double time);
 
@@ -85,8 +85,8 @@ class Date {
 	/**
 	 * \brief CDate current time function
 	 *
-	 * gets the current time in julian seconds
-	 * \return Returns a double containing the julian seconds.
+	 * gets the current time in Gregorian seconds
+	 * \return Returns a double containing the Gregorian seconds.
 	 */
 	static double now();
 
@@ -94,9 +94,9 @@ class Date {
 	 * \brief CDate initialize function
 	 *
 	 * Initialize function for the CDate class, initializes
-	 * the class from a provided time in julian seconds.
+	 * the class from a provided time in Gregorian seconds.
 	 *
-	 * \param time - A double value containing the time in julian seconds
+	 * \param time - A double value containing the time in Gregorian seconds
 	 * \return returns true if successful, false otherwise
 	 */
 	bool initialize(double time);
@@ -178,10 +178,10 @@ class Date {
 	double seconds();
 
 	/**
-	 * \brief Get the julian seconds
+	 * \brief Get the Gregorian seconds
 	 *
-	 * Get the total julian seconds
-	 * \return Returns a double containing the julian seconds.
+	 * Get the total Gregorian seconds
+	 * \return Returns a double containing the Gregorian seconds.
 	 */
 	double time();
 
@@ -189,7 +189,7 @@ class Date {
 	 * \brief Calculate the 20 character date string
 	 *
 	 * Calculate the 20 character date string in the form
-	 * 1988Jan23 1234 12.21 from the julian seconds.
+	 * 1988Jan23 1234 12.21 from the Gregorian seconds.
 	 * \return Returns a std::string containing the date string
 	 */
 	std::string date18();
@@ -198,7 +198,7 @@ class Date {
 	 * \brief Calculate the 18 character date string
 	 *
 	 * Calculate the 18 character date string in the form
-	 * 88Jan23 1234 12.21 from the julian seconds.
+	 * 88Jan23 1234 12.21 from the Gregorian seconds.
 	 * \return Returns a std::string containing the date string
 	 */
 	std::string date20();
@@ -207,7 +207,7 @@ class Date {
 	 * \brief Calculate the ISO8601 date string
 	 *
 	 * Calculate the ISO8601 date string in the form
-	 * 'YYYY-MM-DDTHH:MM:SS.SSSZ' from the julian seconds assuming
+	 * 'YYYY-MM-DDTHH:MM:SS.SSSZ' from the Gregorian seconds assuming
 	 * base time is already UTC.
 	 * \return Returns a std::string containing the date string
 	 */
@@ -217,27 +217,27 @@ class Date {
 	 * \brief Calculate the DateTime date string
 	 *
 	 * Calculate the date time string in the form
-	 * 'yyyymmddhhmmss.sss' from the julian seconds assuming
+	 * 'yyyymmddhhmmss.sss' from the Gregorian seconds assuming
 	 * base time is already UTC.
 	 * \return Returns a std::string containing the datetime string
 	 */
 	std::string dateTime();
 
 	/**
-	 * \brief Decode the datetime format date string into julian seconds
+	 * \brief Decode the datetime format date string into Gregorian seconds
 	 *
 	 * Decode the datetime format date string
-	 * 'yyyymmddhhmmss.sss' into julian seconds.
-	 * \return Returns a double containing the julian seconds
+	 * 'yyyymmddhhmmss.sss' into Gregorian seconds.
+	 * \return Returns a double containing the Gregorian seconds
 	 */
 	double decodeDateTime(std::string datetime);
 
 	/**
-	 * \brief Decode the ISO8601 date string into julian seconds
+	 * \brief Decode the ISO8601 date string into Gregorian seconds
 	 *
 	 * Decode the ISO8601 format date string
-	 * 'YYYY-MM-DDTHH:MM:SS.SSSZ' into julian seconds.
-	 * \return Returns a double containing the julian seconds
+	 * 'YYYY-MM-DDTHH:MM:SS.SSSZ' into Gregorian seconds.
+	 * \return Returns a double containing the Gregorian seconds
 	 */
 	double decodeISO8601Time(std::string iso8601);
 
@@ -245,7 +245,7 @@ class Date {
 	 * \brief Calculate (encode) the date time date string
 	 *
 	 * Calculate the date time string in the form
-	 * 'yyyymmddhhmmss.sss' from the julian seconds assuming
+	 * 'yyyymmddhhmmss.sss' from the Gregorian seconds assuming
 	 * base time is already UTC.
 	 * \return Returns a std::string containing the date string
 	 */
@@ -255,7 +255,7 @@ class Date {
 	 * \brief Calculate (encode) the ISO8610 date string
 	 *
 	 * Calculate the ISO8601 date string in the form
-	 * 'YYYY-MM-DDTHH:MM:SS.SSSZ' from the julian seconds assuming
+	 * 'YYYY-MM-DDTHH:MM:SS.SSSZ' from the Gregorian seconds assuming
 	 * base time is already UTC.
 	 * \return Returns a std::string containing the date string
 	 */
@@ -383,7 +383,7 @@ class Date {
 	double m_dSeconds;
 
 	/**
-	 * \brief A double variable containing the julian seconds.
+	 * \brief A double variable containing the Gregorian seconds.
 	 */
 	double m_dTime;
 };

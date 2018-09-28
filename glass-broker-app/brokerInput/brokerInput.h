@@ -62,7 +62,7 @@ class brokerInput : public glass3::input::Input {
 	/**
 	 * \brief brokerInput configuration function
 	 *
-	 * The this function configures the brokerInput class.
+	 * This function configures the brokerInput class.
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use
 	 * \return returns true if successful.

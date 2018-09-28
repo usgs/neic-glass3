@@ -56,7 +56,7 @@ class CTrigger {
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometer
 	 * \param maxZ - A double value containing the node maximum depth
-	 * 	 * \param sum - A double value containing the bayesian sum for this trigger
+	 * \param sum - A double value containing the bayesian sum for this trigger
 	 * \param count - An integer value containing the site count for this
 	 * trigger
 	 * \param picks - A std::vector<std::shared_ptr<CPick> containing the picks
@@ -131,7 +131,7 @@ class CTrigger {
 
 	/**
 	 * \brief Get the origin time for this trigger
-	 * \return Returns a double containing the trigger origin time in julian seconds
+	 * \return Returns a double containing the trigger origin time in Gregorian seconds
 	 */
 	double getTOrigin() const;
 

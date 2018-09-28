@@ -33,7 +33,7 @@
  *    \b logname is an optional string defining an alternate
  * name for the glass-app log file.
  *
- *    \b noconsole is an optional string specifying that glass-app should not
+ *    \b noconsole is an optional commmand specifying that glass-app should not
  * write messages to the console.
  * \endparblock
  * \endparblock

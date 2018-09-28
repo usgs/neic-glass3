@@ -63,7 +63,7 @@ class brokerOutput : public glass3::output::output {
 	/**
 	 * \brief brokerOutput configuration function
 	 *
-	 * The this function configures the brokerOutput class.
+	 * This function configures the brokerOutput class.
 	 *
 	 * \param config - A pointer to a json::Object containing to the
 	 * configuration to use
@@ -93,6 +93,8 @@ class brokerOutput : public glass3::output::output {
 
 	/**
 	 * \brief the function for producer logging
+   * This function is used by the HazDevBroker producer to log messages
+   * with neic-glass3's logging system. 
 	 * \param message - A string containing the logging message
 	 */
 	void logProducer(const std::string &message);

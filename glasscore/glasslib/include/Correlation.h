@@ -64,7 +64,7 @@ class CCorrelation {
 	 * \param correlationIdString - A std::string containing the external
 	 * correlation id.
 	 * \param phase - A std::string containing the phase name
-	 * \param orgTime - A double containing the julian time in seconds to use
+	 * \param orgTime - A double containing the Gregorian time in seconds to use
 	 * \param orgLat - A double containing the geocentric latitude in degrees to
 	 * use
 	 * \param orgLon - A double containing the geocentric longitude in degrees
@@ -115,7 +115,7 @@ class CCorrelation {
 	 * \param correlationIdString - A std::string containing the external
 	 * correlation id.
 	 * \param phase - A std::string containing the phase name
-	 * \param orgTime - A double containing the julian time in seconds to use
+	 * \param orgTime - A double containing the Gregorian time in seconds to use
 	 * \param orgLat - A double containing the geocentric latitude in degrees to
 	 * use
 	 * \param orgLon - A double containing the geocentric longitude in degrees
@@ -219,7 +219,7 @@ class CCorrelation {
 	/**
 	 * \brief Get the correlation source origin time for this correlation
 	 * \return Return a double containing the correlation source origin time in
-	 * julian seconds
+	 * Gregorian seconds
 	 */
 	double getTOrigin() const;
 
@@ -305,7 +305,7 @@ class CCorrelation {
 	std::atomic<double> m_tCorrelation;
 
 	/**
-	 * \brief A double value containing this correlation's origin time in julian
+	 * \brief A double value containing this correlation's origin time in Gregorian
 	 * seconds
 	 */
 	std::atomic<double> m_tOrigin;
@@ -333,7 +333,7 @@ class CCorrelation {
 
 	/**
 	 * \brief A double value containing the creation (insertion) time of the
-	 * correlation in glass in julian seconds
+	 * correlation in glass in Gregorian seconds
 	 */
 	std::atomic<double> m_tCreate;
 

@@ -34,7 +34,7 @@ INPUT                  = @PROJECT_SOURCE_DIR@/README.md \
 FILE_PATTERNS          = *.h \
                          *.cpp
 RECURSIVE              = YES
-# exclude known external libraries
+# exclude known external libraries and unit tests
 EXCLUDE_PATTERNS       = */spdlog/* \
                          */SuperEasyJSON/* \
                          *unittest.* \

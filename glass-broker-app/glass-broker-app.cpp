@@ -12,8 +12,9 @@
  * rest of the glass3 infrastructure to generate seismic event detections based
  * on an input dataset of picks, correlations, and detections.
  *
- * glass-broker-app reads it's input data from various kafka input topics
- * accessed via the hazdevbroker library.
+ * glass-broker-app reads it's input data from various kafka
+ * (https://kafka.apache.org/) input topics accessed via the hazdevbroker
+ * (https://github.com/usgs/hazdev-broker) library.
  *
  * glass-broker-app writes it's output detections to various kafka output topics
  * accessed via the hazdevbroker library.
@@ -33,7 +34,7 @@
  *    \b logname is an optional string defining an alternate
  * name for the glass-broker-app log file.
  *
- *    \b noconsole is an optional string specifying that glass-broker-app should
+ *    \b noconsole is an optional command specifying that glass-broker-app should
  * not write messages to the console.
  * \endparblock
  * \endparblock

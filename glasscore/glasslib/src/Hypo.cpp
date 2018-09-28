@@ -2634,7 +2634,7 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 
 	glass3::util::Logger::log("debug", "CHypo::resolve. " + m_sID);
 
-	bool bAss = false;
+	bool bAssoc = false;
 	char sLog[1024];
 
 	// handle picks
@@ -2705,7 +2705,7 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 				CGlass::getHypoList()->appendToHypoProcessingQueue(pickHyp);
 
 				// we've made a change to the hypo (grabbed a pick)
-				bAss = true;
+				bAssoc = true;
 				keptCount++;
 			}
 
@@ -2715,7 +2715,7 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 			removePickReference(pck);
 
 			// we've made a change to the hypo (got rid of a pick)
-			bAss = true;
+			bAssoc = true;
 			removeCount++;
 		}
 	}
@@ -2787,7 +2787,7 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 				CGlass::getHypoList()->appendToHypoProcessingQueue(corrHyp);
 
 				// we've made a change to the hypo (grabbed a pick)
-				bAss = true;
+				bAssoc = true;
 			}
 		} else {
 			// this pick has higher affinity with the original hypo
@@ -2795,11 +2795,11 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 			removeCorrelationReference(corr);
 
 			// we've made a change to the hypo (got rid of a pick)
-			bAss = true;
+			bAssoc = true;
 		}
 	}
 
-	return (bAss);
+	return (bAssoc);
 }
 
 // ---------------------------------------------------------calculateStatistics

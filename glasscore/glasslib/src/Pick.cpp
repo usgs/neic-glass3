@@ -144,13 +144,13 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 	// get the pick time based on which key we find
 	if (pick->HasKey("Time")
 			&& ((*pick)["Time"].GetType() == json::ValueType::StringVal)) {
-		// Time is formatted in iso8601, convert to julian seconds
+		// Time is formatted in iso8601, convert to Gregorian seconds
 		ttt = (*pick)["Time"].ToString();
 		glass3::util::Date dt = glass3::util::Date();
 		tpick = dt.decodeISO8601Time(ttt);
 	} else if (pick->HasKey("T")
 			&& ((*pick)["T"].GetType() == json::ValueType::StringVal)) {
-		// T is formatted in datetime, convert to julian seconds
+		// T is formatted in datetime, convert to Gregorian seconds
 		ttt = (*pick)["T"].ToString();
 		glass3::util::Date dt = glass3::util::Date();
 		tpick = dt.decodeDateTime(ttt);

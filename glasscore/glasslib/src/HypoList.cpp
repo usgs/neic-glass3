@@ -949,7 +949,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			// error or minor issue in location?
 			// the new Hypo is at least as good as the old toHypo but it
 			// hasn't improved significantly. This could be because either
-			// from Hypo has a subset of the picks of the toHypo, or because
+			// fromHypo has a subset of the picks of the toHypo, or because
 			// the two hypos are unrelated and share no picks. Resolve
 			// duplicate picks and see if the weaker hypo can still stand.
 				if (resolveData(toHypo)) {

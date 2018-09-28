@@ -232,32 +232,34 @@ class CPick {
 
 	/**
 	 * \brief Get the sorting time for this pick
-	 * \return Returns an int64_t containing the pick sort time in julian seconds
+	 * \return Returns an double containing the pick sort time in Gregorian
+	 * seconds
 	 */
 	double getTSort() const;
 
 	/**
 	 * \brief Set the sorting time for this pick
-	 * \param newTSort - a double containing the pick sort time in julian seconds
+	 * \param newTSort - a double containing the pick sort time in Gregorian
+	 * seconds
 	 */
 	void setTSort(double newTSort);
 
 	/**
 	 * \brief Get the insertion time for this pick
 	 * \return Returns a double containing the pick inserrtion time into Glass
-	 * in julian seconds
+	 * in Gregorian seconds
 	 */
 	double getTInsertion() const;
 	/**
 	 * \brief Get the first assoc time for this pick
-	 * \return Returns a double containing the time in julian seconds when the
-	 * pick was first associated with an event.
+	 * \return Returns a double containing the time in Gregorian seconds when
+	 * the pick was first associated with an event.
 	 */
 	double getTFirstAssociation() const;
 	/**
 	 * \brief Get the nucleation time for this pick
-	 * \return Returns a double containing the time in julian seconds when this
-	 * pick was used as keystone for nucleation
+	 * \return Returns a double containing the time in Gregorian seconds when
+	 * this pick was used as keystone for nucleation
 	 */
 	double getTNucleation() const;
 
@@ -334,14 +336,14 @@ class CPick {
 	std::shared_ptr<json::Object> m_JSONPick;
 
 	/**
-	 * \brief An int64_t value containing this pick's sort time in julian
-	 * seconds, this is a cached copy of tPick as an integer that is
-	 * guaranteed to not change during the lifetime of the pick in a PickList's
-	 * internal multiset, ensuring that sort order won't change, even when
-	 * tPick changes because of an update. Resorting is accomplished by
-	 * removing the pick from the internal multiset (NOT the PickList), updating
-	 * tSort to equal the current tPick, and then reinserting the pick into
-	 * the internal multiset. /see PickList.
+	 * \brief A double value containing this pick's sort time in Gregorian
+	 * seconds, this is a cached copy of tPick that is  guaranteed to not change
+	 * during the lifetime of the pick in a PickList's internal multiset,
+	 * ensuring that sort order won't change, even when tPick changes because of
+	 * an update. Resorting is accomplished by removing the pick from the
+	 * internal multiset (NOT the PickList), updating tSort to equal the current
+	 * tPick, and then reinserting the pick into the internal multiset.
+	 * /see CPickList.
 	 */
 	std::atomic<double> m_tSort;
 

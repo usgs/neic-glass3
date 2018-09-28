@@ -6,7 +6,7 @@
 
 #define ISO8601TIME "2015-12-28T21:32:24.017Z"
 #define DATETIME "20151228213224.017"
-#define JULIANTIME 3660327144.017
+#define GREGORIANTIME 3660327144.017
 #define EPOCHTIME 1451338344.017
 
 #define ISO8601TIME2 "2015-12-28T21:32:24.500Z"
@@ -28,7 +28,7 @@
 #define MINUTE 32
 #define SECONDS 24.017
 
-// tests to see if we can convert julian time to iso8601
+// tests to see if we can convert Gregorian time to iso8601
 TEST(DateTest, Construction) {
 	// default constru tor
 	glass3::util::Date dt;
@@ -54,29 +54,29 @@ TEST(DateTest, Construction) {
 	// time()
 	ASSERT_EQ(0, dt.time())<< "Default time() Check";
 
-	// julian time constructor
-	glass3::util::Date dt2(JULIANTIME);
+	// Gregorian time constructor
+	glass3::util::Date dt2(GREGORIANTIME);
 
 	// year()
-	ASSERT_EQ(YEAR, dt2.year())<< "Julian year() Check";
+	ASSERT_EQ(YEAR, dt2.year())<< "Gregorian year() Check";
 
 	// month()
-	ASSERT_EQ(MONTH, dt2.month())<< "Julian month() Check";
+	ASSERT_EQ(MONTH, dt2.month())<< "Gregorian month() Check";
 
 	// day()
-	ASSERT_EQ(DAY, dt2.day())<< "Julian day() Check";
+	ASSERT_EQ(DAY, dt2.day())<< "Gregorian day() Check";
 
 	// hour()
-	ASSERT_EQ(HOUR, dt2.hour())<< "Julian hour() Check";
+	ASSERT_EQ(HOUR, dt2.hour())<< "Gregorian hour() Check";
 
 	// minute()
-	ASSERT_EQ(MINUTE, dt2.minute())<< "Julian minute() Check";
+	ASSERT_EQ(MINUTE, dt2.minute())<< "Gregorian minute() Check";
 
 	// seconds()
-	ASSERT_NEAR(SECONDS, dt2.seconds(), 0.001)<< "Julian seconds() Check";
+	ASSERT_NEAR(SECONDS, dt2.seconds(), 0.001)<< "Gregorian seconds() Check";
 
 	// time()
-	ASSERT_NEAR(JULIANTIME, dt2.time(), 0.001)<< "Julian time() Check";
+	ASSERT_NEAR(GREGORIANTIME, dt2.time(), 0.001)<< "Gregorian time() Check";
 
 	// full time constructor
 	glass3::util::Date dt3(YEAR, MONTH, DAY, HOUR, MINUTE, SECONDS);
@@ -100,37 +100,37 @@ TEST(DateTest, Construction) {
 	ASSERT_NEAR(SECONDS, dt3.seconds(), 0.001)<< "Full seconds() Check";
 
 	// time()
-	ASSERT_NEAR(JULIANTIME, dt3.time(), 0.001)<< "Full time() Check";
+	ASSERT_NEAR(GREGORIANTIME, dt3.time(), 0.001)<< "Full time() Check";
 }
 
-// tests to see if we can convert julian time to iso8601
+// tests to see if we can convert Gregorian time to iso8601
 TEST(DateTest, Initialize) {
 	glass3::util::Logger::disable();
 
-	// julian init
+	// Gregorian init
 	glass3::util::Date dt;
-	dt.initialize(JULIANTIME);
+	dt.initialize(GREGORIANTIME);
 
 	// year()
-	ASSERT_EQ(YEAR, dt.year())<< "Julian year() Check";
+	ASSERT_EQ(YEAR, dt.year())<< "Gregorian year() Check";
 
 	// month()
-	ASSERT_EQ(MONTH, dt.month())<< "Julian month() Check";
+	ASSERT_EQ(MONTH, dt.month())<< "Gregorian month() Check";
 
 	// day()
-	ASSERT_EQ(DAY, dt.day())<< "Julian day() Check";
+	ASSERT_EQ(DAY, dt.day())<< "Gregorian day() Check";
 
 	// hour()
-	ASSERT_EQ(HOUR, dt.hour())<< "Julian hour() Check";
+	ASSERT_EQ(HOUR, dt.hour())<< "Gregorian hour() Check";
 
 	// minute()
-	ASSERT_EQ(MINUTE, dt.minute())<< "Julian minute() Check";
+	ASSERT_EQ(MINUTE, dt.minute())<< "Gregorian minute() Check";
 
 	// seconds()
-	ASSERT_NEAR(SECONDS, dt.seconds(), 0.001)<< "Julian seconds() Check";
+	ASSERT_NEAR(SECONDS, dt.seconds(), 0.001)<< "Gregorian seconds() Check";
 
 	// time()
-	ASSERT_NEAR(JULIANTIME, dt.time(), 0.001)<< "Julian time() Check";
+	ASSERT_NEAR(GREGORIANTIME, dt.time(), 0.001)<< "Gregorian time() Check";
 
 	// full init
 	glass3::util::Date dt2;
@@ -156,7 +156,7 @@ TEST(DateTest, Initialize) {
 	ASSERT_NEAR(SECONDS, dt2.seconds(), 0.001)<< "Full seconds() Check";
 
 	// time()
-	ASSERT_NEAR(JULIANTIME, dt2.time(), 0.001)<< "Full time() Check";
+	ASSERT_NEAR(GREGORIANTIME, dt2.time(), 0.001)<< "Full time() Check";
 
 	// iso string init
 	glass3::util::Date dt3;
@@ -182,7 +182,7 @@ TEST(DateTest, Initialize) {
 	ASSERT_NEAR(SECONDS, dt3.seconds(), 0.001)<< "ISO String seconds() Check";
 
 	// time()
-	ASSERT_NEAR(JULIANTIME, dt3.time(), 0.001)<< "ISO String time() Check";
+	ASSERT_NEAR(GREGORIANTIME, dt3.time(), 0.001)<< "ISO String time() Check";
 
 	// date string init
 	glass3::util::Date dt4;
@@ -208,61 +208,61 @@ TEST(DateTest, Initialize) {
 	ASSERT_NEAR(SECONDS, dt4.seconds(), 0.001)<< "date String seconds() Check";
 
 	// time()
-	ASSERT_NEAR(JULIANTIME, dt4.time(), 0.001)<< "date String time() Check";
+	ASSERT_NEAR(GREGORIANTIME, dt4.time(), 0.001)<< "date String time() Check";
 }
 
-// tests to see if we can convert julian time to iso8601
-TEST(DateTest, ConvertJulianTimeToISO8601) {
+// tests to see if we can convert Gregorian time to iso8601
+TEST(DateTest, ConvertGregorianTimeToISO8601) {
 	glass3::util::Logger::disable();
 
 	glass3::util::Date dt;
 
 	std::string ExpectedISO8601 = std::string(ISO8601TIME);
 
-	// test decimal julian time to ISO8601 conversion
-	std::string ConvertedISO8601 = dt.encodeISO8601Time(JULIANTIME);
+	// test decimal Gregorian time to ISO8601 conversion
+	std::string ConvertedISO8601 = dt.encodeISO8601Time(GREGORIANTIME);
 	ASSERT_STREQ(ConvertedISO8601.c_str(), ExpectedISO8601.c_str());
 }
 
 // tests to see if ConvertDateTimeToISO8601 is functional
-TEST(DateTest, ConvertJulianTimeToDateTime) {
+TEST(DateTest, ConvertGregorianTimeToDateTime) {
 	glass3::util::Logger::disable();
 
 	glass3::util::Date dt;
 
 	std::string ExpectedDateTime = std::string(DATETIME);
 
-	// test decimal julian time to DateTime conversion
-	std::string ConvertedDateTime = dt.encodeDateTime(JULIANTIME);
+	// test decimal Gregorian time to DateTime conversion
+	std::string ConvertedDateTime = dt.encodeDateTime(GREGORIANTIME);
 	ASSERT_STREQ(ConvertedDateTime.c_str(), ExpectedDateTime.c_str());
 }
 
 // tests to see if ConvertDateTimeToEpochTime is functional
-TEST(DateTest, ConvertDateTimeToJulianTime) {
+TEST(DateTest, ConvertDateTimeToGregorianTime) {
 	glass3::util::Logger::disable();
 
 	glass3::util::Date dt;
 
-	double ExpectedJulieanTime = JULIANTIME;
+	double ExpectedJulieanTime = GREGORIANTIME;
 	std::string DateTime = std::string(DATETIME);
 
-	// test DateTime to julian time conversion
-	double ConvertedJulianTime = dt.decodeDateTime(DateTime);
-	ASSERT_NEAR(ConvertedJulianTime, ExpectedJulieanTime, 0.0001);
+	// test DateTime to Gregorian time conversion
+	double ConvertedGregorianTime = dt.decodeDateTime(DateTime);
+	ASSERT_NEAR(ConvertedGregorianTime, ExpectedJulieanTime, 0.0001);
 }
 
 // tests to see if ConvertISO8601ToEpochTime is functional
-TEST(DateTest, ConvertISO8601ToJulianTime) {
+TEST(DateTest, ConvertISO8601ToGregorianTime) {
 	glass3::util::Logger::disable();
 
 	glass3::util::Date dt;
 
-	double ExpectedJulieanTime = JULIANTIME;
+	double ExpectedJulieanTime = GREGORIANTIME;
 	std::string ISO8601Time = std::string(ISO8601TIME);
 
-	// test ISO8601 to julian time conversion
-	double ConvertedJulianTime = dt.decodeISO8601Time(ISO8601Time);
-	ASSERT_NEAR(ConvertedJulianTime, ExpectedJulieanTime, 0.0001);
+	// test ISO8601 to Gregorian time conversion
+	double ConvertedGregorianTime = dt.decodeISO8601Time(ISO8601Time);
+	ASSERT_NEAR(ConvertedGregorianTime, ExpectedJulieanTime, 0.0001);
 }
 
 // tests to see if ConvertEpochTimeToISO8601 is functional

@@ -158,7 +158,7 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 	// time
 	if (correlation->HasKey("Time")
 			&& ((*correlation)["Time"].GetType() == json::ValueType::StringVal)) {
-		// Time is formatted in iso8601, convert to julian seconds
+		// Time is formatted in iso8601, convert to Gregorian seconds
 		ttt = (*correlation)["Time"].ToString();
 		glass3::util::Date dt = glass3::util::Date();
 		tcorr = dt.decodeISO8601Time(ttt);
@@ -246,7 +246,7 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 		// get the correlation time based on which key we find
 		if (hypoobj.HasKey("Time")
 				&& (hypoobj["Time"].GetType() == json::ValueType::StringVal)) {
-			// Time is formatted in iso8601, convert to julian seconds
+			// Time is formatted in iso8601, convert to Gregorian seconds
 			ttt = hypoobj["Time"].ToString();
 			glass3::util::Date dt = glass3::util::Date();
 			tori = dt.decodeISO8601Time(ttt);

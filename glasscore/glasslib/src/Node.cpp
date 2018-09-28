@@ -18,6 +18,11 @@
 #include "Site.h"
 #include "Pick.h"
 
+// This is kinda big (sloppy) slop factor, but we only use it in the initial
+// pick-selection window, so seems OK to use a slighly larger window than we
+// likely need, since it won't generate a lot of additional results, and might
+// be necessary if we have improperly recognized the size of other potential
+// errors.
 #define NUCLEATION_SLOP_FACTOR_SECONDS 60.0
 
 namespace glasscore {
@@ -293,10 +298,16 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		double travelTime2 = std::get< LINK_TT2>(link);
 		double distDeg = std::get< LINK_DIST>(link);
 
+		// the minimum and maximum time windows for picks
 		double min = 0.0;
 		double max = 0.0;
+
+		// the exclusion window within min and max that we don't want
+		// picks from
 		double dtExcludeBegin = 0.0;
 		double dtExcludeEnd = 0.0;
+
+		// use traveltimes to compute min and max
 		if ((travelTime1 >= 0) && (travelTime2 >= 0)) {
 			// both travel times are valid
 			if (travelTime1 <= travelTime2) {
@@ -323,6 +334,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			continue;
 		}
 
+		// use min and max to compute exclusion window
 		if (max - min > NUCLEATION_SLOP_FACTOR_SECONDS * 2.0) {
 			// we have two different TTs and there's a window of picks
 			// in between the two TTs we don't want
@@ -337,15 +349,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 		site->getPickMutex().lock();
 
-		// compute bounds
+		// compute bounds iterator
 		auto lower = site->getLower(min);
-
-		// get the picks
-		// std::vector<std::shared_ptr<CPick>> vSitePicks = site->getPicks(min,
-		// max);
-
-		// search through each pick in the window
-		// for (const auto &pick : vSitePicks) {
 
 		for (auto it = lower; (it != site->getEnd()); ++it) {
 			auto pick = *it;
@@ -447,7 +452,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// add the pick to the pick vector
 			vPick.push_back(pickBest);
 		}
-	}
+	}  // ---- end search through each site this node is linked to ----
 
 	// make sure the number of significant picks
 	// exceeds the nucleation threshold

@@ -2,6 +2,7 @@
 #include <json.h>  // NOLINT(build/include)
 #include <logger.h>
 #include <Producer.h>
+#include <geo.h>
 
 #include <string>
 
@@ -62,6 +63,9 @@ bool outputTopic::setup(const json::Value &config) {
 		return (false);
 	}
 
+	// now look for the optional Lat/Lon box used to restrict the detection
+	// messages sent via this topic.  If a key is not specified, use the
+	// geographic bounds (90/-180/-90/180) as the default
 	// top lat
 	if (configuration.HasKey("TopLatitude")
 			&& (configuration["TopLatitude"].GetType()
@@ -73,7 +77,7 @@ bool outputTopic::setup(const json::Value &config) {
 						+ " TopLatitude: " + std::to_string(m_dTopLatitude)
 						+ ".");
 	} else {
-		m_dTopLatitude = 90.0;
+		m_dTopLatitude = MAXLATITUDE;
 		glass3::util::Logger::log(
 				"info",
 				"outputTopic::setup(): Setting up topic: " + m_sTopicName
@@ -92,7 +96,7 @@ bool outputTopic::setup(const json::Value &config) {
 						+ " LeftLongitude: " + std::to_string(m_dLeftLongitude)
 						+ ".");
 	} else {
-		m_dLeftLongitude = -180.0;
+		m_dLeftLongitude = MINLONGITUDE;
 		glass3::util::Logger::log(
 				"info",
 				"outputTopic::setup(): Setting up topic: " + m_sTopicName
@@ -111,7 +115,7 @@ bool outputTopic::setup(const json::Value &config) {
 						+ " BottomLatitude: "
 						+ std::to_string(m_dBottomLatitude) + ".");
 	} else {
-		m_dBottomLatitude = -90.0;
+		m_dBottomLatitude = MINLATITUDE;
 		glass3::util::Logger::log(
 				"info",
 				"outputTopic::setup(): Setting up topic: " + m_sTopicName
@@ -130,7 +134,7 @@ bool outputTopic::setup(const json::Value &config) {
 						+ " RightLongitude: "
 						+ std::to_string(m_dRightLongitude) + ".");
 	} else {
-		m_dRightLongitude = 180.0;
+		m_dRightLongitude = MAXLONGITUDE;
 		glass3::util::Logger::log(
 				"info",
 				"outputTopic::setup(): Setting up topic: " + m_sTopicName

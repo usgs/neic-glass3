@@ -54,7 +54,7 @@ struct HypoCompare {
  * earthquake hypocenters being considered by glasscore.
  *
  * CHypoList also maintains a std::vector mapping the double hypo origin time
- * (in julian seconds) to the std::string hypo id
+ * (in Gregorian seconds) to the std::string hypo id
  *
  * CHypoList also maintains a std::vector of std::string ids of hypos to be
  * processed
@@ -210,11 +210,12 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	/**
 	 * \brief Merge hypos close in space time
 	 *
-	 * This function attempts to create a new hypo from picks of the given
-	 * hypo and other hypos within a time/distance range. If a new hypo can be
-	 * created, and the resultant stack value is high enough then the new merged
-	 * hypo is added to the list, and the original pair of hypos are canceled /
-	 * removed
+	 * This function attempts to merge the picks of the given hypo and other
+	 * hypos within a time/distance range into a target hypo. This function
+	 * prefers a reported hypo over an unreported hypo when selecting the merge
+	 * target. If the targeted hypo's resultant stack value is high enough then
+	 * the target hypo keeps the picks, and the donor hypo(s) are canceled /
+	 * removed.
 	 *
 	 * \param hyp - a shared_ptr to the CHypo to start the merge process with
 	 * \return Returns true if hypos were merged, false otherwise

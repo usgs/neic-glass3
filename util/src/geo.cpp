@@ -62,12 +62,12 @@ void Geo::setGeographic(double lat, double lon, double r) {
 	m_dGeocentricLatitude = RAD2DEG * atan(0.993277 * tan(DEG2RAD * lat));
 
 	// longitude wrap check
-	if (lon > 180.0) {
+	if (lon > MAXLONGITUDE) {
 		// dLon is greater than 180
-		m_dGeocentricLongitude = lon - 360.0;
-	} else if (lon < -180.0) {
+		m_dGeocentricLongitude = lon - LONGITUDEWRAP;
+	} else if (lon < MINLONGITUDE) {
 		// dLon is less than -180
-		m_dGeocentricLongitude = lon + 360.0;
+		m_dGeocentricLongitude = lon + LONGITUDEWRAP;
 	} else {
 		m_dGeocentricLongitude = lon;
 	}
@@ -94,12 +94,12 @@ void Geo::setGeocentric(double lat, double lon, double r) {
 	m_dGeocentricLatitude = lat;
 
 	// longitude wrap check
-	if (lon > 180.0) {
+	if (lon > MAXLONGITUDE) {
 		// dLon is greater than 180
-		m_dGeocentricLongitude = lon - 360.0;
-	} else if (lon < -180.0) {
+		m_dGeocentricLongitude = lon - LONGITUDEWRAP;
+	} else if (lon < MINLONGITUDE) {
 		// dLon is less than -180
-		m_dGeocentricLongitude = lon + 360.0;
+		m_dGeocentricLongitude = lon + LONGITUDEWRAP;
 	} else {
 		m_dGeocentricLongitude = lon;
 	}
@@ -146,12 +146,12 @@ void Geo::getGeographic(double *lat, double *lon, double *r) {
 	*lat = RAD2DEG * atan(tan(DEG2RAD * m_dGeocentricLatitude) / 0.993277);
 
 	// longitude wrap check
-	if (m_dGeocentricLongitude > 180.0) {
+	if (m_dGeocentricLongitude > MAXLONGITUDE) {
 		// dLon is greater than 180
-		*lon = m_dGeocentricLongitude - 360.0;
-	} else if (m_dGeocentricLongitude < -180.0) {
+		*lon = m_dGeocentricLongitude - LONGITUDEWRAP;
+	} else if (m_dGeocentricLongitude < MINLONGITUDE) {
 		// dLon is less than -180
-		*lon = m_dGeocentricLongitude + 360.0;
+		*lon = m_dGeocentricLongitude + LONGITUDEWRAP;
 	} else {
 		*lon = m_dGeocentricLongitude;
 	}
@@ -164,12 +164,12 @@ void Geo::getGeocentric(double *lat, double *lon, double *r) {
 	*lat = m_dGeocentricLatitude;
 
 	// longitude wrap check
-	if (m_dGeocentricLongitude > 180.0) {
+	if (m_dGeocentricLongitude > MAXLONGITUDE) {
 		// dLon is greater than 180
-		*lon = m_dGeocentricLongitude - 360.0;
-	} else if (m_dGeocentricLongitude < -180.0) {
+		*lon = m_dGeocentricLongitude - LONGITUDEWRAP;
+	} else if (m_dGeocentricLongitude < MINLONGITUDE) {
 		// dLon is less than -180
-		*lon = m_dGeocentricLongitude + 360.0;
+		*lon = m_dGeocentricLongitude + LONGITUDEWRAP;
 	} else {
 		*lon = m_dGeocentricLongitude;
 	}

@@ -162,7 +162,7 @@ class CNode {
 	 * them up.
 	 *
 	 * \param tOrigin - A double value containing the proposed origin time
-	 * to use in julian seconds
+	 * to use in Gregorian seconds
 	 * \return Returns true if the node nucleated an event, false otherwise
 	 */
 	std::shared_ptr<CTrigger> nucleate(double tOrigin);

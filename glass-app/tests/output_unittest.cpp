@@ -20,7 +20,7 @@
 #define TESTAUTHOR "glass"
 #define REPORTINTERVAL 60
 #define OUTPUTFORMAT "json"
-#define TIMESTAMP false
+#define NO_LOGFILE_WITH_TIMESTAMP false
 
 #define OUTPUTID "DB277841F26BB84089FE877BAAB85084"
 #define HYPOFILE "hypo.txt"
@@ -424,7 +424,7 @@ TEST_F(OutputTest, Configuration) {
 			author.c_str()) << "check author";
 
 	// check timestamp
-	ASSERT_EQ(OutputThread->getTimestampFileName(), TIMESTAMP) <<
+	ASSERT_EQ(OutputThread->getTimestampFileName(), NO_LOGFILE_WITH_TIMESTAMP) <<
 			"check timestamp";
 }
 

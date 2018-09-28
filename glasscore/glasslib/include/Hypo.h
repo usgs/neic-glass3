@@ -125,7 +125,7 @@ class CHypo {
 	 * \param lon - A double containing the geocentric longitude in degrees to
 	 * use
 	 * \param z - A double containing the geocentric depth in kilometers to use
-	 * \param time - A double containing the julian time in seconds to use
+	 * \param time - A double containing the Gregorian time in seconds to use
 	 * \param pid - A std::string containing the id of this hypo
 	 * \param web - A std::string containing the name of the web that nucleated
 	 * this hypo
@@ -209,7 +209,7 @@ class CHypo {
 	 * \param lon - A double containing the geocentric longitude in degrees to
 	 * use
 	 * \param z - A double containing the geocentric depth in kilometers to use
-	 * \param time - A double containing the julian time in seconds to use
+	 * \param time - A double containing the Gregorian time in seconds to use
 	 * \param pid - A std::string containing the id of this hypo
 	 * \param web - A std::string containing the name of the web that nucleated
 	 * this hypo
@@ -727,13 +727,13 @@ class CHypo {
 
 	/**
 	 * \brief Get the origin time for this hypo
-	 * \return Returns a double containing the hypo origin time in julian seconds
+	 * \return Returns a double containing the hypo origin time in Gregorian seconds
 	 */
 	double getTOrigin() const;
 
 	/**
 	 * \brief Sets the origin time for this hypo
-	 * \param newTOrg - a double containing the hypo origin time in julian seconds
+	 * \param newTOrg - a double containing the hypo origin time in Gregorian seconds
 	 */
 	void setTOrigin(double newTOrg);
 
@@ -966,7 +966,7 @@ class CHypo {
 	/**
 	 * \brief Get the time that this hypo was created
 	 * \return Returns a double value containg the time this hypo was created in
-	 * julian seconds
+	 * Gregorian seconds
 	 */
 	double getTCreate() const;
 
@@ -1015,21 +1015,21 @@ class CHypo {
 
 	/**
 	 * \brief Get the sorting time for this hypo
-	 * \return Returns an int64_t containing the hypo sort time in julian seconds
+	 * \return Returns an int64_t containing the hypo sort time in Gregorian seconds
 	 */
 	int64_t getTSort() const;
 
 	/**
 	 * \brief Set the sorting time for this hypo
-	 * \param newTSort - a double containing the hypo sort time in julian seconds
+	 * \param newTSort - a double containing the hypo sort time in Gregorian seconds
 	 */
 	void setTSort(double newTSort);
 
 	/**
 	 * \brief Set nucleation auditing info for this hypo
-	 * \param tNucleation - time this hypo was nucleated(julian seconds).
+	 * \param tNucleation - time this hypo was nucleated(Gregorian seconds).
 	 * \param tNucleationKeyPickInsertion - time the key pick for nucleating
-	 * this hypo was inserted into Glass3(julian seconds).
+	 * this hypo was inserted into Glass3(Gregorian seconds).
 	 */
 	void setNucleationAuditingInfo(double tNucleation,
 									double tNucleationKeyPickInsertion);
@@ -1075,7 +1075,7 @@ class CHypo {
 	std::atomic<int> m_iProcessCount;
 
 	/**
-	 * \brief A double value containing this hypo's origin time in julian
+	 * \brief A double value containing this hypo's origin time in Gregorian
 	 * seconds
 	 */
 	std::atomic<double> m_tOrigin;
@@ -1179,13 +1179,13 @@ class CHypo {
 	std::atomic<int> m_iReportCount;
 
 	/**
-	 * \brief A double value containing this hypo's creation time in julian
+	 * \brief A double value containing this hypo's creation time in Gregorian
 	 * seconds
 	 */
 	std::atomic<double> m_tCreate;
 
 	/**
-	 * \brief An int64_t value containing this hypo's sort time in julian
+	 * \brief An int64_t value containing this hypo's sort time in Gregorian
 	 * seconds, this is a cached copy of tOrigin as an integer that is
 	 * guaranteed to not change during the lifetime of the Hypo in a HypoList's
 	 * internal multiset, ensuring that sort order won't change, even when

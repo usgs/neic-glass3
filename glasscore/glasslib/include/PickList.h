@@ -115,7 +115,7 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * CSiteList getSite() function.
 	 *
 	 * This function will first attempt to associate the pick with
-	 * an existing hypocenter via calling the CPickList::associate()
+	 * an existing hypocenter via calling the CHypoList::associate()
 	 * function.  If association is unsuccessful, the pick is nucleated
 	 * using the CPick::Nucleate() function.
 	 *
@@ -205,9 +205,9 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * to t2
 	 *
 	 * \param t1 - A double value containing the beginning of the time window in
-	 * julian seconds
+	 * Gregorian seconds
 	 * \param t2 - A double value containing the end of the time window in
-	 * julian seconds
+	 * Gregorian seconds
 	 * \return Return a std::vector of std::weak_ptrs to the picks within the
 	 * time window
 	 */
@@ -222,7 +222,7 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 */
 	glass3::util::WorkState work() override;
 
- private:
+ protected:
 	/**
 	 * \brief A PickList function that updates the position of the given pick
 	 * in the multiset
@@ -236,6 +236,7 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 */
 	void eraseFromMultiset(std::shared_ptr<CPick> pick);
 
+ private:
 	/**
 	 * \brief A pointer to a CSiteList object containing all the sites for
 	 * lookups
