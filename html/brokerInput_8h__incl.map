@@ -1,0 +1,14 @@
+<map id="glass&#45;broker&#45;app/brokerInput/brokerInput.h" name="glass&#45;broker&#45;app/brokerInput/brokerInput.h">
+<area shape="rect" id="node3" href="$threadbaseclass_8h.html" title="threadbaseclass.h" alt="" coords="461,171,589,197"/>
+<area shape="rect" id="node15" href="$input_8h.html" title="input.h" alt="" coords="1159,96,1220,123"/>
+<area shape="rect" id="node4" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="1105,320,1196,347"/>
+<area shape="rect" id="node9" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="224,245,323,272"/>
+<area shape="rect" id="node10" href="$workstate_8h.html" title="workstate.h " alt="" coords="347,245,437,272"/>
+<area shape="rect" id="node16" href="$inputinterface_8h.html" title="inputinterface.h" alt="" coords="1978,320,2088,347"/>
+<area shape="rect" id="node17" href="$associatorinterface_8h.html" title="associatorinterface.h " alt="" coords="1811,320,1953,347"/>
+<area shape="rect" id="node18" href="$gpickparser_8h.html" title="gpickparser.h" alt="" coords="1227,171,1327,197"/>
+<area shape="rect" id="node20" href="$jsonparser_8h.html" title="jsonparser.h" alt="" coords="1352,171,1445,197"/>
+<area shape="rect" id="node21" href="$ccparser_8h.html" title="ccparser.h" alt="" coords="1469,171,1551,197"/>
+<area shape="rect" id="node22" href="$queue_8h.html" title="queue.h" alt="" coords="1526,245,1593,272"/>
+<area shape="rect" id="node19" href="$parser_8h.html" title="parser.h" alt="" coords="1301,245,1371,272"/>
+</map>

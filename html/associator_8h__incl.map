@@ -1,0 +1,11 @@
+<map id="process/include/associator.h" name="process/include/associator.h">
+<area shape="rect" id="node3" href="$IGlassSend_8h.html" title="IGlassSend.h" alt="" coords="23,155,124,181"/>
+<area shape="rect" id="node5" href="$inputinterface_8h.html" title="inputinterface.h" alt="" coords="149,155,259,181"/>
+<area shape="rect" id="node6" href="$outputinterface_8h.html" title="outputinterface.h" alt="" coords="284,155,402,181"/>
+<area shape="rect" id="node7" href="$associatorinterface_8h.html" title="associatorinterface.h " alt="" coords="426,155,568,181"/>
+<area shape="rect" id="node8" href="$threadbaseclass_8h.html" title="threadbaseclass.h" alt="" coords="1183,80,1311,107"/>
+<area shape="rect" id="node19" href="$queue_8h.html" title="queue.h" alt="" coords="741,80,808,107"/>
+<area shape="rect" id="node9" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="828,155,919,181"/>
+<area shape="rect" id="node13" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="1384,155,1483,181"/>
+<area shape="rect" id="node14" href="$workstate_8h.html" title="workstate.h " alt="" coords="1507,155,1598,181"/>
+</map>

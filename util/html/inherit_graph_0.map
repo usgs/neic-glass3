@@ -1,7 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classglass3_1_1util_1_1BaseClass.html" title="glass3::util::BaseClass class &#45; encapsulates the most basic setup and configuration logic..." alt="" coords="5,56,163,83"/>
-<area shape="rect" id="node2" href="$classglass3_1_1util_1_1Cache.html" title="glass3::util::Cache class &#45; a thread safe in&#45;memory cache " alt="" coords="227,5,357,32"/>
-<area shape="rect" id="node3" href="$classglass3_1_1util_1_1Queue.html" title="glass3::util::Queue class " alt="" coords="227,56,357,83"/>
-<area shape="rect" id="node4" href="$classglass3_1_1util_1_1ThreadBaseClass.html" title="glass3::util::ThreadBaseClass class " alt="" coords="211,107,373,149"/>
-<area shape="rect" id="node5" href="$classglass3_1_1util_1_1ThreadPool.html" title="glass3::util::ThreadPool class " alt="" coords="422,115,581,141"/>
-</map>

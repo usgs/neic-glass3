@@ -1,7 +1,0 @@
-<map id="traveltime/include/Terra.h" name="traveltime/include/Terra.h">
-<area shape="rect" id="node2" href="$GenTrv_8cpp.html" title="traveltime/src/GenTrv.cpp" alt="" coords="5,96,179,123"/>
-<area shape="rect" id="node3" href="$Ray_8cpp.html" title="traveltime/src/Ray.cpp" alt="" coords="203,96,356,123"/>
-<area shape="rect" id="node4" href="$Terra_8cpp.html" title="traveltime/src/Terra.cpp" alt="" coords="381,96,540,123"/>
-<area shape="rect" id="node5" href="$Glass_8cpp.html" title="glasslib/src/Glass.cpp" alt="" coords="566,96,716,123"/>
-<area shape="rect" id="node6" href="$Web_8cpp.html" title="glasslib/src/Web.cpp" alt="" coords="741,96,885,123"/>
-</map>

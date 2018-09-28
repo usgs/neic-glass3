@@ -1,6 +1,0 @@
-<map id="BaseClass" name="BaseClass">
-<area shape="rect" id="node2" href="$classglass3_1_1parse_1_1Parser.html" title="glass3 parser class " alt="" coords="213,131,360,253"/>
-<area shape="rect" id="node3" href="$classglass3_1_1parse_1_1CCParser.html" title="glass cross correlation message parser class " alt="" coords="5,301,171,408"/>
-<area shape="rect" id="node4" href="$classglass3_1_1parse_1_1GPickParser.html" title="glass global pick parser class " alt="" coords="195,301,377,408"/>
-<area shape="rect" id="node5" href="$classglass3_1_1parse_1_1JSONParser.html" title="json parser class " alt="" coords="402,301,584,408"/>
-</map>

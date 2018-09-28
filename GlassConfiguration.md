@@ -16,9 +16,10 @@ An example `glass_init.d` configuration file:
   "SiteHoursWithoutPicking": 36,
   "SiteLookupInterval": 24,
   "SiteMaximumPicksPerHour": 200,
+  "AllowPickUpdates": false,
   "Params": {
       "NucleationStackThreshold": 0.5,
-      "NucleationDataThreshold": 10,
+      "NucleationDataCountThreshold": 10,
       "AssociationStandardDeviationCutoff": 3.0,
       "PruningStandardDeviationCutoff": 3.0,
       "PickAffinityExponentialFactor": 2.5,
@@ -117,6 +118,9 @@ to -1, sites will not request information, even new ones.
 * **SiteMaximumPicksPerHour** - The number of picks per hour, above which a site
 will be removed from the detection webs  If set to -1, sites will not be removed
 from the detection webs due to pick rate.
+* **AllowPickUpdates** - A boolean flag indicating whether glass should glass
+should reject new duplicate picks of an existing pick (false) or update an
+existing pick with the latest duplicate pick (true).
 
 ## Nucleation Configuration
 These configuration parameters define and control glasscore nucleation and
@@ -127,7 +131,7 @@ being determined.
 needs to exceed for a nucleation to be declared. This threshold is also used to
 cancel a previously nucleated hypocenter. This value can be overridden in a
 detection grid (Web).
-* **NucleationDataThreshold** - The default threshold that the number of supporting  
+* **NucleationDataCountThreshold** - The default threshold that the number of supporting  
 data (eg. Picks, Correlations) must exceed for a nucleation to be declared.  
 This threshold is also used to cancel a previously nucleated hypocenter. This
 value can be overridden in a detection grid (Web).
@@ -163,7 +167,7 @@ mergeable hypocenters in degrees.
 * **ReportingStackThreshold** The viability threshold needed to exceed to report a
 hypocenter. Defaults to **NucleationStackThreshold**.
 * **ReportingDataThreshold** The default number of data that need to be associated to report
-a hypocenter. Defaults to **NucleationDataThreshold**.
+a hypocenter. Defaults to **NucleationDataCountThreshold**.
 * **EventFragmentDepthThreshold** The depth threshold for declaring a hypo an
 event fragment, in combination with  **EventFragmentAzimuthThreshold**.
 * **EventFragmentAzimuthThreshold** The azimuth threshold for declaring a hypo an
@@ -198,8 +202,8 @@ These configuration parameters are common to all GLASS 3 Detection grids.
 * **NucleationStackThreshold** - The viability threshold needed to exceed for a nucleation in a
 grid to be successful.  Overrides the default **NucleationStackThreshold** in Nucleation
 Parameters
-* **NucleationDataThreshold** - The default number of data that need to be gathered for a
-nucleation in a grid to be successful.  Overrides the default **NucleationDataThreshold** in
+* **NucleationDataCountThreshold** - The default number of data that need to be gathered for a
+nucleation in a grid to be successful.  Overrides the default **NucleationDataCountThreshold** in
 Nucleation Parameters
 * **NumStationsPerNode** - The number of closest stations to each detection node to use in
 a grid.
@@ -222,8 +226,18 @@ a grid, a station must have one of the given SCNL codes to be used in the grid
 use stations flagged as "UseForTeleseismic" in the station list, generally used
 only in global grids.
 * **DepthLayers** - The list of depth layers for a grid in kilometers
+* **MaximumDepth** - The web specific maximum allowable locator depth in
+kilometers
+* **AzimuthGapTaper** - The web specific value in degrees where the locator
+should start down weighting for azimuthal gap
 * **NodeResolution** - The desired inter-node resolution (or spacing) for a grid
 in kilometers.
+* **ZoneStatsFile** - An optional file containing zonestats information to be used
+when generating a grid to prevent nodes in areas where deep seismicity does not
+occur from being generated
+* **DepthResolution** - An optional maximum depth in kilometers below which a
+trigger at a specific node is rejected. If not provided, the maximum depth
+defaults to **MaximumDepth**
 * **SaveGrid** - A flag indicating whether to save the grid node locations to a
 file for evaluation.
 * **UpdateGrid** - A flag indicating whether a grid is allowed to add or remove sites
@@ -239,7 +253,7 @@ interest, with the provided depth layers.
 	"Cmd": "Grid",
 	"Name": "Oklahoma",
 	"NucleationStackThreshold": 0.5,
-	"NucleationDataThreshold": 6,
+	"NucleationDataCountThreshold": 6,
 	"NumStationsPerNode": 10,
 	"NucleationPhases":{
 	    "Phase1": {
@@ -256,10 +270,15 @@ interest, with the provided depth layers.
 	"CenterLatitude": 36.0,
 	"CenterLongitude": -97.5,
 	"DepthLayers": [ 10.0, 30.0 ],
+  "MaximumDepth": 900.0,
+  "AzimuthGapTaper": 360.0,
 	"NodeResolution": 25.0,
 	"NumberOfRows": 51,
 	"NumberOfColumns": 51,
-	"SaveGrid": true
+  "ZoneStatsFile": "./qa_zonestats.txt",
+  "DepthResolution": 125.0,  
+	"SaveGrid": true,
+  "UpdateGrid": true
 }
 ```
 ### Parameters
@@ -278,7 +297,7 @@ detection nodes at the provided depth layers.
 	"Cmd": "Global",
 	"Name": "Global",
 	"NucleationStackThreshold": 0.5,
-	"NucleationDataThreshold": 6,
+	"NucleationDataCountThreshold": 6,
 	"NumStationsPerNode": 24,
 	"NucleationPhases":
 	{
@@ -296,7 +315,12 @@ detection nodes at the provided depth layers.
 	"IncludeNetworks": ["IU", "US", "II", "CU", "G", "GE", "IM", "IC", "GT", "C", "AU", "MX", "AT"],
   "UseOnlyTeleseismicStations": true,
 	"DepthLayers": [10.0, 30.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 750.0],
+  "MaximumDepth": 900.0,
+  "AzimuthGapTaper": 360.0,
 	"NodeResolution": 100.0,
-	"SaveGrid": false
+  "ZoneStatsFile": "./qa_zonestats.txt",
+  "DepthResolution": 125.0,
+	"SaveGrid": false,
+  "UpdateGrid": true
 }
 ```

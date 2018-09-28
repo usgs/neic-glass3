@@ -1,0 +1,6 @@
+<map id="glass3::process::Associator" name="glass3::process::Associator">
+<area shape="rect" id="node2" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="5,491,176,568"/>
+<area shape="rect" id="node3" href="$classglass3_1_1util_1_1iAssociator.html" title="The associator messaging interface, used in sending configuration and input data to neic&#45;glass3..." alt="" coords="201,491,359,568"/>
+<area shape="rect" id="node4" href="$classglass3_1_1util_1_1ThreadBaseClass.html" title="glass3::util::ThreadBaseClass class " alt="" coords="384,337,563,722"/>
+<area shape="rect" id="node5" href="$classglass3_1_1util_1_1BaseClass.html" title="glass3::util::BaseClass class &#45; encapsulates the most basic setup and configuration logic..." alt="" coords="395,5,552,288"/>
+</map>
