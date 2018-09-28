@@ -7,8 +7,28 @@
 namespace glass3 {
 namespace util {
 
+bool Logger::m_bDisable = false;
+// ---------------------------------------------------------CLogit
+Logger::Logger() {
+}
+
+// ---------------------------------------------------------~CLogit
+Logger::~Logger() {
+}
+
+// ---------------------------------------------------------disable
+void Logger::disable() {
+	m_bDisable = true;
+}
+
+// ---------------------------------------------------------enable
+void Logger::enable() {
+	m_bDisable = false;
+}
+
 // ----------------------------------------------------------string_to_log_level
-spdlog::level::level_enum string_to_log_level(const std::string &levelString) {
+spdlog::level::level_enum Logger::string_to_log_level(
+		const std::string &levelString) {
 	// update current log level
 	if (levelString == "debug") {
 		return (spdlog::level::debug);
@@ -30,8 +50,9 @@ spdlog::level::level_enum string_to_log_level(const std::string &levelString) {
 }
 
 // -------------------------------------------------------------log_init
-void log_init(const std::string &programName, const std::string &logLevel,
-				const std::string &logPath, bool logConsole) {
+void Logger::log_init(const std::string &programName,
+						const std::string &logLevel, const std::string &logPath,
+						bool logConsole) {
 	// inits logging
 	try {
 		// create sink vector
@@ -87,7 +108,7 @@ void log_init(const std::string &programName, const std::string &logLevel,
 }
 
 // -------------------------------------------------------------log_update_level
-void log_update_level(spdlog::level::level_enum loglevel) {
+void Logger::log_update_level(spdlog::level::level_enum loglevel) {
 	// update current log level
 	try {
 		// set logging level
@@ -104,13 +125,28 @@ void log_update_level(spdlog::level::level_enum loglevel) {
 }
 
 // -------------------------------------------------------------log_update_level
-void log_update_level(const std::string &levelString) {
+void Logger::log_update_level(const std::string &levelString) {
 	// update current log level
 	log_update_level(string_to_log_level(levelString));
 }
 
+// ---------------------------------------------------------log
+void Logger::log(const char * logMessage) {
+	log("debug", std::string(logMessage));
+}
+
+// ---------------------------------------------------------log
+void Logger::log(const std::string &level, const char * logMessage) {
+	log(level, std::string(logMessage));
+}
+
+// ---------------------------------------------------------log
+void Logger::log(std::string logMessage) {
+	log("debug", logMessage);
+}
+
 // -------------------------------------------------------------log
-void log(const std::string &level, const std::string &message) {
+void Logger::log(const std::string &level, const std::string &message) {
 	// log a message
 	if (level == "info") {
 		logInfo(message);
@@ -130,9 +166,14 @@ void log(const std::string &level, const std::string &message) {
 }
 
 // -------------------------------------------------------------logInfo
-void logInfo(const std::string &message) {
+void Logger::logInfo(const std::string &message) {
 	// log an info message
 	if (message == "") {
+		return;
+	}
+
+	// don't bother if logging is disabled
+	if (m_bDisable == true) {
 		return;
 	}
 
@@ -147,9 +188,14 @@ void logInfo(const std::string &message) {
 }
 
 // -------------------------------------------------------------logTrace
-void logTrace(const std::string &message) {
+void Logger::logTrace(const std::string &message) {
 	// log a debug message
 	if (message == "") {
+		return;
+	}
+
+	// don't bother if logging is disabled
+	if (m_bDisable == true) {
 		return;
 	}
 
@@ -164,9 +210,14 @@ void logTrace(const std::string &message) {
 }
 
 // -------------------------------------------------------------logDebug
-void logDebug(const std::string &message) {
+void Logger::logDebug(const std::string &message) {
 	// log a debug message
 	if (message == "") {
+		return;
+	}
+
+	// don't bother if logging is disabled
+	if (m_bDisable == true) {
 		return;
 	}
 
@@ -181,9 +232,14 @@ void logDebug(const std::string &message) {
 }
 
 // -------------------------------------------------------------logWarning
-void logWarning(const std::string &message) {
+void Logger::logWarning(const std::string &message) {
 	// log a warning message
 	if (message == "") {
+		return;
+	}
+
+	// don't bother if logging is disabled
+	if (m_bDisable == true) {
 		return;
 	}
 
@@ -198,9 +254,14 @@ void logWarning(const std::string &message) {
 }
 
 // -------------------------------------------------------------logError
-void logError(const std::string &message) {
+void Logger::logError(const std::string &message) {
 	// log an error message
 	if (message == "") {
+		return;
+	}
+
+	// don't bother if logging is disabled
+	if (m_bDisable == true) {
 		return;
 	}
 
@@ -216,9 +277,14 @@ void logError(const std::string &message) {
 }
 
 // -------------------------------------------------------------logCriticalError
-void logCriticalError(const std::string &message) {
+void Logger::logCriticalError(const std::string &message) {
 	// log a critical error message
 	if (message == "") {
+		return;
+	}
+
+	// don't bother if logging is disabled
+	if (m_bDisable == true) {
 		return;
 	}
 

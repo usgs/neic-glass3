@@ -1,14 +1,14 @@
+#include "WebList.h"
 #include <json.h>
+#include <logger.h>
 #include <memory>
 #include <string>
-#include "WebList.h"
 #include "Node.h"
 #include "Glass.h"
 #include "Web.h"
 #include "SiteList.h"
 #include "Site.h"
 #include "Pick.h"
-#include "Logit.h"
 
 namespace glasscore {
 
@@ -40,8 +40,8 @@ void CWebList::clear() {
 bool CWebList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWebList::receiveExternalMessage: NULL json configuration.");
 		return (false);
 	}
@@ -71,7 +71,7 @@ bool CWebList::receiveExternalMessage(std::shared_ptr<json::Object> com) {
 bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CWebList::addWeb: NULL json configuration.");
 		return (false);
 	}
@@ -92,8 +92,8 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 
 		// look for name match
 		if (web->getName() == name) {
-			glassutil::CLogit::log(
-					glassutil::log_level::warn,
+			glass3::util::Logger::log(
+					"warning",
 					"CWebList::addWeb: Already have a web with the name " + name
 							+ " call RemoveWeb before adding a new web.");
 			return (false);
@@ -122,8 +122,8 @@ bool CWebList::addWeb(std::shared_ptr<json::Object> com) {
 bool CWebList::removeWeb(std::shared_ptr<json::Object> com) {
 	// null check json
 	if (com == NULL) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CWebList::removeWeb: NULL json configuration.");
 		return (false);
 	}
@@ -138,8 +138,8 @@ bool CWebList::removeWeb(std::shared_ptr<json::Object> com) {
 
 	// make sure we have a valid name for removal
 	if (name == "Nemo") {
-		glassutil::CLogit::log(
-				glassutil::log_level::warn,
+		glass3::util::Logger::log(
+				"warning",
 				"CWebList::removeWeb: Unnamed subnets cannot be removed.");
 		return (false);
 	}
@@ -171,8 +171,8 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CWebList::addSite: Adding station " + site->getSCNL() + ".");
 
 	// Update all web node site lists that might be changed
@@ -195,8 +195,8 @@ void CWebList::removeSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CWebList::remSite: Removing station " + site->getSCNL() + ".");
 
 	// Remove site from all web nodes that link to it and restructure

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <file_input.h>
+#include <fileInput.h>
 #include <config.h>
 #include <fileutil.h>
 
@@ -35,7 +35,7 @@ class InputTest : public ::testing::Test {
  protected:
 	virtual void SetUp() {
 		// create input test
-		InputThread = new glass::fileInput();
+		InputThread = new glass3::fileInput();
 		InputConfig = NULL;
 		input_config_json = NULL;
 
@@ -122,7 +122,7 @@ class InputTest : public ::testing::Test {
 			delete (InputConfig);
 	}
 
-	glass::fileInput * InputThread;
+	glass3::fileInput * InputThread;
 	glass3::util::Config * InputConfig;
 	std::shared_ptr<const json::Object> input_config_json;
 

@@ -7,6 +7,7 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
+#include <geo.h>
 #include <vector>
 #include <memory>
 #include <string>
@@ -14,8 +15,6 @@
 #include <mutex>
 #include <tuple>
 #include <atomic>
-
-#include "Geo.h"
 #include "Link.h"
 
 namespace glasscore {
@@ -56,6 +55,7 @@ class CTrigger {
 	 * for this trigger in seconds
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometer
+	 * \param maxZ - A double value containing the node maximum depth
 	 * \param sum - A double value containing the bayesian sum for this trigger
 	 * \param count - An integer value containing the site count for this
 	 * trigger
@@ -64,7 +64,7 @@ class CTrigger {
 	 * \param web - A pointer to the creating node's CWeb
 	 */
 	CTrigger(double lat, double lon, double z, double ot, double resolution,
-				double sum, int count,
+				double maxZ, double sum, int count,
 				std::vector<std::shared_ptr<CPick>> picks, CWeb *web);
 
 	/**
@@ -87,6 +87,7 @@ class CTrigger {
 	 * for this trigger in seconds
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometer
+	 * \param maxZ - A double value containing the node maximum depth
 	 * \param sum - A double value containing the bayesian sum for this trigger
 	 * \param count - An integer value containing the site count for this
 	 * trigger
@@ -95,7 +96,7 @@ class CTrigger {
 	 * \param web - A pointer to the creating node's web
 	 */
 	bool initialize(double lat, double lon, double z, double ot,
-					double resolution, double sum, int count,
+					double resolution, double maxZ, double sum, int count,
 					std::vector<std::shared_ptr<CPick>> picks, CWeb *web);
 
 	/**
@@ -124,13 +125,13 @@ class CTrigger {
 	/**
 	 * \brief Get the combined trigger location (latitude, longitude, depth) as
 	 * a CGeo object
-	 * \return Returns a glassutil::CGeo object containing the combined location.
+	 * \return Returns a glass3::util::Geo object containing the combined location.
 	 */
-	glassutil::CGeo getGeo() const;
+	glass3::util::Geo getGeo() const;
 
 	/**
 	 * \brief Get the origin time for this trigger
-	 * \return Returns a double containing the trigger origin time in julian seconds
+	 * \return Returns a double containing the trigger origin time in Gregorian seconds
 	 */
 	double getTOrigin() const;
 
@@ -140,6 +141,12 @@ class CTrigger {
 	 * that nucleated this trigger in kilometers
 	 */
 	double getWebResolution() const;
+
+	/**
+	 * \brief Get the node max depth for this trigger
+	 * \return Return a double containing the node max depth in kilometers
+	 */
+	double getNodeMaxDepth() const;
 
 	/**
 	 * \brief Gets the current bayes stack value for this trigger
@@ -194,6 +201,11 @@ class CTrigger {
 	 * (between nodes) in kilometers.
 	 */
 	std::atomic<double> m_dWebResolution;
+
+	/**
+	 * \brief A double value containing the node max depth in kilometers.
+	 */
+	std::atomic<double> m_dNodeMaxDepth;
 
 	/**
 	 * \brief A double value that accumulates the Bayesian

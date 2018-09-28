@@ -1,11 +1,13 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
+
+#include <logger.h>
+
 #include "SiteList.h"
 #include "Site.h"
 #include "Hypo.h"
 #include "Correlation.h"
-#include "Logit.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":6377.377373,\"Latitude\":40.4314,\"Longitude\":-117.221,\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
 #define CORRELATIONJSON "{\"Type\":\"Correlation\",\"ID\":\"12GFH48776857\",\"Site\":{\"Station\":\"BMN\",\"Network\":\"LB\",\"Channel\":\"HHZ\",\"Location\":\"01\"},\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"},\"Phase\":\"P\",\"Time\":\"2015-12-28T21:32:24.017Z\",\"Correlation\":2.65,\"Hypocenter\":{\"Latitude\":40.3344,\"Longitude\":-121.44,\"Depth\":32.44,\"Time\":\"2015-12-28T21:30:44.039Z\"},\"EventType\":\"earthquake\",\"Magnitude\":2.14,\"SNR\":3.8,\"ZScore\":33.67,\"DetectionThreshold\":1.5,\"ThresholdType\":\"minimum\"}"  // NOLINT
@@ -95,7 +97,7 @@ void checkdata(glasscore::CCorrelation * corrleationobject,
 
 // test to see if the correlation can be constructed
 TEST(CorrelationTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a correlation
 	glasscore::CCorrelation * testCorrelation = new glasscore::CCorrelation();
@@ -135,7 +137,7 @@ TEST(CorrelationTest, Construction) {
 
 // tests to see if the correlation can be constructed from JSON
 TEST(CorrelationTest, JSONConstruction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
@@ -162,7 +164,7 @@ TEST(CorrelationTest, JSONConstruction) {
 
 // tests correlation hypo operations
 TEST(CorrelationTest, HypoOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create  shared pointer to the site
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(

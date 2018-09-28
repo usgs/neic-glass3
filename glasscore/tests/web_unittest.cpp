@@ -5,11 +5,13 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+
+#include <logger.h>
+
 #include "Node.h"
 #include "Web.h"
 #include "Site.h"
 #include "SiteList.h"
-#include "Logit.h"
 
 #define TESTPATH "testdata"
 
@@ -48,7 +50,7 @@
 #define GLOBALNUMNUCLEATE 5
 #define GLOBALRESOLUTION 250.0
 #define GLOBALNUMZ 2
-#define GLOBALNUMNODES 19410
+#define GLOBALNUMNODES 14593
 #define GLOBALNUMNETEXLUDE 13
 
 #define GRIDNAME "TestGrid"
@@ -73,7 +75,7 @@
 
 // tests to see if the web can be constructed
 TEST(WebTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// default constructor
 	glasscore::CWeb aWeb(NOTHREADS, 10, 10);
@@ -99,7 +101,7 @@ TEST(WebTest, Construction) {
 	ASSERT_EQ(NUMDETECT, testWeb->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataThreshold())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataCountThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb->getNodeResolution())<< "Web resolution Check";
@@ -141,7 +143,7 @@ TEST(WebTest, Construction) {
 	ASSERT_EQ(NUMDETECT, testWeb2->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb2->getNucleationDataThreshold())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb2->getNucleationDataCountThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb2->getNodeResolution())<< "Web resolution Check";
@@ -167,7 +169,7 @@ TEST(WebTest, Construction) {
 
 // tests to see if the web can be initialized
 TEST(WebTest, Initialize) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	printf("[ startup  ]\n");
 
@@ -198,7 +200,7 @@ TEST(WebTest, Initialize) {
 	ASSERT_EQ(NUMDETECT, testWeb->getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataThreshold())<< "Web getNucleate() Check";
+	ASSERT_EQ(NUMNUCLEATE, testWeb->getNucleationDataCountThreshold())<< "Web getNucleate() Check";
 
 	// resolution
 	ASSERT_EQ(RESOLUTION, testWeb->getNodeResolution())<< "Web resolution Check";
@@ -224,7 +226,7 @@ TEST(WebTest, Initialize) {
 
 // test constructing a global grid
 TEST(WebTest, GlobalTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasename1 = std::string(PHASE1);
 	std::string phasename2 = std::string(PHASE2);
@@ -276,7 +278,7 @@ TEST(WebTest, GlobalTest) {
 	"Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.getNucleationDataThreshold())<<
+	ASSERT_EQ(GLOBALNUMNUCLEATE, testGlobalWeb.getNucleationDataCountThreshold())<<
 	"Web getNucleate() Check";
 
 	// getResolution()
@@ -317,7 +319,7 @@ TEST(WebTest, GlobalTest) {
 // test creating a regional/local grid
 // NOTE: Need to check that grid boundries are as expected.
 TEST(WebTest, GridTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasename1 = std::string(PHASE1);
 	std::string phasename2 = std::string(PHASE2);
@@ -366,7 +368,7 @@ TEST(WebTest, GridTest) {
 	ASSERT_EQ(GRIDNUMDETECT, testGridWeb.getNumStationsPerNode())<< "Web getDetect() Check";
 
 	// getNucleate()
-	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.getNucleationDataThreshold())<<
+	ASSERT_EQ(GRIDNUMNUCLEATE, testGridWeb.getNucleationDataCountThreshold())<<
 	"Web getNucleate() Check";
 
 	// getResolution()
@@ -406,7 +408,7 @@ TEST(WebTest, GridTest) {
 
 // test creating an explcit grid
 TEST(WebTest, GridExplicitTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasename1 = std::string(PHASE1);
 
@@ -458,7 +460,7 @@ TEST(WebTest, GridExplicitTest) {
 
 	// getNucleate()
 	ASSERT_EQ(GRIDEXPLICITNUMNUCLEATE,
-			testGridWeb.getNucleationDataThreshold())<< "Web getNucleate() Check";
+			testGridWeb.getNucleationDataCountThreshold())<< "Web getNucleate() Check";
 
 	// getResolution()
 	ASSERT_EQ(GRIDEXPLICITRESOLUTION,
@@ -493,7 +495,7 @@ TEST(WebTest, GridExplicitTest) {
 
 // test adding a station to a grid
 TEST(WebTest, AddTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -552,7 +554,7 @@ TEST(WebTest, AddTest) {
 
 // test removing a station from a grid
 TEST(WebTest, RemoveTest) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -611,7 +613,7 @@ TEST(WebTest, RemoveTest) {
 
 // test various failure cases for web
 TEST(WebTest, FailTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	printf("[ startup  ]\n");
 

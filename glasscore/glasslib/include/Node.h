@@ -7,6 +7,7 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <geo.h>
 #include <vector>
 #include <memory>
 #include <string>
@@ -14,8 +15,6 @@
 #include <mutex>
 #include <tuple>
 #include <atomic>
-
-#include "Geo.h"
 #include "Link.h"
 
 namespace glasscore {
@@ -26,6 +25,9 @@ class CSite;
 class CWeb;
 class CTrigger;
 
+#define NUC_DEPTH_SHELL_RESOLUTION_KM 10
+#define NUC_SECONDS_PER_SIGMA 3.0
+#define FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO .7071  // sqrt(2)/2)
 /**
  * \brief glasscore detection node class
  *
@@ -65,9 +67,11 @@ class CNode {
 	 * for this node in kilometers
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometers
+	 * \param maxDepth - A double value containing the maximum trigger depth
+	 * in kilometers
 	 */
-	CNode(std::string name, double lat, double lon, double z,
-			double resolution);
+	CNode(std::string name, double lat, double lon, double z, double resolution,
+			double maxDepth);
 
 	/**
 	 * \brief CNode destructor
@@ -100,9 +104,11 @@ class CNode {
 	 * for this node in kilometers
 	 * \param resolution - A double value containing the inter-node resolution
 	 * in kilometers
+	 * \param maxDepth - A double value containing the maximum trigger depth
+	 * in kilometers
 	 */
 	bool initialize(std::string name, double lat, double lon, double z,
-					double resolution);
+					double resolution, double maxDepth);
 
 	/**
 	 * \brief CNode node-site and site-node linker
@@ -114,6 +120,8 @@ class CNode {
 	 * and unlinking (deleting) using this-> The solution was to pass a pointer
 	 * to the node in this function.
 	 *
+	 * \param distDeg - A double value containing the distance in degrees
+	 * between the node and the site.
 	 * \param travelTime1 - A double value containing the first travel time to
 	 * use for the link
 	 * \param travelTime2 - A double value containing the optional second travel
@@ -123,7 +131,8 @@ class CNode {
 	 * \return - Returns true if successful, false otherwise
 	 */
 	bool linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
-					double travelTime1, double travelTime2 = -1);
+					double distDeg, double travelTime1,
+					double travelTime2 = -1);
 
 	/**
 	 * \brief CNode node-site and site-node unlinker
@@ -153,7 +162,7 @@ class CNode {
 	 * them up.
 	 *
 	 * \param tOrigin - A double value containing the proposed origin time
-	 * to use in julian seconds
+	 * to use in Gregorian seconds
 	 * \return Returns true if the node nucleated an event, false otherwise
 	 */
 	std::shared_ptr<CTrigger> nucleate(double tOrigin);
@@ -166,11 +175,17 @@ class CNode {
 	 * node.
 	 *
 	 * \param tObservedTT - A double value containing the observed travel time
-	 * \param link - A SiteLink containing the travel times to use
+	 * \param travelTime1 - A double value containing the first calculated
+	 * travel time
+	 * \param travelTime2 - A double value containing the first calculated
+	 * travel time
+	 * \param distDeg - A double value containing the distance between the
+	 * station and the node in degrees
 	 * \return Returns best significance if there is at least one valid travel
 	 * time, -1.0 otherwise
 	 */
-	double getBestSignificance(double tObservedTT, SiteLink link);
+	double getBestSignificance(double tObservedTT, double travelTime1,
+								double travelTime2, double distDeg);
 
 	/**
 	 * \brief CNode site used function
@@ -251,11 +266,18 @@ class CNode {
 	double getDepth() const;
 
 	/**
+	 * \brief Get the maximum depth for triggers made at this node
+	 * \return Returns a double containing the maximum depth for triggers made
+	 * in kilometers
+	 */
+	double getMaxDepth() const;
+
+	/**
 	 * \brief Get the combined node location (latitude, longitude, depth) as
 	 * a CGeo object
-	 * \return Returns a glassutil::CGeo object containing the combined location.
+	 * \return Returns a glass3::util::Geo object containing the combined location.
 	 */
-	glassutil::CGeo getGeo() const;
+	glass3::util::Geo getGeo() const;
 
 	/**
 	 * \brief Gets the resolution of the web that created this node
@@ -318,6 +340,12 @@ class CNode {
 	 * \brief A double value containing this node's depth in kilometers.
 	 */
 	std::atomic<double> m_dDepth;
+
+	/**
+	 * \brief A double value containing this node's maximum trigger depth in
+	 * kilometers.
+	 */
+	std::atomic<double> m_dMaxDepth;
 
 	/**
 	 * \brief A double value containing this node's spatial resolution

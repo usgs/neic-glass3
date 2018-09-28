@@ -1,13 +1,13 @@
+#include "Trigger.h"
+#include <logger.h>
+#include <geo.h>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 #include <mutex>
 #include <algorithm>
-#include "Trigger.h"
 #include "Pick.h"
-#include "Logit.h"
-#include "Geo.h"
 
 namespace glasscore {
 
@@ -18,9 +18,9 @@ CTrigger::CTrigger() {
 
 // ---------------------------------------------------------CTrigger
 CTrigger::CTrigger(double lat, double lon, double z, double ot,
-					double resolution, double sum, int count,
+					double resolution, double maxZ, double sum, int count,
 					std::vector<std::shared_ptr<CPick>> picks, CWeb *web) {
-	if (!initialize(lat, lon, z, ot, resolution, sum, count, picks, web)) {
+	if (!initialize(lat, lon, z, ot, resolution, maxZ, sum, count, picks, web)) {
 		clear();
 	}
 }
@@ -39,6 +39,7 @@ void CTrigger::clear() {
 	m_dDepth = 0;
 	m_tOrigin = 0;
 	m_dWebResolution = 0;
+	m_dNodeMaxDepth = 0;
 	m_dBayesValue = 0;
 	m_iPickCount = 0;
 	m_pWeb = NULL;
@@ -48,7 +49,7 @@ void CTrigger::clear() {
 
 // ---------------------------------------------------------initialize
 bool CTrigger::initialize(double lat, double lon, double z, double ot,
-							double resolution, double sum, int count,
+							double resolution, double maxZ, double sum, int count,
 							std::vector<std::shared_ptr<CPick>> picks,
 							CWeb *web) {
 	clear();
@@ -60,6 +61,7 @@ bool CTrigger::initialize(double lat, double lon, double z, double ot,
 	m_dDepth = z;
 	m_tOrigin = ot;
 	m_dWebResolution = resolution;
+	m_dNodeMaxDepth = maxZ;
 	m_dBayesValue = sum;
 	m_iPickCount = count;
 	m_pWeb = web;
@@ -92,8 +94,8 @@ double CTrigger::getTOrigin() const {
 }
 
 // ---------------------------------------------------------getGeo
-glassutil::CGeo CTrigger::getGeo() const {
-	glassutil::CGeo geoTrigger;
+glass3::util::Geo CTrigger::getGeo() const {
+	glass3::util::Geo geoTrigger;
 	geoTrigger.setGeographic(m_dLatitude, m_dLongitude,
 								EARTHRADIUSKM - m_dDepth);
 	return (geoTrigger);
@@ -102,6 +104,11 @@ glassutil::CGeo CTrigger::getGeo() const {
 // ---------------------------------------------------------getResolution
 double CTrigger::getWebResolution() const {
 	return (m_dWebResolution);
+}
+
+// ---------------------------------------------------------getNodeMaxDepth
+double CTrigger::getNodeMaxDepth() const {
+	return (m_dNodeMaxDepth);
 }
 
 // ---------------------------------------------------------getBayesValue

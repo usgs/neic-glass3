@@ -29,7 +29,7 @@ void ThreadPool::addJob(std::function<void()> newjob) {
 	m_JobQueue.push(newjob);
 	getMutex().unlock();
 
-	glass3::util::log(
+	glass3::util::Logger::log(
 			"debug",
 			"ThreadPool::addJob(): Added Job.(" + getThreadName() + ")");
 }
@@ -55,7 +55,7 @@ glass3::util::WorkState ThreadPool::work() {
 	// done with queue
 	getMutex().unlock();
 
-	glass3::util::log(
+	glass3::util::Logger::log(
 			"debug",
 			"ThreadPool::jobLoop(): Found Job.(" + getThreadName() + ")");
 
@@ -63,14 +63,14 @@ glass3::util::WorkState ThreadPool::work() {
 	try {
 		newjob();
 	} catch (const std::exception &e) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"ThreadPool::jobLoop: Exception during job(): "
 						+ std::string(e.what()) + " (" + getThreadName() + ")");
 		return (glass3::util::WorkState::Error);
 	}
 
-	glass3::util::log(
+	glass3::util::Logger::log(
 			"debug",
 			"ThreadPool::jobLoop(): Finished Job.(" + getThreadName() + ")");
 

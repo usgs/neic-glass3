@@ -1,10 +1,12 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
+
+#include <logger.h>
+
 #include "SiteList.h"
 #include "Site.h"
 #include "Pick.h"
-#include "Logit.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"--\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
 #define SITE2JSON "{\"Type\":\"StationInfo\",\"Elevation\":1342.000000,\"Latitude\":46.711330,\"Longitude\":-111.831200,\"Site\":{\"Station\":\"HRY\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"--\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
@@ -17,7 +19,7 @@
 
 // test to see if the sitelist can be constructed
 TEST(SiteListTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	printf("[ startup  ]\n");
 
@@ -39,7 +41,7 @@ TEST(SiteListTest, Construction) {
 
 // test various site operations
 TEST(SiteListTest, SiteOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();
@@ -83,7 +85,7 @@ TEST(SiteListTest, SiteOperations) {
 
 // test various failure cases
 TEST(SiteListTest, FailTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a sitelist
 	glasscore::CSiteList * testSiteList = new glasscore::CSiteList();

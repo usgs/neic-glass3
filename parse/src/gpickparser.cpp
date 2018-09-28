@@ -2,7 +2,7 @@
 #include <json.h>
 #include <logger.h>
 #include <stringutil.h>
-#include <timeutil.h>
+#include <date.h>
 #include <detection-formats.h>
 #include <string>
 #include <vector>
@@ -78,7 +78,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 	if (input.length() == 0)
 		return (NULL);
 
-	glass3::util::log("trace",
+	glass3::util::Logger::log("trace",
 						"gpickparser::parse: Input String: " + input + ".");
 
 	try {
@@ -88,7 +88,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 		// make sure we split the response into at
 		// least as many elements as we need
 		if (splitInput.size() < GPICK_MSG_MAX_INDEX) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"error",
 					"gpickparser::parse: Provided input did not split into at "
 							"least the 20 elements needed for a global pick "
@@ -109,7 +109,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 		newPick.site.location = splitInput[LOCATION_INDEX];
 
 		// convert the global pick "DateTime" into epoch time
-		newPick.time = glass3::util::convertDateTimeToEpochTime(
+		newPick.time = glass3::util::Date::convertDateTimeToEpochTime(
 				splitInput[ARRIVALTIME_INDEX]);
 
 		// build the source object
@@ -167,7 +167,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			HighPass = std::stod(splitInput[HIGHPASS_INDEX]);
 			LowPass = std::stod(splitInput[LOWPASS_INDEX]);
 		} catch (const std::exception &) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"warning",
 					"gpickparser::parse: Problem converting optional filter "
 					"values to doubles.");
@@ -188,7 +188,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			BackAzimuth = std::stod(splitInput[BACKAZIMUTH_INDEX]);
 			Slowness = std::stod(splitInput[SLOWNESS_INDEX]);
 		} catch (const std::exception &) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"warning",
 					"gpickparser::parse: Problem converting optional beam "
 					"values to doubles.");
@@ -212,7 +212,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			Period = std::stod(splitInput[PERIOD_INDEX]);
 			SNR = std::stod(splitInput[SNR_INDEX]);
 		} catch (const std::exception &) {
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"warning",
 					"gpickparser::parse: Problem converting optional amplitude "
 					"values to doubles.");
@@ -228,7 +228,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 
 		// validate
 		if (newPick.isvalid() == false) {
-			glass3::util::log("warning", "gpickparser::parse: Pick invalid.");
+			glass3::util::Logger::log("warning", "gpickparser::parse: Pick invalid.");
 			return (NULL);
 		}
 
@@ -247,7 +247,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			std::shared_ptr<json::Object> newjsonpick = std::make_shared<
 					json::Object>(json::Object(deserializedJSON.ToObject()));
 
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"trace",
 					"gpickparser::parse: Output JSON: "
 							+ json::Serialize(*newjsonpick) + ".");
@@ -255,7 +255,7 @@ std::shared_ptr<json::Object> GPickParser::parse(const std::string &input) {
 			return (newjsonpick);
 		}
 	} catch (const std::exception &e) {
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"warning",
 				"gpickparser::parse: Exception parsing global pick: "
 						+ std::string(e.what()));

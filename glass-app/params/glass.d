@@ -2,7 +2,7 @@
 # glass configuration file
 {
 	# this config is for glass
-	"Cmd":"Glass",
+	"Configuration":"glass-app",
 
 	# Set this logging level
 	# trace, debug, info, warning, error, criticalerror

@@ -1,10 +1,10 @@
+#include "Trav.h"
+#include <glassmath.h>
+#include <logger.h>
 #include <memory>
 #include <string>
-#include "Trav.h"
 #include "Ray.h"
 #include "Spline.h"
-#include "Geo.h"
-#include "Logit.h"
 
 namespace traveltime {
 
@@ -44,13 +44,13 @@ CTrav::~CTrav() {
 bool CTrav::genBranch(CRay *ray, std::string phase, double depth) {
 	// nullcheck
 	if (ray == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CTrav::genBranch: NULL CRay provided");
 		return (false);
 	}
 
 	if (phase == "") {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CTrav::genBranch: empty phase provided");
 		return (false);
 	}
@@ -146,8 +146,8 @@ bool CTrav::genBranch(CRay *ray, std::string phase, double depth) {
 		return (true);
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::error,
+	glass3::util::Logger::log(
+			"error",
 			"CTrav::genBranch: Problem generating branch, splines were not"
 			" created successfully");
 
@@ -230,7 +230,7 @@ void CTrav::branch(CRay *ray, double startDistance, double endDistance) {
 double CTrav::T(double delta) {
 	// Calculate travel time from distance in degrees
 	if (tSpline == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CTrav::T: NULL tSpline");
 		return (-1.0);
 	}
@@ -250,7 +250,7 @@ double CTrav::T(double delta) {
 double CTrav::D(double travelTime) {
 	// Calculate distance (degrees) from travel time
 	if (dSpline == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CTrav::D: NULL dSpline");
 		return (-1.0);
 	}

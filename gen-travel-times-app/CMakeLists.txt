@@ -43,10 +43,6 @@ set(SRCS "${PROJECT_SOURCE_DIR}/gen-travel-times-app.cpp")
 set(EXE_LIBRARIES ${SuperEasyJSON_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES})
 include(${CMAKE_DIR}/build_exe.cmake)
 
-# ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}")
-include(${CMAKE_DIR}/documentation.cmake)
-
 # ----- RUN CPPCHECK ----- #
 include(${CMAKE_DIR}/cppcheck.cmake)
 

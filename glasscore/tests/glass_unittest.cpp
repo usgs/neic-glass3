@@ -4,8 +4,10 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+
+#include <logger.h>
+
 #include "Glass.h"
-#include "Logit.h"
 
 #define TESTPATH "testdata"
 #define INITFILENAME "initialize.d"
@@ -74,7 +76,7 @@
 
 // test to see if the hypo can be constructed
 TEST(GlassTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a glass
 	glasscore::CGlass * testGlass = new glasscore::CGlass();
@@ -121,7 +123,7 @@ TEST(GlassTest, Construction) {
 	"getNumStationsPerNode";
 	ASSERT_EQ(DEFAULT_MAXNUMHYPOS, testGlass->getMaxNumHypos())<<
 	"getMaxNumHypos";
-	ASSERT_EQ(DEFAULT_NUCTDATA, testGlass->getNucleationDataThreshold())<<
+	ASSERT_EQ(DEFAULT_NUCTDATA, testGlass->getNucleationDataCountThreshold())<<
 	"getNucleationDataThreshold";
 	ASSERT_EQ(DEFAULT_MAXNUMPICKS, testGlass->getMaxNumPicks())<<
 	"getMaxNumPicks";
@@ -157,7 +159,7 @@ TEST(GlassTest, Construction) {
 
 // test to see if the glass can be initialized
 TEST(GlassTest, Init) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a glass
 	glasscore::CGlass * testGlass = new glasscore::CGlass();
@@ -218,7 +220,7 @@ TEST(GlassTest, Init) {
 	"getNumStationsPerNode";
 	ASSERT_EQ(MAXNUMHYPOS, testGlass->getMaxNumHypos())<<
 	"getMaxNumHypos";
-	ASSERT_EQ(NUCTDATA, testGlass->getNucleationDataThreshold())<<
+	ASSERT_EQ(NUCTDATA, testGlass->getNucleationDataCountThreshold())<<
 	"getNucleationDataThreshold";
 	ASSERT_EQ(MAXNUMPICKS, testGlass->getMaxNumPicks())<<
 	"getMaxNumPicks";

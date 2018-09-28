@@ -6,11 +6,12 @@
 #include <iostream>
 #include <fstream>
 
+#include <logger.h>
+
 #include "Web.h"
 #include "WebList.h"
 #include "Site.h"
 #include "SiteList.h"
-#include "Logit.h"
 
 #define TESTPATH "testdata"
 #define STATIONFILENAME "teststationlist.json"
@@ -23,7 +24,7 @@
 
 // tests to see if the weblist can be constructed
 TEST(WebListTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();
@@ -34,7 +35,7 @@ TEST(WebListTest, Construction) {
 
 // tests adding a web to the web list
 TEST(WebListTest, AddWeb) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -80,7 +81,7 @@ TEST(WebListTest, AddWeb) {
 
 // tests removing a web from the web list
 TEST(WebListTest, RemWeb) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -136,7 +137,7 @@ TEST(WebListTest, RemWeb) {
 
 // test various site operations (add, remove) with the web list
 TEST(WebListTest, SiteOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -219,7 +220,7 @@ TEST(WebListTest, SiteOperations) {
 
 // Tests various falure cases for weblist
 TEST(WebListTest, FailTests) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a WebList
 	glasscore::CWebList * testWebList = new glasscore::CWebList();

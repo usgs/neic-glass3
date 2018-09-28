@@ -1,8 +1,10 @@
 #include <gtest/gtest.h>
 
 #include <string>
+
+#include <logger.h>
+
 #include "TravelTime.h"
-#include "Logit.h"
 
 #define TESTPATH "testdata"
 #define PHASE "P"
@@ -21,7 +23,7 @@
 
 // tests to see if the traveltime can be constructed
 TEST(TravelTimeTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a traveltime
 	traveltime::CTravelTime traveltime;
@@ -48,7 +50,7 @@ TEST(TravelTimeTest, Construction) {
 
 // tests to see if the traveltime can be setup
 TEST(TravelTimeTest, Setup) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasefile = "./" + std::string(TESTPATH) + "/"
 			+ std::string(PHASEFILENAME);
@@ -87,7 +89,7 @@ TEST(TravelTimeTest, Setup) {
 
 // tests the time warp copy constructor
 TEST(TravelTimeTest, Copy) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasefile = "./" + std::string(TESTPATH) + "/"
 			+ std::string(PHASEFILENAME);
@@ -132,7 +134,7 @@ TEST(TravelTimeTest, Copy) {
 
 // tests traveltime operations
 TEST(TravelTimeTest, Operations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	std::string phasefile = "./" + std::string(TESTPATH) + "/"
 			+ std::string(PHASEFILENAME);
@@ -156,7 +158,7 @@ TEST(TravelTimeTest, Operations) {
 	// dDelta
 	ASSERT_NEAR(DISTANCE, traveltime.dDelta, 0.001)<< "Delta Check";
 
-	glassutil::CGeo testGeo;
+	glass3::util::Geo testGeo;
 	testGeo.setGeographic(LATITUDE, LONGITUDE + DISTANCE, DEPTH);
 
 	// T(geo)

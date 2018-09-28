@@ -26,7 +26,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 		return (NULL);
 	}
 
-	glass3::util::log("trace",
+	glass3::util::Logger::log("trace",
 						"jsonparser::parse: Input String: " + input + ".");
 
 	// Note: Detection formats does not provide generic parsing or validation
@@ -46,7 +46,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 
 		// let detection formats validate
 		if (newPick.isvalid() == false) {
-			glass3::util::log("warning", "JSONParser::parse: Pick invalid.");
+			glass3::util::Logger::log("warning", "JSONParser::parse: Pick invalid.");
 			return (NULL);
 		}
 
@@ -62,7 +62,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 
 		// let detection formats validate
 		if (newCorrelation.isvalid() == false) {
-			glass3::util::log("warning",
+			glass3::util::Logger::log("warning",
 								"JSONParser::parse: Correlation invalid.");
 			return (NULL);
 		}
@@ -79,7 +79,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 
 		// let detection formats validate
 		if (newDetection.isvalid() == false) {
-			glass3::util::log("warning",
+			glass3::util::Logger::log("warning",
 								"JSONParser::parse: Detection invalid.");
 			return (NULL);
 		}
@@ -96,7 +96,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 
 		// let detection formats validate
 		if (newStation.isvalid() == false) {
-			glass3::util::log("warning", "JSONParser::parse: Station invalid.");
+			glass3::util::Logger::log("warning", "JSONParser::parse: Station invalid.");
 			return (NULL);
 		}
 
@@ -109,7 +109,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 					!= getDefaultAgencyId())
 					|| (newStation.informationRequestor.author
 							!= getDefaultAuthor())) {
-				glass3::util::log(
+				glass3::util::Logger::log(
 						"debug", "jsonparser::parse: Station is not for this "
 						"instance by agencyID and author.");
 				return (NULL);
@@ -137,7 +137,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 			std::shared_ptr<json::Object> newObject = std::make_shared<
 					json::Object>(json::Object(deserializedValue.ToObject()));
 
-			glass3::util::log(
+			glass3::util::Logger::log(
 					"trace",
 					"JSONParser::parse: Output JSON: "
 							+ json::Serialize(*newObject) + ".");
@@ -147,7 +147,7 @@ std::shared_ptr<json::Object> JSONParser::parse(const std::string &input) {
 	} catch (const std::runtime_error &e) {
 		// oopse
 		std::string exceptionstring = e.what();
-		glass3::util::log(
+		glass3::util::Logger::log(
 				"error",
 				"jsonparser::parse: json::Deserialize encountered error "
 						+ exceptionstring + ", returning.");

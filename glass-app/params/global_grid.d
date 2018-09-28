@@ -5,7 +5,7 @@
   "Name": "Global",
   "NodeResolution": 100.0,
   "NumStationsPerNode": 40,
-  "NucleationDataThreshold": 8,
+  "NucleationDataCountThreshold": 8,
   "DepthLayers": [
       10.0,
       30.0,

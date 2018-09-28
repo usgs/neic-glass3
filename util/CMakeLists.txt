@@ -20,6 +20,9 @@ include(${CMAKE_DIR}/base.cmake)
 # SuperEasyJSON
 include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 
+# uuid
+include(${CMAKE_DIR}/uuid.cmake)
+
 # ----- SET PROJECT INCLUDE DIRECTORIES ----- #
 include_directories(${PROJECT_SOURCE_DIR}/../lib)
 include_directories(${PROJECT_SOURCE_DIR}/../lib/spdlog)
@@ -33,10 +36,6 @@ file(GLOB HDRS ${PROJECT_SOURCE_DIR}/include/*.h)
 # ----- BUILD LIBRARY ----- #
 include(${CMAKE_DIR}/build_lib.cmake)
 
-# ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src")
-include(${CMAKE_DIR}/documentation.cmake)
-
 # ----- RUN CPPCHECK ----- #
 include(${CMAKE_DIR}/cppcheck.cmake)
 
@@ -47,6 +46,9 @@ include(${CMAKE_DIR}/cpplint.cmake)
 file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
 # WARNING: linking order of libraries matters for G++
 set(TEST_LIBRARIES ${SuperEasyJSON_LIBRARIES})
+if (UNIX AND NOT APPLE)
+    set(TEST_LIBRARIES ${TEST_LIBRARIES} ${LIBUUID_LIBRARY})
+endif (UNIX AND NOT APPLE)
 include(${CMAKE_DIR}/test.cmake)
 
 # ----- INSTALL LIBRARY ----- #

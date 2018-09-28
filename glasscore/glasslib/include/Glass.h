@@ -300,7 +300,7 @@ class CGlass {
 	 * \return Returns an integer containing the minimum number of data required
 	 * to nucleate an event
 	 */
-	static int getNucleationDataThreshold();
+	static int getNucleationDataCountThreshold();
 
 	/**
 	 * \brief Gets the minimum number of data required to report an event
@@ -398,7 +398,6 @@ class CGlass {
 	 */
 	static void setMaxNumHypos(int max);
 
-
 	/**
 	 * \brief Gets the depth threshold used for declaring a hypo an event
 	 * fragment, in combination with m_dEventFragmentAzimuthThreshold.
@@ -410,6 +409,12 @@ class CGlass {
 	 * fragment, in combination with m_dEventFragmentDepthThreshold.
 	 */
 	static double getEventFragmentAzimuthThreshold();
+
+	/**
+	 * \brief Gets a boolean flag indicating whether to allow picks in the
+	 * pick list to be updated
+	 */
+	static bool getAllowPickUpdates();
 
 	/**
 	 * \brief Gets a pointer to the Correlation list
@@ -462,6 +467,12 @@ class CGlass {
 	 */
 	static std::shared_ptr<traveltime::CTTT>& getAssociationTravelTimes();
 
+	/**
+	 * \brief The factor used to scale thread count to implement maximum
+	 * queue lengths for processing
+	 */
+	static const int iMaxQueueLenPerThreadFactor = 10;
+
  private:
 	/**
 	 * \brief A double value containing the default number of (e.g. Pick,
@@ -469,7 +480,7 @@ class CGlass {
 	 * event. This value can be overridden in a detection grid (Web) if provided
 	 * as part of a specific grid setup.
 	 */
-	static std::atomic<int> m_iNucleationDataThreshold;
+	static std::atomic<int> m_iNucleationDataCountThreshold;
 
 	/**
 	 * \brief A double value containing the default viability threshold needed
@@ -661,6 +672,12 @@ class CGlass {
 	 * combination with m_dEventFragmentDepthThreshold.
 	 */
 	static std::atomic<double> m_dEventFragmentAzimuthThreshold;
+
+	/**
+	 * \brief The boolean flag indicating whether to allow picks in the
+	 * pick list to be updated
+	 */
+	static std::atomic<bool> m_bAllowPickUpdates;
 
 	/**
 	 * \brief An IGlassSend interface pointer used to send communication

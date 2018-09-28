@@ -6,11 +6,12 @@
  ****************************************/
 #ifndef TTT_H
 #define TTT_H
+
+#include <geo.h>
+#include <taper.h>
 #include <string>
 #include <mutex>
-#include "Geo.h"
 #include "TravelTime.h"
-#include "Taper.h"
 
 namespace traveltime {
 
@@ -86,19 +87,32 @@ class CTTT {
 	void setOrigin(double lat, double lon, double z);
 
 	/**
+	 * \brief Set current geographic location
+	 *
+	 * Set the current geographic location using the provided CGeo.
+	 * This will set the source location used for source/receiver
+	 * traveltime calculations.
+	 *
+	 * \param geoOrigin - A CGeo representing the lat/lon and surface depth (or
+	 * elev) of the source, along with already computed concentric lat/lon and
+	 * vector coordinates.
+	 */
+	void setOrigin(const glass3::util::Geo &geoOrigin);
+
+	/**
 	 * \brief Calculate travel time in seconds
 	 *
 	 * Calculate travel time in seconds given geographic location and
 	 * the desired phase
 	 *
-	 * \param geo - A pointer to a glassutil::CGeo object representing the location
+	 * \param geo - A pointer to a glass3::util::Geo object representing the location
 	 * to calculate the travel time from
 	 * \param phase - A std::std::string containing the phase to use in calculating
 	 * the travel time, default is "P"
 	 * \return Returns the travel time in seconds, or -1.0 if there is
 	 * no valid travel time
 	 */
-	double T(glassutil::CGeo *geo, std::string phase = "P");
+	double T(glass3::util::Geo *geo, std::string phase = "P");
 
 	/**
 	 * \brief Calculate travel time in seconds
@@ -137,13 +151,13 @@ class CTTT {
 	 * Calculate best travel time in seconds given geographic location and
 	 * the observed arrival time
 	 *
-	 * \param geo - A pointer to a glassutil::CGeo object representing the location
+	 * \param geo - A pointer to a glass3::util::Geo object representing the location
 	 * to calculate the travel time from
 	 * \param tobs - A double value containing the observed arrival time.
 	 * \return Returns the travel time in seconds, or -1.0 if there is
 	 * no valid travel time
 	 */
-	double T(glassutil::CGeo *geo, double tobs);
+	double T(glass3::util::Geo *geo, double tobs);
 
 	/**
 	 * \brief Print Travel Times to File
@@ -165,22 +179,10 @@ class CTTT {
 	double dWeight;
 
 	/**
-	 * \brief A double value containing the latitude of the hypocenter used for
-	 * calculations, set by setOrigin()
+	 * \brief glass3::util::Geo object containing current
+	 * geographic location of source(as in source/receiver). Set by setOrigin()
 	 */
-	double dLat;
-
-	/**
-	 * \brief A double value containing the longitude of the hypocenter used for
-	 * calculations, set by setOrigin()
-	 */
-	double dLon;
-
-	/**
-	 * \brief A double value containing the depth of the hypocenter used for
-	 * calculations, set by setOrigin()
-	 */
-	double dZ;
+	glass3::util::Geo geoOrg;
 
 	/**
 	 * \brief An integer variable containing number of CTravelTime objects in
@@ -197,17 +199,17 @@ class CTTT {
 	 * \brief An array of pointers taper objects that determine phase
 	 * weights as a function of distance
 	 */
-	glassutil::CTaper *pTaper[MAX_TRAV];
+	glass3::util::Taper *pTaper[MAX_TRAV];
 
 	/**
 	 * \brief An array of doubles containing the minimum values for association
 	 */
-	double dAssMin[MAX_TRAV];
+	double dAssocMin[MAX_TRAV];
 
 	/**
 	 * \brief  An array of doubles containing the maximum values for association
 	 */
-	double dAssMax[MAX_TRAV];
+	double dAssocMax[MAX_TRAV];
 
 	// std::mutex m_TTTMutex;
 };

@@ -224,6 +224,45 @@ class CPick {
 	 */
 	double getTPick() const;
 
+	/**
+	 * \brief Set the arrival time for this pick
+	 * \param tPick -  a double containing the pick arrival time
+	 */
+	void setTPick(double tPick);
+
+	/**
+	 * \brief Get the sorting time for this pick
+	 * \return Returns an double containing the pick sort time in Gregorian
+	 * seconds
+	 */
+	double getTSort() const;
+
+	/**
+	 * \brief Set the sorting time for this pick
+	 * \param newTSort - a double containing the pick sort time in Gregorian
+	 * seconds
+	 */
+	void setTSort(double newTSort);
+
+	/**
+	 * \brief Get the insertion time for this pick
+	 * \return Returns a double containing the pick inserrtion time into Glass
+	 * in Gregorian seconds
+	 */
+	double getTInsertion() const;
+	/**
+	 * \brief Get the first assoc time for this pick
+	 * \return Returns a double containing the time in Gregorian seconds when
+	 * the pick was first associated with an event.
+	 */
+	double getTFirstAssociation() const;
+	/**
+	 * \brief Get the nucleation time for this pick
+	 * \return Returns a double containing the time in Gregorian seconds when
+	 * this pick was used as keystone for nucleation
+	 */
+	double getTNucleation() const;
+
  protected:
 	/**
 	 * \brief Remove hypo reference to this pick
@@ -235,6 +274,16 @@ class CPick {
 	 * pick data lists.
 	 */
 	void clearHypoReference();
+
+	/**
+	 * \brief Set the first-assoc time for this pick to Now
+	 */
+	void setTFirstAssociation();
+
+	/**
+	 * \brief Set the nucleation time for this pick to Now
+	 */
+	void setTNucleation();
 
  private:
 	/**
@@ -285,6 +334,35 @@ class CPick {
 	 * not relevant to glass that are needed for generating outputs.
 	 */
 	std::shared_ptr<json::Object> m_JSONPick;
+
+	/**
+	 * \brief A double value containing this pick's sort time in Gregorian
+	 * seconds, this is a cached copy of tPick that is  guaranteed to not change
+	 * during the lifetime of the pick in a PickList's internal multiset,
+	 * ensuring that sort order won't change, even when tPick changes because of
+	 * an update. Resorting is accomplished by removing the pick from the
+	 * internal multiset (NOT the PickList), updating tSort to equal the current
+	 * tPick, and then reinserting the pick into the internal multiset.
+	 * /see CPickList.
+	 */
+	std::atomic<double> m_tSort;
+
+	/**
+	 * \brief A double value containing the time this pick was created in Glass3.
+	 */
+	std::atomic<double> m_tInsertion;
+
+	/**
+	 * \brief A double value containing the time this pick was first associated
+	 * with a Hypo.
+	 */
+	std::atomic<double> m_tFirstAssociation;
+
+	/**
+	 * \brief A double value containing the time this pick was nucleated.  Could
+	 * be 0 if nucleation wasn't done with this pick.
+	 */
+	std::atomic<double> m_tNucleation;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CPick.

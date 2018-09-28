@@ -2,10 +2,13 @@
 #include <memory>
 #include <string>
 #include <cmath>
+
+#include <logger.h>
+#include <geo.h>
+
 #include "Site.h"
 #include "Pick.h"
 #include "Node.h"
-#include "Logit.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
 #define SITE2JSON "{\"Type\":\"StationInfo\",\"Elevation\":1342.000000,\"Latitude\":46.711330,\"Longitude\":-111.831200,\"Site\":{\"Station\":\"HRY\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
@@ -20,7 +23,7 @@
 #define ELEVATION 2326.000000
 #define QUALITY 1.0
 #define GEOCENTRIC_LATITUDE 45.628982
-#define GEOCENTRID_ELEVATION 4555.822336
+#define GEOCENTRIC_ELEVATION 6373.326
 #define SITE2DISTANCE 109.66700963282658
 #define SITE2DELTA 0.017241728546897175
 #define USE true
@@ -58,22 +61,22 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	ASSERT_STREQ(siteloc.c_str(), expectedloc.c_str());
 
 	// check latitude
-	double sitelatitude = siteobject->getGeo().dLat;
+	double sitelatitude = siteobject->getGeo().m_dGeocentricLatitude;
 	// NOTE: expected latitude is in geocentric coordinates
 	double expectedlatitude = GEOCENTRIC_LATITUDE;
 	ASSERT_NEAR(sitelatitude, expectedlatitude, 0.000001);
 
 	// check longitude
-	double sitelongitude = siteobject->getGeo().dLon;
+	double sitelongitude = siteobject->getGeo().m_dGeocentricLongitude;
 	// NOTE: expected longitude is the same in geocentric and geographic
 	// coordinates
 	double expectedlongitude = LONGITUDE;
 	ASSERT_NEAR(sitelongitude, expectedlongitude, 0.000001);
 
 	// check elevation
-	double siteelevation = siteobject->getGeo().dZ;
+	double siteelevation = siteobject->getGeo().m_dGeocentricRadius;
 	// NOTE: expected elevation is in geocentric coordinates
-	double expectedelevation = GEOCENTRID_ELEVATION;
+	double expectedelevation = GEOCENTRIC_ELEVATION;
 	ASSERT_NEAR(siteelevation, expectedelevation, 0.000001);
 
 	// check use
@@ -94,7 +97,7 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 
 // tests to see if the site can be constructed
 TEST(SiteTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a site
 	glasscore::CSite * testSite = new glasscore::CSite();
@@ -112,13 +115,15 @@ TEST(SiteTest, Construction) {
 	ASSERT_EQ(1, testSite->getQuality())<< "dQual one";
 
 	// geographic
-	ASSERT_EQ(0, testSite->getGeo().dLat)<< "geo.dLat 0";
-	ASSERT_EQ(0, testSite->getGeo().dLon)<< "geo.dLon 0";
-	ASSERT_EQ(0, testSite->getGeo().dZ)<< "geo.dZ 0";
+	ASSERT_EQ(0, testSite->getGeo().m_dGeocentricLatitude)<<
+			"geo.m_dGeocentricLatitude 0";
+	ASSERT_EQ(0, testSite->getGeo().m_dGeocentricLongitude)<<
+			"geo.m_dGeocentricLongitude 0";
+	ASSERT_EQ(0, testSite->getGeo().m_dGeocentricRadius)<<
+			"geo.m_dGeocentricRadius 0";
 
 	// lists
 	ASSERT_EQ(0, testSite->getNodeLinksCount())<< "vNode.size() 0";
-	ASSERT_EQ(0, testSite->getVPick().size())<< "vPick.size() 0";
 
 	// now init
 	testSite->initialize(std::string(SITE), std::string(COMP), std::string(NET),
@@ -137,7 +142,7 @@ TEST(SiteTest, Construction) {
 
 // tests to see if the site can be constructed from JSON
 TEST(SiteTest, JSONConstruction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -155,7 +160,7 @@ TEST(SiteTest, JSONConstruction) {
 
 // tests to see if the distance functions are working
 TEST(SiteTest, Distance) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create json objects from the strings
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -181,7 +186,7 @@ TEST(SiteTest, Distance) {
 
 // tests to see if picks can be added to and removed from the site
 TEST(SiteTest, PickOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -201,30 +206,77 @@ TEST(SiteTest, PickOperations) {
 														"1", -1, -1);
 	glasscore::CPick * testPick2 = new glasscore::CPick(sharedTestSite2, 11.1,
 														"2", -1, -1);
+	glasscore::CPick * testPick3 = new glasscore::CPick(sharedTestSite, 12.2,
+														"3", -1, -1);
+	glasscore::CPick * testPick4 = new glasscore::CPick(sharedTestSite, 13.3,
+														"4", -1, -1);
+	glasscore::CPick * testPick5 = new glasscore::CPick(sharedTestSite, 14.4,
+														"5", -1, -1);
+	glasscore::CPick * testPick6 = new glasscore::CPick(sharedTestSite, 15.5,
+														"6", -1, -1);
+	glasscore::CPick * testPick7 = new glasscore::CPick(sharedTestSite, 16.6,
+														"7", -1, -1);
+	glasscore::CPick * testPick8 = new glasscore::CPick(sharedTestSite, 17.7,
+														"8", -1, -1);
+	glasscore::CPick * testPick9 = new glasscore::CPick(sharedTestSite, 18.8,
+														"9", -1, -1);
+	glasscore::CPick * testPick10 = new glasscore::CPick(sharedTestSite, 19.9,
+															"10", -1, -1);
 
 	// create new shared pointers to the picks
 	std::shared_ptr<glasscore::CPick> sharedTestPick(testPick);
 	std::shared_ptr<glasscore::CPick> sharedTestPick2(testPick2);
+	std::shared_ptr<glasscore::CPick> sharedTestPick3(testPick3);
+	std::shared_ptr<glasscore::CPick> sharedTestPick4(testPick4);
+	std::shared_ptr<glasscore::CPick> sharedTestPick5(testPick5);
+	std::shared_ptr<glasscore::CPick> sharedTestPick6(testPick6);
+	std::shared_ptr<glasscore::CPick> sharedTestPick7(testPick7);
+	std::shared_ptr<glasscore::CPick> sharedTestPick8(testPick8);
+	std::shared_ptr<glasscore::CPick> sharedTestPick9(testPick9);
+	std::shared_ptr<glasscore::CPick> sharedTestPick10(testPick10);
 
 	// test adding pick to site
 	testSite->addPick(sharedTestPick);
 	int expectedSize = 1;
-	ASSERT_EQ(expectedSize, testSite->getVPick().size())<< "Added Pick";
+	ASSERT_EQ(expectedSize, testSite->getPickCount())<< "Added Pick";
 
 	// test adding pick from different station
 	testSite->addPick(sharedTestPick2);
-	ASSERT_EQ(expectedSize, testSite->getVPick().size())<<
+	ASSERT_EQ(expectedSize, testSite->getPickCount())<<
 	"Added pick from different station";
+
+	// add more sites
+	testSite->addPick(sharedTestPick3);
+	testSite->addPick(sharedTestPick4);
+	testSite->addPick(sharedTestPick5);
+	testSite->addPick(sharedTestPick6);
+	testSite->addPick(sharedTestPick7);
+	testSite->addPick(sharedTestPick8);
+	testSite->addPick(sharedTestPick9);
+	testSite->addPick(sharedTestPick10);
+	expectedSize = 9;
+	ASSERT_EQ(expectedSize, testSite->getPickCount())<< "Added more Picks";
+
+	double min = 12.5;
+	double max = 17.0;
+
+	// get the picks
+	std::vector<std::shared_ptr<glasscore::CPick>> testPicks = testSite
+			->getPicks(min, max);
+	expectedSize = 4;
+	ASSERT_EQ(expectedSize, testPicks.size())<< "test pick vector size";
+	ASSERT_STREQ("4", testPicks[0]->getID().c_str())<< "start pick vector";
+	ASSERT_STREQ("7", testPicks[3]->getID().c_str())<< "end pick vector";
 
 	// test removing pick
 	testSite->removePick(sharedTestPick);
-	expectedSize = 0;
-	ASSERT_EQ(expectedSize, testSite->getVPick().size())<< "Removed pick";
+	expectedSize = 8;
+	ASSERT_EQ(expectedSize, testSite->getPickCount())<< "Removed pick";
 }
 
 // tests to see if nodes can be added to and removed from the site
 TEST(SiteTest, NodeOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// create a json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -235,17 +287,17 @@ TEST(SiteTest, NodeOperations) {
 
 	// create node objects
 	glasscore::CNode * testNode = new glasscore::CNode("test", 0.0, 0.0, 10,
-														100);
+														100, 10);
 	glasscore::CNode * testNode2 = new glasscore::CNode("test2", 0.897, 0.897,
-														10, 100);
+														10, 100, 10);
 
 	// create new shared pointers to the nodes
 	std::shared_ptr<glasscore::CNode> sharedNode(testNode);
 	std::shared_ptr<glasscore::CNode> sharedNode2(testNode2);
 
 	// test adding nodes to site
-	testSite->addNode(sharedNode, 10.0);
-	testSite->addNode(sharedNode2, 12.0);
+	testSite->addNode(sharedNode, 5.0, 10.0);
+	testSite->addNode(sharedNode2, 6.0, 12.0);
 	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Added Nodes";
 

@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <logger.h>
+
 #include "Site.h"
 #include "SiteList.h"
 #include "Pick.h"
@@ -13,8 +15,6 @@
 #include "Web.h"
 #include "Trigger.h"
 #include "Glass.h"
-#include "Logit.h"
-#include "logger.h"
 
 #define TESTPATH "testdata"
 #define STATIONFILENAME "teststationlist.json"
@@ -37,6 +37,7 @@
 #define TRIGGER_TIME 3648585210.926340
 #define TRIGGER_SUM 3.5
 #define TRIGGER_COUNT 1
+#define TRIGGER_MAXDEPTH 15
 
 #define TRIGGER_SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}" // NOLINT
 
@@ -143,7 +144,7 @@ void checkdata(glasscore::CHypo *hypoobject, const std::string &testinfo) {
 
 // test to see if the hypo can be constructed
 TEST(HypoTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo();
@@ -183,7 +184,7 @@ TEST(HypoTest, Construction) {
 
 // test to see if the hypo can be constructed from a correlation
 TEST(HypoTest, CorrelationConstruction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -255,7 +256,7 @@ TEST(HypoTest, CorrelationConstruction) {
 
 // test to see if the hypo can be constructed from a correlation
 TEST(HypoTest, TriggerConstruction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a web
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -297,6 +298,7 @@ TEST(HypoTest, TriggerConstruction) {
 			TRIGGER_DEPTH,
 			TRIGGER_TIME,
 			TRIGGER_WEB_RESOLUTION,
+			TRIGGER_MAXDEPTH,
 			TRIGGER_SUM,
 			TRIGGER_COUNT, picks, testWeb);
 	std::shared_ptr<glasscore::CTrigger> sharedTrigger(testTrigger);
@@ -328,7 +330,7 @@ TEST(HypoTest, TriggerConstruction) {
 
 // test to see if the hypopick operations work
 TEST(HypoTest, PickOperations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a hypo
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
@@ -398,7 +400,7 @@ TEST(HypoTest, PickOperations) {
 // test to see if the localize operation works
 TEST(HypoTest, Anneal) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -447,7 +449,7 @@ TEST(HypoTest, Anneal) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			hypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -458,33 +460,33 @@ TEST(HypoTest, Anneal) {
 	// check lat
 	double latitude = testHypo->getLatitude();
 	double expectedLatitude = ANNEAL_LATITUDE;
-	ASSERT_NEAR(latitude, expectedLatitude, 0.5);
+	ASSERT_NEAR(latitude, expectedLatitude, 1.0);
 
 	// check lon
 	double longitude = testHypo->getLongitude();
 	double expectedLongitude = ANNEAL_LONGITUDE;
-	ASSERT_NEAR(longitude, expectedLongitude, 0.5);
+	ASSERT_NEAR(longitude, expectedLongitude, 1.0);
 
 	// check depth
 	double depth = testHypo->getDepth();
 	double expectedDepth = ANNEAL_DEPTH;
-	ASSERT_NEAR(depth, expectedDepth, 10.0);
+	ASSERT_NEAR(depth, expectedDepth, 50.0);
 
 	// check time
 	double time = testHypo->getTOrigin();
 	double expectedTime = ANNEAL_TIME;
-	ASSERT_NEAR(time, expectedTime, 0.5);
+	ASSERT_NEAR(time, expectedTime, 1.0);
 
 	// check bayes
 	double bayes = testHypo->getBayesValue();
 	double expectedBayes = ANNEAL_BAYES;
-	ASSERT_NEAR(bayes, expectedBayes, 0.5);
+	ASSERT_NEAR(bayes, expectedBayes, 1.0);
 }
 
 // test to see if the localize operation works
 TEST(HypoTest, Localize) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -533,7 +535,7 @@ TEST(HypoTest, Localize) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			hypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -544,27 +546,27 @@ TEST(HypoTest, Localize) {
 	// check lat
 	double latitude = testHypo->getLatitude();
 	double expectedLatitude = LOCALIZE_LATITUDE;
-	ASSERT_NEAR(latitude, expectedLatitude, 0.1);
+	ASSERT_NEAR(latitude, expectedLatitude, 1.0);
 
 	// check lon
 	double longitude = testHypo->getLongitude();
 	double expectedLongitude = LOCALIZE_LONGITUDE;
-	ASSERT_NEAR(longitude, expectedLongitude, 0.1);
+	ASSERT_NEAR(longitude, expectedLongitude, 1.0);
 
 	// check depth
 	double depth = testHypo->getDepth();
 	double expectedDepth = LOCALIZE_DEPTH;
-	ASSERT_NEAR(depth, expectedDepth, 1.0);
+	ASSERT_NEAR(depth, expectedDepth, 10.0);
 
 	// check time
 	double time = testHypo->getTOrigin();
 	double expectedTime = LOCALIZE_TIME;
-	ASSERT_NEAR(time, expectedTime, 0.1);
+	ASSERT_NEAR(time, expectedTime, 1.0);
 
 	// check bayes
 	double bayes = testHypo->getBayesValue();
 	double expectedBayes = LOCALIZE_BAYES;
-	ASSERT_NEAR(bayes, expectedBayes, 0.1);
+	ASSERT_NEAR(bayes, expectedBayes, 1.0);
 
 	// switch to residual locator
 	testGlass->setMinimizeTTLocator(true);
@@ -601,7 +603,7 @@ TEST(HypoTest, Localize) {
 // test to see if the localize operation works
 TEST(HypoTest, Prune) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -650,7 +652,7 @@ TEST(HypoTest, Prune) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			hypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -664,7 +666,7 @@ TEST(HypoTest, Prune) {
 // test to see if the localize operation works
 TEST(HypoTest, Resolve) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -713,7 +715,7 @@ TEST(HypoTest, Resolve) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			hypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);
@@ -729,7 +731,7 @@ TEST(HypoTest, Resolve) {
 // test to see if the localize operation works
 TEST(HypoTest, Messaging) {
 	// glass3::util::log_init("localizetest", "debug", ".", true);
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// load files
 	// stationlist
@@ -778,7 +780,7 @@ TEST(HypoTest, Messaging) {
 	// construct a hypo
 	glasscore::CHypo * testHypo = new glasscore::CHypo(
 			sharedHypoMessage, testGlass->getNucleationStackThreshold(),
-			testGlass->getNucleationDataThreshold(),
+			testGlass->getNucleationDataCountThreshold(),
 			testGlass->getDefaultNucleationTravelTime(), nullTrav,
 			testGlass->getAssociationTravelTimes(), 100, 360.0, 800.0,
 			testSiteList);

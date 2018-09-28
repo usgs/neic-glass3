@@ -6,7 +6,7 @@
   "IncludeNetworks": ["IU", "US", "II", "CU", "G", "GE", "IM", "IC", "GT", "C", "AU", "MX", "AT", "JP", "NZ"],
   "NodeResolution": 100.0,
   "NumStationsPerNode": 40,
-  "NucleationDataThreshold": 8,
+  "NucleationDataCountThreshold": 8,
   "DepthLayers": [
       10.0,
       30.0,

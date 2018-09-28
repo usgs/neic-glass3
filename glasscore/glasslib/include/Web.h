@@ -22,6 +22,7 @@
 #include <atomic>
 
 #include "TravelTime.h"
+#include "ZoneStats.h"
 
 namespace glasscore {
 
@@ -411,7 +412,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \return Returns an integer value containing the nucleation data minimum
 	 * threshold
 	 */
-	int getNucleationDataThreshold() const;
+	int getNucleationDataCountThreshold() const;
 
 	/**
 	 * \brief Gets the name of this web
@@ -503,7 +504,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * also fills in the distance), and used by genNode() during a Single(),
 	 * Shell(), Grid(), or Global() call
 	 */
-	std::vector<std::pair<double, std::shared_ptr<CSite>>> m_vSitesSortedForCurrentNode; // NOLINT
+	std::vector<std::pair<double, std::shared_ptr<CSite>>>m_vSitesSortedForCurrentNode;  // NOLINT
 
 	/**
 	 * \brief A std::vector containing a std::shared_ptr to each node in this
@@ -533,7 +534,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * gathered to trigger the nucleation of an event. This number overrides the
 	 * default Glass parameter if it is provided
 	 */
-	std::atomic<int> m_iNucleationDataThreshold;
+	std::atomic<int> m_iNucleationDataCountThreshold;
 
 	/**
 	 * \brief A double value containing the viability threshold needed to
@@ -559,6 +560,11 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * depth
 	 **/
 	std::atomic<double> m_dMaxDepth;
+
+	/**
+	 * \brief A double which describes the web depth layer resolution
+	 **/
+	std::atomic<double> m_dDepthResolution;
 
 	/**
 	 * \brief A boolean flag that stores whether to update this web when a
@@ -598,6 +604,16 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief the std::mutex for m_QueueMutex
 	 */
 	std::mutex m_QueueMutex;
+
+	/**
+	 * \brief string containing the filename of ZoneStats file.  Empty = no
+	 * zonestats
+	 */
+	std::string m_sZoneStatsFileName;
+	/**
+	 * \brief shared pointer to ZoneStats info
+	 */
+	std::shared_ptr<traveltime::CZoneStats> m_pZoneStats;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CWeb.

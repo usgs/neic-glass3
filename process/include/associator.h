@@ -9,7 +9,6 @@
 
 #include <json.h>
 #include <IGlassSend.h>
-#include <Logit.h>
 #include <inputinterface.h>
 #include <outputinterface.h>
 #include <associatorinterface.h>
@@ -19,9 +18,18 @@
 #include <memory>
 
 namespace glass3 {
+
+/**
+ * \namespace glass3::process
+ * \brief The neic-glass3 project namespace containing processing class and
+ * functions
+ *
+ * The neic-glass3 process namespace contains the class, and functions used
+ * by other components of neic-glass3 to host glasscore.
+ */
 namespace process {
 /**
- * \brief glass association l
+ * \brief glass association class
  *
  * The glass association class is a thread class hosting the glass core
  * association and nucleation engine.  The associator class pulls input data

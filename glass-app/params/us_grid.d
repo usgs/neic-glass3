@@ -10,7 +10,7 @@
 	"CenterLongitude": -97.0,
 	"DepthLayers": [ 10.0 ],
 	"NumStationsPerNode": 16,
-	"NucleationDataThreshold": 7,
+	"NucleationDataCountThreshold": 7,
 	"NucleationStackThreshold": 0.5,
 	"UpdateGrid":false, # False because glass-app does not do site lookups.
 	"SaveGrid":false,

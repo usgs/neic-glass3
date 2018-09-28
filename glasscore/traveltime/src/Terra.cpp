@@ -1,10 +1,10 @@
+#include "Terra.h"
+#include <logger.h>
 #include <json.h>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <string>
-#include "Logit.h"
-#include "Terra.h"
 
 namespace traveltime {
 
@@ -35,7 +35,7 @@ void CTerra::clear() {
 bool CTerra::load(std::string filename) {
 	// null check
 	if (filename == "") {
-		glassutil::CLogit::log(glassutil::log_level::error,
+		glass3::util::Logger::log("error",
 								"CTerra::load: Empty filename provided.");
 		return (false);
 	}
@@ -60,8 +60,8 @@ bool CTerra::load(std::string filename) {
 
 	// make sure we loaded a valid file
 	if (!earthModelFile) {
-		glassutil::CLogit::log(
-				glassutil::log_level::error,
+		glass3::util::Logger::log(
+				"error",
 				"CTerra::load: Unable to open earth model file: " + filename);
 		return (false);
 	}
@@ -146,8 +146,8 @@ bool CTerra::load(std::string filename) {
 		}
 	}
 
-	glassutil::CLogit::log(
-			glassutil::log_level::debug,
+	glass3::util::Logger::log(
+			"debug",
 			"CTerra::load: Loaded earth model file: " + filename);
 
 	return (true);

@@ -1,21 +1,29 @@
+#include "Node.h"
 #include <json.h>
+#include <logger.h>
+#include <glassmath.h>
+#include <geo.h>
 #include <memory>
 #include <string>
 #include <utility>
 #include <tuple>
+#include <limits>
 #include <mutex>
 #include <algorithm>
 #include <vector>
 #include <cmath>
-#include "Node.h"
 #include "Glass.h"
 #include "Web.h"
 #include "Trigger.h"
 #include "Site.h"
 #include "Pick.h"
-#include "Date.h"
-#include "Logit.h"
-#include "GlassMath.h"
+
+// This is kinda big (sloppy) slop factor, but we only use it in the initial
+// pick-selection window, so seems OK to use a slighly larger window than we
+// likely need, since it won't generate a lot of additional results, and might
+// be necessary if we have improperly recognized the size of other potential
+// errors.
+#define NUCLEATION_SLOP_FACTOR_SECONDS 60.0
 
 namespace glasscore {
 
@@ -48,8 +56,8 @@ CNode::CNode() {
 
 // ---------------------------------------------------------CNode
 CNode::CNode(std::string name, double lat, double lon, double z,
-				double resolution) {
-	if (!initialize(name, lat, lon, z, resolution)) {
+				double resolution, double maxDepth) {
+	if (!initialize(name, lat, lon, z, resolution, maxDepth)) {
 		clear();
 	}
 }
@@ -71,6 +79,7 @@ void CNode::clear() {
 	m_dLongitude = 0;
 	m_dDepth = 0;
 	m_dResolution = 0;
+	m_dMaxDepth = 0;
 	m_bEnabled = false;
 }
 
@@ -95,7 +104,7 @@ void CNode::clearSiteLinks() {
 
 // ---------------------------------------------------------initialize
 bool CNode::initialize(std::string name, double lat, double lon, double z,
-						double resolution) {
+						double resolution, double maxDepth) {
 	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
 
 	clear();
@@ -105,6 +114,7 @@ bool CNode::initialize(std::string name, double lat, double lon, double z,
 	m_dLongitude = lon;
 	m_dDepth = z;
 	m_dResolution = resolution;
+	m_dMaxDepth = maxDepth;
 	m_bEnabled = true;
 
 	return (true);
@@ -112,18 +122,19 @@ bool CNode::initialize(std::string name, double lat, double lon, double z,
 
 // ---------------------------------------------------------linkSite
 bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
-						double travelTime1, double travelTime2) {
+						double distDeg, double travelTime1,
+						double travelTime2) {
 	// nullchecks
 	// check site
 	if (site == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::linkSite: NULL site pointer.");
+		glass3::util::Logger::log("error",
+									"CNode::linkSite: NULL site pointer.");
 		return (false);
 	}
 	// check node
 	if (node == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::linkSite: NULL node pointer.");
+		glass3::util::Logger::log("error",
+									"CNode::linkSite: NULL node pointer.");
 		return (false);
 	}
 
@@ -131,14 +142,14 @@ bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
 
 	// Link node to site using traveltime
-	// NOTE: No validation on travel times
-	SiteLink link = std::make_tuple(site, travelTime1, travelTime2);
+	// NOTE: No validation on travel times or distance
+	SiteLink link = std::make_tuple(site, travelTime1, travelTime2, distDeg);
 	m_vSiteLinkList.push_back(link);
 
 	// link site to node, again using the traveltime
 	// NOTE: this used to be site->addNode(shared_ptr<CNode>(this), tt);
 	// but that caused problems when deleting site-node links.
-	site->addNode(node, travelTime1, travelTime2);
+	site->addNode(node, distDeg, travelTime1, travelTime2);
 
 	// successfully linked site
 	return (true);
@@ -149,8 +160,8 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 	// nullchecks
 	// check site
 	if (site == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::unlinkSite: NULL site pointer.");
+		glass3::util::Logger::log("error",
+									"CNode::unlinkSite: NULL site pointer.");
 		return (false);
 	}
 
@@ -167,7 +178,7 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 
 		// if the new station would be before
 		// the current station
-		if (currentSite->getSCNL() == site->getSCNL()) {
+		if (currentSite == site) {
 			found = true;
 			foundLink = link;
 			foundSite = currentSite;
@@ -235,8 +246,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	// nullchecks
 	// check web
 	if (m_pWeb == NULL) {
-		glassutil::CLogit::log(glassutil::log_level::error,
-								"CNode::nucleate: NULL web pointer.");
+		glass3::util::Logger::log("error",
+									"CNode::nucleate: NULL web pointer.");
 		return (NULL);
 	}
 	// don't nucleate if this node is disabled
@@ -246,7 +257,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 	// get the cut and threshold from our
 	// parent web
-	int nCut = m_pWeb->getNucleationDataThreshold();
+	int nCut = m_pWeb->getNucleationDataCountThreshold();
 	double dThresh = m_pWeb->getNucleationStackThreshold();
 	double dAzimuthRange = CGlass::getBeamMatchingAzimuthWindow();
 	// commented out because slowness matching of beams is not yet implemented
@@ -260,16 +271,16 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 	std::vector<std::shared_ptr<CPick>> vPick;
 
-	// lock mutex for this scope
+	// lock mutex for this scope (iterating through the site links)
 	std::lock_guard<std::mutex> guard(m_SiteLinkListMutex);
-
-	// the best nucleating pick
-	std::shared_ptr<CPick> pickBest;
 
 	// search through each site linked to this node
 	for (const auto &link : m_vSiteLinkList) {
 		// init sigbest
 		double dSigBest = -1.0;
+
+		// the best nucleating pick
+		std::shared_ptr<CPick> pickBest;
 
 		// get shared pointer to site
 		std::shared_ptr<CSite> site = std::get< LINK_PTR>(link);
@@ -282,16 +293,84 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			continue;
 		}
 
-		std::vector<std::shared_ptr<CPick>> vSitePicks = site->getVPick();
+		// get traveltime(s) to site
+		double travelTime1 = std::get< LINK_TT1>(link);
+		double travelTime2 = std::get< LINK_TT2>(link);
+		double distDeg = std::get< LINK_DIST>(link);
 
-		// search through each pick at this site
-		for (const auto &pick : vSitePicks) {
+		// the minimum and maximum time windows for picks
+		double min = 0.0;
+		double max = 0.0;
+
+		// the exclusion window within min and max that we don't want
+		// picks from
+		double dtExcludeBegin = 0.0;
+		double dtExcludeEnd = 0.0;
+
+		// use traveltimes to compute min and max
+		if ((travelTime1 >= 0) && (travelTime2 >= 0)) {
+			// both travel times are valid
+			if (travelTime1 <= travelTime2) {
+				// TT1 smaller/shorter/faster
+				min = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
+				max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
+			} else {
+				// TT2 smaller/shorter/faster
+				min = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
+				max = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
+			}
+		} else if (travelTime1 >= 0) {
+			// Only TT1 valid
+			min = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
+			max = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
+		} else if (travelTime2 >= 0) {
+			// Only TT2 valid
+			min = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
+			max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
+		} else {
+			// no valid TTs
+			glass3::util::Logger::log(
+					"error", "CNode::nucleate: Bad Pick SearchRange.");
+			continue;
+		}
+
+		// use min and max to compute exclusion window
+		if (max - min > NUCLEATION_SLOP_FACTOR_SECONDS * 2.0) {
+			// we have two different TTs and there's a window of picks
+			// in between the two TTs we don't want
+			dtExcludeBegin = min + NUCLEATION_SLOP_FACTOR_SECONDS * 2.0;
+			dtExcludeEnd = max - NUCLEATION_SLOP_FACTOR_SECONDS * 2.0;
+			if (dtExcludeEnd < dtExcludeBegin) {
+				// we effectively don't have a window because our two windows
+				// overlap.
+				dtExcludeBegin = 0.0;
+			}
+		}
+
+		site->getPickMutex().lock();
+
+		// compute bounds iterator
+		auto lower = site->getLower(min);
+
+		for (auto it = lower; (it != site->getEnd()); ++it) {
+			auto pick = *it;
+
 			if (pick == NULL) {
 				continue;
 			}
 
 			// get the pick's arrival time
 			double tPick = pick->getTPick();
+
+			if (tPick > max) {
+				break;  // picks are in time order and we're past our window
+			}
+			// skip this pick if it's in our exclude window(if we have one)
+			// between our two TTs
+			if (dtExcludeBegin && (tPick > dtExcludeBegin)
+					&& (tPick <= dtExcludeEnd)) {
+				continue;
+			}
 
 			// get the picks back azimuth
 			double backAzimuth = pick->getBackAzimuth();
@@ -300,19 +379,12 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// the provided origin time
 			double tObs = tPick - tOrigin;
 
-			// Ignore arrivals past earlier than this potential origin and
-			// past 1000 seconds (about 100 degrees)
-			// NOTE: Time cutoff is hard coded
-			if (tObs < 0 || tObs > 1000.0) {
-				continue;
-			}
-
 			// check backazimuth if present
 			if (backAzimuth > 0) {
 				// set up a geo for distance calculations
-				glassutil::CGeo nodeGeo;
+				glass3::util::Geo nodeGeo;
 				nodeGeo.setGeographic(m_dLatitude, m_dLongitude,
-									  EARTHRADIUSKM - m_dDepth);
+				EARTHRADIUSKM - m_dDepth);
 
 				// compute azimith from the site to the node
 				double siteAzimuth = pick->getSite()->getGeo().azimuth(
@@ -334,11 +406,9 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			/*if (pick->dSlowness > 0) {
 			 // compute distance from the site to the node
 			 double siteDistance = pick->pSite->getGeo().delta(&nodeGeo);
-
 			 // compute observed distance from slowness (1/velocity)
 			 // and tObs (distance = velocity * time)
 			 double obsDistance = (1 / pick->dSlowness) * tObs;
-
 			 // check to see if the observed distance is within the
 			 // valid range
 			 if ((obsDistance < (siteDistance - dDistanceRange))
@@ -346,11 +416,14 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			 // it is not, do not nucleate
 			 continue;
 			 }
-			 }*/
+			 }
+			 */
 
 			// get the best significance from the observed time and the
-			// link
-			double dSig = getBestSignificance(tObs, link);
+			// link hmmm... at this point we don't know which TT got us here,
+			// or wich one
+			double dSig = getBestSignificance(tObs, travelTime1, travelTime2,
+												distDeg);
 
 			// only count if this pick is significant (better than
 			// previous)
@@ -363,10 +436,12 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			}
 		}  // ---- end search through each pick at this site ----
 
+		site->getPickMutex().unlock();
+
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site
 		// NOTE: This significance threshold is hard coded.
-		if (dSigBest >= 0.1) {
+		if ((dSigBest >= 0.1) && (pickBest != NULL)) {
 			// count this site
 			nCount++;
 
@@ -377,13 +452,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// add the pick to the pick vector
 			vPick.push_back(pickBest);
 		}
-	}
-
-	// Depth Down-weighting
-	// if (dZ > 75.) {
-	// dSum = dSum / (dZ / 75.);  // 75 was empirically when testing
-	//							   // events in Soda Springs
-	// }
+	}  // ---- end search through each site this node is linked to ----
 
 	// make sure the number of significant picks
 	// exceeds the nucleation threshold
@@ -402,20 +471,16 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	// create trigger
 	std::shared_ptr<CTrigger> trigger(
 			new CTrigger(m_dLatitude, m_dLongitude, m_dDepth, tOrigin,
-							m_dResolution, dSum, nCount, vPick, m_pWeb));
+							m_dResolution, m_dMaxDepth, dSum, nCount, vPick,
+							m_pWeb));
 
 	// the node nucleated an event
 	return (trigger);
 }
 
 // ---------------------------------------------------------getBestSignificance
-double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
-	// get traveltime1 to site
-	double travelTime1 = std::get< LINK_TT1>(link);
-
-	// get traveltime2 to site
-	double travelTime2 = std::get< LINK_TT2>(link);
-
+double CNode::getBestSignificance(double tObservedTT, double travelTime1,
+									double travelTime2, double distDeg) {
 	// use observed travel time, travel times to site
 	double tRes1 = -1;
 	if (travelTime1 > 0) {
@@ -430,13 +495,51 @@ double CNode::getBestSignificance(double tObservedTT, SiteLink link) {
 
 	// compute significances using residuals and web resolution
 	// should trigger be a looser cutoff than location cutoff
+
+	// CNode::nucleate() will ignore anything with a residual > 2.15 sigma.
+	// since we are using the web resolution as our starting point, that says we
+	// should be able to pull in anything that is 2.15 times the web resolution
+	// away, which should let us go plenty far (anything over sqrt(2)/2 *
+	// resolution should theoretically be closer to another node than it is to
+	// us, but we're already reducing the slop by up to 8x over what it was)
+	// even though we have not accounted for pick error. I think this really
+	// should be some combination of: location error(converted to seconds) -
+	// sqrt(2)/2 * m_dSurfaceResolution* KM2DEG * tt1.rayparam(dtdx) + 0.5 *
+	// m_dDepthResolution*tt1.dtdz tt error -  tt1.residual_PDF_SD for sigma -
+	// observed difference between theoretical and actual for tt1 pick error -
+	// estimated picking error from pick data. but that's more complicated than
+	// what we are prepared to deal with at this time, so let's go with what's
+	// below, and refine it empirically: where we subtract location error from
+	// tRes1, and then
 	double dSig1 = 0;
 	if (tRes1 > 0) {
-		dSig1 = glassutil::GlassMath::sig(tRes1, m_dResolution);
+		// calculate the PDF based on the number of SDs we are from mean, by
+		// allowing for WEb Resolution slop converted to seconds
+		dSig1 =
+				glass3::util::GlassMath::sig(
+						std::max(
+								0.0,
+								(tRes1
+										- travelTime1 / distDeg
+												* (m_dResolution
+														+ NUC_DEPTH_SHELL_RESOLUTION_KM)  // NOLINT
+												* KM2DEG
+												* FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO)),  // NOLINT
+						NUC_SECONDS_PER_SIGMA);
 	}
 	double dSig2 = 0;
 	if (tRes2 > 0) {
-		dSig2 = glassutil::GlassMath::sig(tRes2, m_dResolution);
+		dSig2 =
+				glass3::util::GlassMath::sig(
+						std::max(
+								0.0,
+								(tRes2
+										- travelTime2 / distDeg
+												* (m_dResolution
+														+ NUC_DEPTH_SHELL_RESOLUTION_KM)  // NOLINT
+												* KM2DEG
+												* FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO)),  // NOLINT
+						NUC_SECONDS_PER_SIGMA);
 	}
 
 	// return the higher of the two significances
@@ -557,15 +660,20 @@ double CNode::getDepth() const {
 	return (m_dDepth);
 }
 
+// ---------------------------------------------------------getMaxTriggerDepth
+double CNode::getMaxDepth() const {
+	return (m_dMaxDepth);
+}
+
 // ---------------------------------------------------------getGeo
-glassutil::CGeo CNode::getGeo() const {
-	glassutil::CGeo geoNode;
+glass3::util::Geo CNode::getGeo() const {
+	glass3::util::Geo geoNode;
 	geoNode.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
 	return (geoNode);
 }
 
 // ---------------------------------------------------------getWeb
-CWeb* CNode::getWeb() const {
+CWeb * CNode::getWeb() const {
 	std::lock_guard<std::recursive_mutex> nodeGuard(m_NodeMutex);
 	return (m_pWeb);
 }

@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <logger.h>
+
 #include "TimeWarp.h"
-#include "Logit.h"
 
 #define GRIDMINIMUM 0.0
 #define GRIDMAXIMUM 360.0
@@ -13,7 +14,7 @@
 
 // tests to see if the timewarp can be constructed
 TEST(TimeWarpTest, Construction) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a timewarp
 	traveltime::CTimeWarp timeWarp(GRIDMINIMUM, GRIDMAXIMUM, DECAYCONSTANT,
@@ -41,7 +42,7 @@ TEST(TimeWarpTest, Construction) {
 
 // tests the time warp copy constructor
 TEST(TimeWarpTest, Copy) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a timewarp
 	traveltime::CTimeWarp timeWarp1;
@@ -92,7 +93,7 @@ TEST(TimeWarpTest, Copy) {
 
 // tests the time warp operations
 TEST(TimeWarpTest, Operations) {
-	glassutil::CLogit::disable();
+	glass3::util::Logger::disable();
 
 	// construct a timewarp
 	traveltime::CTimeWarp timeWarp(GRIDMINIMUM, GRIDMAXIMUM, DECAYCONSTANT,

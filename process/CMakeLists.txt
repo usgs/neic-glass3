@@ -37,10 +37,6 @@ file(GLOB HDRS ${PROJECT_SOURCE_DIR}/include/*.h)
 # ----- BUILD LIBRARY ----- #
 include(${CMAKE_DIR}/build_lib.cmake)
 
-# ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src")
-include(${CMAKE_DIR}/documentation.cmake)
-
 # ----- RUN CPPCHECK ----- #
 include(${CMAKE_DIR}/cppcheck.cmake)
 
