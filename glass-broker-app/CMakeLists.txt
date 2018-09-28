@@ -78,10 +78,6 @@ if (UNIX AND NOT APPLE)
 endif (UNIX AND NOT APPLE)
 include(${CMAKE_DIR}/build_exe.cmake)
 
-# ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/brokerInput ${PROJECT_SOURCE_DIR}/brokerOutput ${PROJECT_SOURCE_DIR}/glass-broker-app.cpp")
-include(${CMAKE_DIR}/documentation.cmake)
-
 # ----- RUN CPPCHECK ----- #
 include(${CMAKE_DIR}/cppcheck.cmake)
 

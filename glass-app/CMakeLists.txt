@@ -68,10 +68,6 @@ add_library (testingLib STATIC ${SRCS} ${HDRS})
 set(EXE_LIBRARIES ${input_LIBRARIES} ${output_LIBRARIES} ${process_LIBRARIES} ${parse_LIBRARIES} ${DetectionFormats_LIBRARIES} ${glasscore_LIBRARIES} ${util_LIBRARIES} ${log_LIBRARIES} ${SuperEasyJSON_LIBRARIES})
 include(${CMAKE_DIR}/build_exe.cmake)
 
-# ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/file_input ${PROJECT_SOURCE_DIR}/file_output ${PROJECT_SOURCE_DIR}/glass-app.cpp")
-include(${CMAKE_DIR}/documentation.cmake)
-
 # ----- RUN CPPCHECK ----- #
 include(${CMAKE_DIR}/cppcheck.cmake)
 

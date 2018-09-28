@@ -10,6 +10,13 @@
 #include <json.h>
 #include <memory>
 
+/**
+ * \namespace glasscore
+ * \brief The namespace containing the core algorithm
+ *
+ * The glasscore namespace contains the classs, and functions that make up the
+ * core glass3 algorithm
+ */
 namespace glasscore {
 
 /**

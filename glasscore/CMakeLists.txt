@@ -42,10 +42,6 @@ file(GLOB HDRS "${PROJECT_SOURCE_DIR}/traveltime/include/*.h"
 # ----- BUILD LIBRARY ----- #
 include(${CMAKE_DIR}/build_lib.cmake)
 
-# ----- GENERATE DOCUMENTATION ----- #
-set(DOC_DIRS "${PROJECT_SOURCE_DIR}/traveltime ${PROJECT_SOURCE_DIR}/glasslib")
-include(${CMAKE_DIR}/documentation.cmake)
-
 # ----- RUN CPPCHECK ----- #
 include(${CMAKE_DIR}/cppcheck.cmake)
 

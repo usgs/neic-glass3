@@ -24,18 +24,12 @@ if(GENERATE_DOCUMENTATION)
     set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
     configure_file(${doxyfile_in} ${doxyfile} @ONLY)
 
-    # run Doxygen after the project build
-    add_custom_command(TARGET ${PROJECT_NAME}
-        POST_BUILD
+    # run Doxygen always, but wait until the ${INSTALL_LOCATION} has been created
+    add_custom_target(${PROJECT_NAME}_doxygen
+        ALL
         COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen"
+        DEPENDS glasscore
         VERBATIM)
-
-    # copy Doxygen output to the distribution directory
-    # in the doc subdirectory
-    install(
-        DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
-        DESTINATION doc/${PROJECT_NAME}
-    )
 endif()

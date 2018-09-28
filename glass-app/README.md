@@ -26,4 +26,4 @@ An example configuration for **glass-app** is available in the [glass-app params
 
 To run **glass-app**, use the following command: `glass-app <configfile> [logname] [noconsole]` where `<configfile>` is the required path the the glass.d configuration file, `[logname]` is an optional command that when present specifies the log file name and enables logging, and `[noconsole]` is an optional string specifying that glass-app should not write messages to the console.
 
-For more information, please see the [glass-app DOxygen documentation](https://usgs.github.io/neic-glass3/glass-app/html/glass-app_8cpp.html)
+For more information, please see the [glass-app DOxygen documentation](https://usgs.github.io/neic-glass3/html/glass-app_8cpp.html)

@@ -27,6 +27,14 @@
 #include <memory>
 
 namespace glass3 {
+
+/**
+ * \namespace glass3::input
+ * \brief The neic-glass3 namespace containing input class and functions
+ *
+ * The neic-glass3 input namespace contains the class, and functions used
+ * by other components of neic-glass3 to input data.
+ */
 namespace input {
 
 #define GPICK_TYPE "gpick"

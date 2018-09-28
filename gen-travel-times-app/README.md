@@ -18,4 +18,4 @@ An example configuration for **gen-travel-times-app** is available in the [gen-t
 
 To run **gen-travel-times-app**, use the following command: `gen-travel-times-app <configfile> [logname]` where `<configfile>` is the required path the the gen-travel-times.d configuration file and `[logname]` is an optional command that when present specifies the log file name and enables logging.
 
-For more information, please see the [gen-travel-times-app DOxygen documentation](https://usgs.github.io/neic-glass3/gen-travel-times-app/html/gen-travel-times-app_8cpp.html)
+For more information, please see the [gen-travel-times-app DOxygen documentation](https://usgs.github.io/neic-glass3/html/gen-travel-times-app_8cpp.html)

@@ -238,7 +238,6 @@ occur from being generated
 * **DepthResolution** - An optional maximum depth in kilometers below which a
 trigger at a specific node is rejected. If not provided, the maximum depth
 defaults to **MaximumDepth**
-
 * **SaveGrid** - A flag indicating whether to save the grid node locations to a
 file for evaluation.
 * **UpdateGrid** - A flag indicating whether a grid is allowed to add or remove sites
