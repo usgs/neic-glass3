@@ -14,7 +14,6 @@
 
 // default values
 #define DEFAULT_MAXNUMPICKS -1
-#define DEFAULT_MAXPICKSPERSITE -1
 #define DEFAULT_MAXNUMCORR -1
 #define DEFAULT_MAXNUMHYPOS -1
 #define DEFAULT_GRAPHICSOUT false
@@ -45,7 +44,6 @@
 
 // init values
 #define MAXNUMPICKS 10000
-#define MAXPICKSPERSITE 30
 #define MAXNUMCORR 1000
 #define MAXNUMHYPOS 250
 #define GRAPHICSOUT false
@@ -129,8 +127,6 @@ TEST(GlassTest, Construction) {
 	"getMaxNumPicks";
 	ASSERT_EQ(DEFAULT_REPORTDATA, testGlass->getReportingDataThreshold())<<
 	"getReportingDataThreshold";
-	ASSERT_EQ(DEFAULT_MAXPICKSPERSITE, testGlass->getMaxNumPicksPerSite())<<
-	"getMaxNumPicksPerSite";
 	ASSERT_EQ(DEFAULT_PICKDUP, testGlass->getPickDuplicateTimeWindow())<<
 	"getPickDuplicateTimeWindow";
 	ASSERT_EQ(DEFAULT_ASSOCSD, testGlass->getAssociationSDCutoff())<<
@@ -226,8 +222,6 @@ TEST(GlassTest, Init) {
 	"getMaxNumPicks";
 	ASSERT_EQ(REPORTDATA, testGlass->getReportingDataThreshold())<<
 	"getReportingDataThreshold";
-	ASSERT_EQ(MAXPICKSPERSITE, testGlass->getMaxNumPicksPerSite())<<
-	"getMaxNumPicksPerSite";
 	ASSERT_EQ(PICKDUP, testGlass->getPickDuplicateTimeWindow())<<
 	"getPickDuplicateTimeWindow";
 	ASSERT_EQ(ASSOCSD, testGlass->getAssociationSDCutoff())<<

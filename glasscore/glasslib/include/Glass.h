@@ -373,13 +373,6 @@ class CGlass {
 	static void setMaxNumCorrelations(int max);
 
 	/**
-	 * \brief Get the maximum number of picks to store with a site
-	 * \return Returns an integer containing the maximum number of picks to
-	 * store with a site
-	 */
-	static int getMaxNumPicksPerSite();
-
-	/**
 	 * \brief Set the maximum number of picks to store with a site
 	 * \param max - an integer containing the maximum number of picks to
 	 * store with a site
@@ -546,12 +539,6 @@ class CGlass {
 	 * pCorrelationList
 	 */
 	static std::atomic<int> m_iMaxNumCorrelations;
-
-	/**
-	 * \brief An integer containing the maximum number of picks stored by
-	 * the vector in a site
-	 */
-	static std::atomic<int> m_iMaxNumPicksPerSite;
 
 	/**
 	 * \brief An integer containing the maximum number of hypocenters stored by

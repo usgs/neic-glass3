@@ -34,7 +34,6 @@ std::shared_ptr<traveltime::CTTT> CGlass::m_pAssociationTravelTimes = NULL;
 
 std::atomic<int> CGlass::m_iMaxNumPicks { -1 };
 std::atomic<int> CGlass::m_iMaxNumCorrelations { -1 };
-std::atomic<int> CGlass::m_iMaxNumPicksPerSite { -1 };
 std::atomic<int> CGlass::m_iMaxNumHypos { -1 };
 std::atomic<int> CGlass::m_iNucleationDataCountThreshold { 7 };
 std::atomic<int> CGlass::m_iNumStationsPerNode { 20 };
@@ -174,7 +173,6 @@ void CGlass::clear() {
 	// reset to defaults
 	m_iMaxNumPicks = -1;
 	m_iMaxNumCorrelations = -1;
-	m_iMaxNumPicksPerSite = -1;
 	m_iMaxNumHypos = -1;
 	m_iNucleationDataCountThreshold = 7;
 	m_iNumStationsPerNode = 20;
@@ -910,18 +908,6 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						+ std::to_string(m_iMaxNumPicks));
 	}
 
-	// set maximum number of pick in a single site
-	if ((com->HasKey("MaximumNumberOfPicksPerSite"))
-			&& ((*com)["MaximumNumberOfPicksPerSite"].GetType()
-					== json::ValueType::IntVal)) {
-		m_iMaxNumPicksPerSite = (*com)["MaximumNumberOfPicksPerSite"].ToInt();
-
-		glass3::util::Logger::log(
-				"info",
-				"CGlass::initialize: Using MaximumNumberOfPicksPerSite: "
-						+ std::to_string(m_iMaxNumPicksPerSite));
-	}
-
 	// set maximum number of correlations
 	if ((com->HasKey("MaximumNumberOfCorrelations"))
 			&& ((*com)["MaximumNumberOfCorrelations"].GetType()
@@ -1283,16 +1269,6 @@ int CGlass::getMaxNumCorrelations() {
 // ------------------------------------------------setMaxNumCorrelations
 void CGlass::setMaxNumCorrelations(int max) {
 	m_iMaxNumCorrelations = max;
-}
-
-// ------------------------------------------------getMaxNumPicksPerSite
-int CGlass::getMaxNumPicksPerSite() {
-	return (m_iMaxNumPicksPerSite);
-}
-
-// ------------------------------------------------setMaxNumPicksPerSite
-void CGlass::setMaxNumPicksPerSite(int max) {
-	m_iMaxNumPicksPerSite = max;
 }
 
 // ------------------------------------------------getMaxNumHypos
