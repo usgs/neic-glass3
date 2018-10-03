@@ -368,6 +368,39 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_HypoListMutex;
+
+	// constants
+	/**
+	 * \brief The duration in seconds to search into the past for hypos matching
+	 * a pick
+	 */
+	static const int k_nHypoSearchPastDurationForPick = 2400;
+
+	/**
+	 * \brief default maximum number of hypos allowed in CHypoList.
+	 */
+	static const int k_nMaxAllowableHypoCountDefault = 100;
+
+	/**
+	 * \brief The number of anneal iterations to run when merging
+	 */
+	static const unsigned int k_nNumberOfMergeAnnealIterations = 2000;
+
+	/**
+	 * \brief The final anneal step size to use when merging
+	 */
+	static constexpr double k_dFinalMergeAnnealTimeStepSize = 0.01;
+
+	/**
+	 * \brief The ratio used when evaluating the improvement of the stack ratio
+	 * after merging
+	 */
+	static constexpr double k_dMergeStackImprovementRatio = 0.1;
+
+	/**
+	 * \brief The ratio used to protect against minimum rounding
+	 */
+	static constexpr double k_dMinimumRoundingProtectionRatio = 0.99;
 };
 }  // namespace glasscore
 #endif  // HYPOLIST_H

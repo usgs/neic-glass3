@@ -224,6 +224,12 @@ class Logger {
 	 * \brief A boolean flag to disable all logging
 	 */
 	static bool m_bDisable;
+
+	// constants
+	/**
+	 * \brief The maximum size of a constructed (via sprintf) log entry
+	 */
+	static const unsigned int k_nMaxLogEntrySize = 1024;
 };
 }  // namespace util
 }  // namespace glass3

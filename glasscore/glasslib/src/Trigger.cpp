@@ -20,7 +20,8 @@ CTrigger::CTrigger() {
 CTrigger::CTrigger(double lat, double lon, double z, double ot,
 					double resolution, double maxZ, double sum, int count,
 					std::vector<std::shared_ptr<CPick>> picks, CWeb *web) {
-	if (!initialize(lat, lon, z, ot, resolution, maxZ, sum, count, picks, web)) {
+	if (!initialize(lat, lon, z, ot, resolution, maxZ, sum, count, picks,
+					web)) {
 		clear();
 	}
 }
@@ -49,7 +50,8 @@ void CTrigger::clear() {
 
 // ---------------------------------------------------------initialize
 bool CTrigger::initialize(double lat, double lon, double z, double ot,
-							double resolution, double maxZ, double sum, int count,
+							double resolution, double maxZ, double sum,
+							int count,
 							std::vector<std::shared_ptr<CPick>> picks,
 							CWeb *web) {
 	clear();
@@ -97,7 +99,7 @@ double CTrigger::getTOrigin() const {
 glass3::util::Geo CTrigger::getGeo() const {
 	glass3::util::Geo geoTrigger;
 	geoTrigger.setGeographic(m_dLatitude, m_dLongitude,
-								EARTHRADIUSKM - m_dDepth);
+								glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 	return (geoTrigger);
 }
 

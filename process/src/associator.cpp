@@ -89,6 +89,9 @@ void Associator::clear() {
 	glass3::util::Logger::log("debug",
 								"associator::clear(): clearing configuration.");
 
+	// initialize default values in CGlass
+	glasscore::CGlass::clear();
+
 	// finally do baseclass clear
 	glass3::util::ThreadBaseClass::clear();
 }

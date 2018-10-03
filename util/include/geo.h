@@ -9,16 +9,6 @@
 
 #include <glassmath.h>
 
-// geographic defines
-#define EARTHRADIUSKM 6371.0  // average
-#define DEG2KM 111.19  // based on 6371 as the average radius
-#define KM2DEG 0.00899  // based on 6371 as the average radius
-#define MAXLATITUDE 90.0
-#define MINLATITUDE -90.0
-#define MAXLONGITUDE 180.0
-#define MINLONGITUDE -180.0
-#define LONGITUDEWRAP 360.0
-
 namespace glass3 {
 namespace util {
 
@@ -250,6 +240,64 @@ class Geo {
 	 * used in delta calculations
 	 */
 	double m_dUnitVectorZ;
+
+	// Geographic constants
+	/**
+	 * \brief Average earth radius in kilometers
+	 */
+	static constexpr double k_EarthRadiusKm = 6371.0;
+
+	/**
+	 * \brief Degrees to Kilometers conversion factor based on 6371 as the
+	 * average radius
+	 */
+	static constexpr double k_DegreesToKm = 111.19;
+
+	/**
+	 * \brief Kilometers to Degrees conversion factor based on 6371 as the
+	 * average radius
+	 */
+	static constexpr double k_KmToDegrees = 0.00899;
+
+	/**
+	 * \brief Maximum possible latitude value
+	 */
+	static constexpr double k_MaximumLatitude = 90.0;
+
+	/**
+	 * \brief Minimum possible latitude value
+	 */
+	static constexpr double k_MinimumLatitude = -90.0;
+
+	/**
+	 * \brief Maximum possible longitude value
+	 */
+	static constexpr double k_MaximumLongitude = 180.0;
+
+	/**
+	 * \brief Minimum possible longitude value
+	 */
+	static constexpr double k_MinimumLongitude = -180.0;
+
+	/**
+	 * \brief Longitude wrap factor
+	 */
+	static constexpr double k_LongitudeWrap = 360.0;
+
+	/**
+	 * \brief Latitude geographic to geocentric conversion factor
+	 */
+	static constexpr double k_GeographicToGeocentric = 0.993277;
+
+	/**
+	 * \brief The factor used to convert meters to kilometers
+	 */
+	static constexpr double k_dMetersToKm = 0.001;
+
+	/**
+	 * \brief The factor used to elevation to depth
+	 */
+	static constexpr double k_dElevationToDepth = -1.0;
 };
 }  // namespace util
 }  // namespace glass3

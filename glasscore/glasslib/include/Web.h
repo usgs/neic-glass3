@@ -623,6 +623,49 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_WebMutex;
+
+	/**
+	 * \brief default azimuth taper
+	 */
+	static constexpr double k_dAzimuthTaperDefault = 360.0;
+
+	/**
+	 * \brief the value for an undefined depth resolution
+	 */
+	static constexpr double k_dDepthResolutionUndefined = -1.0;
+
+	/**
+	 * \brief the value for an undefined travel time
+	 */
+	static constexpr double k_dTravelTimeUndefined = -1.0;
+
+	/**
+	 * \brief the ratio used when generating the global grids
+	 * NOTE: = (1 + std::sqrt(5.0)) / 2.0
+	 * NOTE: AKA golden ratio - See https://en.wikipedia.org/wiki/Golden_ratio
+	 */
+	static constexpr double k_dFibonacciRatio = 1.6180339888;
+
+	/**
+	 * \briefThe index of the latitude for explicit grids
+	 */
+	static const int k_iNodeLatitudeIndex = 0;
+
+	/**
+	 * \brief The index of the longitude for explicit grids
+	 */
+	static const int k_iNodeLongitudeIndex = 1;
+
+	/**
+	 * \brief The index of the depth for explicit grids
+	 */
+	static const int k_iNodeDepthIndex = 2;
+
+	/**
+	 * \brief the minimum value for the maximum node depth (used to reject nodes
+	 * based on zonestats).
+	 */
+	static constexpr double k_dMinimumMaxNodeDepth = 50.0;
 };
 }  // namespace glasscore
 #endif  // WEB_H

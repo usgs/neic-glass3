@@ -16,9 +16,6 @@
 
 namespace glasscore {
 
-// global defines
-#define ASSOC_SIGMA_VALUE_SECONDS 1.0
-
 // forward declarations
 class CWebList;
 class CSiteList;
@@ -460,11 +457,29 @@ class CGlass {
 	 */
 	static std::shared_ptr<traveltime::CTTT>& getAssociationTravelTimes();
 
+	// constants
 	/**
 	 * \brief The factor used to scale thread count to implement maximum
 	 * queue lengths for processing
 	 */
 	static const int iMaxQueueLenPerThreadFactor = 10;
+
+	/**
+	 * \brief The seconds per sigma value used for association, intentionally
+	 * a tighter sigma value than nucleation
+	 */
+	static constexpr double k_dAssociationSecondsPerSigma = 1.0;
+
+	/**
+	 * \brief The seconds per sigma value used for nucleation, intentionally
+	 * a looser sigma value than association
+	 */
+	static constexpr double k_dNucleationSecondsPerSigma = 3.0;
+
+	/**
+	 * \brief The maximum allowed depth
+	 */
+	static constexpr double k_dMaximumDepth = 800.0;
 
  private:
 	/**
@@ -710,7 +725,7 @@ class CGlass {
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
-	 *default travel time for nucleation
+	 * default travel time for nucleation
 	 */
 	static std::shared_ptr<traveltime::CTravelTime> m_pDefaultNucleationTravelTime;
 
@@ -724,6 +739,82 @@ class CGlass {
 	 * \brief the std::mutex for traveltimes
 	 */
 	static std::mutex m_TTTMutex;
+
+	// constants
+	/**
+	 * \brief Taper Range array size
+	 */
+	static const unsigned int k_nRangeArraySize = 4;
+
+	/**
+	 * \brief Taper Range up start
+	 */
+	static const unsigned int k_iTaperUpStart = 0;
+
+	/**
+	 * \brief Taper Range full start
+	 */
+	static const unsigned int k_iFullStart = 1;
+
+	/**
+	 * \brief Taper Range full end
+	 */
+	static const unsigned int k_iFullEnd = 2;
+
+	/**
+	 * \brief Taper Range down end
+	 */
+	static const unsigned int k_iTaperDownEnd = 3;
+
+	/**
+	 * \brief Assoc (non-taper) Range array size
+	 */
+	static const unsigned int k_nAssocArraySize = 2;
+
+	/**
+	 * \brief Assoc (non-taper) Range start
+	 */
+	static const unsigned int k_iAssocRangeStart = 0;
+
+	/**
+	 * \brief Assoc (non-taper) Range end
+	 */
+	static const unsigned int k_iAssocRangeEnd = 1;
+
+	/**
+	 * \brief Default number of nucleation threads
+	 */
+	static const unsigned int k_DefaultNumNucleationThreads = 5;
+
+	/**
+	 * \brief Default number of hypo threads
+	 */
+	static const unsigned int k_DefaultNumHypoThreads = 3;
+
+	/**
+	 * \brief Default number of web threads
+	 */
+	static const unsigned int k_DefaultNumWebThreads = 0;
+
+	/**
+	 * \brief Default value used to indicate a param is disabled
+	 */
+	static const int k_nParamDisabled = -1;
+
+	/**
+	 * \brief Default (disabled) hours without picking
+	 */
+	static const int k_DefaultHoursWithoutPicking = k_nParamDisabled;
+
+	/**
+	 * \brief Default (disabled) hours before looking up
+	 */
+	static const int k_DefaultHoursBeforeLookingUp = k_nParamDisabled;
+
+	/**
+	 * \brief Default (disabled) maximum picks per hour
+	 */
+	static const int k_DefaultMaxPicksPerHour = k_nParamDisabled;
 };
 }  // namespace glasscore
 #endif  // GLASS_H

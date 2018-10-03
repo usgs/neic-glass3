@@ -166,7 +166,8 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 			glass3::util::Geo geo2;
 			geo2.setGeographic(hypo->getLatitude(), hypo->getLongitude(),
 								hypo->getDepth());
-			double delta = RAD2DEG * geo1.delta(&geo2);
+			double delta = glass3::util::GlassMath::k_RadiansToDegrees
+					* geo1.delta(&geo2);
 
 			// if the detection is beyond the merging window, it isn't a match
 			if (delta < CGlass::getHypoMergingDistanceWindow()) {
@@ -191,7 +192,8 @@ bool CDetection::processDetectionMessage(std::shared_ptr<json::Object> com) {
 				CGlass::getAssociationTravelTimes());
 
 		// set thresholds
-		hypo->setNucleationDataThreshold(CGlass::getNucleationDataCountThreshold());
+		hypo->setNucleationDataThreshold(
+				CGlass::getNucleationDataCountThreshold());
 		hypo->setNucleationStackThreshold(
 				CGlass::getNucleationStackThreshold());
 

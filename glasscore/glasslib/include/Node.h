@@ -25,9 +25,6 @@ class CSite;
 class CWeb;
 class CTrigger;
 
-#define NUC_DEPTH_SHELL_RESOLUTION_KM 10
-#define NUC_SECONDS_PER_SIGMA 3.0
-#define FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO .7071  // sqrt(2)/2)
 /**
  * \brief glasscore detection node class
  *
@@ -378,6 +375,29 @@ class CNode {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_NodeMutex;
+
+	// constants
+	/**
+	 * \brief The window used with the predicted travel time to select picks for
+	 * nucleation.
+	 * NOTE: it seems OK to use a slightly larger window than we likely need,
+	 * since it won't generate a lot of additional results, and might be
+	 * necessary if we have improperly recognized the size of other potential
+	 * errors.
+	 */
+	static constexpr double k_dTravelTimePickSelectionWindow = 120.0;
+
+	/**
+	 * \brief The depth shell resolution in kilometers used in nucleation
+	 * NOTE: this could be calculated from the grid in the future.
+	 */
+	static constexpr double k_dDepthShellResolutionKm = 10.0;
+
+	/**
+	 * \brief The the ratio between the grid points and the grid resolution
+	 * NOTE: = sqrt(2)/2)
+	 */
+	static constexpr double k_dGridPointVsResolutionRatio = 0.7071;
 };
 }  // namespace glasscore
 #endif  // NODE_H

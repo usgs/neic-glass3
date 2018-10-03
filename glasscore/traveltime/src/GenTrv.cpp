@@ -81,7 +81,7 @@ void CGenTrv::clear() {
 bool CGenTrv::setup(std::string modelFile, std::string outputPath,
 					std::string fileExtension) {
 	if (bSetup == true) {
-		return(true);
+		return (true);
 	}
 
 	// create earth structure class
@@ -96,8 +96,7 @@ bool CGenTrv::setup(std::string modelFile, std::string outputPath,
 						+ std::to_string(pTerra->dEarthRadius));
 	} else {
 		glass3::util::Logger::log(
-				"error",
-				"CGenTrv::setup: Unable to load Model: " + modelFile);
+				"error", "CGenTrv::setup: Unable to load Model: " + modelFile);
 		return (false);
 	}
 
@@ -109,22 +108,22 @@ bool CGenTrv::setup(std::string modelFile, std::string outputPath,
 	m_FileExtension = fileExtension;
 	bSetup = true;
 
-	return(true);
+	return (true);
 }
 
 // ---------------------------------------------------------generate
 bool CGenTrv::generate(json::Object *com) {
 	if (bSetup == false) {
 		glass3::util::Logger::log("error",
-										"CGenTrv::generate: Call setup before "
-										"generate.");
-		return(false);
+									"CGenTrv::generate: Call setup before "
+									"generate.");
+		return (false);
 	}
 
 	// null check json
 	if (com == NULL) {
-		glass3::util::Logger::log("error",
-								"CGenTrv::generate: NULL json communication.");
+		glass3::util::Logger::log(
+				"error", "CGenTrv::generate: NULL json communication.");
 		return (false);
 	}
 
@@ -137,15 +136,14 @@ bool CGenTrv::generate(json::Object *com) {
 
 		if (command != "GenerateTraveltime") {
 			glass3::util::Logger::log(
-					"warning",
-					"CGenTrv::generate: Non-Correlation message "
+					"warning", "CGenTrv::generate: Non-Correlation message "
 					"passed in.");
 			return (false);
 		}
 	} else {
 		// no command or type
-		glass3::util::Logger::log("error",
-								"CGenTrv::generate: Missing required Cmd Key.");
+		glass3::util::Logger::log(
+				"error", "CGenTrv::generate: Missing required Cmd Key.");
 		return (false);
 	}
 
@@ -158,12 +156,10 @@ bool CGenTrv::generate(json::Object *com) {
 			&& ((*com)["Branch"].GetType() == json::ValueType::StringVal)) {
 		branchName = (*com)["Branch"].ToString();
 		glass3::util::Logger::log(
-				"info",
-				"CGenTrv::generate: Using Branch: " + branchName);
+				"info", "CGenTrv::generate: Using Branch: " + branchName);
 	} else {
 		glass3::util::Logger::log(
-				"error",
-				"CGenTrv::generate: Missing required Branch Key.");
+				"error", "CGenTrv::generate: Missing required Branch Key.");
 		return (false);
 	}
 
@@ -191,12 +187,11 @@ bool CGenTrv::generate(json::Object *com) {
 			vRays.push_back(ray);
 
 			glass3::util::Logger::log("info",
-									"CGenTrv::generate: Using ray: " + ray);
+										"CGenTrv::generate: Using ray: " + ray);
 		}
 	} else {
 		glass3::util::Logger::log(
-				"error",
-				"CGenTrv::generate: Missing required Phases key");
+				"error", "CGenTrv::generate: Missing required Phases key");
 		return (false);
 	}
 
@@ -454,7 +449,7 @@ bool CGenTrv::generate(json::Object *com) {
 	// UnitTest("P", 90, 100, 768.24);
 
 	glass3::util::Logger::log("info",
-							"CGenTrv::generate: Generating depth layers.");
+								"CGenTrv::generate: Generating depth layers.");
 
 	// set up for interpolation
 	double *travelTimeArray = new double[nDistanceWarp * nDepthWarp];
@@ -555,8 +550,8 @@ bool CGenTrv::generate(json::Object *com) {
 	// open file
 	std::string outFileName = m_OutputPath + branchName + m_FileExtension;
 
-	glass3::util::Logger::log("info",
-							"CGenTrv::generate: writing file: " + outFileName);
+	glass3::util::Logger::log(
+			"info", "CGenTrv::generate: writing file: " + outFileName);
 
 	FILE *outFile = fopen(outFileName.c_str(), "wb");
 
@@ -591,7 +586,7 @@ bool CGenTrv::generate(json::Object *com) {
 	fclose(outFile);
 
 	glass3::util::Logger::log("info",
-							"CGenTrv::generate: file writing complete.");
+								"CGenTrv::generate: file writing complete.");
 
 	// cleanup
 	delete[] (travelTimeArray);
@@ -626,8 +621,7 @@ int CGenTrv::Row(int iDepth, double *travelTimeArray,
 		// get the current phase
 		std::string phase = vRays[phaseIndex];
 
-		glass3::util::Logger::log("debug",
-								"CGenTrv::Row: Phase:" + phase);
+		glass3::util::Logger::log("debug", "CGenTrv::Row: Phase:" + phase);
 
 		// for each distance at this depth
 		for (int distanceIndex = 0; distanceIndex < nDistanceWarp;
@@ -784,7 +778,9 @@ bool CGenTrv::T(std::string phase, double delta, double depth) {
 	pRay->setupRayParam();
 
 	// get travel time and ray parameter
-	travelTime = pRay->travel((DEG2RAD * delta), radius, &rayParam);
+	travelTime = pRay->travel(
+			(glass3::util::GlassMath::k_DegreesToRadians * delta), radius,
+			&rayParam);
 
 	// check for valid travel time
 	if (travelTime < 0) {
@@ -809,7 +805,8 @@ bool CGenTrv::T(std::string phase, double delta, double depth) {
 		pRay->setupRayParam();
 
 		// get travel time and ray parameter
-		double tdif = pRay->travel((DEG2RAD * delta), radius);
+		double tdif = pRay->travel(
+				(glass3::util::GlassMath::k_DegreesToRadians * delta), radius);
 
 		// check for valid travel time
 		if (tdif < 0) {

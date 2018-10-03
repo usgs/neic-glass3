@@ -19,6 +19,12 @@
 
 namespace glasscore {
 
+// constants
+const unsigned int CPick::k_nNucleateAnnealPasses;
+const unsigned int CPick::k_nNucleateNumberOfAnnealIterations;
+constexpr double CPick::k_dNucleateInitialAnnealTimeStepSize;
+constexpr double CPick::k_dNucleateFinalAnnealTimeStepSize;
+
 // ---------------------------------------------------------CPick
 CPick::CPick() {
 	clear();
@@ -332,7 +338,7 @@ bool CPick::nucleate() {
 	// get the site shared_ptr
 	std::shared_ptr<CSite> pickSite = m_wpSite.lock();
 	std::string pt = glass3::util::Date::encodeDateTime(m_tPick);
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	setTNucleation();
 
@@ -369,7 +375,9 @@ bool CPick::nucleate() {
 
 				glass3::util::Geo trigHypo = trigger->getGeo();
 
-				double dist = (geoHypo.delta(&trigHypo) / DEG2RAD) * 111.12;
+				double dist = (geoHypo.delta(&trigHypo)
+						/ glass3::util::GlassMath::k_DegreesToRadians)
+						* glass3::util::Geo::k_DegreesToKm;
 
 				// is the associated hypo close enough to this trigger to skip
 				// close enough means within the resolution of the trigger
@@ -410,7 +418,7 @@ bool CPick::nucleate() {
 
 		// First localization attempt after nucleation
 		// make 3 passes
-		for (int ipass = 0; ipass < 3; ipass++) {
+		for (int ipass = 0; ipass < k_nNucleateAnnealPasses; ipass++) {
 			// get an initial location via synthetic annealing,
 			// which also prunes out any poorly fitting picks
 			// the search is based on the grid resolution, and how
@@ -418,9 +426,16 @@ bool CPick::nucleate() {
 			// this all assumes that the closest grid triggers
 			// values derived from testing global event association
 			double bayes = hypo->anneal(
-					2000, trigger->getWebResolution() / 2.,
-					trigger->getWebResolution() / 100.,
-					std::max(trigger->getWebResolution() / 10.0, 5.0), .1);
+					k_nNucleateNumberOfAnnealIterations,
+					trigger->getWebResolution()
+							/ CHypo::k_dInitialAnnealStepReducationFactor,  // NOLINT
+					trigger->getWebResolution()
+							/ CHypo::k_dFinalAnnealStepReducationFactor,
+					std::max(
+							trigger->getWebResolution()
+									/ CHypo::k_dTimeToDistanceCorrectionFactor,  // NOLINT
+							k_dNucleateInitialAnnealTimeStepSize),  // NOLINT
+					k_dNucleateFinalAnnealTimeStepSize);
 
 			// get the number of picks we have now
 			int npick = hypo->getPickDataSize();

@@ -94,7 +94,7 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	// nullcheck
 	if (phase == "") {
 		glass3::util::Logger::log("error",
-								"CTravelTime::Setup: empty phase provided");
+									"CTravelTime::Setup: empty phase provided");
 		return (false);
 	} else {
 		sPhase = phase;
@@ -106,14 +106,13 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	}
 
 	glass3::util::Logger::log(
-			"debug",
-			"CTravelTime::Setup: phase:" + phase + " file:" + file);
+			"debug", "CTravelTime::Setup: phase:" + phase + " file:" + file);
 
 	// open file
 	FILE *inFile = fopen(file.c_str(), "rb");
 	if (!inFile) {
-		glass3::util::Logger::log("debug",
-								"CTravelTime::Setup: Cannot open file:" + file);
+		glass3::util::Logger::log(
+				"debug", "CTravelTime::Setup: Cannot open file:" + file);
 		return (false);
 	}
 
@@ -126,8 +125,7 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	// check file type
 	if (strcmp(fileType, "TRAV") != 0) {
 		glass3::util::Logger::log(
-				"debug",
-				"CTravelTime::Setup: File is not .trv file:" + file);
+				"debug", "CTravelTime::Setup: File is not .trv file:" + file);
 
 		fclose(inFile);
 
@@ -209,7 +207,7 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 
 // ---------------------------------------------------------setOrigin
 void CTravelTime::setOrigin(double lat, double lon, double depth) {
-	geoOrg.setGeographic(lat, lon, EARTHRADIUSKM - depth);
+	geoOrg.setGeographic(lat, lon, glass3::util::Geo::k_EarthRadiusKm - depth);
 	dDepth = depth;
 }
 
@@ -217,13 +215,13 @@ void CTravelTime::setOrigin(double lat, double lon, double depth) {
 void CTravelTime::setOrigin(const glass3::util::Geo &geoOrigin) {
 	geoOrg = geoOrigin;
 	// ditch dDepth in favor or
-	dDepth = EARTHRADIUSKM - geoOrg.m_dGeocentricRadius;
+	dDepth = glass3::util::Geo::k_EarthRadiusKm - geoOrg.m_dGeocentricRadius;
 }
 
 // ---------------------------------------------------------T
 double CTravelTime::T(glass3::util::Geo *geo) {
 	// Calculate travel time given CGeo
-	dDelta = RAD2DEG * geoOrg.delta(geo);
+	dDelta = glass3::util::GlassMath::k_RadiansToDegrees * geoOrg.delta(geo);
 
 	return (T(dDelta));
 }

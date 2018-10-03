@@ -103,12 +103,12 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 // ---------------------------------------------------------setOrigin
 void CTTT::setOrigin(double lat, double lon, double z) {
 	// this should go ahead and update the CGeo
-	geoOrg.setGeographic(lat, lon, EARTHRADIUSKM - z);
+	geoOrg.setGeographic(lat, lon, glass3::util::Geo::k_EarthRadiusKm - z);
 }
 
 // ---------------------------------------------------------setOrigin
 void CTTT::setOrigin(const glass3::util::Geo &geoOrigin) {
-  geoOrg = geoOrigin;
+	geoOrg = geoOrigin;
 }
 
 // ---------------------------------------------------------T
@@ -144,7 +144,7 @@ double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 
 // ---------------------------------------------------------T
 double CTTT::Td(double delta, std::string phase, double depth) {
-	geoOrg.m_dGeocentricRadius = EARTHRADIUSKM - depth;
+	geoOrg.m_dGeocentricRadius = glass3::util::Geo::k_EarthRadiusKm - depth;
 	// Calculate time from delta (degrees) and depth
 	// for each phase
 	for (int i = 0; i < nTrv; i++) {

@@ -1,12 +1,19 @@
 #include <logger.h>
 #include <glassmath.h>
 #include <random>
+#include <cmath>
 
 namespace glass3 {
 namespace util {
 
 bool GlassMath::m_bInitialized = false;
 std::default_random_engine GlassMath::m_RandomGenerator;
+
+// constants
+constexpr double GlassMath::k_RadiansToDegrees;
+constexpr double GlassMath::k_DegreesToRadians;
+constexpr double GlassMath::k_Pi;
+constexpr double GlassMath::k_TwoPi;
 
 // ---------------------------------------------------------Sig
 // Calculate the significance function, which is just
