@@ -15,8 +15,6 @@
 
 namespace traveltime {
 
-#define MAX_TRAV 40  // Maximum number of supported travel time objects
-
 class CRay;
 
 /**
@@ -84,7 +82,7 @@ class CTTT {
 	 * \param lon - A double value containing the longitude to use
 	 * \param z - A double value containing the depth to use
 	 */
-	void setOrigin(double lat, double lon, double z);
+	void setTTOrigin(double lat, double lon, double z);
 
 	/**
 	 * \brief Set current geographic location
@@ -97,7 +95,7 @@ class CTTT {
 	 * elev) of the source, along with already computed concentric lat/lon and
 	 * vector coordinates.
 	 */
-	void setOrigin(const glass3::util::Geo &geoOrigin);
+	void setTTOrigin(const glass3::util::Geo &geoOrigin);
 
 	/**
 	 * \brief Calculate travel time in seconds
@@ -166,52 +164,62 @@ class CTTT {
 	 */
 	double testTravelTimes(std::string phase);
 
+
+	// constants
 	/**
-	 * \brief A temporary std::std::string variable containing the phase determined
-	 * during the last call to T()
+	 * \brief A value representing a travel time that is too large to be valid
 	 */
-	std::string sPhase;
+	static constexpr double k_dTTTooLargeToBeValid = 1000.0;
+
+	/**
+	 * \brief The maximum number of supported travel times
+	 */
+	static const int k_iMaximumNumberOfTravelTimes = 40;
+
+	/**
+	 * \brief A temporary std::std::string variable containing the phase
+	 * determinedduring the last call to T()
+	 */
+	std::string m_sPhase;
 
 	/**
 	 * \brief A temporary double variable containing the weight determined
 	 * during the last call to T()
 	 */
-	double dWeight;
+	double m_dWeight;
 
 	/**
 	 * \brief glass3::util::Geo object containing current
 	 * geographic location of source(as in source/receiver). Set by setOrigin()
 	 */
-	glass3::util::Geo geoOrg;
+	glass3::util::Geo m_geoTTOrigin;
 
 	/**
 	 * \brief An integer variable containing number of CTravelTime objects in
 	 * pTrv
 	 */
-	int nTrv;
+	int m_iNumTravelTimes;
 
 	/**
 	 * \brief An array of pointers to CTravelTime objects for each phase
 	 */
-	CTravelTime *pTrv[MAX_TRAV];
+	CTravelTime * m_pTravelTimes[k_iMaximumNumberOfTravelTimes];
 
 	/**
 	 * \brief An array of pointers taper objects that determine phase
 	 * weights as a function of distance
 	 */
-	glass3::util::Taper *pTaper[MAX_TRAV];
+	glass3::util::Taper * m_pTapers[k_iMaximumNumberOfTravelTimes];
 
 	/**
 	 * \brief An array of doubles containing the minimum values for association
 	 */
-	double dAssocMin[MAX_TRAV];
+	double m_adMinimumAssociationValues[k_iMaximumNumberOfTravelTimes];  // NOLINT
 
 	/**
-	 * \brief  An array of doubles containing the maximum values for association
+	 * \brief An array of doubles containing the maximum values for association
 	 */
-	double dAssocMax[MAX_TRAV];
-
-	// std::mutex m_TTTMutex;
+	double m_adMaximumAssociationValues[k_iMaximumNumberOfTravelTimes];  // NOLINT
 };
 }  // namespace traveltime
 #endif  // TTT_H

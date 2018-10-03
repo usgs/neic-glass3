@@ -29,23 +29,23 @@ TEST(TravelTimeTest, Construction) {
 	traveltime::CTravelTime traveltime;
 
 	// nDistanceWarp
-	ASSERT_EQ(0, traveltime.nDistanceWarp)<< "nDistanceWarp Check";
+	ASSERT_EQ(0, traveltime.m_iNumDistanceWarp)<< "nDistanceWarp Check";
 
 	// nDepthWarp
-	ASSERT_EQ(0, traveltime.nDepthWarp)<< "nDepthWarp Check";
+	ASSERT_EQ(0, traveltime.m_iNumDepthWarp)<< "nDepthWarp Check";
 
 	// dDepth
-	ASSERT_EQ(0, traveltime.dDepth)<< "Depth Check";
+	ASSERT_EQ(0, traveltime.m_dDepth)<< "Depth Check";
 
 	// dDelta
-	ASSERT_EQ(0, traveltime.dDelta)<< "Delta Check";
+	ASSERT_EQ(0, traveltime.m_dDelta)<< "Delta Check";
 
 	// pointers
-	ASSERT_EQ(NULL, traveltime.pDistanceWarp)<< "pDistanceWarp null";
-	ASSERT_EQ(NULL, traveltime.pDepthWarp)<< "pDepthWarp null";
-	ASSERT_EQ(NULL, traveltime.pTravelTimeArray)<< "pTravelTimeArray null";
-	ASSERT_EQ(NULL, traveltime.pDepthDistanceArray)<< "pDepthDistanceArray null";
-	ASSERT_EQ(NULL, traveltime.pPhaseArray)<< "pPhaseArray null";
+	ASSERT_EQ(NULL, traveltime.m_pDistanceWarp)<< "pDistanceWarp null";
+	ASSERT_EQ(NULL, traveltime.m_pDepthWarp)<< "pDepthWarp null";
+	ASSERT_EQ(NULL, traveltime. m_pTravelTimeArray)<< "pTravelTimeArray null";
+	ASSERT_EQ(NULL, traveltime.m_pDepthDistanceArray)<< "pDepthDistanceArray null";
+	ASSERT_EQ(NULL, traveltime.m_pPhaseArray)<< "pPhaseArray null";
 }
 
 // tests to see if the traveltime can be setup
@@ -63,28 +63,28 @@ TEST(TravelTimeTest, Setup) {
 	traveltime.setup(phasename, phasefile);
 
 	// phase name
-	ASSERT_STREQ(traveltime.sPhase.c_str(), phasename.c_str());
+	ASSERT_STREQ(traveltime.m_sPhase.c_str(), phasename.c_str());
 
 	// nDistanceWarp
-	ASSERT_EQ(NDISTANCEWARP, traveltime.nDistanceWarp)<< "nDistanceWarp Check";
+	ASSERT_EQ(NDISTANCEWARP, traveltime.m_iNumDistanceWarp)<< "nDistanceWarp Check";
 
 	// nDepthWarp
-	ASSERT_EQ(NDEPTHWARP, traveltime.nDepthWarp)<< "nDepthWarp Check";
+	ASSERT_EQ(NDEPTHWARP, traveltime.m_iNumDepthWarp)<< "nDepthWarp Check";
 
 	// dDepth
-	ASSERT_EQ(0, traveltime.dDepth)<< "Depth Check";
+	ASSERT_EQ(0, traveltime.m_dDepth)<< "Depth Check";
 
 	// dDelta
-	ASSERT_EQ(0, traveltime.dDelta)<< "Delta Check";
+	ASSERT_EQ(0, traveltime.m_dDelta)<< "Delta Check";
 
 	// pointers
-	ASSERT_TRUE(NULL != traveltime.pDistanceWarp)<< "pDistanceWarp not null";
-	ASSERT_TRUE(NULL != traveltime.pDepthWarp)<< "pDepthWarp not null";
-	ASSERT_TRUE(NULL != traveltime.pTravelTimeArray)<< "pTravelTimeArray not "
+	ASSERT_TRUE(NULL != traveltime.m_pDistanceWarp)<< "pDistanceWarp not null";
+	ASSERT_TRUE(NULL != traveltime.m_pDepthWarp)<< "pDepthWarp not null";
+	ASSERT_TRUE(NULL != traveltime. m_pTravelTimeArray)<< "pTravelTimeArray not "
 			"null";
-	ASSERT_TRUE(NULL != traveltime.pDepthDistanceArray)<< "pDepthDistanceArray "
+	ASSERT_TRUE(NULL != traveltime.m_pDepthDistanceArray)<< "pDepthDistanceArray "
 			"not null";
-	ASSERT_TRUE(NULL != traveltime.pPhaseArray)<< "pPhaseArray not null";
+	ASSERT_TRUE(NULL != traveltime.m_pPhaseArray)<< "pPhaseArray not null";
 }
 
 // tests the time warp copy constructor
@@ -102,34 +102,34 @@ TEST(TravelTimeTest, Copy) {
 	traveltime2.setup(phasename, phasefile);
 
 	// set origin
-	traveltime2.setOrigin(LATITUDE, LONGITUDE, DEPTH);
+	traveltime2.setTTOrigin(LATITUDE, LONGITUDE, DEPTH);
 
 	// copy
 	traveltime::CTravelTime traveltime1(traveltime2);
 
 	// phase name
-	ASSERT_STREQ(traveltime1.sPhase.c_str(), phasename.c_str());
+	ASSERT_STREQ(traveltime1.m_sPhase.c_str(), phasename.c_str());
 
 	// nDistanceWarp
-	ASSERT_EQ(NDISTANCEWARP, traveltime1.nDistanceWarp)<< "nDistanceWarp Check";
+	ASSERT_EQ(NDISTANCEWARP, traveltime1.m_iNumDistanceWarp)<< "nDistanceWarp Check";
 
 	// nDepthWarp
-	ASSERT_EQ(NDEPTHWARP, traveltime1.nDepthWarp)<< "nDepthWarp Check";
+	ASSERT_EQ(NDEPTHWARP, traveltime1.m_iNumDepthWarp)<< "nDepthWarp Check";
 
 	// dDepth
-	ASSERT_NEAR(DEPTH, traveltime1.dDepth, 0.001)<< "Depth Check";
+	ASSERT_NEAR(DEPTH, traveltime1.m_dDepth, 0.001)<< "Depth Check";
 
 	// dDelta
-	ASSERT_EQ(0, traveltime1.dDelta)<< "Delta Check";
+	ASSERT_EQ(0, traveltime1.m_dDelta)<< "Delta Check";
 
 	// pointers
-	ASSERT_TRUE(NULL != traveltime1.pDistanceWarp)<< "pDistanceWarp not null";
-	ASSERT_TRUE(NULL != traveltime1.pDepthWarp)<< "pDepthWarp not null";
-	ASSERT_TRUE(NULL != traveltime1.pTravelTimeArray)<< "pTravelTimeArray not "
+	ASSERT_TRUE(NULL != traveltime1.m_pDistanceWarp)<< "pDistanceWarp not null";
+	ASSERT_TRUE(NULL != traveltime1.m_pDepthWarp)<< "pDepthWarp not null";
+	ASSERT_TRUE(NULL != traveltime1. m_pTravelTimeArray)<< "pTravelTimeArray not "
 			"null";
-	ASSERT_TRUE(NULL != traveltime1.pDepthDistanceArray)<< "pDepthDistanceArray "
+	ASSERT_TRUE(NULL != traveltime1.m_pDepthDistanceArray)<< "pDepthDistanceArray "
 			"not null";
-	ASSERT_TRUE(NULL != traveltime1.pPhaseArray)<< "pPhaseArray not null";
+	ASSERT_TRUE(NULL != traveltime1.m_pPhaseArray)<< "pPhaseArray not null";
 }
 
 // tests traveltime operations
@@ -147,16 +147,16 @@ TEST(TravelTimeTest, Operations) {
 	traveltime.setup(phasename, phasefile);
 
 	// set origin
-	traveltime.setOrigin(LATITUDE, LONGITUDE, DEPTH);
+	traveltime.setTTOrigin(LATITUDE, LONGITUDE, DEPTH);
 
 	// T(delta)
 	ASSERT_NEAR(TIME, traveltime.T(DISTANCE), 0.001)<< "T(delta) Check";
 
 	// dDepth
-	ASSERT_NEAR(DEPTH, traveltime.dDepth, 0.001)<< "Depth Check";
+	ASSERT_NEAR(DEPTH, traveltime.m_dDepth, 0.001)<< "Depth Check";
 
 	// dDelta
-	ASSERT_NEAR(DISTANCE, traveltime.dDelta, 0.001)<< "Delta Check";
+	ASSERT_NEAR(DISTANCE, traveltime.m_dDelta, 0.001)<< "Delta Check";
 
 	glass3::util::Geo testGeo;
 	testGeo.setGeographic(LATITUDE, LONGITUDE + DISTANCE, DEPTH);
@@ -165,10 +165,10 @@ TEST(TravelTimeTest, Operations) {
 	ASSERT_NEAR(TIME, traveltime.T(&testGeo), 0.001)<< "T(geo) Check";
 
 	// dDepth
-	ASSERT_NEAR(DEPTH, traveltime.dDepth, 0.001)<< "Depth Check";
+	ASSERT_NEAR(DEPTH, traveltime.m_dDepth, 0.001)<< "Depth Check";
 
 	// dDelta
-	ASSERT_NEAR(DISTANCE, traveltime.dDelta, 0.001)<< "Delta Check";
+	ASSERT_NEAR(DISTANCE, traveltime.m_dDelta, 0.001)<< "Delta Check";
 
 	// T(delta, distance)
 	ASSERT_NEAR(TIME2, traveltime.T(DISTANCE,DEPTH), 0.001)<< "T(delta, distance) Check"; // NOLINT

@@ -494,11 +494,11 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 
 	// set the traveltime for the current hypo
 	if (m_pNucleationTravelTime1 != NULL) {
-		m_pNucleationTravelTime1->setOrigin(m_dLatitude, m_dLongitude,
+		m_pNucleationTravelTime1->setTTOrigin(m_dLatitude, m_dLongitude,
 											m_dDepth);
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
-		m_pNucleationTravelTime2->setOrigin(m_dLatitude, m_dLongitude,
+		m_pNucleationTravelTime2->setTTOrigin(m_dLatitude, m_dLongitude,
 											m_dDepth);
 	}
 
@@ -796,7 +796,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 	double delta;
 	double sigma;
 
-	m_pTravelTimeTables->setOrigin(m_dLatitude, m_dLongitude, m_dDepth);
+	m_pTravelTimeTables->setTTOrigin(m_dLatitude, m_dLongitude, m_dDepth);
 
 	double valStart = calculateAbsResidualSum(m_dLatitude, m_dLongitude,
 												m_dDepth, m_tOrigin, nucleate);
@@ -870,7 +870,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 		// compute current origin time
 		double oT = m_tOrigin + dt;
 
-		m_pTravelTimeTables->setOrigin(xlat, xlon, xz);
+		m_pTravelTimeTables->setTTOrigin(xlat, xlon, xz);
 		double calculateValue = calculateAbsResidualSum(xlat, xlon, xz, oT,
 														nucleate);
 		// geo.setGeographic(dLat, dLon, glass3::util::Geo::k_EarthRadiusKm - dZ);
@@ -1503,7 +1503,7 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick) {
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
 	// setup traveltime interface for this hypo
-	m_pTravelTimeTables->setOrigin(m_dLatitude, m_dLongitude, m_dDepth);
+	m_pTravelTimeTables->setTTOrigin(m_dLatitude, m_dLongitude, m_dDepth);
 
 	// get site
 	std::shared_ptr<CSite> site = pick->getSite();
@@ -1571,13 +1571,13 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 
 	// This sets the travel-time look up location
 	if (m_pNucleationTravelTime1) {
-		m_pNucleationTravelTime1->setOrigin(geo);
+		m_pNucleationTravelTime1->setTTOrigin(geo);
 	}
 	if (m_pNucleationTravelTime2) {
-		m_pNucleationTravelTime2->setOrigin(geo);
+		m_pNucleationTravelTime2->setTTOrigin(geo);
 	}
 
-	m_pTravelTimeTables->setOrigin(geo);
+	m_pTravelTimeTables->setTTOrigin(geo);
 
 	// The number of picks associated with the hypocenter
 	int npick = m_vPickData.size();
@@ -1602,13 +1602,13 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 				// calculate the residual using the phase name
 				double tcal1 = m_pNucleationTravelTime1->T(&siteGeo);
 				double resi1 = calculateWeightedResidual(
-						m_pNucleationTravelTime1->sPhase, tobs, tcal1);
+						m_pNucleationTravelTime1->m_sPhase, tobs, tcal1);
 
 				// second nucleation phase
 				// calculate the residual using the phase name
 				double tcal2 = m_pNucleationTravelTime2->T(&siteGeo);
 				double resi2 = calculateWeightedResidual(
-						m_pNucleationTravelTime2->sPhase, tobs, tcal2);
+						m_pNucleationTravelTime2->m_sPhase, tobs, tcal2);
 
 				// use the smallest residual
 				if (abs(resi1) < abs(resi2)) {
@@ -1623,13 +1623,13 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 				// we have just the first nucleation phase
 				tcal = m_pNucleationTravelTime1->T(&siteGeo);
 				resi = calculateWeightedResidual(
-						m_pNucleationTravelTime1->sPhase, tobs, tcal);
+						m_pNucleationTravelTime1->m_sPhase, tobs, tcal);
 			} else if ((!m_pNucleationTravelTime1)
 					&& (m_pNucleationTravelTime2)) {
 				// we have just the second ducleation phase
 				tcal = m_pNucleationTravelTime2->T(&siteGeo);
 				resi = calculateWeightedResidual(
-						m_pNucleationTravelTime2->sPhase, tobs, tcal);
+						m_pNucleationTravelTime2->m_sPhase, tobs, tcal);
 			}
 		} else {
 			// use all available association phases
@@ -1637,7 +1637,7 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 			tcal = m_pTravelTimeTables->T(&siteGeo, tobs);
 
 			// calculate the residual using the phase name
-			resi = calculateWeightedResidual(m_pTravelTimeTables->sPhase, tobs,
+			resi = calculateWeightedResidual(m_pTravelTimeTables->m_sPhase, tobs,
 												tcal);
 		}
 
@@ -1832,13 +1832,13 @@ double CHypo::calculateAbsResidualSum(double xlat, double xlon, double xZ,
 
 	// This sets the travel-time look up location
 	if (m_pNucleationTravelTime1 != NULL) {
-		m_pNucleationTravelTime1->setOrigin(xlat, xlat, xZ);
+		m_pNucleationTravelTime1->setTTOrigin(xlat, xlat, xZ);
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
-		m_pNucleationTravelTime2->setOrigin(xlat, xlat, xZ);
+		m_pNucleationTravelTime2->setTTOrigin(xlat, xlat, xZ);
 	}
 
-	m_pTravelTimeTables->setOrigin(xlat, xlon, xZ);
+	m_pTravelTimeTables->setTTOrigin(xlat, xlon, xZ);
 
 	// The number of picks associated with the hypocenter
 	int npick = m_vPickData.size();
@@ -1866,8 +1866,8 @@ double CHypo::calculateAbsResidualSum(double xlat, double xlon, double xZ,
 		} else {
 			// take whichever has the smallest residual, P or S
 			tcal = m_pTravelTimeTables->T(&site->getGeo(), tobs);
-			if (m_pTravelTimeTables->sPhase == "P"
-					|| m_pTravelTimeTables->sPhase == "S") {
+			if (m_pTravelTimeTables->m_sPhase == "P"
+					|| m_pTravelTimeTables->m_sPhase == "S") {
 				resi = tobs - tcal;
 			}
 		}
@@ -1964,7 +1964,7 @@ void CHypo::graphicsOutput() {
 							/ glass3::util::Geo::k_DegreesToKm;
 
 			// set up traveltimes
-			m_pTravelTimeTables->setOrigin(xlat, xlon, m_dDepth);
+			m_pTravelTimeTables->setTTOrigin(xlat, xlon, m_dDepth);
 			stack = 0;
 
 			// for each pick
@@ -2109,7 +2109,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 	// generate data array for this hypo
 	// set up traveltime object
-	m_pTravelTimeTables->setOrigin(m_dLatitude, m_dLongitude, m_dDepth);
+	m_pTravelTimeTables->setTTOrigin(m_dLatitude, m_dLongitude, m_dDepth);
 
 	// set up geo for distance calculations
 	glass3::util::Geo geo;
@@ -2139,7 +2139,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 			// add the association info
 			json::Object assocobj;
-			assocobj["Phase"] = m_pTravelTimeTables->sPhase;
+			assocobj["Phase"] = m_pTravelTimeTables->m_sPhase;
 			assocobj["Distance"] = geo.delta(&site->getGeo())
 					/ glass3::util::GlassMath::k_DegreesToRadians;
 			assocobj["Azimuth"] = geo.azimuth(&site->getGeo())
@@ -2186,7 +2186,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 			// add the association info
 			json::Object assocobj;
-			assocobj["Phase"] = m_pTravelTimeTables->sPhase;
+			assocobj["Phase"] = m_pTravelTimeTables->m_sPhase;
 			assocobj["Distance"] = geo.delta(&site->getGeo())
 					/ glass3::util::GlassMath::k_DegreesToRadians;
 			assocobj["Azimuth"] = geo.azimuth(&site->getGeo())

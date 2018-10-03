@@ -8,11 +8,11 @@
 #define GLASS_H
 
 #include <json.h>
+#include <TTT.h>
+#include <TravelTime.h>
 #include <string>
 #include <memory>
 #include <atomic>
-#include "TTT.h"
-#include "TravelTime.h"
 
 namespace glasscore {
 

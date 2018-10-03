@@ -360,10 +360,10 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 	std::string phases = "";
 	if (m_pNucleationTravelTime1 != NULL) {
-		phases += m_pNucleationTravelTime1->sPhase;
+		phases += m_pNucleationTravelTime1->m_sPhase;
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
-		phases += ", " + m_pNucleationTravelTime2->sPhase;
+		phases += ", " + m_pNucleationTravelTime2->m_sPhase;
 	}
 
 	// log grid info
@@ -602,10 +602,10 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 	std::string phases = "";
 	if (m_pNucleationTravelTime1 != NULL) {
-		phases += m_pNucleationTravelTime1->sPhase;
+		phases += m_pNucleationTravelTime1->m_sPhase;
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
-		phases += ", " + m_pNucleationTravelTime2->sPhase;
+		phases += ", " + m_pNucleationTravelTime2->m_sPhase;
 	}
 
 	// log local grid info
@@ -753,10 +753,10 @@ bool CWeb::generateExplicitGrid(
 
 	std::string phases = "";
 	if (m_pNucleationTravelTime1 != NULL) {
-		phases += m_pNucleationTravelTime1->sPhase;
+		phases += m_pNucleationTravelTime1->m_sPhase;
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
-		phases += ", " + m_pNucleationTravelTime2->sPhase;
+		phases += ", " + m_pNucleationTravelTime2->m_sPhase;
 	}
 
 	// log explicit grid info
@@ -1399,12 +1399,12 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 
 	// setup traveltimes for this node
 	if (m_pNucleationTravelTime1 != NULL) {
-		m_pNucleationTravelTime1->setOrigin(node->getLatitude(),
+		m_pNucleationTravelTime1->setTTOrigin(node->getLatitude(),
 											node->getLongitude(),
 											node->getDepth());
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
-		m_pNucleationTravelTime2->setOrigin(node->getLatitude(),
+		m_pNucleationTravelTime2->setTTOrigin(node->getLatitude(),
 											node->getLongitude(),
 											node->getDepth());
 	}
@@ -1543,12 +1543,12 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 
 		// setup traveltimes for this node
 		if (m_pNucleationTravelTime1 != NULL) {
-			m_pNucleationTravelTime1->setOrigin(node->getLatitude(),
+			m_pNucleationTravelTime1->setTTOrigin(node->getLatitude(),
 												node->getLongitude(),
 												node->getDepth());
 		}
 		if (m_pNucleationTravelTime2 != NULL) {
-			m_pNucleationTravelTime2->setOrigin(node->getLatitude(),
+			m_pNucleationTravelTime2->setTTOrigin(node->getLatitude(),
 												node->getLongitude(),
 												node->getDepth());
 		}

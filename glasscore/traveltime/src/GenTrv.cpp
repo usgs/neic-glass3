@@ -298,18 +298,18 @@ bool CGenTrv::generate(json::Object *com) {
 		// create distance timewarp
 		pDistanceWarp = new CTimeWarp(gridMin, gridMax, decayConst, slopeZero,
 										slopeInf);
-		nDistanceWarp = pDistanceWarp->grid(gridMax);
+		nDistanceWarp = pDistanceWarp->calculateGridPoint(gridMax);
 
 		glass3::util::Logger::log(
 				"debug",
 				"CGenTrv::generate: pDistanceWarp: minDistance: "
 						+ std::to_string(
-								pDistanceWarp->value(
-										pDistanceWarp->grid(gridMin)))
+								pDistanceWarp->calculateValue(
+										pDistanceWarp->calculateGridPoint(gridMin)))
 						+ " -> maxDistance:"
 						+ std::to_string(
-								pDistanceWarp->value(
-										pDistanceWarp->grid(gridMax))));
+								pDistanceWarp->calculateValue(
+										pDistanceWarp->calculateGridPoint(gridMax))));
 	} else {
 		glass3::util::Logger::log(
 				"error",
@@ -420,16 +420,16 @@ bool CGenTrv::generate(json::Object *com) {
 		// create depth timewarp
 		pDepthWarp = new CTimeWarp(gridMin, gridMax, decayConst, slopeZero,
 									slopeInf);
-		nDepthWarp = pDepthWarp->grid(gridMax);
+		nDepthWarp = pDepthWarp->calculateGridPoint(gridMax);
 
 		glass3::util::Logger::log(
 				"debug",
 				"CGenTrv::generate: pDepthWarp: minDepth: "
 						+ std::to_string(
-								pDepthWarp->value(pDepthWarp->grid(gridMin)))
+								pDepthWarp->calculateValue(pDepthWarp->calculateGridPoint(gridMin)))
 						+ " -> maxDepth:"
 						+ std::to_string(
-								pDepthWarp->value(pDepthWarp->grid(gridMax))));
+								pDepthWarp->calculateValue(pDepthWarp->calculateGridPoint(gridMax))));
 	} else {
 		glass3::util::Logger::log(
 				"error",
@@ -477,7 +477,7 @@ bool CGenTrv::generate(json::Object *com) {
 					"debug",
 					"CGenTrv::generate: iDelta: " + std::to_string(iDelta)
 							+ " distance: "
-							+ std::to_string(pDistanceWarp->value(iDelta)));
+							+ std::to_string(pDistanceWarp->calculateValue(iDelta)));
 
 			// check to see if there is a valid travel time at this
 			// distance for this depth
@@ -498,7 +498,7 @@ bool CGenTrv::generate(json::Object *com) {
 					"debug",
 					"CGenTrv::generate: iDepth:" + std::to_string(iDepth)
 							+ " depth:"
-							+ std::to_string(pDepthWarp->value(iDepth))
+							+ std::to_string(pDepthWarp->calculateValue(iDepth))
 							+ " No Travel Times for this depth.");
 
 			continue;
@@ -563,19 +563,19 @@ bool CGenTrv::generate(json::Object *com) {
 
 	// Output distance warp parameters
 	fwrite(&nDistanceWarp, 1, 4, outFile);
-	fwrite(&pDistanceWarp->dGridMinimum, 1, 8, outFile);
-	fwrite(&pDistanceWarp->dGridMaximum, 1, 8, outFile);
-	fwrite(&pDistanceWarp->dDecayConstant, 1, 8, outFile);
-	fwrite(&pDistanceWarp->dSlopeZero, 1, 8, outFile);
-	fwrite(&pDistanceWarp->dSlopeInfinity, 1, 8, outFile);
+	fwrite(&pDistanceWarp->m_dGridMinimum, 1, 8, outFile);
+	fwrite(&pDistanceWarp->m_dGridMaximum, 1, 8, outFile);
+	fwrite(&pDistanceWarp->m_dDecayConstant, 1, 8, outFile);
+	fwrite(&pDistanceWarp->m_dSlopeZero, 1, 8, outFile);
+	fwrite(&pDistanceWarp->m_dSlopeInfinity, 1, 8, outFile);
 
 	// Output depth warp paramters
 	fwrite(&nDepthWarp, 1, 4, outFile);
-	fwrite(&pDepthWarp->dGridMinimum, 1, 8, outFile);
-	fwrite(&pDepthWarp->dGridMaximum, 1, 8, outFile);
-	fwrite(&pDepthWarp->dDecayConstant, 1, 8, outFile);
-	fwrite(&pDepthWarp->dSlopeZero, 1, 8, outFile);
-	fwrite(&pDepthWarp->dSlopeInfinity, 1, 8, outFile);
+	fwrite(&pDepthWarp->m_dGridMinimum, 1, 8, outFile);
+	fwrite(&pDepthWarp->m_dGridMaximum, 1, 8, outFile);
+	fwrite(&pDepthWarp->m_dDecayConstant, 1, 8, outFile);
+	fwrite(&pDepthWarp->m_dSlopeZero, 1, 8, outFile);
+	fwrite(&pDepthWarp->m_dSlopeInfinity, 1, 8, outFile);
 
 	// Output interpolation grids
 	fwrite(travelTimeArray, 1, 8 * nDistanceWarp * nDepthWarp, outFile);
@@ -602,7 +602,7 @@ int CGenTrv::Row(int iDepth, double *travelTimeArray,
 	glass3::util::Logger::log(
 			"debug",
 			"CGenTrv::Row: iDepth: " + std::to_string(iDepth) + +" depth:"
-					+ std::to_string(pDepthWarp->value(iDepth)));
+					+ std::to_string(pDepthWarp->calculateValue(iDepth)));
 
 	// array to hold ray parameters
 	// NOTE: This doesn't appear to be used by anything
@@ -614,7 +614,7 @@ int CGenTrv::Row(int iDepth, double *travelTimeArray,
 	}
 
 	// get current depth
-	double depth = pDepthWarp->value(iDepth);
+	double depth = pDepthWarp->calculateValue(iDepth);
 
 	// for each phase
 	for (int phaseIndex = 0; phaseIndex < nRays; phaseIndex++) {
@@ -627,7 +627,7 @@ int CGenTrv::Row(int iDepth, double *travelTimeArray,
 		for (int distanceIndex = 0; distanceIndex < nDistanceWarp;
 				distanceIndex++) {
 			// get the current distance
-			double distance = pDistanceWarp->value(distanceIndex);
+			double distance = pDistanceWarp->calculateValue(distanceIndex);
 
 			// generate traveltime for this phase / distance / depth
 			if (T(phase, distance, depth)) {

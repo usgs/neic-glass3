@@ -3,6 +3,8 @@
 #include <date.h>
 #include <geo.h>
 #include <logger.h>
+#include <TTT.h>
+#include <TravelTime.h>
 #include <cmath>
 #include <string>
 #include <atomic>
@@ -14,9 +16,6 @@
 #include "HypoList.h"
 #include "CorrelationList.h"
 #include "Detection.h"
-#include "Terra.h"
-#include "TTT.h"
-#include "TravelTime.h"
 
 namespace glasscore {
 
@@ -1400,93 +1399,4 @@ bool CGlass::getTestTravelTimes() {
 bool CGlass::getAllowPickUpdates() {
 	return (m_bAllowPickUpdates);
 }
-/* NOTE: Leave these in place as examples for Travel Time unit tests.
- *
- // ---------------------------------------------------------Test
- // General testing wart
- bool CGlass::test(json::Object *com) {
- CTerra *terra = new CTerra();
- CRay *ray = new CRay();
- double deg2rad = 0.01745329251994;
- double rad2deg = 57.29577951308;
- ray->pTerra = terra;
- string mdl = (*com)["Model"].ToString();
- printf("model:%s\n", mdl.c_str());
-
- bool bload = terra->load(mdl.c_str());
- if (!bload)
- return(false;
- printf("Terra nLayer:%ld dRadius:%.2f\n", terra->nLayer, terra->dRadius);
- double r = terra->dRadius;
-
- int iphs = ray->setPhase("P");
- printf("ray->setPhase:%d\n", iphs);
- ray->setDepth(100.0);
- ray->Setup();
- double t1;
- double t2;
- double dtdz;
- double rad;
- for (double deg = 0.0; deg < 30.0; deg += 1.0) {
- rad = deg2rad * deg;
- t1 = ray->Travel(rad, r);
- t2 = ray->Travel(rad, r + 1.0);
- printf("T %6.2f %6.2f %6.2f %6.2f\n", deg, t1, t2, t2 - t1);
- }
-
- return(true;
- }
-
- // ---------------------------------------------------------GenTrv
- // Generate travel time interpolation file
- bool CGlass::genTrv(json::Object *com) {
- CGenTrv *gentrv;
-
- gentrv = new CGenTrv();
- bool bres = gentrv->Generate(com);
- delete gentrv;
- return(bres;
- }
-
- // ---------------------------------------------------------TestTTT
- // Quick and dirty unit test for TTT functions
- void CGlass::testTTT(json::Object *com) {
- pTerra = new CTerra();
- pRay = new CRay();
- double deg2rad = 0.01745329251994;
- double rad2deg = 57.29577951308;
- pRay->pTerra = pTerra;
- string mdl = (*com)["Model"].ToString();
- printf("model:%s\n", mdl.c_str());
- bool bload = pTerra->load(mdl.c_str());
- if (!bload)
- printf(" ** ERR:Cannot load Earth model\n");
- printf("Terra nLayer:%ld dRadius:%.2f\n", pTerra->nLayer, pTerra->dRadius);
- CTravelTime *trv = new CTravelTime();
- trv->Setup(pRay, "PKPdf");
- trv->setOrigin(0.0, 0.0, 50.0);
- double t = trv->T(50.0);
- printf("T(50.0,50.0) is %.2f\n", t);
- int mn;
- double sc;
- trv->setOrigin(0.0, 0.0, 0.0);
- for (double d = 0.0; d < 360.5; d += 1.0) {
- t = trv->T(d);
- mn = (int) (t / 60.0);
- sc = t - 60.0 * mn;
- printf("%6.1f %3d %5.2f\n", d, mn, sc);
- }
- CTTT *ttt = new CTTT();
- ttt->Setup(pRay);
- ttt->addPhase("P");
- ttt->addPhase("S");
- ttt->setOrigin(0.0, 0.0, 0.0);
- for (double d = 0.0; d < 360.5; d += 1.0) {
- t = ttt->T(d, "P");
- mn = (int) (t / 60.0);
- sc = t - 60.0 * mn;
- printf("%6.1f %3d %5.2f\n", d, mn, sc);
- }
- }*/
-
 }  // namespace glasscore

@@ -21,12 +21,12 @@ CTimeWarp::CTimeWarp(double gridMin, double gridMax, double decayConst,
 CTimeWarp::CTimeWarp(const CTimeWarp & timeWarp) {
 	clear();
 
-	dGridMinimum = timeWarp.dGridMinimum;
-	dGridMaximum = timeWarp.dGridMaximum;
-	dDecayConstant = timeWarp.dDecayConstant;
-	dSlopeZero = timeWarp.dSlopeZero;
-	dSlopeInfinity = timeWarp.dSlopeInfinity;
-	bSetup = timeWarp.bSetup;
+	m_dGridMinimum = timeWarp.m_dGridMinimum;
+	m_dGridMaximum = timeWarp.m_dGridMaximum;
+	m_dDecayConstant = timeWarp.m_dDecayConstant;
+	m_dSlopeZero = timeWarp.m_dSlopeZero;
+	m_dSlopeInfinity = timeWarp.m_dSlopeInfinity;
+	m_bSetup = timeWarp.m_bSetup;
 }
 
 // ---------------------------------------------------------~CTimeWarp
@@ -36,69 +36,74 @@ CTimeWarp::~CTimeWarp() {
 
 // ---------------------------------------------------------clear
 void CTimeWarp::clear() {
-	dGridMinimum = 0;
-	dGridMaximum = 0;
-	dDecayConstant = 0;
-	dSlopeZero = 0;
-	dSlopeInfinity = 0;
-	bSetup = false;
+	m_dGridMinimum = 0;
+	m_dGridMaximum = 0;
+	m_dDecayConstant = 0;
+	m_dSlopeZero = 0;
+	m_dSlopeInfinity = 0;
+	m_bSetup = false;
 }
 
 // ---------------------------------------------------------setup
 void CTimeWarp::setup(double gridMin, double gridMax, double decayConst,
 						double slopeZero, double slopeInf) {
-	dGridMinimum = gridMin;
-	dGridMaximum = gridMax;
-	dDecayConstant = decayConst;
-	dSlopeZero = slopeZero;
-	dSlopeInfinity = slopeInf;
-	bSetup = true;
+	m_dGridMinimum = gridMin;
+	m_dGridMaximum = gridMax;
+	m_dDecayConstant = decayConst;
+	m_dSlopeZero = slopeZero;
+	m_dSlopeInfinity = slopeInf;
+	m_bSetup = true;
 }
 
 // ---------------------------------------------------------grid
-double CTimeWarp::grid(double val) {
-	// Calculate grid index from value
-	if (bSetup == false) {
-		glass3::util::Logger::log("error",
-								"CTimeWarp::grid: Time Warp is not set up.");
+double CTimeWarp::calculateGridPoint(double value) {
+	// Calculate grid point value from given value
+	if (m_bSetup == false) {
+		glass3::util::Logger::log(
+				"error", "CTimeWarp::grid: Time Warp is not set up.");
 	}
 
-	// init
-	double a = 1.0 / dSlopeInfinity;
-	double b = 1.0 / dSlopeZero - 1.0 / dSlopeInfinity;
-	double c = b * exp(-dDecayConstant * dGridMinimum) / dDecayConstant
-			- a * dGridMinimum;
+	// Transform a value on a physical measurement scale to one on a pre-
+	// conceived internal scale (grid point), where data points exist at each
+	// natural-integral value, such that the data points are equidistant on the
+	// internal scale, and conceived such that they efficiently represent
+	// changes in the physical curve scale.
+	double a = 1.0 / m_dSlopeInfinity;
+	double b = 1.0 / m_dSlopeZero - 1.0 / m_dSlopeInfinity;
+	double c = b * exp(-m_dDecayConstant * m_dGridMinimum) / m_dDecayConstant
+			- a * m_dGridMinimum;
 
-	// calculate grid index
-	double grid = a * val - b * exp(-dDecayConstant * val) / dDecayConstant + c;
+	// calculate grid point value
+	double grid = a * value
+			- b * exp(-m_dDecayConstant * value) / m_dDecayConstant + c;
 
 	return (grid);
 }
 
 // ---------------------------------------------------------value
-double CTimeWarp::value(double gridIndex) {
+double CTimeWarp::calculateValue(double gridPoint) {
 	// Calculate interpolated value at given grid point
-	if (bSetup == false) {
-		glass3::util::Logger::log("error",
-								"CTimeWarp::value: Time Warp is not set up.");
+	if (m_bSetup == false) {
+		glass3::util::Logger::log(
+				"error", "CTimeWarp::value: Time Warp is not set up.");
 	}
 
 	// init
-	double a = 1.0 / dSlopeInfinity;
-	double b = 1.0 / dSlopeZero - 1.0 / dSlopeInfinity;
-	double val = 0.5 * (dGridMinimum + dGridMaximum);
+	double a = 1.0 / m_dSlopeInfinity;
+	double b = 1.0 / m_dSlopeZero - 1.0 / m_dSlopeInfinity;
+	double value = 0.5 * (m_dGridMinimum + m_dGridMaximum);
 
 	// Calculate interpolated value
 	// NOTE: Why 100 here?
 	for (int i = 0; i < 100; i++) {
-		double f = grid(val) - gridIndex;
+		double f = calculateGridPoint(value) - gridPoint;
 		if (fabs(f) < 0.000001) {
 			break;
 		}
 
-		double fp = a + b * exp(-dDecayConstant * val);
-		val -= f / fp;
+		double fp = a + b * exp(-m_dDecayConstant * value);
+		value -= f / fp;
 	}
-	return (val);
+	return (value);
 }
 }  // namespace traveltime

@@ -305,11 +305,11 @@ TEST(WebTest, GlobalTest) {
 	ASSERT_TRUE(NULL != testGlobalWeb.getNucleationTravelTime2())<< "getTrv2() not null";
 
 	// phase name
-	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime1()->sPhase.c_str(),
+	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime1()->m_sPhase.c_str(),
 					phasename1.c_str());
 
 	// phase name
-	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime2()->sPhase.c_str(),
+	ASSERT_STREQ(testGlobalWeb.getNucleationTravelTime2()->m_sPhase.c_str(),
 					phasename2.c_str());
 
 	// cleanup
@@ -395,11 +395,11 @@ TEST(WebTest, GridTest) {
 	ASSERT_TRUE(NULL != testGridWeb.getNucleationTravelTime2())<< "getTrv2() not null";
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->sPhase.c_str(),
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->m_sPhase.c_str(),
 					phasename1.c_str());
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getNucleationTravelTime2()->sPhase.c_str(),
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime2()->m_sPhase.c_str(),
 					phasename2.c_str());
 
 	// cleanup
@@ -486,7 +486,7 @@ TEST(WebTest, GridExplicitTest) {
 	ASSERT_TRUE(NULL == testGridWeb.getNucleationTravelTime2())<< "getTrv2() null";
 
 	// phase name
-	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->sPhase.c_str(),
+	ASSERT_STREQ(testGridWeb.getNucleationTravelTime1()->m_sPhase.c_str(),
 					phasename1.c_str());
 
 	// cleanup

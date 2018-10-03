@@ -22,22 +22,22 @@ TEST(TimeWarpTest, Construction) {
 									SLOPEINFINITY);
 
 	// setup?
-	ASSERT_TRUE(timeWarp.bSetup);
+	ASSERT_TRUE(timeWarp.m_bSetup);
 
 	// dGridMinimum
-	ASSERT_EQ(GRIDMINIMUM, timeWarp.dGridMinimum)<< "Grid Minimum Check";
+	ASSERT_EQ(GRIDMINIMUM, timeWarp.m_dGridMinimum)<< "Grid Minimum Check";
 
 	// dGridMaximum
-	ASSERT_EQ(GRIDMAXIMUM, timeWarp.dGridMaximum)<< "Grid Maximum Check";
+	ASSERT_EQ(GRIDMAXIMUM, timeWarp.m_dGridMaximum)<< "Grid Maximum Check";
 
 	// dDecayConstant
-	ASSERT_EQ(DECAYCONSTANT, timeWarp.dDecayConstant)<< "Decay Constant Check";
+	ASSERT_EQ(DECAYCONSTANT, timeWarp.m_dDecayConstant)<< "Decay Constant Check";
 
 	// dSlopeZero
-	ASSERT_EQ(SLOPEZERO, timeWarp.dSlopeZero)<< "Slope Zero Check";
+	ASSERT_EQ(SLOPEZERO, timeWarp.m_dSlopeZero)<< "Slope Zero Check";
 
 	// dSlopeInfinity
-	ASSERT_EQ(SLOPEINFINITY, timeWarp.dSlopeInfinity)<< "Slope Infinity Check";
+	ASSERT_EQ(SLOPEINFINITY, timeWarp.m_dSlopeInfinity)<< "Slope Infinity Check";
 }
 
 // tests the time warp copy constructor
@@ -48,22 +48,22 @@ TEST(TimeWarpTest, Copy) {
 	traveltime::CTimeWarp timeWarp1;
 
 	// setup?
-	ASSERT_FALSE(timeWarp1.bSetup);
+	ASSERT_FALSE(timeWarp1.m_bSetup);
 
 	// dGridMinimum
-	ASSERT_EQ(0, timeWarp1.dGridMinimum)<< "Grid Minimum Check";
+	ASSERT_EQ(0, timeWarp1.m_dGridMinimum)<< "Grid Minimum Check";
 
 	// dGridMaximum
-	ASSERT_EQ(0, timeWarp1.dGridMaximum)<< "Grid Maximum Check";
+	ASSERT_EQ(0, timeWarp1.m_dGridMaximum)<< "Grid Maximum Check";
 
 	// dDecayConstant
-	ASSERT_EQ(0, timeWarp1.dDecayConstant)<< "Decay Constant Check";
+	ASSERT_EQ(0, timeWarp1.m_dDecayConstant)<< "Decay Constant Check";
 
 	// dSlopeZero
-	ASSERT_EQ(0, timeWarp1.dSlopeZero)<< "Slope Zero Check";
+	ASSERT_EQ(0, timeWarp1.m_dSlopeZero)<< "Slope Zero Check";
 
 	// dSlopeInfinity
-	ASSERT_EQ(0, timeWarp1.dSlopeInfinity)<< "Slope Infinity Check";
+	ASSERT_EQ(0, timeWarp1.m_dSlopeInfinity)<< "Slope Infinity Check";
 
 	// construct a second timewarp
 	traveltime::CTimeWarp timeWarp2(GRIDMINIMUM, GRIDMAXIMUM, DECAYCONSTANT,
@@ -73,22 +73,22 @@ TEST(TimeWarpTest, Copy) {
 	timeWarp1 = traveltime::CTimeWarp(timeWarp2);
 
 	// setup?
-	ASSERT_TRUE(timeWarp1.bSetup);
+	ASSERT_TRUE(timeWarp1.m_bSetup);
 
 	// dGridMinimum
-	ASSERT_EQ(GRIDMINIMUM, timeWarp1.dGridMinimum)<< "Grid Minimum Check";
+	ASSERT_EQ(GRIDMINIMUM, timeWarp1.m_dGridMinimum)<< "Grid Minimum Check";
 
 	// dGridMaximum
-	ASSERT_EQ(GRIDMAXIMUM, timeWarp1.dGridMaximum)<< "Grid Maximum Check";
+	ASSERT_EQ(GRIDMAXIMUM, timeWarp1.m_dGridMaximum)<< "Grid Maximum Check";
 
 	// dDecayConstant
-	ASSERT_EQ(DECAYCONSTANT, timeWarp1.dDecayConstant)<< "Decay Constant Check";
+	ASSERT_EQ(DECAYCONSTANT, timeWarp1.m_dDecayConstant)<< "Decay Constant Check";
 
 	// dSlopeZero
-	ASSERT_EQ(SLOPEZERO, timeWarp1.dSlopeZero)<< "Slope Zero Check";
+	ASSERT_EQ(SLOPEZERO, timeWarp1.m_dSlopeZero)<< "Slope Zero Check";
 
 	// dSlopeInfinity
-	ASSERT_EQ(SLOPEINFINITY, timeWarp1.dSlopeInfinity)<< "Slope Infinity Check";
+	ASSERT_EQ(SLOPEINFINITY, timeWarp1.m_dSlopeInfinity)<< "Slope Infinity Check";
 }
 
 // tests the time warp operations
@@ -100,7 +100,7 @@ TEST(TimeWarpTest, Operations) {
 	SLOPEZERO,
 									SLOPEINFINITY);
 
-	ASSERT_NEAR(GRIDINDEX, timeWarp.grid(GRIDVALUE), 0.0001)<< "Grid Index Check";
+	ASSERT_NEAR(GRIDINDEX, timeWarp.calculateGridPoint(GRIDVALUE), 0.0001)<< "Grid Index Check";
 
-	ASSERT_NEAR(GRIDVALUE, timeWarp.value(GRIDINDEX), 0.001)<< "Grid Value Check";
+	ASSERT_NEAR(GRIDVALUE, timeWarp.calculateValue(GRIDINDEX), 0.001)<< "Grid Value Check";
 }
