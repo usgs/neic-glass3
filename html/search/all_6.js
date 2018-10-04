@@ -29,6 +29,5 @@ var searchData=
   ['fun_5fs_5fdelta',['FUN_S_DELTA',['../Terra_8h.html#addc6106ff934fe77132474660c08a30f',1,'Terra.h']]],
   ['fun_5fs_5ftau',['FUN_S_TAU',['../Terra_8h.html#a7bea1107486b72bbde48f49eb494eb49',1,'Terra.h']]],
   ['fun_5fs_5ftime',['FUN_S_TIME',['../Terra_8h.html#a13fc2761f7fd03fe2258588a84d99645',1,'Terra.h']]],
-  ['fun_5ftest',['FUN_TEST',['../Terra_8h.html#aae37fb42511f521f2f27a533013ef36f',1,'Terra.h']]],
-  ['furthest_5fgrid_5fpoint_5fvs_5fresolution_5fratio',['FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO',['../Node_8h.html#a255c6e6fd66b7c0a3d79cf09f8fe4501',1,'Node.h']]]
+  ['fun_5ftest',['FUN_TEST',['../Terra_8h.html#aae37fb42511f521f2f27a533013ef36f',1,'Terra.h']]]
 ];

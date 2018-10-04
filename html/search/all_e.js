@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['ndepthwarp',['nDepthWarp',['../classtraveltime_1_1CGenTrv.html#a5d84a1d1340834793aa3cba8593b41c5',1,'traveltime::CGenTrv::nDepthWarp()'],['../classtraveltime_1_1CTravelTime.html#a5beebace3228cb12e8794e2ee5d1e025',1,'traveltime::CTravelTime::nDepthWarp()']]],
+  ['ndepthwarp',['nDepthWarp',['../classtraveltime_1_1CGenTrv.html#a5d84a1d1340834793aa3cba8593b41c5',1,'traveltime::CGenTrv']]],
   ['ndiscontinuities',['nDiscontinuities',['../classtraveltime_1_1CTerra.html#af89f7a01b79f2ce9c4d1edd5cf9f93e2',1,'traveltime::CTerra']]],
-  ['ndistancewarp',['nDistanceWarp',['../classtraveltime_1_1CGenTrv.html#a4236c7815308f912791adfa64e80d51d',1,'traveltime::CGenTrv::nDistanceWarp()'],['../classtraveltime_1_1CTravelTime.html#af6c4a38f51335dbdf1633c850ad26423',1,'traveltime::CTravelTime::nDistanceWarp()']]],
+  ['ndistancewarp',['nDistanceWarp',['../classtraveltime_1_1CGenTrv.html#a4236c7815308f912791adfa64e80d51d',1,'traveltime::CGenTrv']]],
   ['network_5findex',['NETWORK_INDEX',['../ccparser_8cpp.html#acd1ae4f8c1546a4086848c7e5fb799ce',1,'NETWORK_INDEX():&#160;ccparser.cpp'],['../gpickparser_8cpp.html#acd1ae4f8c1546a4086848c7e5fb799ce',1,'NETWORK_INDEX():&#160;gpickparser.cpp']]],
   ['neventcount',['nEventCount',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a62f41dc7b27636aa999bc2d7637c15d8',1,'traveltime::_ZoneStatsInfoStruct']]],
   ['nlayer',['nLayer',['../classtraveltime_1_1CTerra.html#aa293dab64c42e435c1a9a2cc2ef2aa87',1,'traveltime::CTerra']]],
@@ -14,10 +14,7 @@ var searchData=
   ['nodelink',['NodeLink',['../namespaceglasscore.html#a851b82abb04ff778f65dcec3ae29ac87',1,'glasscore']]],
   ['now',['now',['../classglass3_1_1util_1_1Date.html#a0a57945ec7f8e1d626113173656bac84',1,'glass3::util::Date']]],
   ['nrays',['nRays',['../classtraveltime_1_1CGenTrv.html#a84dde28f4413124f1454b734a47aa01f',1,'traveltime::CGenTrv']]],
-  ['ntrv',['nTrv',['../classtraveltime_1_1CTrav.html#af9e7e8121fa0dad455fda4534db92c83',1,'traveltime::CTrav::nTrv()'],['../classtraveltime_1_1CTTT.html#a9b26bf34ace2b93af8856e7b431e4d9f',1,'traveltime::CTTT::nTrv()']]],
-  ['nuc_5fdepth_5fshell_5fresolution_5fkm',['NUC_DEPTH_SHELL_RESOLUTION_KM',['../Node_8h.html#ad84af9387fea0afbb353697739dc1d06',1,'Node.h']]],
-  ['nuc_5fseconds_5fper_5fsigma',['NUC_SECONDS_PER_SIGMA',['../Node_8h.html#afe92677a2a36bafd76874ad318e23ba1',1,'Node.h']]],
+  ['ntrv',['nTrv',['../classtraveltime_1_1CTrav.html#af9e7e8121fa0dad455fda4534db92c83',1,'traveltime::CTrav']]],
   ['nucleate',['nucleate',['../classglasscore_1_1CNode.html#a1e3b72adfc0f3067f8af4aeae7fa9736',1,'glasscore::CNode::nucleate()'],['../classglasscore_1_1CPick.html#a7bc9730805c61733f67e4bba810c1099',1,'glasscore::CPick::nucleate()'],['../classglasscore_1_1CSite.html#a6bcd4c0b553af67863b2af7244c48f98',1,'glasscore::CSite::nucleate()']]],
-  ['nucleation_5fslop_5ffactor_5fseconds',['NUCLEATION_SLOP_FACTOR_SECONDS',['../Node_8cpp.html#a0c79a18efc420dd073f98fc01a985e87',1,'Node.cpp']]],
   ['nx',['nX',['../classtraveltime_1_1CSpline.html#a9fa65e71ac8bc3dc5d8895b4abc48223',1,'traveltime::CSpline']]]
 ];

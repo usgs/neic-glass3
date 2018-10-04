@@ -15,11 +15,6 @@ var searchData=
   ['loadwebsitelist',['loadWebSiteList',['../classglasscore_1_1CWeb.html#a7d7cd0912a0b8aeba102e3c5d42b3a93',1,'glasscore::CWeb']]],
   ['localize',['localize',['../classglasscore_1_1CHypo.html#a615084a07169e3aa24d0e35a18d76c98',1,'glasscore::CHypo']]],
   ['location_5findex',['LOCATION_INDEX',['../ccparser_8cpp.html#a5084cb8b5935a3f6f770eac0cb4a644d',1,'LOCATION_INDEX():&#160;ccparser.cpp'],['../gpickparser_8cpp.html#a5084cb8b5935a3f6f770eac0cb4a644d',1,'LOCATION_INDEX():&#160;gpickparser.cpp']]],
-  ['location_5fmax_5ftaper_5ftresh',['LOCATION_MAX_TAPER_TRESH',['../Hypo_8cpp.html#a0a4c12f2b1b762ba02b0033245041cb5',1,'Hypo.cpp']]],
-  ['location_5fmin_5fdistance_5fstep_5fsize',['LOCATION_MIN_DISTANCE_STEP_SIZE',['../Hypo_8cpp.html#a3ba36e596888e4583226f38e02f61a2b',1,'Hypo.cpp']]],
-  ['location_5fmin_5ftime_5fstep_5fsize',['LOCATION_MIN_TIME_STEP_SIZE',['../Hypo_8cpp.html#a74ae451e4a19cb7e327242a5b85cae83',1,'Hypo.cpp']]],
-  ['location_5fsearch_5fradius_5fto_5ftime_5fconversion',['LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION',['../Hypo_8cpp.html#a26fa60c10f75f102ee1102d5d36c888e',1,'Hypo.cpp']]],
-  ['location_5ftaper_5fconstant',['LOCATION_TAPER_CONSTANT',['../Hypo_8cpp.html#a0a40ac72e3a12b07ef1df8deb91ac171',1,'Hypo.cpp']]],
   ['log',['log',['../classglass3_1_1util_1_1Logger.html#a163b0014eab540f6cc82d0c66eb5fff9',1,'glass3::util::Logger::log(const char *logMessage)'],['../classglass3_1_1util_1_1Logger.html#ae331ea1e94429bfd79ce4961723b3178',1,'glass3::util::Logger::log(const std::string &amp;level, const char *logMessage)'],['../classglass3_1_1util_1_1Logger.html#a7d348bcf8601d8ddef81349027af7cab',1,'glass3::util::Logger::log(std::string logMessage)'],['../classglass3_1_1util_1_1Logger.html#a2d944b8bf0b78415cb83f89bb7392eea',1,'glass3::util::Logger::log(const std::string &amp;level, const std::string &amp;message)']]],
   ['log_5finit',['log_init',['../classglass3_1_1util_1_1Logger.html#ae51ca3f4ff63a2c3dcf0aaf9fff03899',1,'glass3::util::Logger']]],
   ['log_5fupdate_5flevel',['log_update_level',['../classglass3_1_1util_1_1Logger.html#a38cb08096a5dc1e289e64348f5454c01',1,'glass3::util::Logger::log_update_level(spdlog::level::level_enum loglevel)'],['../classglass3_1_1util_1_1Logger.html#a611e0f61e87ef5fa78dfbeab311f4406',1,'glass3::util::Logger::log_update_level(const std::string &amp;levelString)']]],
@@ -37,6 +32,5 @@ var searchData=
   ['logtrace',['logTrace',['../classglass3_1_1util_1_1Logger.html#a521a72083f4b094405e31f9d1ae66d22',1,'glass3::util::Logger']]],
   ['logwarning',['logWarning',['../classglass3_1_1util_1_1Logger.html#a867fca5f6f15c52da34007257198d1ce',1,'glass3::util::Logger']]],
   ['longitude_5findex',['LONGITUDE_INDEX',['../ccparser_8cpp.html#afa2d59a247fc75a92e777ca2541203f3',1,'ccparser.cpp']]],
-  ['longitudewrap',['LONGITUDEWRAP',['../geo_8h.html#a2089174f6b2cbe5eab38201fe2d32869',1,'geo.h']]],
   ['lowpass_5findex',['LOWPASS_INDEX',['../gpickparser_8cpp.html#ad2f29fa5cf161bc9c37384eb763fc84d',1,'gpickparser.cpp']]]
 ];

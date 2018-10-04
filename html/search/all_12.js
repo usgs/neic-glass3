@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['rad2deg',['RAD2DEG',['../glassmath_8h.html#ac5a945020d3528355cda82d383676736',1,'glassmath.h']]],
   ['random',['random',['../classglass3_1_1util_1_1GlassID.html#ae84aab0bb5aba2fec78070df0f4c95b4',1,'glass3::util::GlassID::random()'],['../classglass3_1_1util_1_1GlassMath.html#acfe6ba18ecf14ee174bb6a196f583a9d',1,'glass3::util::GlassMath::random()']]],
   ['ray_2ecpp',['Ray.cpp',['../Ray_8cpp.html',1,'']]],
   ['ray_2eh',['Ray.h',['../Ray_8h.html',1,'']]],

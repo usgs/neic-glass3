@@ -234,12 +234,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aaa90bde703fc3b6d652db8082e02bb41"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#aaa90bde703fc3b6d652db8082e02bb41">setMaxNumCorrelations</a> (int max)</td></tr>
 <tr class="memdesc:aaa90bde703fc3b6d652db8082e02bb41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of correlations to store in glass.  <a href="#aaa90bde703fc3b6d652db8082e02bb41">More...</a><br/></td></tr>
 <tr class="separator:aaa90bde703fc3b6d652db8082e02bb41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8f164873eefc44539e7357593d508eb"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ae8f164873eefc44539e7357593d508eb">getMaxNumPicksPerSite</a> ()</td></tr>
-<tr class="memdesc:ae8f164873eefc44539e7357593d508eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum number of picks to store with a site.  <a href="#ae8f164873eefc44539e7357593d508eb">More...</a><br/></td></tr>
-<tr class="separator:ae8f164873eefc44539e7357593d508eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a4959197e22846ba8e384acd1f721e2"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a2a4959197e22846ba8e384acd1f721e2">setMaxNumPicksPerSite</a> (int max)</td></tr>
-<tr class="memdesc:a2a4959197e22846ba8e384acd1f721e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of picks to store with a site.  <a href="#a2a4959197e22846ba8e384acd1f721e2">More...</a><br/></td></tr>
-<tr class="separator:a2a4959197e22846ba8e384acd1f721e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad06d75a07aa09bd23087b6872e96170f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ad06d75a07aa09bd23087b6872e96170f">setMaxNumPicksPerSite</a> (int max)</td></tr>
+<tr class="memdesc:ad06d75a07aa09bd23087b6872e96170f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum number of picks to store with a site.  <a href="#ad06d75a07aa09bd23087b6872e96170f">More...</a><br/></td></tr>
+<tr class="separator:ad06d75a07aa09bd23087b6872e96170f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d4f6f4ff0773b26631ef6c6eb90d943"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a0d4f6f4ff0773b26631ef6c6eb90d943">getMaxNumHypos</a> ()</td></tr>
 <tr class="memdesc:a0d4f6f4ff0773b26631ef6c6eb90d943"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum number of hypos to store in glass.  <a href="#a0d4f6f4ff0773b26631ef6c6eb90d943">More...</a><br/></td></tr>
 <tr class="separator:a0d4f6f4ff0773b26631ef6c6eb90d943"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -287,6 +284,15 @@ Static Public Attributes</h2></td></tr>
 <tr class="memitem:afcfd1b9aa76a4557e1eff40405904d31"><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#afcfd1b9aa76a4557e1eff40405904d31">iMaxQueueLenPerThreadFactor</a> = 10</td></tr>
 <tr class="memdesc:afcfd1b9aa76a4557e1eff40405904d31"><td class="mdescLeft">&#160;</td><td class="mdescRight">The factor used to scale thread count to implement maximum queue lengths for processing.  <a href="#afcfd1b9aa76a4557e1eff40405904d31">More...</a><br/></td></tr>
 <tr class="separator:afcfd1b9aa76a4557e1eff40405904d31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75bdc4d16e330accd3682f8295d4f347"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a75bdc4d16e330accd3682f8295d4f347">k_dAssociationSecondsPerSigma</a> = 1.0</td></tr>
+<tr class="memdesc:a75bdc4d16e330accd3682f8295d4f347"><td class="mdescLeft">&#160;</td><td class="mdescRight">The seconds per sigma value used for association, intentionally a tighter sigma value than nucleation.  <a href="#a75bdc4d16e330accd3682f8295d4f347">More...</a><br/></td></tr>
+<tr class="separator:a75bdc4d16e330accd3682f8295d4f347"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a224c2461ab15d2de220c17ac8f5eea8a"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a224c2461ab15d2de220c17ac8f5eea8a">k_dNucleationSecondsPerSigma</a> = 3.0</td></tr>
+<tr class="memdesc:a224c2461ab15d2de220c17ac8f5eea8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The seconds per sigma value used for nucleation, intentionally a looser sigma value than association.  <a href="#a224c2461ab15d2de220c17ac8f5eea8a">More...</a><br/></td></tr>
+<tr class="separator:a224c2461ab15d2de220c17ac8f5eea8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a210a080d60db921092e210594d16a876"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a210a080d60db921092e210594d16a876">k_dMaximumDepth</a> = 800.0</td></tr>
+<tr class="memdesc:a210a080d60db921092e210594d16a876"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum allowed depth.  <a href="#a210a080d60db921092e210594d16a876">More...</a><br/></td></tr>
+<tr class="separator:a210a080d60db921092e210594d16a876"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>glasscore interface class </p>
@@ -1004,32 +1010,6 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae8f164873eefc44539e7357593d508eb"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int glasscore::CGlass::getMaxNumPicksPerSite </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the maximum number of picks to store with a site. </p>
-<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the maximum number of picks to store with a site </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a3cefe6923fda6b38b73c82e2dc9787c7"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1703,7 +1683,7 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2a4959197e22846ba8e384acd1f721e2"></a>
+<a class="anchor" id="ad06d75a07aa09bd23087b6872e96170f"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -1711,7 +1691,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void glasscore::CGlass::setMaxNumPicksPerSite </td>
+          <td class="memname">static void glasscore::CGlass::setMaxNumPicksPerSite </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>max</em></td><td>)</td>
@@ -1790,6 +1770,72 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a75bdc4d16e330accd3682f8295d4f347"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double glasscore::CGlass::k_dAssociationSecondsPerSigma = 1.0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The seconds per sigma value used for association, intentionally a tighter sigma value than nucleation. </p>
+
+</div>
+</div>
+<a class="anchor" id="a210a080d60db921092e210594d16a876"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double glasscore::CGlass::k_dMaximumDepth = 800.0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The maximum allowed depth. </p>
+
+</div>
+</div>
+<a class="anchor" id="a224c2461ab15d2de220c17ac8f5eea8a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double glasscore::CGlass::k_dNucleationSecondsPerSigma = 3.0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The seconds per sigma value used for nucleation, intentionally a looser sigma value than association. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>glasscore/glasslib/include/<a class="el" href="Glass_8h_source.html">Glass.h</a></li>
 <li>glasscore/glasslib/src/<a class="el" href="Glass_8cpp.html">Glass.cpp</a></li>
@@ -1797,7 +1843,7 @@ Static Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Sep 28 2018 20:05:23 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Oct 4 2018 16:00:57 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

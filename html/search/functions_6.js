@@ -105,7 +105,6 @@ var searchData=
   ['getmaxnumcorrelations',['getMaxNumCorrelations',['../classglasscore_1_1CGlass.html#ad8874c7a3bb49340e38a06b36268f0d8',1,'glasscore::CGlass']]],
   ['getmaxnumhypos',['getMaxNumHypos',['../classglasscore_1_1CGlass.html#a0d4f6f4ff0773b26631ef6c6eb90d943',1,'glasscore::CGlass']]],
   ['getmaxnumpicks',['getMaxNumPicks',['../classglasscore_1_1CGlass.html#a657c54b35b52d523f8b0e3179aec626f',1,'glasscore::CGlass']]],
-  ['getmaxnumpickspersite',['getMaxNumPicksPerSite',['../classglasscore_1_1CGlass.html#ae8f164873eefc44539e7357593d508eb',1,'glasscore::CGlass']]],
   ['getmaxpicksperhour',['getMaxPicksPerHour',['../classglasscore_1_1CSiteList.html#a6f18250192a8b4eaf1cb5af4faf3ff67',1,'glasscore::CSiteList']]],
   ['getmediandistance',['getMedianDistance',['../classglasscore_1_1CHypo.html#a7200094c8c0c1737ff23cc88da11d3b2',1,'glasscore::CHypo']]],
   ['getmindistance',['getMinDistance',['../classglasscore_1_1CHypo.html#a224ebc3950d0f20b21e9f31a25c9796a',1,'glasscore::CHypo']]],
@@ -198,6 +197,5 @@ var searchData=
   ['getzonestatsinfoforlatlon',['getZonestatsInfoForLatLon',['../classtraveltime_1_1CZoneStats.html#a180b92b290ce4ff3af2f94a3d534c5f3',1,'traveltime::CZoneStats']]],
   ['glassid',['GlassID',['../classglass3_1_1util_1_1GlassID.html#a745a88163f80ff8da5aff5b474d50e1f',1,'glass3::util::GlassID']]],
   ['gpickparser',['GPickParser',['../classglass3_1_1parse_1_1GPickParser.html#a4bae6a628f9044e07fef5f77297401bb',1,'glass3::parse::GPickParser']]],
-  ['graphicsoutput',['graphicsOutput',['../classglasscore_1_1CHypo.html#a091c97f7b48b9735348d9cb2436bbb42',1,'glasscore::CHypo']]],
-  ['grid',['grid',['../classtraveltime_1_1CTimeWarp.html#a731142c82ac8670a629ddada2378d6e6',1,'traveltime::CTimeWarp']]]
+  ['graphicsoutput',['graphicsOutput',['../classglasscore_1_1CHypo.html#a091c97f7b48b9735348d9cb2436bbb42',1,'glasscore::CHypo']]]
 ];

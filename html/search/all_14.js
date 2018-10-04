@@ -38,6 +38,5 @@ var searchData=
   ['tspline',['tSpline',['../classtraveltime_1_1CTrav.html#a103659de23fdc40dba0dcd34489937d4',1,'traveltime::CTrav']]],
   ['ttt_2ecpp',['TTT.cpp',['../TTT_8cpp.html',1,'']]],
   ['ttt_2eh',['TTT.h',['../TTT_8h.html',1,'']]],
-  ['twopi',['TWOPI',['../glassmath_8h.html#a4912c64aec0c943b7985db6cb61ff83a',1,'glassmath.h']]],
   ['type_5fkey',['TYPE_KEY',['../convert_8cpp.html#ab41ae0319e008c5fa8048a4f4ba7b061',1,'TYPE_KEY():&#160;convert.cpp'],['../output_8cpp.html#ab41ae0319e008c5fa8048a4f4ba7b061',1,'TYPE_KEY():&#160;output.cpp']]]
 ];

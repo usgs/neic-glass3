@@ -16,6 +16,6 @@ var searchData=
   ['brokeroutput',['brokerOutput',['../classglass3_1_1brokerOutput.html',1,'glass3']]],
   ['brokeroutput_2ecpp',['brokerOutput.cpp',['../brokerOutput_8cpp.html',1,'']]],
   ['brokeroutput_2eh',['brokerOutput.h',['../brokerOutput_8h.html',1,'']]],
-  ['bsetup',['bSetup',['../classtraveltime_1_1CGenTrv.html#af0b09f806ea720e4f6119e0a6bb8d305',1,'traveltime::CGenTrv::bSetup()'],['../classtraveltime_1_1CTimeWarp.html#a65821caf73258e934d8d2999ef1dd498',1,'traveltime::CTimeWarp::bSetup()']]],
+  ['bsetup',['bSetup',['../classtraveltime_1_1CGenTrv.html#af0b09f806ea720e4f6119e0a6bb8d305',1,'traveltime::CGenTrv']]],
   ['byte',['byte',['../glassid_8cpp.html#a0c8186d9b9b7880309c27230bbb5e69d',1,'glassid.cpp']]]
 ];
