@@ -22,6 +22,11 @@
 
 namespace glasscore {
 
+// constants
+const int CSite::k_iUnitVectorXCoordinateIndex;
+const int CSite::k_iUnitVectorYCoordinateIndex;
+const int CSite::k_iUnitVectorZCoordinateIndex;
+
 // ---------------------------------------------------------CSite
 CSite::CSite() {
 	clear();
@@ -39,8 +44,7 @@ CSite::CSite(std::string sta, std::string comp, std::string net,
 CSite::CSite(std::shared_ptr<json::Object> site) {
 	// null check json
 	if (site == NULL) {
-		glass3::util::Logger::log("error",
-								"CSite::CSite: NULL json site.");
+		glass3::util::Logger::log("error", "CSite::CSite: NULL json site.");
 		return;
 	}
 
@@ -57,7 +61,7 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 		}
 	} else {
 		glass3::util::Logger::log("error",
-								"CSite::CSite: Missing required Type Key.");
+									"CSite::CSite: Missing required Type Key.");
 		return;
 	}
 
@@ -87,8 +91,7 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 			station = siteobj["Station"].ToString();
 		} else {
 			glass3::util::Logger::log(
-					"error",
-					"CSite::CSite: Missing required Station Key.");
+					"error", "CSite::CSite: Missing required Station Key.");
 
 			return;
 		}
@@ -107,8 +110,7 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 			network = siteobj["Network"].ToString();
 		} else {
 			glass3::util::Logger::log(
-					"error",
-					"CSite::CSite: Missing required Network Key.");
+					"error", "CSite::CSite: Missing required Network Key.");
 
 			return;
 		}
@@ -127,8 +129,8 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 			location = "";
 		}
 	} else {
-		glass3::util::Logger::log("error",
-								"CSite::CSite: Missing required Site Object.");
+		glass3::util::Logger::log(
+				"error", "CSite::CSite: Missing required Site Object.");
 
 		return;
 	}
@@ -138,8 +140,8 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 			&& ((*site)["Latitude"].GetType() == json::ValueType::DoubleVal)) {
 		latitude = (*site)["Latitude"].ToDouble();
 	} else {
-		glass3::util::Logger::log("error",
-								"CSite::CSite: Missing required Latitude Key.");
+		glass3::util::Logger::log(
+				"error", "CSite::CSite: Missing required Latitude Key.");
 
 		return;
 	}
@@ -150,8 +152,7 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 		longitude = (*site)["Longitude"].ToDouble();
 	} else {
 		glass3::util::Logger::log(
-				"error",
-				"CSite::CSite: Missing required Longitude Key.");
+				"error", "CSite::CSite: Missing required Longitude Key.");
 
 		return;
 	}
@@ -162,8 +163,7 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 		elevation = (*site)["Elevation"].ToDouble();
 	} else {
 		glass3::util::Logger::log(
-				"error",
-				"CSite::CSite: Missing required Elevation Key.");
+				"error", "CSite::CSite: Missing required Elevation Key.");
 
 		return;
 	}
@@ -213,8 +213,7 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	if (sta != "") {
 		m_sSCNL += sta;
 	} else {
-		glass3::util::Logger::log("error",
-								"CSite::initialize: missing sSite.");
+		glass3::util::Logger::log("error", "CSite::initialize: missing sSite.");
 		return (false);
 	}
 
@@ -227,8 +226,7 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	if (net != "") {
 		m_sSCNL += "." + net;
 	} else {
-		glass3::util::Logger::log("error",
-								"CSite::initialize: missing sNet.");
+		glass3::util::Logger::log("error", "CSite::initialize: missing sNet.");
 		return (false);
 	}
 
@@ -247,7 +245,11 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	// convert site elevation in meters to surface depth in km
 	// (invert the sign to get positive (above earth radius)
 	// and then divide by 1000 (meters to km))
-	setLocation(lat, lon, -0.001 * elv);
+	setLocation(
+			lat,
+			lon,
+			glass3::util::Geo::k_dElevationToDepth
+					* glass3::util::Geo::k_dMetersToKm * elv);
 
 	// quality
 	m_dQuality = qual;
@@ -282,9 +284,9 @@ void CSite::clear() {
 
 	// clear geographic
 	m_Geo = glass3::util::Geo();
-	m_daUnitVectors[0] = 0;
-	m_daUnitVectors[1] = 0;
-	m_daUnitVectors[2] = 0;
+	m_daUnitVectors[k_iUnitVectorXCoordinateIndex] = 0;
+	m_daUnitVectors[k_iUnitVectorYCoordinateIndex] = 0;
+	m_daUnitVectors[k_iUnitVectorZCoordinateIndex] = 0;
 
 	// clear lists
 	m_vNodeMutex.lock();
@@ -331,9 +333,12 @@ void CSite::update(CSite *aSite) {
 	double vec[3];
 	aSite->getUnitVectors(vec);
 
-	m_daUnitVectors[0] = vec[0];
-	m_daUnitVectors[1] = vec[1];
-	m_daUnitVectors[2] = vec[2];
+	m_daUnitVectors[k_iUnitVectorXCoordinateIndex] =
+			vec[k_iUnitVectorXCoordinateIndex];
+	m_daUnitVectors[k_iUnitVectorYCoordinateIndex] =
+			vec[k_iUnitVectorYCoordinateIndex];
+	m_daUnitVectors[k_iUnitVectorZCoordinateIndex] =
+			vec[k_iUnitVectorZCoordinateIndex];
 
 	// copy statistics
 	m_tLastPickAdded = aSite->getTLastPickAdded();
@@ -347,9 +352,12 @@ double * CSite::getUnitVectors(double * vec) {
 		return (NULL);
 	}
 
-	vec[0] = m_daUnitVectors[0];
-	vec[1] = m_daUnitVectors[1];
-	vec[2] = m_daUnitVectors[2];
+	vec[k_iUnitVectorXCoordinateIndex] =
+			m_daUnitVectors[k_iUnitVectorXCoordinateIndex];
+	vec[k_iUnitVectorYCoordinateIndex] =
+			m_daUnitVectors[k_iUnitVectorYCoordinateIndex];
+	vec[k_iUnitVectorZCoordinateIndex] =
+			m_daUnitVectors[k_iUnitVectorZCoordinateIndex];
 
 	return (vec);
 }
@@ -358,13 +366,16 @@ double * CSite::getUnitVectors(double * vec) {
 void CSite::setLocation(double lat, double lon, double z) {
 	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
 	// construct unit vector in cartesian earth coordinates
-	double rxy = cos(DEG2RAD * lat);
-	m_daUnitVectors[0] = rxy * cos(DEG2RAD * lon);
-	m_daUnitVectors[1] = rxy * sin(DEG2RAD * lon);
-	m_daUnitVectors[2] = sin(DEG2RAD * lat);
+	double rxy = cos(glass3::util::GlassMath::k_DegreesToRadians * lat);
+	m_daUnitVectors[k_iUnitVectorXCoordinateIndex] = rxy
+			* cos(glass3::util::GlassMath::k_DegreesToRadians * lon);
+	m_daUnitVectors[k_iUnitVectorYCoordinateIndex] = rxy
+			* sin(glass3::util::GlassMath::k_DegreesToRadians * lon);
+	m_daUnitVectors[k_iUnitVectorZCoordinateIndex] = sin(
+			glass3::util::GlassMath::k_DegreesToRadians * lat);
 
 	// set geographic object
-	m_Geo.setGeographic(lat, lon, EARTHRADIUSKM - z);
+	m_Geo.setGeographic(lat, lon, glass3::util::Geo::k_EarthRadiusKm - z);
 }
 
 // ---------------------------------------------------------getDelta
@@ -372,7 +383,7 @@ double CSite::getDelta(glass3::util::Geo *geo2) {
 	// nullcheck
 	if (geo2 == NULL) {
 		glass3::util::Logger::log("warning",
-								"CSite::getDelta: NULL CGeo provided.");
+									"CSite::getDelta: NULL CGeo provided.");
 		return (0);
 	}
 
@@ -385,7 +396,7 @@ double CSite::getDistance(std::shared_ptr<CSite> site) {
 	// nullcheck
 	if (site == NULL) {
 		glass3::util::Logger::log("warning",
-								"CSite::getDistance: NULL CSite provided.");
+									"CSite::getDistance: NULL CSite provided.");
 		return (0);
 	}
 
@@ -410,7 +421,7 @@ void CSite::addPick(std::shared_ptr<CPick> pck) {
 	// nullcheck
 	if (pck == NULL) {
 		glass3::util::Logger::log("warning",
-								"CSite::addPick: NULL CPick provided.");
+									"CSite::addPick: NULL CPick provided.");
 		return;
 	}
 
@@ -438,7 +449,7 @@ void CSite::removePick(std::shared_ptr<CPick> pck) {
 	// nullcheck
 	if (pck == NULL) {
 		glass3::util::Logger::log("warning",
-								"CSite::removePick: NULL CPick provided.");
+									"CSite::removePick: NULL CPick provided.");
 		return;
 	}
 	if (pck->getID() == "") {
@@ -544,7 +555,7 @@ void CSite::addNode(std::shared_ptr<CNode> node, double distDeg,
 	// nullcheck
 	if (node == NULL) {
 		glass3::util::Logger::log("warning",
-								"CSite::addNode: NULL CNode provided.");
+									"CSite::addNode: NULL CNode provided.");
 		return;
 	}
 	// check travel times
@@ -570,8 +581,8 @@ void CSite::removeNode(std::string nodeID) {
 
 	// nullcheck
 	if (nodeID == "") {
-		glass3::util::Logger::log("warning",
-								"CSite::removeNode: empty web name provided.");
+		glass3::util::Logger::log(
+				"warning", "CSite::removeNode: empty web name provided.");
 		return;
 	}
 

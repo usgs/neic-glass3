@@ -53,10 +53,10 @@ double Taper::calculateValue(double x) {
 		return 1.0;
 	}
 	if (x < m_dX2) {
-		return (0.5 - 0.5 * cos(PI * (x - m_dX1) / (m_dX2 - m_dX1)));
+		return (0.5 - 0.5 * cos(GlassMath::k_Pi * (x - m_dX1) / (m_dX2 - m_dX1)));
 	}
 	if (x > m_dX3) {
-		return (0.5 - 0.5 * cos(PI * (m_dX4 - x) / (m_dX4 - m_dX3)));
+		return (0.5 - 0.5 * cos(GlassMath::k_Pi * (m_dX4 - x) / (m_dX4 - m_dX3)));
 	}
 
 	return (0.0);

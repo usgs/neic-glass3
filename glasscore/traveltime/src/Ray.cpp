@@ -222,8 +222,8 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 
 	glass3::util::Logger::log(
 			"debug",
-			"CRay::travel: delta:" + std::to_string(delta)
-					+ " earthRadius:" + std::to_string(earthRadius));
+			"CRay::travel: delta:" + std::to_string(delta) + " earthRadius:"
+					+ std::to_string(earthRadius));
 
 	trav = -10.0;  // Indicates no arrivals detected
 
@@ -251,9 +251,11 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 													dMinimumRayParam);
 			trav =
 					time
-							+ RAD2DEG * (delta - d)
+							+ glass3::util::GlassMath::k_RadiansToDegrees
+									* (delta - d)
 									* pTerra->dLayerRadii[pTerra
-											->iOuterDiscontinuity + 1] * DEG2KM
+											->iOuterDiscontinuity + 1]
+									* glass3::util::Geo::k_DegreesToKm
 									/ earthRadius
 									/ pTerra->dLayerPVel[pTerra
 											->iOuterDiscontinuity + 1];
@@ -279,9 +281,11 @@ double CRay::travel(double delta, double earthRadius, double *rayParam) {
 													dMinimumRayParam);
 			trav =
 					time
-							+ RAD2DEG * (delta - d)
+							+ glass3::util::GlassMath::k_RadiansToDegrees
+									* (delta - d)
 									* pTerra->dLayerRadii[pTerra
-											->iOuterDiscontinuity + 1] * DEG2KM
+											->iOuterDiscontinuity + 1]
+									* glass3::util::Geo::k_DegreesToKm
 									/ earthRadius
 									/ pTerra->dLayerSVel[pTerra
 											->iOuterDiscontinuity + 1];
@@ -459,7 +463,7 @@ double CRay::delta(double time, double *pret) {
 			for (int iref = 0; iref < 5; iref++) {
 				rayParam = p1 + (time - t1) * (p2 - p1) / (t2 - t1);
 				double tcal = integrateFunction(FUN_P_TIME, rayParam,
-											pTerra->dEarthRadius);
+												pTerra->dEarthRadius);
 				dcal = integrateFunction(FUN_P_DELTA, rayParam,
 											pTerra->dEarthRadius);
 

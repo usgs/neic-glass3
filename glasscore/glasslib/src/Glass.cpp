@@ -3,6 +3,8 @@
 #include <date.h>
 #include <geo.h>
 #include <logger.h>
+#include <TTT.h>
+#include <TravelTime.h>
 #include <cmath>
 #include <string>
 #include <atomic>
@@ -14,62 +16,94 @@
 #include "HypoList.h"
 #include "CorrelationList.h"
 #include "Detection.h"
-#include "Terra.h"
-#include "Trav.h"
-#include "TTT.h"
-#include "TravelTime.h"
 
 namespace glasscore {
 
-glasscore::IGlassSend *CGlass::m_pExternalInterface = NULL;
-CWebList* CGlass::m_pWebList = NULL;
-CSiteList* CGlass::m_pSiteList = NULL;
-CPickList* CGlass::m_pPickList = NULL;
-CHypoList* CGlass::m_pHypoList = NULL;
-CCorrelationList* CGlass::m_pCorrelationList = NULL;
-CDetection* CGlass::m_pDetectionProcessor = NULL;
-std::shared_ptr<traveltime::CTravelTime> CGlass::m_pDefaultNucleationTravelTime =  // NOLINT
+// pointers
+glasscore::IGlassSend * CGlass::m_pExternalInterface = NULL;
+CWebList * CGlass::m_pWebList = NULL;
+CSiteList * CGlass::m_pSiteList = NULL;
+CPickList * CGlass::m_pPickList = NULL;
+CHypoList * CGlass::m_pHypoList = NULL;
+CCorrelationList * CGlass::m_pCorrelationList = NULL;
+CDetection * CGlass::m_pDetectionProcessor = NULL;
+std::shared_ptr<traveltime::CTravelTime> CGlass::m_pDefaultNucleationTravelTime = // NOLINT
 		NULL;
 std::shared_ptr<traveltime::CTTT> CGlass::m_pAssociationTravelTimes = NULL;
 
-std::atomic<int> CGlass::m_iMaxNumPicks { -1 };
-std::atomic<int> CGlass::m_iMaxNumCorrelations { -1 };
-std::atomic<int> CGlass::m_iMaxNumPicksPerSite { -1 };
-std::atomic<int> CGlass::m_iMaxNumHypos { -1 };
-std::atomic<int> CGlass::m_iNucleationDataCountThreshold { 7 };
-std::atomic<int> CGlass::m_iNumStationsPerNode { 20 };
-std::atomic<double> CGlass::m_dNucleationStackThreshold { 2.5 };
-std::atomic<double> CGlass::m_dAssociationSDCutoff { 3.0 };
-std::atomic<double> CGlass::m_dPruningSDCutoff { 3.0 };
-std::atomic<double> CGlass::m_dPickAffinityExpFactor { 2.5 };
-std::atomic<double> CGlass::m_dDistanceCutoffFactor { 4.0 };
-std::atomic<double> CGlass::m_dDistanceCutoffRatio { 0.4 };
-std::atomic<double> CGlass::m_dMinDistanceCutoff { 30.0 };
-std::atomic<int> CGlass::m_iProcessLimit { 25 };
-std::atomic<bool> CGlass::m_bTestTravelTimes { false };
-std::atomic<bool> CGlass::m_bTestLocator { false };
-std::atomic<bool> CGlass::m_bGraphicsOut { false };
-std::string CGlass::m_sGraphicsOutFolder = "./";  // NOLINT
-std::atomic<double> CGlass::m_dGraphicsStepKM { 1.0 };
-std::atomic<int> CGlass::m_iGraphicsSteps { 100 };
-std::atomic<bool> CGlass::m_bMinimizeTTLocator { false };
-std::atomic<double> CGlass::m_dPickDuplicateTimeWindow { 2.5 };
-std::atomic<double> CGlass::m_dCorrelationMatchingTimeWindow { 2.5 };
-std::atomic<double> CGlass::m_dCorrelationMatchingDistanceWindow { 0.5 };
-std::atomic<int> CGlass::m_iCorrelationCancelAge { 900 };
-std::atomic<double> CGlass::m_dBeamMatchingAzimuthWindow { 22.5 };
-std::atomic<double> CGlass::m_dBeamMatchingDistanceWindow { 5.0 };
-std::atomic<int> CGlass::m_iReportingDataThreshold { 0 };
-std::atomic<double> CGlass::m_dReportingStackThreshold { 2.5 };
-std::atomic<double> CGlass::m_dHypoMergingTimeWindow { 30.0 };
-std::atomic<double> CGlass::m_dHypoMergingDistanceWindow { 3.0 };
-std::atomic<double> CGlass::m_dEventFragmentDepthThreshold { 550.0 };
-std::atomic<double> CGlass::m_dEventFragmentAzimuthThreshold { 270.0 };
-std::atomic<bool> CGlass::m_bAllowPickUpdates { false };
+// configuration values
+std::atomic<int> CGlass::m_iMaxNumPicks;
+std::atomic<int> CGlass::m_iMaxNumCorrelations;
+std::atomic<int> CGlass::m_iMaxNumHypos;
+std::atomic<int> CGlass::m_iNucleationDataCountThreshold;
+std::atomic<int> CGlass::m_iNumStationsPerNode;
+std::atomic<double> CGlass::m_dNucleationStackThreshold;
+std::atomic<double> CGlass::m_dAssociationSDCutoff;
+std::atomic<double> CGlass::m_dPruningSDCutoff;
+std::atomic<double> CGlass::m_dPickAffinityExpFactor;
+std::atomic<double> CGlass::m_dDistanceCutoffFactor;
+std::atomic<double> CGlass::m_dDistanceCutoffRatio;
+std::atomic<double> CGlass::m_dMinDistanceCutoff;
+std::atomic<int> CGlass::m_iProcessLimit;
+std::atomic<bool> CGlass::m_bTestTravelTimes;
+std::atomic<bool> CGlass::m_bTestLocator;
+std::atomic<bool> CGlass::m_bGraphicsOut;
+std::string CGlass::m_sGraphicsOutFolder;  // NOLINT
+std::atomic<double> CGlass::m_dGraphicsStepKM;
+std::atomic<int> CGlass::m_iGraphicsSteps;
+std::atomic<bool> CGlass::m_bMinimizeTTLocator;
+std::atomic<double> CGlass::m_dPickDuplicateTimeWindow;
+std::atomic<double> CGlass::m_dCorrelationMatchingTimeWindow;
+std::atomic<double> CGlass::m_dCorrelationMatchingDistanceWindow;
+std::atomic<int> CGlass::m_iCorrelationCancelAge;
+std::atomic<double> CGlass::m_dBeamMatchingAzimuthWindow;
+std::atomic<double> CGlass::m_dBeamMatchingDistanceWindow;
+std::atomic<int> CGlass::m_iReportingDataThreshold;
+std::atomic<double> CGlass::m_dReportingStackThreshold;
+std::atomic<double> CGlass::m_dHypoMergingTimeWindow;
+std::atomic<double> CGlass::m_dHypoMergingDistanceWindow;
+std::atomic<double> CGlass::m_dEventFragmentDepthThreshold;
+std::atomic<double> CGlass::m_dEventFragmentAzimuthThreshold;
+std::atomic<bool> CGlass::m_bAllowPickUpdates;
 std::mutex CGlass::m_TTTMutex;
+
+// constants
+// Related to Taper Range array
+const unsigned int CGlass::k_nRangeArraySize;
+const unsigned int CGlass::k_iTaperUpStart;
+const unsigned int CGlass::k_iFullStart;
+const unsigned int CGlass::k_iFullEnd;
+const unsigned int CGlass::k_iTaperDownEnd;
+// Related to Assoc (non-taper) range array
+const unsigned int CGlass::k_nAssocArraySize;
+const unsigned int CGlass::k_iAssocRangeStart;
+const unsigned int CGlass::k_iAssocRangeEnd;
+// Default Thread count values
+const unsigned int CGlass::k_DefaultNumNucleationThreads;
+const unsigned int CGlass::k_DefaultNumHypoThreads;
+const unsigned int CGlass::k_DefaultNumWebThreads;
+// Other default values
+const int CGlass::k_nParamDisabled;  // used to indicate a param is disabled
+const int CGlass::k_DefaultHoursWithoutPicking;
+const int CGlass::k_DefaultHoursBeforeLookingUp;
+const int CGlass::k_DefaultMaxPicksPerHour;
+constexpr double CGlass::k_dAssociationSecondsPerSigma;
+constexpr double CGlass::k_dNucleationSecondsPerSigma;
+constexpr double CGlass::k_dMaximumDepth;
 
 // ---------------------------------------------------------CGlass
 CGlass::CGlass() {
+	m_pExternalInterface = NULL;
+	m_pWebList = NULL;
+	m_pSiteList = NULL;
+	m_pPickList = NULL;
+	m_pHypoList = NULL;
+	m_pCorrelationList = NULL;
+	m_pDetectionProcessor = NULL;
+	m_pDefaultNucleationTravelTime = NULL;
+	m_pAssociationTravelTimes = NULL;
+
+	clear();
 }
 
 // ---------------------------------------------------------~CGlass
@@ -92,6 +126,8 @@ CGlass::~CGlass() {
 	if (m_pDetectionProcessor) {
 		delete (m_pDetectionProcessor);
 	}
+
+	clear();
 }
 
 // -------------------------------------------------------receiveExternalMessage
@@ -174,7 +210,6 @@ void CGlass::clear() {
 	// reset to defaults
 	m_iMaxNumPicks = -1;
 	m_iMaxNumCorrelations = -1;
-	m_iMaxNumPicksPerSite = -1;
 	m_iMaxNumHypos = -1;
 	m_iNucleationDataCountThreshold = 7;
 	m_iNumStationsPerNode = 20;
@@ -195,7 +230,7 @@ void CGlass::clear() {
 	m_bMinimizeTTLocator = false;
 	m_dPickDuplicateTimeWindow = 2.5;
 	m_dCorrelationMatchingTimeWindow = 2.5;
-	m_dCorrelationMatchingDistanceWindow = .5;
+	m_dCorrelationMatchingDistanceWindow = 0.5;
 	m_iCorrelationCancelAge = 900;
 	m_dBeamMatchingAzimuthWindow = 22.5;
 	m_dBeamMatchingDistanceWindow = 5;
@@ -318,10 +353,10 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			// get this phase object
 			json::Object obj = val.ToObject();
 
-			double range[4];
-			double *rng = NULL;
-			double assoc[2];
-			double * ass = NULL;
+			double range[k_nRangeArraySize];  // NOLINT
+			double *pdRange = NULL;
+			double assoc[k_nAssocArraySize];  // NOLINT
+			double * pdAssoc = NULL;
 			std::string file = "";
 
 			// get the phase name
@@ -337,37 +372,38 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				json::Array arr = obj["Range"].ToArray();
 
 				// make sure the range array has the correct number of entries
-				if (arr.size() != 4) {
+				if (arr.size() != k_nRangeArraySize) {
 					continue;
 				}
 
 				// copy out the range values
-				for (int i = 0; i < 4; i++) {
+				for (int i = 0; i < k_nRangeArraySize; i++) {
 					range[i] = arr[i].ToDouble();
 				}
 
 				glass3::util::Logger::log(
 						"info",
 						"CGlass::initialize: Using association Range = ["
-								+ std::to_string(range[0]) + ","
-								+ std::to_string(range[1]) + ","
-								+ std::to_string(range[2]) + ","
-								+ std::to_string(range[3]) + "]");
+								+ std::to_string(range[k_iTaperUpStart]) + ","
+								+ std::to_string(range[k_iFullStart]) + ","
+								+ std::to_string(range[k_iFullEnd]) + ","
+								+ std::to_string(range[k_iTaperDownEnd]) + "]");
 				glass3::util::Logger::log(
 						"info",
 						"CGlass::initialize: Using association Assoc = ["
-								+ std::to_string(assoc[0]) + ","
-								+ std::to_string(assoc[1]) + "]");
+								+ std::to_string(assoc[k_iAssocRangeStart])
+								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
+								+ "]");
 
 				// set range pointer
-				rng = range;
+				pdRange = range;
 
 				// populate assoc from range
 				assoc[0] = range[0];
 				assoc[1] = range[3];
 
 				// set assoc pointer
-				ass = assoc;
+				pdAssoc = assoc;
 
 			} else if (obj.HasKey("Assoc")
 					&& (obj["Assoc"].GetType() == json::ValueType::ArrayVal)) {
@@ -375,26 +411,27 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				json::Array arr = obj["Assoc"].ToArray();
 
 				// make sure the assoc array has the correct number of entries
-				if (arr.size() != 2) {
+				if (arr.size() != k_nAssocArraySize) {
 					continue;
 				}
 
 				// copy out the assoc values
-				for (int i = 0; i < 2; i++) {
+				for (int i = 0; i < k_nAssocArraySize; i++) {
 					assoc[i] = arr[i].ToDouble();
 				}
 
 				glass3::util::Logger::log(
 						"info",
 						"CGlass::initialize: Using association Assoc = ["
-								+ std::to_string(assoc[0]) + ","
-								+ std::to_string(assoc[1]) + "]");
+								+ std::to_string(assoc[k_iAssocRangeStart])
+								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
+								+ "]");
 
 				// set range pointer
-				rng = NULL;
+				pdRange = NULL;
 
 				// set assoc pointer
-				ass = assoc;
+				pdAssoc = assoc;
 			} else {
 				glass3::util::Logger::log(
 						"error",
@@ -419,7 +456,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			}
 
 			// set up this phase
-			m_pAssociationTravelTimes->addPhase(phs, rng, ass, file);
+			m_pAssociationTravelTimes->addPhase(phs, pdRange, pdAssoc, file);
 
 			// test this phase
 			if (m_bTestTravelTimes) {
@@ -868,7 +905,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 							+ std::to_string(m_iReportingDataThreshold));
 		} else {
 			// default to overall nNucleate
-			m_iReportingDataThreshold = 0;
+			m_iReportingDataThreshold = getNucleationDataCountThreshold();
 			glass3::util::Logger::log(
 					"info",
 					"CGlass::initialize: Using default ReportingDataThreshold: "
@@ -908,18 +945,6 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				"info",
 				"CGlass::initialize: Using MaximumNumberOfPicks: "
 						+ std::to_string(m_iMaxNumPicks));
-	}
-
-	// set maximum number of pick in a single site
-	if ((com->HasKey("MaximumNumberOfPicksPerSite"))
-			&& ((*com)["MaximumNumberOfPicksPerSite"].GetType()
-					== json::ValueType::IntVal)) {
-		m_iMaxNumPicksPerSite = (*com)["MaximumNumberOfPicksPerSite"].ToInt();
-
-		glass3::util::Logger::log(
-				"info",
-				"CGlass::initialize: Using MaximumNumberOfPicksPerSite: "
-						+ std::to_string(m_iMaxNumPicksPerSite));
 	}
 
 	// set maximum number of correlations
@@ -964,7 +989,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	// set the number of nucleation threads
-	int numNucleationThreads = 5;
+	int numNucleationThreads = k_DefaultNumNucleationThreads;
 	if ((com->HasKey("NumberOfNucleationThreads"))
 			&& ((*com)["NumberOfNucleationThreads"].GetType()
 					== json::ValueType::IntVal)) {
@@ -982,7 +1007,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	// set the number of hypo threads
-	int numHypoThreads = 3;
+	int numHypoThreads = k_DefaultNumNucleationThreads;
 	if ((com->HasKey("NumberOfHypoThreads"))
 			&& ((*com)["NumberOfHypoThreads"].GetType()
 					== json::ValueType::IntVal)) {
@@ -1000,7 +1025,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	}
 
 	// set the number of web threads
-	int numWebThreads = 0;
+	int numWebThreads = k_DefaultNumWebThreads;
 	if ((com->HasKey("NumberOfWebThreads"))
 			&& ((*com)["NumberOfWebThreads"].GetType()
 					== json::ValueType::IntVal)) {
@@ -1017,7 +1042,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						+ std::to_string(numWebThreads));
 	}
 
-	int iHoursWithoutPicking = -1;
+	int iHoursWithoutPicking = k_DefaultHoursWithoutPicking;
 	if ((com->HasKey("SiteHoursWithoutPicking"))
 			&& ((*com)["SiteHoursWithoutPicking"].GetType()
 					== json::ValueType::IntVal)) {
@@ -1034,7 +1059,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						+ std::to_string(iHoursWithoutPicking));
 	}
 
-	int iHoursBeforeLookingUp = -1;
+	int iHoursBeforeLookingUp = k_DefaultHoursBeforeLookingUp;
 	if ((com->HasKey("SiteLookupInterval"))
 			&& ((*com)["SiteLookupInterval"].GetType()
 					== json::ValueType::IntVal)) {
@@ -1051,7 +1076,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						+ std::to_string(iHoursBeforeLookingUp));
 	}
 
-	int iMaxPicksPerHour = -1;
+	int iMaxPicksPerHour = k_DefaultMaxPicksPerHour;
 	if ((com->HasKey("SiteMaximumPicksPerHour"))
 			&& ((*com)["SiteMaximumPicksPerHour"].GetType()
 					== json::ValueType::IntVal)) {
@@ -1285,16 +1310,6 @@ void CGlass::setMaxNumCorrelations(int max) {
 	m_iMaxNumCorrelations = max;
 }
 
-// ------------------------------------------------getMaxNumPicksPerSite
-int CGlass::getMaxNumPicksPerSite() {
-	return (m_iMaxNumPicksPerSite);
-}
-
-// ------------------------------------------------setMaxNumPicksPerSite
-void CGlass::setMaxNumPicksPerSite(int max) {
-	m_iMaxNumPicksPerSite = max;
-}
-
 // ------------------------------------------------getMaxNumHypos
 int CGlass::getMaxNumHypos() {
 	return (m_iMaxNumHypos);
@@ -1386,93 +1401,4 @@ bool CGlass::getTestTravelTimes() {
 bool CGlass::getAllowPickUpdates() {
 	return (m_bAllowPickUpdates);
 }
-/* NOTE: Leave these in place as examples for Travel Time unit tests.
- *
- // ---------------------------------------------------------Test
- // General testing wart
- bool CGlass::test(json::Object *com) {
- CTerra *terra = new CTerra();
- CRay *ray = new CRay();
- double deg2rad = 0.01745329251994;
- double rad2deg = 57.29577951308;
- ray->pTerra = terra;
- string mdl = (*com)["Model"].ToString();
- printf("model:%s\n", mdl.c_str());
-
- bool bload = terra->load(mdl.c_str());
- if (!bload)
- return(false;
- printf("Terra nLayer:%ld dRadius:%.2f\n", terra->nLayer, terra->dRadius);
- double r = terra->dRadius;
-
- int iphs = ray->setPhase("P");
- printf("ray->setPhase:%d\n", iphs);
- ray->setDepth(100.0);
- ray->Setup();
- double t1;
- double t2;
- double dtdz;
- double rad;
- for (double deg = 0.0; deg < 30.0; deg += 1.0) {
- rad = deg2rad * deg;
- t1 = ray->Travel(rad, r);
- t2 = ray->Travel(rad, r + 1.0);
- printf("T %6.2f %6.2f %6.2f %6.2f\n", deg, t1, t2, t2 - t1);
- }
-
- return(true;
- }
-
- // ---------------------------------------------------------GenTrv
- // Generate travel time interpolation file
- bool CGlass::genTrv(json::Object *com) {
- CGenTrv *gentrv;
-
- gentrv = new CGenTrv();
- bool bres = gentrv->Generate(com);
- delete gentrv;
- return(bres;
- }
-
- // ---------------------------------------------------------TestTTT
- // Quick and dirty unit test for TTT functions
- void CGlass::testTTT(json::Object *com) {
- pTerra = new CTerra();
- pRay = new CRay();
- double deg2rad = 0.01745329251994;
- double rad2deg = 57.29577951308;
- pRay->pTerra = pTerra;
- string mdl = (*com)["Model"].ToString();
- printf("model:%s\n", mdl.c_str());
- bool bload = pTerra->load(mdl.c_str());
- if (!bload)
- printf(" ** ERR:Cannot load Earth model\n");
- printf("Terra nLayer:%ld dRadius:%.2f\n", pTerra->nLayer, pTerra->dRadius);
- CTravelTime *trv = new CTravelTime();
- trv->Setup(pRay, "PKPdf");
- trv->setOrigin(0.0, 0.0, 50.0);
- double t = trv->T(50.0);
- printf("T(50.0,50.0) is %.2f\n", t);
- int mn;
- double sc;
- trv->setOrigin(0.0, 0.0, 0.0);
- for (double d = 0.0; d < 360.5; d += 1.0) {
- t = trv->T(d);
- mn = (int) (t / 60.0);
- sc = t - 60.0 * mn;
- printf("%6.1f %3d %5.2f\n", d, mn, sc);
- }
- CTTT *ttt = new CTTT();
- ttt->Setup(pRay);
- ttt->addPhase("P");
- ttt->addPhase("S");
- ttt->setOrigin(0.0, 0.0, 0.0);
- for (double d = 0.0; d < 360.5; d += 1.0) {
- t = ttt->T(d, "P");
- mn = (int) (t / 60.0);
- sc = t - 60.0 * mn;
- printf("%6.1f %3d %5.2f\n", d, mn, sc);
- }
- }*/
-
 }  // namespace glasscore

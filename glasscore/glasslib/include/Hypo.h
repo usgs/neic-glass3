@@ -1039,6 +1039,163 @@ class CHypo {
 	 **/
 	const HypoAuditingPerformanceStruct * getHypoAuditingPerformanceInfo();
 
+	// constants
+	/**
+	 * \brief The residual sigma length in seconds
+	 */
+	static constexpr double k_dResidualSigmaLengthSeconds = 1.0;
+
+	/**
+	 * \brief The beginning of the gap taper
+	 */
+	static constexpr double k_dGapTaperDownBegin = 270.0;
+
+	/**
+	 * \brief The end of the gap taper
+	 */
+	static constexpr double k_dGapTaperDownEnd = 360.0;
+
+	/**
+	 * \brief The factor to correct time to distance
+	 */
+	static constexpr double k_dTimeToDistanceCorrectionFactor = 10.0;
+
+	/**
+	 * \brief The factor to correct vertical to horizontal distance
+	 */
+	static constexpr double k_dVerticalToHorizontalDistanceCorrectionFactor = 2.0;  // NOLINT
+
+	/**
+	 * \brief The maximum range factor used in bayes stack calculations
+	 */
+	static constexpr double k_dBayesFactorMaximumRange = 0.2;
+
+	/**
+	 * \brief The exponent factor used in bayes stack calculations
+	 */
+	static constexpr double k_dBayesFactorExponent = 2.0;
+
+	/**
+	 * \brief The step size reduction factor used in bayes stack calculations
+	 */
+	static constexpr double k_dBayesFactorStepSizeReduction = 500.0;
+
+	/* \brief Indicates what portion of the Web Resolution is required to
+	 * indicate an epicentral location change was significant(big, large, etc..)
+	 * Used for auditing purposes.
+	 */
+	static constexpr double k_dLocationChangeWebResolutionRatio = 0.5;
+
+	/**
+	 * \brief The minimum depth change in km that constitutes a significant
+	 * change in location. Used for auditing purposes
+	 */
+	static constexpr double k_dMinimumDepthChangeKMThreshold = 7.5;
+
+	/**
+	 * \brief The minimum depth change (expressed as a ratio to the previous
+	 * depth, that constitutes a significant change in location.  Used for
+	 * auditing purposes
+	 */
+	static constexpr double k_dMinimumDepthChangeRatioThreshold = 0.25;
+
+	/**
+	 * \brief The initial step reduction factor for anneal
+	 */
+	static constexpr double k_dInitialAnnealStepReducationFactor = 2.0;
+
+	/**
+	 * \brief The final step reduction factor for anneal
+	 */
+	static constexpr double k_dFinalAnnealStepReducationFactor = 100.0;
+
+	/**
+	 * \brief The minimum location iteration distance step size
+	 */
+	static constexpr double k_dLocationMinDistanceStepSize = 1.0;
+
+	/**
+	 * \brief The minimum location iteration time step size
+	 */
+	static constexpr double k_dLocationMinTimeStepSize = 0.1;
+
+	/**
+	 * \brief The factor used to convert the location search radius to time
+	 */
+	static constexpr double k_dLocationSearchRadiusToTime = 30.0;
+
+	/**
+	 * \brief The location taper constant
+	 */
+	static constexpr double k_dLocationTaperConstant = 0.0001;
+
+	/**
+	 * \brief The maximum threshold for the location taper
+	 */
+	static constexpr double k_dLocationMaxTaperThreshold = 30.0;
+
+	/**
+	 * \brief The small nPick threshold to skip during location
+	 */
+	static const int k_iLocationNPicksToSkipSmall = 5;
+
+	/**
+	 * \brief The medium nPick threshold to skip during location
+	 */
+	static const int k_iLocationNPicksToSkipMedium = 10;
+
+	/**
+	 * \brief The large nPick threshold to skip during location
+	 */
+	static const int k_iLocationNPicksToSkipLarge = 25;
+
+	/**
+	 * \brief The nPick threshold indicating a small hypo during location
+	 */
+	static const int k_iLocationNPickThresholdSmall = 25;
+
+	/**
+	 * \brief The nPick threshold indicating a medium hypo during location
+	 */
+	static const int k_iLocationNPickThresholdMedium = 50;
+
+	/**
+	 * \brief The nPick threshold indicating a large hypo during location
+	 */
+	static const int k_iLocationNPickThresholdLarge = 150;
+
+	/**
+	 * \brief The small number of location iterations to perform for a hypo
+	 */
+	static const int k_iLocationNumIterationsSmall = 500;
+
+	/**
+	 * \brief The medium number of location iterations to perform for a hypo
+	 */
+	static const int k_iLocationNumIterationsMedium = 1250;
+
+	/**
+	 * \brief The large number of location iterations to perform for a hypo
+	 */
+	static const int k_iLocationNumIterationsLarge = 5000;
+
+	/**
+	 * \brief The factor for dividing the web resolution when computing the
+	 * location search radius
+	 */
+	static constexpr double k_dSearchRadiusResolutionFactor = 4.0;
+
+	/**
+	 * \brief The factor for multiplying the taper when computing the location
+	 * search radius
+	 */
+	static constexpr double k_dSearchRadiusTaperFactor = 0.75;
+
+	/**
+	 * \brief The factor for dividing when computing the location search radius
+	 */
+	static constexpr double k_dSearchRadiusFactor = 2.0;
+
  private:
 	/**
 	 * \brief  A std::string with the name of the web used during the nucleation

@@ -372,6 +372,27 @@ class CPick {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_PickMutex;
+
+	// constants
+	/**
+	 * \brief The number of anneal passes to run when nucleating
+	 */
+	static const unsigned int k_nNucleateAnnealPasses = 3;
+
+	/**
+	 * \brief The number of anneal iterations to run when nucleating
+	 */
+	static const unsigned int k_nNucleateNumberOfAnnealIterations = 2000;
+
+	/**
+	 * \brief The initial anneal step size to use when nucleating
+	 */
+	static constexpr double k_dNucleateInitialAnnealTimeStepSize = 5.0;
+
+	/**
+	 * \brief The final anneal step size to use when nucleating
+	 */
+	static constexpr double k_dNucleateFinalAnnealTimeStepSize = 0.1;
 };
 }  // namespace glasscore
 #endif  // PICK_H

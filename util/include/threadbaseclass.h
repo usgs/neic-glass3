@@ -312,6 +312,22 @@ class ThreadBaseClass : public util::BaseClass {
 	 * between work() calls in workloop()
 	 */
 	std::atomic<int> m_iSleepTimeMS;
+
+	// constants
+	/**
+	 * \brief default health check interval in seconds
+	 */
+	static const int k_iHeathCheckIntervalDefault = 30;
+
+	/**
+	 * \brief default sleep time in milliseconds
+	 */
+	static const int k_iSleepTimeDefault = 100;
+
+	/**
+	 * \brief default number of threads
+	 */
+	static const int k_iNumThreadsDefault = 10;
 };
 }  // namespace util
 }  // namespace glass3

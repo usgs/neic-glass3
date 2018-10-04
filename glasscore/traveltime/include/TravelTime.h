@@ -63,7 +63,7 @@ class CTravelTime {
 	 * \brief Load or generate branch data
 	 *
 	 * Attempts to load branch data (using Load()) for a phase using a given
-	 * CRay and phase std::string.
+	 * CRay and phase std::string and filename.
 	 *
 	 * \param phase - A std::std::string representing the phase to use, default
 	 * is "P"
@@ -91,7 +91,7 @@ class CTravelTime {
 	 * \param depth - A double value representing the depth of the
 	 * desired geographic location.
 	 */
-	void setOrigin(double lat, double lon, double depth);
+	void setTTOrigin(double lat, double lon, double depth);
 
 	/**
 	 * \brief Set current geographic location
@@ -104,7 +104,7 @@ class CTravelTime {
 	 * (or elev) of the source, along with already computed concentric lat/lon
 	 * and vector coordinates.
 	 */
-	void setOrigin(const glass3::util::Geo &geoOrigin);
+	void setTTOrigin(const glass3::util::Geo &geoOrigin);
 
 	/**
 	 * \brief Calculate travel time in seconds
@@ -159,65 +159,71 @@ class CTravelTime {
 	/**
 	 * \brief A pointer to the distance warp object used
 	 */
-	CTimeWarp *pDistanceWarp;
+	CTimeWarp *m_pDistanceWarp;
 
 	/**
 	 * \brief A pointer to the depth warp object used
 	 */
-	CTimeWarp *pDepthWarp;
+	CTimeWarp *m_pDepthWarp;
 
 	/**
 	 * \brief An integer variable containing the grid index for the distance
 	 * warp
 	 */
-	int nDistanceWarp;
+	int m_iNumDistanceWarp;
 
 	/**
 	 * \brief An integer variable containing the grid index for the depth
 	 * warp
 	 */
-	int nDepthWarp;
+	int m_iNumDepthWarp;
 
 	/**
 	 * \brief An array of double values containing the travel times indexed by
 	 * depth and distance
 	 */
-	double *pTravelTimeArray;
+	double * m_pTravelTimeArray;
 
 	/**
 	 * \brief An array of double values containing the distances indexed by
 	 * depth
 	 */
-	double *pDepthDistanceArray;
+	double * m_pDepthDistanceArray;
 
 	/**
 	 * \brief An array of characters containing the phases
 	 */
-	char *pPhaseArray;
+	char * m_pPhaseArray;
 
 	/**
 	 * \brief A std::std::string containing the name of the phase used for this
 	 * CTravelTime
 	 */
-	std::string sPhase;
+	std::string m_sPhase;
 
 	/**
 	 * \brief Delta in degrees used by caller to calculate distance
 	 * dependent weights
 	 */
-	double dDelta;
+	double m_dDelta;
 
 	/**
 	 * \brief Depth in km used by caller to calculate distance
 	 * dependent weights
 	 */
-	double dDepth;
+	double m_dDepth;
 
 	/**
 	 * \brief Ephemeral (temporary) glass3::util::Geo object containing current
 	 * geographic location. Set by setOrigin()
 	 */
-	glass3::util::Geo geoOrg;
+	glass3::util::Geo m_geoTTOrigin;
+
+	// constants
+	/**
+	 * \brief the value for an invalid travel time
+	 */
+	static constexpr double k_dTravelTimeInvalid = -1.0;
 };
 }  // namespace traveltime
 #endif  // TRAVELTIME_H

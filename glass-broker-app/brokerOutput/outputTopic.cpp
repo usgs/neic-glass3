@@ -77,7 +77,7 @@ bool outputTopic::setup(const json::Value &config) {
 						+ " TopLatitude: " + std::to_string(m_dTopLatitude)
 						+ ".");
 	} else {
-		m_dTopLatitude = MAXLATITUDE;
+		m_dTopLatitude = glass3::util::Geo::k_MaximumLatitude;
 		glass3::util::Logger::log(
 				"info",
 				"outputTopic::setup(): Setting up topic: " + m_sTopicName
@@ -96,7 +96,7 @@ bool outputTopic::setup(const json::Value &config) {
 						+ " LeftLongitude: " + std::to_string(m_dLeftLongitude)
 						+ ".");
 	} else {
-		m_dLeftLongitude = MINLONGITUDE;
+		m_dLeftLongitude = glass3::util::Geo::k_MinimumLongitude;
 		glass3::util::Logger::log(
 				"info",
 				"outputTopic::setup(): Setting up topic: " + m_sTopicName
@@ -115,7 +115,7 @@ bool outputTopic::setup(const json::Value &config) {
 						+ " BottomLatitude: "
 						+ std::to_string(m_dBottomLatitude) + ".");
 	} else {
-		m_dBottomLatitude = MINLATITUDE;
+		m_dBottomLatitude = glass3::util::Geo::k_MinimumLatitude;
 		glass3::util::Logger::log(
 				"info",
 				"outputTopic::setup(): Setting up topic: " + m_sTopicName
@@ -134,7 +134,7 @@ bool outputTopic::setup(const json::Value &config) {
 						+ " RightLongitude: "
 						+ std::to_string(m_dRightLongitude) + ".");
 	} else {
-		m_dRightLongitude = MAXLONGITUDE;
+		m_dRightLongitude = glass3::util::Geo::k_MaximumLongitude;
 		glass3::util::Logger::log(
 				"info",
 				"outputTopic::setup(): Setting up topic: " + m_sTopicName
@@ -147,10 +147,10 @@ bool outputTopic::setup(const json::Value &config) {
 
 // ---------------------------------------------------------clear
 void outputTopic::clear() {
-	m_dTopLatitude = 90.0;
-	m_dBottomLatitude = -90.0;
-	m_dLeftLongitude = -180.0;
-	m_dRightLongitude = 180.0;
+	m_dTopLatitude = glass3::util::Geo::k_MaximumLatitude;
+	m_dBottomLatitude = glass3::util::Geo::k_MinimumLatitude;
+	m_dLeftLongitude = glass3::util::Geo::k_MinimumLongitude;
+	m_dRightLongitude = glass3::util::Geo::k_MaximumLongitude;
 
 	m_sTopicName = "";
 	if (m_OutputTopic != NULL) {

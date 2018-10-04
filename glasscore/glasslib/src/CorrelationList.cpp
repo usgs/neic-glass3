@@ -21,6 +21,8 @@
 
 namespace glasscore {
 
+const int CCorrelationList::k_nMaxAllowableCorrelationCountDefault;
+
 // ---------------------------------------------------------CCorrelationList
 CCorrelationList::CCorrelationList() {
 	clear();
@@ -42,7 +44,7 @@ void CCorrelationList::clear() {
 
 	// reset nCorrelation
 	m_iCountOfTotalCorrelationsProcessed = 0;
-	m_iMaxAllowableCorrelationCount = 10000;
+	m_iMaxAllowableCorrelationCount = k_nMaxAllowableCorrelationCountDefault;
 }
 
 // -------------------------------------------------------receiveExternalMessage
@@ -341,7 +343,8 @@ bool CCorrelationList::checkDuplicate(CCorrelation * newCorrelation,
 					geo2.setGeographic(currentCorrelation->getLatitude(),
 										currentCorrelation->getLongitude(),
 										currentCorrelation->getDepth());
-					double delta = RAD2DEG * geo1.delta(&geo2);
+					double delta = glass3::util::GlassMath::k_RadiansToDegrees
+							* geo1.delta(&geo2);
 
 					// check if distance difference is within window
 					if (delta < xWindow) {

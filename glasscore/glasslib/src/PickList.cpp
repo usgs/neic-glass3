@@ -20,6 +20,10 @@
 
 namespace glasscore {
 
+// constants
+const int CPickList::k_nMaxAllowablePickCountDefault;
+const int CPickList::k_ProcessQueueMaximumSize;
+
 // ---------------------------------------------------------CPickList
 CPickList::CPickList(int numThreads, int sleepTime, int checkInterval)
 		: glass3::util::ThreadBaseClass("PickList", sleepTime, numThreads,
@@ -53,7 +57,7 @@ void CPickList::clear() {
 
 	// reset nPick
 	m_iCountOfTotalPicksProcessed = 0;
-	m_iMaxAllowablePickCount = 10000;
+	m_iMaxAllowablePickCount = k_nMaxAllowablePickCountDefault;
 
 	// init the upper and lower values
 	std::shared_ptr<CSite> nullSite;
@@ -141,7 +145,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	m_PicksToProcessMutex.unlock();
 
 	// don't let the queue get too large
-	while (queueSize >= 1000) {
+	while (queueSize >= k_ProcessQueueMaximumSize) {
 		/* glassutil::CLogit::log(glassutil::log_level::debug,
 		 "CPickList::addPick. Delaying work due to "
 		 "PickList process queue size."); */
@@ -308,7 +312,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 		return (false);
 	}
 
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	glass3::util::Logger::log("debug", "CPickList::scavenge. " + hyp->getID());
 
@@ -342,7 +346,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 			}
 
 			// check to see if this pick can be associated with this hypo
-			if (!hyp->canAssociate(currentPick, ASSOC_SIGMA_VALUE_SECONDS,
+			if (!hyp->canAssociate(currentPick,
+									CGlass::k_dAssociationSecondsPerSigma,
 									sdassoc)) {
 				// it can't, skip it
 				continue;

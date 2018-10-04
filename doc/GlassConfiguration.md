@@ -6,7 +6,6 @@ An example `glass_init.d` configuration file:
 {
   "Cmd": "Initialize",
   "MaximumNumberOfPicks": 10000,
-  "MaximumNumberOfPicksPerSite": 30,
   "MaximumNumberOfCorrelations": 1000,
   "MaximumNumberOfHypos": 250,
   "PickDuplicateWindow": 2.5,
@@ -89,9 +88,6 @@ performance tuning. Too small a value can impact glass association performance.
 is reached, glass will start expiring the oldest picks from this list as new
 picks are received. This value is used for computational performance tuning.
 Too small a value can impact glass detection performance.
-* **MaximumNumberOfPicksPerSite** - The maximum size of the per site pick list. This value is
-used for computational performance tuning. Too small a value can impact glass
-detection performance.
 * **MaximumNumberOfCorrelations** - The maximum size of the input correlation list. Once the
 maximum size is reached, glass will start expiring the oldest correlations from
 this list as new correlations are received. This value is used for computational

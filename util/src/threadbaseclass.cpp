@@ -9,8 +9,10 @@
 namespace glass3 {
 namespace util {
 
-#define DEFAULT_HEALTHCHECK_INTERVAL 30
-#define DEFAULT_SLEEP_TIME 100
+// constants
+const int ThreadBaseClass::k_iHeathCheckIntervalDefault;
+const int ThreadBaseClass::k_iSleepTimeDefault;
+const int ThreadBaseClass::k_iNumThreadsDefault;
 
 // ---------------------------------------------------------ThreadBaseClass
 ThreadBaseClass::ThreadBaseClass()
@@ -18,12 +20,12 @@ ThreadBaseClass::ThreadBaseClass()
 	m_sThreadName = "unknown";
 
 	setWorkThreadsState(glass3::util::ThreadState::Initialized);
-	setHealthCheckInterval(DEFAULT_HEALTHCHECK_INTERVAL);
-	setNumThreads(1);
+	setHealthCheckInterval(k_iHeathCheckIntervalDefault);
+	setNumThreads(k_iNumThreadsDefault);
 	setThreadHealth();
 
 	// set to default inter-loop sleep
-	setSleepTime(DEFAULT_SLEEP_TIME);
+	setSleepTime(k_iSleepTimeDefault);
 
 	m_WorkThreads.clear();
 }

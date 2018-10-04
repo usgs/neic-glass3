@@ -8,6 +8,10 @@ namespace glass3 {
 namespace util {
 
 bool Logger::m_bDisable = false;
+
+// constants
+const unsigned int Logger::k_nMaxLogEntrySize;
+
 // ---------------------------------------------------------CLogit
 Logger::Logger() {
 }

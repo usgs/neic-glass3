@@ -6,7 +6,7 @@
 #include <glassid.h>
 #include <glassmath.h>
 #include <geo.h>
-#include <math.h>
+#include <cmath>
 #include <string>
 #include <algorithm>
 #include <memory>
@@ -27,15 +27,36 @@
 
 namespace glasscore {
 
-// The maximum allowed locator depth
-#define MAXLOCDEPTH 800.0
-
-// location algorithm constants
-#define LOCATION_MIN_DISTANCE_STEP_SIZE 1.0
-#define LOCATION_MIN_TIME_STEP_SIZE 0.1
-#define LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION 30.0
-#define LOCATION_TAPER_CONSTANT 0.0001
-#define LOCATION_MAX_TAPER_TRESH 30
+// constants
+constexpr double CHypo::k_dResidualSigmaLengthSeconds;
+constexpr double CHypo::k_dGapTaperDownBegin;
+constexpr double CHypo::k_dGapTaperDownEnd;
+constexpr double CHypo::k_dTimeToDistanceCorrectionFactor;
+constexpr double CHypo::k_dVerticalToHorizontalDistanceCorrectionFactor;
+constexpr double CHypo::k_dBayesFactorMaximumRange;
+constexpr double CHypo::k_dBayesFactorExponent;
+constexpr double CHypo::k_dBayesFactorStepSizeReduction;
+constexpr double CHypo::k_dLocationChangeWebResolutionRatio;
+constexpr double CHypo::k_dMinimumDepthChangeKMThreshold;
+constexpr double CHypo::k_dMinimumDepthChangeRatioThreshold;
+constexpr double CHypo::k_dInitialAnnealStepReducationFactor;
+constexpr double CHypo::k_dFinalAnnealStepReducationFactor;
+constexpr double CHypo::k_dLocationMinDistanceStepSize;
+constexpr double CHypo::k_dLocationMinTimeStepSize;
+constexpr double CHypo::k_dLocationSearchRadiusToTime;
+constexpr double CHypo::k_dLocationTaperConstant;
+constexpr double CHypo::k_dLocationMaxTaperThreshold;
+const int CHypo::k_iLocationNPicksToSkipSmall;
+const int CHypo::k_iLocationNPicksToSkipMedium;
+const int CHypo::k_iLocationNPickThresholdSmall;
+const int CHypo::k_iLocationNPickThresholdMedium;
+const int CHypo::k_iLocationNPickThresholdLarge;
+const int CHypo::k_iLocationNumIterationsSmall;
+const int CHypo::k_iLocationNumIterationsMedium;
+const int CHypo::k_iLocationNumIterationsLarge;
+constexpr double CHypo::k_dSearchRadiusResolutionFactor;
+constexpr double CHypo::k_dSearchRadiusTaperFactor;
+constexpr double CHypo::k_dSearchRadiusFactor;
 
 // ---------------------------------------------------------CHypo
 CHypo::CHypo() {
@@ -308,7 +329,7 @@ void CHypo::addCorrelationReference(std::shared_ptr<CCorrelation> corr) {
 		// NOTE: this only checks by ID, need to improve this to
 		// an ID/Source check
 		if (q->getID() == corr->getID()) {
-			char sLog[1024];
+			char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::addCorrelation: ** Duplicate correlation %s",
 						corr->getSite()->getSCNL().c_str());
@@ -370,7 +391,7 @@ double CHypo::calculateAffinity(std::shared_ptr<CPick> pck) {
 
 	// check to see if this pick can  associate with this hypo using
 	// the given association standard deviation
-	if (!canAssociate(pck, 1.0, sdassoc)) {
+	if (!canAssociate(pck, k_dResidualSigmaLengthSeconds, sdassoc)) {
 		// the pick did not associate
 		return (0.0);
 	}
@@ -394,7 +415,8 @@ double CHypo::calculateAffinity(std::shared_ptr<CPick> pck) {
 
 	// now compute the gap factor using a taper
 	glass3::util::Taper gap;
-	gap = glass3::util::Taper(0.0, 0.0, 270.0, 360.0);
+	gap = glass3::util::Taper(0.0, 0.0, k_dGapTaperDownBegin,
+								k_dGapTaperDownEnd);
 	double gapfac = gap.calculateValue(m_dGap);
 
 	// compute the affinity of this pick to this hypo by multiplying
@@ -430,19 +452,22 @@ double CHypo::calculateAffinity(std::shared_ptr<CCorrelation> corr) {
 
 	// compute time factor, multiply by 10 to make time factor
 	// have equal weight to the distance factor
-	double tFactor = std::abs(m_tOrigin - corr->getTCorrelation()) * 10;
+	double tFactor = std::abs(m_tOrigin - corr->getTCorrelation())
+			* k_dTimeToDistanceCorrectionFactor;
 
 	// hypo is in geographic coordinates
 	glass3::util::Geo geo1;
-	geo1.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
+	geo1.setGeographic(m_dLatitude, m_dLongitude,
+						glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 
 	// correlation is in geographic coordinates
 	glass3::util::Geo geo2;
 	geo2.setGeographic(corr->getLatitude(), corr->getLongitude(),
-	EARTHRADIUSKM - corr->getDepth());
+						glass3::util::Geo::k_EarthRadiusKm - corr->getDepth());
 
 	// compute distance factor
-	double xFactor = RAD2DEG * geo1.delta(&geo2);
+	double xFactor = glass3::util::GlassMath::k_RadiansToDegrees
+			* geo1.delta(&geo2);
 
 	// compute the affinity of this correlation to this hypo by taking the
 	// inverse of multiplying the time factor to the distance filter
@@ -476,16 +501,16 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 	calculateStatistics();
 
 	// create pick delete vector
-	std::vector<std::shared_ptr<CPick>> vkill;
+	std::vector<std::shared_ptr<CPick>> vRemovePicks;
 
 	// set the traveltime for the current hypo
 	if (m_pNucleationTravelTime1 != NULL) {
-		m_pNucleationTravelTime1->setOrigin(m_dLatitude, m_dLongitude,
-											m_dDepth);
+		m_pNucleationTravelTime1->setTTOrigin(m_dLatitude, m_dLongitude,
+												m_dDepth);
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
-		m_pNucleationTravelTime2->setOrigin(m_dLatitude, m_dLongitude,
-											m_dDepth);
+		m_pNucleationTravelTime2->setTTOrigin(m_dLatitude, m_dLongitude,
+												m_dDepth);
 	}
 
 	// get number of picks
@@ -530,12 +555,12 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		// make sure the pick residual is within the residual limits
 		// NOTE: The residual limit is hard coded
 		if (tResBest > CGlass::getAssociationSDCutoff()) {
-			vkill.push_back(pick);
+			vRemovePicks.push_back(pick);
 		}
 	}
 
 	// for each pick to remove
-	for (auto pick : vkill) {
+	for (auto pick : vRemovePicks) {
 		// remove the pick hypo link
 		std::shared_ptr<CHypo> pickHyp = pick->getHypoReference();
 		if (pickHyp != NULL) {
@@ -566,7 +591,8 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 
 	// taper to lower calculateValue if large azimuthal gap
 	glass3::util::Taper taperGap;
-	taperGap = glass3::util::Taper(0., 0., m_dAzimuthTaper, 360.);
+	taperGap = glass3::util::Taper(0.0, 0.0, m_dAzimuthTaper,
+									k_dGapTaperDownEnd);
 
 	// these hold the values of the initial, current, and best stack location
 	double valStart = 0;
@@ -577,7 +603,7 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 			* taperGap.calculateValue(
 					calculateGap(m_dLatitude, m_dLongitude, m_dDepth));
 
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// if testing locator, setup output file
 	std::ofstream outfile;
@@ -604,7 +630,10 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 	// end point. As we iterate through trial locations this makes
 	// the search space decrease.
 	glass3::util::Taper taper;
-	taper = glass3::util::Taper(-0.0001, -0.0001, -0.0001, nIter + 0.0001);
+	taper = glass3::util::Taper(-k_dLocationTaperConstant,
+								-k_dLocationTaperConstant,
+								-k_dLocationTaperConstant,
+								nIter + k_dLocationTaperConstant);
 
 	// for the number of requested iterations
 	for (int iter = 0; iter < nIter; iter++) {
@@ -619,15 +648,19 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 		// init x, y, and z gaussian step distances
 		// the km for dx and dy is double so the epicentral search space is
 		// larger than the depth search space, because we live on a sphere
-		double dx = glass3::util::GlassMath::gauss(0.0, dkm * 2);
-		double dy = glass3::util::GlassMath::gauss(0.0, dkm * 2);
+		double dx = glass3::util::GlassMath::gauss(
+				0.0, dkm * k_dVerticalToHorizontalDistanceCorrectionFactor);
+		double dy = glass3::util::GlassMath::gauss(
+				0.0, dkm * k_dVerticalToHorizontalDistanceCorrectionFactor);
 		double dz = glass3::util::GlassMath::gauss(0.0, dkm);
 		double dt = glass3::util::GlassMath::gauss(0.0, dOt);
 
 		// compute current location using the hypo location and the x and y
 		// Gaussian step distances
-		double xlon = m_dLongitude + cos(DEG2RAD * m_dLatitude) * dx / DEG2KM;
-		double xlat = m_dLatitude + dy / DEG2KM;
+		double xlon = m_dLongitude
+				+ cos(glass3::util::GlassMath::k_DegreesToRadians * m_dLatitude)
+						* dx / glass3::util::Geo::k_DegreesToKm;
+		double xlat = m_dLatitude + dy / glass3::util::Geo::k_DegreesToKm;
 
 		// compute current depth using the hypo depth and the z Gaussian step
 		// distance
@@ -665,8 +698,10 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 		if (bayes > valBest
 				|| (bayes > m_dNucleationStackThreshold
 						&& (valBest - bayes)
-								< (pow(glass3::util::GlassMath::gauss(0, .2), 2)
-										/ (500. / dkm)))) {
+								< (pow(glass3::util::GlassMath::gauss(
+										0, k_dBayesFactorMaximumRange),
+										k_dBayesFactorExponent)
+										/ (k_dBayesFactorStepSizeReduction / dkm)))) {
 			// then this is the new best value
 			valBest = bayes;
 
@@ -676,13 +711,18 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 					(xlat - this->m_hapsAudit.dLatPrev)
 							* (xlat - this->m_hapsAudit.dLatPrev)
 							+ (xlon - this->m_hapsAudit.dLonPrev)
-									* cos(DEG2RAD * xlat)
+									* cos(glass3::util::GlassMath::k_DegreesToRadians
+											* xlat)
 									* (xlon - this->m_hapsAudit.dLonPrev)
-									* cos(DEG2RAD * xlat)) * DEG2KM
-					> m_dWebResolution / 2.0)
-					|| (fabs(this->m_hapsAudit.dDepthPrev - xz) > 7.5
+									* cos(glass3::util::GlassMath::k_DegreesToRadians
+											* xlat))
+					* glass3::util::Geo::k_DegreesToKm
+					> m_dWebResolution * k_dLocationChangeWebResolutionRatio)
+					|| (fabs(this->m_hapsAudit.dDepthPrev - xz)
+							> k_dMinimumDepthChangeKMThreshold
 							&& fabs(m_dDepth - xz)
-									> this->m_hapsAudit.dDepthPrev * 0.25)) {
+									> this->m_hapsAudit.dDepthPrev
+											* k_dMinimumDepthChangeRatioThreshold)) {
 				// this represents a LARGE movement (currently
 				// m_dWebResolution / 2).  Update auditing information
 				this->m_hapsAudit.dtLastBigMove = glass3::util::Date::now();
@@ -762,15 +802,15 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 	if (m_bFixed) {
 		return;
 	}
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	double delta;
 	double sigma;
 
-	m_pTravelTimeTables->setOrigin(m_dLatitude, m_dLongitude, m_dDepth);
+	m_pTravelTimeTables->setTTOrigin(m_dLatitude, m_dLongitude, m_dDepth);
 
-	double valStart = calculateAbsResidualSum(m_dLatitude, m_dLongitude, m_dDepth,
-										m_tOrigin, nucleate);
+	double valStart = calculateAbsResidualSum(m_dLatitude, m_dLongitude,
+												m_dDepth, m_tOrigin, nucleate);
 	m_dBayesValue = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
 									m_tOrigin, nucleate);
 	snprintf(sLog, sizeof(sLog), "CHypo::annealingLocate: old bayes value %.4f",
@@ -794,7 +834,10 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 	// create taper using the number of iterations to define the
 	// end point
 	glass3::util::Taper taper;
-	taper = glass3::util::Taper(-0.0001, -0.0001, -0.0001, nIter + 0.0001);
+	taper = glass3::util::Taper(-k_dLocationTaperConstant,
+								-k_dLocationTaperConstant,
+								-k_dLocationTaperConstant,
+								nIter + k_dLocationTaperConstant);
 
 	// for the number of requested iterations
 	for (int iter = 0; iter < nIter; iter++) {
@@ -807,15 +850,19 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 				+ tStop;
 
 		// init x, y, and z gaussian step distances
-		double dx = glass3::util::GlassMath::gauss(0.0, dkm * 2);
-		double dy = glass3::util::GlassMath::gauss(0.0, dkm * 2);
+		double dx = glass3::util::GlassMath::gauss(
+				0.0, dkm * k_dVerticalToHorizontalDistanceCorrectionFactor);
+		double dy = glass3::util::GlassMath::gauss(
+				0.0, dkm * k_dVerticalToHorizontalDistanceCorrectionFactor);
 		double dz = glass3::util::GlassMath::gauss(0.0, dkm);
 		double dt = glass3::util::GlassMath::gauss(0.0, dOt);
 
 		// compute current location using the hypo location and the x and y
 		// Gaussian step distances
-		double xlon = m_dLongitude + cos(DEG2RAD * m_dLatitude) * dx / DEG2KM;
-		double xlat = m_dLatitude + dy / DEG2KM;
+		double xlon = m_dLongitude
+				+ cos(glass3::util::GlassMath::k_DegreesToRadians * m_dLatitude)
+						* dx / glass3::util::Geo::k_DegreesToKm;
+		double xlat = m_dLatitude + dy / glass3::util::Geo::k_DegreesToKm;
 
 		// compute current depth using the hypo depth and the z Gaussian step
 		// distance
@@ -834,9 +881,10 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 		// compute current origin time
 		double oT = m_tOrigin + dt;
 
-		m_pTravelTimeTables->setOrigin(xlat, xlon, xz);
-		double calculateValue = calculateAbsResidualSum(xlat, xlon, xz, oT, nucleate);
-		// geo.setGeographic(dLat, dLon, EARTHRADIUSKM - dZ);
+		m_pTravelTimeTables->setTTOrigin(xlat, xlon, xz);
+		double calculateValue = calculateAbsResidualSum(xlat, xlon, xz, oT,
+														nucleate);
+		// geo.setGeographic(dLat, dLon, glass3::util::Geo::k_EarthRadiusKm - dZ);
 
 		// is this stacked bayesian value better than the previous one
 		if (calculateValue < valBest) {
@@ -849,12 +897,17 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 			// information.
 			if ((sqrt(
 					(xlat - m_dLatitude) * (xlat - m_dLatitude)
-							+ (xlon - m_dLongitude) * cos(DEG2RAD * xlat)
-									* (xlon - m_dLongitude)
-									* cos(DEG2RAD * xlat)) * DEG2KM
-					> m_dWebResolution / 2.0)
-					|| (fabs(m_dDepth - xz) > 7.5
-							&& fabs(m_dDepth - xz) > m_dDepth * 0.25)) {
+							+ (xlon - m_dLongitude)
+									* cos(glass3::util::GlassMath::k_DegreesToRadians
+											* xlat) * (xlon - m_dLongitude)
+									* cos(glass3::util::GlassMath::k_DegreesToRadians
+											* xlat))
+					* glass3::util::Geo::k_DegreesToKm
+					> m_dWebResolution * k_dLocationChangeWebResolutionRatio)
+					|| (fabs(m_dDepth - xz) > k_dMinimumDepthChangeKMThreshold
+							&& fabs(m_dDepth - xz)
+									> this->m_hapsAudit.dDepthPrev
+											* k_dMinimumDepthChangeRatioThreshold)) {
 				// this represents a LARGE movement (currently m_dWebResolution
 				// / 2).  Update auditing information
 				this->m_hapsAudit.dtLastBigMove = glass3::util::Date::now();
@@ -937,7 +990,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	// set up a geographic object for this hypo
 	glass3::util::Geo hypoGeo;
 	hypoGeo.setGeographic(m_dLatitude, m_dLongitude,
-	EARTHRADIUSKM - m_dDepth);
+							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 
 	// check backazimuth if present
 	if (pick->getBackAzimuth() != std::numeric_limits<double>::quiet_NaN()) {
@@ -972,7 +1025,8 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	 } */
 
 	// compute distance
-	double siteDistance = hypoGeo.delta(&site->getGeo()) / DEG2RAD;
+	double siteDistance = hypoGeo.delta(&site->getGeo())
+			/ glass3::util::GlassMath::k_DegreesToRadians;
 
 	// check if distance is beyond cutoff
 	if (siteDistance > m_dAssociationDistanceCutoff) {
@@ -995,7 +1049,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	// and sigma
 	double stdev = tRes / sigma;
 
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// check if pick standard deviation is greater than cutoff
 	if (stdev > sdassoc) {
@@ -1048,7 +1102,7 @@ bool CHypo::canAssociate(std::shared_ptr<CCorrelation> corr, double tWindow,
 		return (false);
 	}
 
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	double tDist = 0;
 	double xDist = 0;
@@ -1058,11 +1112,12 @@ bool CHypo::canAssociate(std::shared_ptr<CCorrelation> corr, double tWindow,
 	if (tDist < tWindow) {
 		glass3::util::Geo geo1;
 		geo1.setGeographic(m_dLatitude, m_dLongitude,
-		EARTHRADIUSKM - m_dDepth);
+							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 		glass3::util::Geo geo2;
-		geo2.setGeographic(corr->getLatitude(), corr->getLongitude(),
-		EARTHRADIUSKM - corr->getDepth());
-		xDist = RAD2DEG * geo1.delta(&geo2);
+		geo2.setGeographic(
+				corr->getLatitude(), corr->getLongitude(),
+				glass3::util::Geo::k_EarthRadiusKm - corr->getDepth());
+		xDist = glass3::util::GlassMath::k_RadiansToDegrees * geo1.delta(&geo2);
 
 		// check if distance difference is within window
 		if (xDist < xWindow) {
@@ -1144,8 +1199,8 @@ bool CHypo::cancelCheck() {
 		return (false);
 	}
 
-	char sLog[2048];
-	char sHypo[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize * 2];
+	char sHypo[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	glass3::util::Date dt = glass3::util::Date(m_tOrigin);
 	snprintf(sHypo, sizeof(sHypo), "CHypo::cancel: %s tOrg:%s; dLat:%9.4f; "
@@ -1154,12 +1209,6 @@ bool CHypo::cancelCheck() {
 				getLongitude(), getDepth(), getBayesValue(),
 				static_cast<int>(m_vPickData.size()),
 				static_cast<int>(m_vCorrelationData.size()));
-
-	// check to see if there is enough supporting data for this hypocenter
-	// NOTE, in Node, ncut is used as a threshold for the number of
-	// *stations* here it's used for the number of *picks*, not sure
-	// what implication this has
-	int ncut = m_iNucleationDataThreshold;
 
 	// check correlations, we want a hypo created from a correlation
 	// to stick around awhile to have a chance to associate picks.
@@ -1210,13 +1259,18 @@ bool CHypo::cancelCheck() {
 
 	// check to see if we still have enough picks for this hypo to
 	// survive.
-	// NOTE: Is this a good idea, combining correlations and picks?? JMP
-	if ((m_vPickData.size() + m_vCorrelationData.size()) < ncut) {
+	// check to see if there is enough supporting data for this hypocenter
+	// NOTE, in Node, ncut is used as a threshold for the number of
+	// *stations* here it's used for the number of *picks*, not sure
+	// what implication this has
+	int ncut = m_iNucleationDataThreshold;
+	int nPicks = static_cast<int>(m_vPickData.size());
+	int nCorrelations = static_cast<int>(m_vCorrelationData.size());
+	if ((nPicks + nCorrelations) < ncut) {
 		// there isn't
 		snprintf(sLog, sizeof(sLog), "CHypo::cancel: Insufficient data "
 					"((%d + %d) < %d) Hypo: %s",
-					static_cast<int>(m_vPickData.size()),
-					static_cast<int>(m_vCorrelationData.size()), ncut, sHypo);
+					nPicks, nCorrelations, ncut, sHypo);
 		glass3::util::Logger::log(sLog);
 
 		// this hypo can be canceled
@@ -1226,11 +1280,13 @@ bool CHypo::cancelCheck() {
 	// check to see if we still have a high enough bayes value for this
 	// hypo to survive.
 	double thresh = m_dNucleationStackThreshold;
-	if (m_dBayesValue < thresh) {
+	double bayes = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
+									m_tOrigin, false);
+	if (bayes < thresh) {
 		// failure
 		snprintf(sLog, sizeof(sLog),
 					"CHypo::cancel: Below threshold (%.1f < %.1f) Hypo: %s",
-					getBayesValue(), thresh, sHypo);
+					bayes, thresh, sHypo);
 		glass3::util::Logger::log(sLog);
 
 		// this hypo can be canceled
@@ -1409,7 +1465,7 @@ double CHypo::calculateGap(double lat, double lon, double z) {
 
 	// set up a geographic object for this hypo
 	glass3::util::Geo geo;
-	geo.setGeographic(lat, lon, EARTHRADIUSKM - z);
+	geo.setGeographic(lat, lon, glass3::util::Geo::k_EarthRadiusKm - z);
 
 	// create and populate vectors containing the
 	// pick distances and azimuths
@@ -1420,7 +1476,8 @@ double CHypo::calculateGap(double lat, double lon, double z) {
 		std::shared_ptr<CSite> site = pick->getSite();
 
 		// compute the azimuth
-		double azimuth = geo.azimuth(&site->getGeo()) / DEG2RAD;
+		double azimuth = geo.azimuth(&site->getGeo())
+				/ glass3::util::GlassMath::k_DegreesToRadians;
 
 		// add to azimuth vector
 		azm.push_back(azimuth);
@@ -1457,7 +1514,7 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick) {
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
 	// setup traveltime interface for this hypo
-	m_pTravelTimeTables->setOrigin(m_dLatitude, m_dLongitude, m_dDepth);
+	m_pTravelTimeTables->setTTOrigin(m_dLatitude, m_dLongitude, m_dDepth);
 
 	// get site
 	std::shared_ptr<CSite> site = pick->getSite();
@@ -1513,7 +1570,7 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 	glass3::util::Geo geo;
 	double value = 0.;
 	double tcal;
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// define a taper for sigma, makes close in readings have higher weight
 	// ranges from 0.75-3.0 from 0-2 degrees, than 3.0 after that (see loop)
@@ -1521,17 +1578,17 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 	tap = glass3::util::Taper(-0.0001, 2.0, 999.0, 999.0);
 
 	// geo is used for calculating distances to stations for determining sigma
-	geo.setGeographic(xlat, xlon, EARTHRADIUSKM - xZ);
+	geo.setGeographic(xlat, xlon, glass3::util::Geo::k_EarthRadiusKm - xZ);
 
 	// This sets the travel-time look up location
 	if (m_pNucleationTravelTime1) {
-		m_pNucleationTravelTime1->setOrigin(geo);
+		m_pNucleationTravelTime1->setTTOrigin(geo);
 	}
 	if (m_pNucleationTravelTime2) {
-		m_pNucleationTravelTime2->setOrigin(geo);
+		m_pNucleationTravelTime2->setTTOrigin(geo);
 	}
 
-	m_pTravelTimeTables->setOrigin(geo);
+	m_pTravelTimeTables->setTTOrigin(geo);
 
 	// The number of picks associated with the hypocenter
 	int npick = m_vPickData.size();
@@ -1556,13 +1613,13 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 				// calculate the residual using the phase name
 				double tcal1 = m_pNucleationTravelTime1->T(&siteGeo);
 				double resi1 = calculateWeightedResidual(
-						m_pNucleationTravelTime1->sPhase, tobs, tcal1);
+						m_pNucleationTravelTime1->m_sPhase, tobs, tcal1);
 
 				// second nucleation phase
 				// calculate the residual using the phase name
 				double tcal2 = m_pNucleationTravelTime2->T(&siteGeo);
 				double resi2 = calculateWeightedResidual(
-						m_pNucleationTravelTime2->sPhase, tobs, tcal2);
+						m_pNucleationTravelTime2->m_sPhase, tobs, tcal2);
 
 				// use the smallest residual
 				if (abs(resi1) < abs(resi2)) {
@@ -1577,13 +1634,13 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 				// we have just the first nucleation phase
 				tcal = m_pNucleationTravelTime1->T(&siteGeo);
 				resi = calculateWeightedResidual(
-						m_pNucleationTravelTime1->sPhase, tobs, tcal);
+						m_pNucleationTravelTime1->m_sPhase, tobs, tcal);
 			} else if ((!m_pNucleationTravelTime1)
 					&& (m_pNucleationTravelTime2)) {
 				// we have just the second ducleation phase
 				tcal = m_pNucleationTravelTime2->T(&siteGeo);
 				resi = calculateWeightedResidual(
-						m_pNucleationTravelTime2->sPhase, tobs, tcal);
+						m_pNucleationTravelTime2->m_sPhase, tobs, tcal);
 			}
 		} else {
 			// use all available association phases
@@ -1591,8 +1648,8 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 			tcal = m_pTravelTimeTables->T(&siteGeo, tobs);
 
 			// calculate the residual using the phase name
-			resi = calculateWeightedResidual(m_pTravelTimeTables->sPhase, tobs,
-												tcal);
+			resi = calculateWeightedResidual(m_pTravelTimeTables->m_sPhase,
+												tobs, tcal);
 		}
 
 		// make sure residual is valid
@@ -1603,7 +1660,8 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 		}
 
 		// calculate distance to station to get sigma
-		double delta = RAD2DEG * geo.delta(&site->getGeo());
+		double delta = glass3::util::GlassMath::k_RadiansToDegrees
+				* geo.delta(&site->getGeo());
 		double sigma = (tap.calculateValue(delta) * 2.25) + 0.75;
 
 		// calculate and add to the stack
@@ -1662,7 +1720,7 @@ glass3::util::Geo CHypo::getGeo() const {
 	std::lock_guard<std::recursive_mutex> hypoGuard(m_HypoMutex);
 	glass3::util::Geo geoHypo;
 	geoHypo.setGeographic(m_dLatitude, m_dLongitude,
-	EARTHRADIUSKM - m_dDepth);
+							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 	return (geoHypo);
 }
 
@@ -1781,17 +1839,17 @@ double CHypo::calculateAbsResidualSum(double xlat, double xlon, double xZ,
 
 	double sigma;
 	double value = 0.;
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// This sets the travel-time look up location
 	if (m_pNucleationTravelTime1 != NULL) {
-		m_pNucleationTravelTime1->setOrigin(xlat, xlat, xZ);
+		m_pNucleationTravelTime1->setTTOrigin(xlat, xlat, xZ);
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
-		m_pNucleationTravelTime2->setOrigin(xlat, xlat, xZ);
+		m_pNucleationTravelTime2->setTTOrigin(xlat, xlat, xZ);
 	}
 
-	m_pTravelTimeTables->setOrigin(xlat, xlon, xZ);
+	m_pTravelTimeTables->setTTOrigin(xlat, xlon, xZ);
 
 	// The number of picks associated with the hypocenter
 	int npick = m_vPickData.size();
@@ -1819,8 +1877,8 @@ double CHypo::calculateAbsResidualSum(double xlat, double xlon, double xZ,
 		} else {
 			// take whichever has the smallest residual, P or S
 			tcal = m_pTravelTimeTables->T(&site->getGeo(), tobs);
-			if (m_pTravelTimeTables->sPhase == "P"
-					|| m_pTravelTimeTables->sPhase == "S") {
+			if (m_pTravelTimeTables->m_sPhase == "P"
+					|| m_pTravelTimeTables->m_sPhase == "S") {
 				resi = tobs - tcal;
 			}
 		}
@@ -1903,18 +1961,21 @@ void CHypo::graphicsOutput() {
 	for (int y = -1 * CGlass::getGraphicsSteps();
 			y <= CGlass::getGraphicsSteps(); y++) {
 		// compute lat
-		double xlat = m_dLatitude + (y * CGlass::getGraphicsStepKm()) / DEG2KM;
+		double xlat = m_dLatitude
+				+ (y * CGlass::getGraphicsStepKm())
+						/ glass3::util::Geo::k_DegreesToKm;
 
 		// for each step in the x axis
 		for (int x = -1 * CGlass::getGraphicsSteps();
 				x <= CGlass::getGraphicsSteps(); x++) {
 			// compute lon
 			double xlon = m_dLongitude
-					+ cos(DEG2RAD * xlat) * (x * CGlass::getGraphicsStepKm())
-							/ DEG2KM;
+					+ cos(glass3::util::GlassMath::k_DegreesToRadians * xlat)
+							* (x * CGlass::getGraphicsStepKm())
+							/ glass3::util::Geo::k_DegreesToKm;
 
 			// set up traveltimes
-			m_pTravelTimeTables->setOrigin(xlat, xlon, m_dDepth);
+			m_pTravelTimeTables->setTTOrigin(xlat, xlon, m_dDepth);
 			stack = 0;
 
 			// for each pick
@@ -1923,7 +1984,8 @@ void CHypo::graphicsOutput() {
 				double tobs = pick->getTPick() - m_tOrigin;
 				std::shared_ptr<CSite> site = pick->getSite();
 				tcal = m_pTravelTimeTables->T(&site->getGeo(), tobs);
-				delta = RAD2DEG * geo.delta(&site->getGeo());
+				delta = glass3::util::GlassMath::k_RadiansToDegrees
+						* geo.delta(&site->getGeo());
 
 				// This should be a function.
 				if (delta < 1.5) {
@@ -2058,12 +2120,12 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 	// generate data array for this hypo
 	// set up traveltime object
-	m_pTravelTimeTables->setOrigin(m_dLatitude, m_dLongitude, m_dDepth);
+	m_pTravelTimeTables->setTTOrigin(m_dLatitude, m_dLongitude, m_dDepth);
 
 	// set up geo for distance calculations
 	glass3::util::Geo geo;
 	geo.setGeographic(m_dLatitude, m_dLongitude,
-	EARTHRADIUSKM - m_dDepth);
+						glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 
 	// array to hold data
 	json::Array data;
@@ -2088,9 +2150,11 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 			// add the association info
 			json::Object assocobj;
-			assocobj["Phase"] = m_pTravelTimeTables->sPhase;
-			assocobj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
-			assocobj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
+			assocobj["Phase"] = m_pTravelTimeTables->m_sPhase;
+			assocobj["Distance"] = geo.delta(&site->getGeo())
+					/ glass3::util::GlassMath::k_DegreesToRadians;
+			assocobj["Azimuth"] = geo.azimuth(&site->getGeo())
+					/ glass3::util::GlassMath::k_DegreesToRadians;
 			assocobj["Residual"] = tres;
 			assocobj["Sigma"] = sig;
 			pickObj["AssociationInfo"] = assocobj;
@@ -2101,8 +2165,10 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 			pickObj["T"] = glass3::util::Date::encodeDateTime(pick->getTPick());
 			pickObj["Time"] = glass3::util::Date::encodeISO8601Time(
 					pick->getTPick());
-			pickObj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
-			pickObj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
+			pickObj["Distance"] = geo.delta(&site->getGeo())
+					/ glass3::util::GlassMath::k_DegreesToRadians;
+			pickObj["Azimuth"] = geo.azimuth(&site->getGeo())
+					/ glass3::util::GlassMath::k_DegreesToRadians;
 			pickObj["Residual"] = tres;
 		}
 
@@ -2131,9 +2197,11 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 
 			// add the association info
 			json::Object assocobj;
-			assocobj["Phase"] = m_pTravelTimeTables->sPhase;
-			assocobj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
-			assocobj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
+			assocobj["Phase"] = m_pTravelTimeTables->m_sPhase;
+			assocobj["Distance"] = geo.delta(&site->getGeo())
+					/ glass3::util::GlassMath::k_DegreesToRadians;
+			assocobj["Azimuth"] = geo.azimuth(&site->getGeo())
+					/ glass3::util::GlassMath::k_DegreesToRadians;
 			assocobj["Residual"] = tres;
 			assocobj["Sigma"] = sig;
 			correlationObj["AssociationInfo"] = assocobj;
@@ -2146,8 +2214,10 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 			correlationObj["Latitude"] = correlation->getLatitude();
 			correlationObj["Longitude"] = correlation->getLongitude();
 			correlationObj["Depth"] = correlation->getDepth();
-			correlationObj["Distance"] = geo.delta(&site->getGeo()) / DEG2RAD;
-			correlationObj["Azimuth"] = geo.azimuth(&site->getGeo()) / DEG2RAD;
+			correlationObj["Distance"] = geo.delta(&site->getGeo())
+					/ glass3::util::GlassMath::k_DegreesToRadians;
+			correlationObj["Azimuth"] = geo.azimuth(&site->getGeo())
+					/ glass3::util::GlassMath::k_DegreesToRadians;
 			correlationObj["Residual"] = tres;
 			correlationObj["Correlation"] = correlation->getCorrelation();
 		}
@@ -2184,6 +2254,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 						+ std::to_string(m_hapsAudit.dDepthPrev) + " "
 						+ std::to_string(m_iProcessCount) + " "
 						+ std::to_string(m_dBayesValue) + " "
+						+ std::to_string(m_vPickData.size()) + " "
 						+ std::to_string(m_dInitialBayesValue) + " "
 						+ std::to_string(m_dMinDistance) + " "
 						+ std::to_string(m_dMedianDistance) + " "
@@ -2287,7 +2358,7 @@ double CHypo::localize() {
 	}
 
 	// Localize this hypo
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	glass3::util::Logger::log("debug", "CHypo::localize. " + m_sID);
 
@@ -2295,6 +2366,7 @@ double CHypo::localize() {
 	// NOTE: What implication does this have for "seed hypos" like twitter
 	// detections
 	if (m_bFixed) {
+		calculateStatistics();
 		return (m_dBayesValue);
 	}
 
@@ -2307,65 +2379,77 @@ double CHypo::localize() {
 
 	// create taper using the number of picks to define the
 	// search distance in localize. Smaller search with more picks
-	// the search radius starts at 1/4 the node resolution and
-	// shrinks to 1/16 the node radius as picks are added
+	// the search radius starts at 1/2 the node resolution and
+	// shrinks to 1/8 the node radius as picks are added
 	// note that the locator can extend past the input search radius
 	// these values were chosen by testing specific events
-	// LOCATION_TAPER_CONSTANT is a taper constant to ensure that the taper
+	// k_dLocationTaperConstant is a taper constant to ensure that the taper
 	// starts at 0 and maxes at one when the m_vPickData size exceeds 30 picks
 	glass3::util::Taper taper(
-			-LOCATION_TAPER_CONSTANT, -LOCATION_TAPER_CONSTANT,
-			-LOCATION_TAPER_CONSTANT,
-			LOCATION_MAX_TAPER_TRESH + LOCATION_TAPER_CONSTANT);
-	double searchR = (m_dWebResolution / 4.
-			+ taper.calculateValue(m_vPickData.size()) * .75 * m_dWebResolution)
-			/ 2.0;
+			-k_dLocationTaperConstant, -k_dLocationTaperConstant,
+			-k_dLocationTaperConstant,
+			k_dLocationMaxTaperThreshold + k_dLocationTaperConstant);
+	double searchR = (m_dWebResolution / k_dSearchRadiusResolutionFactor
+			+ taper.calculateValue(npick)
+					* k_dSearchRadiusTaperFactor * m_dWebResolution)
+			/ k_dSearchRadiusFactor;
 
 	// This should be the default
 	if (CGlass::getMinimizeTTLocator() == false) {
-		if (npick < 50) {
-			annealingLocateBayes(
-					5000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
-					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
-					LOCATION_MIN_TIME_STEP_SIZE);
-		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocateBayes(
-					1250, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
-					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
-					LOCATION_MIN_TIME_STEP_SIZE);
-		} else if ((npick % 25) == 0) {
-			annealingLocateBayes(
-					500, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
-					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
-					LOCATION_MIN_TIME_STEP_SIZE);
+		if (npick < k_iLocationNPickThresholdMedium) {
+			annealingLocateBayes(k_iLocationNumIterationsLarge, searchR,
+									k_dLocationMinDistanceStepSize,
+									searchR / k_dLocationSearchRadiusToTime,
+									k_dLocationMinTimeStepSize);
+		} else if (npick < k_iLocationNPickThresholdLarge
+				&& (npick % k_iLocationNPicksToSkipMedium) == 0) {
+			annealingLocateBayes(k_iLocationNumIterationsMedium, searchR,
+									k_dLocationMinDistanceStepSize,
+									searchR / k_dLocationSearchRadiusToTime,
+									k_dLocationMinTimeStepSize);
+		} else if ((npick % k_iLocationNPicksToSkipLarge) == 0) {
+			annealingLocateBayes(k_iLocationNumIterationsSmall, searchR,
+									k_dLocationMinDistanceStepSize,
+									searchR / k_dLocationSearchRadiusToTime,
+									k_dLocationMinTimeStepSize);
 		} else {
+			// calculate bayes for resolve even if we didn't localize
+			m_dBayesValue = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
+											m_tOrigin, false);
+
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::localize: Skipping localize with %d picks",
 						npick);
 			glass3::util::Logger::log(sLog);
 		}
 	} else {
-		if (npick < 25) {
-			annealingLocateResidual(
-					2000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
-					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
-					LOCATION_MIN_TIME_STEP_SIZE);
-		} else if (npick < 50 && (npick % 5) == 0) {
-			annealingLocateResidual(
-					1000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
-					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
-					LOCATION_MIN_TIME_STEP_SIZE);
-		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocateResidual(
-					1000, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
-					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
-					LOCATION_MIN_TIME_STEP_SIZE);
-		} else if ((npick % 25) == 0) {
-			annealingLocateResidual(
-					500, searchR, LOCATION_MIN_DISTANCE_STEP_SIZE,
-					searchR / LOCATION_SEARCH_RADIUS_TO_TIME_CONVERSION,
-					LOCATION_MIN_TIME_STEP_SIZE);
+		if (npick < k_iLocationNPickThresholdSmall) {
+			annealingLocateResidual(k_iLocationNumIterationsLarge, searchR,
+									k_dLocationMinDistanceStepSize,
+									searchR / k_dLocationSearchRadiusToTime,
+									k_dLocationMinTimeStepSize);
+		} else if (npick < k_iLocationNPickThresholdMedium
+				&& (npick % k_iLocationNPicksToSkipSmall) == 0) {
+			annealingLocateResidual(k_iLocationNumIterationsMedium, searchR,
+									k_dLocationMinDistanceStepSize,
+									searchR / k_dLocationSearchRadiusToTime,
+									k_dLocationMinTimeStepSize);
+		} else if (npick < k_iLocationNPickThresholdLarge
+				&& (npick % k_iLocationNPicksToSkipMedium) == 0) {
+			annealingLocateResidual(k_iLocationNumIterationsMedium, searchR,
+									k_dLocationMinDistanceStepSize,
+									searchR / k_dLocationSearchRadiusToTime,
+									k_dLocationMinTimeStepSize);
+		} else if ((npick % k_iLocationNPicksToSkipLarge) == 0) {
+			annealingLocateResidual(k_iLocationNumIterationsSmall, searchR,
+									k_dLocationMinDistanceStepSize,
+									searchR / k_dLocationSearchRadiusToTime,
+									k_dLocationMinTimeStepSize);
 		} else {
+			// calculate bayes for resolve even if we didn't localize
+			m_dBayesValue = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
+											m_tOrigin, false);
+
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::localize: Skipping localize with %d picks",
 						npick);
@@ -2378,7 +2462,7 @@ double CHypo::localize() {
 	snprintf(sLog, sizeof(sLog),
 				"CHypo::localize: HYP %s %s%9.4f%10.4f%6.1f %d", m_sID.c_str(),
 				dt.dateTime().c_str(), getLatitude(), getLongitude(),
-				getDepth(), static_cast<int>(m_vPickData.size()));
+				getDepth(), npick);
 	glass3::util::Logger::log(sLog);
 
 	// compute current stats after location
@@ -2405,11 +2489,12 @@ bool CHypo::pruneData() {
 
 	// set up a geographic object for this hypo
 	glass3::util::Geo geo;
-	geo.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM);
+	geo.setGeographic(m_dLatitude, m_dLongitude,
+						glass3::util::Geo::k_EarthRadiusKm);
 
 	// get the standard deviation allowed for pruning
 	double sdprune = CGlass::getPruningSDCutoff();
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// for each pick in this hypo
 	for (auto pck : m_vPickData) {
@@ -2571,8 +2656,8 @@ bool CHypo::reportCheck() {
 		return (false);
 	}
 
-	char sLog[2048];
-	char sHypo[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize * 2];
+	char sHypo[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	glass3::util::Date dt = glass3::util::Date(m_tOrigin);
 	snprintf(sHypo, sizeof(sHypo), "%s %s%9.4f%10.4f%6.1f %d", m_sID.c_str(),
@@ -2635,7 +2720,7 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 	glass3::util::Logger::log("debug", "CHypo::resolve. " + m_sID);
 
 	bool bAssoc = false;
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// handle picks
 	// for each pick in this hypo
@@ -2825,7 +2910,7 @@ void CHypo::calculateStatistics() {
 	// set up a geographic object for this hypo
 	glass3::util::Geo geo;
 	geo.setGeographic(m_dLatitude, m_dLongitude,
-	EARTHRADIUSKM - m_dDepth);
+						glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 
 	// create and populate vectors containing the
 	// pick distances and azimuths
@@ -2836,13 +2921,15 @@ void CHypo::calculateStatistics() {
 		std::shared_ptr<CSite> site = pick->getSite();
 
 		// compute the distance delta
-		double delta = geo.delta(&site->getGeo()) / DEG2RAD;
+		double delta = geo.delta(&site->getGeo())
+				/ glass3::util::GlassMath::k_DegreesToRadians;
 
 		// add to distance vactor
 		dis.push_back(delta);
 
 		// compute the azimuth
-		double azimuth = geo.azimuth(&site->getGeo()) / DEG2RAD;
+		double azimuth = geo.azimuth(&site->getGeo())
+				/ glass3::util::GlassMath::k_DegreesToRadians;
 
 		// add to azimuth vector
 		azm.push_back(azimuth);
@@ -2899,7 +2986,7 @@ void CHypo::trap() {
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// for each pick in this hypocenter
 	for (const auto &q : m_vPickData) {

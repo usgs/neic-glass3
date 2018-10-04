@@ -33,22 +33,22 @@ TEST(TTTTest, Construction) {
 	traveltime::CTTT ttt;
 
 	// nTrv
-	ASSERT_EQ(0, ttt.nTrv)<< "nTrv Check";
+	ASSERT_EQ(0, ttt.m_iNumTravelTimes)<< "nTrv Check";
 
 	// m_dGeocentricLatitude
-	ASSERT_EQ(0, ttt.geoOrg.m_dGeocentricLatitude)<<
-			"m_dGeocentricLatitude Check";
+	ASSERT_EQ(0, ttt.m_geoTTOrigin.m_dGeocentricLatitude)<<
+	"m_dGeocentricLatitude Check";
 
 	// m_dGeocentricLongitude
-	ASSERT_EQ(0, ttt.geoOrg.m_dGeocentricLongitude)<<
-			"m_dGeocentricLongitude Check";
+	ASSERT_EQ(0, ttt.m_geoTTOrigin.m_dGeocentricLongitude)<<
+	"m_dGeocentricLongitude Check";
 
 	// m_dGeocentricRadius
-	ASSERT_EQ(0, ttt.geoOrg.m_dGeocentricRadius)<<
-			"m_dGeocentricRadius Check";
+	ASSERT_EQ(0, ttt.m_geoTTOrigin.m_dGeocentricRadius)<<
+	"m_dGeocentricRadius Check";
 
 	// dWeight
-	ASSERT_EQ(0, ttt.dWeight)<< "dWeight Check";
+	ASSERT_EQ(0, ttt.m_dWeight)<< "dWeight Check";
 }
 
 // tests to see if phases can be added to the ttt
@@ -81,19 +81,23 @@ TEST(TTTTest, AddPhase) {
 	ttt.addPhase(phase1name, weightRange, NULL, phase1file);
 
 	// nTrv
-	ASSERT_EQ(1, ttt.nTrv)<< "nTrv Check";
+	ASSERT_EQ(1, ttt.m_iNumTravelTimes)<< "nTrv Check";
 
 	// phase name
-	ASSERT_STREQ(ttt.pTrv[ttt.nTrv - 1]->sPhase.c_str(), phase1name.c_str());
+	ASSERT_STREQ(
+	ttt.m_pTravelTimes[ttt.m_iNumTravelTimes - 1]->m_sPhase.c_str(),
+					phase1name.c_str());
 
 	// add second phase
 	ttt.addPhase(phase2name, NULL, assocRange, phase2file);
 
 	// nTrv
-	ASSERT_EQ(2, ttt.nTrv)<< "nTrv Check";
+	ASSERT_EQ(2, ttt.m_iNumTravelTimes)<< "nTrv Check";
 
 	// phase name
-	ASSERT_STREQ(ttt.pTrv[ttt.nTrv - 1]->sPhase.c_str(), phase2name.c_str());
+	ASSERT_STREQ(
+	ttt.m_pTravelTimes[ttt.m_iNumTravelTimes - 1]->m_sPhase.c_str(),
+					phase2name.c_str());
 
 	delete[] (weightRange);
 	delete[] (assocRange);
@@ -107,19 +111,19 @@ TEST(TTTTest, SetOrigin) {
 	traveltime::CTTT ttt;
 
 	// call setorigin
-	ttt.setOrigin(LATITUDE, LONGITUDE, DEPTH);
+	ttt.setTTOrigin(LATITUDE, LONGITUDE, DEPTH);
 
 	// m_dGeocentricLatitude
-	ASSERT_NEAR(GEOLATITUDE, ttt.geoOrg.m_dGeocentricLatitude, 0.001)<<
-			"m_dGeocentricLatitude Check";
+	ASSERT_NEAR(GEOLATITUDE, ttt.m_geoTTOrigin.m_dGeocentricLatitude, 0.001)<<
+	"m_dGeocentricLatitude Check";
 
 	// m_dGeocentricLongitude
-	ASSERT_EQ(LONGITUDE, ttt.geoOrg.m_dGeocentricLongitude)<<
-			"m_dGeocentricLongitude Check";
+	ASSERT_EQ(LONGITUDE, ttt.m_geoTTOrigin.m_dGeocentricLongitude)<<
+	"m_dGeocentricLongitude Check";
 
 	// m_dGeocentricRadius
-	ASSERT_NEAR(GEODEPTH, ttt.geoOrg.m_dGeocentricRadius, 0.01)<<
-			"m_dGeocentricRadius Check";
+	ASSERT_NEAR(GEODEPTH, ttt.m_geoTTOrigin.m_dGeocentricRadius, 0.01)<<
+	"m_dGeocentricRadius Check";
 }
 
 // tests to see if copy constructor works
@@ -153,30 +157,34 @@ TEST(TTTTest, Copy) {
 	ttt2.addPhase(phase2name, NULL, assocRange, phase2file);
 
 	// set origin
-	ttt2.setOrigin(LATITUDE, LONGITUDE, DEPTH);
+	ttt2.setTTOrigin(LATITUDE, LONGITUDE, DEPTH);
 
 	traveltime::CTTT ttt(ttt2);
 
 	// nTrv
-	ASSERT_EQ(2, ttt.nTrv)<< "nTrv Check";
+	ASSERT_EQ(2, ttt.m_iNumTravelTimes)<< "nTrv Check";
 
 	// phase1 name
-	ASSERT_STREQ(ttt.pTrv[ttt.nTrv - 2]->sPhase.c_str(), phase1name.c_str());
+	ASSERT_STREQ(
+			ttt.m_pTravelTimes[ttt.m_iNumTravelTimes - 2]->m_sPhase.c_str(),
+			phase1name.c_str());
 
 	// phase2 name
-	ASSERT_STREQ(ttt.pTrv[ttt.nTrv - 1]->sPhase.c_str(), phase2name.c_str());
+	ASSERT_STREQ(
+			ttt.m_pTravelTimes[ttt.m_iNumTravelTimes - 1]->m_sPhase.c_str(),
+			phase2name.c_str());
 
 	// m_dGeocentricLatitude
-	ASSERT_NEAR(GEOLATITUDE, ttt.geoOrg.m_dGeocentricLatitude, 0.001)<<
-			"m_dGeocentricLatitude Check";
+	ASSERT_NEAR(GEOLATITUDE, ttt.m_geoTTOrigin.m_dGeocentricLatitude, 0.001)<<
+	"m_dGeocentricLatitude Check";
 
 	// m_dGeocentricLongitude
-	ASSERT_EQ(LONGITUDE, ttt.geoOrg.m_dGeocentricLongitude)<<
-			"m_dGeocentricLongitude Check";
+	ASSERT_EQ(LONGITUDE, ttt.m_geoTTOrigin.m_dGeocentricLongitude)<<
+	"m_dGeocentricLongitude Check";
 
 	// m_dGeocentricRadius
-	ASSERT_NEAR(GEODEPTH, ttt.geoOrg.m_dGeocentricRadius, 0.01)<<
-			"m_dGeocentricRadius Check";
+	ASSERT_NEAR(GEODEPTH, ttt.m_geoTTOrigin.m_dGeocentricRadius, 0.01)<<
+	"m_dGeocentricRadius Check";
 
 	delete[] (weightRange);
 	delete[] (assocRange);
@@ -213,7 +221,7 @@ TEST(TTTTest, TTests) {
 	ttt.addPhase(phase2name, NULL, assocRange, phase2file);
 
 	// set origin
-	ttt.setOrigin(LATITUDE, LONGITUDE, DEPTH);
+	ttt.setTTOrigin(LATITUDE, LONGITUDE, DEPTH);
 
 	glass3::util::Geo testGeo;
 	testGeo.setGeographic(LATITUDE, LONGITUDE + DISTANCE, DEPTH);
@@ -268,7 +276,7 @@ TEST(TTTTest, TFailTests) {
 	ttt.addPhase(phase2name, NULL, assocRange, phase2file);
 
 	// set origin
-	ttt.setOrigin(LATITUDE, LONGITUDE, BADDEPTH);
+	ttt.setTTOrigin(LATITUDE, LONGITUDE, BADDEPTH);
 
 	glass3::util::Geo testGeo;
 	testGeo.setGeographic(LATITUDE, LONGITUDE + BADDISTANCE, DEPTH);

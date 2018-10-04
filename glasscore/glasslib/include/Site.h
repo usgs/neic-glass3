@@ -235,8 +235,8 @@ class CSite {
 	 * \param travelTime2 - A double value containing the optional second travel
 	 * time to use for the link, defaults to -1 (no travel time)
 	 */
-	void addNode(std::shared_ptr<CNode> node, double distDeg, double travelTime1,
-					double travelTime2 = -1);
+	void addNode(std::shared_ptr<CNode> node, double distDeg,
+					double travelTime1, double travelTime2 = -1);
 
 	/**
 	 * \brief Remove pick from this site
@@ -573,6 +573,22 @@ class CSite {
 	 * getPicks() calls
 	 */
 	std::shared_ptr<CPick> m_UpperValue;
+
+	// constants
+	/**
+	 * \brief The index of the X coordinate in the unit vector array
+	 */
+	static const int k_iUnitVectorXCoordinateIndex = 0;
+
+	/**
+	 * \brief The index of the Y coordinate in the unit vector array
+	 */
+	static const int k_iUnitVectorYCoordinateIndex = 1;
+
+	/**
+	 * \brief The index of the Z coordinate in the unit vector array
+	 */
+	static const int k_iUnitVectorZCoordinateIndex = 2;
 };
 }  // namespace glasscore
 #endif  // SITE_H

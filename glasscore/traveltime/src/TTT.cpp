@@ -10,6 +10,10 @@
 
 namespace traveltime {
 
+// constants
+constexpr double CTTT::k_dTTTooLargeToBeValid;
+const int CTTT::k_iMaximumNumberOfTravelTimes;
+
 // ---------------------------------------------------------CTTT
 CTTT::CTTT() {
 	clear();
@@ -19,49 +23,49 @@ CTTT::CTTT() {
 CTTT::CTTT(const CTTT &ttt) {
 	clear();
 
-	nTrv = ttt.nTrv;
-	geoOrg = ttt.geoOrg;
-	dWeight = ttt.dWeight;
+	m_iNumTravelTimes = ttt.m_iNumTravelTimes;
+	m_geoTTOrigin = ttt.m_geoTTOrigin;
+	m_dWeight = ttt.m_dWeight;
 
-	for (int i = 0; i < ttt.nTrv; i++) {
-		if (ttt.pTrv[i] != NULL) {
-			pTrv[i] = new CTravelTime(*ttt.pTrv[i]);
+	for (int i = 0; i < ttt.m_iNumTravelTimes; i++) {
+		if (ttt.m_pTravelTimes[i] != NULL) {
+			m_pTravelTimes[i] = new CTravelTime(*ttt.m_pTravelTimes[i]);
 		} else {
-			pTrv[i] = NULL;
+			m_pTravelTimes[i] = NULL;
 		}
 
-		if (ttt.pTaper[i] != NULL) {
-			pTaper[i] = new glass3::util::Taper(*ttt.pTaper[i]);
+		if (ttt.m_pTapers[i] != NULL) {
+			m_pTapers[i] = new glass3::util::Taper(*ttt.m_pTapers[i]);
 		} else {
-			pTaper[i] = NULL;
+			m_pTapers[i] = NULL;
 		}
 
-		dAssocMin[i] = ttt.dAssocMin[i];
-		dAssocMax[i] = ttt.dAssocMax[i];
+		m_adMinimumAssociationValues[i] = ttt.m_adMinimumAssociationValues[i];
+		m_adMaximumAssociationValues[i] = ttt.m_adMaximumAssociationValues[i];
 	}
 }
 
 // ---------------------------------------------------------~CTTT
 CTTT::~CTTT() {
-	for (int i = 0; i < nTrv; i++) {
-		delete (pTrv[i]);
+	for (int i = 0; i < m_iNumTravelTimes; i++) {
+		delete (m_pTravelTimes[i]);
 
-		if (pTaper[i] != NULL) {
-			delete (pTaper[i]);
+		if (m_pTapers[i] != NULL) {
+			delete (m_pTapers[i]);
 		}
 	}
 }
 
 void CTTT::clear() {
-	nTrv = 0;
-	geoOrg.clear();
-	dWeight = 0;
+	m_iNumTravelTimes = 0;
+	m_geoTTOrigin.clear();
+	m_dWeight = 0;
 
-	for (int i = 0; i < MAX_TRAV; i++) {
-		pTrv[i] = NULL;
-		pTaper[i] = NULL;
-		dAssocMin[i] = -1.0;
-		dAssocMax[i] = -1.0;
+	for (int i = 0; i < k_iMaximumNumberOfTravelTimes; i++) {
+		m_pTravelTimes[i] = NULL;
+		m_pTapers[i] = NULL;
+		m_adMinimumAssociationValues[i] = CTravelTime::k_dTravelTimeInvalid;
+		m_adMaximumAssociationValues[i] = CTravelTime::k_dTravelTimeInvalid;
 	}
 }
 
@@ -70,11 +74,11 @@ void CTTT::clear() {
 bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 					std::string file) {
 	// bounds check
-	if ((nTrv + 1) > MAX_TRAV) {
+	if ((m_iNumTravelTimes + 1) > k_iMaximumNumberOfTravelTimes) {
 		glass3::util::Logger::log(
 				"error",
 				"CTTT::addPhase: Maximum number of phases ("
-						+ std::to_string(MAX_TRAV) + ") reached");
+						+ std::to_string(k_iMaximumNumberOfTravelTimes) + ") reached");
 		return (false);
 	}
 
@@ -83,53 +87,57 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 	trv->setup(phase, file);
 
 	// add traveltime to list
-	pTrv[nTrv] = trv;
-	nTrv++;
+	m_pTravelTimes[m_iNumTravelTimes] = trv;
+	m_iNumTravelTimes++;
 
 	// setup taper for phase weighting
 	if (weightRange != NULL) {
-		pTaper[nTrv] = new glass3::util::Taper(weightRange[0], weightRange[1],
-												weightRange[2], weightRange[3]);
+		m_pTapers[m_iNumTravelTimes] = new glass3::util::Taper(weightRange[0],
+																weightRange[1],
+																weightRange[2],
+																weightRange[3]);
 	}
 	// set up association range
 	if (assocRange != NULL) {
-		dAssocMin[nTrv] = assocRange[0];
-		dAssocMax[nTrv] = assocRange[1];
+		m_adMinimumAssociationValues[m_iNumTravelTimes] = assocRange[0];
+		m_adMaximumAssociationValues[m_iNumTravelTimes] = assocRange[1];
 	}
 
 	return (true);
 }
 
-// ---------------------------------------------------------setOrigin
-void CTTT::setOrigin(double lat, double lon, double z) {
+// ---------------------------------------------------------setTTOrigin
+void CTTT::setTTOrigin(double lat, double lon, double z) {
 	// this should go ahead and update the CGeo
-	geoOrg.setGeographic(lat, lon, EARTHRADIUSKM - z);
+	m_geoTTOrigin.setGeographic(lat, lon,
+								glass3::util::Geo::k_EarthRadiusKm - z);
 }
 
-// ---------------------------------------------------------setOrigin
-void CTTT::setOrigin(const glass3::util::Geo &geoOrigin) {
-  geoOrg = geoOrigin;
+// ---------------------------------------------------------setTTOrigin
+void CTTT::setTTOrigin(const glass3::util::Geo &geoOrigin) {
+	m_geoTTOrigin = geoOrigin;
 }
 
 // ---------------------------------------------------------T
 double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 	// Calculate travel time from distance in degrees
 	// for each phase
-	for (int i = 0; i < nTrv; i++) {
+	for (int i = 0; i < m_iNumTravelTimes; i++) {
 		// is this the phase we're looking for
-		if (pTrv[i]->sPhase == phase) {
+		if (m_pTravelTimes[i]->m_sPhase == phase) {
 			// set origin
-			pTrv[i]->setOrigin(geoOrg);
+			m_pTravelTimes[i]->setTTOrigin(m_geoTTOrigin);
 
 			// get travel time and phase
-			double traveltime = pTrv[i]->T(geo);
-			sPhase = phase;
+			double traveltime = m_pTravelTimes[i]->T(geo);
+			m_sPhase = phase;
 
 			// use taper to compute weight if present
-			if (pTaper[i] != NULL) {
-				dWeight = pTaper[i]->calculateValue(pTrv[i]->dDelta);
+			if (m_pTapers[i] != NULL) {
+				m_dWeight = m_pTapers[i]->calculateValue(
+						m_pTravelTimes[i]->m_dDelta);
 			} else {
-				dWeight = 0.0;
+				m_dWeight = 0.0;
 			}
 
 			return (traveltime);
@@ -137,70 +145,71 @@ double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 	}
 
 	// no valid travel time
-	dWeight = 0.0;
-	sPhase = "?";
-	return (-1.0);
+	m_dWeight = 0.0;
+	m_sPhase = "?";
+	return (CTravelTime::k_dTravelTimeInvalid);
 }
 
 // ---------------------------------------------------------T
 double CTTT::Td(double delta, std::string phase, double depth) {
-	geoOrg.m_dGeocentricRadius = EARTHRADIUSKM - depth;
+	m_geoTTOrigin.m_dGeocentricRadius = glass3::util::Geo::k_EarthRadiusKm
+			- depth;
 	// Calculate time from delta (degrees) and depth
 	// for each phase
-	for (int i = 0; i < nTrv; i++) {
+	for (int i = 0; i < m_iNumTravelTimes; i++) {
 		// is this the phase we're looking for
-		if (pTrv[i]->sPhase == phase) {
+		if (m_pTravelTimes[i]->m_sPhase == phase) {
 			// set origin and depth
-			pTrv[i]->setOrigin(geoOrg);
+			m_pTravelTimes[i]->setTTOrigin(m_geoTTOrigin);
 
 			// get travel time and phase
-			double traveltime = pTrv[i]->T(delta);
-			sPhase = phase;
+			double traveltime = m_pTravelTimes[i]->T(delta);
+			m_sPhase = phase;
 
 			// use taper to compute weight if present
-			if (pTaper[i] != NULL) {
-				dWeight = pTaper[i]->calculateValue(delta);
+			if (m_pTapers[i] != NULL) {
+				m_dWeight = m_pTapers[i]->calculateValue(delta);
 			} else {
-				dWeight = 0.0;
+				m_dWeight = 0.0;
 			}
 			return (traveltime);
 		}
 	}
 
 	// no valid travel time
-	sPhase = "?";
-	dWeight = 0.0;
-	return (-1.0);
+	m_sPhase = "?";
+	m_dWeight = 0.0;
+	return (CTravelTime::k_dTravelTimeInvalid);
 }
 
 // ---------------------------------------------------------T
 double CTTT::T(double delta, std::string phase) {
 	// Calculate time from delta (degrees)
 	// for each phase
-	for (int i = 0; i < nTrv; i++) {
+	for (int i = 0; i < m_iNumTravelTimes; i++) {
 		// is this the phase we're looking for
-		if (pTrv[i]->sPhase == phase) {
+		if (m_pTravelTimes[i]->m_sPhase == phase) {
 			// set origin
-			pTrv[i]->setOrigin(geoOrg);
+			m_pTravelTimes[i]->setTTOrigin(m_geoTTOrigin);
 
 			// get travel time and phase
-			double traveltime = pTrv[i]->T(delta);
-			sPhase = phase;
+			double traveltime = m_pTravelTimes[i]->T(delta);
+			m_sPhase = phase;
 
 			// use taper to compute weight if present
-			if (pTaper[i] != NULL) {
-				dWeight = pTaper[i]->calculateValue(delta);
+			if (m_pTapers[i] != NULL) {
+				m_dWeight = m_pTapers[i]->calculateValue(delta);
 			} else {
-				dWeight = 0.0;
+				m_dWeight = 0.0;
 			}
 			return (traveltime);
 		}
 	}
 
 	// no valid travel time
-	sPhase = "?";
-	dWeight = 0.0;
-	return (-1.0);
+	m_sPhase = "?";
+	m_dWeight = 0.0;
+	return (CTravelTime::k_dTravelTimeInvalid);
 }
 
 // ---------------------------------------------------------T
@@ -245,15 +254,15 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 	double bestTraveltime;
 	std::string bestPhase;
 	double weight;
-	double minResidual = 1000.0;
+	double minResidual = k_dTTTooLargeToBeValid;
 
 	// for each phase
-	for (int i = 0; i < nTrv; i++) {
+	for (int i = 0; i < m_iNumTravelTimes; i++) {
 		// get current aTrv
-		CTravelTime * aTrv = pTrv[i];
+		CTravelTime * aTrv = m_pTravelTimes[i];
 
 		// set origin
-		aTrv->setOrigin(geoOrg);
+		aTrv->setTTOrigin(m_geoTTOrigin);
 
 		// get traveltime
 		double traveltime = aTrv->T(geo);
@@ -265,8 +274,8 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 
 		// check to see if phase is associable
 		// based on minimum assoc distance, if present
-		if (dAssocMin[i] >= 0) {
-			if (aTrv->dDelta < dAssocMin[i]) {
+		if (m_adMinimumAssociationValues[i] >= 0) {
+			if (aTrv->m_dDelta < m_adMinimumAssociationValues[i]) {
 				// this phase is not associable  at this distance
 				continue;
 			}
@@ -274,8 +283,8 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 
 		// check to see if phase is associable
 		// based on maximum assoc distance, if present
-		if (dAssocMax[i] > 0) {
-			if (aTrv->dDelta > dAssocMax[i]) {
+		if (m_adMaximumAssociationValues[i] > 0) {
+			if (aTrv->m_dDelta > m_adMaximumAssociationValues[i]) {
 				// this phase is not associable  at this distance
 				continue;
 			}
@@ -289,12 +298,12 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 		if (residual < minResidual) {
 			// this is the new best travel time
 			minResidual = residual;
-			bestPhase = aTrv->sPhase;
+			bestPhase = aTrv->m_sPhase;
 			bestTraveltime = traveltime;
 
 			// use taper to compute weight if present
-			if (pTaper[i] != NULL) {
-				weight = pTaper[i]->calculateValue(aTrv->dDelta);
+			if (m_pTapers[i] != NULL) {
+				weight = m_pTapers[i]->calculateValue(aTrv->m_dDelta);
 			} else {
 				weight = 0.0;
 			}
@@ -302,16 +311,16 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 	}
 
 	// check to see if minimum residual is valid
-	if (minResidual < 999.0) {
-		sPhase = bestPhase;
-		dWeight = weight;
+	if (minResidual < k_dTTTooLargeToBeValid) {
+		m_sPhase = bestPhase;
+		m_dWeight = weight;
 
 		return (bestTraveltime);
 	}
 
 	// no valid travel time
-	sPhase = "?";
-	dWeight = 0.0;
-	return (-1.0);
+	m_sPhase = "?";
+	m_dWeight = 0.0;
+	return (CTravelTime::k_dTravelTimeInvalid);
 }
 }  // namespace traveltime

@@ -210,7 +210,7 @@ class CCorrelationList {
 	/**
 	 * \brief An integer containing the maximum number of correlations allowed in
 	 * CCorrelationList. This value is overridden by pGlass->getMaxNumCorrelations()
-	 * if provided. Defaults to 10000.
+	 * if provided. Defaults to m_nMaxAllowableCorrelationCountDefault.
 	 */
 	std::atomic<int> m_iMaxAllowableCorrelationCount;
 
@@ -234,6 +234,11 @@ class CCorrelationList {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_CorrelationListMutex;
+
+	/**
+	 * \brief default maximum number of correlations allowed in CCorrelationList.
+	 */
+	static const int k_nMaxAllowableCorrelationCountDefault = 10000;
 };
 }   // namespace glasscore
 #endif  // CORRELATIONLIST_H

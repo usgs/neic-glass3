@@ -23,6 +23,14 @@
 
 namespace glasscore {
 
+// constants
+const int CHypoList::k_nHypoSearchPastDurationForPick;
+const int CHypoList::k_nMaxAllowableHypoCountDefault;
+const unsigned int CHypoList::k_nNumberOfMergeAnnealIterations;
+constexpr double CHypoList::k_dFinalMergeAnnealTimeStepSize;
+constexpr double CHypoList::k_dMergeStackImprovementRatio;
+constexpr double CHypoList::k_dMinimumRoundingProtectionRatio;
+
 // ---------------------------------------------------------CHypoList
 CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval)
 		: glass3::util::ThreadBaseClass("HypoList", sleepTime, numThreads,
@@ -110,8 +118,8 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 	// (a potential hypo must be before the pick we're associating)
 	// use the pick time minus 2400 seconds to compute the starting index
 	// NOTE: Hard coded time delta
-	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(pk->getTPick() - 2400,
-															pk->getTPick());
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
+			pk->getTPick() - k_nHypoSearchPastDurationForPick, pk->getTPick());
 
 	// make sure we got any hypos
 	if (hypoList.size() == 0) {
@@ -134,7 +142,8 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 			// check to see if the pick will associate with
 			// this hypo
 			// NOTE: The sigma value passed into associate is hard coded
-			if (hyp->canAssociate(pk, ASSOC_SIGMA_VALUE_SECONDS, sdassoc)) {
+			if (hyp->canAssociate(pk, CGlass::k_dAssociationSecondsPerSigma,
+									sdassoc)) {
 				// add to the list of hypos this pick can associate with
 				assocHypoList.push_back(hyp);
 
@@ -311,7 +320,7 @@ void CHypoList::clear() {
 
 	// reset
 	m_iCountOfTotalHyposProcessed = 0;
-	m_iMaxAllowableHypoCount = 100;
+	m_iMaxAllowableHypoCount = k_nMaxAllowableHypoCountDefault;
 }
 
 // ---------------------------------------------------------work
@@ -323,7 +332,7 @@ glass3::util::WorkState CHypoList::work() {
 	}
 
 	// log the cycle count and queue size
-	char sLog[1024];
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// get the next hypo to process
 	std::shared_ptr<CHypo> hyp = getNextHypoFromProcessingQueue();
@@ -584,7 +593,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	}
 
 	// check to see if this is a new event
-	if (hyp->getTotalProcessCount() < 2) {
+	if (hyp->getTotalProcessCount() <= 1) {
 		glass3::util::Logger::log(
 				"debug",
 				"CHypoList::processHypo: Should report new hypo sPid:" + pid
@@ -786,7 +795,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
-	char sLog[1024];  // logging string
+	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];  // logging string
 	double distanceCut = CGlass::getHypoMergingDistanceWindow();
 	double timeCut = CGlass::getHypoMergingTimeWindow();
 	bool merged = false;
@@ -862,14 +871,15 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			glass3::util::Geo fromGeo;
 			fromGeo.setGeographic(fromHypo->getLatitude(),
 									fromHypo->getLongitude(),
-									EARTHRADIUSKM);
+									glass3::util::Geo::k_EarthRadiusKm);
 
 			glass3::util::Geo toGeo;
 			toGeo.setGeographic(toHypo->getLatitude(), toHypo->getLongitude(),
-			EARTHRADIUSKM);
+								glass3::util::Geo::k_EarthRadiusKm);
 
 			// calculate distance between hypos
-			double distanceDiff = toGeo.delta(&fromGeo) / DEG2RAD;
+			double distanceDiff = toGeo.delta(&fromGeo)
+					/ glass3::util::GlassMath::k_DegreesToRadians;
 
 			// check distance
 			if (distanceDiff > distanceCut) {
@@ -912,8 +922,14 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			}
 
 			// initial localization attempt of toHypo after adding picks
-			toHypo->anneal(2000, (distanceCut / 2.) * DEG2KM,
-							(distanceCut / 100.) * DEG2KM, (timeCut / 2.), .01);
+			toHypo->anneal(
+					k_nNumberOfMergeAnnealIterations,
+					(distanceCut / CHypo::k_dInitialAnnealStepReducationFactor)
+							* glass3::util::Geo::k_DegreesToKm,
+					(distanceCut / CHypo::k_dFinalAnnealStepReducationFactor)
+							* glass3::util::Geo::k_DegreesToKm,
+					(timeCut / CHypo::k_dInitialAnnealStepReducationFactor),
+					k_dFinalMergeAnnealTimeStepSize);
 
 			// Remove picks from toHypo that do not fit initial location
 			if (toHypo->pruneData()) {
@@ -928,7 +944,8 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			// bayes values
 			if (newBayes
 					> (std::max(toBayes, fromBayes))
-							+ (.1 * std::min(toBayes, fromBayes))) {
+							+ (k_dMergeStackImprovementRatio
+									* std::min(toBayes, fromBayes))) {
 				snprintf(
 						sLog, sizeof(sLog),
 						"CHypoList::findAndMergeMatchingHypos: merged fromHypo "
@@ -945,13 +962,14 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 				// we've merged a hypo, move on to the next candidate
 				merged = true;
-			} else if (newBayes >= toBayes * 0.99) {  // protect against rounding
-			// error or minor issue in location?
-			// the new Hypo is at least as good as the old toHypo but it
-			// hasn't improved significantly. This could be because either
-			// fromHypo has a subset of the picks of the toHypo, or because
-			// the two hypos are unrelated and share no picks. Resolve
-			// duplicate picks and see if the weaker hypo can still stand.
+			} else if (newBayes
+					>= toBayes * k_dMinimumRoundingProtectionRatio) {
+				// error or minor issue in location?
+				// the new Hypo is at least as good as the old toHypo but it
+				// hasn't improved significantly. This could be because either
+				// fromHypo has a subset of the picks of the toHypo, or because
+				// the two hypos are unrelated and share no picks. Resolve
+				// duplicate picks and see if the weaker hypo can still stand.
 				if (resolveData(toHypo)) {
 					// relocate the toHypo if we resolved to get an updated
 					// bayes value
@@ -1172,6 +1190,7 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 					+ std::to_string(perfInfo->dDepthPrev) + " "
 					+ std::to_string(hypo->getProcessCount()) + " "
 					+ std::to_string(hypo->getBayesValue()) + " "
+					+ std::to_string(hypo->getPickDataSize()) + " "
 					+ std::to_string(hypo->getInitialBayesValue()) + " "
 					+ std::to_string(hypo->getMinDistance()) + " "
 					+ std::to_string(hypo->getMedianDistance()) + " "

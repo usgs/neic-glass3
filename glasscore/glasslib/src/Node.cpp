@@ -18,14 +18,12 @@
 #include "Site.h"
 #include "Pick.h"
 
-// This is kinda big (sloppy) slop factor, but we only use it in the initial
-// pick-selection window, so seems OK to use a slighly larger window than we
-// likely need, since it won't generate a lot of additional results, and might
-// be necessary if we have improperly recognized the size of other potential
-// errors.
-#define NUCLEATION_SLOP_FACTOR_SECONDS 60.0
-
 namespace glasscore {
+
+// constants
+constexpr double CNode::k_dTravelTimePickSelectionWindow;
+constexpr double CNode::k_dDepthShellResolutionKm;
+constexpr double CNode::k_dGridPointVsResolutionRatio;
 
 // site Link sorting function
 // Compares site links using travel times
@@ -73,7 +71,7 @@ void CNode::clear() {
 
 	clearSiteLinks();
 
-	m_sName = "Nemo";
+	m_sName = "UNDEFINED";
 	m_pWeb = NULL;
 	m_dLatitude = 0;
 	m_dLongitude = 0;
@@ -312,21 +310,29 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// both travel times are valid
 			if (travelTime1 <= travelTime2) {
 				// TT1 smaller/shorter/faster
-				min = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
-				max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
+				min = tOrigin + travelTime1
+						- (k_dTravelTimePickSelectionWindow / 2);
+				max = tOrigin + travelTime2
+						+ (k_dTravelTimePickSelectionWindow / 2);
 			} else {
 				// TT2 smaller/shorter/faster
-				min = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
-				max = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
+				min = tOrigin + travelTime2
+						- (k_dTravelTimePickSelectionWindow / 2);
+				max = tOrigin + travelTime1
+						+ (k_dTravelTimePickSelectionWindow / 2);
 			}
 		} else if (travelTime1 >= 0) {
 			// Only TT1 valid
-			min = tOrigin + travelTime1 - NUCLEATION_SLOP_FACTOR_SECONDS;
-			max = tOrigin + travelTime1 + NUCLEATION_SLOP_FACTOR_SECONDS;
+			min = tOrigin + travelTime1
+					- (k_dTravelTimePickSelectionWindow / 2);
+			max = tOrigin + travelTime1
+					+ (k_dTravelTimePickSelectionWindow / 2);
 		} else if (travelTime2 >= 0) {
 			// Only TT2 valid
-			min = tOrigin + travelTime2 - NUCLEATION_SLOP_FACTOR_SECONDS;
-			max = tOrigin + travelTime2 + NUCLEATION_SLOP_FACTOR_SECONDS;
+			min = tOrigin + travelTime2
+					- (k_dTravelTimePickSelectionWindow / 2);
+			max = tOrigin + travelTime2
+					+ (k_dTravelTimePickSelectionWindow / 2);
 		} else {
 			// no valid TTs
 			glass3::util::Logger::log(
@@ -335,11 +341,11 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		}
 
 		// use min and max to compute exclusion window
-		if (max - min > NUCLEATION_SLOP_FACTOR_SECONDS * 2.0) {
+		if ((max - min) > k_dTravelTimePickSelectionWindow) {
 			// we have two different TTs and there's a window of picks
 			// in between the two TTs we don't want
-			dtExcludeBegin = min + NUCLEATION_SLOP_FACTOR_SECONDS * 2.0;
-			dtExcludeEnd = max - NUCLEATION_SLOP_FACTOR_SECONDS * 2.0;
+			dtExcludeBegin = min + (k_dTravelTimePickSelectionWindow / 2) * 2.0;
+			dtExcludeEnd = max - (k_dTravelTimePickSelectionWindow / 2) * 2.0;
 			if (dtExcludeEnd < dtExcludeBegin) {
 				// we effectively don't have a window because our two windows
 				// overlap.
@@ -383,8 +389,9 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			if (backAzimuth > 0) {
 				// set up a geo for distance calculations
 				glass3::util::Geo nodeGeo;
-				nodeGeo.setGeographic(m_dLatitude, m_dLongitude,
-				EARTHRADIUSKM - m_dDepth);
+				nodeGeo.setGeographic(
+						m_dLatitude, m_dLongitude,
+						glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 
 				// compute azimith from the site to the node
 				double siteAzimuth = pick->getSite()->getGeo().azimuth(
@@ -504,42 +511,40 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 	// us, but we're already reducing the slop by up to 8x over what it was)
 	// even though we have not accounted for pick error. I think this really
 	// should be some combination of: location error(converted to seconds) -
-	// sqrt(2)/2 * m_dSurfaceResolution* KM2DEG * tt1.rayparam(dtdx) + 0.5 *
-	// m_dDepthResolution*tt1.dtdz tt error -  tt1.residual_PDF_SD for sigma -
-	// observed difference between theoretical and actual for tt1 pick error -
-	// estimated picking error from pick data. but that's more complicated than
-	// what we are prepared to deal with at this time, so let's go with what's
-	// below, and refine it empirically: where we subtract location error from
-	// tRes1, and then
+	// sqrt(2)/2 * m_dSurfaceResolution* glass3::util::Geo::k_KmToDegrees *
+	// tt1.rayparam(dtdx) + 0.5 * m_dDepthResolution*tt1.dtdz tt error -
+	// tt1.residual_PDF_SD for sigma - observed difference between theoretical
+	// and actual for tt1 pick error - estimated picking error from pick data.
+	// but that's more complicated than what we are prepared to deal with at
+	// this time, so let's go with what's below, and refine it empirically:
+	// where we subtract location error from tRes1, and then
 	double dSig1 = 0;
 	if (tRes1 > 0) {
 		// calculate the PDF based on the number of SDs we are from mean, by
 		// allowing for WEb Resolution slop converted to seconds
-		dSig1 =
-				glass3::util::GlassMath::sig(
-						std::max(
-								0.0,
-								(tRes1
-										- travelTime1 / distDeg
-												* (m_dResolution
-														+ NUC_DEPTH_SHELL_RESOLUTION_KM)  // NOLINT
-												* KM2DEG
-												* FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO)),  // NOLINT
-						NUC_SECONDS_PER_SIGMA);
+		dSig1 = glass3::util::GlassMath::sig(
+				std::max(
+						0.0,
+						(tRes1
+								- travelTime1 / distDeg
+										* (m_dResolution
+												+ k_dDepthShellResolutionKm)
+										* glass3::util::Geo::k_KmToDegrees
+										* k_dGridPointVsResolutionRatio)),
+				CGlass::k_dNucleationSecondsPerSigma);
 	}
 	double dSig2 = 0;
 	if (tRes2 > 0) {
-		dSig2 =
-				glass3::util::GlassMath::sig(
-						std::max(
-								0.0,
-								(tRes2
-										- travelTime2 / distDeg
-												* (m_dResolution
-														+ NUC_DEPTH_SHELL_RESOLUTION_KM)  // NOLINT
-												* KM2DEG
-												* FURTHEST_GRID_POINT_VS_RESOLUTION_RATIO)),  // NOLINT
-						NUC_SECONDS_PER_SIGMA);
+		dSig2 = glass3::util::GlassMath::sig(
+				std::max(
+						0.0,
+						(tRes2
+								- travelTime2 / distDeg
+										* (m_dResolution
+												+ k_dDepthShellResolutionKm)
+										* glass3::util::Geo::k_KmToDegrees
+										* k_dGridPointVsResolutionRatio)),
+				CGlass::k_dNucleationSecondsPerSigma);
 	}
 
 	// return the higher of the two significances
@@ -668,7 +673,8 @@ double CNode::getMaxDepth() const {
 // ---------------------------------------------------------getGeo
 glass3::util::Geo CNode::getGeo() const {
 	glass3::util::Geo geoNode;
-	geoNode.setGeographic(m_dLatitude, m_dLongitude, EARTHRADIUSKM - m_dDepth);
+	geoNode.setGeographic(m_dLatitude, m_dLongitude,
+							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 	return (geoNode);
 }
 

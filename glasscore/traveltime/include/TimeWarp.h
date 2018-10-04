@@ -91,48 +91,48 @@ class CTimeWarp {
 	 * \param value - A double value containing the interpolated value to use
 	 * \return Returns the corresponding grid index
 	 */
-	double grid(double value);
+	double calculateGridPoint(double value);
 
 	/**
 	 * \brief Calculate interpolated value
 	 *
 	 * Calculate interpolated value at given grid point
 	 *
-	 * \param gridIndex - A double value containing the grid point to use
+	 * \param gridPoint - A double value containing the grid point to use
 	 * \return Returns the corresponding interpolated value
 	 */
-	double value(double gridIndex);
+	double calculateValue(double gridPoint);
 
 	/**
 	 * \brief A double value containing the Lowest value mapped to the grid
 	 */
-	double dGridMinimum;
+	double m_dGridMinimum;
 
 	/**
 	 * \brief A double value containing the Highest value mapped to the grid
 	 */
-	double dGridMaximum;
+	double m_dGridMaximum;
 
 	/**
 	 * \brief A double value containing the Decay exponent
 	 */
-	double dDecayConstant;
+	double m_dDecayConstant;
 
 	/**
 	 * \brief A double value containing the slope value per grid at 0
 	 */
-	double dSlopeZero;
+	double m_dSlopeZero;
 
 	/**
 	 * \brief A double value containing the slope value per grid at infinity
 	 */
-	double dSlopeInfinity;
+	double m_dSlopeInfinity;
 
 	/**
 	 * \brief A boolean value containing the flag indicating whether the time
 	 * warp is setup
 	 */
-	bool bSetup;
+	bool m_bSetup;
 };
 }  // namespace traveltime
 #endif  // TIMEWARP_H

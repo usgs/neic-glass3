@@ -3,7 +3,6 @@
 {
   "Cmd": "Initialize",
   "MaximumNumberOfPicks": 10000,
-  "MaximumNumberOfPicksPerSite": 30,
   "MaximumNumberOfCorrelations": 1000,
   "MaximumNumberOfHypos": 250,
   "PickDuplicateWindow": 2.5,

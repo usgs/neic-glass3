@@ -45,13 +45,13 @@ bool CTrav::genBranch(CRay *ray, std::string phase, double depth) {
 	// nullcheck
 	if (ray == NULL) {
 		glass3::util::Logger::log("error",
-								"CTrav::genBranch: NULL CRay provided");
+									"CTrav::genBranch: NULL CRay provided");
 		return (false);
 	}
 
 	if (phase == "") {
 		glass3::util::Logger::log("error",
-								"CTrav::genBranch: empty phase provided");
+									"CTrav::genBranch: empty phase provided");
 		return (false);
 	}
 
@@ -174,10 +174,12 @@ void CTrav::branch(CRay *ray, double startDistance, double endDistance) {
 		// check to see if distance less than the minimum allowed
 		if (distance <= minDistance) {
 			// use minimum
-			traveltime = ray->travel(DEG2RAD * minDistance);
+			traveltime = ray->travel(
+					glass3::util::GlassMath::k_DegreesToRadians * minDistance);
 		} else {
 			// use provided
-			traveltime = ray->travel(DEG2RAD * distance);
+			traveltime = ray->travel(
+					glass3::util::GlassMath::k_DegreesToRadians * distance);
 		}
 
 		// check for valid travel time
@@ -230,8 +232,7 @@ void CTrav::branch(CRay *ray, double startDistance, double endDistance) {
 double CTrav::T(double delta) {
 	// Calculate travel time from distance in degrees
 	if (tSpline == NULL) {
-		glass3::util::Logger::log("error",
-								"CTrav::T: NULL tSpline");
+		glass3::util::Logger::log("error", "CTrav::T: NULL tSpline");
 		return (-1.0);
 	}
 
@@ -250,8 +251,7 @@ double CTrav::T(double delta) {
 double CTrav::D(double travelTime) {
 	// Calculate distance (degrees) from travel time
 	if (dSpline == NULL) {
-		glass3::util::Logger::log("error",
-								"CTrav::D: NULL dSpline");
+		glass3::util::Logger::log("error", "CTrav::D: NULL dSpline");
 		return (-1.0);
 	}
 

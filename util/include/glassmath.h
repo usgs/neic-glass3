@@ -9,12 +9,6 @@
 
 #include <random>
 
-// mathmatical defines
-#define RAD2DEG 57.29577951308
-#define DEG2RAD	0.01745329251994
-#define TWOPI 6.283185307179586
-#define PI 3.14159265359
-
 namespace glass3 {
 namespace util {
 
@@ -82,6 +76,27 @@ class GlassMath {
 	 * Initializes the random number generator by seeding m_RandomGenerator.
 	 */
 	static void initializeRandom();
+
+	// Mathmatical constants
+	/**
+	 * \brief Radians to Degrees conversion factor
+	 */
+	static constexpr double k_RadiansToDegrees = 57.29577951308;
+
+	/**
+	 * \brief Degrees to Radians conversion factor
+	 */
+	static constexpr double k_DegreesToRadians = 0.01745329251994;
+
+	/**
+	 * \brief Pi value
+	 */
+	static constexpr double k_Pi = 3.14159265359;
+
+	/**
+	 * \brief Two Pi value
+	 */
+	static constexpr double k_TwoPi = 6.283185307179586;
 
  private:
 	/**

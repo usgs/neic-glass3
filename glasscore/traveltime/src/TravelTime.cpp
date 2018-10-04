@@ -9,45 +9,48 @@
 
 namespace traveltime {
 
+// constants
+constexpr double CTravelTime::k_dTravelTimeInvalid;
+
 // ---------------------------------------------------------CTravelTime
 CTravelTime::CTravelTime() {
-	pDistanceWarp = NULL;
-	pDepthWarp = NULL;
-	pTravelTimeArray = NULL;
-	pDepthDistanceArray = NULL;
-	pPhaseArray = NULL;
+	m_pDistanceWarp = NULL;
+	m_pDepthWarp = NULL;
+	m_pTravelTimeArray = NULL;
+	m_pDepthDistanceArray = NULL;
+	m_pPhaseArray = NULL;
 
 	clear();
 }
 
 // ---------------------------------------------------------CTravelTime
 CTravelTime::CTravelTime(const CTravelTime &travelTime) {
-	pDistanceWarp = NULL;
-	pDepthWarp = NULL;
-	pTravelTimeArray = NULL;
-	pDepthDistanceArray = NULL;
-	pPhaseArray = NULL;
+	m_pDistanceWarp = NULL;
+	m_pDepthWarp = NULL;
+	m_pTravelTimeArray = NULL;
+	m_pDepthDistanceArray = NULL;
+	m_pPhaseArray = NULL;
 
 	clear();
 
-	nDistanceWarp = travelTime.nDistanceWarp;
-	nDepthWarp = travelTime.nDepthWarp;
-	dDepth = travelTime.dDepth;
-	dDelta = travelTime.dDelta;
-	sPhase = travelTime.sPhase;
+	m_iNumDistanceWarp = travelTime.m_iNumDistanceWarp;
+	m_iNumDepthWarp = travelTime.m_iNumDepthWarp;
+	m_dDepth = travelTime.m_dDepth;
+	m_dDelta = travelTime.m_dDelta;
+	m_sPhase = travelTime.m_sPhase;
 
 	// null check these?
-	pDistanceWarp = new CTimeWarp(*travelTime.pDistanceWarp);
-	pDepthWarp = new CTimeWarp(*travelTime.pDepthWarp);
+	m_pDistanceWarp = new CTimeWarp(*travelTime.m_pDistanceWarp);
+	m_pDepthWarp = new CTimeWarp(*travelTime.m_pDepthWarp);
 
-	pTravelTimeArray = new double[nDistanceWarp * nDepthWarp];
-	pDepthDistanceArray = new double[nDistanceWarp * nDepthWarp];
-	pPhaseArray = new char[nDistanceWarp * nDepthWarp];
+	m_pTravelTimeArray = new double[m_iNumDistanceWarp * m_iNumDepthWarp];
+	m_pDepthDistanceArray = new double[m_iNumDistanceWarp * m_iNumDepthWarp];
+	m_pPhaseArray = new char[m_iNumDistanceWarp * m_iNumDepthWarp];
 
-	for (int i = 0; i < (nDistanceWarp * nDepthWarp); i++) {
-		pTravelTimeArray[i] = travelTime.pTravelTimeArray[i];
-		pDepthDistanceArray[i] = travelTime.pDepthDistanceArray[i];
-		pPhaseArray[i] = travelTime.pPhaseArray[i];
+	for (int i = 0; i < (m_iNumDistanceWarp * m_iNumDepthWarp); i++) {
+		m_pTravelTimeArray[i] = travelTime.m_pTravelTimeArray[i];
+		m_pDepthDistanceArray[i] = travelTime.m_pDepthDistanceArray[i];
+		m_pPhaseArray[i] = travelTime.m_pPhaseArray[i];
 	}
 }
 
@@ -58,35 +61,35 @@ CTravelTime::~CTravelTime() {
 
 // ---------------------------------------------------------clear
 void CTravelTime::clear() {
-	nDistanceWarp = 0;
-	nDepthWarp = 0;
-	dDepth = 0;
-	dDelta = 0;
+	m_iNumDistanceWarp = 0;
+	m_iNumDepthWarp = 0;
+	m_dDepth = 0;
+	m_dDelta = 0;
 
-	if (pDistanceWarp) {
-		delete (pDistanceWarp);
+	if (m_pDistanceWarp) {
+		delete (m_pDistanceWarp);
 	}
-	pDistanceWarp = NULL;
+	m_pDistanceWarp = NULL;
 
-	if (pDepthWarp) {
-		delete (pDepthWarp);
+	if (m_pDepthWarp) {
+		delete (m_pDepthWarp);
 	}
-	pDepthWarp = NULL;
+	m_pDepthWarp = NULL;
 
-	if (pTravelTimeArray) {
-		delete (pTravelTimeArray);
+	if (m_pTravelTimeArray) {
+		delete (m_pTravelTimeArray);
 	}
-	pTravelTimeArray = NULL;
+	m_pTravelTimeArray = NULL;
 
-	if (pDepthDistanceArray) {
-		delete (pDepthDistanceArray);
+	if (m_pDepthDistanceArray) {
+		delete (m_pDepthDistanceArray);
 	}
-	pDepthDistanceArray = NULL;
+	m_pDepthDistanceArray = NULL;
 
-	if (pPhaseArray) {
-		delete (pPhaseArray);
+	if (m_pPhaseArray) {
+		delete (m_pPhaseArray);
 	}
-	pPhaseArray = NULL;
+	m_pPhaseArray = NULL;
 }
 
 // ---------------------------------------------------------Setup
@@ -94,10 +97,10 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	// nullcheck
 	if (phase == "") {
 		glass3::util::Logger::log("error",
-								"CTravelTime::Setup: empty phase provided");
+									"CTravelTime::Setup: empty phase provided");
 		return (false);
 	} else {
-		sPhase = phase;
+		m_sPhase = phase;
 	}
 
 	// generate file name if not specified
@@ -106,14 +109,13 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	}
 
 	glass3::util::Logger::log(
-			"debug",
-			"CTravelTime::Setup: phase:" + phase + " file:" + file);
+			"debug", "CTravelTime::Setup: phase:" + phase + " file:" + file);
 
 	// open file
 	FILE *inFile = fopen(file.c_str(), "rb");
 	if (!inFile) {
-		glass3::util::Logger::log("debug",
-								"CTravelTime::Setup: Cannot open file:" + file);
+		glass3::util::Logger::log(
+				"debug", "CTravelTime::Setup: Cannot open file:" + file);
 		return (false);
 	}
 
@@ -126,8 +128,7 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	// check file type
 	if (strcmp(fileType, "TRAV") != 0) {
 		glass3::util::Logger::log(
-				"debug",
-				"CTravelTime::Setup: File is not .trv file:" + file);
+				"debug", "CTravelTime::Setup: File is not .trv file:" + file);
 
 		fclose(inFile);
 
@@ -152,8 +153,8 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	double alpha = 0;
 	double bzero = 0;
 	double binf = 0;
-	nDistanceWarp = 0;
-	fread(&nDistanceWarp, 1, 4, inFile);
+	m_iNumDistanceWarp = 0;
+	fread(&m_iNumDistanceWarp, 1, 4, inFile);
 	fread(&vlow, 1, 8, inFile);
 	fread(&vhigh, 1, 8, inFile);
 	fread(&alpha, 1, 8, inFile);
@@ -163,11 +164,11 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	char sLog[1024];
 	snprintf(sLog, sizeof(sLog),
 				"CTravelTime::Setup: pDistanceWarp %d %.2f %.2f %.2f %.2f %.2f",
-				nDistanceWarp, vlow, vhigh, alpha, bzero, binf);
+				m_iNumDistanceWarp, vlow, vhigh, alpha, bzero, binf);
 	glass3::util::Logger::log(sLog);
 
 	// create distance warp
-	pDistanceWarp = new CTimeWarp(vlow, vhigh, alpha, bzero, binf);
+	m_pDistanceWarp = new CTimeWarp(vlow, vhigh, alpha, bzero, binf);
 
 	// read depth warp
 	vlow = 0;
@@ -175,8 +176,8 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	alpha = 0;
 	bzero = 0;
 	binf = 0;
-	nDepthWarp = 0;
-	fread(&nDepthWarp, 1, 4, inFile);
+	m_iNumDepthWarp = 0;
+	fread(&m_iNumDepthWarp, 1, 4, inFile);
 	fread(&vlow, 1, 8, inFile);
 	fread(&vhigh, 1, 8, inFile);
 	fread(&alpha, 1, 8, inFile);
@@ -185,21 +186,23 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 
 	snprintf(sLog, sizeof(sLog),
 				"CTravelTime::Setup: pDepthWarp %d %.2f %.2f %.2f %.2f %.2f",
-				nDepthWarp, vlow, vhigh, alpha, bzero, binf);
+				m_iNumDepthWarp, vlow, vhigh, alpha, bzero, binf);
 	glass3::util::Logger::log(sLog);
 
 	// create depth warp
-	pDepthWarp = new CTimeWarp(vlow, vhigh, alpha, bzero, binf);
+	m_pDepthWarp = new CTimeWarp(vlow, vhigh, alpha, bzero, binf);
 
 	// create interpolation grids
-	pTravelTimeArray = new double[nDistanceWarp * nDepthWarp];
-	pDepthDistanceArray = new double[nDistanceWarp * nDepthWarp];
-	pPhaseArray = new char[nDistanceWarp * nDepthWarp];
+	m_pTravelTimeArray = new double[m_iNumDistanceWarp * m_iNumDepthWarp];
+	m_pDepthDistanceArray = new double[m_iNumDistanceWarp * m_iNumDepthWarp];
+	m_pPhaseArray = new char[m_iNumDistanceWarp * m_iNumDepthWarp];
 
 	// read interpolation grids
-	fread(pTravelTimeArray, 1, 8 * nDistanceWarp * nDepthWarp, inFile);
-	fread(pDepthDistanceArray, 1, 8 * nDistanceWarp * nDepthWarp, inFile);
-	fread(pPhaseArray, 1, nDistanceWarp * nDepthWarp, inFile);
+	fread(m_pTravelTimeArray, 1, 8 * m_iNumDistanceWarp * m_iNumDepthWarp,
+			inFile);
+	fread(m_pDepthDistanceArray, 1, 8 * m_iNumDistanceWarp * m_iNumDepthWarp,
+			inFile);
+	fread(m_pPhaseArray, 1, m_iNumDistanceWarp * m_iNumDepthWarp, inFile);
 
 	// done with file
 	fclose(inFile);
@@ -208,36 +211,39 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 }
 
 // ---------------------------------------------------------setOrigin
-void CTravelTime::setOrigin(double lat, double lon, double depth) {
-	geoOrg.setGeographic(lat, lon, EARTHRADIUSKM - depth);
-	dDepth = depth;
+void CTravelTime::setTTOrigin(double lat, double lon, double depth) {
+	m_geoTTOrigin.setGeographic(lat, lon,
+								glass3::util::Geo::k_EarthRadiusKm - depth);
+	m_dDepth = depth;
 }
 
 // ---------------------------------------------------------setOrigin
-void CTravelTime::setOrigin(const glass3::util::Geo &geoOrigin) {
-	geoOrg = geoOrigin;
+void CTravelTime::setTTOrigin(const glass3::util::Geo &geoOrigin) {
+	m_geoTTOrigin = geoOrigin;
 	// ditch dDepth in favor or
-	dDepth = EARTHRADIUSKM - geoOrg.m_dGeocentricRadius;
+	m_dDepth = glass3::util::Geo::k_EarthRadiusKm
+			- m_geoTTOrigin.m_dGeocentricRadius;
 }
 
 // ---------------------------------------------------------T
 double CTravelTime::T(glass3::util::Geo *geo) {
 	// Calculate travel time given CGeo
-	dDelta = RAD2DEG * geoOrg.delta(geo);
+	m_dDelta = glass3::util::GlassMath::k_RadiansToDegrees
+			* m_geoTTOrigin.delta(geo);
 
-	return (T(dDelta));
+	return (T(m_dDelta));
 }
 
 // ---------------------------------------------------------T
 
 double CTravelTime::T(double delta) {
 	// Calculate travel time given delta in degrees
-	double depth = pDepthWarp->grid(dDepth);
-	double distance = pDistanceWarp->grid(delta);
+	double depth = m_pDepthWarp->calculateGridPoint(m_dDepth);
+	double distance = m_pDistanceWarp->calculateGridPoint(delta);
 
 	// compute travel time using bilinear interpolation
 	double travelTime = bilinear(distance, depth);
-	dDelta = delta;
+	m_dDelta = delta;
 
 	return (travelTime);
 }
@@ -245,16 +251,16 @@ double CTravelTime::T(double delta) {
 // ---------------------------------------------------------T
 double CTravelTime::T(int deltaIndex, int depthIndex) {
 	// bounds checks
-	if ((deltaIndex < 0) || (deltaIndex >= nDistanceWarp)) {
-		return (-1.0);
+	if ((deltaIndex < 0) || (deltaIndex >= m_iNumDistanceWarp)) {
+		return (k_dTravelTimeInvalid);
 	}
-	if ((depthIndex < 0) || (depthIndex >= nDepthWarp)) {
-		return (-1.0);
+	if ((depthIndex < 0) || (depthIndex >= m_iNumDepthWarp)) {
+		return (k_dTravelTimeInvalid);
 	}
 
 	// get traveltime from travel time array
-	double travelTime =
-			pTravelTimeArray[depthIndex * nDistanceWarp + deltaIndex];
+	double travelTime = m_pTravelTimeArray[depthIndex * m_iNumDistanceWarp
+			+ deltaIndex];
 
 	return (travelTime);
 }
@@ -301,7 +307,7 @@ double CTravelTime::bilinear(double distance, double depth) {
 	// check if we had errors
 	if (error) {
 		// no traveltime
-		return (-1.0);
+		return (k_dTravelTimeInvalid);
 	}
 
 	return (travelTime);
