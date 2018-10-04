@@ -46,8 +46,8 @@ constexpr double CHypo::k_dLocationMinTimeStepSize;
 constexpr double CHypo::k_dLocationSearchRadiusToTime;
 constexpr double CHypo::k_dLocationTaperConstant;
 constexpr double CHypo::k_dLocationMaxTaperThreshold;
-const int CHypo::k_iLocationNPickThresholdTiny;
-const int CHypo::k_iLocationNPickThresholdVerySmall;
+const int CHypo::k_iLocationNPicksToSkipSmall;
+const int CHypo::k_iLocationNPicksToSkipMedium;
 const int CHypo::k_iLocationNPickThresholdSmall;
 const int CHypo::k_iLocationNPickThresholdMedium;
 const int CHypo::k_iLocationNPickThresholdLarge;
@@ -2402,12 +2402,12 @@ double CHypo::localize() {
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
 		} else if (npick < k_iLocationNPickThresholdLarge
-				&& (npick % k_iLocationNPickThresholdVerySmall) == 0) {
+				&& (npick % k_iLocationNPicksToSkipMedium) == 0) {
 			annealingLocateBayes(k_iLocationNumIterationsMedium, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
-		} else if ((npick % k_iLocationNPickThresholdSmall) == 0) {
+		} else if ((npick % k_iLocationNPicksToSkipLarge) == 0) {
 			annealingLocateBayes(k_iLocationNumIterationsSmall, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
@@ -2429,18 +2429,18 @@ double CHypo::localize() {
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
 		} else if (npick < k_iLocationNPickThresholdMedium
-				&& (npick % k_iLocationNPickThresholdTiny) == 0) {
+				&& (npick % k_iLocationNPicksToSkipSmall) == 0) {
 			annealingLocateResidual(k_iLocationNumIterationsMedium, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
 		} else if (npick < k_iLocationNPickThresholdLarge
-				&& (npick % k_iLocationNPickThresholdVerySmall) == 0) {
+				&& (npick % k_iLocationNPicksToSkipMedium) == 0) {
 			annealingLocateResidual(k_iLocationNumIterationsMedium, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
-		} else if ((npick % k_iLocationNPickThresholdSmall) == 0) {
+		} else if ((npick % k_iLocationNPicksToSkipLarge) == 0) {
 			annealingLocateResidual(k_iLocationNumIterationsSmall, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,

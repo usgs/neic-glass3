@@ -1135,14 +1135,19 @@ class CHypo {
 	static constexpr double k_dLocationMaxTaperThreshold = 30.0;
 
 	/**
-	 * \brief The nPick threshold indicating a tiny hypo during location
+	 * \brief The small nPick threshold to skip during location
 	 */
-	static const int k_iLocationNPickThresholdTiny = 5;
+	static const int k_iLocationNPicksToSkipSmall = 5;
 
 	/**
-	 * \brief The nPick threshold indicating a very small hypo during location
+	 * \brief The medium nPick threshold to skip during location
 	 */
-	static const int k_iLocationNPickThresholdVerySmall = 10;
+	static const int k_iLocationNPicksToSkipMedium = 10;
+
+	/**
+	 * \brief The large nPick threshold to skip during location
+	 */
+	static const int k_iLocationNPicksToSkipLarge = 25;
 
 	/**
 	 * \brief The nPick threshold indicating a small hypo during location
