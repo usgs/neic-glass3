@@ -21,10 +21,6 @@ include(${CMAKE_DIR}/base.cmake)
 # SuperEasyJSON
 include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 
-# glasscore
-find_package(glasscore CONFIG REQUIRED)
-include_directories(${glasscore_INCLUDE_DIRS})
-
 # ----- GLASS3 LIBRARIES ----- #
 # util
 include(${CMAKE_DIR}/include_neic-glass3_util.cmake)
