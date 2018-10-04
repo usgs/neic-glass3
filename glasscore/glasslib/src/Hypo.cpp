@@ -46,6 +46,17 @@ constexpr double CHypo::k_dLocationMinTimeStepSize;
 constexpr double CHypo::k_dLocationSearchRadiusToTime;
 constexpr double CHypo::k_dLocationTaperConstant;
 constexpr double CHypo::k_dLocationMaxTaperThreshold;
+const int CHypo::k_iLocationNPickThresholdTiny;
+const int CHypo::k_iLocationNPickThresholdVerySmall;
+const int CHypo::k_iLocationNPickThresholdSmall;
+const int CHypo::k_iLocationNPickThresholdMedium;
+const int CHypo::k_iLocationNPickThresholdLarge;
+const int CHypo::k_iLocationNumIterationsSmall;
+const int CHypo::k_iLocationNumIterationsMedium;
+const int CHypo::k_iLocationNumIterationsLarge;
+constexpr double CHypo::k_dSearchRadiusResolutionFactor;
+constexpr double CHypo::k_dSearchRadiusTaperFactor;
+constexpr double CHypo::k_dSearchRadiusFactor;
 
 // ---------------------------------------------------------CHypo
 CHypo::CHypo() {
@@ -495,11 +506,11 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 	// set the traveltime for the current hypo
 	if (m_pNucleationTravelTime1 != NULL) {
 		m_pNucleationTravelTime1->setTTOrigin(m_dLatitude, m_dLongitude,
-											m_dDepth);
+												m_dDepth);
 	}
 	if (m_pNucleationTravelTime2 != NULL) {
 		m_pNucleationTravelTime2->setTTOrigin(m_dLatitude, m_dLongitude,
-											m_dDepth);
+												m_dDepth);
 	}
 
 	// get number of picks
@@ -1637,8 +1648,8 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 			tcal = m_pTravelTimeTables->T(&siteGeo, tobs);
 
 			// calculate the residual using the phase name
-			resi = calculateWeightedResidual(m_pTravelTimeTables->m_sPhase, tobs,
-												tcal);
+			resi = calculateWeightedResidual(m_pTravelTimeTables->m_sPhase,
+												tobs, tcal);
 		}
 
 		// make sure residual is valid
@@ -2355,6 +2366,7 @@ double CHypo::localize() {
 	// NOTE: What implication does this have for "seed hypos" like twitter
 	// detections
 	if (m_bFixed) {
+		calculateStatistics();
 		return (m_dBayesValue);
 	}
 
@@ -2367,8 +2379,8 @@ double CHypo::localize() {
 
 	// create taper using the number of picks to define the
 	// search distance in localize. Smaller search with more picks
-	// the search radius starts at 1/4 the node resolution and
-	// shrinks to 1/16 the node radius as picks are added
+	// the search radius starts at 1/2 the node resolution and
+	// shrinks to 1/8 the node radius as picks are added
 	// note that the locator can extend past the input search radius
 	// these values were chosen by testing specific events
 	// k_dLocationTaperConstant is a taper constant to ensure that the taper
@@ -2377,52 +2389,67 @@ double CHypo::localize() {
 			-k_dLocationTaperConstant, -k_dLocationTaperConstant,
 			-k_dLocationTaperConstant,
 			k_dLocationMaxTaperThreshold + k_dLocationTaperConstant);
-	double searchR = (m_dWebResolution / 4.
-			+ taper.calculateValue(m_vPickData.size()) * .75 * m_dWebResolution)
-			/ 2.0;
+	double searchR = (m_dWebResolution / k_dSearchRadiusResolutionFactor
+			+ taper.calculateValue(npick)
+					* k_dSearchRadiusTaperFactor * m_dWebResolution)
+			/ k_dSearchRadiusFactor;
 
 	// This should be the default
 	if (CGlass::getMinimizeTTLocator() == false) {
-		if (npick < 50) {
-			annealingLocateBayes(5000, searchR, k_dLocationMinDistanceStepSize,
+		if (npick < k_iLocationNPickThresholdMedium) {
+			annealingLocateBayes(k_iLocationNumIterationsLarge, searchR,
+									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
-		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocateBayes(1250, searchR, k_dLocationMinDistanceStepSize,
+		} else if (npick < k_iLocationNPickThresholdLarge
+				&& (npick % k_iLocationNPickThresholdVerySmall) == 0) {
+			annealingLocateBayes(k_iLocationNumIterationsMedium, searchR,
+									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
-		} else if ((npick % 25) == 0) {
-			annealingLocateBayes(500, searchR, k_dLocationMinDistanceStepSize,
+		} else if ((npick % k_iLocationNPickThresholdSmall) == 0) {
+			annealingLocateBayes(k_iLocationNumIterationsSmall, searchR,
+									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
 		} else {
+			// calculate bayes for resolve even if we didn't localize
+			m_dBayesValue = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
+											m_tOrigin, false);
+
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::localize: Skipping localize with %d picks",
 						npick);
 			glass3::util::Logger::log(sLog);
 		}
 	} else {
-		if (npick < 25) {
-			annealingLocateResidual(2000, searchR,
+		if (npick < k_iLocationNPickThresholdSmall) {
+			annealingLocateResidual(k_iLocationNumIterationsLarge, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
-		} else if (npick < 50 && (npick % 5) == 0) {
-			annealingLocateResidual(1000, searchR,
+		} else if (npick < k_iLocationNPickThresholdMedium
+				&& (npick % k_iLocationNPickThresholdTiny) == 0) {
+			annealingLocateResidual(k_iLocationNumIterationsMedium, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
-		} else if (npick < 150 && (npick % 10) == 0) {
-			annealingLocateResidual(1000, searchR,
+		} else if (npick < k_iLocationNPickThresholdLarge
+				&& (npick % k_iLocationNPickThresholdVerySmall) == 0) {
+			annealingLocateResidual(k_iLocationNumIterationsMedium, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
-		} else if ((npick % 25) == 0) {
-			annealingLocateResidual(500, searchR,
+		} else if ((npick % k_iLocationNPickThresholdSmall) == 0) {
+			annealingLocateResidual(k_iLocationNumIterationsSmall, searchR,
 									k_dLocationMinDistanceStepSize,
 									searchR / k_dLocationSearchRadiusToTime,
 									k_dLocationMinTimeStepSize);
 		} else {
+			// calculate bayes for resolve even if we didn't localize
+			m_dBayesValue = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
+											m_tOrigin, false);
+
 			snprintf(sLog, sizeof(sLog),
 						"CHypo::localize: Skipping localize with %d picks",
 						npick);
@@ -2435,7 +2462,7 @@ double CHypo::localize() {
 	snprintf(sLog, sizeof(sLog),
 				"CHypo::localize: HYP %s %s%9.4f%10.4f%6.1f %d", m_sID.c_str(),
 				dt.dateTime().c_str(), getLatitude(), getLongitude(),
-				getDepth(), static_cast<int>(m_vPickData.size()));
+				getDepth(), npick);
 	glass3::util::Logger::log(sLog);
 
 	// compute current stats after location

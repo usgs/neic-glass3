@@ -341,7 +341,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		}
 
 		// use min and max to compute exclusion window
-		if (max - min > (k_dTravelTimePickSelectionWindow / 2) * 2.0) {
+		if ((max - min) > k_dTravelTimePickSelectionWindow) {
 			// we have two different TTs and there's a window of picks
 			// in between the two TTs we don't want
 			dtExcludeBegin = min + (k_dTravelTimePickSelectionWindow / 2) * 2.0;

@@ -20,15 +20,16 @@
 namespace glasscore {
 
 // pointers
-glasscore::IGlassSend *CGlass::m_pExternalInterface;
-CWebList* CGlass::m_pWebList;
-CSiteList* CGlass::m_pSiteList;
-CPickList* CGlass::m_pPickList;
-CHypoList* CGlass::m_pHypoList;
-CCorrelationList* CGlass::m_pCorrelationList;
-CDetection* CGlass::m_pDetectionProcessor;
-std::shared_ptr<traveltime::CTravelTime> CGlass::m_pDefaultNucleationTravelTime;
-std::shared_ptr<traveltime::CTTT> CGlass::m_pAssociationTravelTimes;
+glasscore::IGlassSend * CGlass::m_pExternalInterface = NULL;
+CWebList * CGlass::m_pWebList = NULL;
+CSiteList * CGlass::m_pSiteList = NULL;
+CPickList * CGlass::m_pPickList = NULL;
+CHypoList * CGlass::m_pHypoList = NULL;
+CCorrelationList * CGlass::m_pCorrelationList = NULL;
+CDetection * CGlass::m_pDetectionProcessor = NULL;
+std::shared_ptr<traveltime::CTravelTime> CGlass::m_pDefaultNucleationTravelTime = // NOLINT
+		NULL;
+std::shared_ptr<traveltime::CTTT> CGlass::m_pAssociationTravelTimes = NULL;
 
 // configuration values
 std::atomic<int> CGlass::m_iMaxNumPicks;
@@ -89,7 +90,6 @@ const int CGlass::k_DefaultMaxPicksPerHour;
 constexpr double CGlass::k_dAssociationSecondsPerSigma;
 constexpr double CGlass::k_dNucleationSecondsPerSigma;
 constexpr double CGlass::k_dMaximumDepth;
-
 
 // ---------------------------------------------------------CGlass
 CGlass::CGlass() {
@@ -391,8 +391,9 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				glass3::util::Logger::log(
 						"info",
 						"CGlass::initialize: Using association Assoc = ["
-								+ std::to_string(assoc[k_iAssocRangeStart]) + ","
-								+ std::to_string(assoc[k_iAssocRangeEnd]) + "]");
+								+ std::to_string(assoc[k_iAssocRangeStart])
+								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
+								+ "]");
 
 				// set range pointer
 				pdRange = range;
@@ -422,8 +423,9 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				glass3::util::Logger::log(
 						"info",
 						"CGlass::initialize: Using association Assoc = ["
-								+ std::to_string(assoc[k_iAssocRangeStart]) + ","
-								+ std::to_string(assoc[k_iAssocRangeEnd]) + "]");
+								+ std::to_string(assoc[k_iAssocRangeStart])
+								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
+								+ "]");
 
 				// set range pointer
 				pdRange = NULL;

@@ -635,11 +635,6 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	static constexpr double k_dDepthResolutionUndefined = -1.0;
 
 	/**
-	 * \brief the value for an undefined travel time
-	 */
-	static constexpr double k_dTravelTimeUndefined = -1.0;
-
-	/**
 	 * \brief the ratio used when generating the global grids
 	 * NOTE: = (1 + std::sqrt(5.0)) / 2.0
 	 * NOTE: AKA golden ratio - See https://en.wikipedia.org/wiki/Golden_ratio

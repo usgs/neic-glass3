@@ -28,7 +28,6 @@ namespace glasscore {
 // constants
 constexpr double CWeb::k_dAzimuthTaperDefault;
 constexpr double CWeb::k_dDepthResolutionUndefined;
-constexpr double CWeb::k_dTravelTimeUndefined;
 constexpr double CWeb::k_dFibonacciRatio;
 const int CWeb::k_iNodeLatitudeIndex;
 const int CWeb::k_iNodeLongitudeIndex;
@@ -1423,12 +1422,12 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 				* aSite.first;
 
 		// compute traveltimes between site and node
-		double travelTime1 = k_dTravelTimeUndefined;
+		double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 		if (m_pNucleationTravelTime1 != NULL) {
 			travelTime1 = m_pNucleationTravelTime1->T(delta);
 		}
 
-		double travelTime2 = k_dTravelTimeUndefined;
+		double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 		if (m_pNucleationTravelTime2 != NULL) {
 			travelTime2 = m_pNucleationTravelTime2->T(delta);
 		}
@@ -1694,11 +1693,11 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 					* nextSite.first;
 
 			// compute traveltimes between site and node
-			double travelTime1 = k_dTravelTimeUndefined;
+			double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 			if (m_pNucleationTravelTime1 != NULL) {
 				travelTime1 = m_pNucleationTravelTime1->T(newDistance);
 			}
-			double travelTime2 = k_dTravelTimeUndefined;
+			double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 			if (m_pNucleationTravelTime2 != NULL) {
 				travelTime2 = m_pNucleationTravelTime2->T(newDistance);
 			}
@@ -1729,8 +1728,8 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 	}
 
 	// log info if we've removed a site
-	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 	if (nodeModCount > 0) {
+		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 		snprintf(
 				sLog, sizeof(sLog),
 				"CWeb::remSite: Removed site: %s from %d node(s) in web: %s",

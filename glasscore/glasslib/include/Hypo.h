@@ -1056,7 +1056,7 @@ class CHypo {
 	static constexpr double k_dGapTaperDownEnd = 360.0;
 
 	/**
-	 * \brief The the factor to correct time to distance
+	 * \brief The factor to correct time to distance
 	 */
 	static constexpr double k_dTimeToDistanceCorrectionFactor = 10.0;
 
@@ -1133,6 +1133,63 @@ class CHypo {
 	 * \brief The maximum threshold for the location taper
 	 */
 	static constexpr double k_dLocationMaxTaperThreshold = 30.0;
+
+	/**
+	 * \brief The nPick threshold indicating a tiny hypo during location
+	 */
+	static const int k_iLocationNPickThresholdTiny = 5;
+
+	/**
+	 * \brief The nPick threshold indicating a very small hypo during location
+	 */
+	static const int k_iLocationNPickThresholdVerySmall = 10;
+
+	/**
+	 * \brief The nPick threshold indicating a small hypo during location
+	 */
+	static const int k_iLocationNPickThresholdSmall = 25;
+
+	/**
+	 * \brief The nPick threshold indicating a medium hypo during location
+	 */
+	static const int k_iLocationNPickThresholdMedium = 50;
+
+	/**
+	 * \brief The nPick threshold indicating a large hypo during location
+	 */
+	static const int k_iLocationNPickThresholdLarge = 150;
+
+	/**
+	 * \brief The small number of location iterations to perform for a hypo
+	 */
+	static const int k_iLocationNumIterationsSmall = 500;
+
+	/**
+	 * \brief The medium number of location iterations to perform for a hypo
+	 */
+	static const int k_iLocationNumIterationsMedium = 1250;
+
+	/**
+	 * \brief The large number of location iterations to perform for a hypo
+	 */
+	static const int k_iLocationNumIterationsLarge = 5000;
+
+	/**
+	 * \brief The factor for dividing the web resolution when computing the
+	 * location search radius
+	 */
+	static constexpr double k_dSearchRadiusResolutionFactor = 4.0;
+
+	/**
+	 * \brief The factor for multiplying the taper when computing the location
+	 * search radius
+	 */
+	static constexpr double k_dSearchRadiusTaperFactor = 0.75;
+
+	/**
+	 * \brief The factor for dividing when computing the location search radius
+	 */
+	static constexpr double k_dSearchRadiusFactor = 2.0;
 
  private:
 	/**
