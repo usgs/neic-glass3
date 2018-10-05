@@ -508,6 +508,15 @@ glass3::util::WorkState CPickList::work() {
 		// find first pick in multiset
 		std::shared_ptr<CPick> oldestPick = *oldest;
 
+		// check to see if the new pick is older than the
+		// first pick in multiset
+		if (pick->getTPick() <= oldestPick->getTPick()) {
+			m_PickListMutex.unlock();
+			// it is, don't insert
+			// message was processed
+			return (glass3::util::WorkState::OK);
+		}
+
 		// remove from site specific pick list
 		oldestPick->getSite()->removePick(oldestPick);
 
