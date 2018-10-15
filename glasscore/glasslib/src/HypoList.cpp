@@ -77,6 +77,14 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 		// find first hypo in multiset
 		std::shared_ptr<CHypo> oldestHypo = *oldest;
 
+		// check to see if the new hypo is older than the
+		// first hypo in multiset
+		if (hypo->getTOrigin() <= oldestHypo->getTOrigin()) {
+			// it is, don't insert
+			// message was processed
+			return (true);
+		}
+
 		// send expiration message
 		if (oldestHypo->getHypoGenerated()) {
 			CGlass::sendExternalMessage(oldestHypo->generateExpireMessage());
