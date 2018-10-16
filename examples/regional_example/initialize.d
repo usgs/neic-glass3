@@ -1,4 +1,4 @@
-# glassinitialize.d
+# initialize.d
 # Configuration file for the glass parameters
 {
   "Cmd": "Initialize",
@@ -36,4 +36,4 @@
       }
   ]
 }
-# End of glassinitialize.d
+# End of initialize.d
