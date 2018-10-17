@@ -54,12 +54,16 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 
 		if (type != "Pick") {
 			glass3::util::Logger::log(
-					"warning", "CPick::CPick: Non-Pick message passed in.");
+					"warning",
+					"CPick::CPick: Non-Pick message passed in: "
+							+ json::Serialize(*pick));
 			return;
 		}
 	} else {
-		glass3::util::Logger::log("error",
-									"CPick::CPick: Missing required Type Key.");
+		glass3::util::Logger::log(
+				"error",
+				"CPick::CPick: Missing required Type Key: "
+						+ json::Serialize(*pick));
 		return;
 	}
 
@@ -90,7 +94,9 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 			sta = siteobj["Station"].ToString();
 		} else {
 			glass3::util::Logger::log(
-					"error", "CPick::CPick: Missing required Station Key.");
+					"error",
+					"CPick::CPick: Missing required Station Key: "
+							+ json::Serialize(*pick));
 
 			return;
 		}
@@ -109,7 +115,9 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 			net = siteobj["Network"].ToString();
 		} else {
 			glass3::util::Logger::log(
-					"error", "CPick::CPick: Missing required Network Key.");
+					"error",
+					"CPick::CPick: Missing required Network Key: "
+							+ json::Serialize(*pick));
 
 			return;
 		}
@@ -123,8 +131,10 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		}
 	} else {
 		// no site key
-		glass3::util::Logger::log("error",
-									"CPick::CPick: Missing required Site Key.");
+		glass3::util::Logger::log(
+				"error",
+				"CPick::CPick: Missing required Site Key: "
+						+ json::Serialize(*pick));
 
 		return;
 	}
@@ -136,7 +146,9 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 
 	// check to see if we got a site
 	if (site == NULL) {
-		glass3::util::Logger::log("warning", "CPick::CPick: site is null.");
+		glass3::util::Logger::log(
+				"warning",
+				"CPick::CPick: Unknown site: " + json::Serialize(*pick));
 
 		return;
 	}
@@ -162,7 +174,9 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		tpick = dt.decodeDateTime(ttt);
 	} else {
 		glass3::util::Logger::log(
-				"error", "CPick::CPick: Missing required Time or T Key.");
+				"error",
+				"CPick::CPick: Missing required Time or T Key: "
+						+ json::Serialize(*pick));
 
 		return;
 	}
@@ -177,7 +191,9 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		pid = (*pick)["Pid"].ToString();
 	} else {
 		glass3::util::Logger::log(
-				"warning", "CPick::CPick: Missing required ID or Pid Key.");
+				"warning",
+				"CPick::CPick: Missing required ID or Pid Key: "
+						+ json::Serialize(*pick));
 
 		return;
 	}
@@ -195,7 +211,9 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 			backAzimuth = beamobj["BackAzimuth"].ToDouble();
 		} else {
 			glass3::util::Logger::log(
-					"warning", "CPick::CPick: Missing Beam BackAzimuth Key.");
+					"warning",
+					"CPick::CPick: Missing Beam BackAzimuth Key: "
+							+ json::Serialize(*pick));
 			backAzimuth = std::numeric_limits<double>::quiet_NaN();
 		}
 
@@ -205,7 +223,9 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 			slowness = beamobj["Slowness"].ToDouble();
 		} else {
 			glass3::util::Logger::log(
-					"warning", "CPick::CPick: Missing Beam Slowness Key.");
+					"warning",
+					"CPick::CPick: Missing Beam Slowness Key: "
+							+ json::Serialize(*pick));
 			slowness = std::numeric_limits<double>::quiet_NaN();
 		}
 	} else {
@@ -215,8 +235,10 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 
 	// pass to initialization function
 	if (!initialize(site, tpick, pid, backAzimuth, slowness)) {
-		glass3::util::Logger::log("error",
-									"CPick::CPick: Failed to initialize pick.");
+		glass3::util::Logger::log(
+				"error",
+				"CPick::CPick: Failed to initialize pick: "
+						+ json::Serialize(*pick));
 		return;
 	}
 

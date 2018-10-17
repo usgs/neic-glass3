@@ -1553,17 +1553,22 @@ double CHypo::getBayesValue() const {
 // ---------------------------------------------------calculateBayes
 double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 								bool nucleate) {
+	// check to see if this is a valid hypo, a hypo must always have an id
+	if (m_sID == "") {
+		return (0);
+	}
+
 	// lock mutex for this scope
 	std::lock_guard<std::recursive_mutex> guard(m_HypoMutex);
 
 	if ((!m_pNucleationTravelTime1) && (!m_pNucleationTravelTime2)) {
-		glass3::util::Logger::log("error",
-									"CHypo::getBayes: NULL pTrv1 and pTrv2.");
+		glass3::util::Logger::log(
+				"error", "CHypo::calculateBayes: NULL pTrv1 and pTrv2.");
 		return (0);
 	}
 
 	if (!m_pTravelTimeTables) {
-		glass3::util::Logger::log("error", "CHypo::getBayes: NULL pTTT.");
+		glass3::util::Logger::log("error", "CHypo::calculateBayes: NULL pTTT.");
 		return (0);
 	}
 

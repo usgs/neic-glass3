@@ -382,7 +382,7 @@ class CPick {
 	/**
 	 * \brief The number of anneal iterations to run when nucleating
 	 */
-	static const unsigned int k_nNucleateNumberOfAnnealIterations = 2000;
+	static const unsigned int k_nNucleateNumberOfAnnealIterations = 10000;
 
 	/**
 	 * \brief The initial anneal step size to use when nucleating
