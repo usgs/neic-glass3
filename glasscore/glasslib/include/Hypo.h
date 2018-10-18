@@ -516,7 +516,7 @@ class CHypo {
 	 * step size in seconds, default 0.5 seconds
 	 * \return Returns a double value containing the final baysian fit.
 	 */
-	double anneal(int nIter = 250, double dStart = 100.0, double dStop = 1.0,
+	double anneal(int nIter = 5000, double dStart = 100.0, double dStop = 1.0,
 					double tStart = 5., double tStop = .5);
 
 	/**

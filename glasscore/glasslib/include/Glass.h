@@ -474,7 +474,7 @@ class CGlass {
 	 * \brief The seconds per sigma value used for nucleation, intentionally
 	 * a looser sigma value than association
 	 */
-	static constexpr double k_dNucleationSecondsPerSigma = 3.0;
+	static constexpr double k_dNucleationSecondsPerSigma = 10.0;
 
 	/**
 	 * \brief The maximum allowed depth

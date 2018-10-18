@@ -391,7 +391,7 @@ class CNode {
 	 * \brief The depth shell resolution in kilometers used in nucleation
 	 * NOTE: this could be calculated from the grid in the future.
 	 */
-	static constexpr double k_dDepthShellResolutionKm = 10.0;
+	static constexpr double k_dDepthShellResolutionKm = 100.0;
 
 	/**
 	 * \brief The the ratio between the grid points and the grid resolution
@@ -405,7 +405,7 @@ class CNode {
 	 * corresponding to a center of a node cubiod. 3 allows it to span across a
 	 * kitty corner node in a cubiod plus halfway to the next.
 	 */
-	static constexpr double k_residualDistanceAllowanceFactor = 2.;
+	static constexpr double k_residualDistanceAllowanceFactor = 4.;
 };
 }  // namespace glasscore
 #endif  // NODE_H
