@@ -398,6 +398,14 @@ class CNode {
 	 * NOTE: = sqrt(2)/2)
 	 */
 	static constexpr double k_dGridPointVsResolutionRatio = 0.7071;
+
+	/**
+	 * \brief A factor for allowing distance of triggering relative to the distance
+	 * between detection nodes. A factor of one would just allow a residual change
+	 * corresponding to a center of a node cubiod. 3 allows it to span across a
+	 * kitty corner node in a cubiod plus halfway to the next.
+	 */
+	static constexpr double k_residualDistanceAllowanceFactor = 2.;
 };
 }  // namespace glasscore
 #endif  // NODE_H
