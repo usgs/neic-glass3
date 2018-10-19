@@ -503,25 +503,14 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 	// compute significances using residuals and web resolution
 	// should trigger be a looser cutoff than location cutoff
 
-	// CNode::nucleate() will ignore anything with a residual > 2.15 sigma.
-	// since we are using the web resolution as our starting point, that says we
-	// should be able to pull in anything that is 2.15 times the web resolution
-	// away, which should let us go plenty far (anything over sqrt(2)/2 *
-	// resolution should theoretically be closer to another node than it is to
-	// us, but we're already reducing the slop by up to 8x over what it was)
-	// even though we have not accounted for pick error. I think this really
-	// should be some combination of: location error(converted to seconds) -
-	// sqrt(2)/2 * m_dSurfaceResolution* glass3::util::Geo::k_KmToDegrees *
-	// tt1.rayparam(dtdx) + 0.5 * m_dDepthResolution*tt1.dtdz tt error -
-	// tt1.residual_PDF_SD for sigma - observed difference between theoretical
-	// and actual for tt1 pick error - estimated picking error from pick data.
-	// but that's more complicated than what we are prepared to deal with at
-	// this time, so let's go with what's below, and refine it empirically:
-	// where we subtract location error from tRes1, and then
+	// The significance is defined in a way that allows for picks to still be
+	// significant even if an event is not directly on a node. This is done in
+	// the form of a residual allowance which calculates the maximum off grid
+	// distance assuming the nodes form a cuboid and multiply but compute
+	// slowness at that region, then multiplies by a factor (2) for slop.
 	double dSig1 = 0;
 	if (tRes1 > 0) {
-		// calculate the PDF based on the number of SDs we are from mean, by
-		// allowing for WEb Resolution slop converted to seconds
+
 		dSig1 =
 				glass3::util::GlassMath::sig(
 						std::max(
