@@ -502,7 +502,6 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 
 	// compute significances using residuals and web resolution
 	// should trigger be a looser cutoff than location cutoff
-
 	// The significance is defined in a way that allows for picks to still be
 	// significant even if an event is not directly on a node. This is done in
 	// the form of a residual allowance which calculates the maximum off grid
