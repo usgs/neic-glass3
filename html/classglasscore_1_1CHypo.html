@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.0</span>
+   &#160;<span id="projectnumber">1.0.1</span>
    </div>
   </td>
  </tr>
@@ -194,9 +194,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3f3d283300b58e45b2ef7f108707a4bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a3f3d283300b58e45b2ef7f108707a4bb">calculateStatistics</a> ()</td></tr>
 <tr class="memdesc:a3f3d283300b58e45b2ef7f108707a4bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate supporting data statistical values.  <a href="#a3f3d283300b58e45b2ef7f108707a4bb">More...</a><br/></td></tr>
 <tr class="separator:a3f3d283300b58e45b2ef7f108707a4bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74f04f2136f3853602daf66b73936004"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a74f04f2136f3853602daf66b73936004">anneal</a> (int nIter=250, double dStart=100.0, double dStop=1.0, double tStart=5., double tStop=.5)</td></tr>
-<tr class="memdesc:a74f04f2136f3853602daf66b73936004"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fast baysian fit synthetic annealing location algorithm used by nucleation.  <a href="#a74f04f2136f3853602daf66b73936004">More...</a><br/></td></tr>
-<tr class="separator:a74f04f2136f3853602daf66b73936004"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a191e799e2dd7993fd783c294ac39b2b2"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a191e799e2dd7993fd783c294ac39b2b2">anneal</a> (int nIter=5000, double dStart=100.0, double dStop=1.0, double tStart=5., double tStop=.5)</td></tr>
+<tr class="memdesc:a191e799e2dd7993fd783c294ac39b2b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fast baysian fit synthetic annealing location algorithm used by nucleation.  <a href="#a191e799e2dd7993fd783c294ac39b2b2">More...</a><br/></td></tr>
+<tr class="separator:a191e799e2dd7993fd783c294ac39b2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a615084a07169e3aa24d0e35a18d76c98"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a615084a07169e3aa24d0e35a18d76c98">localize</a> ()</td></tr>
 <tr class="memdesc:a615084a07169e3aa24d0e35a18d76c98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Location calculation function.  <a href="#a615084a07169e3aa24d0e35a18d76c98">More...</a><br/></td></tr>
 <tr class="separator:a615084a07169e3aa24d0e35a18d76c98"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -480,7 +480,7 @@ Static Public Attributes</h2></td></tr>
 <p><a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> also maintains vectors of shared_ptr's to <a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> and <a class="el" href="classglasscore_1_1CCorrelation.html" title="glasscore correlation class ">CCorrelation</a> objects that make up the data that supports the hypocenter</p>
 <p><a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> contains functions to support association, disassociation, location, removal, and various statistical calculations, as well as generating output data in various formats.</p>
 <p>The <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> associate() and prune() functions essentially make up the glasscore data association engine, along with the various statistical calculations.</p>
-<p>The glasscore location algorithm consists of the <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> <a class="el" href="classglasscore_1_1CHypo.html#a74f04f2136f3853602daf66b73936004" title="Fast baysian fit synthetic annealing location algorithm used by nucleation. ">anneal()</a>, <a class="el" href="classglasscore_1_1CHypo.html#a615084a07169e3aa24d0e35a18d76c98" title="Location calculation function. ">localize()</a>, <a class="el" href="classglasscore_1_1CHypo.html#a9c2d1128a3fdae2e3ca230cd07b1de0b" title="Baysian Fit synthetic annealing location algorithm. ">annealingLocateBayes()</a>, <a class="el" href="classglasscore_1_1CHypo.html#a53d3f01739998d729a1a6ea7933d9605" title="Residual synthetic annealing location algorithm. ">annealingLocateResidual()</a>, <a class="el" href="classglasscore_1_1CHypo.html#afd4c83dfb69a35dd3841a7498cac4d3c" title="Calculate bayes. ">calculateBayes()</a>, and <a class="el" href="classglasscore_1_1CHypo.html#afeda539858c17faddf1cbe44fca10489" title="Calculate absolute residual sum. ">calculateAbsResidualSum()</a> functions, along with the various statistical calculations.</p>
+<p>The glasscore location algorithm consists of the <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> <a class="el" href="classglasscore_1_1CHypo.html#a191e799e2dd7993fd783c294ac39b2b2" title="Fast baysian fit synthetic annealing location algorithm used by nucleation. ">anneal()</a>, <a class="el" href="classglasscore_1_1CHypo.html#a615084a07169e3aa24d0e35a18d76c98" title="Location calculation function. ">localize()</a>, <a class="el" href="classglasscore_1_1CHypo.html#a9c2d1128a3fdae2e3ca230cd07b1de0b" title="Baysian Fit synthetic annealing location algorithm. ">annealingLocateBayes()</a>, <a class="el" href="classglasscore_1_1CHypo.html#a53d3f01739998d729a1a6ea7933d9605" title="Residual synthetic annealing location algorithm. ">annealingLocateResidual()</a>, <a class="el" href="classglasscore_1_1CHypo.html#afd4c83dfb69a35dd3841a7498cac4d3c" title="Calculate bayes. ">calculateBayes()</a>, and <a class="el" href="classglasscore_1_1CHypo.html#afeda539858c17faddf1cbe44fca10489" title="Calculate absolute residual sum. ">calculateAbsResidualSum()</a> functions, along with the various statistical calculations.</p>
 <p><a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> uses smart pointers (std::shared_ptr). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="aaa52e4eef3fbd2bc345b6a90ad575f69"></a>
@@ -895,7 +895,7 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a74f04f2136f3853602daf66b73936004"></a>
+<a class="anchor" id="a191e799e2dd7993fd783c294ac39b2b2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -903,7 +903,7 @@ Static Public Attributes</h2></td></tr>
           <td class="memname">double glasscore::CHypo::anneal </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>nIter</em> = <code>250</code>, </td>
+          <td class="paramname"><em>nIter</em> = <code>5000</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1314,7 +1314,7 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Calculate supporting data statistical values. </p>
-<p>Calculate various statistical values for this hypo, including minimum distance, median distance, gap, kurtosis value, and association distance cutoff as part of the <a class="el" href="classglasscore_1_1CHypo.html#a74f04f2136f3853602daf66b73936004" title="Fast baysian fit synthetic annealing location algorithm used by nucleation. ">anneal()</a> and <a class="el" href="classglasscore_1_1CHypo.html#a615084a07169e3aa24d0e35a18d76c98" title="Location calculation function. ">localize()</a> </p>
+<p>Calculate various statistical values for this hypo, including minimum distance, median distance, gap, kurtosis value, and association distance cutoff as part of the <a class="el" href="classglasscore_1_1CHypo.html#a191e799e2dd7993fd783c294ac39b2b2" title="Fast baysian fit synthetic annealing location algorithm used by nucleation. ">anneal()</a> and <a class="el" href="classglasscore_1_1CHypo.html#a615084a07169e3aa24d0e35a18d76c98" title="Location calculation function. ">localize()</a> </p>
 
 </div>
 </div>
@@ -3601,7 +3601,7 @@ Static Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Oct 17 2018 15:11:45 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Oct 23 2018 15:24:15 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
