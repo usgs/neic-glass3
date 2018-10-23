@@ -510,7 +510,6 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 	// slowness at that region, then multiplies by a factor (2) for slop.
 	double dSig1 = 0;
 	if (tRes1 > 0) {
-
 		dSig1 =
 				glass3::util::GlassMath::sig(
 						std::max(
