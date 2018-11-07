@@ -5,7 +5,7 @@
 	"Configuration":"GlassOutput",
 
 	# the times in seconds to publish events
-	"PublicationTimes":[60,300],
+    "PublicationTimes":[60,300],
 
 	# Whether to publish an event on expiration from glass
 	"PublishOnExpiration":true,
@@ -21,7 +21,7 @@
 	# output file names, defaults to true.
 	"TimeStampFileName":true,
 
-	# The  source to use when outputting data
+	# The  source to use when outputing data
 	"OutputAgencyID":"US",
 	"OutputAuthor":"Glass3GlobalExample"
 }

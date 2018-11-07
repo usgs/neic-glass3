@@ -4,8 +4,9 @@
   "Cmd": "Global",
   "Name": "Global",
   "NodeResolution": 100.0,
-  "NumStationsPerNode": 24,
-  "NucleationDataCountThreshold": 6,
+  "NumStationsPerNode": 40,
+  "NucleationDataCountThreshold": 8,
+  "NucleationStackThreshold": 7.9,
   "DepthLayers": [
       10.0,
       30.0,
@@ -19,15 +20,15 @@
       750.0
   ],
   "SaveGrid":false,
-  "UpdateGrid":false, # False because glass-app does not do site lookups.
+  "AzimuthGapTaper": 270.0,
   "ZoneStatsFile": "./global_example/qa_zonestats.txt",
   "DepthResolution": 125.0,
   "NucleationPhases":
   {
     "Phase1":
     {
-	"PhaseName": "P",
-	"TravFile": "./global_example/P.trv"
+	    "PhaseName": "P",
+	    "TravFile": "./global_example/P.trv"
     }
   }
 }

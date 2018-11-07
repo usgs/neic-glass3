@@ -1,23 +1,25 @@
-# initialize.d
+# glassinitialize.d
 # Configuration file for the glass parameters
 {
   "Cmd": "Initialize",
   "MaximumNumberOfHypos": 300,
   "MaximumNumberOfPicks": 2500,
   "MaximumNumberOfPicksPerSite": 30,
-  "PickDuplicateWindow": 10.0,
-  "NumberOfNucleationThreads": 5,
-  "NumberOfHypoThreads": 5,
+  "PickDuplicateWindow": 5.0,
+  "NumberOfNucleationThreads": 15,
+  "NumberOfHypoThreads": 15,
   "Params": {
       "NucleationStackThreshold": 6.5,
       "NucleationDataCountThreshold": 10,
-      "AssociationStandardDeviationCutoff": 5.0,
+      "AssociationStandardDeviationCutoff": 10.0,
       "PruningStandardDeviationCutoff": 3.0,
+      "avgDelta": 0.0,
+      "avgSigma": 0.75,
       "DistanceCutoffFactor": 2.0,
       "DistanceCutoffRatio": 0.8,
       "DistanceCutoffMinimum": 2.0,
       "HypoProcessCountLimit": 25,
-      "ReportingDataThreshold":10
+      "ReportingDataThreshold":1
   },
   "DefaultNucleationPhase": {
       "PhaseName": "P",
@@ -36,4 +38,4 @@
       }
   ]
 }
-# End of initialize.d
+# End of glassinitialize.d
