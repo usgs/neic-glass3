@@ -5,19 +5,16 @@
 	"Configuration":"GlassInput",
 
 	# the directory to read input from
-	"InputDirectory":"./input",
-
-	# the directory to write errors out to
-	"ErrorDirectory":"./error",
+	"InputDirectory":"./regional_example/input",
 
 	# the directory to archive input
-	"ArchiveDirectory":"./archive",
+	"ArchiveDirectory":"./regional_example/archive",
 
 	# Whether to shut down when there is no more input data
-	"ShutdownWhenNoData":true,
+    "ShutdownWhenNoData":true,
 
-	# The time in seconds to wait before shutting down due to no data
-	"ShutdownWait":120,
+    # The time in seconds to wait before shutting down due to no data
+    "ShutdownWait":120,
 
 	# the formats glass will accept
 	# glass currently understands the gpick, jsonpick,
@@ -30,5 +27,6 @@
 	# The default source to use when converting data to json
 	"DefaultAgencyID":"US",
 	"DefaultAuthor":"Glass3RegionalExample"
+
 }
 # End of input.d

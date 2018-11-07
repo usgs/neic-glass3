@@ -11,10 +11,10 @@
 	"ArchiveDirectory":"./global_example/archive",
 
 	# Whether to shut down when there is no more input data
-	"ShutdownWhenNoData":true,
+    "ShutdownWhenNoData":true,
 
-	# The time in seconds to wait before shutting down due to no data
-	"ShutdownWait":600,
+    # The time in seconds to wait before shutting down due to no data
+    "ShutdownWait":600,
 
 	# the formats glass will accept
 	# glass currently understands the gpick, jsonpick,

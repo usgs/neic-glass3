@@ -18,12 +18,12 @@
 	"NumberOfColumns": 360,
 	"CenterLatitude": 37.5,
 	"CenterLongitude": -90.0,
-	"DepthLayers": [1.0, 10.0],
-	"NumStationsPerNode": 25,
-	"NucleationDataCountThreshold": 8,
-	"NucleationStackThreshold": 7.6,
-	"SaveGrid":false,
-	"AzimuthalGapTaper":180.0,
-	"MaximumDepth": 30.0
+	"DepthLayers": [7.],
+	"NumStationsPerNode": 18,
+	"NucleationDataCountThreshold": 7,
+	"NucleationStackThreshold": 6.7,
+	"SaveGrid":true,
+	"AzimuthGapTaper":270.,
+    "MaximumDepth": 30.
 }
 # End of ceus_grid.d

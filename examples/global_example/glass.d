@@ -10,7 +10,7 @@
 
 	# Use this directory for the other glass
 	# subcomponent configuration files
-	"ConfigDirectory":"./global_example",
+	"ConfigDirectory":"./global_example/",
 
 	# Association thread configuration
 	# The file containing the configuration
@@ -24,7 +24,11 @@
 	# to define 1 or more global/regional/local grids
 	"GridFiles":[
 		"global_grid.d",
-		"culled_global_grid.d"
+		"culled_global_grid.d",
+  		"us_grid.d",
+		"ak_grid.d",
+		"hi_grid.d",
+		"pr_grid.d"
 	],
 
 	# The file containing the configuration
