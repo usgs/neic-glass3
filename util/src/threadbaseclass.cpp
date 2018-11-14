@@ -211,25 +211,14 @@ bool ThreadBaseClass::healthCheck() {
 						+ getThreadName() + ")");
 		return (false);
 	}
-	std::thread::id oldestThreadId;
-	int lastCheckInterval = (std::time(nullptr) -
-		getAllLastHealthy(&oldestThreadId));
+	int lastCheckInterval = (std::time(nullptr) - getAllLastHealthy());
 
 	if (lastCheckInterval > getHealthCheckInterval()) {
-		// convert threadid to size_t
-		// thread id's are not directly printable
-		// so use the same method spdlog uses since we want this for
-		// logging anyway
-		size_t tid =
-			static_cast<size_t>(std::hash<std::thread::id>()(oldestThreadId));
-
 		glass3::util::Logger::log(
 				"error",
 				"ThreadBaseClass::healthCheck():"
 						" lastCheckInterval for at least one thread in "
-						+ getThreadName() + " ("
-						+ std::to_string(tid)
-						+ ") exceeds health check interval ( "
+						+ getThreadName() + " exceeds health check interval ( "
 						+ std::to_string(lastCheckInterval) + " > "
 						+ std::to_string(getHealthCheckInterval()) + " )");
 
@@ -304,8 +293,7 @@ void ThreadBaseClass::workLoop() {
 }
 
 // ---------------------------------------------------------getAllLastHealthy
-std::time_t ThreadBaseClass::getAllLastHealthy(
-		std::thread::id* oldestThreadId) {
+std::time_t ThreadBaseClass::getAllLastHealthy() {
 	// don't bother if we've not got any threads
 	if (getNumThreads() <= 0) {
 		return (0);
@@ -335,11 +323,6 @@ std::time_t ThreadBaseClass::getAllLastHealthy(
 
 		// Only report the oldest time
 		if (healthTime < oldestTime) {
-			// remember the oldest thread if we're asked
-			if(oldestThreadId != NULL) {
-				*oldestThreadId = StatusItr->first;
-			}
-
 			// remember the oldest time
 			oldestTime = healthTime;
 		}

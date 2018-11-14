@@ -8,6 +8,7 @@
 #include <chrono>
 #include <mutex>
 #include <string>
+#include <limits>
 
 namespace glass3 {
 
@@ -18,6 +19,7 @@ brokerInput::brokerInput()
 								"brokerInput::brokerInput(): Construction.");
 
 	m_Consumer = NULL;
+	m_iHeartbeatInterval = std::numeric_limits<int>::quiet_NaN();
 
 	clear();
 }
@@ -26,6 +28,7 @@ brokerInput::brokerInput()
 brokerInput::brokerInput(const std::shared_ptr<const json::Object> &config)
 		: glass3::input::Input() {
 	m_Consumer = NULL;
+	m_iHeartbeatInterval = std::numeric_limits<int>::quiet_NaN();
 
 	// do basic construction
 	clear();
@@ -128,6 +131,25 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 		}
 	}
 
+	// optional directory to write heartbeat files to
+	std::string heartbeatDirectory = "";
+	if (config->HasKey("HeartbeatDirectory")) {
+		heartbeatDirectory = (*config)["HeartbeatDirectory"].ToString();
+		glass3::util::Logger::log(
+				"info",
+				"brokerInput::setup(): Using HeartbeatDirectory: "
+						+ heartbeatDirectory + ".");
+	}
+
+	// optional interval to check for heartbeats
+	if (config->HasKey("HeartbeatInterval")) {
+		m_iHeartbeatInterval = (*config)["HeartbeatInterval"].ToInt();
+		glass3::util::Logger::log(
+				"info",
+				"brokerInput::setup(): Using HeartbeatInterval: "
+						+ std::to_string(m_iHeartbeatInterval) + ".");
+	}
+
 	// set up consumer
 	if (m_Consumer != NULL) {
 		delete (m_Consumer);
@@ -135,6 +157,7 @@ bool brokerInput::setup(std::shared_ptr<const json::Object> config) {
 
 	// create new consumer
 	m_Consumer = new hazdevbroker::Consumer();
+	m_Consumer->setHeartbeatDirectory(heartbeatDirectory);
 
 	// set up logging
 	m_Consumer->setLogCallback(
@@ -172,8 +195,32 @@ std::string brokerInput::fetchRawData(std::string* pOutType) {
 	*pOutType = std::string(JSON_TYPE);
 
 	// make sure we have a consumer
-	if (m_Consumer == NULL)
+	if (m_Consumer == NULL) {
 		return ("");
+	}
+
+	// if we are checking heartbeat times
+	if (!(std::isnan(m_iHeartbeatInterval))) {
+		// get current time in seconds
+		int64_t timeNow = std::time(NULL);
+
+		// get last heartbeat time
+		int64_t lastHB = m_Consumer->getLastHeartbeatTime();
+
+		// calculate elapsed time
+		int64_t elapsedTime = timeNow - lastHB;
+
+		// has it been too long since the last heartbeat?
+		if (elapsedTime > m_iHeartbeatInterval) {
+			glass3::util::Logger::log("error",
+				"No Heartbeat Message seen from topic(s) in " +
+				std::to_string(m_iHeartbeatInterval) + " seconds! (" +
+				std::to_string(elapsedTime) + ")");
+
+			// reset last heartbeat time so that we don't fill the log
+			m_Consumer->setLastHeartbeatTime(timeNow);
+		}
+	}
 
 	// get message from the consumer
 	std::string message = m_Consumer->pollString(100);
