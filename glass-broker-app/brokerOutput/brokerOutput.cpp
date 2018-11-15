@@ -457,10 +457,10 @@ void brokerOutput::sendToOutputTopics(const std::string &message) {
 void brokerOutput::sendHeartbeat() {
 	// send heartbeats to each topic
 	// for each topic
-	for (auto aTopic : m_vOutputTopics) {
-		// send it
-		aTopic->heartbeat();
-	}
+	// for (auto aTopic : m_vOutputTopics) {
+	// send it
+	// aTopic->heartbeat();
+	// }
 }
 
 // ---------------------------------------------------------logProducer
