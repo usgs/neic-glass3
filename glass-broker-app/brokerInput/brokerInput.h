@@ -104,7 +104,7 @@ class brokerInput : public glass3::input::Input {
 	/**
 	 * \brief the interval in seconds to expect hazdevbroker heartbeats.
 	 */
-	int m_iHeartbeatInterval;
+	int m_iBrokerHeartbeatInterval;
 };
 }  // namespace glass3
 #endif  // BROKERINPUT_H

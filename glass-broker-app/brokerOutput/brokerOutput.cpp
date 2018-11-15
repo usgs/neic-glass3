@@ -159,16 +159,6 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 						+ topicConfig + ".");
 	}
 
-	// heartbeat interval
-	int64_t heartbeatInterval = std::numeric_limits<int64_t>::quiet_NaN();
-	if (config->HasKey("HeartbeatInterval")) {
-		heartbeatInterval = (*config)["HeartbeatInterval"].ToInt();
-		glass3::util::Logger::log(
-				"info",
-				"brokerOutput::setup(): Using HeartbeatInterval: "
-						+ std::to_string(heartbeatInterval) + ".");
-	}
-
 	// clear out any old producer
 	if (m_OutputProducer != NULL) {
 		delete (m_OutputProducer);
@@ -176,7 +166,17 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 
 	// create new producer
 	m_OutputProducer = new hazdevbroker::Producer();
-	m_OutputProducer->setHeartbeatInterval(heartbeatInterval);
+
+	// heartbeat interval
+	if (config->HasKey("BrokerHeartbeatInterval")) {
+		int64_t brokerHeartbeatInterval =
+			(*config)["BrokerHeartbeatInterval"].ToInt();
+		m_OutputProducer->setHeartbeatInterval(brokerHeartbeatInterval);
+		glass3::util::Logger::log(
+				"info",
+				"brokerOutput::setup(): Using BrokerHeartbeatInterval: "
+						+ std::to_string(brokerHeartbeatInterval) + ".");
+	}
 
 	// set up logging
 	m_OutputProducer->setLogCallback(
