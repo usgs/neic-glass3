@@ -188,4 +188,17 @@ void outputTopic::send(const std::string &message) {
 	// send it
 	m_OutputProducer->sendString(m_OutputTopic, message);
 }
+
+// ---------------------------------------------------------heartbeat
+void outputTopic::heartbeat() {
+	if (m_OutputProducer == NULL) {
+		return;
+	}
+	if (m_OutputTopic == NULL) {
+		return;
+	}
+
+	// send it
+	m_OutputProducer->sendHeartbeat(m_OutputTopic);
+}
 }  // namespace glass3

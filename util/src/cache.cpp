@@ -188,5 +188,10 @@ int Cache::size() {
 
 	return (cachesize);
 }
+
+// ---------------------------------------------------------getMutex
+std::mutex & Cache::getMutex() {
+	return (m_Mutex);
+}
 }  // namespace util
 }  // namespace glass3

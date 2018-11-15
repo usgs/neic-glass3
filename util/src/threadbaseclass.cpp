@@ -134,7 +134,7 @@ bool ThreadBaseClass::stop() {
 	for (int i = 0; i < m_WorkThreads.size(); i++) {
 		try {
 			m_WorkThreads[i].join();
-		} catch (const std::system_error& e) {
+		} catch (const std::exception& e) {
 			glass3::util::Logger::log(
 					"warning",
 					"ThreadBaseClass::stop(): Exception "

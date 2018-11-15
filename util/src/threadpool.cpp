@@ -85,5 +85,9 @@ int ThreadPool::getJobQueueSize() {
 	return (queuesize);
 }
 
+// ---------------------------------------------------------getMutex
+std::mutex & ThreadPool::getMutex() {
+	return (m_Mutex);
+}
 }  // namespace util
 }  // namespace glass3

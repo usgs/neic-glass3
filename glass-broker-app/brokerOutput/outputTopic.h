@@ -79,6 +79,14 @@ class outputTopic {
 	 */
 	void send(const std::string &message);
 
+	/**
+	 * \brief outputTopic heartbeat function
+	 * The function sends generates a heartbeat using the producer pointer and
+	 * the configured topic. Note that the producer takes care of deciding 
+	 * whether it has been long enough to generate a heartbeat
+	 */
+	void heartbeat();
+
  protected:
 	/**
 	 * \brief the top of the bounds rectangle in degrees of latitude.

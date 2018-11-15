@@ -134,6 +134,17 @@ class fileOutput : public glass3::output::output {
 	 * an epoch timestamp in the file name.
 	 */
 	std::atomic<bool> m_bTimestampFileName;
+
+	/**
+	 * \brief Retrieves a reference to the class member containing the mutex
+	 * used to control access to class members
+	 */
+	std::mutex & getMutex();
+
+	/**
+	 * \brief A mutex to control access to class members
+	 */
+	std::mutex m_Mutex;
 };
 }  // namespace glass3
 #endif  // FILEOUTPUT_H

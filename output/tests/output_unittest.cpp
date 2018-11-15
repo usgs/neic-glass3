@@ -261,13 +261,16 @@ TEST(Output, Construction) {
 	OutputStub outputObject;
 
 	// assert that this is an input thread
-	ASSERT_STREQ(outputObject.getThreadName().c_str(), "output")<< "check output thread name";
+	ASSERT_STREQ(outputObject.getThreadName().c_str(), "output")<<
+		"check output thread name";
 
 	// assert the thread sleeptime
-	ASSERT_EQ(outputObject.getSleepTime(), SLEEPTIME)<< "check output thread sleep time";
+	ASSERT_EQ(outputObject.getSleepTime(), SLEEPTIME)<<
+		"check output thread sleep time";
 
 	// assert report interval
-	ASSERT_EQ(outputObject.getReportInterval(), REPORTINTERVAL)<< "output thread report interval";
+	ASSERT_EQ(outputObject.getReportInterval(), REPORTINTERVAL)<<
+		"output thread report interval";
 
 	// assert class is not set up
 	ASSERT_FALSE(outputObject.getSetup())<< "output thread is not set up";
@@ -331,7 +334,8 @@ TEST(Output, Configuration) {
 	ASSERT_EQ(pubTimes[1], PUBDELAY2)<< "second pub time correct";
 
 	// assert pub on expire
-	ASSERT_EQ(outputObject->getPubOnExpiration(), PUBONEXPIRE)<< "pub on expire correct";
+	ASSERT_EQ(outputObject->getPubOnExpiration(), PUBONEXPIRE)<<
+		"pub on expire correct";
 
 	// assert site list delay
 	ASSERT_EQ(outputObject->getSiteListRequestInterval(), SITELISTDELAY)<<
@@ -349,8 +353,8 @@ TEST(Output, Configuration) {
 }
 
 TEST(Output, ThreadTests) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", spdlog::level::debug,
+	// std::string(TESTPATH),true);
 
 	OutputStub* outputObject = new OutputStub();
 
@@ -477,8 +481,8 @@ TEST(Output, TrackingTests) {
 }
 
 TEST(Output, OutputTest) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", spdlog::level::debug,
+	// std::string(TESTPATH), true);
 
 	OutputStub* outputObject = new OutputStub();
 
@@ -532,8 +536,8 @@ TEST(Output, OutputTest) {
 }
 
 TEST(Output, UpdateTest) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", spdlog::level::debug,
+	// std::string(TESTPATH), true);
 
 	OutputStub* outputObject = new OutputStub();
 
@@ -637,12 +641,11 @@ TEST(Output, UpdateTest) {
 
 	// assert that second update was not created
 	ASSERT_EQ(outputObject->messages.size(), 2)<< "update2 not created";
-
 }
 
 TEST(Output, CancelTest) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", spdlog::level::debug,
+	// std::string(TESTPATH), true);
 
 	OutputStub* outputObject = new OutputStub();
 
@@ -694,8 +697,8 @@ TEST(Output, CancelTest) {
 }
 
 TEST(Output, RetractTest) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", spdlog::level::debug,
+	// std::string(TESTPATH), true);
 
 	OutputStub* outputObject = new OutputStub();
 
@@ -753,8 +756,8 @@ TEST(Output, RetractTest) {
 }
 
 TEST(Output, ExpireTest) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", spdlog::level::debug,
+	// std::string(TESTPATH), true);
 
 	OutputStub* outputObject = new OutputStub();
 
@@ -799,7 +802,7 @@ TEST(Output, ExpireTest) {
 	// assert that output was created
 	ASSERT_EQ(outputObject->messages.size(), 1)<< "output created";
 
-	//remove output for update
+	// remove output for update
 	// std::remove(output2file.c_str());
 
 	std::string event2expirefile = std::string(TESTPATH) + "/"
@@ -831,8 +834,8 @@ TEST(Output, ExpireTest) {
 }
 
 TEST(Output, StationRequestTest) {
-	// glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", spdlog::level::debug,
+	// std::string(TESTPATH), true);
 
 	OutputStub* outputObject = new OutputStub();
 
@@ -857,8 +860,8 @@ TEST(Output, StationRequestTest) {
 
 	std::string stationrequestfile = std::string(TESTPATH) + "/"
 			+ std::string(SITEREQUESTFILE);
-//	std::string hypo2file = std::string(TESTPATH) + "/"
-//			+ std::string(HYPO2FILE);
+	// std::string hypo2file = std::string(TESTPATH) + "/"
+	// + std::string(HYPO2FILE);
 
 	std::shared_ptr<json::Object> stationrequest = GetDataFromFile(
 			stationrequestfile);
@@ -908,8 +911,8 @@ TEST(Output, StationListTest) {
 }
 
 TEST(Output, FailTests) {
-	//glass3::util::log_init("outputtest", spdlog::level::debug, std::string(TESTPATH),
-	//					true);
+	// glass3::util::log_init("outputtest", spdlog::level::debug,
+	// std::string(TESTPATH), true);
 	OutputStub* outputObject = new OutputStub();
 
 	// create configfilestring

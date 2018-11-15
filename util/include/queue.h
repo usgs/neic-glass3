@@ -82,6 +82,17 @@ class Queue : public util::BaseClass {
 	 * \brief the std::Queue used to store the Queue
 	 */
 	std::queue<std::shared_ptr<json::Object>> m_DataQueue;
+
+	/**
+	 * \brief Retrieves a reference to the class member containing the mutex
+	 * used to control access to class members
+	 */
+	std::mutex & getMutex();
+
+	/**
+	 * \brief A mutex to control access to class members
+	 */
+	std::mutex m_Mutex;
 };
 }  // namespace util
 }  // namespace glass3

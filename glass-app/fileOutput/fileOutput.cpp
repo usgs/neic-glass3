@@ -288,4 +288,8 @@ bool fileOutput::getTimestampFileName() {
 	return (m_bTimestampFileName);
 }
 
+// ---------------------------------------------------------getMutex
+std::mutex & fileOutput::getMutex() {
+	return (m_Mutex);
+}
 }  // namespace glass3

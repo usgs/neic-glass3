@@ -14,6 +14,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 #include "outputTopic.h"
 
@@ -158,6 +159,16 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 						+ topicConfig + ".");
 	}
 
+	// heartbeat interval
+	int64_t heartbeatInterval = std::numeric_limits<int64_t>::quiet_NaN();
+	if (config->HasKey("HeartbeatInterval")) {
+		heartbeatInterval = (*config)["HeartbeatInterval"].ToInt();
+		glass3::util::Logger::log(
+				"info",
+				"brokerOutput::setup(): Using HeartbeatInterval: "
+						+ std::to_string(heartbeatInterval) + ".");
+	}
+
 	// clear out any old producer
 	if (m_OutputProducer != NULL) {
 		delete (m_OutputProducer);
@@ -165,6 +176,7 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 
 	// create new producer
 	m_OutputProducer = new hazdevbroker::Producer();
+	m_OutputProducer->setHeartbeatInterval(heartbeatInterval);
 
 	// set up logging
 	m_OutputProducer->setLogCallback(
@@ -441,6 +453,16 @@ void brokerOutput::sendToOutputTopics(const std::string &message) {
 	}
 }
 
+// ---------------------------------------------------------sendHeartbeat
+void brokerOutput::sendHeartbeat() {
+	// send heartbeats to each topic
+	// for each topic
+	for (auto aTopic : m_vOutputTopics) {
+		// send it
+		aTopic->heartbeat();
+	}
+}
+
 // ---------------------------------------------------------logProducer
 void brokerOutput::logProducer(const std::string &message) {
 	// log whatever the producer wanted us to log
@@ -458,5 +480,10 @@ void brokerOutput::setStationFileName(const std::string &filename) {
 const std::string brokerOutput::getStationFileName() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	return (m_sStationFileName);
+}
+
+// ---------------------------------------------------------getMutex
+std::mutex & brokerOutput::getMutex() {
+	return (m_Mutex);
 }
 }  // namespace glass3

@@ -361,4 +361,9 @@ void fileInput::setShutdownWait(int waitTime) {
 int fileInput::getShutdownWait() {
 	return (m_iShutdownWait);
 }
+
+// ---------------------------------------------------------getMutex
+std::mutex & fileInput::getMutex() {
+	return (m_Mutex);
+}
 }  // namespace glass3
