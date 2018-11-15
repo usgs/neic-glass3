@@ -179,7 +179,7 @@ if (BUILD_GLASS-BROKER-APP)
     if (GIT_CLONE_PUBLIC)
       ExternalProject_Add(HazdevBroker
           GIT_REPOSITORY https://github.com/usgs/hazdev-broker.git
-          GIT_TAG v0.2.0
+          GIT_TAG v0.2.1
           TIMEOUT 10
           CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -191,7 +191,7 @@ if (BUILD_GLASS-BROKER-APP)
     else()
       ExternalProject_Add(HazdevBroker
           GIT_REPOSITORY git@github.com:usgs/hazdev-broker.git
-          GIT_TAG v0.2.0
+          GIT_TAG v0.2.1
           TIMEOUT 10
           CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}

@@ -169,7 +169,7 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 
 	// heartbeat interval
 	if (config->HasKey("BrokerHeartbeatInterval")) {
-		int64_t brokerHeartbeatInterval =
+		int brokerHeartbeatInterval =
 			(*config)["BrokerHeartbeatInterval"].ToInt();
 		m_OutputProducer->setHeartbeatInterval(brokerHeartbeatInterval);
 		glass3::util::Logger::log(
@@ -457,10 +457,10 @@ void brokerOutput::sendToOutputTopics(const std::string &message) {
 void brokerOutput::sendHeartbeat() {
 	// send heartbeats to each topic
 	// for each topic
-	// for (auto aTopic : m_vOutputTopics) {
-	// send it
-	// aTopic->heartbeat();
-	// }
+	for (auto aTopic : m_vOutputTopics) {
+		// send it
+		aTopic->heartbeat();
+	}
 }
 
 // ---------------------------------------------------------logProducer
