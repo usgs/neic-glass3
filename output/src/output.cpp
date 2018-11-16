@@ -31,8 +31,6 @@ namespace output {
 // ---------------------------------------------------------output
 output::output()
 		: glass3::util::ThreadBaseClass("output") {
-	glass3::util::Logger::log("debug", "output::output(): Construction.");
-
 	std::time(&tLastWorkReport);
 	std::time(&m_tLastSiteRequest);
 
@@ -64,42 +62,31 @@ output::output()
 
 // ---------------------------------------------------------~output
 output::~output() {
-glass3::util::Logger::log("debug", "output::~output(): Destruction.");
-	try {
-		// stop the output threads
-		stop();
+	// cleanup
+	// cppcheck-suppress nullPointerRedundantCheck
+	if (m_TrackingCache != NULL) {
+		m_TrackingCache->clear();
+		delete (m_TrackingCache);
+		m_TrackingCache = NULL;
+	}
 
-		// clear everything
-		clear();
+	// cppcheck-suppress nullPointerRedundantCheck
+	if (m_OutputQueue != NULL) {
+		m_OutputQueue->clear();
+		delete (m_OutputQueue);
+		m_OutputQueue = NULL;
+	}
 
-		// cleanup
-		getMutex().lock();
-		// cppcheck-suppress nullPointerRedundantCheck
-		if (m_TrackingCache != NULL) {
-			m_TrackingCache->clear();
-			delete (m_TrackingCache);
-			m_TrackingCache = NULL;
-		}
+	// cppcheck-suppress nullPointerRedundantCheck
+	if (m_LookupQueue != NULL) {
+		m_LookupQueue->clear();
+		delete (m_LookupQueue);
+		m_LookupQueue = NULL;
+	}
 
-		// cppcheck-suppress nullPointerRedundantCheck
-		if (m_OutputQueue != NULL) {
-			m_OutputQueue->clear();
-			delete (m_OutputQueue);
-			m_OutputQueue = NULL;
-		}
-
-		// cppcheck-suppress nullPointerRedundantCheck
-		if (m_LookupQueue != NULL) {
-			m_LookupQueue->clear();
-			delete (m_LookupQueue);
-			m_LookupQueue = NULL;
-		}
-		getMutex().unlock();
-	} catch (const std::exception& e) {
-		glass3::util::Logger::log(
-				"warning",
-				"output::~output()(): Exception "
-						+ std::string(e.what()));
+	if (m_ThreadPool != NULL) {
+		delete(m_ThreadPool);
+		m_ThreadPool = NULL;
 	}
 }
 

@@ -350,6 +350,8 @@ TEST(Output, Configuration) {
 	std::string author = std::string(TESTAUTHOR);
 	ASSERT_STREQ(outputObject->getDefaultAuthor().c_str(),
 			author.c_str())<< "check author";
+
+	outputObject->stop();
 }
 
 TEST(Output, ThreadTests) {
@@ -478,6 +480,8 @@ TEST(Output, TrackingTests) {
 	// clear
 	outputThread.clearTrackingData();
 	ASSERT_FALSE(outputThread.haveTrackingData(std::string(ID3)));
+
+	outputThread.stop();
 }
 
 TEST(Output, OutputTest) {
@@ -533,6 +537,8 @@ TEST(Output, OutputTest) {
 
 	// check the output data against the input
 	CheckData(senthypo, outputdetection);
+
+	outputObject->stop();
 }
 
 TEST(Output, UpdateTest) {
@@ -641,6 +647,8 @@ TEST(Output, UpdateTest) {
 
 	// assert that second update was not created
 	ASSERT_EQ(outputObject->messages.size(), 2)<< "update2 not created";
+
+	outputObject->stop();
 }
 
 TEST(Output, CancelTest) {
@@ -694,6 +702,8 @@ TEST(Output, CancelTest) {
 
 	// assert that the file is not there
 	ASSERT_EQ(outputObject->messages.size(), 0)<< "no output";
+
+	outputObject->stop();
 }
 
 TEST(Output, RetractTest) {
@@ -753,6 +763,8 @@ TEST(Output, RetractTest) {
 
 	// assert that output was created
 	ASSERT_EQ(outputObject->messages.size(), 2)<< "retract created";
+
+	outputObject->stop();
 }
 
 TEST(Output, ExpireTest) {
@@ -831,6 +843,8 @@ TEST(Output, ExpireTest) {
 
 	// check the output data against the update
 	CheckData(sentexpirehypo2, outputexpiredetection2);
+
+	outputObject->stop();
 }
 
 TEST(Output, StationRequestTest) {
@@ -874,6 +888,8 @@ TEST(Output, StationRequestTest) {
 
 	// assert that request was created
 	ASSERT_EQ(outputObject->messages.size(), 1)<< "request created";
+
+	outputObject->stop();
 }
 
 TEST(Output, StationListTest) {
@@ -908,6 +924,8 @@ TEST(Output, StationListTest) {
 
 	// assert that sitelist was created
 	ASSERT_EQ(outputObject->messages.size(), 1)<< "site list created";
+
+	outputObject->stop();
 }
 
 TEST(Output, FailTests) {
@@ -955,4 +973,6 @@ TEST(Output, FailTests) {
 	std::shared_ptr<json::Object> badData2 = GetDataFromString(
 			std::string(CONFIGFAIL1));
 	outputObject->sendToOutput(badData2);
+
+	outputObject->stop();
 }

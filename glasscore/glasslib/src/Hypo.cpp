@@ -308,7 +308,6 @@ CHypo::CHypo(std::shared_ptr<CCorrelation> corr,
 
 // ---------------------------------------------------------~CHypo
 CHypo::~CHypo() {
-	clear();
 }
 
 // ------------------------------------------------------addCorrelationReference

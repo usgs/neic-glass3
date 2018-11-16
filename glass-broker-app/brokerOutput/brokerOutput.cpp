@@ -54,11 +54,13 @@ brokerOutput::brokerOutput(const std::shared_ptr<json::Object> &config)
 
 // ---------------------------------------------------------~brokerOutput
 brokerOutput::~brokerOutput() {
-	glass3::util::Logger::log("debug",
-								"brokerOutput::~brokerOutput(): Destruction.");
-
-	// stop the input thread
-	stop();
+	// cleanup
+	for (auto aTopic : m_vOutputTopics) {
+		if (aTopic != NULL) {
+			delete (aTopic);
+		}
+	}
+	m_vOutputTopics.clear();
 
 	if(m_OutputProducer != NULL) {
 		delete(m_OutputProducer);
@@ -67,13 +69,6 @@ brokerOutput::~brokerOutput() {
 	if(m_StationRequestTopic != NULL) {
 		delete(m_StationRequestTopic);
 	}
-
-	for (auto aTopic : m_vOutputTopics) {
-		if (aTopic != NULL) {
-			delete (aTopic);
-		}
-	}
-	m_vOutputTopics.clear();
 }
 
 // ---------------------------------------------------------setup

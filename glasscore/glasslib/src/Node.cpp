@@ -62,7 +62,6 @@ CNode::CNode(std::string name, double lat, double lon, double z,
 
 // ---------------------------------------------------------~CNode
 CNode::~CNode() {
-	clear();
 }
 
 // ---------------------------------------------------------clear

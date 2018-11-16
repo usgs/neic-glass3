@@ -42,11 +42,6 @@ fileOutput::fileOutput(const std::shared_ptr<const json::Object> &config)
 
 // ---------------------------------------------------------~fileOutput
 fileOutput::~fileOutput() {
-	glass3::util::Logger::log("debug",
-								"fileOutput::~fileOutput(): Destruction.");
-
-	// stop the input thread
-	stop();
 }
 
 // ---------------------------------------------------------setup

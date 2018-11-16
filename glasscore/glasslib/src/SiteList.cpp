@@ -30,7 +30,6 @@ CSiteList::CSiteList(int numThreads, int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------~CSiteList
 CSiteList::~CSiteList() {
-	clear();
 }
 
 // ---------------------------------------------------------clear

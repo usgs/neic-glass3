@@ -463,6 +463,7 @@ TEST_F(OutputTest, Output) {
 	// assert that the file is not there
 	ASSERT_TRUE(std::ifstream(retract3file).good())
 	<< "retract output file created";
+	OutputThread->stop();
 }
 
 /*

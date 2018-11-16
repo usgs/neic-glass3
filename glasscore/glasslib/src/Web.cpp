@@ -76,7 +76,6 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 
 // ---------------------------------------------------------~CWeb
 CWeb::~CWeb() {
-	clear();
 }
 
 // ---------------------------------------------------------clear

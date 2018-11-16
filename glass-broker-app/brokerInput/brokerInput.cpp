@@ -42,12 +42,7 @@ brokerInput::brokerInput(const std::shared_ptr<const json::Object> &config)
 
 // ---------------------------------------------------------~brokerInput
 brokerInput::~brokerInput() {
-	glass3::util::Logger::log("debug",
-								"brokerInput::~brokerInput(): Destruction.");
-
-	// stop the brokerInput thread
-	stop();
-
+	// cleanup
 	if (m_Consumer != NULL) {
 		delete (m_Consumer);
 	}

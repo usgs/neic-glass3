@@ -313,7 +313,7 @@ TEST(WebTest, GlobalTest) {
 					phasename2.c_str());
 
 	// cleanup
-	delete (testSiteList);
+	// delete (testSiteList);
 }
 
 // test creating a regional/local grid

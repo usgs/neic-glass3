@@ -111,6 +111,8 @@ TEST(InputTest, Configuration) {
 
 	// assert queue max size is -1
 	ASSERT_EQ(TestInput.getInputDataMaxSize(), QUEUESIZE)<< "queue max size check";
+
+	TestInput.stop();
 }
 
 // tests to see if input can process gicks
@@ -137,6 +139,8 @@ TEST(InputTest, GPickTest) {
 
 	// check that the right ammount of data is in the queue
 	ASSERT_EQ(TestInput.getInputDataCount(), DATACOUNT)<< "queue size check";
+
+	TestInput.stop();
 }
 
 // tests to see if input can process ccData
@@ -163,6 +167,8 @@ TEST(InputTest, CCTest) {
 
 	// check that the right ammount of data is in the queue
 	ASSERT_EQ(TestInput.getInputDataCount(), DATACOUNT)<< "queue size check";
+
+	TestInput.stop();
 }
 
 // tests to see if input can process json data
@@ -189,4 +195,6 @@ TEST(InputTest, JSONTest) {
 
 	// check that the right ammount of data is in the queue
 	ASSERT_EQ(TestInput.getInputDataCount(), DATACOUNT)<< "queue size check";
+
+	TestInput.stop();
 }

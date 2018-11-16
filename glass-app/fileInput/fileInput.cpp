@@ -40,10 +40,6 @@ fileInput::fileInput(const std::shared_ptr<const json::Object> &config)
 
 // ---------------------------------------------------------~fileInput
 fileInput::~fileInput() {
-	glass3::util::Logger::log("debug", "fileInput::~fileInput(): Destruction.");
-
-	// stop the input thread
-	stop();
 }
 
 // ---------------------------------------------------------setup

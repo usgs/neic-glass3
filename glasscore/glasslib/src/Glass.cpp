@@ -126,8 +126,6 @@ CGlass::~CGlass() {
 	if (m_pDetectionProcessor) {
 		delete (m_pDetectionProcessor);
 	}
-
-	clear();
 }
 
 // -------------------------------------------------------receiveExternalMessage

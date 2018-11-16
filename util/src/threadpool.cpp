@@ -19,8 +19,6 @@ ThreadPool::ThreadPool(std::string poolName, int numThreads, int sleepTime,
 
 // ---------------------------------------------------------~ThreadPool
 ThreadPool::~ThreadPool() {
-	// stop the threads.
-	stop();
 }
 
 // ---------------------------------------------------------addJob

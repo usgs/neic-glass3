@@ -30,7 +30,6 @@ CCorrelationList::CCorrelationList() {
 
 // ---------------------------------------------------------~CCorrelationList
 CCorrelationList::~CCorrelationList() {
-	clear();
 }
 
 // ---------------------------------------------------------clear
