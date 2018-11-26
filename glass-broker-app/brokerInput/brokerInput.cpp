@@ -19,7 +19,7 @@ brokerInput::brokerInput()
 								"brokerInput::brokerInput(): Construction.");
 
 	m_Consumer = NULL;
-	m_iBrokerHeartbeatInterval = std::numeric_limits<int>::quiet_NaN();
+	m_iBrokerHeartbeatInterval = -1;
 
 	clear();
 }
@@ -28,7 +28,7 @@ brokerInput::brokerInput()
 brokerInput::brokerInput(const std::shared_ptr<const json::Object> &config)
 		: glass3::input::Input() {
 	m_Consumer = NULL;
-	m_iBrokerHeartbeatInterval = std::numeric_limits<int>::quiet_NaN();
+	m_iBrokerHeartbeatInterval = -1;
 
 	// do basic construction
 	clear();
@@ -197,7 +197,7 @@ std::string brokerInput::fetchRawData(std::string* pOutType) {
 	}
 
 	// if we are checking heartbeat times
-	if (!(std::isnan(m_iBrokerHeartbeatInterval))) {
+	if (m_iBrokerHeartbeatInterval >= 0) {
 		// get current time in seconds
 		int64_t timeNow = std::time(NULL);
 
@@ -210,7 +210,8 @@ std::string brokerInput::fetchRawData(std::string* pOutType) {
 		// has it been too long since the last heartbeat?
 		if (elapsedTime > m_iBrokerHeartbeatInterval) {
 			glass3::util::Logger::log("error",
-				"No Heartbeat Message seen from topic(s) in " +
+				"brokerInput::fetchRawData: No Heartbeat Message seen from"
+				" topic(s) in " +
 				std::to_string(m_iBrokerHeartbeatInterval) + " seconds! (" +
 				std::to_string(elapsedTime) + ")");
 
