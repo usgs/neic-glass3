@@ -117,6 +117,7 @@ class InputTest : public ::testing::Test {
 #endif
 
 		// cleanup input thread
+		InputThread->stop();
 		delete (InputThread);
 		if (InputConfig != NULL)
 			delete (InputConfig);

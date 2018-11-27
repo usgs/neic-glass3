@@ -243,6 +243,17 @@ class fileInput : public glass3::input::Input {
 	 * \brief the count of data read from the input file
 	 */
 	int m_iDataCount;
+
+	/**
+	 * \brief Retrieves a reference to the class member containing the mutex
+	 * used to control access to class members
+	 */
+	std::mutex & getMutex();
+
+	/**
+	 * \brief A mutex to control access to class members
+	 */
+	std::mutex m_Mutex;
 };
 }  // namespace glass3
 #endif  // FILEINPUT_H

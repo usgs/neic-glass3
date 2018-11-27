@@ -264,7 +264,6 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 
 // ---------------------------------------------------------~CSite
 CSite::~CSite() {
-	clear();
 }
 
 // --------------------------------------------------------clear

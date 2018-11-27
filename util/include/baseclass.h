@@ -123,12 +123,6 @@ class BaseClass {
 
  protected:
 	/**
-	 * \brief Retrieves a reference to the class member containing the mutex
-	 * used to control access to class members
-	 */
-	std::mutex & getMutex();
-
-	/**
 	 * \brief A shared pointer to the json::Object that holds the configuration
 	 */
 	std::shared_ptr<const json::Object> m_Config;
@@ -150,6 +144,13 @@ class BaseClass {
 	 * use in parsing if one is not provided.
 	 */
 	std::string m_DefaultAuthor;
+
+ private:
+	/**
+	 * \brief Retrieves a reference to the class member containing the mutex
+	 * used to control access to class members
+	 */
+	std::mutex & getMutex();
 
 	/**
 	 * \brief A mutex to control access to BaseClass members

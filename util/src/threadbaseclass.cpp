@@ -23,6 +23,7 @@ ThreadBaseClass::ThreadBaseClass()
 	setHealthCheckInterval(k_iHeathCheckIntervalDefault);
 	setNumThreads(k_iNumThreadsDefault);
 	setThreadHealth();
+	m_bTerminate = false;
 
 	// set to default inter-loop sleep
 	setSleepTime(k_iSleepTimeDefault);
@@ -40,6 +41,7 @@ ThreadBaseClass::ThreadBaseClass(std::string threadName, int sleepTimeMS,
 	setHealthCheckInterval(checkInterval);
 	setNumThreads(numThreads);
 	setThreadHealth();
+	m_bTerminate = false;
 
 	// set to provided inter-loop sleep
 	setSleepTime(sleepTimeMS);
@@ -49,13 +51,9 @@ ThreadBaseClass::ThreadBaseClass(std::string threadName, int sleepTimeMS,
 
 // ---------------------------------------------------------~ThreadBaseClass
 ThreadBaseClass::~ThreadBaseClass() {
-	try {
-		stop();
-	} catch (const std::exception& e) {
-		glass3::util::Logger::log(
-				"warning",
-				"ThreadBaseClass::~ThreadBaseClass()(): Exception "
-						+ std::string(e.what()));
+	m_bTerminate = true;
+	for (int i = 0; i < m_WorkThreads.size(); i++) {
+		m_WorkThreads[i].join();
 	}
 }
 
@@ -110,42 +108,49 @@ bool ThreadBaseClass::start() {
 
 // ---------------------------------------------------------stop
 bool ThreadBaseClass::stop() {
-	// don't bother if we've not got any threads
-	if (getNumThreads() <= 0) {
-		return (false);
-	}
-	if (m_WorkThreads.size() <= 0) {
-		return (false);
-	}
+	try {
+		// don't bother if we've not got any threads
+		if (getNumThreads() <= 0) {
+			return (false);
+		}
+		if (m_WorkThreads.size() <= 0) {
+			return (false);
+		}
 
-	// check if we're running
-	if (getWorkThreadsState() != glass3::util::ThreadState::Started) {
-		glass3::util::Logger::log(
-				"warning",
-				"ThreadBaseClass::stop(): Work Thread is not running, "
-						"or is already stopping. (" + getThreadName() + ")");
-		return (false);
-	}
-
-	// we're stopping
-	setWorkThreadsState(glass3::util::ThreadState::Stopping);
-
-	// wait for threads to finish
-	for (int i = 0; i < m_WorkThreads.size(); i++) {
-		try {
-			m_WorkThreads[i].join();
-		} catch (const std::system_error& e) {
+		// check if we're running
+		if (getWorkThreadsState() != glass3::util::ThreadState::Started) {
 			glass3::util::Logger::log(
 					"warning",
-					"ThreadBaseClass::stop(): Exception "
-							+ std::string(e.what()) + " joining work thread #"
-							+ std::to_string(i) + "(" + getThreadName() + ")");
+					"ThreadBaseClass::stop(): Work Thread is not running, "
+							"or is already stopping. (" + getThreadName() + ")");
+			return (false);
 		}
+
+		// we're stopping
+		setWorkThreadsState(glass3::util::ThreadState::Stopping);
+
+		// wait for threads to finish
+		for (int i = 0; i < m_WorkThreads.size(); i++) {
+			try {
+				m_WorkThreads[i].join();
+			} catch (const std::exception& e) {
+				glass3::util::Logger::log(
+						"warning",
+						"ThreadBaseClass::stop(): Exception "
+								+ std::string(e.what()) + " joining work thread #"
+								+ std::to_string(i) + "(" + getThreadName() + ")");
+			}
+		}
+
+		m_WorkThreads.clear();
+
+		setWorkThreadsState(glass3::util::ThreadState::Stopped);
+	} catch (const std::system_error& e) {
+		glass3::util::Logger::log(
+				"warning",
+				"ThreadBaseClass::stop(): System Error Exception "
+						+ std::string(e.what()));
 	}
-
-	m_WorkThreads.clear();
-
-	setWorkThreadsState(glass3::util::ThreadState::Stopped);
 
 	// done
 	glass3::util::Logger::log(
@@ -211,13 +216,13 @@ bool ThreadBaseClass::healthCheck() {
 						+ getThreadName() + ")");
 		return (false);
 	}
-
 	int lastCheckInterval = (std::time(nullptr) - getAllLastHealthy());
+
 	if (lastCheckInterval > getHealthCheckInterval()) {
 		glass3::util::Logger::log(
 				"error",
 				"ThreadBaseClass::healthCheck():"
-						" lastCheckInterval for at least one thread in"
+						" lastCheckInterval for at least one thread in "
 						+ getThreadName() + " exceeds health check interval ( "
 						+ std::to_string(lastCheckInterval) + " > "
 						+ std::to_string(getHealthCheckInterval()) + " )");
@@ -235,7 +240,7 @@ void ThreadBaseClass::workLoop() {
 	setWorkThreadsState(glass3::util::ThreadState::Started);
 
 	// run until told to stop
-	while (true) {
+	while (!m_bTerminate) {
 		// signal that we're still running
 		setThreadHealth();
 		glass3::util::WorkState workState;
@@ -299,7 +304,7 @@ std::time_t ThreadBaseClass::getAllLastHealthy() {
 		return (0);
 	}
 
-	// empty check
+	// empty check (either no threads or not tracking status)
 	if (m_ThreadHealthMap.size() == 0) {
 		return (0);
 	}
@@ -309,7 +314,7 @@ std::time_t ThreadBaseClass::getAllLastHealthy() {
 		return (0);
 	}
 
-	// init oldest time to now
+	// init oldest time to now, everything should be older than now
 	double oldestTime = std::time(nullptr);
 
 	// go through all work threads
@@ -321,8 +326,9 @@ std::time_t ThreadBaseClass::getAllLastHealthy() {
 		// get the thread status
 		double healthTime = static_cast<double>(StatusItr->second);
 
-		// at least one thread did not respond
+		// Only report the oldest time
 		if (healthTime < oldestTime) {
+			// remember the oldest time
 			oldestTime = healthTime;
 		}
 	}

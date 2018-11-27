@@ -460,6 +460,14 @@ class output : public glass3::util::iOutput,
 	virtual void sendOutput(const std::string &type, const std::string &id,
 							const std::string &message) = 0;
 
+	/**
+	 * \brief Send heartbeats
+	 *
+	 * This function is optionally used by an overriding class to implement a
+	 * specific heartbeat method, i.e. to disk, memory, socket, kafka, etc.
+	 */
+	virtual void sendHeartbeat();
+
  private:
 	/**
 	 * \brief A std::vector of integers containing the times in seconds
@@ -579,6 +587,18 @@ class output : public glass3::util::iOutput,
 	 * perform output.
 	 */
 	glass3::util::ThreadPool *m_ThreadPool;
+
+ private:
+	/**
+	 * \brief Retrieves a reference to the class member containing the mutex
+	 * used to control access to class members
+	 */
+	std::mutex & getMutex();
+
+	/**
+	 * \brief A mutex to control access to class members
+	 */
+	std::mutex m_Mutex;
 };
 }  // namespace output
 }  // namespace glass3

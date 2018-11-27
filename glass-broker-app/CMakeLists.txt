@@ -21,6 +21,9 @@ include(${CMAKE_DIR}/base.cmake)
 # SuperEasyJSON
 include(${CMAKE_DIR}/include_SuperEasyJSON.cmake)
 
+# rapidjson
+include(${CMAKE_DIR}/include_rapidjson.cmake)
+
 # detection-formats
 include(${CMAKE_DIR}/include_DetectionFormats.cmake)
 

@@ -26,32 +26,32 @@ namespace util {
 /**
  * \brief glassutil logging class
  *
- * The CLogit class encapsulates the logic and functionality needed
+ * The Logger class encapsulates the logic and functionality needed
  * to write logging information to disk.
  */
 class Logger {
  public:
 	/**
-	 * \brief CLogit constructor
+	 * \brief Logger constructor
 	 *
-	 * The constructor for the CLogit class.
+	 * The constructor for the Logger class.
 	 */
 	Logger();
 
 	/**
-	 * \brief CLogit destructor
+	 * \brief Logger destructor
 	 *
-	 * The destructor for the CLogit class.
+	 * The destructor for the Logger class.
 	 */
 	~Logger();
 
 	/**
-	 * \brief CLogit disable logging function
+	 * \brief Logger disable logging function
 	 */
 	static void disable();
 
 	/**
-	 * \brief CLogit enable logging function
+	 * \brief Logger enable logging function
 	 */
 	static void enable();
 

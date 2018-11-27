@@ -43,18 +43,12 @@ Associator::Associator(glass3::util::iInput* inputint,
 
 // ---------------------------------------------------------~Associator
 Associator::~Associator() {
-	glass3::util::Logger::log("debug",
-								"associator::~Associator(): Destruction.");
-
-	// stop the processing thread
-	stop();
-
 	m_Input = NULL;
 	m_Output = NULL;
 
 	// clean up message queue
-	m_MessageQueue->clear();
 	if (m_MessageQueue != NULL) {
+		m_MessageQueue->clear();
 		delete (m_MessageQueue);
 	}
 }

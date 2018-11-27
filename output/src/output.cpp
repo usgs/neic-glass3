@@ -31,8 +31,6 @@ namespace output {
 // ---------------------------------------------------------output
 output::output()
 		: glass3::util::ThreadBaseClass("output") {
-	glass3::util::Logger::log("debug", "output::output(): Construction.");
-
 	std::time(&tLastWorkReport);
 	std::time(&m_tLastSiteRequest);
 
@@ -64,16 +62,7 @@ output::output()
 
 // ---------------------------------------------------------~output
 output::~output() {
-	glass3::util::Logger::log("debug", "output::~output(): Destruction.");
-
-	// stop the output threads
-	stop();
-
-	// clear everything
-	clear();
-
 	// cleanup
-	getMutex().lock();
 	// cppcheck-suppress nullPointerRedundantCheck
 	if (m_TrackingCache != NULL) {
 		m_TrackingCache->clear();
@@ -94,7 +83,11 @@ output::~output() {
 		delete (m_LookupQueue);
 		m_LookupQueue = NULL;
 	}
-	getMutex().unlock();
+
+	if (m_ThreadPool != NULL) {
+		delete(m_ThreadPool);
+		m_ThreadPool = NULL;
+	}
 }
 
 // configuration
@@ -234,9 +227,6 @@ void output::clear() {
 	setPubOnExpiration(false);
 	clearPubTimes();
 	setSiteListRequestInterval(-1);
-
-	// finally do baseclass clear
-	glass3::util::BaseClass::clear();
 }
 
 // ---------------------------------------------------------sendToOutput
@@ -624,6 +614,10 @@ glass3::util::WorkState output::work() {
 			m_tLastSiteRequest = tNowRequest;
 		}
 	}
+
+	// send any optional hearbeat messages (implementation specific via
+	// overriding sendHeartbeat)
+	m_ThreadPool->addJob(std::bind(&output::sendHeartbeat, this));
 
 	// null check
 	if ((m_OutputQueue == NULL) || (m_LookupQueue == NULL)) {
@@ -1182,6 +1176,10 @@ bool output::isDataFinished(std::shared_ptr<const json::Object> data) {
 	return (true);
 }
 
+// ---------------------------------------------------------sendHeartbeat
+void output::sendHeartbeat() {
+}
+
 // ---------------------------------------------------------setSiteListRequestInterval
 void output::setSiteListRequestInterval(int delay) {
 	m_iSiteListRequestInterval = delay;
@@ -1240,6 +1238,11 @@ void output::addPubTime(int pubTime) {
 void output::clearPubTimes() {
 	std::lock_guard<std::mutex> guard(getMutex());
 	m_PublicationTimes.clear();
+}
+
+// ---------------------------------------------------------getMutex
+std::mutex & output::getMutex() {
+	return (m_Mutex);
 }
 }  // namespace output
 }  // namespace glass3

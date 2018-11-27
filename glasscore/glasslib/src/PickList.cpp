@@ -36,8 +36,6 @@ CPickList::CPickList(int numThreads, int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------~CPickList
 CPickList::~CPickList() {
-	// clean up everything else
-	clear();
 }
 
 // ---------------------------------------------------------~clear
@@ -447,6 +445,9 @@ glass3::util::WorkState CPickList::work() {
 		return (glass3::util::WorkState::OK);
 	}
 
+	// signal that the thread is still alive after pick parsing
+	setThreadHealth();
+
 	// check if pick is duplicate
 	std::shared_ptr<CPick> existingPick = getDuplicate(
 			newPick->getTPick(), newPick->getSite()->getSCNL(),
@@ -533,6 +534,9 @@ glass3::util::WorkState CPickList::work() {
 	// done modifying the multiset
 	m_PickListMutex.unlock();
 
+	// signal that the thread is still alive after pick insertion
+	setThreadHealth();
+
 	// Attempt to associate the pick
 	CGlass::getHypoList()->associateData(pick);
 
@@ -558,6 +562,10 @@ glass3::util::WorkState CPickList::work() {
 			bNucleateThisPick = false;
 		}
 	}
+
+	// signal that the thread is still alive, since association might have
+	// taken awhile
+	setThreadHealth();
 
 	// Attempt nucleation unless we were told not to.
 	if (bNucleateThisPick == true) {

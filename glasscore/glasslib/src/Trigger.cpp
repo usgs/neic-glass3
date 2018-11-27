@@ -28,7 +28,6 @@ CTrigger::CTrigger(double lat, double lon, double z, double ot,
 
 // ---------------------------------------------------------~CTrigger
 CTrigger::~CTrigger() {
-	clear();
 }
 
 // ---------------------------------------------------------clear

@@ -16,7 +16,6 @@ Queue::Queue() {
 
 // ---------------------------------------------------------~Queue
 Queue::~Queue() {
-	clear();
 }
 
 // ---------------------------------------------------------clear
@@ -71,6 +70,11 @@ int Queue::size() {
 	int queuesize = static_cast<int>(m_DataQueue.size());
 
 	return (queuesize);
+}
+
+// ---------------------------------------------------------getMutex
+std::mutex & Queue::getMutex() {
+	return (m_Mutex);
 }
 }  // namespace util
 }  // namespace glass3

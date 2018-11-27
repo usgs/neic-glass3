@@ -43,8 +43,6 @@ CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------~CHypoList
 CHypoList::~CHypoList() {
-	// clean up everything else
-	clear();
 }
 
 // ---------------------------------------------------------addHypo

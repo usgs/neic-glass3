@@ -19,8 +19,6 @@ ThreadPool::ThreadPool(std::string poolName, int numThreads, int sleepTime,
 
 // ---------------------------------------------------------~ThreadPool
 ThreadPool::~ThreadPool() {
-	// stop the threads.
-	stop();
 }
 
 // ---------------------------------------------------------addJob
@@ -30,7 +28,7 @@ void ThreadPool::addJob(std::function<void()> newjob) {
 	getMutex().unlock();
 
 	glass3::util::Logger::log(
-			"debug",
+			"trace",
 			"ThreadPool::addJob(): Added Job.(" + getThreadName() + ")");
 }
 
@@ -56,7 +54,7 @@ glass3::util::WorkState ThreadPool::work() {
 	getMutex().unlock();
 
 	glass3::util::Logger::log(
-			"debug",
+			"trace",
 			"ThreadPool::jobLoop(): Found Job.(" + getThreadName() + ")");
 
 	// run the job
@@ -71,7 +69,7 @@ glass3::util::WorkState ThreadPool::work() {
 	}
 
 	glass3::util::Logger::log(
-			"debug",
+			"trace",
 			"ThreadPool::jobLoop(): Finished Job.(" + getThreadName() + ")");
 
 	// work was successful
@@ -85,5 +83,9 @@ int ThreadPool::getJobQueueSize() {
 	return (queuesize);
 }
 
+// ---------------------------------------------------------getMutex
+std::mutex & ThreadPool::getMutex() {
+	return (m_Mutex);
+}
 }  // namespace util
 }  // namespace glass3

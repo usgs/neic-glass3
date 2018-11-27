@@ -179,7 +179,7 @@ if (BUILD_GLASS-BROKER-APP)
     if (GIT_CLONE_PUBLIC)
       ExternalProject_Add(HazdevBroker
           GIT_REPOSITORY https://github.com/usgs/hazdev-broker.git
-          #GIT_TAG working
+          GIT_TAG v0.2.1
           TIMEOUT 10
           CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -191,7 +191,7 @@ if (BUILD_GLASS-BROKER-APP)
     else()
       ExternalProject_Add(HazdevBroker
           GIT_REPOSITORY git@github.com:usgs/hazdev-broker.git
-          #GIT_TAG working
+          GIT_TAG v0.2.1
           TIMEOUT 10
           CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -352,6 +352,7 @@ if (BUILD_GLASS-BROKER-APP)
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
           -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
           -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+          -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
           -DLIBRDKAFKA_PATH=${LIBRDKAFKA_PATH}
           -DLIBRDKAFKA_C_LIB=${LIBRDKAFKA_C_LIB}
           -DLIBRDKAFKA_CPP_LIB=${LIBRDKAFKA_CPP_LIB}

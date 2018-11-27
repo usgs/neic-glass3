@@ -100,6 +100,11 @@ class brokerInput : public glass3::input::Input {
 	 * \brief the hazdevbroker consumer object to get messages from kafka
 	 */
 	hazdevbroker::Consumer * m_Consumer;
+
+	/**
+	 * \brief the interval in seconds to expect hazdevbroker heartbeats.
+	 */
+	int m_iBrokerHeartbeatInterval;
 };
 }  // namespace glass3
 #endif  // BROKERINPUT_H

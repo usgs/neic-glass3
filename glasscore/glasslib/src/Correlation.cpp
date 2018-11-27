@@ -300,7 +300,6 @@ CCorrelation::CCorrelation(std::shared_ptr<json::Object> correlation,
 
 // ---------------------------------------------------------~CCorrelation
 CCorrelation::~CCorrelation() {
-	clear();
 }
 
 // ---------------------------------------------------------clear

@@ -251,7 +251,6 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 
 // ---------------------------------------------------------~CPick
 CPick::~CPick() {
-	clear();
 }
 
 // ---------------------------------------------------------clear

@@ -30,7 +30,6 @@ CSiteList::CSiteList(int numThreads, int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------~CSiteList
 CSiteList::~CSiteList() {
-	clear();
 }
 
 // ---------------------------------------------------------clear
@@ -322,14 +321,21 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 		scnl += "." + loc;
 	}
 
+	// lookup the site from the map
+	std::shared_ptr<CSite> foundSite = getSite(scnl);
+	if (foundSite != NULL) {
+		return (foundSite);
+	}
+
+	// if we didn't find the site in the
 	// send request for information about this station
-	// this section is above the getSite() call so that
-	// we could be constantly requesting new station information,
-	// which seems useful.
 	if (m_iHoursBeforeLookingUp >= 0) {
 		// what time is it
 		time_t tNow;
 		std::time(&tNow);
+
+		// lock while we are searching / editing m_mLastTimeSiteLookedUp
+		std::lock_guard<std::recursive_mutex> guard(m_SiteListMutex);
 
 		// get what time this station has been looked up before
 		int tLookup = 0;
@@ -362,12 +368,6 @@ std::shared_ptr<CSite> CSiteList::getSite(std::string site, std::string comp,
 			// remember when we tried
 			m_mLastTimeSiteLookedUp[scnl] = tNow;
 		}
-	}
-
-	// lookup the site from the map
-	std::shared_ptr<CSite> foundSite = getSite(scnl);
-	if (foundSite != NULL) {
-		return (foundSite);
 	}
 
 	// site not found

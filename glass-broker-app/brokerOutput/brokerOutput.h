@@ -93,8 +93,8 @@ class brokerOutput : public glass3::output::output {
 
 	/**
 	 * \brief the function for producer logging
-   * This function is used by the HazDevBroker producer to log messages
-   * with neic-glass3's logging system. 
+	 * This function is used by the HazDevBroker producer to log messages
+	 * with neic-glass3's logging system. 
 	 * \param message - A string containing the logging message
 	 */
 	void logProducer(const std::string &message);
@@ -118,6 +118,14 @@ class brokerOutput : public glass3::output::output {
 	 */
 	void sendToOutputTopics(const std::string &message);
 
+	/**
+	 * \brief Send heartbeats
+	 *
+	 * This function is used to optionally send heartbeat messages to kafka via
+	 * the hazdev-broker producer.
+	 */
+	void sendHeartbeat() override;
+
  private:
 	/**
 	 * \brief The hazdevbroker producer used to send messages to kafka
@@ -138,6 +146,17 @@ class brokerOutput : public glass3::output::output {
 	 * \brief the std::string containing the station file name.
 	 */
 	std::string m_sStationFileName;
+
+	/**
+	 * \brief Retrieves a reference to the class member containing the mutex
+	 * used to control access to class members
+	 */
+	std::mutex & getMutex();
+
+	/**
+	 * \brief A mutex to control access to class members
+	 */
+	std::mutex m_Mutex;
 };
 }  // namespace glass3
 #endif  // BROKEROUTPUT_H

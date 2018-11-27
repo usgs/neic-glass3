@@ -54,11 +54,6 @@ Input::Input(std::shared_ptr<const json::Object> config)
 
 // ---------------------------------------------------------~Input
 Input::~Input() {
-	glass3::util::Logger::log("debug", "Input::~Input(): Destruction.");
-
-	// stop the Input thread
-	stop();
-
 	if (m_DataQueue != NULL) {
 		// clear the queue
 		m_DataQueue->clear();
@@ -66,14 +61,17 @@ Input::~Input() {
 		delete (m_DataQueue);
 	}
 
-	if (m_GPickParser != NULL)
+	if (m_GPickParser != NULL) {
 		delete (m_GPickParser);
+	}
 
-	if (m_JSONParser != NULL)
+	if (m_JSONParser != NULL) {
 		delete (m_JSONParser);
+	}
 
-	if (m_CCParser != NULL)
+	if (m_CCParser != NULL) {
 		delete (m_CCParser);
+	}
 }
 
 // ---------------------------------------------------------setup

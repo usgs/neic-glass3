@@ -42,11 +42,6 @@ fileOutput::fileOutput(const std::shared_ptr<const json::Object> &config)
 
 // ---------------------------------------------------------~fileOutput
 fileOutput::~fileOutput() {
-	glass3::util::Logger::log("debug",
-								"fileOutput::~fileOutput(): Destruction.");
-
-	// stop the input thread
-	stop();
 }
 
 // ---------------------------------------------------------setup
@@ -288,4 +283,8 @@ bool fileOutput::getTimestampFileName() {
 	return (m_bTimestampFileName);
 }
 
+// ---------------------------------------------------------getMutex
+std::mutex & fileOutput::getMutex() {
+	return (m_Mutex);
+}
 }  // namespace glass3

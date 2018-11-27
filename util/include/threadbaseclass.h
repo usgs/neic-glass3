@@ -313,6 +313,8 @@ class ThreadBaseClass : public util::BaseClass {
 	 */
 	std::atomic<int> m_iSleepTimeMS;
 
+	bool m_bTerminate;
+
 	// constants
 	/**
 	 * \brief default health check interval in seconds
