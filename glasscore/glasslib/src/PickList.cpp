@@ -438,6 +438,8 @@ glass3::util::WorkState CPickList::work() {
 	// check to see if we got a valid pick
 	if ((newPick->getSite() == NULL) || (newPick->getTPick() == 0)
 			|| (newPick->getID() == "")) {
+		// pick was not properly constructed, ignore new pick
+
 		// cleanup
 		delete (newPick);
 
@@ -488,13 +490,34 @@ glass3::util::WorkState CPickList::work() {
 			glass3::util::Logger::log(
 					"warning", "CPickList::work: Updated existing pick.");
 		} else {
+			// ignore new pick (first pick wins)
 			glass3::util::Logger::log(
 					"warning",
 					"CPickList::work: Duplicate pick not passed in.");
 		}
 
+		// cleanup
+		delete (newPick);
+
 		// we're done
 		return (glass3::util::WorkState::OK);
+	}
+
+	// are we configured to check pick noise classification
+	if (CGlass::getPickNoiseClassificationThreshold() > 0) {
+		// check to see if the phase is classified as noise
+		// and it's probability is above our threshold
+		if ((newPick->getClassifiedPhase() == "Noise") &&
+			(newPick->getClassifiedPhaseProbability() >
+			CGlass::getPickNoiseClassificationThreshold())) {
+			// this pick is noise, ignore new pick
+
+			// cleanup
+			delete (newPick);
+
+			// message was processed
+			return (glass3::util::WorkState::OK);
+		}
 	}
 
 	// create new shared pointer to this pick

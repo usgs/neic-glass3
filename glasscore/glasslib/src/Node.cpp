@@ -392,7 +392,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 						m_dLatitude, m_dLongitude,
 						glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 
-				// compute azimith from the site to the node
+				// compute azimuth from the site to the node
 				double siteAzimuth = pick->getSite()->getGeo().azimuth(
 						&nodeGeo);
 
@@ -427,7 +427,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 			// get the best significance from the observed time and the
 			// link hmmm... at this point we don't know which TT got us here,
-			// or wich one
+			// or which one
 			double dSig = getBestSignificance(tObs, travelTime1, travelTime2,
 												distDeg);
 
