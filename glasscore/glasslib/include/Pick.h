@@ -61,12 +61,56 @@ class CPick {
 	 * made at
 	 * \param pickTime - A double containing the pick arrival time
 	 * \param pickIdString - A std::string containing the external pick id.
-	 * \param backAzimuth - A double containing the optional back azimuth, -1
-	 * to omit
-	 * \param slowness - A double containing the optional slowness, -1 to omit
+	 * \param backAzimuth - A double containing the optional back azimuth, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param slowness - A double containing the optional slowness, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
 	 */
 	CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-			std::string pickIdString, double backAzimuth, double slowness);
+					std::string pickIdString, double backAzimuth,
+					double slowness);
+
+	/**
+	 * \brief CPick advanced constructor
+	 *
+	 * An advanced constructor for the CPick class. This function
+	 * initializes members to the provided values.
+	 *
+	 * \param pickSite - A shared pointer to a CSite object that the pick was
+	 * made at
+	 * \param pickTime - A double containing the pick arrival time
+	 * \param pickIdString - A std::string containing the external pick id.
+	 * \param backAzimuth - A double containing the optional back azimuth, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param slowness - A double containing the optional slowness, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param phase - A std::string containing the optional classified phase,
+	 * empty string to omit.
+	 * \param phaseProb - A double containing the optional classified phase 
+	 * probability,  std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param distance - A double containing the optional classified distance, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param distanceProb - A double containing the optional classified distance 
+	 * probability,  std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param azimuth - A double containing the optional classified azimuth, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param azimuthProb - A double containing the optional classified azimuth 
+	 * probability,  std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param depth - A double containing the optional classified depth, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param depthProb - A double containing the optional classified depth 
+	 * probability,  std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param magnitude - A double containing the optional classified magnitude, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param magnitudeProb - A double containing the optional classified 
+	 * magnitude probability, std::numeric_limits<double>::quiet_NaN() to omit
+	 */
+	CPick(std::shared_ptr<CSite> pickSite, double pickTime,
+					std::string pickIdString, double backAzimuth,
+					double slowness, std::string phase, double phaseProb,
+					double distance, double distanceProb, double azimuth,
+					double azimuthProb, double depth, double depthProb,
+					double magnitude, double magnitudeProb);
 
 	/**
 	 * \brief CPick advanced constructor
@@ -102,14 +146,38 @@ class CPick {
 	 * made at
 	 * \param pickTime - A double containing the pick arrival time
 	 * \param pickIdString - A std::string containing the external pick id.
-	 * \param backAzimuth - A double containing the optional back azimuth, -1
-	 * to omit
-	 * \param slowness - A double containing the optional slowness, -1 to omit
+	 * \param backAzimuth - A double containing the optional back azimuth, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param slowness - A double containing the optional slowness, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param phase - A std::string containing the optional classified phase,
+	 * empty string to omit.
+	 * \param phaseProb - A double containing the optional classified phase 
+	 * probability,  std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param distance - A double containing the optional classified distance, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param distanceProb - A double containing the optional classified distance 
+	 * probability,  std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param azimuth - A double containing the optional classified azimuth, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param azimuthProb - A double containing the optional classified azimuth 
+	 * probability,  std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param depth - A double containing the optional classified depth, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param depthProb - A double containing the optional classified depth 
+	 * probability,  std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param magnitude - A double containing the optional classified magnitude, 
+	 * std::numeric_limits<double>::quiet_NaN() to omit
+	 * \param magnitudeProb - A double containing the optional classified 
+	 * magnitude probability, std::numeric_limits<double>::quiet_NaN() to omit
 	 * \return Returns true if successful, false otherwise.
 	 */
 	bool initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 					std::string pickIdString, double backAzimuth,
-					double slowness);
+					double slowness, std::string phase, double phaseProb,
+					double distance, double distanceProb, double azimuth,
+					double azimuthProb, double depth, double depthProb,
+					double magnitude, double magnitudeProb);
 
 	/**
 	 * \brief Add hypo reference to this pick
@@ -246,22 +314,88 @@ class CPick {
 
 	/**
 	 * \brief Get the insertion time for this pick
-	 * \return Returns a double containing the pick inserrtion time into Glass
+	 * \return Returns a double containing the pick insertion time into Glass
 	 * in Gregorian seconds
 	 */
 	double getTInsertion() const;
+
 	/**
 	 * \brief Get the first assoc time for this pick
 	 * \return Returns a double containing the time in Gregorian seconds when
 	 * the pick was first associated with an event.
 	 */
 	double getTFirstAssociation() const;
+
 	/**
 	 * \brief Get the nucleation time for this pick
 	 * \return Returns a double containing the time in Gregorian seconds when
 	 * this pick was used as keystone for nucleation
 	 */
 	double getTNucleation() const;
+
+	/**
+	 * \brief Get the classified phase for this pick
+	 * \return Return a std::string containing the pick phase
+	 */
+	const std::string& getClassifiedPhase() const;
+
+	/**
+	 * \brief Get the classified phase probability for this pick
+	 * \return Returns a double containing the pick classified phase probability 
+	 */
+	double getClassifiedPhaseProbability() const;
+
+	/**
+	 * \brief Get the classified distance for this pick
+	 * \return Returns a double containing the pick classified distance 
+	 */
+	double getClassifiedDistance() const;
+
+	/**
+	 * \brief Get the classified distance probability for this pick
+	 * \return Returns a double containing the pick classified distance 
+	 * probability 
+	 */
+	double getClassifiedDistanceProbability() const;
+
+	/**
+	 * \brief Get the classified azimuth for this pick
+	 * \return Returns a double containing the pick classified azimuth 
+	 */
+	double getClassifiedAzimuth() const;
+
+	/**
+	 * \brief Get the classified azimuth probability for this pick
+	 * \return Returns a double containing the pick classified azimuth 
+	 * probability 
+	 */
+	double getClassifiedAzimuthProbability() const;
+
+	/**
+	 * \brief Get the classified depth for this pick
+	 * \return Returns a double containing the pick classified depth 
+	 */
+	double getClassifiedDepth() const;
+
+	/**
+	 * \brief Get the classified depth probability for this pick
+	 * \return Returns a double containing the pick classified depth 
+	 * probability 
+	 */
+	double getClassifiedDepthProbability() const;
+
+	/**
+	 * \brief Get the classified magnitude for this pick
+	 * \return Returns a double containing the pick classified magnitude 
+	 */
+	double getClassifiedMagnitude() const;
+
+	/**
+	 * \brief Get the classified magnitude probability for this pick
+	 * \return Returns a double containing the pick classified magnitude 
+	 * probability 
+	 */
+	double getClassifiedMagnitudeProbability() const;
 
  protected:
 	/**
@@ -327,6 +461,61 @@ class CPick {
 	 * \brief A double value containing the arrival time of the pick
 	 */
 	std::atomic<double> m_tPick;
+
+	/**
+	 * \brief A string containing the classified phase for the pick
+	 */
+	std::string m_sClassifiedPhase;
+
+	/**
+	 * \brief A double value containing the probability of the classified 
+	 * phase
+	 */
+	std::atomic<double> m_dClassifiedPhaseProbability;
+
+	/**
+	 * \brief A double value containing the classified distance for the pick
+	 */
+	std::atomic<double> m_dClassifiedDistance;
+
+	/**
+	 * \brief A double value containing the probability of the classified 
+	 * distance
+	 */
+	std::atomic<double> m_dClassifiedDistanceProbability;
+
+	/**
+	 * \brief A double value containing the classified azimuth for the pick
+	 */
+	std::atomic<double> m_dClassifiedAzimuth;
+
+	/**
+	 * \brief A double value containing the probability of the classified 
+	 * azimuth
+	 */
+	std::atomic<double> m_dClassifiedAzimuthProbability;
+
+	/**
+	 * \brief A double value containing the classified depth for the pick
+	 */
+	std::atomic<double> m_dClassifiedDepth;
+
+	/**
+	 * \brief A double value containing the probability of the classified 
+	 * depth
+	 */
+	std::atomic<double> m_dClassifiedDepthProbability;
+
+	/**
+	 * \brief A double value containing the classified magnitude for the pick
+	 */
+	std::atomic<double> m_dClassifiedMagnitude;
+
+	/**
+	 * \brief A double value containing the probability of the classified 
+	 * magnitude
+	 */
+	std::atomic<double> m_dClassifiedMagnitudeProbability;
 
 	/**
 	 * \brief A std::shared_ptr to a json object

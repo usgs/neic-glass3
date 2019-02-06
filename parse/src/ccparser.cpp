@@ -149,8 +149,9 @@ std::shared_ptr<json::Object> CCParser::parse(const std::string &input) {
 		// depth
 		newCorrelation.hypocenter.depth = std::stod(splitInput[DEPTH_INDEX]);
 
-		// event type is not specified, default to earthquake
-		newCorrelation.eventtype = "earthquake";
+		// event type is not specified, default to suspected earthquake
+		newCorrelation.eventtype = detectionformats::eventtype("Earthquake",
+			"Suspected");
 
 		// magnitude
 		newCorrelation.magnitude = std::stod(splitInput[MAGNITUDE_INDEX]);

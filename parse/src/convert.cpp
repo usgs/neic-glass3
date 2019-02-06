@@ -317,8 +317,10 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 				// optional values
 				// type of event
 				if (dataobject.HasKey("EventType")) {
-					correlation.eventtype =
-							(dataobject)["EventType"].ToString();
+					json::Object typeobj = (dataobject)["EventType"].ToObject();
+					correlation.eventtype.type = (typeobj)["Type"].ToString();
+					correlation.eventtype.certainty =
+						(typeobj)["Certainty"].ToString();
 				}
 
 				// magnitude

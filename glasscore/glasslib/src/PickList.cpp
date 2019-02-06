@@ -463,7 +463,17 @@ glass3::util::WorkState CPickList::work() {
 			existingPick->initialize(existingPick->getSite(),
 										newPick->getTPick(), newPick->getID(),
 										newPick->getBackAzimuth(),
-										newPick->getSlowness());
+										newPick->getSlowness(),
+										newPick->getClassifiedPhase(),
+										newPick->getClassifiedPhaseProbability(),
+										newPick->getClassifiedDistance(),
+										newPick->getClassifiedDistanceProbability(),
+										newPick->getClassifiedAzimuth(),
+										newPick->getClassifiedAzimuthProbability(),
+										newPick->getClassifiedDepth(),
+										newPick->getClassifiedDepthProbability(),
+										newPick->getClassifiedMagnitude(),
+										newPick->getClassifiedMagnitudeProbability());
 
 			// update the position of the pick in the sort
 			updatePosition(existingPick);

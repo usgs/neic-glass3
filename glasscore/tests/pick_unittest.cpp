@@ -11,10 +11,11 @@
 #include "Pick.h"
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
-#define PICKJSON "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Type\":\"Pick\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
+#define PICKJSON "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Type\":\"Pick\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44},\"ClassificationInfo\":{\"Phase\":\"P\",\"PhaseProbability\":0.22,\"Distance\":0.442559,\"DistanceProbability\":22.5,\"Azimuth\":0.418479,\"AzimuthProbability\":0.16,\"Magnitude\":2.14,\"MagnitudeType\":\"Mb\",\"MagnitudeProbability\":0.55,\"Depth\":32.44,\"DepthProbability\":11.2,\"EventType\":{\"Type\":\"Earthquake\",\"Certainty\":\"Suspected\"},\"EventTypeProbability\":1.1,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"}}}"  // NOLINT
 #define BADPICK "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Type\":\"FEH\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
 #define BADPICK2 "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
 
+#define PICKIDSTRING "20682837"
 #define SCNL "LRM.EHZ.MB"
 #define SITE "LRM"
 #define COMP "EHZ"
@@ -23,7 +24,17 @@
 #define PICKTIME 3628281703.599
 #define BACKAZIMUTH 2.65
 #define SLOWNESS 1.44
-#define PICKIDSTRING "20682837"
+#define PHASE "P"
+
+#define PHASEPROB 0.22
+#define DISTANCE 0.442559
+#define DISTANCEPROB 22.5
+#define AZIMUTH 0.418479
+#define AZIMUTHPROB 0.16
+#define MAGNITUDE 2.14
+#define MAGNITUDEPROB 0.55
+#define DEPTH 32.44
+#define DEPTHPROB 11.2
 
 // NOTE: Need to consider testing nucleate function, but that would need a
 // much more involved set of real nodes and data, not these dummy nodes.
@@ -75,6 +86,61 @@ void checkdata(glasscore::CPick * pickobject, const std::string &testinfo) {
 	std::string pickstringid = pickobject->getID();
 	std::string expectedstringid = std::string(PICKIDSTRING);
 	ASSERT_STREQ(pickstringid.c_str(), expectedstringid.c_str());
+
+	// check phase
+	std::string classificationphase = pickobject->getClassifiedPhase();
+	std::string expectedphase = PHASE;
+	ASSERT_STREQ(classificationphase.c_str(), expectedphase.c_str());
+
+	// check phase probability
+	double classificationphaseprobability =
+		pickobject->getClassifiedPhaseProbability();
+	double expectedphaseprobability = PHASEPROB;
+	ASSERT_EQ(classificationphaseprobability, expectedphaseprobability);
+
+	// check distance
+	double classificationdistance = pickobject->getClassifiedDistance();
+	double expecteddistance = DISTANCE;
+	ASSERT_EQ(classificationdistance, expecteddistance);
+
+	// check distance probability
+	double classificationdistanceprobability =
+		pickobject->getClassifiedDistanceProbability();
+	double expecteddistanceprobability = DISTANCEPROB;
+	ASSERT_EQ(classificationdistanceprobability, expecteddistanceprobability);
+
+	// check azimuth
+	double classificationazimuth = pickobject->getClassifiedAzimuth();
+	double expectedazimuth = AZIMUTH;
+	ASSERT_EQ(classificationazimuth, expectedazimuth);
+
+	// check azimuth probability
+	double classificationazimuthprobability =
+		pickobject->getClassifiedAzimuthProbability();
+	double expectedazimuthprobability = AZIMUTHPROB;
+	ASSERT_EQ(classificationazimuthprobability, expectedazimuthprobability);
+
+	// check depth
+	double classificationdepth = pickobject->getClassifiedDepth();
+	double expecteddepth = DEPTH;
+	ASSERT_EQ(classificationdepth, expecteddepth);
+
+	// check depth probability
+	double classificationdepthprobability =
+		pickobject->getClassifiedDepthProbability();
+	double expecteddepthprobability = DEPTHPROB;
+	ASSERT_EQ(classificationdepthprobability, expecteddepthprobability);
+
+	// check magnitude
+	double classificationmagnitude = pickobject->getClassifiedMagnitude();
+	double expectedmagnitude = MAGNITUDE;
+	ASSERT_EQ(classificationmagnitude, expectedmagnitude);
+
+	// check magnitude probability
+	double classificationmagnitudeprobability =
+		pickobject->getClassifiedMagnitudeProbability();
+	double expectedmagnitudeprobability = MAGNITUDEPROB;
+	ASSERT_EQ(classificationmagnitudeprobability, expectedmagnitudeprobability);
 }
 
 // test to see if the pick can be constructed
@@ -111,8 +177,8 @@ TEST(PickTest, Construction) {
 
 	// now init
 	testPick->initialize(sharedTestSite, PICKTIME, std::string(PICKIDSTRING),
-	BACKAZIMUTH,
-							SLOWNESS);
+		BACKAZIMUTH, SLOWNESS, PHASE, PHASEPROB, DISTANCE, DISTANCEPROB,
+		AZIMUTH, AZIMUTHPROB, DEPTH, DEPTHPROB, MAGNITUDE, MAGNITUDEPROB);
 
 	// check results
 	checkdata(testPick, "initialize check");
