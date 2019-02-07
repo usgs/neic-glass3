@@ -499,24 +499,26 @@ glass3::util::WorkState CPickList::work() {
 		// cleanup
 		delete (newPick);
 
-		// we're done
+		// message was processed
 		return (glass3::util::WorkState::OK);
 	}
 
 	// are we configured to check pick noise classification
 	if (CGlass::getPickNoiseClassificationThreshold() > 0) {
-		// check to see if the phase is classified as noise
-		// and it's probability is above our threshold
-		if ((newPick->getClassifiedPhase() == "Noise") &&
+		// check to see if the phase classification is valid and above
+		// our threshold
+		if ((std::isnan(newPick->getClassifiedPhaseProbability()) != true) &&
 			(newPick->getClassifiedPhaseProbability() >
 			CGlass::getPickNoiseClassificationThreshold())) {
-			// this pick is noise, ignore new pick
+			// check to see if the phase is classified as noise
+			if (newPick->getClassifiedPhase() == "Noise") {
+				// this pick is noise, ignore new pick
+				// cleanup
+				delete (newPick);
 
-			// cleanup
-			delete (newPick);
-
-			// message was processed
-			return (glass3::util::WorkState::OK);
+				// message was processed (rejected)
+				return (glass3::util::WorkState::OK);
+			}
 		}
 	}
 

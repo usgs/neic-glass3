@@ -224,6 +224,11 @@ class CTravelTime {
 	 * \brief the value for an invalid travel time
 	 */
 	static constexpr double k_dTravelTimeInvalid = -1.0;
+
+	/**
+	 * \brief the string for an invalid phase name
+	 */
+	static const std::string k_dPhaseInvalid;
 };
 }  // namespace traveltime
 #endif  // TRAVELTIME_H

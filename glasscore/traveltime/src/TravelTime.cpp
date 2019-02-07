@@ -11,6 +11,7 @@ namespace traveltime {
 
 // constants
 constexpr double CTravelTime::k_dTravelTimeInvalid;
+const std::string CTravelTime::k_dPhaseInvalid = ""; // NOLINT
 
 // ---------------------------------------------------------CTravelTime
 CTravelTime::CTravelTime() {
@@ -65,6 +66,7 @@ void CTravelTime::clear() {
 	m_iNumDepthWarp = 0;
 	m_dDepth = 0;
 	m_dDelta = 0;
+	m_sPhase = CTravelTime::k_dPhaseInvalid;
 
 	if (m_pDistanceWarp) {
 		delete (m_pDistanceWarp);
@@ -95,7 +97,7 @@ void CTravelTime::clear() {
 // ---------------------------------------------------------Setup
 bool CTravelTime::setup(std::string phase, std::string file) {
 	// nullcheck
-	if (phase == "") {
+	if (phase == CTravelTime::k_dPhaseInvalid) {
 		glass3::util::Logger::log("error",
 									"CTravelTime::Setup: empty phase provided");
 		return (false);

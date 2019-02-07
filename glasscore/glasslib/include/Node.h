@@ -121,15 +121,18 @@ class CNode {
 	 * between the node and the site.
 	 * \param travelTime1 - A double value containing the first travel time to
 	 * use for the link
+	 * \param phase1 - A std::string containing the first travel time phase code
 	 * \param travelTime2 - A double value containing the optional second travel
 	 * time to use for the link, defaults to -1 (no travel time)
+	 * \param phase2 - A std::string containing the second travel time phase 
+	 * code, defaults to "" (no travel time)
 	 * \param site - A shared_ptr<CSite> to the site to link
 	 * \param node - A shared_ptr<CNode> to the node to link (should be itself)
 	 * \return - Returns true if successful, false otherwise
 	 */
 	bool linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
-					double distDeg, double travelTime1,
-					double travelTime2 = -1);
+					double distDeg, double travelTime1, std::string phase1,
+					double travelTime2 = -1, std::string phase2 = "");
 
 	/**
 	 * \brief CNode node-site and site-node unlinker
