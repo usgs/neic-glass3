@@ -119,8 +119,8 @@ bool CNode::initialize(std::string name, double lat, double lon, double z,
 
 // ---------------------------------------------------------linkSite
 bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
-						double distDeg, double travelTime1,
-						double travelTime2) {
+						double distDeg, double travelTime1, std::string phase1,
+						double travelTime2, std::string phase2) {
 	// nullchecks
 	// check site
 	if (site == NULL) {
@@ -140,13 +140,14 @@ bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 
 	// Link node to site using traveltime
 	// NOTE: No validation on travel times or distance
-	SiteLink link = std::make_tuple(site, travelTime1, travelTime2, distDeg);
+	SiteLink link = std::make_tuple(site, travelTime1, phase1, travelTime2,
+		phase2, distDeg);
 	m_vSiteLinkList.push_back(link);
 
 	// link site to node, again using the traveltime
 	// NOTE: this used to be site->addNode(shared_ptr<CNode>(this), tt);
 	// but that caused problems when deleting site-node links.
-	site->addNode(node, distDeg, travelTime1, travelTime2);
+	site->addNode(node, distDeg, travelTime1, phase1, travelTime2, phase2);
 
 	// successfully linked site
 	return (true);
@@ -292,7 +293,9 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 		// get traveltime(s) to site
 		double travelTime1 = std::get < LINK_TT1 > (link);
+		std::string phase1 = std::get < LINK_PHS1 > (link);
 		double travelTime2 = std::get < LINK_TT2 > (link);
+		std::string phase2 = std::get < LINK_PHS2 > (link);
 		double distDeg = std::get < LINK_DIST > (link);
 
 		// the minimum and maximum time windows for picks
@@ -392,7 +395,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 						m_dLatitude, m_dLongitude,
 						glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 
-				// compute azimith from the site to the node
+				// compute azimuth from the site to the node
 				double siteAzimuth = pick->getSite()->getGeo().azimuth(
 						&nodeGeo);
 
@@ -425,9 +428,34 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			 }
 			 */
 
+			// check pick classification
+			// are we configured to check pick phase classification
+			if (CGlass::getPickPhaseClassificationThreshold() > 0) {
+				// check to see if the phase classification is valid and above
+				// our threshold
+				if ((std::isnan(pick->getClassifiedPhaseProbability()) != true)
+					&& (pick->getClassifiedPhaseProbability() >
+					CGlass::getPickPhaseClassificationThreshold())) {
+					// check to see if the phase is classified as one of our
+					// nucleation phases
+					if (pick->getClassifiedPhase() == phase1) {
+						// match, we only consider traveltime1, disable
+						// traveltime2
+						travelTime2 =
+							traveltime::CTravelTime::k_dTravelTimeInvalid;
+					} else if (pick->getClassifiedPhase() == phase2) {
+						// match, we only consider traveltime2, disable
+						// traveltime1
+						travelTime1 =
+							traveltime::CTravelTime::k_dTravelTimeInvalid;
+					}
+					// otherwise there is no match and it's business as usual
+				}
+			}
+
 			// get the best significance from the observed time and the
 			// link hmmm... at this point we don't know which TT got us here,
-			// or wich one
+			// or which one
 			double dSig = getBestSignificance(tObs, travelTime1, travelTime2,
 												distDeg);
 

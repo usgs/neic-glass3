@@ -407,6 +407,20 @@ class CGlass {
 	static bool getAllowPickUpdates();
 
 	/**
+	 * \brief Gets the optional threshold used for accepting the classification
+	 * of a pick as noise by an external algorithm. -1 indicates this feature is 
+	 * disabled
+	 */
+	static double getPickNoiseClassificationThreshold();
+
+	/**
+	 * \brief Gets the optional threshold used for accepting the classification 
+	 * of a pick phase by an external algorithm. -1 indicates this feature is 
+	 * disabled
+	 */
+	static double getPickPhaseClassificationThreshold();
+
+	/**
 	 * \brief Gets a pointer to the Correlation list
 	 * \return Returns a pointer to the correlation list
 	 */
@@ -680,6 +694,19 @@ class CGlass {
 	 * pick list to be updated
 	 */
 	static std::atomic<bool> m_bAllowPickUpdates;
+
+	/**
+	 * \brief The probability threshold for accepting the pick noise 
+	 * classification, phases that meet this threshold will be rejected
+	 */
+	static std::atomic<double> m_dPickNoiseClassificationThreshold;
+
+	/**
+	 * \brief The probability threshold for accepting the pick phase
+	 * classification, phases that meet this threshold will be assumed to be
+	 * the classified phase for nucleation/association
+	 */
+	static std::atomic<double> m_dPickPhaseClassificationThreshold;
 
 	/**
 	 * \brief An IGlassSend interface pointer used to send communication

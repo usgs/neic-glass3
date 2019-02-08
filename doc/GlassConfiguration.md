@@ -31,11 +31,15 @@ An example `glass_init.d` configuration file:
       "CorrelationCancelAge": 900,
       "BeamMatchingAzimuthWindow" : 22.5,
       "HypocenterTimeWindow": 30.0,
-      "HypocenterDistanceWindow": 3.0,      
+      "HypocenterDistanceWindow": 3.0,
       "ReportingStackThreshold": 0.5,
       "ReportingDataThreshold": 5,
       "EventFragmentDepthThreshold": 550.0,
-      "EventFragmentAzimuthThreshold": 270.0      
+      "EventFragmentAzimuthThreshold": 270.0
+  },
+  "PickClassification":{
+      "NoiseThreshold": 0.75,
+      "PhaseThreshold": 0.75
   },
   "DefaultNucleationPhase": {
       "PhaseName": "P",
@@ -168,6 +172,16 @@ a hypocenter. Defaults to **NucleationDataCountThreshold**.
 event fragment, in combination with  **EventFragmentAzimuthThreshold**.
 * **EventFragmentAzimuthThreshold** The azimuth threshold for declaring a hypo an
 event fragment, in combination with **EventFragmentDepthThreshold**.
+
+## Pick Classification Configuration
+These configuration parameters define the thresholds to use when glass processes
+picks with optional classification information from external algorithms
+
+* **NoiseThreshold** - The threshold used by glass when determining whether it
+accepts the classification of a new pick as "noise". Noise picks are not processed
+* **PhaseThreshold** - The threshold used by glass when determining whether it
+accepts the classification of the phase of a new pick. Classified picks are
+nucleated/associated according to the given phase.
 
 ### DefaultNucleationPhase
 This parameter defines the default nucleation phase for glass. This value can be

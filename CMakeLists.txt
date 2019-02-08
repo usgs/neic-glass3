@@ -141,22 +141,24 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
     if (GIT_CLONE_PUBLIC)
       ExternalProject_Add(DetectionFormats
           GIT_REPOSITORY https://github.com/usgs/earthquake-detection-formats.git
-          #GIT_TAG working
+          GIT_TAG v0.9.7
           TIMEOUT 10
           CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
+            -DRUN_TESTS=${RUN_TESTS}
             -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
             -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
       )
     else()
       ExternalProject_Add(DetectionFormats
           GIT_REPOSITORY git@github.com:usgs/earthquake-detection-formats.git
-          #GIT_TAG working
+          GIT_TAG v0.9.7
           TIMEOUT 10
           CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
+            -DRUN_TESTS=${RUN_TESTS}
             -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
             -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
       )
@@ -179,7 +181,7 @@ if (BUILD_GLASS-BROKER-APP)
     if (GIT_CLONE_PUBLIC)
       ExternalProject_Add(HazdevBroker
           GIT_REPOSITORY https://github.com/usgs/hazdev-broker.git
-          GIT_TAG v0.2.1
+          GIT_TAG v0.2.2
           TIMEOUT 10
           CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -191,7 +193,7 @@ if (BUILD_GLASS-BROKER-APP)
     else()
       ExternalProject_Add(HazdevBroker
           GIT_REPOSITORY git@github.com:usgs/hazdev-broker.git
-          GIT_TAG v0.2.1
+          GIT_TAG v0.2.2
           TIMEOUT 10
           CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -250,6 +252,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
           -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
           -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+          -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
           -DRUN_TESTS=${RUN_TESTS}
           -DRUN_CPPCHECK=${RUN_CPPCHECK}
           -DRUN_CPPLINT=${RUN_CPPLINT}
@@ -286,6 +289,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
           -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
           -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+          -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
           -DRUN_TESTS=${RUN_TESTS}
           -DRUN_CPPCHECK=${RUN_CPPCHECK}
           -DRUN_CPPLINT=${RUN_CPPLINT}
@@ -305,6 +309,7 @@ if (BUILD_GLASS-APP OR BUILD_GLASS-BROKER-APP)
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
           -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
           -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+          -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
           -DRUN_TESTS=${RUN_TESTS}
           -DRUN_CPPCHECK=${RUN_CPPCHECK}
           -DRUN_CPPLINT=${RUN_CPPLINT}
@@ -329,6 +334,7 @@ if (BUILD_GLASS-APP)
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
           -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
           -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
+          -DRAPIDJSON_PATH=${RAPIDJSON_PATH}
           -DRUN_TESTS=${RUN_TESTS}
           -DRUN_CPPCHECK=${RUN_CPPCHECK}
           -DRUN_CPPLINT=${RUN_CPPLINT}

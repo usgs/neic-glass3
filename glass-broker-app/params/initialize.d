@@ -33,6 +33,10 @@
       "HypocenterTimeWindow": 30,
       "HypocenterDistanceWindow": 3
   },
+  "PickClassification": {
+      "NoiseThreshold": 0.75,
+      "PhaseThreshold": 0.75
+  },
   "DefaultNucleationPhase": {
       "PhaseName": "P",
       "TravFile": "./P.trv"

@@ -1422,13 +1422,17 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 
 		// compute traveltimes between site and node
 		double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
+		std::string phase1 = traveltime::CTravelTime::k_dPhaseInvalid;
 		if (m_pNucleationTravelTime1 != NULL) {
 			travelTime1 = m_pNucleationTravelTime1->T(delta);
+			phase1 = m_pNucleationTravelTime1->m_sPhase;
 		}
 
 		double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
+		std::string phase2 = traveltime::CTravelTime::k_dPhaseInvalid;
 		if (m_pNucleationTravelTime2 != NULL) {
 			travelTime2 = m_pNucleationTravelTime2->T(delta);
+			phase2 = m_pNucleationTravelTime2->m_sPhase;
 		}
 
 		// skip site if there are no valid times
@@ -1437,7 +1441,8 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 		}
 
 		// Link node to site using traveltimes
-		node->linkSite(site, node, delta, travelTime1, travelTime2);
+		node->linkSite(site, node, delta, travelTime1, phase1, travelTime2,
+			phase2);
 	}
 
 	// sort the site links
@@ -1552,19 +1557,24 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		}
 
 		// compute traveltimes between site and node
-		double travelTime1 = -1;
+		double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
+		std::string phase1 = traveltime::CTravelTime::k_dPhaseInvalid;
 		if (m_pNucleationTravelTime1 != NULL) {
 			travelTime1 = m_pNucleationTravelTime1->T(newDistance);
+			phase1 = m_pNucleationTravelTime1->m_sPhase;
 		}
-		double travelTime2 = -1;
+		double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
+		std::string phase2 = traveltime::CTravelTime::k_dPhaseInvalid;
 		if (m_pNucleationTravelTime2 != NULL) {
 			travelTime2 = m_pNucleationTravelTime2->T(newDistance);
+			phase2 = m_pNucleationTravelTime2->m_sPhase;
 		}
 
 		// check to see if we're at the limit
 		if (node->getSiteLinksCount() < m_iNumStationsPerNode) {
 			// Link node to site using traveltimes
-			node->linkSite(site, node, newDistance, travelTime1, travelTime2);
+			node->linkSite(site, node, newDistance, travelTime1, phase1,
+				travelTime2, phase2);
 
 		} else {
 			// remove last site
@@ -1573,7 +1583,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 			node->unlinkLastSite();
 
 			// Link node to site using traveltimes
-			node->linkSite(site, node, newDistance, travelTime1, travelTime2);
+			node->linkSite(site, node, newDistance, travelTime1, phase1,
+				travelTime2, phase2);
 		}
 
 		// resort site links
@@ -1693,17 +1704,21 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 
 			// compute traveltimes between site and node
 			double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
+			std::string phase1 = traveltime::CTravelTime::k_dPhaseInvalid;
 			if (m_pNucleationTravelTime1 != NULL) {
 				travelTime1 = m_pNucleationTravelTime1->T(newDistance);
+				phase1 = m_pNucleationTravelTime1->m_sPhase;
 			}
 			double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
+			std::string phase2 = traveltime::CTravelTime::k_dPhaseInvalid;
 			if (m_pNucleationTravelTime2 != NULL) {
 				travelTime2 = m_pNucleationTravelTime2->T(newDistance);
+				phase2 = m_pNucleationTravelTime2->m_sPhase;
 			}
 
 			// Link node to new site using traveltimes
-			if (node->linkSite(newSite, node, newDistance, travelTime1,
-								travelTime2) == false) {
+			if (node->linkSite(newSite, node, newDistance, travelTime1, phase1,
+								travelTime2, phase2) == false) {
 				glass3::util::Logger::log(
 						"error",
 						"CWeb::remSite: Failed to add station "

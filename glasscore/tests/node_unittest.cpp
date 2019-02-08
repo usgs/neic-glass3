@@ -18,6 +18,7 @@
 
 #define SITEJSON "{\"Cmd\":\"Site\",\"Elv\":2326.000000,\"Lat\":45.822170,\"Lon\":-112.451000,\"Site\":\"LRM.EHZ.MB.--\",\"Use\":true}"  // NOLINT
 #define TRAVELTIME 122
+#define PHASE "P"
 #define DISTANCE_FOR_TT 8.5
 
 // NOTE: Need to consider testing nucleate, but that would need a much more
@@ -97,8 +98,8 @@ TEST(NodeTest, SiteOperations) {
 	std::shared_ptr<glasscore::CSite> sharedTestSite(testSite);
 
 	// add the site to the node
-	ASSERT_TRUE(
-			testNode->linkSite(sharedTestSite, sharedTestNode, DISTANCE_FOR_TT, TRAVELTIME));  // NOLINT
+	ASSERT_TRUE(testNode->linkSite(sharedTestSite, sharedTestNode,
+		DISTANCE_FOR_TT, TRAVELTIME, PHASE));  // NOLINT
 
 	// check to see if the site was added
 	int expectedSize = 1;
@@ -140,9 +141,9 @@ TEST(NodeTest, FailTests) {
 
 	// link fails
 	ASSERT_FALSE(
-			testNode->linkSite(nullSite, sharedTestNode, DISTANCE_FOR_TT, TRAVELTIME));  // NOLINT
+			testNode->linkSite(nullSite, sharedTestNode, DISTANCE_FOR_TT, TRAVELTIME, PHASE));  // NOLINT
 	ASSERT_FALSE(
-			testNode->linkSite(sharedTestSite, nullNode, DISTANCE_FOR_TT, TRAVELTIME));  // NOLINT
+			testNode->linkSite(sharedTestSite, nullNode, DISTANCE_FOR_TT, TRAVELTIME, PHASE));  // NOLINT
 
 	// unlink fails
 	ASSERT_FALSE(testNode->unlinkSite(nullSite));

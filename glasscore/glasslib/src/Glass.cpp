@@ -65,6 +65,8 @@ std::atomic<double> CGlass::m_dHypoMergingDistanceWindow;
 std::atomic<double> CGlass::m_dEventFragmentDepthThreshold;
 std::atomic<double> CGlass::m_dEventFragmentAzimuthThreshold;
 std::atomic<bool> CGlass::m_bAllowPickUpdates;
+std::atomic<double> CGlass::m_dPickNoiseClassificationThreshold;
+std::atomic<double> CGlass::m_dPickPhaseClassificationThreshold;
 std::mutex CGlass::m_TTTMutex;
 
 // constants
@@ -223,7 +225,7 @@ void CGlass::clear() {
 	m_bTestLocator = false;
 	m_bGraphicsOut = false;
 	m_sGraphicsOutFolder = "./";
-	m_dGraphicsStepKM = 1.;
+	m_dGraphicsStepKM = 1.0;
 	m_iGraphicsSteps = 100;
 	m_bMinimizeTTLocator = false;
 	m_dPickDuplicateTimeWindow = 2.5;
@@ -239,6 +241,8 @@ void CGlass::clear() {
 	m_dEventFragmentDepthThreshold = 550.0;
 	m_dEventFragmentAzimuthThreshold = 270.0;
 	m_bAllowPickUpdates = false;
+	m_dPickNoiseClassificationThreshold = -1;
+	m_dPickPhaseClassificationThreshold = -1;
 }
 
 // ---------------------------------------------------------Initialize
@@ -1102,6 +1106,54 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						+ std::to_string(m_bAllowPickUpdates));
 	}
 
+	// pick classification
+	if ((com->HasKey("PickClassification"))
+			&& ((*com)["PickClassification"].GetType() == json::ValueType::ObjectVal)) {  // NOLINT
+		// get object
+		json::Object classification = (*com)["PickClassification"].ToObject();
+
+		// m_dPickNoiseClassificationThreshold
+		if ((classification.HasKey("NoiseThreshold"))
+				&& (classification["NoiseThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dPickNoiseClassificationThreshold =
+					classification["NoiseThreshold"].ToDouble();
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using PickClassification NoiseThreshold: "
+							+ std::to_string(m_dPickNoiseClassificationThreshold));
+		} else {
+			m_dPickNoiseClassificationThreshold = -1;
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default PickClassification NoiseThreshold: "
+							+ std::to_string(m_dPickNoiseClassificationThreshold));
+		}
+
+		// m_dPickPhaseClassificationThreshold
+		if ((classification.HasKey("PhaseThreshold"))
+				&& (classification["PhaseClassificationThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dPickPhaseClassificationThreshold =
+					classification["PhaseClassificationThreshold"].ToDouble();
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using PickClassification PhaseThreshold: "
+							+ std::to_string(m_dPickPhaseClassificationThreshold));
+		} else {
+			m_dPickPhaseClassificationThreshold = -1;
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default PhaseClassificationThreshold: "
+							+ std::to_string(m_dPickPhaseClassificationThreshold));
+		}
+	} else {
+		m_dPickNoiseClassificationThreshold = -1;
+		m_dPickPhaseClassificationThreshold = -1;
+	}
+
 	// create site list
 	if (m_pSiteList == NULL) {
 		m_pSiteList = new CSiteList();
@@ -1398,5 +1450,15 @@ bool CGlass::getTestTravelTimes() {
 // ------------------------------------------------getAllowPickUpdates
 bool CGlass::getAllowPickUpdates() {
 	return (m_bAllowPickUpdates);
+}
+
+// ------------------------------------------getPickNoiseClassificationThreshold
+double CGlass::getPickNoiseClassificationThreshold() {
+	return(m_dPickNoiseClassificationThreshold);
+}
+
+// ------------------------------------------getPickPhaseClassificationThreshold
+double CGlass::getPickPhaseClassificationThreshold() {
+	return(m_dPickPhaseClassificationThreshold);
 }
 }  // namespace glasscore

@@ -1521,17 +1521,46 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick) {
 	// compute observed traveltime
 	double tObs = pick->getTPick() - m_tOrigin;
 
-	// get expected travel time
-	double tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
+	// init expected travel time
+	double tCal = traveltime::CTravelTime::k_dTravelTimeInvalid;
+
+	// check pick classification
+	// are we configured to check pick phase classification
+	if (CGlass::getPickPhaseClassificationThreshold() > 0) {
+		// check to see if the phase classification is valid and above
+		// our threshold
+		if ((std::isnan(pick->getClassifiedPhaseProbability()) != true)
+			&& (pick->getClassifiedPhaseProbability() >
+			CGlass::getPickPhaseClassificationThreshold()) &&
+			(pick->getClassifiedPhase() !=
+			traveltime::CTravelTime::k_dPhaseInvalid))  {
+			// valid phase classification,
+			// compute expected travel time based on the pick site location and
+			// the classified pick phase
+			tCal = m_pTravelTimeTables->T(&site->getGeo(),
+				pick->getClassifiedPhase());
+		} else {
+			// no valid phase classification,
+			// compute expected travel time based on the pick site location and
+			// the observed travel time
+			tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
+		}
+	} else {
+		// not checking phase classification
+		// compute expected travel time based on the pick site location and
+		// the observed travel time
+		tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
+	}
 
 	// Check if pick has an invalid travel time,
-	if (tCal < 0.0) {
+	if (tCal <= traveltime::CTravelTime::k_dTravelTimeInvalid) {
 		// it does, don't associated
 		return (std::numeric_limits<double>::quiet_NaN());
 	}
 
+	// compute residual from observed and calculated travel times
 	double tRes = tObs - tCal;
-	return tRes;
+	return (tRes);
 }
 
 // --------------------------------------------------------getAzimuthTaper

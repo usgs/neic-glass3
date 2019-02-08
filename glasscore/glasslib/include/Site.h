@@ -232,11 +232,15 @@ class CSite {
 	 * and this site in degrees
 	 * \param travelTime1 - A double value containing the first travel time
 	 * to use
+	 * \param phase1 - A std::string containing the first travel time phase code
 	 * \param travelTime2 - A double value containing the optional second travel
+	 * \param phase2 - A std::string containing the second travel time phase 
+	 * code, defaults to "" (no travel time)
 	 * time to use for the link, defaults to -1 (no travel time)
 	 */
 	void addNode(std::shared_ptr<CNode> node, double distDeg,
-					double travelTime1, double travelTime2 = -1);
+					double travelTime1, std::string phase1,
+					double travelTime2 = -1, std::string phase2 = "");
 
 	/**
 	 * \brief Remove pick from this site

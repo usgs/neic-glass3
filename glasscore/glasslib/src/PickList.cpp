@@ -438,6 +438,8 @@ glass3::util::WorkState CPickList::work() {
 	// check to see if we got a valid pick
 	if ((newPick->getSite() == NULL) || (newPick->getTPick() == 0)
 			|| (newPick->getID() == "")) {
+		// pick was not properly constructed, ignore new pick
+
 		// cleanup
 		delete (newPick);
 
@@ -463,7 +465,17 @@ glass3::util::WorkState CPickList::work() {
 			existingPick->initialize(existingPick->getSite(),
 										newPick->getTPick(), newPick->getID(),
 										newPick->getBackAzimuth(),
-										newPick->getSlowness());
+										newPick->getSlowness(),
+										newPick->getClassifiedPhase(),
+										newPick->getClassifiedPhaseProbability(),
+										newPick->getClassifiedDistance(),
+										newPick->getClassifiedDistanceProbability(),
+										newPick->getClassifiedAzimuth(),
+										newPick->getClassifiedAzimuthProbability(),
+										newPick->getClassifiedDepth(),
+										newPick->getClassifiedDepthProbability(),
+										newPick->getClassifiedMagnitude(),
+										newPick->getClassifiedMagnitudeProbability());
 
 			// update the position of the pick in the sort
 			updatePosition(existingPick);
@@ -478,13 +490,36 @@ glass3::util::WorkState CPickList::work() {
 			glass3::util::Logger::log(
 					"warning", "CPickList::work: Updated existing pick.");
 		} else {
+			// ignore new pick (first pick wins)
 			glass3::util::Logger::log(
 					"warning",
 					"CPickList::work: Duplicate pick not passed in.");
 		}
 
-		// we're done
+		// cleanup
+		delete (newPick);
+
+		// message was processed
 		return (glass3::util::WorkState::OK);
+	}
+
+	// are we configured to check pick noise classification
+	if (CGlass::getPickNoiseClassificationThreshold() > 0) {
+		// check to see if the phase classification is valid and above
+		// our threshold
+		if ((std::isnan(newPick->getClassifiedPhaseProbability()) != true) &&
+			(newPick->getClassifiedPhaseProbability() >
+			CGlass::getPickNoiseClassificationThreshold())) {
+			// check to see if the phase is classified as noise
+			if (newPick->getClassifiedPhase() == "Noise") {
+				// this pick is noise, ignore new pick
+				// cleanup
+				delete (newPick);
+
+				// message was processed (rejected)
+				return (glass3::util::WorkState::OK);
+			}
+		}
 	}
 
 	// create new shared pointer to this pick

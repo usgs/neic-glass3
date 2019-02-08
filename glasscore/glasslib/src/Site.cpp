@@ -547,7 +547,8 @@ std::mutex & CSite::getPickMutex() {
 
 // ---------------------------------------------------------addNode
 void CSite::addNode(std::shared_ptr<CNode> node, double distDeg,
-					double travelTime1, double travelTime2) {
+						double travelTime1, std::string phase1,
+						double travelTime2, std::string phase2) {
 	// lock for editing
 	std::lock_guard<std::mutex> guard(m_vNodeMutex);
 
@@ -569,7 +570,8 @@ void CSite::addNode(std::shared_ptr<CNode> node, double distDeg,
 	// add node link to vector of nodes linked to this site
 	// NOTE: no duplication check, but multiple nodes from the
 	// same web can exist at the same site (travel times would be different)
-	NodeLink link = std::make_tuple(node, travelTime1, travelTime2, distDeg);
+	NodeLink link = std::make_tuple(node, travelTime1, phase1, travelTime2,
+		phase2, distDeg);
 	m_vNode.push_back(link);
 }
 

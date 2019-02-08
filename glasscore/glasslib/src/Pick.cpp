@@ -29,11 +29,32 @@ constexpr double CPick::k_dNucleateFinalAnnealTimeStepSize;
 CPick::CPick() {
 	clear();
 }
+// ---------------------------------------------------------CPick
+CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
+					std::string pickIdString, double backAzimuth,
+					double slowness) {
+	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness, "",
+		std::numeric_limits<double>::quiet_NaN(),
+		std::numeric_limits<double>::quiet_NaN(),
+		std::numeric_limits<double>::quiet_NaN(),
+		std::numeric_limits<double>::quiet_NaN(),
+		std::numeric_limits<double>::quiet_NaN(),
+		std::numeric_limits<double>::quiet_NaN(),
+		std::numeric_limits<double>::quiet_NaN(),
+		std::numeric_limits<double>::quiet_NaN(),
+		std::numeric_limits<double>::quiet_NaN());
+}
 
 // ---------------------------------------------------------CPick
 CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-				std::string pickIdString, double backAzimuth, double slowness) {
-	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness);
+					std::string pickIdString, double backAzimuth,
+					double slowness, std::string phase, double phaseProb,
+					double distance, double distanceProb, double azimuth,
+					double azimuthProb, double depth, double depthProb,
+					double magnitude, double magnitudeProb) {
+	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness, phase,
+		phaseProb, distance, distanceProb, azimuth, azimuthProb, depth,
+		depthProb, magnitude, magnitudeProb);
 }
 
 // ---------------------------------------------------------CPick
@@ -74,9 +95,19 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 	std::string loc = "";
 	std::shared_ptr<CSite> site = NULL;
 	std::string ttt = "";
-	double tpick = 0;
-	double backAzimuth = -1;
-	double slowness = -1;
+	double tPick = 0;
+	double backAzimuth = std::numeric_limits<double>::quiet_NaN();
+	double slowness = std::numeric_limits<double>::quiet_NaN();
+	std::string classifiedPhase = "";
+	double classifiedPhaseProb = std::numeric_limits<double>::quiet_NaN();
+	double classifiedDist = std::numeric_limits<double>::quiet_NaN();
+	double classifiedDistProb = std::numeric_limits<double>::quiet_NaN();
+	double classifiedAzm = std::numeric_limits<double>::quiet_NaN();
+	double classifiedAzmProb = std::numeric_limits<double>::quiet_NaN();
+	double classifiedDepth = std::numeric_limits<double>::quiet_NaN();
+	double classifiedDepthProb = std::numeric_limits<double>::quiet_NaN();
+	double classifiedMag = std::numeric_limits<double>::quiet_NaN();
+	double classifiedMagProb = std::numeric_limits<double>::quiet_NaN();
 	std::string pid = "";
 
 	// site
@@ -165,13 +196,13 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		// Time is formatted in iso8601, convert to Gregorian seconds
 		ttt = (*pick)["Time"].ToString();
 		glass3::util::Date dt = glass3::util::Date();
-		tpick = dt.decodeISO8601Time(ttt);
+		tPick = dt.decodeISO8601Time(ttt);
 	} else if (pick->HasKey("T")
 			&& ((*pick)["T"].GetType() == json::ValueType::StringVal)) {
 		// T is formatted in datetime, convert to Gregorian seconds
 		ttt = (*pick)["T"].ToString();
 		glass3::util::Date dt = glass3::util::Date();
-		tpick = dt.decodeDateTime(ttt);
+		tPick = dt.decodeDateTime(ttt);
 	} else {
 		glass3::util::Logger::log(
 				"error",
@@ -233,8 +264,119 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		slowness = std::numeric_limits<double>::quiet_NaN();
 	}
 
+	// classification
+	if (pick->HasKey("ClassificationInfo")
+			&& ((*pick)["ClassificationInfo"].GetType() == json::ValueType::ObjectVal)) {
+		// classification is an object
+		json::Object classobj = (*pick)["ClassificationInfo"].ToObject();
+
+		// classifiedPhase
+		if (classobj.HasKey("Phase")
+				&& (classobj["Phase"].GetType()
+						== json::ValueType::StringVal)) {
+			classifiedPhase = classobj["Phase"].ToString();
+		} else {
+			classifiedPhase = "";
+		}
+
+		// classifiedPhaseProb
+		if (classobj.HasKey("PhaseProbability")
+				&& (classobj["PhaseProbability"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedPhaseProb = classobj["PhaseProbability"].ToDouble();
+		} else {
+			classifiedPhaseProb = std::numeric_limits<double>::quiet_NaN();
+		}
+
+		// classifiedDist
+		if (classobj.HasKey("Distance")
+				&& (classobj["Distance"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedDist = classobj["Distance"].ToDouble();
+		} else {
+			classifiedDist = std::numeric_limits<double>::quiet_NaN();
+		}
+
+		// classifiedDistProb
+		if (classobj.HasKey("DistanceProbability")
+				&& (classobj["DistanceProbability"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedDistProb = classobj["DistanceProbability"].ToDouble();
+		} else {
+			classifiedDistProb = std::numeric_limits<double>::quiet_NaN();
+		}
+
+		// classifiedAzm
+		if (classobj.HasKey("Azimuth")
+				&& (classobj["Azimuth"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedAzm = classobj["Azimuth"].ToDouble();
+		} else {
+			classifiedAzm = std::numeric_limits<double>::quiet_NaN();
+		}
+
+		// classifiedAzmProb
+		if (classobj.HasKey("AzimuthProbability")
+				&& (classobj["AzimuthProbability"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedAzmProb = classobj["AzimuthProbability"].ToDouble();
+		} else {
+			classifiedAzmProb = std::numeric_limits<double>::quiet_NaN();
+		}
+
+		// classifiedDepth
+		if (classobj.HasKey("Depth")
+				&& (classobj["Depth"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedDepth = classobj["Depth"].ToDouble();
+		} else {
+			classifiedDepth = std::numeric_limits<double>::quiet_NaN();
+		}
+
+		// classifiedDepthProb
+		if (classobj.HasKey("DepthProbability")
+				&& (classobj["DepthProbability"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedDepthProb = classobj["DepthProbability"].ToDouble();
+		} else {
+			classifiedDepthProb = std::numeric_limits<double>::quiet_NaN();
+		}
+
+		// classifiedMag
+		if (classobj.HasKey("Magnitude")
+				&& (classobj["Magnitude"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedMag = classobj["Magnitude"].ToDouble();
+		} else {
+			classifiedMag = std::numeric_limits<double>::quiet_NaN();
+		}
+
+		// classifiedMagProb
+		if (classobj.HasKey("MagnitudeProbability")
+				&& (classobj["MagnitudeProbability"].GetType()
+						== json::ValueType::DoubleVal)) {
+			classifiedMagProb = classobj["MagnitudeProbability"].ToDouble();
+		} else {
+			classifiedMagProb = std::numeric_limits<double>::quiet_NaN();
+		}
+	} else {
+		classifiedPhase = "";
+		classifiedPhaseProb = std::numeric_limits<double>::quiet_NaN();
+		classifiedDist = std::numeric_limits<double>::quiet_NaN();
+		classifiedDistProb = std::numeric_limits<double>::quiet_NaN();
+		classifiedAzm = std::numeric_limits<double>::quiet_NaN();
+		classifiedAzmProb = std::numeric_limits<double>::quiet_NaN();
+		classifiedDepth = std::numeric_limits<double>::quiet_NaN();
+		classifiedDepthProb = std::numeric_limits<double>::quiet_NaN();
+		classifiedMag = std::numeric_limits<double>::quiet_NaN();
+		classifiedMagProb = std::numeric_limits<double>::quiet_NaN();
+	}
+
 	// pass to initialization function
-	if (!initialize(site, tpick, pid, backAzimuth, slowness)) {
+	if (!initialize(site, tPick, pid, backAzimuth, slowness, classifiedPhase,
+		classifiedPhaseProb, classifiedDist, classifiedDistProb, classifiedAzm,
+		classifiedAzmProb, classifiedDepth, classifiedDepthProb, classifiedMag,
+		classifiedMagProb)) {
 		glass3::util::Logger::log(
 				"error",
 				"CPick::CPick: Failed to initialize pick: "
@@ -269,12 +411,25 @@ void CPick::clear() {
 	m_tInsertion = 0.0;
 	m_tFirstAssociation = 0.0;
 	m_tNucleation = 0.0;
+	m_sClassifiedPhase = "";
+	m_dClassifiedPhaseProbability = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedDistance = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedDistanceProbability = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedAzimuth = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedAzimuthProbability = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedDepth = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedDepthProbability = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedMagnitude = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedMagnitudeProbability = std::numeric_limits<double>::quiet_NaN();
 }
 
 // ---------------------------------------------------------initialize
 bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 						std::string pickIdString, double backAzimuth,
-						double slowness) {
+						double slowness, std::string phase, double phaseProb,
+						double distance, double distanceProb, double azimuth,
+						double azimuthProb, double depth, double depthProb,
+						double magnitude, double magnitudeProb) {
 	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
 
 	clear();
@@ -284,6 +439,16 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 	m_sID = pickIdString;
 	m_dBackAzimuth = backAzimuth;
 	m_dSlowness = slowness;
+	m_sClassifiedPhase = phase;
+	m_dClassifiedPhaseProbability = phaseProb;
+	m_dClassifiedDistance = distance;
+	m_dClassifiedDistanceProbability = distanceProb;
+	m_dClassifiedAzimuth = azimuth;
+	m_dClassifiedAzimuthProbability = azimuthProb;
+	m_dClassifiedDepth = depth;
+	m_dClassifiedDepthProbability = depthProb;
+	m_dClassifiedMagnitude = magnitude;
+	m_dClassifiedMagnitudeProbability = magnitudeProb;
 
 	// nullcheck
 	if (pickSite == NULL) {
@@ -635,4 +800,54 @@ void CPick::setTNucleation() {
 	m_tNucleation = glass3::util::Date::now();
 }
 
+// --------------------------------------------------getClassifiedPhase
+const std::string& CPick::getClassifiedPhase() const {
+	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
+	return (m_sClassifiedPhase);
+}
+
+// ------------------------------------------------getClassifiedPhaseProbability
+double CPick::getClassifiedPhaseProbability() const {
+	return (m_dClassifiedPhaseProbability);
+}
+
+// --------------------------------------------------getClassifiedDistance
+double CPick::getClassifiedDistance() const {
+	return (m_dClassifiedDistance);
+}
+
+// ---------------------------------------------getClassifiedDistanceProbability
+double CPick::getClassifiedDistanceProbability() const {
+	return (m_dClassifiedDistanceProbability);
+}
+
+// --------------------------------------------------getClassifiedAzimuth
+double CPick::getClassifiedAzimuth() const {
+	return (m_dClassifiedAzimuth);
+}
+
+// ----------------------------------------------getClassifiedAzimuthProbability
+double CPick::getClassifiedAzimuthProbability() const {
+	return (m_dClassifiedAzimuthProbability);
+}
+
+// --------------------------------------------------getClassifiedDepth
+double CPick::getClassifiedDepth() const {
+	return (m_dClassifiedDepth);
+}
+
+// ------------------------------------------------getClassifiedDepthProbability
+double CPick::getClassifiedDepthProbability() const {
+	return (m_dClassifiedDepthProbability);
+}
+
+// --------------------------------------------------getClassifiedMagnitude
+double CPick::getClassifiedMagnitude() const {
+	return (m_dClassifiedMagnitude);
+}
+
+// --------------------------------------------getClassifiedMagnitudeProbability
+double CPick::getClassifiedMagnitudeProbability() const {
+	return (m_dClassifiedMagnitudeProbability);
+}
 }  // namespace glasscore
