@@ -403,20 +403,11 @@ std::shared_ptr<json::Object> CSiteList::generateSiteListMessage(bool send) {
 	// move through whole vector
 	for (const auto &site : m_vSite) {
 		json::Object stationObj;
-		double lat;
-		double lon;
-		double z;
-
-		// convert to geographic coordinates
-		site->getGeo().getGeographic(&lat, &lon, &z);
-
-		// convert from earth radius to elevation
-		double elv = (z - 6317.0) * -1000.0;
 
 		// construct a json message containing our site info
-		stationObj["Lat"] = lat;
-		stationObj["Lon"] = lon;
-		stationObj["Z"] = elv;
+		stationObj["Lat"] = site->getRawLatitude();
+		stationObj["Lon"] = site->getRawLongitude();
+		stationObj["Z"] = site->getRawElevation();
 		stationObj["Qual"] = site->getQuality();
 		stationObj["Use"] = site->getEnable();
 		stationObj["UseForTele"] = site->getUseForTeleseismic();

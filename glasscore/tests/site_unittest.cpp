@@ -29,6 +29,10 @@
 #define USE true
 #define USEFORTELE true
 
+#define BADLATITUDE 1000.0
+#define BADLONGITUDE 1000.0
+#define BADELEVATION -550000.0
+
 // NOTE: Need to consider testing nucleate function, but that would need a
 // much more involved set of real nodes and data, not these dummy nodes.
 // Maybe consider performing this test at a higher level?
@@ -78,6 +82,21 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	// NOTE: expected elevation is in geocentric coordinates
 	double expectedelevation = GEOCENTRIC_ELEVATION;
 	ASSERT_NEAR(siteelevation, expectedelevation, 0.000001);
+
+	// check raw latitude
+	double rawlatitude = siteobject->getRawLatitude();
+	double expectedrawlatitude = LATITUDE;
+	ASSERT_NEAR(rawlatitude, expectedrawlatitude, 0.000001);
+
+	// check raw longitude
+	double rawlongitude = siteobject->getRawLongitude();
+	double expectedrawlongitude = LONGITUDE;
+	ASSERT_NEAR(rawlongitude, expectedrawlongitude, 0.000001);
+
+	// check raw elevation
+	double rawelevation = siteobject->getRawElevation();
+	double expectedrawelevation = ELEVATION;
+	ASSERT_NEAR(rawelevation, expectedrawelevation, 0.000001);
 
 	// check use
 	bool siteuse = siteobject->getUse();
@@ -305,4 +324,53 @@ TEST(SiteTest, NodeOperations) {
 	testSite->removeNode(testNode->getID());
 	expectedSize = 1;
 	ASSERT_EQ(expectedSize, testSite->getNodeLinksCount())<< "Removed Node";
+}
+
+
+// tests various failure conditions
+TEST(SiteTest, FailTests) {
+	glass3::util::Logger::disable();
+
+	// construct a site
+	glasscore::CSite * testSite = new glasscore::CSite();
+
+	// missing station
+	ASSERT_FALSE(testSite->initialize(std::string(""), std::string(COMP),
+							std::string(NET), std::string(LOC), LATITUDE, LONGITUDE,
+							ELEVATION,
+							QUALITY,
+							USE,
+							USEFORTELE));
+
+	// missing network
+	ASSERT_FALSE(testSite->initialize(std::string(SITE), std::string(COMP),
+							std::string(""), std::string(LOC), LATITUDE, LONGITUDE,
+							ELEVATION,
+							QUALITY,
+							USE,
+							USEFORTELE));
+
+	// bad latitude
+	ASSERT_FALSE(testSite->initialize(std::string(SITE), std::string(COMP),
+							std::string(NET), std::string(LOC), BADLATITUDE, LONGITUDE,
+							ELEVATION,
+							QUALITY,
+							USE,
+							USEFORTELE));
+
+	// bad longitude
+	ASSERT_FALSE(testSite->initialize(std::string(SITE), std::string(COMP),
+							std::string(NET), std::string(LOC), LATITUDE, BADLONGITUDE,
+							ELEVATION,
+							QUALITY,
+							USE,
+							USEFORTELE));
+
+	// bad elevation
+	ASSERT_FALSE(testSite->initialize(std::string(SITE), std::string(COMP),
+							std::string(NET), std::string(LOC), LATITUDE, LONGITUDE,
+							BADELEVATION,
+							QUALITY,
+							USE,
+							USEFORTELE));
 }
