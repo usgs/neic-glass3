@@ -259,9 +259,9 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 
 	// check elevation, we assume that a station is not deeper than the Dead Sea
 	// and not higher than the Himalayas
-	if ((elv < -500.0) || (elv > 8000.0)) {
+	if ((elv < -5000.0) || (elv > 8000.0)) {
 		glass3::util::Logger::log("error", "CSite::initialize: Elevation not in the"
-			"valid range of -500 to 8000 meters.");
+			"valid range of -5000 to 8000 meters.");
 		return (false);
 	}
 	m_dRawElevation = elv;
