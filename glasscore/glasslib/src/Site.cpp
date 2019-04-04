@@ -213,7 +213,7 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	if (sta != "") {
 		m_sSCNL += sta;
 	} else {
-		glass3::util::Logger::log("error", "CSite::initialize: missing sSite.");
+		glass3::util::Logger::log("error", "CSite::initialize: missing sta.");
 		return (false);
 	}
 
@@ -226,7 +226,7 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	if (net != "") {
 		m_sSCNL += "." + net;
 	} else {
-		glass3::util::Logger::log("error", "CSite::initialize: missing sNet.");
+		glass3::util::Logger::log("error", "CSite::initialize: missing net.");
 		return (false);
 	}
 
@@ -241,15 +241,40 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 	m_sComponent = comp;
 	m_sLocation = loc;
 
+	// check latitude
+	if ((lat < -90.0) || (lat > 90.0)) {
+		glass3::util::Logger::log("error", "CSite::initialize: Latitude not in the"
+			"valid range of -90 to 90 degrees.");
+		return (false);
+	}
+	m_dRawLatitude = lat;
+
+	// check longitude
+	if ((lon < -180.0) || (lon > 180.0)) {
+		glass3::util::Logger::log("error", "CSite::initialize: Longitude not in the"
+			"valid range of -180 to 180 degrees.");
+		return (false);
+	}
+	m_dRawLongitude = lon;
+
+	// check elevation, we assume that a station is not deeper than the Dead Sea
+	// and not higher than the Himalayas
+	if ((elv < -500.0) || (elv > 8000.0)) {
+		glass3::util::Logger::log("error", "CSite::initialize: Elevation not in the"
+			"valid range of -500 to 8000 meters.");
+		return (false);
+	}
+	m_dRawElevation = elv;
+
 	// set geographic location
-	// convert site elevation in meters to surface depth in km
-	// (invert the sign to get positive (above earth radius)
+	// convert site elevation from elevation above the surface in meters into
+	// depth from surface in km (invert the sign to get depth (below surface))
 	// and then divide by 1000 (meters to km))
 	setLocation(
-			lat,
-			lon,
+			m_dRawLatitude,
+			m_dRawLongitude,
 			glass3::util::Geo::k_dElevationToDepth
-					* glass3::util::Geo::k_dMetersToKm * elv);
+					* glass3::util::Geo::k_dMetersToKm * m_dRawElevation);
 
 	// quality
 	m_dQuality = qual;
@@ -275,6 +300,10 @@ void CSite::clear() {
 	m_sComponent = "";
 	m_sNetwork = "";
 	m_sLocation = "";
+
+	m_dRawLatitude = 0.0;
+	m_dRawLongitude = 0.0;
+	m_dRawElevation = 0.0;
 
 	m_bUse = true;
 	m_bEnable = true;
@@ -328,6 +357,9 @@ void CSite::update(CSite *aSite) {
 	m_dQuality = aSite->getQuality();
 
 	// update location
+	m_dRawLatitude = aSite->getRawLatitude();
+	m_dRawLongitude = aSite->getRawLongitude();
+	m_dRawElevation = aSite->getRawElevation();
 	m_Geo = glass3::util::Geo(aSite->getGeo());
 	double vec[3];
 	aSite->getUnitVectors(vec);
@@ -364,6 +396,7 @@ double * CSite::getUnitVectors(double * vec) {
 // ---------------------------------------------------------setLocation
 void CSite::setLocation(double lat, double lon, double z) {
 	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
+
 	// construct unit vector in cartesian earth coordinates
 	double rxy = cos(glass3::util::GlassMath::k_DegreesToRadians * lat);
 	m_daUnitVectors[k_iUnitVectorXCoordinateIndex] = rxy
@@ -373,8 +406,12 @@ void CSite::setLocation(double lat, double lon, double z) {
 	m_daUnitVectors[k_iUnitVectorZCoordinateIndex] = sin(
 			glass3::util::GlassMath::k_DegreesToRadians * lat);
 
+	// convert depth from surface to km from the center of the earth
+	// by subtracting z from the radius of the earth
+	double earthRadZ = glass3::util::Geo::k_EarthRadiusKm - z;
+
 	// set geographic object
-	m_Geo.setGeographic(lat, lon, glass3::util::Geo::k_EarthRadiusKm - z);
+	m_Geo.setGeographic(lat, lon, earthRadZ);
 }
 
 // ---------------------------------------------------------getDelta
@@ -772,6 +809,21 @@ double CSite::getQuality() const {
 // ---------------------------------------------------------setQuality
 void CSite::setQuality(double qual) {
 	m_dQuality = qual;
+}
+
+// ---------------------------------------------------------getRawLatitude
+double CSite::getRawLatitude() const {
+	return (m_dRawLatitude);
+}
+
+// ---------------------------------------------------------getRawLongitude
+double CSite::getRawLongitude() const {
+	return (m_dRawLongitude);
+}
+
+// ---------------------------------------------------------getRawElevation
+double CSite::getRawElevation() const {
+	return (m_dRawElevation);
 }
 
 // ---------------------------------------------------------getGeo

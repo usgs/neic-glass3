@@ -79,6 +79,21 @@ void checkdata(glasscore::CSite * siteobject, const std::string &testinfo) {
 	double expectedelevation = GEOCENTRIC_ELEVATION;
 	ASSERT_NEAR(siteelevation, expectedelevation, 0.000001);
 
+	// check raw latitude
+	double rawlatitude = siteobject->getRawLatitude();
+	double expectedrawlatitude = LATITUDE;
+	ASSERT_NEAR(rawlatitude, expectedrawlatitude, 0.000001);
+
+	// check raw longitude
+	double rawlongitude = siteobject->getRawLongitude();
+	double expectedrawlongitude = LONGITUDE;
+	ASSERT_NEAR(rawlongitude, expectedrawlongitude, 0.000001);
+
+	// check raw elevation
+	double rawelevation = siteobject->getRawElevation();
+	double expectedrawelevation = ELEVATION;
+	ASSERT_NEAR(rawelevation, expectedrawelevation, 0.000001);
+
 	// check use
 	bool siteuse = siteobject->getUse();
 	bool expecteduse = USE;

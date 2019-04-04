@@ -164,9 +164,9 @@ class CSite {
 	 * This function sets the geographic location of the site to
 	 * the provided latitude, longitude, and depth.
 	 *
-	 * \param lat - A double value containing the latitude to use.
-	 * \param lon - A double value containing the longitude to use.
-	 * \param z - A double value containing the depth to use.
+	 * \param lat - A double value containing the latitude in degrees to use.
+	 * \param lon - A double value containing the longitude in degrees to use.
+	 * \param z - A double value containing the surface depth in km to use.
 	 */
 	void setLocation(double lat, double lon, double z);
 
@@ -345,6 +345,27 @@ class CSite {
 	void setQuality(double qual);
 
 	/**
+	 * \brief Get the station raw latitude
+	 * \return Returns a double value containing the raw (original) latitude for
+	 * the station
+	 */
+	double getRawLatitude() const;
+
+	/**
+	 * \brief Get the station raw longitude
+	 * \return Returns a double value containing the raw (original) longitude for
+	 * the station
+	 */
+	double getRawLongitude() const;
+
+	/**
+	 * \brief Get the station raw elevation
+	 * \return Returns a double value containing the raw (original) elevation for
+	 * the station
+	 */
+	double getRawElevation() const;
+
+	/**
 	 * \brief Get the combined site location (latitude, longitude, elevation) as
 	 * a CGeo object
 	 * \return Returns a glass3::util::Geo object containing the combined location.
@@ -504,6 +525,24 @@ class CSite {
 	 * \brief A CGeo object containing the geographic location of this site
 	 */
 	glass3::util::Geo m_Geo;
+
+	/**
+	 * \brief A double value containing the raw (original) latitude of the station
+	 * in degrees.
+	 */
+	std::atomic<double> m_dRawLatitude;
+
+	/**
+	 * \brief A double value containing the raw (original) longitude of the station
+	 * in degrees.
+	 */
+	std::atomic<double> m_dRawLongitude;
+
+	/**
+	 * \brief A double value containing the raw (original) elevation of the station
+	 * in meters from the surface.
+	 */
+	std::atomic<double> m_dRawElevation;
 
 	/**
 	 * \brief A unit vector in Cartesian earth coordinates used to do a quick
