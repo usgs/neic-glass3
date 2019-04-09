@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/lib/SuperEasyJSON/*",
+                "${workspaceFolder}/lib/spdlog/*",
+                "${workspaceFolder}/util/include/*",
+                "${workspaceFolder}/input/include/*",
+                "${workspaceFolder}/output/include/*",
+                "${workspaceFolder}/process/include/*",
+                "${workspaceFolder}/parse/include/*",
+                "${workspaceFolder}/glasscore/glasslib/include/*",
+                "${workspaceFolder}/glasscore/traveltime/include/*"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

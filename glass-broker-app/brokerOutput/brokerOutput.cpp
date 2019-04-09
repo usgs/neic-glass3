@@ -26,7 +26,7 @@ brokerOutput::brokerOutput()
 	glass3::util::Logger::log("debug",
 								"brokerOutput::brokerOutput(): Construction.");
 
-	m_OutputProducer = NULL;
+	m_StationRequestProducer = NULL;
 	m_StationRequestTopic = NULL;
 
 	// init config to defaults and allocate
@@ -39,7 +39,7 @@ brokerOutput::brokerOutput(const std::shared_ptr<json::Object> &config)
 	glass3::util::Logger::log(
 			"debug", "brokerOutput::brokerOutput(): Advanced Construction.");
 
-	m_OutputProducer = NULL;
+	m_StationRequestProducer = NULL;
 	m_StationRequestTopic = NULL;
 
 	// init config to defaults and allocate
@@ -62,8 +62,8 @@ brokerOutput::~brokerOutput() {
 	}
 	m_vOutputTopics.clear();
 
-	if(m_OutputProducer != NULL) {
-		delete(m_OutputProducer);
+	if(m_StationRequestProducer != NULL) {
+		delete(m_StationRequestProducer);
 	}
 
 	if(m_StationRequestTopic != NULL) {
@@ -137,6 +137,18 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 						+ producerConfig + ".");
 	}
 
+	// producer heartbeat interval
+	int brokerHeartbeatInterval = -1;
+	if (config->HasKey("BrokerHeartbeatInterval")) {
+		brokerHeartbeatInterval =
+			(*config)["BrokerHeartbeatInterval"].ToInt();
+
+		glass3::util::Logger::log(
+				"info",
+				"brokerOutput::setup(): Using BrokerHeartbeatInterval: "
+						+ std::to_string(brokerHeartbeatInterval) + ".");
+	}
+
 	// topic config
 	std::string topicConfig = "";
 	if (!(config->HasKey("HazdevBrokerTopicConfig"))) {
@@ -153,32 +165,6 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 				"brokerOutput::setup(): Using HazdevBrokerTopicConfig: "
 						+ topicConfig + ".");
 	}
-
-	// clear out any old producer
-	if (m_OutputProducer != NULL) {
-		delete (m_OutputProducer);
-	}
-
-	// create new producer
-	m_OutputProducer = new hazdevbroker::Producer();
-
-	// heartbeat interval
-	if (config->HasKey("BrokerHeartbeatInterval")) {
-		int brokerHeartbeatInterval =
-			(*config)["BrokerHeartbeatInterval"].ToInt();
-		m_OutputProducer->setHeartbeatInterval(brokerHeartbeatInterval);
-		glass3::util::Logger::log(
-				"info",
-				"brokerOutput::setup(): Using BrokerHeartbeatInterval: "
-						+ std::to_string(brokerHeartbeatInterval) + ".");
-	}
-
-	// set up logging
-	m_OutputProducer->setLogCallback(
-			std::bind(&brokerOutput::logProducer, this, std::placeholders::_1));
-
-	// set up producer
-	m_OutputProducer->setup(producerConfig, topicConfig);
 
 	// clear out any old topics
 	for (auto aTopic : m_vOutputTopics) {
@@ -203,14 +189,25 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 
 		// parse topics
 		for (auto aTopicConfig : topics) {
-			// create output topic
-			outputTopic* newTopic = new outputTopic(m_OutputProducer);
+			// create producer for the topic
+			hazdevbroker::Producer * topicProducer = new hazdevbroker::Producer();
+			topicProducer->setHeartbeatInterval(brokerHeartbeatInterval);
+			topicProducer->setLogCallback(
+					std::bind(&brokerOutput::logProducer, this, std::placeholders::_1));
+			topicProducer->setup(producerConfig, topicConfig);
+
+			// create output topic using the producer
+			outputTopic* newTopic = new outputTopic(topicProducer);
 
 			// setup output topic
 			if (newTopic->setup(aTopicConfig) == true) {
-				// add output tpic to list
+				// add output topic to list
 				m_vOutputTopics.push_back(newTopic);
 			} else {
+				// failure, cleanup
+				newTopic->clear();
+				delete (newTopic);
+
 				glass3::util::Logger::log(
 						"error",
 						"brokerOutput::setup(): Failed set up output topic.");
@@ -248,8 +245,23 @@ bool brokerOutput::setup(std::shared_ptr<const json::Object> config) {
 		delete (m_StationRequestTopic);
 	}
 	if (stationRequestTopic != "") {
+		// clear out any old request producer
+		if (m_StationRequestProducer != NULL) {
+			delete (m_StationRequestProducer);
+		}
+
+		// create new request producer
+		m_StationRequestProducer = new hazdevbroker::Producer();
+
+		// set up logging
+		m_StationRequestProducer->setLogCallback(
+				std::bind(&brokerOutput::logProducer, this, std::placeholders::_1));
+
+		// set up request producer
+		m_StationRequestProducer->setup(producerConfig, topicConfig);
+
 		// create topic
-		m_StationRequestTopic = m_OutputProducer->createTopic(
+		m_StationRequestTopic = m_StationRequestProducer->createTopic(
 				stationRequestTopic);
 	} else {
 		m_StationRequestTopic = NULL;
@@ -304,7 +316,7 @@ void brokerOutput::sendOutput(const std::string &type, const std::string &id,
 	if (type == "StationInfoRequest") {
 		// station info requests get their own special topic
 		if (m_StationRequestTopic != NULL) {
-			m_OutputProducer->sendString(m_StationRequestTopic, message);
+			m_StationRequestProducer->sendString(m_StationRequestTopic, message);
 		}
 	} else if (type == "StationList") {
 		// station lists are written to disk

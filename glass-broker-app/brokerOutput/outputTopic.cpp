@@ -158,7 +158,10 @@ void outputTopic::clear() {
 		m_OutputTopic = NULL;
 	}
 
-	m_OutputProducer = NULL;
+	if (m_OutputProducer != NULL) {
+		delete (m_OutputProducer);
+		m_OutputProducer = NULL;
+	}
 }
 
 // ---------------------------------------------------------isInBounds
