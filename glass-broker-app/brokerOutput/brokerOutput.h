@@ -128,14 +128,15 @@ class brokerOutput : public glass3::output::output {
 
  private:
 	/**
-	 * \brief The hazdevbroker producer used to send messages to kafka
-	 */
-	hazdevbroker::Producer * m_OutputProducer;
-
-	/**
 	 * \brief A vector containing the output topics
 	 */
 	std::vector<glass3::outputTopic*> m_vOutputTopics;
+
+	/**
+	 * \brief The optional hazdevbroker producer used to send station requests
+	 * to kafka
+	 */
+	hazdevbroker::Producer * m_StationRequestProducer;
 
 	/**
 	 * \brief The optional station request topic
