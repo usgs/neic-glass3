@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.4</span>
    </div>
   </td>
  </tr>
@@ -252,6 +252,12 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a7bef6f293fdd9c36c465a48c96dd2a92"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a7bef6f293fdd9c36c465a48c96dd2a92">getAllowPickUpdates</a> ()</td></tr>
 <tr class="memdesc:a7bef6f293fdd9c36c465a48c96dd2a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a boolean flag indicating whether to allow picks in the pick list to be updated.  <a href="#a7bef6f293fdd9c36c465a48c96dd2a92">More...</a><br/></td></tr>
 <tr class="separator:a7bef6f293fdd9c36c465a48c96dd2a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45f4f6eaa135330fd1ff801bd8cd85e2"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a45f4f6eaa135330fd1ff801bd8cd85e2">getPickNoiseClassificationThreshold</a> ()</td></tr>
+<tr class="memdesc:a45f4f6eaa135330fd1ff801bd8cd85e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the optional threshold used for accepting the classification of a pick as noise by an external algorithm. -1 indicates this feature is disabled.  <a href="#a45f4f6eaa135330fd1ff801bd8cd85e2">More...</a><br/></td></tr>
+<tr class="separator:a45f4f6eaa135330fd1ff801bd8cd85e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97d62caa673600cc61ed9158af50581a"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a97d62caa673600cc61ed9158af50581a">getPickPhaseClassificationThreshold</a> ()</td></tr>
+<tr class="memdesc:a97d62caa673600cc61ed9158af50581a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the optional threshold used for accepting the classification of a pick phase by an external algorithm. -1 indicates this feature is disabled.  <a href="#a97d62caa673600cc61ed9158af50581a">More...</a><br/></td></tr>
+<tr class="separator:a97d62caa673600cc61ed9158af50581a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abad8877184214168796b6e4d0a8f00bf"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classglasscore_1_1CCorrelationList.html">CCorrelationList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#abad8877184214168796b6e4d0a8f00bf">getCorrelationList</a> ()</td></tr>
 <tr class="memdesc:abad8877184214168796b6e4d0a8f00bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a pointer to the Correlation list.  <a href="#abad8877184214168796b6e4d0a8f00bf">More...</a><br/></td></tr>
 <tr class="separator:abad8877184214168796b6e4d0a8f00bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1218,6 +1224,56 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a45f4f6eaa135330fd1ff801bd8cd85e2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getPickNoiseClassificationThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the optional threshold used for accepting the classification of a pick as noise by an external algorithm. -1 indicates this feature is disabled. </p>
+
+</div>
+</div>
+<a class="anchor" id="a97d62caa673600cc61ed9158af50581a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getPickPhaseClassificationThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the optional threshold used for accepting the classification of a pick phase by an external algorithm. -1 indicates this feature is disabled. </p>
+
+</div>
+</div>
 <a class="anchor" id="aaadf8df56c1af1de3ae50f4e06db1046"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1843,7 +1899,7 @@ Static Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 23 2018 15:24:15 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2019 20:25:42 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

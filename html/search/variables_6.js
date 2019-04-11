@@ -41,7 +41,6 @@ var searchData=
   ['m_5finumdepthwarp',['m_iNumDepthWarp',['../classtraveltime_1_1CTravelTime.html#a26763788a032ad33b53ab8a364ca9aef',1,'traveltime::CTravelTime']]],
   ['m_5finumdistancewarp',['m_iNumDistanceWarp',['../classtraveltime_1_1CTravelTime.html#a45684ab4d339035c7286937020c6f111',1,'traveltime::CTravelTime']]],
   ['m_5finumtraveltimes',['m_iNumTravelTimes',['../classtraveltime_1_1CTTT.html#ae9005fcfd22944c5088ddda99474d502',1,'traveltime::CTTT']]],
-  ['m_5fmutex',['m_Mutex',['../classglass3_1_1util_1_1BaseClass.html#ae3628e61dcd4f9a310eeabee5824c15c',1,'glass3::util::BaseClass']]],
   ['m_5fnday',['m_nDay',['../classglass3_1_1util_1_1Date.html#a05c9fb29a67cfe60d604e3e0b8c4d8b7',1,'glass3::util::Date']]],
   ['m_5fnhour',['m_nHour',['../classglass3_1_1util_1_1Date.html#a9eba0a9082be094e12f59d72d3bfca70',1,'glass3::util::Date']]],
   ['m_5fnminute',['m_nMinute',['../classglass3_1_1util_1_1Date.html#a8e45aa3e3e5c56154b390f618a2d6937',1,'glass3::util::Date']]],

@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.4</span>
    </div>
   </td>
  </tr>
@@ -124,23 +124,29 @@ Macros</h2></td></tr>
 <tr class="separator:a6349ee9968d239aac4b51e18ae29ddaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f7a1ad442598d7b1a29efb7d2e6cd4f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Link_8h.html#a5f7a1ad442598d7b1a29efb7d2e6cd4f">LINK_TT1</a>&#160;&#160;&#160;1</td></tr>
 <tr class="separator:a5f7a1ad442598d7b1a29efb7d2e6cd4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77662f0bc4fb389f212b9d257bddae25"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Link_8h.html#a77662f0bc4fb389f212b9d257bddae25">LINK_TT2</a>&#160;&#160;&#160;2</td></tr>
+<tr class="memitem:aeaecebe7cfc7aa297a3f6bccdab9fc41"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Link_8h.html#aeaecebe7cfc7aa297a3f6bccdab9fc41">LINK_PHS1</a>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:aeaecebe7cfc7aa297a3f6bccdab9fc41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77662f0bc4fb389f212b9d257bddae25"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Link_8h.html#a77662f0bc4fb389f212b9d257bddae25">LINK_TT2</a>&#160;&#160;&#160;3</td></tr>
 <tr class="separator:a77662f0bc4fb389f212b9d257bddae25"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a907edf4a0747cac1e592a025f6e4da14"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Link_8h.html#a907edf4a0747cac1e592a025f6e4da14">LINK_DIST</a>&#160;&#160;&#160;3</td></tr>
+<tr class="memitem:af8dc7e4f6af4b5d77a2dfa3a4fcc8a11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Link_8h.html#af8dc7e4f6af4b5d77a2dfa3a4fcc8a11">LINK_PHS2</a>&#160;&#160;&#160;4</td></tr>
+<tr class="separator:af8dc7e4f6af4b5d77a2dfa3a4fcc8a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a907edf4a0747cac1e592a025f6e4da14"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Link_8h.html#a907edf4a0747cac1e592a025f6e4da14">LINK_DIST</a>&#160;&#160;&#160;5</td></tr>
 <tr class="separator:a907edf4a0747cac1e592a025f6e4da14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a851b82abb04ff778f65dcec3ae29ac87"><td class="memItemLeft" align="right" valign="top">typedef std::tuple<br class="typebreak"/>
+<tr class="memitem:a513db17b6824c1514b1a657161bd05b9"><td class="memItemLeft" align="right" valign="top">typedef std::tuple<br class="typebreak"/>
 &lt; std::weak_ptr&lt; CNode &gt;<br class="typebreak"/>
-, double, double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglasscore.html#a851b82abb04ff778f65dcec3ae29ac87">glasscore::NodeLink</a></td></tr>
-<tr class="memdesc:a851b82abb04ff778f65dcec3ae29ac87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typedef to simplify use of a site-node link. Contains a <a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> pointer to the Node that it's linked to, and then 3 doubles: Nucleation Traveltime 1 (sec), Nucleation Traveltime 2 (sec), and Distance (between Node and Site) in Deg. Uses weak_ptr to prevent a cyclical reference.  <a href="#a851b82abb04ff778f65dcec3ae29ac87">More...</a><br/></td></tr>
-<tr class="separator:a851b82abb04ff778f65dcec3ae29ac87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a379675b4b0782935fa6ee5656dab42ef"><td class="memItemLeft" align="right" valign="top">typedef std::tuple<br class="typebreak"/>
+, double, std::string, double, <br class="typebreak"/>
+std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglasscore.html#a513db17b6824c1514b1a657161bd05b9">glasscore::NodeLink</a></td></tr>
+<tr class="memdesc:a513db17b6824c1514b1a657161bd05b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typedef to simplify use of a site-node link. Contains a <a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> pointer to the Node that it's linked to, and then 3 doubles: Nucleation Traveltime 1 (sec), Nucleation Traveltime 2 (sec), and Distance (between Node and Site) in Deg. Uses weak_ptr to prevent a cyclical reference.  <a href="#a513db17b6824c1514b1a657161bd05b9">More...</a><br/></td></tr>
+<tr class="separator:a513db17b6824c1514b1a657161bd05b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68d8713df9b0d0426a10672a98020d88"><td class="memItemLeft" align="right" valign="top">typedef std::tuple<br class="typebreak"/>
 &lt; std::shared_ptr&lt; CSite &gt;<br class="typebreak"/>
-, double, double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglasscore.html#a379675b4b0782935fa6ee5656dab42ef">glasscore::SiteLink</a></td></tr>
-<tr class="memdesc:a379675b4b0782935fa6ee5656dab42ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typedef to simplify use of a node-site link. Contains a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> pointer to the Site that it's linked to, and then 3 doubles: Nucleation Traveltime 1 (sec), Nucleation Traveltime 2 (sec), and Distance (between Node and Site) in Deg.  <a href="#a379675b4b0782935fa6ee5656dab42ef">More...</a><br/></td></tr>
-<tr class="separator:a379675b4b0782935fa6ee5656dab42ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+, double, std::string, double, <br class="typebreak"/>
+std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglasscore.html#a68d8713df9b0d0426a10672a98020d88">glasscore::SiteLink</a></td></tr>
+<tr class="memdesc:a68d8713df9b0d0426a10672a98020d88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typedef to simplify use of a node-site link. Contains a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> pointer to the Site that it's linked to, and then 3 doubles: Nucleation Traveltime 1 (sec), Nucleation Traveltime 2 (sec), and Distance (between Node and Site) in Deg.  <a href="#a68d8713df9b0d0426a10672a98020d88">More...</a><br/></td></tr>
+<tr class="separator:a68d8713df9b0d0426a10672a98020d88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="a907edf4a0747cac1e592a025f6e4da14"></a>
@@ -148,7 +154,31 @@ Typedefs</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LINK_DIST&#160;&#160;&#160;3</td>
+          <td class="memname">#define LINK_DIST&#160;&#160;&#160;5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="aeaecebe7cfc7aa297a3f6bccdab9fc41"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LINK_PHS1&#160;&#160;&#160;2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="af8dc7e4f6af4b5d77a2dfa3a4fcc8a11"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LINK_PHS2&#160;&#160;&#160;4</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -184,7 +214,7 @@ Typedefs</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define LINK_TT2&#160;&#160;&#160;2</td>
+          <td class="memname">#define LINK_TT2&#160;&#160;&#160;3</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -194,7 +224,7 @@ Typedefs</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 23 2018 15:24:15 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2019 20:25:42 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

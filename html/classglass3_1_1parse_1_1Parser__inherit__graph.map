@@ -1,6 +1,6 @@
 <map id="glass3::parse::Parser" name="glass3::parse::Parser">
-<area shape="rect" id="node3" href="$classglass3_1_1parse_1_1CCParser.html" title="glass cross correlation message parser class " alt="" coords="5,507,171,613"/>
-<area shape="rect" id="node4" href="$classglass3_1_1parse_1_1GPickParser.html" title="glass global pick parser class " alt="" coords="195,507,377,613"/>
-<area shape="rect" id="node5" href="$classglass3_1_1parse_1_1JSONParser.html" title="json parser class " alt="" coords="402,507,584,613"/>
-<area shape="rect" id="node2" href="$classglass3_1_1util_1_1BaseClass.html" title="glass3::util::BaseClass class &#45; encapsulates the most basic setup and configuration logic..." alt="" coords="208,5,365,288"/>
+<area shape="rect" id="node3" href="$classglass3_1_1parse_1_1CCParser.html" title="glass cross correlation message parser class " alt="" coords="5,477,171,584"/>
+<area shape="rect" id="node4" href="$classglass3_1_1parse_1_1GPickParser.html" title="glass global pick parser class " alt="" coords="195,477,377,584"/>
+<area shape="rect" id="node5" href="$classglass3_1_1parse_1_1JSONParser.html" title="json parser class " alt="" coords="402,477,584,584"/>
+<area shape="rect" id="node2" href="$classglass3_1_1util_1_1BaseClass.html" title="glass3::util::BaseClass class &#45; encapsulates the most basic setup and configuration logic..." alt="" coords="208,5,365,259"/>
 </map>

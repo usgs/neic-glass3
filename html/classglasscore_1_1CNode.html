@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.4</span>
    </div>
   </td>
  </tr>
@@ -127,9 +127,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad9ac3426785f7cd2d9cd3b860fcb21b2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#ad9ac3426785f7cd2d9cd3b860fcb21b2">initialize</a> (std::string name, double lat, double lon, double z, double resolution, double maxDepth)</td></tr>
 <tr class="memdesc:ad9ac3426785f7cd2d9cd3b860fcb21b2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> initialization funcion.  <a href="#ad9ac3426785f7cd2d9cd3b860fcb21b2">More...</a><br/></td></tr>
 <tr class="separator:ad9ac3426785f7cd2d9cd3b860fcb21b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a9085737c75f88142ff2e6345b7fc4e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#a4a9085737c75f88142ff2e6345b7fc4e">linkSite</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; site, std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CNode.html">CNode</a> &gt; node, double distDeg, double travelTime1, double travelTime2=-1)</td></tr>
-<tr class="memdesc:a4a9085737c75f88142ff2e6345b7fc4e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> node-site and site-node linker.  <a href="#a4a9085737c75f88142ff2e6345b7fc4e">More...</a><br/></td></tr>
-<tr class="separator:a4a9085737c75f88142ff2e6345b7fc4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f1e53bc190677a52298687e8310c0e4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#a2f1e53bc190677a52298687e8310c0e4">linkSite</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; site, std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CNode.html">CNode</a> &gt; node, double distDeg, double travelTime1, std::string phase1, double travelTime2=-1, std::string phase2=&quot;&quot;)</td></tr>
+<tr class="memdesc:a2f1e53bc190677a52298687e8310c0e4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> node-site and site-node linker.  <a href="#a2f1e53bc190677a52298687e8310c0e4">More...</a><br/></td></tr>
+<tr class="separator:a2f1e53bc190677a52298687e8310c0e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b108d8354d7011e67c2d806d964914b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#a0b108d8354d7011e67c2d806d964914b">unlinkSite</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; site)</td></tr>
 <tr class="memdesc:a0b108d8354d7011e67c2d806d964914b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> node-site and site-node unlinker.  <a href="#a0b108d8354d7011e67c2d806d964914b">More...</a><br/></td></tr>
 <tr class="separator:a0b108d8354d7011e67c2d806d964914b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -709,7 +709,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a4a9085737c75f88142ff2e6345b7fc4e"></a>
+<a class="anchor" id="a2f1e53bc190677a52298687e8310c0e4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -740,8 +740,20 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>phase1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>travelTime2</em> = <code>-1</code>&#160;</td>
+          <td class="paramname"><em>travelTime2</em> = <code>-1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>phase2</em> = <code>&quot;&quot;</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -758,7 +770,9 @@ Public Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">distDeg</td><td>- A double value containing the distance in degrees between the node and the site. </td></tr>
     <tr><td class="paramname">travelTime1</td><td>- A double value containing the first travel time to use for the link </td></tr>
+    <tr><td class="paramname">phase1</td><td>- A std::string containing the first travel time phase code </td></tr>
     <tr><td class="paramname">travelTime2</td><td>- A double value containing the optional second travel time to use for the link, defaults to -1 (no travel time) </td></tr>
+    <tr><td class="paramname">phase2</td><td>- A std::string containing the second travel time phase code, defaults to "" (no travel time) </td></tr>
     <tr><td class="paramname">site</td><td>- A shared_ptr&lt;CSite&gt; to the site to link </td></tr>
     <tr><td class="paramname">node</td><td>- A shared_ptr&lt;CNode&gt; to the node to link (should be itself) </td></tr>
   </table>
@@ -912,7 +926,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 23 2018 15:24:15 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2019 20:25:42 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

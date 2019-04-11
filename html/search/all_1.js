@@ -7,7 +7,7 @@ var searchData=
   ['addhyporeference',['addHypoReference',['../classglasscore_1_1CCorrelation.html#ac2969324b5efc4710f5065d9fa7fa3df',1,'glasscore::CCorrelation::addHypoReference()'],['../classglasscore_1_1CPick.html#a459df86e0e01dfa4a8bee452ae8eeaab',1,'glasscore::CPick::addHypoReference()']]],
   ['addjob',['addJob',['../classglass3_1_1util_1_1ThreadPool.html#a43e4eb274b1c29eba735b12c791cdad2',1,'glass3::util::ThreadPool::addJob()'],['../classglasscore_1_1CWeb.html#ae2b0fa456ff242a515c7b2d5a709db62',1,'glasscore::CWeb::addJob()']]],
   ['addlistofsitesfromjson',['addListOfSitesFromJSON',['../classglasscore_1_1CSiteList.html#a50c309bb8105f15d04b21c100c2d9d82',1,'glasscore::CSiteList']]],
-  ['addnode',['addNode',['../classglasscore_1_1CSite.html#a1586237ca5885b160f708a4a8d22bb8f',1,'glasscore::CSite::addNode()'],['../classglasscore_1_1CWeb.html#aec329f117e04d1912d1bc2edb58a925e',1,'glasscore::CWeb::addNode()']]],
+  ['addnode',['addNode',['../classglasscore_1_1CSite.html#a0bdd9c20400cc8f855e5ed38a680af74',1,'glasscore::CSite::addNode()'],['../classglasscore_1_1CWeb.html#aec329f117e04d1912d1bc2edb58a925e',1,'glasscore::CWeb::addNode()']]],
   ['addphase',['addPhase',['../classtraveltime_1_1CTTT.html#a6928776db129cf44aea2d04eefa65998',1,'traveltime::CTTT']]],
   ['addpick',['addPick',['../classglasscore_1_1CPickList.html#aaa442b0950031402230133340a0d0d94',1,'glasscore::CPickList::addPick()'],['../classglasscore_1_1CSite.html#ae8d204ee46bf03c9da55b0458f0e64a4',1,'glasscore::CSite::addPick()']]],
   ['addpickreference',['addPickReference',['../classglasscore_1_1CHypo.html#a52bb4ebddee8b0f9622cf969a05d8fb8',1,'glasscore::CHypo']]],

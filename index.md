@@ -1,8 +1,6 @@
-# Welcome to the neic-glass3 Code Documentation pages
+# neic-glass3 Code Documentation pages
 
-Please note that this documentation site is **Under Construction** and not all pages have been completed yet.
-
-## Library Documentation:
+## Library Documentation
 
 * [GlassCore](https://usgs.github.io/neic-glass3/glasscore/html/)
 * [Log](https://usgs.github.io/neic-glass3/log/html/)
@@ -12,11 +10,15 @@ Please note that this documentation site is **Under Construction** and not all p
 * [Util](https://usgs.github.io/neic-glass3/util/html/)
 
 ## Application Documentation
-* [gen-traveltimes-app](https://usgs.github.io/neic-glass3/gen-travel-times-app/html/)
-* [glass-app](https://usgs.github.io/neic-glass3/glass-app/html/)
+
+* [gen-traveltimes-app](gen-travel-times-app.md)
+* [glass-app](glass-app.md)
+* [glass-broker-app](glass-broker-app.md)
 
 ## Configuration Documentation
+
 * [Glass Configuration](GlassConfiguration.md)
 
 ## Wiki
+
 * [Glass Wiki](https://github.com/usgs/neic-glass3/wiki)

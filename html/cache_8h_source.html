@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.4</span>
    </div>
   </td>
  </tr>
@@ -136,29 +136,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    std::map&lt;std::string, std::shared_ptr&lt;json::Object&gt;&gt; m_Cache;</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    std::map&lt;std::string, std::shared_ptr&lt;json::Object&gt;&gt;::iterator m_CacheDumpItr;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;};</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;}  <span class="comment">// namespace util</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;}  <span class="comment">// namespace glass3</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="preprocessor">#endif  // CACHE_H</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="preprocessor"></span></div>
-<div class="ttc" id="classglass3_1_1util_1_1Cache_html_af7eccfa6aec9132793c9c10f04086c7e"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#af7eccfa6aec9132793c9c10f04086c7e">glass3::util::Cache::getFromCache</a></div><div class="ttdeci">virtual std::shared_ptr&lt; const json::Object &gt; getFromCache(std::string id)</div><div class="ttdoc">get data from Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:124</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Cache_html_ab58fd31810e2cb317cf0dc8934696708"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#ab58fd31810e2cb317cf0dc8934696708">glass3::util::Cache::removeFromCache</a></div><div class="ttdeci">virtual bool removeFromCache(std::string id)</div><div class="ttdoc">remove data from Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:76</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Cache_html_af6e4cddb965315a592b0ec002f115722"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#af6e4cddb965315a592b0ec002f115722">glass3::util::Cache::addToCache</a></div><div class="ttdeci">virtual bool addToCache(std::shared_ptr&lt; json::Object &gt; data, std::string id)</div><div class="ttdoc">add data to Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:42</div></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    std::mutex &amp; getMutex();</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    std::mutex m_Mutex;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;};</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;}  <span class="comment">// namespace util</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="preprocessor">#endif  // CACHE_H</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="preprocessor"></span></div>
+<div class="ttc" id="classglass3_1_1util_1_1Cache_html_af7eccfa6aec9132793c9c10f04086c7e"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#af7eccfa6aec9132793c9c10f04086c7e">glass3::util::Cache::getFromCache</a></div><div class="ttdeci">virtual std::shared_ptr&lt; const json::Object &gt; getFromCache(std::string id)</div><div class="ttdoc">get data from Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:123</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Cache_html_ab58fd31810e2cb317cf0dc8934696708"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#ab58fd31810e2cb317cf0dc8934696708">glass3::util::Cache::removeFromCache</a></div><div class="ttdeci">virtual bool removeFromCache(std::string id)</div><div class="ttdoc">remove data from Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:75</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Cache_html_af6e4cddb965315a592b0ec002f115722"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#af6e4cddb965315a592b0ec002f115722">glass3::util::Cache::addToCache</a></div><div class="ttdeci">virtual bool addToCache(std::shared_ptr&lt; json::Object &gt; data, std::string id)</div><div class="ttdoc">add data to Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:41</div></div>
 <div class="ttc" id="baseclass_8h_html"><div class="ttname"><a href="baseclass_8h.html">baseclass.h</a></div></div>
 <div class="ttc" id="classglass3_1_1util_1_1BaseClass_html"><div class="ttname"><a href="classglass3_1_1util_1_1BaseClass.html">glass3::util::BaseClass</a></div><div class="ttdoc">glass3::util::BaseClass class - encapsulates the most basic setup and configuration logic...</div><div class="ttdef"><b>Definition:</b> baseclass.h:30</div></div>
 <div class="ttc" id="classglass3_1_1util_1_1Cache_html_a9f9fa84ded81ec2cbfd042c2218c96a2"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#a9f9fa84ded81ec2cbfd042c2218c96a2">glass3::util::Cache::~Cache</a></div><div class="ttdeci">virtual ~Cache()</div><div class="ttdoc">Cache destructor. </div><div class="ttdef"><b>Definition:</b> cache.cpp:22</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Cache_html_ae4b4d59d612cd142a3b03fdf5650f8be"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#ae4b4d59d612cd142a3b03fdf5650f8be">glass3::util::Cache::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">Cache clear function. </div><div class="ttdef"><b>Definition:</b> cache.cpp:27</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Cache_html_ae4f63b5859bccf3140261cfe23e225de"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#ae4f63b5859bccf3140261cfe23e225de">glass3::util::Cache::getNextFromCache</a></div><div class="ttdeci">virtual std::shared_ptr&lt; const json::Object &gt; getNextFromCache(bool restart=false)</div><div class="ttdoc">get next data from Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:146</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Cache_html_a58fabc765c2b839e330b022b5b1ab718"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#a58fabc765c2b839e330b022b5b1ab718">glass3::util::Cache::isInCache</a></div><div class="ttdeci">virtual bool isInCache(std::string id)</div><div class="ttdoc">check for data in Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:104</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Cache_html_a323f078062ab57f213d57bd575af7fbb"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#a323f078062ab57f213d57bd575af7fbb">glass3::util::Cache::size</a></div><div class="ttdeci">int size()</div><div class="ttdoc">Retrieves the current size of the Cache. </div><div class="ttdef"><b>Definition:</b> cache.cpp:181</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Cache_html_ae4b4d59d612cd142a3b03fdf5650f8be"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#ae4b4d59d612cd142a3b03fdf5650f8be">glass3::util::Cache::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">Cache clear function. </div><div class="ttdef"><b>Definition:</b> cache.cpp:26</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Cache_html_ae4f63b5859bccf3140261cfe23e225de"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#ae4f63b5859bccf3140261cfe23e225de">glass3::util::Cache::getNextFromCache</a></div><div class="ttdeci">virtual std::shared_ptr&lt; const json::Object &gt; getNextFromCache(bool restart=false)</div><div class="ttdoc">get next data from Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:145</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Cache_html_a58fabc765c2b839e330b022b5b1ab718"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#a58fabc765c2b839e330b022b5b1ab718">glass3::util::Cache::isInCache</a></div><div class="ttdeci">virtual bool isInCache(std::string id)</div><div class="ttdoc">check for data in Cache </div><div class="ttdef"><b>Definition:</b> cache.cpp:103</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Cache_html_a323f078062ab57f213d57bd575af7fbb"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#a323f078062ab57f213d57bd575af7fbb">glass3::util::Cache::size</a></div><div class="ttdeci">int size()</div><div class="ttdoc">Retrieves the current size of the Cache. </div><div class="ttdef"><b>Definition:</b> cache.cpp:180</div></div>
 <div class="ttc" id="logger_8h_html"><div class="ttname"><a href="logger_8h.html">logger.h</a></div><div class="ttdoc">logger.h contains the interface to the neic-glass3 logging library </div></div>
 <div class="ttc" id="classglass3_1_1util_1_1Cache_html_a553eb53eaa30ca8c1f4d7e74ba45d4ab"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#a553eb53eaa30ca8c1f4d7e74ba45d4ab">glass3::util::Cache::Cache</a></div><div class="ttdeci">Cache()</div><div class="ttdoc">Cache constructor. </div><div class="ttdef"><b>Definition:</b> cache.cpp:17</div></div>
 <div class="ttc" id="classglass3_1_1util_1_1Cache_html"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html">glass3::util::Cache</a></div><div class="ttdoc">glass3::util::Cache class - a thread safe in-memory cache </div><div class="ttdef"><b>Definition:</b> cache.h:30</div></div>
-<div class="ttc" id="classglass3_1_1util_1_1Cache_html_a21f399dd7bb6479a6c3d74f6a6cf9996"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#a21f399dd7bb6479a6c3d74f6a6cf9996">glass3::util::Cache::isEmpty</a></div><div class="ttdeci">virtual bool isEmpty()</div><div class="ttdoc">check if Cache empty </div><div class="ttdef"><b>Definition:</b> cache.cpp:173</div></div>
+<div class="ttc" id="classglass3_1_1util_1_1Cache_html_a21f399dd7bb6479a6c3d74f6a6cf9996"><div class="ttname"><a href="classglass3_1_1util_1_1Cache.html#a21f399dd7bb6479a6c3d74f6a6cf9996">glass3::util::Cache::isEmpty</a></div><div class="ttdeci">virtual bool isEmpty()</div><div class="ttdoc">check if Cache empty </div><div class="ttdef"><b>Definition:</b> cache.cpp:172</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 23 2018 15:24:15 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2019 20:25:42 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

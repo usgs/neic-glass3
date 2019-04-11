@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.4</span>
    </div>
   </td>
  </tr>
@@ -140,25 +140,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    std::string m_sOutputFormat;</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    std::atomic&lt;bool&gt; m_bTimestampFileName;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;};</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}  <span class="comment">// namespace glass3</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="preprocessor">#endif  // FILEOUTPUT_H</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    std::mutex &amp; getMutex();</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    std::mutex m_Mutex;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;};</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;}  <span class="comment">// namespace glass3</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="preprocessor">#endif  // FILEOUTPUT_H</span></div>
 <div class="ttc" id="output_8h_html"><div class="ttname"><a href="output_8h.html">output.h</a></div></div>
-<div class="ttc" id="classglass3_1_1fileOutput_html_aa28fbb4e7c861d6e4aaf2dca984fe077"><div class="ttname"><a href="classglass3_1_1fileOutput.html#aa28fbb4e7c861d6e4aaf2dca984fe077">glass3::fileOutput::getOutputFormat</a></div><div class="ttdeci">const std::string getOutputFormat()</div><div class="ttdoc">Function to retrieve the output format. </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:281</div></div>
+<div class="ttc" id="classglass3_1_1fileOutput_html_aa28fbb4e7c861d6e4aaf2dca984fe077"><div class="ttname"><a href="classglass3_1_1fileOutput.html#aa28fbb4e7c861d6e4aaf2dca984fe077">glass3::fileOutput::getOutputFormat</a></div><div class="ttdeci">const std::string getOutputFormat()</div><div class="ttdoc">Function to retrieve the output format. </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:276</div></div>
 <div class="ttc" id="classglass3_1_1fileOutput_html"><div class="ttname"><a href="classglass3_1_1fileOutput.html">glass3::fileOutput</a></div><div class="ttdoc">glass fileOutput class </div><div class="ttdef"><b>Definition:</b> fileOutput.h:32</div></div>
-<div class="ttc" id="classglass3_1_1fileOutput_html_aa1cd4b5f6fd1d37ba29c01c14e7789d4"><div class="ttname"><a href="classglass3_1_1fileOutput.html#aa1cd4b5f6fd1d37ba29c01c14e7789d4">glass3::fileOutput::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">fileOutput clear function </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:140</div></div>
-<div class="ttc" id="classglass3_1_1fileOutput_html_a3b7c15915662e6157ddbd1bdf0b6aae5"><div class="ttname"><a href="classglass3_1_1fileOutput.html#a3b7c15915662e6157ddbd1bdf0b6aae5">glass3::fileOutput::setup</a></div><div class="ttdeci">bool setup(std::shared_ptr&lt; const json::Object &gt; config) override</div><div class="ttdoc">fileOutput configuration function </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:53</div></div>
-<div class="ttc" id="classglass3_1_1fileOutput_html_a85e26ba65976cad253e6cbb5d18e7339"><div class="ttname"><a href="classglass3_1_1fileOutput.html#a85e26ba65976cad253e6cbb5d18e7339">glass3::fileOutput::sendOutput</a></div><div class="ttdeci">void sendOutput(const std::string &amp;type, const std::string &amp;id, const std::string &amp;message) override</div><div class="ttdoc">fileOutput file writing function </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:153</div></div>
+<div class="ttc" id="classglass3_1_1fileOutput_html_aa1cd4b5f6fd1d37ba29c01c14e7789d4"><div class="ttname"><a href="classglass3_1_1fileOutput.html#aa1cd4b5f6fd1d37ba29c01c14e7789d4">glass3::fileOutput::clear</a></div><div class="ttdeci">void clear() override</div><div class="ttdoc">fileOutput clear function </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:135</div></div>
+<div class="ttc" id="classglass3_1_1fileOutput_html_a3b7c15915662e6157ddbd1bdf0b6aae5"><div class="ttname"><a href="classglass3_1_1fileOutput.html#a3b7c15915662e6157ddbd1bdf0b6aae5">glass3::fileOutput::setup</a></div><div class="ttdeci">bool setup(std::shared_ptr&lt; const json::Object &gt; config) override</div><div class="ttdoc">fileOutput configuration function </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:48</div></div>
+<div class="ttc" id="classglass3_1_1fileOutput_html_a85e26ba65976cad253e6cbb5d18e7339"><div class="ttname"><a href="classglass3_1_1fileOutput.html#a85e26ba65976cad253e6cbb5d18e7339">glass3::fileOutput::sendOutput</a></div><div class="ttdeci">void sendOutput(const std::string &amp;type, const std::string &amp;id, const std::string &amp;message) override</div><div class="ttdoc">fileOutput file writing function </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:148</div></div>
 <div class="ttc" id="classglass3_1_1fileOutput_html_a0895bae6ce28e2d91df2f9db07e4517d"><div class="ttname"><a href="classglass3_1_1fileOutput.html#a0895bae6ce28e2d91df2f9db07e4517d">glass3::fileOutput::~fileOutput</a></div><div class="ttdeci">~fileOutput()</div><div class="ttdoc">fileOutput destructor </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:44</div></div>
-<div class="ttc" id="classglass3_1_1fileOutput_html_a58bed7fb0aefac7fc89d38e3138e69d9"><div class="ttname"><a href="classglass3_1_1fileOutput.html#a58bed7fb0aefac7fc89d38e3138e69d9">glass3::fileOutput::getOutputDir</a></div><div class="ttdeci">const std::string getOutputDir()</div><div class="ttdoc">Function to retrieve the output directory. </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:275</div></div>
+<div class="ttc" id="classglass3_1_1fileOutput_html_a58bed7fb0aefac7fc89d38e3138e69d9"><div class="ttname"><a href="classglass3_1_1fileOutput.html#a58bed7fb0aefac7fc89d38e3138e69d9">glass3::fileOutput::getOutputDir</a></div><div class="ttdeci">const std::string getOutputDir()</div><div class="ttdoc">Function to retrieve the output directory. </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:270</div></div>
 <div class="ttc" id="classglass3_1_1output_1_1output_html"><div class="ttname"><a href="classglass3_1_1output_1_1output.html">glass3::output::output</a></div><div class="ttdoc">glass output class </div><div class="ttdef"><b>Definition:</b> output.h:74</div></div>
 <div class="ttc" id="classglass3_1_1fileOutput_html_a012d1094c69d1ad130cc587b4df2cafa"><div class="ttname"><a href="classglass3_1_1fileOutput.html#a012d1094c69d1ad130cc587b4df2cafa">glass3::fileOutput::fileOutput</a></div><div class="ttdeci">fileOutput()</div><div class="ttdoc">fileOutput constructor </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:18</div></div>
-<div class="ttc" id="classglass3_1_1fileOutput_html_aeea0efd23be2d1f3788bf5c8b9b28697"><div class="ttname"><a href="classglass3_1_1fileOutput.html#aeea0efd23be2d1f3788bf5c8b9b28697">glass3::fileOutput::getTimestampFileName</a></div><div class="ttdeci">bool getTimestampFileName()</div><div class="ttdoc">Get whether to timestamp output file names. </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:287</div></div>
+<div class="ttc" id="classglass3_1_1fileOutput_html_aeea0efd23be2d1f3788bf5c8b9b28697"><div class="ttname"><a href="classglass3_1_1fileOutput.html#aeea0efd23be2d1f3788bf5c8b9b28697">glass3::fileOutput::getTimestampFileName</a></div><div class="ttdeci">bool getTimestampFileName()</div><div class="ttdoc">Get whether to timestamp output file names. </div><div class="ttdef"><b>Definition:</b> fileOutput.cpp:282</div></div>
 <div class="ttc" id="threadbaseclass_8h_html"><div class="ttname"><a href="threadbaseclass_8h.html">threadbaseclass.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 23 2018 15:24:15 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2019 20:25:42 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

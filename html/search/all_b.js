@@ -22,6 +22,7 @@ var searchData=
   ['k_5fdminimumdepthchangekmthreshold',['k_dMinimumDepthChangeKMThreshold',['../classglasscore_1_1CHypo.html#a47c80206135c13cacb61a0a498733d2a',1,'glasscore::CHypo']]],
   ['k_5fdminimumdepthchangeratiothreshold',['k_dMinimumDepthChangeRatioThreshold',['../classglasscore_1_1CHypo.html#a8e3055e524ac07eaf5f92596a8de793c',1,'glasscore::CHypo']]],
   ['k_5fdnucleationsecondspersigma',['k_dNucleationSecondsPerSigma',['../classglasscore_1_1CGlass.html#a224c2461ab15d2de220c17ac8f5eea8a',1,'glasscore::CGlass']]],
+  ['k_5fdphaseinvalid',['k_dPhaseInvalid',['../classtraveltime_1_1CTravelTime.html#a28f8a2f6c6179d612a8a501e860dd721',1,'traveltime::CTravelTime']]],
   ['k_5fdresidualsigmalengthseconds',['k_dResidualSigmaLengthSeconds',['../classglasscore_1_1CHypo.html#a660971a7a86d01819fe193930902588e',1,'glasscore::CHypo']]],
   ['k_5fdsearchradiusfactor',['k_dSearchRadiusFactor',['../classglasscore_1_1CHypo.html#ae0de3443ecb1e6fe7ad70ddb752d41e8',1,'glasscore::CHypo']]],
   ['k_5fdsearchradiusresolutionfactor',['k_dSearchRadiusResolutionFactor',['../classglasscore_1_1CHypo.html#a891a1c76412c6b1a9a0a5d1e6719db5a',1,'glasscore::CHypo']]],

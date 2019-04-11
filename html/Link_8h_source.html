@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.4</span>
    </div>
   </td>
  </tr>
@@ -108,22 +108,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">class </span>CSite;</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">// defines indexes for links</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="Link_8h.html#a6349ee9968d239aac4b51e18ae29ddaf">   20</a></span>&#160;<span class="preprocessor">#define LINK_PTR 0  // Node or site pointer</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="Link_8h.html#a5f7a1ad442598d7b1a29efb7d2e6cd4f">   21</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LINK_TT1 1  // First travel time in seconds</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="Link_8h.html#a77662f0bc4fb389f212b9d257bddae25">   22</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LINK_TT2 2  // Second travel time in seconds</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="Link_8h.html#a907edf4a0747cac1e592a025f6e4da14">   23</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LINK_DIST 3  // Distance in degrees between Node and Site</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="namespaceglasscore.html#a851b82abb04ff778f65dcec3ae29ac87">   32</a></span>&#160;<span class="keyword">typedef</span> std::tuple&lt;std::weak_ptr&lt;CNode&gt;, double, double, <span class="keywordtype">double</span>&gt; <a class="code" href="namespaceglasscore.html#a851b82abb04ff778f65dcec3ae29ac87">NodeLink</a>;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="namespaceglasscore.html#a379675b4b0782935fa6ee5656dab42ef">   40</a></span>&#160;<span class="keyword">typedef</span> std::tuple&lt;std::shared_ptr&lt;CSite&gt;, double, double, <span class="keywordtype">double</span>&gt; <a class="code" href="namespaceglasscore.html#a379675b4b0782935fa6ee5656dab42ef">SiteLink</a>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#endif  // LINK_H</span></div>
-<div class="ttc" id="namespaceglasscore_html_a851b82abb04ff778f65dcec3ae29ac87"><div class="ttname"><a href="namespaceglasscore.html#a851b82abb04ff778f65dcec3ae29ac87">glasscore::NodeLink</a></div><div class="ttdeci">std::tuple&lt; std::weak_ptr&lt; CNode &gt;, double, double, double &gt; NodeLink</div><div class="ttdoc">Typedef to simplify use of a site-node link. Contains a CNode pointer to the Node that it&#39;s linked to...</div><div class="ttdef"><b>Definition:</b> Link.h:32</div></div>
-<div class="ttc" id="namespaceglasscore_html_a379675b4b0782935fa6ee5656dab42ef"><div class="ttname"><a href="namespaceglasscore.html#a379675b4b0782935fa6ee5656dab42ef">glasscore::SiteLink</a></div><div class="ttdeci">std::tuple&lt; std::shared_ptr&lt; CSite &gt;, double, double, double &gt; SiteLink</div><div class="ttdoc">Typedef to simplify use of a node-site link. Contains a CSite pointer to the Site that it&#39;s linked to...</div><div class="ttdef"><b>Definition:</b> Link.h:40</div></div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="line" href="Link_8h.html#a6349ee9968d239aac4b51e18ae29ddaf">   20</a></span>&#160;<span class="preprocessor">#define LINK_PTR 0   // Node or site pointer</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno"><a class="line" href="Link_8h.html#a5f7a1ad442598d7b1a29efb7d2e6cd4f">   21</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LINK_TT1 1   // First travel time in seconds</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="Link_8h.html#aeaecebe7cfc7aa297a3f6bccdab9fc41">   22</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LINK_PHS1 2  // First travel time phase code</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="Link_8h.html#a77662f0bc4fb389f212b9d257bddae25">   23</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LINK_TT2 3   // Second travel time in seconds</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="Link_8h.html#af8dc7e4f6af4b5d77a2dfa3a4fcc8a11">   24</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LINK_PHS2 4  // Second travel time phase code</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="Link_8h.html#a907edf4a0747cac1e592a025f6e4da14">   25</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define LINK_DIST 5  // Distance in degrees between Node and Site</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="namespaceglasscore.html#a513db17b6824c1514b1a657161bd05b9">   34</a></span>&#160;<span class="keyword">typedef</span> std::tuple&lt;std::weak_ptr&lt;CNode&gt;, double, std::string, double, std::string, <span class="keywordtype">double</span>&gt; <a class="code" href="namespaceglasscore.html#a513db17b6824c1514b1a657161bd05b9">NodeLink</a>; <span class="comment">// NOLINT</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="namespaceglasscore.html#a68d8713df9b0d0426a10672a98020d88">   42</a></span>&#160;<span class="keyword">typedef</span> std::tuple&lt;std::shared_ptr&lt;CSite&gt;, double, std::string, double, std::string, <span class="keywordtype">double</span>&gt; <a class="code" href="namespaceglasscore.html#a68d8713df9b0d0426a10672a98020d88">SiteLink</a>; <span class="comment">// NOLINT</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}  <span class="comment">// namespace glasscore</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#endif  // LINK_H</span></div>
+<div class="ttc" id="namespaceglasscore_html_a513db17b6824c1514b1a657161bd05b9"><div class="ttname"><a href="namespaceglasscore.html#a513db17b6824c1514b1a657161bd05b9">glasscore::NodeLink</a></div><div class="ttdeci">std::tuple&lt; std::weak_ptr&lt; CNode &gt;, double, std::string, double, std::string, double &gt; NodeLink</div><div class="ttdoc">Typedef to simplify use of a site-node link. Contains a CNode pointer to the Node that it&#39;s linked to...</div><div class="ttdef"><b>Definition:</b> Link.h:34</div></div>
+<div class="ttc" id="namespaceglasscore_html_a68d8713df9b0d0426a10672a98020d88"><div class="ttname"><a href="namespaceglasscore.html#a68d8713df9b0d0426a10672a98020d88">glasscore::SiteLink</a></div><div class="ttdeci">std::tuple&lt; std::shared_ptr&lt; CSite &gt;, double, std::string, double, std::string, double &gt; SiteLink</div><div class="ttdoc">Typedef to simplify use of a node-site link. Contains a CSite pointer to the Site that it&#39;s linked to...</div><div class="ttdef"><b>Definition:</b> Link.h:42</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 23 2018 15:24:15 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2019 20:25:42 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

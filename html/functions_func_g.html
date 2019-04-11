@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.4</span>
    </div>
   </td>
  </tr>
@@ -202,6 +202,36 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>getBestSignificance()
 : <a class="el" href="classglasscore_1_1CNode.html#a1039e19a55e11c9d684f3baa20507af8">glasscore::CNode</a>
+</li>
+<li>getClassifiedAzimuth()
+: <a class="el" href="classglasscore_1_1CPick.html#aff856388f1ae104346e5e37db9d34556">glasscore::CPick</a>
+</li>
+<li>getClassifiedAzimuthProbability()
+: <a class="el" href="classglasscore_1_1CPick.html#a496ed5e41f9aeaa21e957c553f717329">glasscore::CPick</a>
+</li>
+<li>getClassifiedDepth()
+: <a class="el" href="classglasscore_1_1CPick.html#a3a380494f2cf0337aaddd499ae236603">glasscore::CPick</a>
+</li>
+<li>getClassifiedDepthProbability()
+: <a class="el" href="classglasscore_1_1CPick.html#a250b742019dffcb244779354f85a89a0">glasscore::CPick</a>
+</li>
+<li>getClassifiedDistance()
+: <a class="el" href="classglasscore_1_1CPick.html#a6b3170b102ea5dbdb877255e44dbbbb6">glasscore::CPick</a>
+</li>
+<li>getClassifiedDistanceProbability()
+: <a class="el" href="classglasscore_1_1CPick.html#aa629eca375070b179f5561051648d7d7">glasscore::CPick</a>
+</li>
+<li>getClassifiedMagnitude()
+: <a class="el" href="classglasscore_1_1CPick.html#a4eae1a386296afa34be7b791d15075a7">glasscore::CPick</a>
+</li>
+<li>getClassifiedMagnitudeProbability()
+: <a class="el" href="classglasscore_1_1CPick.html#a67828d5ef386faf978f97068040482e6">glasscore::CPick</a>
+</li>
+<li>getClassifiedPhase()
+: <a class="el" href="classglasscore_1_1CPick.html#a75cc93a28d4fe72f01d8ad124789c028">glasscore::CPick</a>
+</li>
+<li>getClassifiedPhaseProbability()
+: <a class="el" href="classglasscore_1_1CPick.html#a916d39babbca895a9bb0d5c825aa414d">glasscore::CPick</a>
 </li>
 <li>getComponent()
 : <a class="el" href="classglasscore_1_1CSite.html#ab0774db9031a5d1ef474cce9ae09c3d2">glasscore::CSite</a>
@@ -471,9 +501,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>getMinimizeTTLocator()
 : <a class="el" href="classglasscore_1_1CGlass.html#a6bf9b4cd68f65e334aba43927d729888">glasscore::CGlass</a>
 </li>
-<li>getMutex()
-: <a class="el" href="classglass3_1_1util_1_1BaseClass.html#a63fc51c9c39b960b5037513f83fe42a2">glass3::util::BaseClass</a>
-</li>
 <li>getName()
 : <a class="el" href="classglasscore_1_1CNode.html#af17386ce370f6e51738f597c064deb11">glasscore::CNode</a>
 , <a class="el" href="classglasscore_1_1CWeb.html#a79fb88c2108bba76004aa2d9163f79c0">glasscore::CWeb</a>
@@ -564,6 +591,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>getPickMutex()
 : <a class="el" href="classglasscore_1_1CSite.html#a1a5f2dd70da9b09af3d1e74e04d497bb">glasscore::CSite</a>
 </li>
+<li>getPickNoiseClassificationThreshold()
+: <a class="el" href="classglasscore_1_1CGlass.html#a45f4f6eaa135330fd1ff801bd8cd85e2">glasscore::CGlass</a>
+</li>
+<li>getPickPhaseClassificationThreshold()
+: <a class="el" href="classglasscore_1_1CGlass.html#a97d62caa673600cc61ed9158af50581a">glasscore::CGlass</a>
+</li>
 <li>getPicks()
 : <a class="el" href="classglasscore_1_1CPickList.html#a70e94acc5e2ed9eb664e2c7bcd17a601">glasscore::CPickList</a>
 , <a class="el" href="classglasscore_1_1CSite.html#a33a720577d46b5965e4e443c2d730268">glasscore::CSite</a>
@@ -588,6 +621,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>getQuality()
 : <a class="el" href="classglasscore_1_1CSite.html#a6635b45a6832a86252ec8cdd6ceaf77a">glasscore::CSite</a>
+</li>
+<li>getRawElevation()
+: <a class="el" href="classglasscore_1_1CSite.html#a786c8cd2d6f4cd03763349a652c19796">glasscore::CSite</a>
+</li>
+<li>getRawLatitude()
+: <a class="el" href="classglasscore_1_1CSite.html#aa485fa59b75bdd069e2e723bf2a81fba">glasscore::CSite</a>
+</li>
+<li>getRawLongitude()
+: <a class="el" href="classglasscore_1_1CSite.html#af37ad1293cd871ea237324925d583fd3">glasscore::CSite</a>
 </li>
 <li>getRelativeObservabilityOfSeismicEventsAtLocation()
 : <a class="el" href="classtraveltime_1_1CZoneStats.html#a260ac9399ee5b71520bc4baf818cb583">traveltime::CZoneStats</a>
@@ -763,7 +805,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 23 2018 15:24:16 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2019 20:25:43 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

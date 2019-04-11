@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.4</span>
    </div>
   </td>
  </tr>
@@ -149,9 +149,9 @@ Public Member Functions</h2></td></tr>
 &lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a33a720577d46b5965e4e443c2d730268">getPicks</a> (double t1, double t2)</td></tr>
 <tr class="memdesc:a33a720577d46b5965e4e443c2d730268"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a vector of picks that fall within a time window.  <a href="#a33a720577d46b5965e4e443c2d730268">More...</a><br/></td></tr>
 <tr class="separator:a33a720577d46b5965e4e443c2d730268"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1586237ca5885b160f708a4a8d22bb8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a1586237ca5885b160f708a4a8d22bb8f">addNode</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CNode.html">CNode</a> &gt; node, double distDeg, double travelTime1, double travelTime2=-1)</td></tr>
-<tr class="memdesc:a1586237ca5885b160f708a4a8d22bb8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add node to this site This function adds the given pick to the list of nodes serviced by this site.  <a href="#a1586237ca5885b160f708a4a8d22bb8f">More...</a><br/></td></tr>
-<tr class="separator:a1586237ca5885b160f708a4a8d22bb8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bdd9c20400cc8f855e5ed38a680af74"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a0bdd9c20400cc8f855e5ed38a680af74">addNode</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CNode.html">CNode</a> &gt; node, double distDeg, double travelTime1, std::string phase1, double travelTime2=-1, std::string phase2=&quot;&quot;)</td></tr>
+<tr class="memdesc:a0bdd9c20400cc8f855e5ed38a680af74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add node to this site This function adds the given pick to the list of nodes serviced by this site.  <a href="#a0bdd9c20400cc8f855e5ed38a680af74">More...</a><br/></td></tr>
+<tr class="separator:a0bdd9c20400cc8f855e5ed38a680af74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85220933cc781b562b2219f142d8cae1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a85220933cc781b562b2219f142d8cae1">removeNode</a> (std::string nodeID)</td></tr>
 <tr class="memdesc:a85220933cc781b562b2219f142d8cae1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove pick from this site This function removes the given node from the list of nodes linked to this.  <a href="#a85220933cc781b562b2219f142d8cae1">More...</a><br/></td></tr>
 <tr class="separator:a85220933cc781b562b2219f142d8cae1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -189,6 +189,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad6c593847dce2fea6e652cab1bad520a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#ad6c593847dce2fea6e652cab1bad520a">setQuality</a> (double qual)</td></tr>
 <tr class="memdesc:ad6c593847dce2fea6e652cab1bad520a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the station quality metric.  <a href="#ad6c593847dce2fea6e652cab1bad520a">More...</a><br/></td></tr>
 <tr class="separator:ad6c593847dce2fea6e652cab1bad520a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa485fa59b75bdd069e2e723bf2a81fba"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#aa485fa59b75bdd069e2e723bf2a81fba">getRawLatitude</a> () const </td></tr>
+<tr class="memdesc:aa485fa59b75bdd069e2e723bf2a81fba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the station raw latitude.  <a href="#aa485fa59b75bdd069e2e723bf2a81fba">More...</a><br/></td></tr>
+<tr class="separator:aa485fa59b75bdd069e2e723bf2a81fba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af37ad1293cd871ea237324925d583fd3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#af37ad1293cd871ea237324925d583fd3">getRawLongitude</a> () const </td></tr>
+<tr class="memdesc:af37ad1293cd871ea237324925d583fd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the station raw longitude.  <a href="#af37ad1293cd871ea237324925d583fd3">More...</a><br/></td></tr>
+<tr class="separator:af37ad1293cd871ea237324925d583fd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a786c8cd2d6f4cd03763349a652c19796"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a786c8cd2d6f4cd03763349a652c19796">getRawElevation</a> () const </td></tr>
+<tr class="memdesc:a786c8cd2d6f4cd03763349a652c19796"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the station raw elevation.  <a href="#a786c8cd2d6f4cd03763349a652c19796">More...</a><br/></td></tr>
+<tr class="separator:a786c8cd2d6f4cd03763349a652c19796"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa517495ce12193ea85dc9bb3cfe3366b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglass3_1_1util_1_1Geo.html">glass3::util::Geo</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#aa517495ce12193ea85dc9bb3cfe3366b">getGeo</a> ()</td></tr>
 <tr class="memdesc:aa517495ce12193ea85dc9bb3cfe3366b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the combined site location (latitude, longitude, elevation) as a CGeo object.  <a href="#aa517495ce12193ea85dc9bb3cfe3366b">More...</a><br/></td></tr>
 <tr class="separator:aa517495ce12193ea85dc9bb3cfe3366b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -414,7 +423,7 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a1586237ca5885b160f708a4a8d22bb8f"></a>
+<a class="anchor" id="a0bdd9c20400cc8f855e5ed38a680af74"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -439,8 +448,20 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>phase1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>travelTime2</em> = <code>-1</code>&#160;</td>
+          <td class="paramname"><em>travelTime2</em> = <code>-1</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>phase2</em> = <code>&quot;&quot;</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -456,7 +477,9 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">node</td><td>- A shared_ptr to a <a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> object containing the node to add </td></tr>
     <tr><td class="paramname">distDeg</td><td>- A double value containing the distance between the node and this site in degrees </td></tr>
     <tr><td class="paramname">travelTime1</td><td>- A double value containing the first travel time to use </td></tr>
-    <tr><td class="paramname">travelTime2</td><td>- A double value containing the optional second travel time to use for the link, defaults to -1 (no travel time) </td></tr>
+    <tr><td class="paramname">phase1</td><td>- A std::string containing the first travel time phase code </td></tr>
+    <tr><td class="paramname">travelTime2</td><td>- A double value containing the optional second travel </td></tr>
+    <tr><td class="paramname">phase2</td><td>- A std::string containing the second travel time phase code, defaults to "" (no travel time) time to use for the link, defaults to -1 (no travel time) </td></tr>
   </table>
   </dd>
 </dl>
@@ -849,6 +872,60 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a786c8cd2d6f4cd03763349a652c19796"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CSite::getRawElevation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the station raw elevation. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the raw (original) elevation for the station </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa485fa59b75bdd069e2e723bf2a81fba"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CSite::getRawLatitude </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the station raw latitude. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the raw (original) latitude for the station </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af37ad1293cd871ea237324925d583fd3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CSite::getRawLongitude </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the station raw longitude. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the raw (original) longitude for the station </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="abbd8e5eab4a83a5893603a12552cb9a4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1207,9 +1284,9 @@ Public Member Functions</h2></td></tr>
 <p>Set the site's location This function sets the geographic location of the site to the provided latitude, longitude, and depth. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">lat</td><td>- A double value containing the latitude to use. </td></tr>
-    <tr><td class="paramname">lon</td><td>- A double value containing the longitude to use. </td></tr>
-    <tr><td class="paramname">z</td><td>- A double value containing the depth to use. </td></tr>
+    <tr><td class="paramname">lat</td><td>- A double value containing the latitude in degrees to use. </td></tr>
+    <tr><td class="paramname">lon</td><td>- A double value containing the longitude in degrees to use. </td></tr>
+    <tr><td class="paramname">z</td><td>- A double value containing the surface depth in km to use. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1368,7 +1445,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Oct 23 2018 15:24:15 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Apr 11 2019 20:25:42 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
