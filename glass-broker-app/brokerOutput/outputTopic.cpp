@@ -11,8 +11,10 @@ namespace glass3 {
 // ---------------------------------------------------------outputTopic
 outputTopic::outputTopic(hazdevbroker::Producer * producer) {
 	m_OutputTopic = NULL;
+	m_OutputProducer = NULL;
 
 	clear();
+	
 	m_OutputProducer = producer;
 }
 
