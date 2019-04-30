@@ -1194,7 +1194,7 @@ class CHypo {
 	/**
 	 * \brief The factor for dividing when computing the location search radius
 	 */
-	static constexpr double k_dSearchRadiusFactor = 2.0;
+	static constexpr double k_dSearchRadiusFactor = 0.5;
 
  private:
 	/**
