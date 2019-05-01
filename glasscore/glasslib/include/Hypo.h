@@ -1102,7 +1102,7 @@ class CHypo {
 	/**
 	 * \brief The initial step reduction factor for anneal
 	 */
-	static constexpr double k_dInitialAnnealStepReducationFactor = 2.0;
+	static constexpr double k_dInitialAnnealStepReducationFactor = .5;
 
 	/**
 	 * \brief The final step reduction factor for anneal
@@ -1177,13 +1177,13 @@ class CHypo {
 	/**
 	 * \brief The large number of location iterations to perform for a hypo
 	 */
-	static const int k_iLocationNumIterationsLarge = 5000;
+	static const int k_iLocationNumIterationsLarge = 10000;
 
 	/**
 	 * \brief The factor for dividing the web resolution when computing the
 	 * location search radius
 	 */
-	static constexpr double k_dSearchRadiusResolutionFactor = 4.0;
+	static constexpr double k_dSearchRadiusResolutionFactor = 1.0;
 
 	/**
 	 * \brief The factor for multiplying the taper when computing the location
@@ -1194,7 +1194,7 @@ class CHypo {
 	/**
 	 * \brief The factor for dividing when computing the location search radius
 	 */
-	static constexpr double k_dSearchRadiusFactor = 2.0;
+	static constexpr double k_dSearchRadiusFactor = 0.5;
 
  private:
 	/**

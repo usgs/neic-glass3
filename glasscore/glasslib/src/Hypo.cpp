@@ -694,13 +694,7 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 
 		// is this stacked bayesian value (calculateValue) better than the
 		// previous best  (valBest)
-		if (bayes > valBest
-				|| (bayes > m_dNucleationStackThreshold
-						&& (valBest - bayes)
-								< (pow(glass3::util::GlassMath::gauss(
-										0, k_dBayesFactorMaximumRange),
-										k_dBayesFactorExponent)
-										/ (k_dBayesFactorStepSizeReduction / dkm)))) {
+		if (bayes > valBest) {
 			// then this is the new best value
 			valBest = bayes;
 
