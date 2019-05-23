@@ -401,8 +401,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 				// check to see if pick's backazimuth is within the
 				// valid range
-				if ((backAzimuth < (siteAzimuth - dAzimuthRange))
-						|| (backAzimuth > (siteAzimuth + dAzimuthRange))) {
+				if (glass3::util::GlassMath::angleDifference(backAzimuth, siteAzimuth) >  dAzimuthRange) {
 					// it is not, do not nucleate
 					continue;
 				}
@@ -451,6 +450,79 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 					}
 					// otherwise there is no match and it's business as usual
 				}
+			}
+
+			// check azimuth classification
+			if (CGlass::getPickAzimuthClassificationThreshold() > 0) {
+				if ((std::isnan(pick->getClassifiedAzimuthProbability()) != true)
+									&& (pick->getClassifiedAzimuthProbability() >
+									CGlass::getPickAzimuthClassificationThreshold())) {
+
+					// set up a geo for distance calculations
+					glass3::util::Geo nodeGeo;
+					nodeGeo.setGeographic(
+							m_dLatitude, m_dLongitude,
+							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
+
+					// compute azimuth from the site to the node
+					double siteAzimuth = pick->getSite()->getGeo().azimuth(
+							&nodeGeo);
+
+					// check to see if pick's backazimuth is within the
+					// valid range
+					if (glass3::util::GlassMath::angleDifference(pick->getClassifiedAzimuth(),siteAzimuth) >
+						CGlass::getPickAzimuthClassificationUncertainty()) {
+						// it is not, do not nucleate
+						continue;
+
+				}
+
+			}
+			}
+
+
+			// check distance classification
+			if (CGlass::getPickDistanceClassificationThreshold() > 0) {
+				if ((std::isnan(pick->getClassifiedDistanceProbability()) != true)
+									&& (pick->getClassifiedDistanceProbability() >
+									CGlass::getPickDistanceClassificationThreshold())) {
+
+					// set up a geo for distance calculations
+					glass3::util::Geo nodeGeo;
+					nodeGeo.setGeographic(
+							m_dLatitude, m_dLongitude,
+							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
+
+					// compute distance from the site to the node
+					double siteDistance = pick->getSite()->getGeo().delta(
+							&nodeGeo) * glass3::util::GlassMath::k_RadiansToDegrees;
+
+					glass3::util::Logger::log("warning",
+											  "CNode::nucleate: Distance Check: "+
+											  std::to_string(siteDistance)+
+											  " "+
+											  std::to_string(CGlass::getDistanceClassLowerBound(
+														pick->getClassifiedDistance()))+
+											  " "+
+											  std::to_string(CGlass::getDistanceClassUpperBound(
+														pick->getClassifiedDistance()))+
+											  " "+
+											  std::to_string(
+														pick->getClassifiedDistance()));
+
+					// check to see if pick's distance is within the
+					// valid range
+					if (siteDistance
+							< CGlass::getDistanceClassLowerBound(
+									pick->getClassifiedDistance())
+							|| siteDistance
+									> CGlass::getDistanceClassUpperBound(
+											pick->getClassifiedDistance())) {
+						// it is not, do not nucleate
+						continue;
+					}
+
+			}
 			}
 
 			// get the best significance from the observed time and the

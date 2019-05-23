@@ -27,7 +27,7 @@ CPickList * CGlass::m_pPickList = NULL;
 CHypoList * CGlass::m_pHypoList = NULL;
 CCorrelationList * CGlass::m_pCorrelationList = NULL;
 CDetection * CGlass::m_pDetectionProcessor = NULL;
-std::shared_ptr<traveltime::CTravelTime> CGlass::m_pDefaultNucleationTravelTime = // NOLINT
+std::shared_ptr<traveltime::CTravelTime> CGlass::m_pDefaultNucleationTravelTime =  // NOLINT
 		NULL;
 std::shared_ptr<traveltime::CTTT> CGlass::m_pAssociationTravelTimes = NULL;
 
@@ -67,6 +67,14 @@ std::atomic<double> CGlass::m_dEventFragmentAzimuthThreshold;
 std::atomic<bool> CGlass::m_bAllowPickUpdates;
 std::atomic<double> CGlass::m_dPickNoiseClassificationThreshold;
 std::atomic<double> CGlass::m_dPickPhaseClassificationThreshold;
+std::atomic<double> CGlass::m_dPickAzimuthClassificationThreshold;
+std::atomic<double> CGlass::m_dPickAzimuthClassificationUncertainty;
+std::atomic<double> CGlass::m_dPickDistanceClassificationThreshold;
+std::vector<double> CGlass::m_dPickDistClassificationClasses;
+std::vector<double> CGlass::m_dPickDistClassificationClassesUpperBound;
+std::vector<double> CGlass::m_dPickDistClassificationClassesLowerBound;
+
+
 std::mutex CGlass::m_TTTMutex;
 
 // constants
@@ -243,6 +251,13 @@ void CGlass::clear() {
 	m_bAllowPickUpdates = false;
 	m_dPickNoiseClassificationThreshold = -1;
 	m_dPickPhaseClassificationThreshold = -1;
+	m_dPickDistanceClassificationThreshold = -1;
+	m_dPickAzimuthClassificationThreshold = -1;
+	m_dPickAzimuthClassificationUncertainty = 999.;
+	m_dPickDistClassificationClasses.clear();
+	m_dPickDistClassificationClassesUpperBound.clear();
+	m_dPickDistClassificationClassesLowerBound.clear();
+
 }
 
 // ---------------------------------------------------------Initialize
@@ -279,7 +294,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	if ((com->HasKey("DefaultNucleationPhase"))
 			&& ((*com)["DefaultNucleationPhase"].GetType()
 					== json::ValueType::ObjectVal)) {
-		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+		std::lock_guard < std::mutex > ttGuard(m_TTTMutex);
 		// get the phase object
 		json::Object phsObj = (*com)["DefaultNucleationPhase"].ToObject();
 
@@ -317,7 +332,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		m_pDefaultNucleationTravelTime->setup(phs, file);
 
 	} else {
-		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+		std::lock_guard < std::mutex > ttGuard(m_TTTMutex);
 		// if no first phase, default to P
 		// clean out old phase if any
 		m_pDefaultNucleationTravelTime.reset();
@@ -338,7 +353,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 	if ((com->HasKey("AssociationPhases"))
 			&& ((*com)["AssociationPhases"].GetType()
 					== json::ValueType::ArrayVal)) {
-		std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+		std::lock_guard < std::mutex > ttGuard(m_TTTMutex);
 		// get the array of phase entries
 		json::Array phases = (*com)["AssociationPhases"].ToArray();
 
@@ -527,7 +542,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		if ((paramsPlot.HasKey("graphicsOutFolder"))
 				&& (paramsPlot["graphicsOutFolder"].GetType()
 						== json::ValueType::StringVal)) {
-			std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+			std::lock_guard < std::mutex > ttGuard(m_TTTMutex);
 			m_sGraphicsOutFolder = paramsPlot["graphicsOutFolder"].ToString();
 			glass3::util::Logger::log(
 					"info",
@@ -1108,31 +1123,34 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 
 	// pick classification
 	if ((com->HasKey("PickClassification"))
-			&& ((*com)["PickClassification"].GetType() == json::ValueType::ObjectVal)) {  // NOLINT
+			&& ((*com)["PickClassification"].GetType()
+					== json::ValueType::ObjectVal)) {  // NOLINT
 		// get object
 		json::Object classification = (*com)["PickClassification"].ToObject();
 
 		// m_dPickNoiseClassificationThreshold
-		if ((classification.HasKey("NoiseThreshold"))
-				&& (classification["NoiseThreshold"].GetType()
+		if ((classification.HasKey("NoiseClassificationThreshold"))
+				&& (classification["NoiseClassificationThreshold"].GetType()
 						== json::ValueType::DoubleVal)) {
 			m_dPickNoiseClassificationThreshold =
-					classification["NoiseThreshold"].ToDouble();
+					classification["NoiseClassificationThreshold"].ToDouble();
 
 			glass3::util::Logger::log(
 					"info",
 					"CGlass::initialize: Using PickClassification NoiseThreshold: "
-							+ std::to_string(m_dPickNoiseClassificationThreshold));
+							+ std::to_string(
+									m_dPickNoiseClassificationThreshold));
 		} else {
 			m_dPickNoiseClassificationThreshold = -1;
 			glass3::util::Logger::log(
 					"info",
 					"CGlass::initialize: Using default PickClassification NoiseThreshold: "
-							+ std::to_string(m_dPickNoiseClassificationThreshold));
+							+ std::to_string(
+									m_dPickNoiseClassificationThreshold));
 		}
 
 		// m_dPickPhaseClassificationThreshold
-		if ((classification.HasKey("PhaseThreshold"))
+		if ((classification.HasKey("PhaseClassificationThreshold"))
 				&& (classification["PhaseClassificationThreshold"].GetType()
 						== json::ValueType::DoubleVal)) {
 			m_dPickPhaseClassificationThreshold =
@@ -1141,17 +1159,183 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			glass3::util::Logger::log(
 					"info",
 					"CGlass::initialize: Using PickClassification PhaseThreshold: "
-							+ std::to_string(m_dPickPhaseClassificationThreshold));
+							+ std::to_string(
+									m_dPickPhaseClassificationThreshold));
 		} else {
 			m_dPickPhaseClassificationThreshold = -1;
 			glass3::util::Logger::log(
 					"info",
 					"CGlass::initialize: Using default PhaseClassificationThreshold: "
-							+ std::to_string(m_dPickPhaseClassificationThreshold));
+							+ std::to_string(
+									m_dPickPhaseClassificationThreshold));
 		}
+
+		// m_dPickDistanceClassificationThreshold
+		if ((classification.HasKey("DistanceClassificationThreshold"))
+				&& (classification["DistanceClassificationThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dPickDistanceClassificationThreshold =
+					classification["DistanceClassificationThreshold"].ToDouble();
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using PickClassification DistanceThreshold: "
+							+ std::to_string(
+									m_dPickDistanceClassificationThreshold));
+		} else {
+			m_dPickDistanceClassificationThreshold = -1;
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default DistanceClassificationThreshold: "
+							+ std::to_string(
+									m_dPickDistanceClassificationThreshold));
+		}
+
+		// m_dPickAzimuthClassificationThreshold
+		if ((classification.HasKey("AzimuthClassificationThreshold"))
+				&& (classification["AzimuthClassificationThreshold"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dPickAzimuthClassificationThreshold =
+					classification["AzimuthClassificationThreshold"].ToDouble();
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using PickClassification AzimuthThreshold: "
+							+ std::to_string(
+									m_dPickAzimuthClassificationThreshold));
+		} else {
+			m_dPickAzimuthClassificationThreshold = -1;
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default AzimuthClassificationThreshold: "
+							+ std::to_string(
+									m_dPickAzimuthClassificationThreshold));
+		}
+
+		// m_dPickAzimuthClassificationUncertainty
+		if ((classification.HasKey("AzimuthClassificationUncertainty"))
+				&& (classification["AzimuthClassificationUncertainty"].GetType()
+						== json::ValueType::DoubleVal)) {
+			m_dPickAzimuthClassificationUncertainty =
+					classification["AzimuthClassificationUncertainty"].ToDouble();
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using PickClassification AzimuthUncertainty: "
+							+ std::to_string(
+									m_dPickAzimuthClassificationUncertainty));
+		} else {
+			m_dPickAzimuthClassificationUncertainty = 999.;
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default AzimuthClassificationUncertainty: "
+							+ std::to_string(
+									m_dPickAzimuthClassificationUncertainty));
+		}
+
+		// m_dPickDistClassificationClasses
+		if ((classification.HasKey("DistanceClassificationClasses"))
+				&& (classification["DistanceClassificationClasses"].GetType()
+						== json::ValueType::ArrayVal)) {
+			json::Array arr = classification["DistanceClassificationClasses"]
+					.ToArray();
+
+			std::string tempstr;
+			for (int i = 0; i < arr.size(); i++) {
+				m_dPickDistClassificationClasses.push_back(arr[i].ToDouble());
+
+				tempstr +=  std::to_string(m_dPickDistClassificationClasses[i]) + " ";
+
+			}
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using PickClassification DistanceClassificationClasses: "
+							+ tempstr);
+		} else {
+			m_dPickDistClassificationClasses.clear();
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default (none) DistanceClassificationClasses");
+		}
+
+		// m_dPickDistClassificationClassesUpperBound
+		if ((classification.HasKey("DistanceClassificationClassesUpperBound"))
+				&& (classification["DistanceClassificationClassesUpperBound"]
+						.GetType() == json::ValueType::ArrayVal)) {
+			json::Array arr =
+					classification["DistanceClassificationClassesUpperBound"]
+							.ToArray();
+
+			std::string tempstr;
+			for (int i = 0; i < arr.size(); i++) {
+				m_dPickDistClassificationClassesUpperBound.push_back(
+						arr[i].ToDouble());
+				tempstr += std::to_string(
+						m_dPickDistClassificationClassesUpperBound[i]) + " ";
+
+			}
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using PickClassification DistanceClassificationClassesUpperBound: "
+							+ tempstr);
+		} else {
+			m_dPickDistClassificationClassesUpperBound.clear();
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default (none) DistanceClassificationClassesUpperBound");
+		}
+
+		// m_dPickDistClassificationClassesLowerBound
+		if ((classification.HasKey("DistanceClassificationClassesLowerBound"))
+				&& (classification["DistanceClassificationClassesLowerBound"]
+						.GetType() == json::ValueType::ArrayVal)) {
+			json::Array arr =
+					classification["DistanceClassificationClassesLowerBound"]
+							.ToArray();
+
+			std::string tempstr;
+
+			for (int i = 0; i < arr.size(); i++) {
+				m_dPickDistClassificationClassesLowerBound.push_back(
+						arr[i].ToDouble());
+				tempstr += std::to_string(
+						m_dPickDistClassificationClassesLowerBound[i]) + " ";
+			}
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using PickClassification DistanceClassificationClassesLowerBound: "
+							+ tempstr);
+		} else {
+			m_dPickDistClassificationClassesLowerBound.clear();
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default (none) DistanceClassificationClassesLowerBound");
+		}
+
+		if (m_dPickDistClassificationClasses.size()
+				!= m_dPickDistClassificationClassesUpperBound.size()
+				|| m_dPickDistClassificationClasses.size()
+						!= m_dPickDistClassificationClassesLowerBound.size()) {
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Distance Class Bound Array Sizes Don't Match. Not Using Them.");
+			m_dPickDistClassificationClasses.clear();
+			m_dPickDistClassificationClassesUpperBound.clear();
+			m_dPickDistClassificationClassesLowerBound.clear();
+		}
+
 	} else {
 		m_dPickNoiseClassificationThreshold = -1;
 		m_dPickPhaseClassificationThreshold = -1;
+		m_dPickDistanceClassificationThreshold = -1;
+		m_dPickAzimuthClassificationThreshold = -1;
+		m_dPickAzimuthClassificationUncertainty = 999;
+		m_dPickDistClassificationClasses.clear();
+		m_dPickDistClassificationClassesUpperBound.clear();
+		m_dPickDistClassificationClassesLowerBound.clear();
 	}
 
 	// create site list
@@ -1296,7 +1480,7 @@ bool CGlass::getGraphicsOut() {
 
 // ------------------------------------------------getGraphicsOutFolder
 const std::string& CGlass::getGraphicsOutFolder() {
-	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+	std::lock_guard < std::mutex > ttGuard(m_TTTMutex);
 	return (m_sGraphicsOutFolder);
 }
 
@@ -1412,13 +1596,13 @@ CSiteList* CGlass::getSiteList() {
 
 // -----------------------------------------------getDefaultNucleationTravelTime
 std::shared_ptr<traveltime::CTravelTime>& CGlass::getDefaultNucleationTravelTime() {  // NOLINT
-	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+	std::lock_guard < std::mutex > ttGuard(m_TTTMutex);
 	return (m_pDefaultNucleationTravelTime);
 }
 
 // ------------------------------------------------getAssociationTravelTimes
 std::shared_ptr<traveltime::CTTT>& CGlass::getAssociationTravelTimes() {
-	std::lock_guard<std::mutex> ttGuard(m_TTTMutex);
+	std::lock_guard < std::mutex > ttGuard(m_TTTMutex);
 	return (m_pAssociationTravelTimes);
 }
 
@@ -1454,11 +1638,47 @@ bool CGlass::getAllowPickUpdates() {
 
 // ------------------------------------------getPickNoiseClassificationThreshold
 double CGlass::getPickNoiseClassificationThreshold() {
-	return(m_dPickNoiseClassificationThreshold);
+	return (m_dPickNoiseClassificationThreshold);
 }
 
 // ------------------------------------------getPickPhaseClassificationThreshold
 double CGlass::getPickPhaseClassificationThreshold() {
-	return(m_dPickPhaseClassificationThreshold);
+	return (m_dPickPhaseClassificationThreshold);
 }
+
+// ------------------------------------------getPickDistanceClassificationThreshold
+double CGlass::getPickDistanceClassificationThreshold() {
+	return (m_dPickDistanceClassificationThreshold);
+}
+
+// ------------------------------------------getPickAzimuthClassificationThreshold
+double CGlass::getPickAzimuthClassificationThreshold() {
+	return (m_dPickAzimuthClassificationThreshold);
+}
+
+// ------------------------------------------getPickAzimuthClassificationUncertainty
+double CGlass::getPickAzimuthClassificationUncertainty() {
+	return (m_dPickAzimuthClassificationUncertainty);
+}
+
+// ------------------------------------------getDistanceUpperBound
+double CGlass::getDistanceClassUpperBound(double distClass) {
+	for (int i = 0; i < m_dPickDistClassificationClasses.size(); i++) {
+		if (m_dPickDistClassificationClasses[i] == distClass) {
+			return m_dPickDistClassificationClassesUpperBound[i];
+		}
+	}
+	return 999.;
+}
+
+// ------------------------------------------getDistanceLowerBound
+double CGlass::getDistanceClassLowerBound(double distClass) {
+	for (int i = 0; i < m_dPickDistClassificationClasses.size(); i++) {
+		if (m_dPickDistClassificationClasses[i] == distClass) {
+			return m_dPickDistClassificationClassesLowerBound[i];
+		}
+	}
+	return -1.;
+}
+
 }  // namespace glasscore

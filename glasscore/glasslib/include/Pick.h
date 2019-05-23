@@ -67,8 +67,7 @@ class CPick {
 	 * std::numeric_limits<double>::quiet_NaN() to omit
 	 */
 	CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-					std::string pickIdString, double backAzimuth,
-					double slowness);
+			std::string pickIdString, double backAzimuth, double slowness);
 
 	/**
 	 * \brief CPick advanced constructor
@@ -106,11 +105,11 @@ class CPick {
 	 * magnitude probability, std::numeric_limits<double>::quiet_NaN() to omit
 	 */
 	CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-					std::string pickIdString, double backAzimuth,
-					double slowness, std::string phase, double phaseProb,
-					double distance, double distanceProb, double azimuth,
-					double azimuthProb, double depth, double depthProb,
-					double magnitude, double magnitudeProb);
+			std::string pickIdString, double backAzimuth, double slowness,
+			std::string phase, double phaseProb, double distance,
+			double distanceProb, double azimuth, double azimuthProb,
+			double depth, double depthProb, double magnitude,
+			double magnitudeProb);
 
 	/**
 	 * \brief CPick advanced constructor

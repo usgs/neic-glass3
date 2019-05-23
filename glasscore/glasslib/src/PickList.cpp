@@ -507,6 +507,7 @@ glass3::util::WorkState CPickList::work() {
 	if (CGlass::getPickNoiseClassificationThreshold() > 0) {
 		// check to see if the phase classification is valid and above
 		// our threshold
+
 		if ((std::isnan(newPick->getClassifiedPhaseProbability()) != true) &&
 			(newPick->getClassifiedPhaseProbability() >
 			CGlass::getPickNoiseClassificationThreshold())) {
@@ -515,7 +516,6 @@ glass3::util::WorkState CPickList::work() {
 				// this pick is noise, ignore new pick
 				// cleanup
 				delete (newPick);
-
 				// message was processed (rejected)
 				return (glass3::util::WorkState::OK);
 			}

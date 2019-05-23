@@ -421,6 +421,36 @@ class CGlass {
 	static double getPickPhaseClassificationThreshold();
 
 	/**
+	 * \brief Gets the optional threshold used for accepting the classification
+	 * of a pick Distance by an external algorithm. -1 indicates this feature is
+	 * disabled
+	 */
+	static double getPickDistanceClassificationThreshold();
+
+	/**
+	 * \brief Gets the upper distance bound for a given distance class
+	 */
+	static double getDistanceClassUpperBound(double distClass);
+
+	/**
+	 * \brief Gets the lower distance bound for a given distance class
+	 */
+	static double getDistanceClassLowerBound(double distClass);
+
+	/**
+	 * \brief Gets the optional threshold used for accepting the classification
+	 * of a pick Azimuth by an external algorithm. -1 indicates this feature is
+	 * disabled
+	 */
+	static double getPickAzimuthClassificationThreshold();
+
+	/**
+	 * \brief Gets the optional uncertainty used for accepting the classification
+	 * of a pick Azimuth by an external algorithm.
+	 */
+	static double getPickAzimuthClassificationUncertainty();
+
+	/**
 	 * \brief Gets a pointer to the Correlation list
 	 * \return Returns a pointer to the correlation list
 	 */
@@ -707,6 +737,43 @@ class CGlass {
 	 * the classified phase for nucleation/association
 	 */
 	static std::atomic<double> m_dPickPhaseClassificationThreshold;
+
+	/**
+	 * \brief The probability threshold for accepting the pick distance
+	 * classification, picks that meet this threshold will use these
+	 * parameters in nulceation/association
+	 */
+	static std::atomic<double> m_dPickDistanceClassificationThreshold;
+
+	/**
+	 * \brief The possible distance classes from the external classifier
+	 */
+	static std::vector<double> m_dPickDistClassificationClasses;
+
+	/**
+	 * \brief The distances upper distance bound associated with a given
+	 * distance class.
+	 */
+	static std::vector<double> m_dPickDistClassificationClassesUpperBound;
+
+	/**
+	 * \brief The distances lower distance bound associated with a given
+	 * distance class.
+	 */
+	static std::vector<double> m_dPickDistClassificationClassesLowerBound;
+
+	/**
+	 * \brief The probability threshold for accepting the pick azimuth
+	 * classification, picks that meet this threshold will use these
+	 * parameters in nulceation/association
+	 */
+	static std::atomic<double> m_dPickAzimuthClassificationThreshold;
+
+	/**
+	 * \brief The uncertainty allowed for the pick azimuth
+	 * classification.
+	 */
+	static std::atomic<double> m_dPickAzimuthClassificationUncertainty;
 
 	/**
 	 * \brief An IGlassSend interface pointer used to send communication

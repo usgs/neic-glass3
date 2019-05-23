@@ -74,5 +74,17 @@ void GlassMath::initializeRandom() {
 		m_bInitialized = true;
 	}
 }
+
+/**
+ * Get the minimum angle (degrees) between two angles
+ */
+double GlassMath::angleDifference(double angle1, double angle2) {
+	double difference = fmod(abs(angle1 - angle2), 360.);
+	if (difference > 360.) {
+		difference = 360. - difference;
+	}
+	return difference;
+}
+
 }  // namespace util
 }  // namespace glass3
