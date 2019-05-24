@@ -269,10 +269,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 					== json::ValueType::ObjectVal)) {
 		// classification is an object
 		json::Object classobj = (*pick)["ClassificationInfo"].ToObject();
-		glass3::util::Logger::log(
-				"warning",
-				"CPick::CPick: Classification: "
-						+ json::Serialize(*pick));
+
 		// classifiedPhase
 		if (classobj.HasKey("Phase")
 				&& (classobj["Phase"].GetType() == json::ValueType::StringVal)) {
