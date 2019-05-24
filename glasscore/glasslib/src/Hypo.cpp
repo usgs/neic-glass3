@@ -1006,9 +1006,9 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 				&& (pick->getClassifiedAzimuthProbability()
 						> CGlass::getPickAzimuthClassificationThreshold())) {
 
-			// set up a geo for distance calculations
-			double siteAzimuth = site->getGeo().azimuth(&hypoGeo);
-
+			// set up a geo for azimuth calculations
+			double siteAzimuth = hypoGeo.azimuth(&(site->getGeo()))
+					* glass3::util::GlassMath::k_RadiansToDegrees;
 			// check to see if pick's azimuth is within the
 			// valid range
 			if (glass3::util::GlassMath::angleDifference(

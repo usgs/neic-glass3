@@ -141,7 +141,7 @@ bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 	// Link node to site using traveltime
 	// NOTE: No validation on travel times or distance
 	SiteLink link = std::make_tuple(site, travelTime1, phase1, travelTime2,
-		phase2, distDeg);
+									phase2, distDeg);
 	m_vSiteLinkList.push_back(link);
 
 	// link site to node, again using the traveltime
@@ -401,7 +401,9 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 				// check to see if pick's backazimuth is within the
 				// valid range
-				if (glass3::util::GlassMath::angleDifference(backAzimuth, siteAzimuth) >  dAzimuthRange) {
+				if (glass3::util::GlassMath::angleDifference(backAzimuth,
+																siteAzimuth)
+						> dAzimuthRange) {
 					// it is not, do not nucleate
 					continue;
 				}
@@ -433,20 +435,20 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 				// check to see if the phase classification is valid and above
 				// our threshold
 				if ((std::isnan(pick->getClassifiedPhaseProbability()) != true)
-					&& (pick->getClassifiedPhaseProbability() >
-					CGlass::getPickPhaseClassificationThreshold())) {
+						&& (pick->getClassifiedPhaseProbability()
+								> CGlass::getPickPhaseClassificationThreshold())) {
 					// check to see if the phase is classified as one of our
 					// nucleation phases
 					if (pick->getClassifiedPhase() == phase1) {
 						// match, we only consider traveltime1, disable
 						// traveltime2
 						travelTime2 =
-							traveltime::CTravelTime::k_dTravelTimeInvalid;
+								traveltime::CTravelTime::k_dTravelTimeInvalid;
 					} else if (pick->getClassifiedPhase() == phase2) {
 						// match, we only consider traveltime2, disable
 						// traveltime1
 						travelTime1 =
-							traveltime::CTravelTime::k_dTravelTimeInvalid;
+								traveltime::CTravelTime::k_dTravelTimeInvalid;
 					}
 					// otherwise there is no match and it's business as usual
 				}
@@ -455,37 +457,39 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			// check azimuth classification
 			if (CGlass::getPickAzimuthClassificationThreshold() > 0) {
 				if ((std::isnan(pick->getClassifiedAzimuthProbability()) != true)
-									&& (pick->getClassifiedAzimuthProbability() >
-									CGlass::getPickAzimuthClassificationThreshold())) {
+						&& (pick->getClassifiedAzimuthProbability()
+								> CGlass::getPickAzimuthClassificationThreshold())) {
 
-					// set up a geo for distance calculations
+					// set up a geo for azimuth calculations
 					glass3::util::Geo nodeGeo;
 					nodeGeo.setGeographic(
 							m_dLatitude, m_dLongitude,
 							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
 
-					// compute azimuth from the site to the node
-					double siteAzimuth = pick->getSite()->getGeo().azimuth(
-							&nodeGeo);
+					// compute azimuth from the azimuth node to site
+					double siteAzimuth = nodeGeo.azimuth(
+							&(pick->getSite()->getGeo()))
+							* glass3::util::GlassMath::k_RadiansToDegrees;
 
 					// check to see if pick's backazimuth is within the
 					// valid range
-					if (glass3::util::GlassMath::angleDifference(pick->getClassifiedAzimuth(),siteAzimuth) >
-						CGlass::getPickAzimuthClassificationUncertainty()) {
+					if (glass3::util::GlassMath::angleDifference(
+							pick->getClassifiedAzimuth(), siteAzimuth)
+							> CGlass::getPickAzimuthClassificationUncertainty()) {
 						// it is not, do not nucleate
 						continue;
 
+					}
+
 				}
-
 			}
-			}
-
 
 			// check distance classification
 			if (CGlass::getPickDistanceClassificationThreshold() > 0) {
-				if ((std::isnan(pick->getClassifiedDistanceProbability()) != true)
-									&& (pick->getClassifiedDistanceProbability() >
-									CGlass::getPickDistanceClassificationThreshold())) {
+				if ((std::isnan(pick->getClassifiedDistanceProbability())
+						!= true)
+						&& (pick->getClassifiedDistanceProbability()
+								> CGlass::getPickDistanceClassificationThreshold())) {
 
 					// set up a geo for distance calculations
 					glass3::util::Geo nodeGeo;
@@ -495,20 +499,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 					// compute distance from the site to the node
 					double siteDistance = pick->getSite()->getGeo().delta(
-							&nodeGeo) * glass3::util::GlassMath::k_RadiansToDegrees;
-
-					glass3::util::Logger::log("warning",
-											  "CNode::nucleate: Distance Check: "+
-											  std::to_string(siteDistance)+
-											  " "+
-											  std::to_string(CGlass::getDistanceClassLowerBound(
-														pick->getClassifiedDistance()))+
-											  " "+
-											  std::to_string(CGlass::getDistanceClassUpperBound(
-														pick->getClassifiedDistance()))+
-											  " "+
-											  std::to_string(
-														pick->getClassifiedDistance()));
+							&nodeGeo)
+							* glass3::util::GlassMath::k_RadiansToDegrees;
 
 					// check to see if pick's distance is within the
 					// valid range
@@ -522,7 +514,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 						continue;
 					}
 
-			}
+				}
 			}
 
 			// get the best significance from the observed time and the
