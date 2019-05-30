@@ -9,6 +9,7 @@
 #include <string>
 #include <atomic>
 #include <memory>
+#include <vector>
 #include "IGlassSend.h"
 #include "WebList.h"
 #include "SiteList.h"
@@ -257,7 +258,6 @@ void CGlass::clear() {
 	m_dPickDistClassificationClasses.clear();
 	m_dPickDistClassificationClassesUpperBound.clear();
 	m_dPickDistClassificationClassesLowerBound.clear();
-
 }
 
 // ---------------------------------------------------------Initialize
@@ -1245,12 +1245,12 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				m_dPickDistClassificationClasses.push_back(arr[i].ToDouble());
 
 				tempstr +=  std::to_string(m_dPickDistClassificationClasses[i]) + " ";
-
 			}
 
 			glass3::util::Logger::log(
 					"info",
-					"CGlass::initialize: Using PickClassification DistanceClassificationClasses: "
+					"CGlass::initialize: Using PickClassification Distance"
+					" ClassificationClasses: "
 							+ tempstr);
 		} else {
 			m_dPickDistClassificationClasses.clear();
@@ -1273,18 +1273,19 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						arr[i].ToDouble());
 				tempstr += std::to_string(
 						m_dPickDistClassificationClassesUpperBound[i]) + " ";
-
 			}
 
 			glass3::util::Logger::log(
 					"info",
-					"CGlass::initialize: Using PickClassification DistanceClassificationClassesUpperBound: "
+					"CGlass::initialize: Using PickClassification"
+					" DistanceClassificationClassesUpperBound: "
 							+ tempstr);
 		} else {
 			m_dPickDistClassificationClassesUpperBound.clear();
 			glass3::util::Logger::log(
 					"info",
-					"CGlass::initialize: Using default (none) DistanceClassificationClassesUpperBound");
+					"CGlass::initialize: Using default (none) "
+					" DistanceClassificationClassesUpperBound");
 		}
 
 		// m_dPickDistClassificationClassesLowerBound
@@ -1306,13 +1307,15 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 
 			glass3::util::Logger::log(
 					"info",
-					"CGlass::initialize: Using PickClassification DistanceClassificationClassesLowerBound: "
+					"CGlass::initialize: Using PickClassification "
+					"DistanceClassificationClassesLowerBound: "
 							+ tempstr);
 		} else {
 			m_dPickDistClassificationClassesLowerBound.clear();
 			glass3::util::Logger::log(
 					"info",
-					"CGlass::initialize: Using default (none) DistanceClassificationClassesLowerBound");
+					"CGlass::initialize: Using default (none) "
+					"DistanceClassificationClassesLowerBound");
 		}
 
 		if (m_dPickDistClassificationClasses.size()
@@ -1321,7 +1324,8 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						!= m_dPickDistClassificationClassesLowerBound.size()) {
 			glass3::util::Logger::log(
 					"info",
-					"CGlass::initialize: Distance Class Bound Array Sizes Don't Match. Not Using Them.");
+					"CGlass::initialize: Distance Class Bound Array "
+					"Sizes Don't Match. Not Using Them.");
 			m_dPickDistClassificationClasses.clear();
 			m_dPickDistClassificationClassesUpperBound.clear();
 			m_dPickDistClassificationClassesLowerBound.clear();

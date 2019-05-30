@@ -293,7 +293,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 			classifiedDist = classobj["Distance"].ToDouble();
 		} else if (classobj.HasKey("Distance")
 				&& (classobj["Distance"].GetType() == json::ValueType::IntVal)) {
-			classifiedDist = (double) classobj["Distance"].ToInt();
+			classifiedDist = static_cast<double>(classobj["Distance"].ToInt());
 		} else {
 			classifiedDist = std::numeric_limits<double>::quiet_NaN();
 		}

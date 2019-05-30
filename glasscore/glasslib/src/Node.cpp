@@ -459,7 +459,6 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 				if ((std::isnan(pick->getClassifiedAzimuthProbability()) != true)
 						&& (pick->getClassifiedAzimuthProbability()
 								> CGlass::getPickAzimuthClassificationThreshold())) {
-
 					// set up a geo for azimuth calculations
 					glass3::util::Geo nodeGeo;
 					nodeGeo.setGeographic(
@@ -478,9 +477,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 							> CGlass::getPickAzimuthClassificationUncertainty()) {
 						// it is not, do not nucleate
 						continue;
-
 					}
-
 				}
 			}
 
@@ -490,7 +487,6 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 						!= true)
 						&& (pick->getClassifiedDistanceProbability()
 								> CGlass::getPickDistanceClassificationThreshold())) {
-
 					// set up a geo for distance calculations
 					glass3::util::Geo nodeGeo;
 					nodeGeo.setGeographic(
@@ -513,7 +509,6 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 						// it is not, do not nucleate
 						continue;
 					}
-
 				}
 			}
 

@@ -13,7 +13,7 @@
 #include <string>
 #include <memory>
 #include <atomic>
-
+#include <vector>
 namespace glasscore {
 
 // forward declarations

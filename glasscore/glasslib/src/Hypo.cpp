@@ -1005,7 +1005,6 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		if ((std::isnan(pick->getClassifiedAzimuthProbability()) != true)
 				&& (pick->getClassifiedAzimuthProbability()
 						> CGlass::getPickAzimuthClassificationThreshold())) {
-
 			// set up a geo for azimuth calculations
 			double siteAzimuth = hypoGeo.azimuth(&(site->getGeo()))
 					* glass3::util::GlassMath::k_RadiansToDegrees;
@@ -1014,11 +1013,9 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 			if (glass3::util::GlassMath::angleDifference(
 					pick->getClassifiedAzimuth(), siteAzimuth)
 					> CGlass::getPickAzimuthClassificationUncertainty()) {
-				// it is not, do not nucleate
+				// it is not, do not associate
 				return (false);
-
 			}
-
 		}
 	}
 
@@ -1055,7 +1052,6 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		if ((std::isnan(pick->getClassifiedDistanceProbability()) != true)
 				&& (pick->getClassifiedDistanceProbability()
 						> CGlass::getPickDistanceClassificationThreshold())) {
-
 			// check to see if pick's distance is within the
 			// valid range
 			if (siteDistance
@@ -1064,10 +1060,9 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 					|| siteDistance
 							> CGlass::getDistanceClassUpperBound(
 									pick->getClassifiedDistance())) {
-				// it is not, do not nucleate
+				// it is not, do not associate
 				return (false);
 			}
-
 		}
 	}
 
