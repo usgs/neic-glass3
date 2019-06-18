@@ -6,12 +6,13 @@
 
 #define SIG_RESULT 0.60653065971263342
 #define SIG_LAPLACE_RESULT 0.036787944117144235
-
+#define ANGLE_DIFF 119.0
 TEST(GlassMathTest, CombinedTest) {
 	glass3::util::Logger::disable();
 
 	ASSERT_NEAR(SIG_RESULT, glass3::util::GlassMath::sig(5,5), 0.0001)<< "sig";
 	ASSERT_NEAR(SIG_LAPLACE_RESULT, glass3::util::GlassMath::sig_laplace_pdf(5,5), 0.0001)<< "sig_laplace_pdf";  // NOLINT
+	ASSERT_NEAR(ANGLE_DIFF, glass3::util::GlassMath::angleDifference(480.0,1.0), 0.0001)<< "angleDifference";
 
 	// don't really know how to test gauss or random, since they're randomized
 	// so just print it out

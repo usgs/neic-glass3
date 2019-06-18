@@ -12,6 +12,8 @@
 #define TESTPATH "testdata"
 #define INITFILENAME "initialize.d"
 
+#define BADJSON "{\"Type\":\"MadeUp\",\"Key\":\"Value\"}"
+
 // default values
 #define DEFAULT_MAXNUMPICKS -1
 #define DEFAULT_MAXNUMCORR -1
@@ -248,3 +250,25 @@ TEST(GlassTest, Init) {
 	"association travel times";
 }
 
+// fail tests
+TEST(GlassTest, FailTests) {
+	glass3::util::Logger::disable();
+
+	// construct a glass
+	glasscore::CGlass * testGlass = new glasscore::CGlass();
+
+	std::shared_ptr<json::Object> badJSON = std::make_shared<json::Object>(
+				json::Deserialize(std::string(BADJSON)));
+
+	ASSERT_FALSE(testGlass->receiveExternalMessage(NULL))<<
+	"receiveExternalMessage null";
+
+	ASSERT_FALSE(testGlass->receiveExternalMessage(badJSON))<<
+	"receiveExternalMessage bad";
+
+	ASSERT_FALSE(testGlass->initialize(NULL))<<
+	"initialize null";
+
+	ASSERT_FALSE(testGlass->initialize(badJSON))<<
+	"initialize bad";
+}

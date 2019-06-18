@@ -33,9 +33,15 @@
       "HypocenterTimeWindow": 30,
       "HypocenterDistanceWindow": 3
   },
-  "PickClassification": {
-      "NoiseThreshold": 0.75,
-      "PhaseThreshold": 0.75
+  "PickClassification":{
+      "NoiseClassificationThreshold": 0.75,
+      "PhaseClassificationThreshold": 0.75,
+      "DistanceClassificationThreshold": 0.75,
+      "DistanceClassificationClasses": [0., 1.5, 10., 30.],
+      "DistanceClassificationClassesLowerBound": [0., 1., 5., 20.],
+      "DistanceClassificationClassesUpperBound": [4., 15.., 35., 180.]
+      "AzimuthClassificationThreshold":.75,
+      "AzimuthClassificationUncertainty":90.
   },
   "DefaultNucleationPhase": {
       "PhaseName": "P",
