@@ -196,16 +196,10 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		ttt = (*pick)["Time"].ToString();
 		glass3::util::Date dt = glass3::util::Date();
 		tPick = dt.decodeISO8601Time(ttt);
-	} else if (pick->HasKey("T")
-			&& ((*pick)["T"].GetType() == json::ValueType::StringVal)) {
-		// T is formatted in datetime, convert to Gregorian seconds
-		ttt = (*pick)["T"].ToString();
-		glass3::util::Date dt = glass3::util::Date();
-		tPick = dt.decodeDateTime(ttt);
 	} else {
 		glass3::util::Logger::log(
 				"error",
-				"CPick::CPick: Missing required Time or T Key: "
+				"CPick::CPick: Missing required Time Key: "
 						+ json::Serialize(*pick));
 
 		return;
@@ -216,13 +210,10 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 	if (pick->HasKey("ID")
 			&& ((*pick)["ID"].GetType() == json::ValueType::StringVal)) {
 		pid = (*pick)["ID"].ToString();
-	} else if (pick->HasKey("Pid")
-			&& ((*pick)["Pid"].GetType() == json::ValueType::StringVal)) {
-		pid = (*pick)["Pid"].ToString();
 	} else {
 		glass3::util::Logger::log(
 				"warning",
-				"CPick::CPick: Missing required ID or Pid Key: "
+				"CPick::CPick: Missing required ID Key: "
 						+ json::Serialize(*pick));
 
 		return;
