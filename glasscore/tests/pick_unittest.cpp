@@ -14,6 +14,9 @@
 #define PICKJSON "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Type\":\"Pick\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44},\"ClassificationInfo\":{\"Phase\":\"P\",\"PhaseProbability\":0.22,\"Distance\":0.442559,\"DistanceProbability\":22.5,\"Azimuth\":0.418479,\"AzimuthProbability\":0.16,\"Magnitude\":2.14,\"MagnitudeType\":\"Mb\",\"MagnitudeProbability\":0.55,\"Depth\":32.44,\"DepthProbability\":11.2,\"EventType\":{\"Type\":\"Earthquake\",\"Certainty\":\"Suspected\"},\"EventTypeProbability\":1.1,\"Source\":{\"AgencyID\":\"US\",\"Author\":\"TestAuthor\"}}}"  // NOLINT
 #define BADPICK "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Type\":\"FEH\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
 #define BADPICK2 "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
+#define BADPICK3 "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Network\":\"MB\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
+#define BADPICK4 "{\"ID\":\"20682837\",\"Phase\":\"P\",\"Polarity\":\"up\",\"Site\":{\"Channel\":\"EHZ\",\"Location\":\"\",\"Station\":\"LRM\"},\"Source\":{\"AgencyID\":\"228041013\",\"Author\":\"228041013\"},\"Time\":\"2014-12-23T00:01:43.599Z\",\"Beam\":{\"BackAzimuth\":2.65,\"Slowness\":1.44}}"  // NOLINT
+
 
 #define PICKIDSTRING "20682837"
 #define SCNL "LRM.EHZ.MB"
@@ -259,6 +262,10 @@ TEST(PickTest, FailTests) {
 			json::Object(json::Deserialize(std::string(BADPICK))));
 	std::shared_ptr<json::Object> badPick2 = std::make_shared<json::Object>(
 			json::Object(json::Deserialize(std::string(BADPICK2))));
+	std::shared_ptr<json::Object> badPick3 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADPICK3))));
+	std::shared_ptr<json::Object> badPick4 = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADPICK4))));
 	std::shared_ptr<json::Object> nullMessage;
 
 	// construct a sitelist
@@ -283,4 +290,10 @@ TEST(PickTest, FailTests) {
 
 	glasscore::CPick aBadPick2(badPick2, NULL);
 	ASSERT_STREQ("", aBadPick2.getID().c_str());
+
+	glasscore::CPick aBadPick3(badPick3, NULL);
+	ASSERT_STREQ("", aBadPick3.getID().c_str());
+
+	glasscore::CPick aBadPick4(badPick4, NULL);
+	ASSERT_STREQ("", aBadPick4.getID().c_str());
 }

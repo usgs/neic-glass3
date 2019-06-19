@@ -33,6 +33,13 @@
 #define BADLONGITUDE 1000.0
 #define BADELEVATION -550000.0
 
+#define BADSITEJSON1 "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
+#define BADSITEJSON2 "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
+#define BADSITEJSON3 "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,,\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
+#define BADSITEJSON4 "{\"Type\":\"StationInfo\",\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
+#define BADSITEJSON5 "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Longitude\":-112.451000,\"Site\":{\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
+#define BADSITEJSON6 "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Site\":{\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}"  // NOLINT
+
 // NOTE: Need to consider testing nucleate function, but that would need a
 // much more involved set of real nodes and data, not these dummy nodes.
 // Maybe consider performing this test at a higher level?
@@ -331,6 +338,18 @@ TEST(SiteTest, NodeOperations) {
 TEST(SiteTest, FailTests) {
 	glass3::util::Logger::disable();
 
+	// create json objects from the strings
+	std::shared_ptr<json::Object> badSite1JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADSITEJSON1))));
+	std::shared_ptr<json::Object> badSite2JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADSITEJSON2))));
+	std::shared_ptr<json::Object> badSite3JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADSITEJSON3))));
+	std::shared_ptr<json::Object> badSite4JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADSITEJSON4))));
+	std::shared_ptr<json::Object> badSite5JSON = std::make_shared<json::Object>(
+			json::Object(json::Deserialize(std::string(BADSITEJSON5))));
+
 	// construct a site
 	glasscore::CSite * testSite = new glasscore::CSite();
 
@@ -373,4 +392,13 @@ TEST(SiteTest, FailTests) {
 							QUALITY,
 							USE,
 							USEFORTELE));
+
+
+	// construct a site
+	glasscore::CSite * badSite0 = new glasscore::CSite(NULL);
+	glasscore::CSite * badSite1 = new glasscore::CSite(badSite1JSON);
+	glasscore::CSite * badSite2 = new glasscore::CSite(badSite2JSON);
+	glasscore::CSite * badSite3 = new glasscore::CSite(badSite3JSON);
+	glasscore::CSite * badSite4 = new glasscore::CSite(badSite4JSON);
+	glasscore::CSite * badSite5 = new glasscore::CSite(badSite5JSON);
 }

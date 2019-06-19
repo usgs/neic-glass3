@@ -31,30 +31,29 @@ CPick::CPick() {
 }
 // ---------------------------------------------------------CPick
 CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-					std::string pickIdString, double backAzimuth,
-					double slowness) {
+				std::string pickIdString, double backAzimuth, double slowness) {
 	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness, "",
-		std::numeric_limits<double>::quiet_NaN(),
-		std::numeric_limits<double>::quiet_NaN(),
-		std::numeric_limits<double>::quiet_NaN(),
-		std::numeric_limits<double>::quiet_NaN(),
-		std::numeric_limits<double>::quiet_NaN(),
-		std::numeric_limits<double>::quiet_NaN(),
-		std::numeric_limits<double>::quiet_NaN(),
-		std::numeric_limits<double>::quiet_NaN(),
-		std::numeric_limits<double>::quiet_NaN());
+				std::numeric_limits<double>::quiet_NaN(),
+				std::numeric_limits<double>::quiet_NaN(),
+				std::numeric_limits<double>::quiet_NaN(),
+				std::numeric_limits<double>::quiet_NaN(),
+				std::numeric_limits<double>::quiet_NaN(),
+				std::numeric_limits<double>::quiet_NaN(),
+				std::numeric_limits<double>::quiet_NaN(),
+				std::numeric_limits<double>::quiet_NaN(),
+				std::numeric_limits<double>::quiet_NaN());
 }
 
 // ---------------------------------------------------------CPick
 CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-					std::string pickIdString, double backAzimuth,
-					double slowness, std::string phase, double phaseProb,
-					double distance, double distanceProb, double azimuth,
-					double azimuthProb, double depth, double depthProb,
-					double magnitude, double magnitudeProb) {
+				std::string pickIdString, double backAzimuth, double slowness,
+				std::string phase, double phaseProb, double distance,
+				double distanceProb, double azimuth, double azimuthProb,
+				double depth, double depthProb, double magnitude,
+				double magnitudeProb) {
 	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness, phase,
-		phaseProb, distance, distanceProb, azimuth, azimuthProb, depth,
-		depthProb, magnitude, magnitudeProb);
+				phaseProb, distance, distanceProb, azimuth, azimuthProb, depth,
+				depthProb, magnitude, magnitudeProb);
 }
 
 // ---------------------------------------------------------CPick
@@ -197,16 +196,10 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		ttt = (*pick)["Time"].ToString();
 		glass3::util::Date dt = glass3::util::Date();
 		tPick = dt.decodeISO8601Time(ttt);
-	} else if (pick->HasKey("T")
-			&& ((*pick)["T"].GetType() == json::ValueType::StringVal)) {
-		// T is formatted in datetime, convert to Gregorian seconds
-		ttt = (*pick)["T"].ToString();
-		glass3::util::Date dt = glass3::util::Date();
-		tPick = dt.decodeDateTime(ttt);
 	} else {
 		glass3::util::Logger::log(
 				"error",
-				"CPick::CPick: Missing required Time or T Key: "
+				"CPick::CPick: Missing required Time Key: "
 						+ json::Serialize(*pick));
 
 		return;
@@ -217,13 +210,10 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 	if (pick->HasKey("ID")
 			&& ((*pick)["ID"].GetType() == json::ValueType::StringVal)) {
 		pid = (*pick)["ID"].ToString();
-	} else if (pick->HasKey("Pid")
-			&& ((*pick)["Pid"].GetType() == json::ValueType::StringVal)) {
-		pid = (*pick)["Pid"].ToString();
 	} else {
 		glass3::util::Logger::log(
 				"warning",
-				"CPick::CPick: Missing required ID or Pid Key: "
+				"CPick::CPick: Missing required ID Key: "
 						+ json::Serialize(*pick));
 
 		return;
@@ -266,14 +256,14 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 
 	// classification
 	if (pick->HasKey("ClassificationInfo")
-			&& ((*pick)["ClassificationInfo"].GetType() == json::ValueType::ObjectVal)) {
+			&& ((*pick)["ClassificationInfo"].GetType()
+					== json::ValueType::ObjectVal)) {
 		// classification is an object
 		json::Object classobj = (*pick)["ClassificationInfo"].ToObject();
 
 		// classifiedPhase
 		if (classobj.HasKey("Phase")
-				&& (classobj["Phase"].GetType()
-						== json::ValueType::StringVal)) {
+				&& (classobj["Phase"].GetType() == json::ValueType::StringVal)) {
 			classifiedPhase = classobj["Phase"].ToString();
 		} else {
 			classifiedPhase = "";
@@ -288,11 +278,13 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 			classifiedPhaseProb = std::numeric_limits<double>::quiet_NaN();
 		}
 
-		// classifiedDist
+
 		if (classobj.HasKey("Distance")
-				&& (classobj["Distance"].GetType()
-						== json::ValueType::DoubleVal)) {
+				&& (classobj["Distance"].GetType() == json::ValueType::DoubleVal)) {
 			classifiedDist = classobj["Distance"].ToDouble();
+		} else if (classobj.HasKey("Distance")
+				&& (classobj["Distance"].GetType() == json::ValueType::IntVal)) {
+			classifiedDist = static_cast<double>(classobj["Distance"].ToInt());
 		} else {
 			classifiedDist = std::numeric_limits<double>::quiet_NaN();
 		}
@@ -308,8 +300,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 
 		// classifiedAzm
 		if (classobj.HasKey("Azimuth")
-				&& (classobj["Azimuth"].GetType()
-						== json::ValueType::DoubleVal)) {
+				&& (classobj["Azimuth"].GetType() == json::ValueType::DoubleVal)) {
 			classifiedAzm = classobj["Azimuth"].ToDouble();
 		} else {
 			classifiedAzm = std::numeric_limits<double>::quiet_NaN();
@@ -326,8 +317,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 
 		// classifiedDepth
 		if (classobj.HasKey("Depth")
-				&& (classobj["Depth"].GetType()
-						== json::ValueType::DoubleVal)) {
+				&& (classobj["Depth"].GetType() == json::ValueType::DoubleVal)) {
 			classifiedDepth = classobj["Depth"].ToDouble();
 		} else {
 			classifiedDepth = std::numeric_limits<double>::quiet_NaN();
@@ -374,9 +364,9 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 
 	// pass to initialization function
 	if (!initialize(site, tPick, pid, backAzimuth, slowness, classifiedPhase,
-		classifiedPhaseProb, classifiedDist, classifiedDistProb, classifiedAzm,
-		classifiedAzmProb, classifiedDepth, classifiedDepthProb, classifiedMag,
-		classifiedMagProb)) {
+					classifiedPhaseProb, classifiedDist, classifiedDistProb,
+					classifiedAzm, classifiedAzmProb, classifiedDepth,
+					classifiedDepthProb, classifiedMag, classifiedMagProb)) {
 		glass3::util::Logger::log(
 				"error",
 				"CPick::CPick: Failed to initialize pick: "
@@ -384,7 +374,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		return;
 	}
 
-	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > guard(m_PickMutex);
 
 	// remember input json for hypo message generation
 	// note, move to init?
@@ -397,7 +387,7 @@ CPick::~CPick() {
 
 // ---------------------------------------------------------clear
 void CPick::clear() {
-	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > guard(m_PickMutex);
 
 	m_wpSite.reset();
 	m_wpHypo.reset();
@@ -420,7 +410,8 @@ void CPick::clear() {
 	m_dClassifiedDepth = std::numeric_limits<double>::quiet_NaN();
 	m_dClassifiedDepthProbability = std::numeric_limits<double>::quiet_NaN();
 	m_dClassifiedMagnitude = std::numeric_limits<double>::quiet_NaN();
-	m_dClassifiedMagnitudeProbability = std::numeric_limits<double>::quiet_NaN();
+	m_dClassifiedMagnitudeProbability =
+			std::numeric_limits<double>::quiet_NaN();
 }
 
 // ---------------------------------------------------------initialize
@@ -430,7 +421,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 						double distance, double distanceProb, double azimuth,
 						double azimuthProb, double depth, double depthProb,
 						double magnitude, double magnitudeProb) {
-	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > guard(m_PickMutex);
 
 	clear();
 
@@ -464,7 +455,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 
 // ---------------------------------------------------------addHypoReference
 void CPick::addHypoReference(std::shared_ptr<CHypo> hyp, bool force) {
-	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > guard(m_PickMutex);
 
 	// nullcheck
 	if (hyp == NULL) {
@@ -499,7 +490,7 @@ void CPick::removeHypoReference(std::shared_ptr<CHypo> hyp) {
 
 // ---------------------------------------------------------removeHypoReference
 void CPick::removeHypoReference(std::string pid) {
-	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > guard(m_PickMutex);
 
 	// is the pointer still valid
 	if (auto pHypo = m_wpHypo.lock()) {
@@ -515,7 +506,7 @@ void CPick::removeHypoReference(std::string pid) {
 
 // ---------------------------------------------------------clearHypoReference
 void CPick::clearHypoReference() {
-	std::lock_guard<std::recursive_mutex> guard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > guard(m_PickMutex);
 	m_wpHypo.reset();
 }
 
@@ -532,7 +523,7 @@ bool CPick::nucleate() {
 	// linked to this pick's site and calculate
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
-	std::vector<std::shared_ptr<CTrigger>> vTrigger = pickSite->nucleate(
+	std::vector < std::shared_ptr < CTrigger >> vTrigger = pickSite->nucleate(
 			m_tPick);
 
 	// if there were no triggers, we're done
@@ -580,15 +571,16 @@ bool CPick::nucleate() {
 		}
 
 		// create the hypo using the node
-		std::shared_ptr<CHypo> hypo = std::make_shared<CHypo>(
-				trigger, CGlass::getAssociationTravelTimes());
+		std::shared_ptr<CHypo> hypo = std::make_shared < CHypo
+				> (trigger, CGlass::getAssociationTravelTimes());
 
 		// set nuclation auditing info
 		hypo->setNucleationAuditingInfo(glass3::util::Date::now(),
 										this->getTInsertion());
 
 		// add links to all the picks that support the hypo
-		std::vector<std::shared_ptr<CPick>> vTriggerPicks = trigger->getVPick();
+		std::vector < std::shared_ptr < CPick >> vTriggerPicks = trigger
+				->getVPick();
 
 		for (auto pick : vTriggerPicks) {
 			// they're not associated yet, just potentially
@@ -717,31 +709,31 @@ bool CPick::nucleate() {
 
 // ---------------------------------------------------------getJSONPick
 const std::shared_ptr<json::Object>& CPick::getJSONPick() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > pickGuard(m_PickMutex);
 	return (m_JSONPick);
 }
 
 // ---------------------------------------------------------getHypo
 const std::shared_ptr<CHypo> CPick::getHypoReference() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > pickGuard(m_PickMutex);
 	return (m_wpHypo.lock());
 }
 
 // ---------------------------------------------------------getSite
 const std::shared_ptr<CSite> CPick::getSite() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > pickGuard(m_PickMutex);
 	return (m_wpSite.lock());
 }
 
 // ---------------------------------------------------------getPhaseName
 const std::string& CPick::getPhaseName() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > pickGuard(m_PickMutex);
 	return (m_sPhaseName);
 }
 
 // ---------------------------------------------------------getID
 const std::string& CPick::getID() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > pickGuard(m_PickMutex);
 	return (m_sID);
 }
 
@@ -802,7 +794,7 @@ void CPick::setTNucleation() {
 
 // --------------------------------------------------getClassifiedPhase
 const std::string& CPick::getClassifiedPhase() const {
-	std::lock_guard<std::recursive_mutex> pickGuard(m_PickMutex);
+	std::lock_guard < std::recursive_mutex > pickGuard(m_PickMutex);
 	return (m_sClassifiedPhase);
 }
 

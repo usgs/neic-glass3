@@ -77,6 +77,17 @@ class GlassMath {
 	 */
 	static void initializeRandom();
 
+	/**
+	 * \brief get angle difference between two angles
+	 *
+	 * Takes two angles in degrees and computes the minimum angle difference
+	 *
+	 * \param angle1 - The first angle in degrees
+	 * \param angle2 - The second angle in degrees
+	 * \return Returns the minimum difference between angles in degrees
+	 */
+	static double angleDifference(double angle1, double angle2);
+
 	// Mathmatical constants
 	/**
 	 * \brief Radians to Degrees conversion factor
