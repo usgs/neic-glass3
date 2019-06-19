@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.0.6</span>
+   &#160;<span id="projectnumber">1.0.7</span>
    </div>
   </td>
  </tr>
@@ -125,6 +125,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ab25086b682cafa599a8766ed2f03163c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1GlassMath.html#ab25086b682cafa599a8766ed2f03163c">initializeRandom</a> ()</td></tr>
 <tr class="memdesc:ab25086b682cafa599a8766ed2f03163c"><td class="mdescLeft">&#160;</td><td class="mdescRight">initialize random number generator  <a href="#ab25086b682cafa599a8766ed2f03163c">More...</a><br/></td></tr>
 <tr class="separator:ab25086b682cafa599a8766ed2f03163c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18efcc33e88f0df1f1821d9608290f59"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1GlassMath.html#a18efcc33e88f0df1f1821d9608290f59">angleDifference</a> (double angle1, double angle2)</td></tr>
+<tr class="memdesc:a18efcc33e88f0df1f1821d9608290f59"><td class="mdescLeft">&#160;</td><td class="mdescRight">get angle difference between two angles  <a href="#a18efcc33e88f0df1f1821d9608290f59">More...</a><br/></td></tr>
+<tr class="separator:a18efcc33e88f0df1f1821d9608290f59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -145,6 +148,52 @@ Static Public Attributes</h2></td></tr>
 <div class="textblock"><p>glassutil logging class </p>
 <p>The CLogit class encapsulates the logic and functionality needed to write logging information to disk. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a18efcc33e88f0df1f1821d9608290f59"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glass3::util::GlassMath::angleDifference </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>angle1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>angle2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>get angle difference between two angles </p>
+<p>Takes two angles in degrees and computes the minimum angle difference</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">angle1</td><td>- The first angle in degrees </td></tr>
+    <tr><td class="paramname">angle2</td><td>- The second angle in degrees </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the minimum difference between angles in degrees</dd></dl>
+<p>Get the minimum angle (degrees) between two angles </p>
+
+</div>
+</div>
 <a class="anchor" id="ae04a6201df982bfe76425caf699b605a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -447,7 +496,7 @@ Static Public Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 1 2019 15:14:01 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jun 19 2019 14:53:05 for neic-glass3 by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
