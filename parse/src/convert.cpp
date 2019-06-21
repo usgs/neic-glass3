@@ -234,6 +234,25 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 						(assocobj)["Distance"].ToDouble();
 				pick.associationinfo.azimuth = (assocobj)["Azimuth"].ToDouble();
 
+				// classification
+				if (dataobject.HasKey("ClassificationInfo")) {
+					// get the object
+					json::Object classificationobject = (dataobject)["ClassificationInfo"]
+							.ToObject();
+
+					// convert to string
+					std::string classificationstring = json::Serialize(classificationobject);
+
+					// read it back in as a classification info object
+    			rapidjson::Document classificationdocument;
+    			detectionformats::classification classificationinfo(
+            detectionformats::FromJSONString(classificationstring,
+            classificationdocument));
+
+					// add to outgoing pick
+					pick.classificationinfo = classificationinfo;
+				}
+
 				if (pick.isvalid() == false) {
 					std::vector<std::string> errors = pick.geterrors();
 
