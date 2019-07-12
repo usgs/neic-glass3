@@ -150,6 +150,10 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 					pick.site.location = (siteobj)["Location"].ToString();
 				}
 
+				// pick.site.latitude = (siteobj)["Latitude"].ToDouble();
+				// pick.site.longitude = (siteobj)["Longitude"].ToDouble();
+				// pick.site.elevation = (siteobj)["Elevation"].ToDouble();
+
 				// source
 				pick.source.agencyid = (sourceobj)["AgencyID"].ToString();
 				pick.source.author = (sourceobj)["Author"].ToString();
@@ -288,6 +292,10 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 					correlation.site.location =
 							(siteobj)["Location"].ToString();
 				}
+
+				// correlation.site.latitude = (siteobj)["Latitude"].ToDouble();
+				// correlation.site.longitude = (siteobj)["Longitude"].ToDouble();
+				// correlation.site.elevation = (siteobj)["Elevation"].ToDouble();
 
 				// source
 				correlation.source.agencyid =

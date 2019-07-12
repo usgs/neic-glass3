@@ -2221,6 +2221,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 				siteobj["Latitude"] = site->getRawLatitude();
 				siteobj["Longitude"] = site->getRawLongitude();
 				siteobj["Elevation"] = site->getRawElevation();
+				pickObj["Site"] = siteobj;
 			}
 
 			// add the association info
@@ -2277,6 +2278,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 				siteobj["Latitude"] = site->getRawLatitude();
 				siteobj["Longitude"] = site->getRawLongitude();
 				siteobj["Elevation"] = site->getRawElevation();
+				correlationObj["Site"] = siteobj;
 			}
 
 			// add the association info
