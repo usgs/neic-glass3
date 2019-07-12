@@ -77,7 +77,7 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 	// optional values
 	double quality = 0;
 	bool enable = true;
-	bool useForTelesiesmic = true;
+	bool useForTeleseismic = true;
 
 	// get site information from json
 	// scnl
@@ -128,6 +128,39 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 		if (location == "--") {
 			location = "";
 		}
+
+		// get station location, note that the error returns are commented
+		// out for now to make glass backwards compatible with format changes in
+		// detection formats
+		// latitude for this site
+		if ((siteobj.HasKey("Latitude"))
+				&& (siteobj["Latitude"].GetType() == json::ValueType::DoubleVal)) {
+			latitude = siteobj["Latitude"].ToDouble();
+		}  // else {
+			// glass3::util::Logger::log(
+			// "error", "CSite::CSite: Missing required Latitude Key.");
+			// return;
+		// }
+
+		// longitude for this site
+		if ((siteobj.HasKey("Longitude"))
+				&& (siteobj["Longitude"].GetType() == json::ValueType::DoubleVal)) {
+			longitude = siteobj["Longitude"].ToDouble();
+		}  // else {
+			// glass3::util::Logger::log(
+			// "error", "CSite::CSite: Missing required Longitude Key.");
+			// return;
+		// }
+
+		// elevation for this site
+		if ((siteobj.HasKey("Elevation"))
+				&& (siteobj["Elevation"].GetType() == json::ValueType::DoubleVal)) {
+			elevation = siteobj["Elevation"].ToDouble();
+		}  // else {
+			// glass3::util::Logger::log(
+			// "error", "CSite::CSite: Missing required Elevation Key.");
+			// return;
+		// }
 	} else {
 		glass3::util::Logger::log(
 				"error", "CSite::CSite: Missing required Site Object.");
@@ -135,37 +168,25 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 		return;
 	}
 
+	// check the old location for lat/lon/elev as well, it may or may not be there
+	// this is to make glass backwards compatible with format changes in
+	// detection formats
 	// latitude for this site
 	if (((*site).HasKey("Latitude"))
 			&& ((*site)["Latitude"].GetType() == json::ValueType::DoubleVal)) {
 		latitude = (*site)["Latitude"].ToDouble();
-	} else {
-		glass3::util::Logger::log(
-				"error", "CSite::CSite: Missing required Latitude Key.");
-
-		return;
 	}
 
 	// longitude for this site
 	if (((*site).HasKey("Longitude"))
 			&& ((*site)["Longitude"].GetType() == json::ValueType::DoubleVal)) {
 		longitude = (*site)["Longitude"].ToDouble();
-	} else {
-		glass3::util::Logger::log(
-				"error", "CSite::CSite: Missing required Longitude Key.");
-
-		return;
 	}
 
 	// elevation for this site
 	if (((*site).HasKey("Elevation"))
 			&& ((*site)["Elevation"].GetType() == json::ValueType::DoubleVal)) {
 		elevation = (*site)["Elevation"].ToDouble();
-	} else {
-		glass3::util::Logger::log(
-				"error", "CSite::CSite: Missing required Elevation Key.");
-
-		return;
 	}
 
 	// quality for this site (if present)
@@ -188,14 +209,21 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 	if (((*site).HasKey("UseForTeleseismic"))
 			&& ((*site)["UseForTeleseismic"].GetType()
 					== json::ValueType::BoolVal)) {
-		useForTelesiesmic = (*site)["UseForTeleseismic"].ToBool();
+		useForTeleseismic = (*site)["UseForTeleseismic"].ToBool();
 	} else {
-		useForTelesiesmic = true;
+		useForTeleseismic = true;
+	}
+
+	// make sure we got a valid lat/lon/elev
+	if ((latitude == 0) && (longitude == 0) && (elevation == 0)) {
+		glass3::util::Logger::log(
+				"error", "CSite::CSite: Invalid Latitude / Longitude / Elevation (=0).");
+		return;
 	}
 
 	// pass to initialization function
 	initialize(station, channel, network, location, latitude, longitude,
-				elevation, quality, enable, useForTelesiesmic);
+				elevation, quality, enable, useForTeleseismic);
 }
 
 // --------------------------------------------------------initialize
