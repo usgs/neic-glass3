@@ -224,7 +224,7 @@ TEST(Convert, CancelTest) {
 }
 
 TEST(Convert, SiteListTest) {
-	// glass3::util::log_init("converttest", spdlog::level::debug, ".", true);
+	glass3::util::Logger::log_init("converttest", "debug", ".", true);
 
 	// failure cases
 	ASSERT_STREQ(glass3::parse::siteListToStationList(NULL).c_str(), "");

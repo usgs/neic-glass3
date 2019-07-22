@@ -14,7 +14,7 @@ outputTopic::outputTopic(hazdevbroker::Producer * producer) {
 	m_OutputProducer = NULL;
 
 	clear();
-	
+
 	m_OutputProducer = producer;
 }
 
