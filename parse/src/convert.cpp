@@ -150,6 +150,10 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 					pick.site.location = (siteobj)["Location"].ToString();
 				}
 
+				pick.site.latitude = (siteobj)["Latitude"].ToDouble();
+				pick.site.longitude = (siteobj)["Longitude"].ToDouble();
+				pick.site.elevation = (siteobj)["Elevation"].ToDouble();
+
 				// source
 				pick.source.agencyid = (sourceobj)["AgencyID"].ToString();
 				pick.source.author = (sourceobj)["Author"].ToString();
@@ -288,6 +292,10 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 					correlation.site.location =
 							(siteobj)["Location"].ToString();
 				}
+
+				correlation.site.latitude = (siteobj)["Latitude"].ToDouble();
+				correlation.site.longitude = (siteobj)["Longitude"].ToDouble();
+				correlation.site.elevation = (siteobj)["Elevation"].ToDouble();
 
 				// source
 				correlation.source.agencyid =
@@ -603,9 +611,9 @@ std::string siteListToStationList(std::shared_ptr<json::Object> data) {
 			}
 
 			// site location
-			stationObject.latitude = (siteObject)["Lat"].ToDouble();
-			stationObject.longitude = (siteObject)["Lon"].ToDouble();
-			stationObject.elevation = (siteObject)["Z"].ToDouble();
+			stationObject.site.latitude = (siteObject)["Lat"].ToDouble();
+			stationObject.site.longitude = (siteObject)["Lon"].ToDouble();
+			stationObject.site.elevation = (siteObject)["Z"].ToDouble();
 
 			// site quality metrics
 			stationObject.quality = (siteObject)["Qual"].ToDouble();
@@ -619,6 +627,18 @@ std::string siteListToStationList(std::shared_ptr<json::Object> data) {
 				rapidjson::Document stationJSON(rapidjson::kObjectType);
 				stationObject.tojson(stationJSON, allocator);
 				stationListArray.PushBack(stationJSON, allocator);
+			} else {
+				std::vector<std::string> errors = stationObject.geterrors();
+
+				std::string errorString = stationObject.site.station + "."
+					+ stationObject.site.network;
+				for (int errorCount = 0; errorCount < errors.size(); errorCount++) {
+					errorString += " " + errors[errorCount];
+				}
+
+				glass3::util::Logger::log(
+					"warning",
+					"siteListToStationList: " + errorString);
 			}
 		} catch (const std::exception &e) {
 			glass3::util::Logger::log(

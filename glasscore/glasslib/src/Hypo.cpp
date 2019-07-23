@@ -2214,6 +2214,16 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 			// which has the site, source, time, etc
 			pickObj = json::Object(*jPick.get());
 
+			// add the lat/lon/elev to site
+			if (pickObj.HasKey("Site")) {
+				// get the site object
+				json::Object siteobj = pickObj["Site"].ToObject();
+				siteobj["Latitude"] = site->getRawLatitude();
+				siteobj["Longitude"] = site->getRawLongitude();
+				siteobj["Elevation"] = site->getRawElevation();
+				pickObj["Site"] = siteobj;
+			}
+
 			// add the association info
 			json::Object assocobj;
 			assocobj["Phase"] = m_pTravelTimeTables->m_sPhase;
@@ -2260,6 +2270,16 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 			// start with a copy of json pick
 			// which has the site, source, time, etc
 			correlationObj = json::Object(*jCorrelation.get());
+
+			// add the lat/lon/elev to site
+			if (correlationObj.HasKey("Site")) {
+				// get the site object
+				json::Object siteobj = correlationObj["Site"].ToObject();
+				siteobj["Latitude"] = site->getRawLatitude();
+				siteobj["Longitude"] = site->getRawLongitude();
+				siteobj["Elevation"] = site->getRawElevation();
+				correlationObj["Site"] = siteobj;
+			}
 
 			// add the association info
 			json::Object assocobj;
