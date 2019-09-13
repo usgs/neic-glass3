@@ -1,10 +1,10 @@
 <map id="glasscore/glasslib/include/Web.h" name="glasscore/glasslib/include/Web.h">
-<area shape="rect" id="node2" href="$threadbaseclass_8h.html" title="threadbaseclass.h" alt="" coords="913,96,1041,123"/>
-<area shape="rect" id="node18" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="152,96,251,123"/>
-<area shape="rect" id="node22" href="$ZoneStats_8h.html" title="ZoneStats.h" alt="" coords="463,96,556,123"/>
-<area shape="rect" id="node3" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="906,171,997,197"/>
-<area shape="rect" id="node9" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="1073,171,1172,197"/>
-<area shape="rect" id="node10" href="$workstate_8h.html" title="workstate.h " alt="" coords="660,171,751,197"/>
-<area shape="rect" id="node19" href="$geo_8h.html" title="geo.h" alt="" coords="159,171,213,197"/>
-<area shape="rect" id="node20" href="$glassmath_8h.html" title="glassmath.h" alt="" coords="180,245,273,272"/>
+<area shape="rect" id="node2" href="$threadbaseclass_8h.html" title="threadbaseclass.h" alt="" coords="914,95,1042,121"/>
+<area shape="rect" id="node18" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="153,95,251,121"/>
+<area shape="rect" id="node22" href="$ZoneStats_8h.html" title="ZoneStats.h" alt="" coords="463,95,557,121"/>
+<area shape="rect" id="node3" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="907,169,999,196"/>
+<area shape="rect" id="node9" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="1074,169,1173,196"/>
+<area shape="rect" id="node10" href="$workstate_8h.html" title="workstate.h " alt="" coords="661,169,751,196"/>
+<area shape="rect" id="node19" href="$geo_8h.html" title="geo.h" alt="" coords="160,169,215,196"/>
+<area shape="rect" id="node20" href="$glassmath_8h.html" title="glassmath.h" alt="" coords="181,244,274,271"/>
 </map>

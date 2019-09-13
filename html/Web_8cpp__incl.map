@@ -1,21 +1,21 @@
 <map id="glasscore/glasslib/src/Web.cpp" name="glasscore/glasslib/src/Web.cpp">
-<area shape="rect" id="node2" href="$Web_8h.html" title="Web.h" alt="" coords="1607,96,1666,123"/>
-<area shape="rect" id="node20" href="$geo_8h.html" title="geo.h" alt="" coords="3073,320,3127,347"/>
-<area shape="rect" id="node26" href="$logger_8h.html" title="logger.h contains the interface to the neic&#45;glass3 logging library " alt="" coords="55,96,122,123"/>
-<area shape="rect" id="node32" href="$Glass_8h.html" title="Glass.h" alt="" coords="1954,96,2021,123"/>
-<area shape="rect" id="node35" href="$Terra_8h.html" title="Terra.h" alt="" coords="117,245,179,272"/>
-<area shape="rect" id="node36" href="$Pick_8h.html" title="Pick.h" alt="" coords="2357,245,2414,272"/>
-<area shape="rect" id="node37" href="$Node_8h.html" title="Node.h" alt="" coords="3069,171,3133,197"/>
-<area shape="rect" id="node39" href="$SiteList_8h.html" title="SiteList.h" alt="" coords="986,96,1062,123"/>
-<area shape="rect" id="node40" href="$Site_8h.html" title="Site.h" alt="" coords="2806,171,2861,197"/>
-<area shape="rect" id="node3" href="$threadbaseclass_8h.html" title="threadbaseclass.h" alt="" coords="727,171,855,197"/>
-<area shape="rect" id="node19" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="1877,245,1975,272"/>
-<area shape="rect" id="node23" href="$ZoneStats_8h.html" title="ZoneStats.h" alt="" coords="1213,171,1306,197"/>
-<area shape="rect" id="node4" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="2139,245,2230,272"/>
-<area shape="rect" id="node10" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="642,245,741,272"/>
-<area shape="rect" id="node11" href="$workstate_8h.html" title="workstate.h " alt="" coords="765,245,855,272"/>
-<area shape="rect" id="node21" href="$glassmath_8h.html" title="glassmath.h" alt="" coords="3054,395,3147,421"/>
-<area shape="rect" id="node33" href="$TTT_8h.html" title="TTT.h" alt="" coords="1984,171,2041,197"/>
-<area shape="rect" id="node34" href="$taper_8h.html" title="taper.h" alt="" coords="2000,245,2062,272"/>
-<area shape="rect" id="node38" href="$Link_8h.html" title="Link.h" alt="" coords="3291,245,3347,272"/>
+<area shape="rect" id="node2" href="$Web_8h.html" title="Web.h" alt="" coords="1607,95,1667,121"/>
+<area shape="rect" id="node20" href="$geo_8h.html" title="geo.h" alt="" coords="3073,319,3128,345"/>
+<area shape="rect" id="node26" href="$logger_8h.html" title="logger.h contains the interface to the neic&#45;glass3 logging library " alt="" coords="55,95,123,121"/>
+<area shape="rect" id="node32" href="$Glass_8h.html" title="Glass.h" alt="" coords="1954,95,2021,121"/>
+<area shape="rect" id="node35" href="$Terra_8h.html" title="Terra.h" alt="" coords="117,244,180,271"/>
+<area shape="rect" id="node36" href="$Pick_8h.html" title="Pick.h" alt="" coords="2357,244,2415,271"/>
+<area shape="rect" id="node37" href="$Node_8h.html" title="Node.h" alt="" coords="3069,169,3133,196"/>
+<area shape="rect" id="node39" href="$SiteList_8h.html" title="SiteList.h" alt="" coords="986,95,1063,121"/>
+<area shape="rect" id="node40" href="$Site_8h.html" title="Site.h" alt="" coords="2806,169,2862,196"/>
+<area shape="rect" id="node3" href="$threadbaseclass_8h.html" title="threadbaseclass.h" alt="" coords="727,169,855,196"/>
+<area shape="rect" id="node19" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="1877,244,1975,271"/>
+<area shape="rect" id="node23" href="$ZoneStats_8h.html" title="ZoneStats.h" alt="" coords="1213,169,1306,196"/>
+<area shape="rect" id="node4" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="2139,244,2231,271"/>
+<area shape="rect" id="node10" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="642,244,741,271"/>
+<area shape="rect" id="node11" href="$workstate_8h.html" title="workstate.h " alt="" coords="765,244,855,271"/>
+<area shape="rect" id="node21" href="$glassmath_8h.html" title="glassmath.h" alt="" coords="3054,393,3147,420"/>
+<area shape="rect" id="node33" href="$TTT_8h.html" title="TTT.h" alt="" coords="1984,169,2041,196"/>
+<area shape="rect" id="node34" href="$taper_8h.html" title="taper.h" alt="" coords="2000,244,2063,271"/>
+<area shape="rect" id="node38" href="$Link_8h.html" title="Link.h" alt="" coords="3291,244,3348,271"/>
 </map>
