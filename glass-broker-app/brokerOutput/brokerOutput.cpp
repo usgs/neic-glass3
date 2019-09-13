@@ -450,7 +450,7 @@ void brokerOutput::sendToOutputTopics(const std::string &message) {
 					"Hypocenter");
 			return;
 		}
-	} else if (type == "Retraction") {
+	} else if (type == "Retract") {
 		// retractions don't have a lat/lon, so just send to all topics?
 		// for each topic
 		for (auto aTopic : m_vOutputTopics) {
