@@ -29,6 +29,8 @@ Input::Input()
 	m_GPickParser = NULL;
 	m_JSONParser = NULL;
 	m_CCParser = NULL;
+	m_SimplePickParser = NULL;
+
 	m_DataQueue = new glass3::util::Queue();
 
 	clear();
@@ -40,6 +42,7 @@ Input::Input(std::shared_ptr<const json::Object> config)
 	m_GPickParser = NULL;
 	m_JSONParser = NULL;
 	m_CCParser = NULL;
+	m_SimplePickParser = NULL;
 	m_DataQueue = new glass3::util::Queue();
 
 	// do basic construction
@@ -72,7 +75,12 @@ Input::~Input() {
 	if (m_CCParser != NULL) {
 		delete (m_CCParser);
 	}
+
+	if (m_SimplePickParser != NULL) {
+		delete (m_SimplePickParser);
+	}
 }
+
 
 // ---------------------------------------------------------setup
 bool Input::setup(std::shared_ptr<const json::Object> config) {
@@ -166,6 +174,12 @@ bool Input::setup(std::shared_ptr<const json::Object> config) {
 	}
 	m_CCParser = new glass3::parse::CCParser(getDefaultAgencyId(),
 												getDefaultAuthor());
+
+	if (m_SimplePickParser != NULL) {
+		delete (m_SimplePickParser);
+	}
+	m_SimplePickParser = new glass3::parse::SimplePickParser(getDefaultAgencyId(),
+																getDefaultAuthor());
 
 	glass3::util::Logger::log("debug", "Input::setup(): Done Setting Up.");
 
@@ -261,6 +275,9 @@ std::shared_ptr<json::Object> Input::parse(std::string inputType,
 	} else if ((inputType == CC_TYPE) && (m_CCParser != NULL)) {
 		// cc data
 		return (m_CCParser->parse(inputMessage));
+	} else if ((inputType == SIMPLE_TYPE) && (m_SimplePickParser != NULL)) {
+		// simple pick data
+		return (m_SimplePickParser->parse(inputMessage));
 	} else {
 		glass3::util::Logger::log("warning",
 							"Input::parse(): Unknown type " + inputType);

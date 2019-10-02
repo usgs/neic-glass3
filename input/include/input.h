@@ -14,6 +14,7 @@
 #include <gpickparser.h>
 #include <jsonparser.h>
 #include <ccparser.h>
+#include <simplepickparser.h>
 #include <queue.h>
 
 #include <thread>
@@ -40,6 +41,8 @@ namespace input {
 #define GPICK_TYPE "gpick"
 #define JSON_TYPE "json"
 #define CC_TYPE "dat"
+#define SIMPLE_TYPE "txt"
+
 
 /**
  * \brief neic-glass3 Input class
@@ -232,6 +235,12 @@ class Input : public glass3::util::iInput,
 	 * \brief the cross correlation format parsing object
 	 */
 	glass3::parse::CCParser * m_CCParser;
+
+	/**
+	 * \brief the simple pick format parsing object
+	 */
+	glass3::parse::SimplePickParser * m_SimplePickParser;
+
 };
 }  // namespace input
 }  // namespace glass3
