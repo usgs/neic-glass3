@@ -64,7 +64,7 @@ std::shared_ptr<json::Object> SimplePickParser::parse(const std::string &input) 
 
 		// make sure we split the response into at
 		// least as many elements as we need
-		if (splitInput.size() < SIMPLEPICK_MSG_MAX_INDEX) {
+		if (splitInput.size() <= SIMPLEPICK_MSG_MAX_INDEX) {
 			glass3::util::Logger::log(
 					"error",
 					"simplepickparser::parse: Provided input did not split into at "
@@ -93,7 +93,7 @@ std::shared_ptr<json::Object> SimplePickParser::parse(const std::string &input) 
 		newPick.source.author = "None";
 
 		// if phase is set, define in as classified
-		if(splitInput.size() > 5) {
+		if(splitInput.size() == SIMPLEPICK_MSG_MAX_INDEX) {
 				newPick.phase = splitInput[PHASETYPE_INDEX];
 				newPick.classificationinfo.phase = splitInput[PHASETYPE_INDEX];
 				newPick.classificationinfo.phaseprobability = 1.0;
