@@ -65,7 +65,7 @@ std::shared_ptr<json::Object> SimplePickParser::parse(
 
 		// make sure we split the response into at
 		// least as many elements as we need
-		if (splitInput.size() < SIMPLEPICK_MSG_MAX_INDEX ) {
+		if (splitInput.size() < SIMPLEPICK_MSG_MAX_INDEX) {
 			glass3::util::Logger::log(
 					"error",
 					"simplepickparser::parse: Provided input did not split into at "
