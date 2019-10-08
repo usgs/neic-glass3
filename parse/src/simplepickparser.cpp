@@ -35,7 +35,7 @@
 #define LOCATION_INDEX 4
 #define ARRIVALTIME_INDEX 5
 #define PHASETYPE_INDEX 6
-#define SIMPLEPICK_MSG_MAX_INDEX 6
+#define SIMPLEPICK_MSG_MAX_INDEX 7
 
 namespace glass3 {
 namespace parse {
@@ -64,7 +64,7 @@ std::shared_ptr<json::Object> SimplePickParser::parse(const std::string &input) 
 
 		// make sure we split the response into at
 		// least as many elements as we need
-		if (splitInput.size() <= SIMPLEPICK_MSG_MAX_INDEX) {
+		if (splitInput.size() < SIMPLEPICK_MSG_MAX_INDEX-1) {
 			glass3::util::Logger::log(
 					"error",
 					"simplepickparser::parse: Provided input did not split into at "
