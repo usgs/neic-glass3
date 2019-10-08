@@ -50,7 +50,8 @@ SimplePickParser::~SimplePickParser() {
 }
 
 // ------------------------------------------------------------------------parse
-std::shared_ptr<json::Object> SimplePickParser::parse(const std::string &input) {
+std::shared_ptr<json::Object> SimplePickParser::parse(
+	const std::string &input) {
 	// make sure we got something
 	if (input.length() == 0)
 		return (NULL);
@@ -101,7 +102,8 @@ std::shared_ptr<json::Object> SimplePickParser::parse(const std::string &input) 
 
 		// validate
 		if (newPick.isvalid() == false) {
-			glass3::util::Logger::log("warning", "simplepickparser::parse: Pick invalid.");
+			glass3::util::Logger::log(
+				"warning", "simplepickparser::parse: Pick invalid.");
 			return (NULL);
 		}
 
