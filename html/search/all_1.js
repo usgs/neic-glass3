@@ -25,7 +25,7 @@ var searchData=
   ['annealinglocateresidual',['annealingLocateResidual',['../classglasscore_1_1CHypo.html#a53d3f01739998d729a1a6ea7933d9605',1,'glasscore::CHypo']]],
   ['appendtohypoprocessingqueue',['appendToHypoProcessingQueue',['../classglasscore_1_1CHypoList.html#a545f448554756fdb4902d404a53beabb',1,'glasscore::CHypoList']]],
   ['arrivaldate_5findex',['ARRIVALDATE_INDEX',['../ccparser_8cpp.html#ad457733d72980759476d2be86b1475ab',1,'ccparser.cpp']]],
-  ['arrivaltime_5findex',['ARRIVALTIME_INDEX',['../ccparser_8cpp.html#a5aa47a15e28d7a6bbb16ebf0d9b83fb5',1,'ARRIVALTIME_INDEX():&#160;ccparser.cpp'],['../gpickparser_8cpp.html#a5aa47a15e28d7a6bbb16ebf0d9b83fb5',1,'ARRIVALTIME_INDEX():&#160;gpickparser.cpp']]],
+  ['arrivaltime_5findex',['ARRIVALTIME_INDEX',['../ccparser_8cpp.html#a5aa47a15e28d7a6bbb16ebf0d9b83fb5',1,'ARRIVALTIME_INDEX():&#160;ccparser.cpp'],['../gpickparser_8cpp.html#a5aa47a15e28d7a6bbb16ebf0d9b83fb5',1,'ARRIVALTIME_INDEX():&#160;gpickparser.cpp'],['../simplepickparser_8cpp.html#a5aa47a15e28d7a6bbb16ebf0d9b83fb5',1,'ARRIVALTIME_INDEX():&#160;simplepickparser.cpp']]],
   ['associatedata',['associateData',['../classglasscore_1_1CHypoList.html#a602bf172cf73d3438518589b6b751bb2',1,'glasscore::CHypoList::associateData(std::shared_ptr&lt; CPick &gt; pk)'],['../classglasscore_1_1CHypoList.html#a4ea562e28ccc6a1cd3f28a86c59d5832',1,'glasscore::CHypoList::associateData(std::shared_ptr&lt; CCorrelation &gt; corr)']]],
   ['associator',['Associator',['../classglass3_1_1process_1_1Associator.html#ac9ebc38a23e12e74a8e9bb22c0b26621',1,'glass3::process::Associator']]],
   ['associator',['Associator',['../classglass3_1_1process_1_1Associator.html',1,'glass3::process']]],

@@ -37,7 +37,7 @@ var searchData=
   ['cglass',['CGlass',['../classglasscore_1_1CGlass.html',1,'glasscore']]],
   ['cglass',['CGlass',['../classglasscore_1_1CGlass.html#a2e6f4a2ccca36cf7eb7f0bae75e51e31',1,'glasscore::CGlass']]],
   ['cgold',['CGOLD',['../Ray_8cpp.html#a84b6d4f75b738c61f98e4d28db6a8ad3',1,'Ray.cpp']]],
-  ['channel_5findex',['CHANNEL_INDEX',['../ccparser_8cpp.html#a61b87e499a3ab3f6c0ebf4f6d57e1b3a',1,'CHANNEL_INDEX():&#160;ccparser.cpp'],['../gpickparser_8cpp.html#a61b87e499a3ab3f6c0ebf4f6d57e1b3a',1,'CHANNEL_INDEX():&#160;gpickparser.cpp']]],
+  ['channel_5findex',['CHANNEL_INDEX',['../ccparser_8cpp.html#a61b87e499a3ab3f6c0ebf4f6d57e1b3a',1,'CHANNEL_INDEX():&#160;ccparser.cpp'],['../gpickparser_8cpp.html#a61b87e499a3ab3f6c0ebf4f6d57e1b3a',1,'CHANNEL_INDEX():&#160;gpickparser.cpp'],['../simplepickparser_8cpp.html#a61b87e499a3ab3f6c0ebf4f6d57e1b3a',1,'CHANNEL_INDEX():&#160;simplepickparser.cpp']]],
   ['checkduplicate',['checkDuplicate',['../classglasscore_1_1CCorrelationList.html#a9f250b5f25ab6e333a13ab67d6aa3292',1,'glasscore::CCorrelationList']]],
   ['checkeventsloop',['checkEventsLoop',['../classglass3_1_1output_1_1output.html#a7f48a1b32a6a7d21ecae9118a1b6c103',1,'glass3::output::output']]],
   ['chypo',['CHypo',['../classglasscore_1_1CHypo.html',1,'glasscore']]],

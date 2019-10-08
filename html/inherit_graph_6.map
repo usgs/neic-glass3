@@ -1,26 +1,27 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classglass3_1_1util_1_1BaseClass.html" title="glass3::util::BaseClass class &#45; encapsulates the most basic setup and configuration logic..." alt="" coords="5,132,163,159"/>
-<area shape="rect" id="node2" href="$classglass3_1_1parse_1_1Parser.html" title="glass3 parser class " alt="" coords="219,56,365,83"/>
-<area shape="rect" id="node6" href="$classglass3_1_1util_1_1Cache.html" title="glass3::util::Cache class &#45; a thread safe in&#45;memory cache " alt="" coords="227,107,357,133"/>
-<area shape="rect" id="node7" href="$classglass3_1_1util_1_1Queue.html" title="glass3::util::Queue class " alt="" coords="227,157,357,184"/>
-<area shape="rect" id="node8" href="$classglass3_1_1util_1_1ThreadBaseClass.html" title="glass3::util::ThreadBaseClass class " alt="" coords="211,353,373,394"/>
+<area shape="rect" id="node1" href="$classglass3_1_1util_1_1BaseClass.html" title="glass3::util::BaseClass class &#45; encapsulates the most basic setup and configuration logic..." alt="" coords="5,165,163,192"/>
+<area shape="rect" id="node2" href="$classglass3_1_1parse_1_1Parser.html" title="glass3 parser class " alt="" coords="219,89,365,116"/>
+<area shape="rect" id="node7" href="$classglass3_1_1util_1_1Cache.html" title="glass3::util::Cache class &#45; a thread safe in&#45;memory cache " alt="" coords="227,140,357,167"/>
+<area shape="rect" id="node8" href="$classglass3_1_1util_1_1Queue.html" title="glass3::util::Queue class " alt="" coords="227,191,357,217"/>
+<area shape="rect" id="node9" href="$classglass3_1_1util_1_1ThreadBaseClass.html" title="glass3::util::ThreadBaseClass class " alt="" coords="211,386,373,427"/>
 <area shape="rect" id="node3" href="$classglass3_1_1parse_1_1CCParser.html" title="glass cross correlation message parser class " alt="" coords="430,5,597,32"/>
 <area shape="rect" id="node4" href="$classglass3_1_1parse_1_1GPickParser.html" title="glass global pick parser class " alt="" coords="422,56,605,83"/>
 <area shape="rect" id="node5" href="$classglass3_1_1parse_1_1JSONParser.html" title="json parser class " alt="" coords="422,107,605,133"/>
-<area shape="rect" id="node9" href="$classglass3_1_1input_1_1Input.html" title="neic&#45;glass3 Input class " alt="" coords="447,208,580,235"/>
-<area shape="rect" id="node12" href="$classglass3_1_1output_1_1output.html" title="glass output class " alt="" coords="439,259,587,285"/>
-<area shape="rect" id="node15" href="$classglass3_1_1process_1_1Associator.html" title="glass association class " alt="" coords="421,563,605,589"/>
-<area shape="rect" id="node16" href="$classglass3_1_1util_1_1ThreadPool.html" title="glass3::util::ThreadPool class " alt="" coords="434,461,593,488"/>
-<area shape="rect" id="node17" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="439,512,587,539"/>
-<area shape="rect" id="node18" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="442,309,585,336"/>
-<area shape="rect" id="node19" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="443,360,583,387"/>
-<area shape="rect" id="node20" href="$classglasscore_1_1CWeb.html" title="glasscore detection web class " alt="" coords="452,411,575,437"/>
-<area shape="rect" id="node10" href="$classglass3_1_1brokerInput.html" title="glass3 broker input class " alt="" coords="658,157,791,184"/>
-<area shape="rect" id="node11" href="$classglass3_1_1fileInput.html" title="glass fileInput class " alt="" coords="667,208,782,235"/>
-<area shape="rect" id="node13" href="$classglass3_1_1brokerOutput.html" title="glass3 broker output class " alt="" coords="653,259,796,285"/>
-<area shape="rect" id="node14" href="$classglass3_1_1fileOutput.html" title="glass fileOutput class " alt="" coords="663,309,787,336"/>
-<area shape="rect" id="node21" href="$classglass3_1_1util_1_1iAssociator.html" title="The associator messaging interface, used in sending configuration and input data to neic&#45;glass3..." alt="" coords="213,537,371,564"/>
-<area shape="rect" id="node22" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="215,588,369,615"/>
-<area shape="rect" id="node23" href="$classglass3_1_1util_1_1iInput.html" title="The input data retrieval interface, used to provide input data to other parts of neic&#45;glass3. " alt="" coords="229,208,355,235"/>
-<area shape="rect" id="node24" href="$classglass3_1_1util_1_1iOutput.html" title="The output message interface, used in sending data to output classes in neic&#45;glass3. " alt="" coords="225,259,359,285"/>
+<area shape="rect" id="node6" href="$classglass3_1_1parse_1_1SimplePickParser.html" title="glass simple pick parser class " alt="" coords="426,158,601,199"/>
+<area shape="rect" id="node10" href="$classglass3_1_1input_1_1Input.html" title="neic&#45;glass3 Input class " alt="" coords="447,241,580,268"/>
+<area shape="rect" id="node13" href="$classglass3_1_1output_1_1output.html" title="glass output class " alt="" coords="439,292,587,319"/>
+<area shape="rect" id="node16" href="$classglass3_1_1process_1_1Associator.html" title="glass association class " alt="" coords="421,596,605,623"/>
+<area shape="rect" id="node17" href="$classglass3_1_1util_1_1ThreadPool.html" title="glass3::util::ThreadPool class " alt="" coords="434,393,593,420"/>
+<area shape="rect" id="node18" href="$classglasscore_1_1CHypoList.html" title="glasscore hypocenter list class " alt="" coords="439,444,587,471"/>
+<area shape="rect" id="node19" href="$classglasscore_1_1CPickList.html" title="glasscore pick list class " alt="" coords="442,495,585,521"/>
+<area shape="rect" id="node20" href="$classglasscore_1_1CSiteList.html" title="glasscore site list class " alt="" coords="443,545,583,572"/>
+<area shape="rect" id="node21" href="$classglasscore_1_1CWeb.html" title="glasscore detection web class " alt="" coords="452,343,575,369"/>
+<area shape="rect" id="node11" href="$classglass3_1_1brokerInput.html" title="glass3 broker input class " alt="" coords="658,191,791,217"/>
+<area shape="rect" id="node12" href="$classglass3_1_1fileInput.html" title="glass fileInput class " alt="" coords="667,241,782,268"/>
+<area shape="rect" id="node14" href="$classglass3_1_1brokerOutput.html" title="glass3 broker output class " alt="" coords="653,292,796,319"/>
+<area shape="rect" id="node15" href="$classglass3_1_1fileOutput.html" title="glass fileOutput class " alt="" coords="663,343,787,369"/>
+<area shape="rect" id="node22" href="$classglass3_1_1util_1_1iAssociator.html" title="The associator messaging interface, used in sending configuration and input data to neic&#45;glass3..." alt="" coords="213,571,371,597"/>
+<area shape="rect" id="node23" href="$structglasscore_1_1IGlassSend.html" title="glasscore messaging interface " alt="" coords="215,621,369,648"/>
+<area shape="rect" id="node24" href="$classglass3_1_1util_1_1iInput.html" title="The input data retrieval interface, used to provide input data to other parts of neic&#45;glass3. " alt="" coords="229,241,355,268"/>
+<area shape="rect" id="node25" href="$classglass3_1_1util_1_1iOutput.html" title="The output message interface, used in sending data to output classes in neic&#45;glass3. " alt="" coords="225,292,359,319"/>
 </map>
