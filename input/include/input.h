@@ -240,7 +240,6 @@ class Input : public glass3::util::iInput,
 	 * \brief the simple pick format parsing object
 	 */
 	glass3::parse::SimplePickParser * m_SimplePickParser;
-
 };
 }  // namespace input
 }  // namespace glass3
