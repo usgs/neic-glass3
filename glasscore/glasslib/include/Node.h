@@ -171,21 +171,19 @@ class CNode {
 	 * \brief CNode significance function
 	 *
 	 * Given an observed time and a link to a site, compute the best
-	 * significance value from the traveltime(s) contained in the link to this
+	 * significance value from the traveltime contained in the link to this
 	 * node.
 	 *
 	 * \param tObservedTT - A double value containing the observed travel time
-	 * \param travelTime1 - A double value containing the first calculated
-	 * travel time
-	 * \param travelTime2 - A double value containing the first calculated
+	 * \param travelTime - A double value containing the first calculated
 	 * travel time
 	 * \param distDeg - A double value containing the distance between the
 	 * station and the node in degrees
-	 * \return Returns best significance if there is at least one valid travel
+	 * \return Returns  significance if there is a valid travel
 	 * time, -1.0 otherwise
 	 */
-	double getBestSignificance(double tObservedTT, double travelTime1,
-								double travelTime2, double distDeg);
+	double getSignificance(double tObservedTT, double travelTime,
+							double distDeg);
 
 	/**
 	 * \brief CNode site used function
