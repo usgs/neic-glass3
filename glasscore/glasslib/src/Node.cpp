@@ -529,13 +529,11 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			if (dSig1 >= dSig2 && dSig1 > dSigBest_phase1) {
 				dSigBest_phase1 = dSig1;
 				pickBest_phase1 = pick;
-
 			}
 			if (dSig2 > dSig1 && dSig2 > dSigBest_phase2) {
 				dSigBest_phase2 = dSig2;
 				pickBest_phase2 = pick;
 			}
-
 		}  // ---- end search through each pick at this site ----
 
 		site->getPickMutex().unlock();
