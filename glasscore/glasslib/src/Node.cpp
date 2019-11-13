@@ -275,10 +275,12 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	// search through each site linked to this node
 	for (const auto &link : m_vSiteLinkList) {
 		// init sigbest
-		double dSigBest = -1.0;
+		double dSigBest_phase1 = -1.0;
+		double dSigBest_phase2 = -1.0;
 
 		// the best nucleating pick
-		std::shared_ptr<CPick> pickBest;
+		std::shared_ptr<CPick> pickBest_phase1;
+		std::shared_ptr<CPick> pickBest_phase2;
 
 		// get shared pointer to site
 		std::shared_ptr<CSite> site = std::get < LINK_PTR > (link);
@@ -363,6 +365,9 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		for (auto it = lower; (it != site->getEnd()); ++it) {
 			auto pick = *it;
 
+			bool phase1set = false;
+			bool phase2set = false;
+
 			if (pick == NULL) {
 				continue;
 			}
@@ -442,13 +447,11 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 					if (pick->getClassifiedPhase() == phase1) {
 						// match, we only consider traveltime1, disable
 						// traveltime2
-						travelTime2 =
-								traveltime::CTravelTime::k_dTravelTimeInvalid;
+						phase1set = true;
 					} else if (pick->getClassifiedPhase() == phase2) {
 						// match, we only consider traveltime2, disable
 						// traveltime1
-						travelTime1 =
-								traveltime::CTravelTime::k_dTravelTimeInvalid;
+						phase2set = true;
 					}
 					// otherwise there is no match and it's business as usual
 				}
@@ -512,20 +515,24 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 				}
 			}
 
-			// get the best significance from the observed time and the
-			// link hmmm... at this point we don't know which TT got us here,
-			// or which one
-			double dSig = getBestSignificance(tObs, travelTime1, travelTime2,
-												distDeg);
+			// get the best significance from the observed time and link
 
-			// only count if this pick is significant (better than
-			// previous)
-			if (dSig > dSigBest) {
-				// keep the new best significance
-				dSigBest = dSig;
+			double dSig1 = getSignificance(tObs, travelTime1, distDeg);
+			double dSig2 = getSignificance(tObs, travelTime2, distDeg);
 
-				// remember the best pick
-				pickBest = pick;
+			if(phase1set) {
+				dSig2 = -1.;
+			}
+			if(phase2set) {
+				dSig1 = -1.;
+			}
+			if (dSig1 >= dSig2 && dSig1 > dSigBest_phase1) {
+				dSigBest_phase1 = dSig1;
+				pickBest_phase1 = pick;
+			}
+			if (dSig2 > dSig1 && dSig2 > dSigBest_phase2) {
+				dSigBest_phase2 = dSig2;
+				pickBest_phase2 = pick;
 			}
 		}  // ---- end search through each pick at this site ----
 
@@ -534,19 +541,29 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site
 		// NOTE: This significance threshold is hard coded.
-		if ((dSigBest >= 0.1) && (pickBest != NULL)) {
+		if ((dSigBest_phase1 >= 0.1) && (pickBest_phase1 != NULL)) {
 			// count this site
 			nCount++;
 
 			// add the best pick significance to the node
 			// significance sum
-			dSum += dSigBest;
+			dSum += dSigBest_phase1;
 
 			// add the pick to the pick vector
-			vPick.push_back(pickBest);
+			vPick.push_back(pickBest_phase1);
+		}
+		if ((dSigBest_phase2 >= 0.1) && (pickBest_phase2 != NULL)) {
+			// count this site
+			nCount++;
+			// add the best pick significance to the node
+			// significance sum
+			dSum += dSigBest_phase2;
+
+			// add the pick to the pick vector
+			vPick.push_back(pickBest_phase2);
 		}
 	}  // ---- end search through each site this node is linked to ----
-
+	// std::cout << "ncount: " << nCount << std::endl;
 	// make sure the number of significant picks
 	// exceeds the nucleation threshold
 	if (nCount < nCut) {
@@ -571,19 +588,14 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	return (trigger);
 }
 
-// ---------------------------------------------------------getBestSignificance
-double CNode::getBestSignificance(double tObservedTT, double travelTime1,
-									double travelTime2, double distDeg) {
+// ---------------------------------------------------------getSignificance
+double CNode::getSignificance(double tObservedTT, double travelTime,
+								double distDeg) {
 	// use observed travel time, travel times to site
-	double tRes1 = -1;
-	if (travelTime1 > 0) {
+	double tRes = -1;
+	if (travelTime > 0) {
 		// calculate time residual
-		tRes1 = std::abs(tObservedTT - travelTime1);
-	}
-	double tRes2 = -1;
-	if (travelTime2 > 0) {
-		// calculate time residual
-		tRes2 = std::abs(tObservedTT - travelTime2);
+		tRes = std::abs(tObservedTT - travelTime);
 	}
 
 	// compute significances using residuals and web resolution
@@ -594,33 +606,14 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 	// the form of a residual allowance which calculates the maximum off grid
 	// distance assuming the nodes form a cuboid and multiply but compute
 	// slowness at that region, then multiplies by a factor (2) for slop.
-	double dSig1 = 0;
-	if (tRes1 > 0) {
-		dSig1 =
+	double dSig = 0;
+	if (tRes > 0) {
+		dSig =
 				glass3::util::GlassMath::sig(
 						std::max(
 								0.0,
-								(tRes1
-										- (travelTime1 / distDeg)
-												* (std::sqrt(
-														3.
-																* (m_dResolution
-																		* m_dResolution)
-																+ (k_dDepthShellResolutionKm
-																		* k_dDepthShellResolutionKm))
-														* .5)
-												* glass3::util::Geo::k_KmToDegrees
-												* k_residualDistanceAllowanceFactor)),
-						CGlass::k_dNucleationSecondsPerSigma);
-	}
-	double dSig2 = 0;
-	if (tRes2 > 0) {
-		dSig2 =
-				glass3::util::GlassMath::sig(
-						std::max(
-								0.0,
-								(tRes2
-										- (travelTime2 / distDeg)
+								(tRes
+										- (travelTime / distDeg)
 												* (std::sqrt(
 														3.
 																* (m_dResolution
@@ -633,12 +626,7 @@ double CNode::getBestSignificance(double tObservedTT, double travelTime1,
 						CGlass::k_dNucleationSecondsPerSigma);
 	}
 
-	// return the higher of the two significances
-	if (dSig1 > dSig2) {
-		return (dSig1);
-	} else {
-		return (dSig2);
-	}
+	return (dSig);
 }
 
 // ---------------------------------------------------------getSite
