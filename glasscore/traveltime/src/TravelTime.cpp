@@ -15,8 +15,6 @@ const std::string CTravelTime::k_dPhaseInvalid = ""; // NOLINT
 
 // ---------------------------------------------------------CTravelTime
 CTravelTime::CTravelTime() {
-	m_pDistanceWarp = NULL;
-	m_pDepthWarp = NULL;
 	m_pTravelTimeArray = NULL;
 	m_pDepthDistanceArray = NULL;
 	m_pPhaseArray = NULL;
@@ -26,29 +24,24 @@ CTravelTime::CTravelTime() {
 
 // ---------------------------------------------------------CTravelTime
 CTravelTime::CTravelTime(const CTravelTime &travelTime) {
-	m_pDistanceWarp = NULL;
-	m_pDepthWarp = NULL;
 	m_pTravelTimeArray = NULL;
 	m_pDepthDistanceArray = NULL;
 	m_pPhaseArray = NULL;
 
 	clear();
 
-	m_iNumDistanceWarp = travelTime.m_iNumDistanceWarp;
-	m_iNumDepthWarp = travelTime.m_iNumDepthWarp;
+	m_iNumDistances = travelTime.m_iNumDistances;
+	m_iNumDepths = travelTime.m_iNumDepths;
 	m_dDepth = travelTime.m_dDepth;
 	m_dDelta = travelTime.m_dDelta;
 	m_sPhase = travelTime.m_sPhase;
 
 	// null check these?
-	m_pDistanceWarp = new CTimeWarp(*travelTime.m_pDistanceWarp);
-	m_pDepthWarp = new CTimeWarp(*travelTime.m_pDepthWarp);
+	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
+	m_pDepthDistanceArray = new double[m_iNumDistances * m_iNumDepths];
+	m_pPhaseArray = new char[m_iNumDistances * m_iNumDepths];
 
-	m_pTravelTimeArray = new double[m_iNumDistanceWarp * m_iNumDepthWarp];
-	m_pDepthDistanceArray = new double[m_iNumDistanceWarp * m_iNumDepthWarp];
-	m_pPhaseArray = new char[m_iNumDistanceWarp * m_iNumDepthWarp];
-
-	for (int i = 0; i < (m_iNumDistanceWarp * m_iNumDepthWarp); i++) {
+	for (int i = 0; i < (m_iNumDistances * m_iNumDepths); i++) {
 		m_pTravelTimeArray[i] = travelTime.m_pTravelTimeArray[i];
 		m_pDepthDistanceArray[i] = travelTime.m_pDepthDistanceArray[i];
 		m_pPhaseArray[i] = travelTime.m_pPhaseArray[i];
@@ -62,21 +55,11 @@ CTravelTime::~CTravelTime() {
 
 // ---------------------------------------------------------clear
 void CTravelTime::clear() {
-	m_iNumDistanceWarp = 0;
-	m_iNumDepthWarp = 0;
+	m_iNumDistances = 0;
+	m_iNumDepths = 0;
 	m_dDepth = 0;
 	m_dDelta = 0;
 	m_sPhase = CTravelTime::k_dPhaseInvalid;
-
-	if (m_pDistanceWarp) {
-		delete (m_pDistanceWarp);
-	}
-	m_pDistanceWarp = NULL;
-
-	if (m_pDepthWarp) {
-		delete (m_pDepthWarp);
-	}
-	m_pDepthWarp = NULL;
 
 	if (m_pTravelTimeArray) {
 		delete (m_pTravelTimeArray);
@@ -149,62 +132,25 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	char phaseList[64];
 	fread(phaseList, 1, 64, inFile);
 
-	// read distance warp
-	double vlow = 0;
-	double vhigh = 0;
-	double alpha = 0;
-	double bzero = 0;
-	double binf = 0;
-	m_iNumDistanceWarp = 0;
-	fread(&m_iNumDistanceWarp, 1, 4, inFile);
-	fread(&vlow, 1, 8, inFile);
-	fread(&vhigh, 1, 8, inFile);
-	fread(&alpha, 1, 8, inFile);
-	fread(&bzero, 1, 8, inFile);
-	fread(&binf, 1, 8, inFile);
+	// read num distances
+	m_iNumDistances = 0;
+	fread(&m_iNumDistances, 1, 4, inFile);
 
-	char sLog[1024];
-	snprintf(sLog, sizeof(sLog),
-				"CTravelTime::Setup: pDistanceWarp %d %.2f %.2f %.2f %.2f %.2f",
-				m_iNumDistanceWarp, vlow, vhigh, alpha, bzero, binf);
-	glass3::util::Logger::log(sLog);
-
-	// create distance warp
-	m_pDistanceWarp = new CTimeWarp(vlow, vhigh, alpha, bzero, binf);
-
-	// read depth warp
-	vlow = 0;
-	vhigh = 0;
-	alpha = 0;
-	bzero = 0;
-	binf = 0;
-	m_iNumDepthWarp = 0;
-	fread(&m_iNumDepthWarp, 1, 4, inFile);
-	fread(&vlow, 1, 8, inFile);
-	fread(&vhigh, 1, 8, inFile);
-	fread(&alpha, 1, 8, inFile);
-	fread(&bzero, 1, 8, inFile);
-	fread(&binf, 1, 8, inFile);
-
-	snprintf(sLog, sizeof(sLog),
-				"CTravelTime::Setup: pDepthWarp %d %.2f %.2f %.2f %.2f %.2f",
-				m_iNumDepthWarp, vlow, vhigh, alpha, bzero, binf);
-	glass3::util::Logger::log(sLog);
-
-	// create depth warp
-	m_pDepthWarp = new CTimeWarp(vlow, vhigh, alpha, bzero, binf);
+	// read num depths
+	m_iNumDepths = 0;
+	fread(&m_iNumDepths, 1, 4, inFile);
 
 	// create interpolation grids
-	m_pTravelTimeArray = new double[m_iNumDistanceWarp * m_iNumDepthWarp];
-	m_pDepthDistanceArray = new double[m_iNumDistanceWarp * m_iNumDepthWarp];
-	m_pPhaseArray = new char[m_iNumDistanceWarp * m_iNumDepthWarp];
+	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
+	m_pDepthDistanceArray = new double[m_iNumDistances * m_iNumDepths];
+	m_pPhaseArray = new char[m_iNumDistances * m_iNumDepths];
 
 	// read interpolation grids
-	fread(m_pTravelTimeArray, 1, 8 * m_iNumDistanceWarp * m_iNumDepthWarp,
+	fread(m_pTravelTimeArray, 1, 8 * m_iNumDistances * m_iNumDepths,
 			inFile);
-	fread(m_pDepthDistanceArray, 1, 8 * m_iNumDistanceWarp * m_iNumDepthWarp,
+	fread(m_pDepthDistanceArray, 1, 8 * m_iNumDistances * m_iNumDepths,
 			inFile);
-	fread(m_pPhaseArray, 1, m_iNumDistanceWarp * m_iNumDepthWarp, inFile);
+	fread(m_pPhaseArray, 1, m_iNumDistances * m_iNumDepths, inFile);
 
 	// done with file
 	fclose(inFile);
@@ -237,15 +183,12 @@ double CTravelTime::T(glass3::util::Geo *geo) {
 }
 
 // ---------------------------------------------------------T
-
 double CTravelTime::T(double delta) {
-	// Calculate travel time given delta in degrees
-	double depth = m_pDepthWarp->calculateGridPoint(m_dDepth);
-	double distance = m_pDistanceWarp->calculateGridPoint(delta);
+	m_dDelta = delta;
 
 	// compute travel time using bilinear interpolation
-	double travelTime = bilinear(distance, depth);
-	m_dDelta = delta;
+	double travelTime = bilinear(m_dDelta, m_dDepth);
+
 
 	return (travelTime);
 }
@@ -253,15 +196,15 @@ double CTravelTime::T(double delta) {
 // ---------------------------------------------------------T
 double CTravelTime::T(int deltaIndex, int depthIndex) {
 	// bounds checks
-	if ((deltaIndex < 0) || (deltaIndex >= m_iNumDistanceWarp)) {
+	if ((deltaIndex < 0) || (deltaIndex >= m_iNumDistances)) {
 		return (k_dTravelTimeInvalid);
 	}
-	if ((depthIndex < 0) || (depthIndex >= m_iNumDepthWarp)) {
+	if ((depthIndex < 0) || (depthIndex >= m_iNumDepths)) {
 		return (k_dTravelTimeInvalid);
 	}
 
 	// get traveltime from travel time array
-	double travelTime = m_pTravelTimeArray[depthIndex * m_iNumDistanceWarp
+	double travelTime = m_pTravelTimeArray[depthIndex * m_iNumDistances
 			+ deltaIndex];
 
 	return (travelTime);
