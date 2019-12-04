@@ -148,7 +148,7 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	m_iNumDistances = 0;
 	fread(&m_iNumDistances, sizeof(m_iNumDistances), 1, inFile);
 
-// read the minimum distance
+	// read the minimum distance
 	float minDist = 0;
 	fread(&minDist, sizeof(minDist), 1, inFile);
 	m_dMinimumDistance = static_cast<double>(minDist);
@@ -216,11 +216,27 @@ double CTravelTime::T(glass3::util::Geo *geo) {
 
 // ---------------------------------------------------------T
 double CTravelTime::T(double delta) {
+	// bounds checks
+	if(delta < m_dMinimumDistance || delta > m_dMaximumDistance) {
+    return (k_dTravelTimeInvalid);
+	}
+	if(m_dDepth < m_dMinimumDepth || m_dDepth > m_dMaximumDepth) {
+    return (k_dTravelTimeInvalid);
+	}
+
 	m_dDelta = delta;
 
-	// compute travel time using bilinear interpolation
-	double travelTime = bilinear(m_dDelta, m_dDepth);
+	// compute distance and depth points
+	double depthStep = (m_dMaximumDepth - m_dMinimumDepth) /
+		static_cast<double>(m_iNumDepths);
+	double depthPoint = floor((m_dDepth / depthStep) - 1);
 
+	double distanceStep = (m_dMaximumDistance - m_dMinimumDistance) /
+		static_cast<double>(m_iNumDistances);
+	double distancePoint = floor((delta / distanceStep) - 1);
+
+	// compute travel time using bilinear interpolation
+	double travelTime = bilinear(distancePoint, depthPoint);
 
 	return (travelTime);
 }
