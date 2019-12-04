@@ -25,7 +25,6 @@ namespace traveltime {
 
 // forward declarations
 class CRay;
-class CTimeWarp;
 
 /**
  * \brief travel time phase class
@@ -157,26 +156,16 @@ class CTravelTime {
 	double bilinear(double distance, double depth);
 
 	/**
-	 * \brief A pointer to the distance warp object used
-	 */
-	CTimeWarp *m_pDistanceWarp;
-
-	/**
-	 * \brief A pointer to the depth warp object used
-	 */
-	CTimeWarp *m_pDepthWarp;
-
-	/**
 	 * \brief An integer variable containing the grid index for the distance
 	 * warp
 	 */
-	int m_iNumDistanceWarp;
+	int m_iNumDistances;
 
 	/**
 	 * \brief An integer variable containing the grid index for the depth
 	 * warp
 	 */
-	int m_iNumDepthWarp;
+	int m_iNumDepths;
 
 	/**
 	 * \brief An array of double values containing the travel times indexed by
