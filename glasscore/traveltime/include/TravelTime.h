@@ -155,17 +155,41 @@ class CTravelTime {
 	 */
 	double bilinear(double distance, double depth);
 
-	/**
-	 * \brief An integer variable containing the grid index for the distance
-	 * warp
+/**
+	 * \brief An integer variable containing the array index size for the distance
+	 * array
 	 */
 	int m_iNumDistances;
 
 	/**
-	 * \brief An integer variable containing the grid index for the depth
-	 * warp
+	 * \brief An double variable containing the minimum distance of the depth 
+	 * distance array
+	 */
+	double m_dMinimumDistance;
+
+	/**
+	 * \brief An double variable containing the maximum distance of the depth 
+	 * distance array
+	 */
+	double m_dMaximumDistance;
+
+	/**
+	 * \brief An integer variable containing the array index size for the depth
+	 * array
 	 */
 	int m_iNumDepths;
+
+	/**
+	 * \brief An double variable containing the minimum depth of the depth 
+	 * distance array
+	 */
+	double m_dMinimumDepth;
+
+	/**
+	 * \brief An double variable containing the maximum Depth of the depth 
+	 * distance array
+	 */
+	double m_dMaximumDepth;
 
 	/**
 	 * \brief An array of double values containing the travel times indexed by

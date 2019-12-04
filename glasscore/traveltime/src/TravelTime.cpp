@@ -31,7 +31,13 @@ CTravelTime::CTravelTime(const CTravelTime &travelTime) {
 	clear();
 
 	m_iNumDistances = travelTime.m_iNumDistances;
+	m_dMinimumDistance = travelTime.m_dMinimumDistance;
+	m_dMaximumDistance = travelTime.m_dMaximumDistance;
+
 	m_iNumDepths = travelTime.m_iNumDepths;
+	m_dMinimumDepth = travelTime.m_dMinimumDepth;
+	m_dMaximumDepth = travelTime.m_dMaximumDepth;
+
 	m_dDepth = travelTime.m_dDepth;
 	m_dDelta = travelTime.m_dDelta;
 	m_sPhase = travelTime.m_sPhase;
@@ -56,7 +62,13 @@ CTravelTime::~CTravelTime() {
 // ---------------------------------------------------------clear
 void CTravelTime::clear() {
 	m_iNumDistances = 0;
+	m_dMinimumDistance = 0;
+	m_dMaximumDistance = 0;
+
 	m_iNumDepths = 0;
+	m_dMinimumDepth = 0;
+	m_dMaximumDepth = 0;
+
 	m_dDepth = 0;
 	m_dDelta = 0;
 	m_sPhase = CTravelTime::k_dPhaseInvalid;
@@ -134,11 +146,31 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 
 	// read num distances
 	m_iNumDistances = 0;
-	fread(&m_iNumDistances, 1, 4, inFile);
+	fread(&m_iNumDistances, sizeof(m_iNumDistances), 1, inFile);
+
+// read the minimum distance
+	float minDist = 0;
+	fread(&minDist, sizeof(minDist), 1, inFile);
+	m_dMinimumDistance = static_cast<double>(minDist);
+
+	// read the maximum distance
+	float maxDist = 0;
+	fread(&maxDist, sizeof(maxDist), 1, inFile);
+	m_dMaximumDistance = static_cast<double>(maxDist);
 
 	// read num depths
 	m_iNumDepths = 0;
-	fread(&m_iNumDepths, 1, 4, inFile);
+	fread(&m_iNumDepths, sizeof(m_iNumDepths), 1, inFile);
+
+	// read the minimum depth
+	float minDepth = 0;
+	fread(&minDepth, sizeof(minDepth), 1, inFile);
+	m_dMinimumDepth = static_cast<double>(minDepth);
+
+	// read the maximum depth
+	float maxDepth = 0;
+	fread(&maxDepth, sizeof(maxDepth), 1, inFile);
+	m_dMaximumDepth = static_cast<double>(maxDepth);
 
 	// create interpolation grids
 	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
