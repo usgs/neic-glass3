@@ -204,11 +204,6 @@ class CTravelTime {
 	double * m_pDepthDistanceArray;
 
 	/**
-	 * \brief An array of characters containing the phases
-	 */
-	char * m_pPhaseArray;
-
-	/**
 	 * \brief A std::std::string containing the name of the phase used for this
 	 * CTravelTime
 	 */

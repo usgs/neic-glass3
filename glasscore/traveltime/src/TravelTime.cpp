@@ -17,7 +17,6 @@ const std::string CTravelTime::k_dPhaseInvalid = ""; // NOLINT
 CTravelTime::CTravelTime() {
 	m_pTravelTimeArray = NULL;
 	m_pDepthDistanceArray = NULL;
-	m_pPhaseArray = NULL;
 
 	clear();
 }
@@ -26,7 +25,6 @@ CTravelTime::CTravelTime() {
 CTravelTime::CTravelTime(const CTravelTime &travelTime) {
 	m_pTravelTimeArray = NULL;
 	m_pDepthDistanceArray = NULL;
-	m_pPhaseArray = NULL;
 
 	clear();
 
@@ -45,12 +43,10 @@ CTravelTime::CTravelTime(const CTravelTime &travelTime) {
 	// null check these?
 	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
 	m_pDepthDistanceArray = new double[m_iNumDistances * m_iNumDepths];
-	m_pPhaseArray = new char[m_iNumDistances * m_iNumDepths];
 
 	for (int i = 0; i < (m_iNumDistances * m_iNumDepths); i++) {
 		m_pTravelTimeArray[i] = travelTime.m_pTravelTimeArray[i];
 		m_pDepthDistanceArray[i] = travelTime.m_pDepthDistanceArray[i];
-		m_pPhaseArray[i] = travelTime.m_pPhaseArray[i];
 	}
 }
 
@@ -82,11 +78,6 @@ void CTravelTime::clear() {
 		delete (m_pDepthDistanceArray);
 	}
 	m_pDepthDistanceArray = NULL;
-
-	if (m_pPhaseArray) {
-		delete (m_pPhaseArray);
-	}
-	m_pPhaseArray = NULL;
 }
 
 // ---------------------------------------------------------Setup
@@ -132,10 +123,6 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 		return (false);
 	}
 
-	// read endian
-	int16_t endianType;
-	fread(&endianType, 1, 2, inFile);
-
 	// read branch
 	char branch[16];
 	fread(branch, 1, 16, inFile);
@@ -175,14 +162,12 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	// create interpolation grids
 	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
 	m_pDepthDistanceArray = new double[m_iNumDistances * m_iNumDepths];
-	m_pPhaseArray = new char[m_iNumDistances * m_iNumDepths];
 
 	// read interpolation grids
-	fread(m_pTravelTimeArray, 1, 8 * m_iNumDistances * m_iNumDepths,
+	fread(m_pTravelTimeArray, 1, sizeof(double) * m_iNumDistances * m_iNumDepths,
 			inFile);
-	fread(m_pDepthDistanceArray, 1, 8 * m_iNumDistances * m_iNumDepths,
+	fread(m_pDepthDistanceArray, 1, sizeof(double) * m_iNumDistances * m_iNumDepths,
 			inFile);
-	fread(m_pPhaseArray, 1, m_iNumDistances * m_iNumDepths, inFile);
 
 	// done with file
 	fclose(inFile);
@@ -226,7 +211,7 @@ double CTravelTime::T(double delta) {
 
 	m_dDelta = delta;
 
-	// compute distance and depth points
+	// compute distance and depth interpolation points
 	double depthStep = (m_dMaximumDepth - m_dMinimumDepth) /
 		static_cast<double>(m_iNumDepths);
 	double depthPoint = floor((m_dDepth / depthStep) - 1);
