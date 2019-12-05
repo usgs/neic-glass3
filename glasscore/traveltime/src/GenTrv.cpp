@@ -562,7 +562,7 @@ bool CGenTrv::generate(json::Object *com) {
 	fwrite(phases, 1, 64, outFile);
 
 	// Output distance warp parameters
-	fwrite(&nDistanceWarp, 1, 4, outFile);
+	fwrite(&nDepthWarp, 1, 4, outFile);
 	fwrite(&pDistanceWarp->m_dGridMinimum, 1, 8, outFile);
 	fwrite(&pDistanceWarp->m_dGridMaximum, 1, 8, outFile);
 	fwrite(&pDistanceWarp->m_dDecayConstant, 1, 8, outFile);
