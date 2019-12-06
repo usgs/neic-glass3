@@ -98,14 +98,10 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 		return (false);
 	}
 
-	printf("Opened File \n");
-
 	// header
 	// read file type
 	char fileType[5];
 	fread(fileType, sizeof(char), 5, inFile);
-
-	printf("File Type |%s|\n", fileType);
 
 	// check file type
 	if (strcmp(fileType, "TRAV") != 0) {
@@ -121,49 +117,32 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	char branch[17];
 	fread(branch, sizeof(char), 17, inFile);
 
-	printf("Branch Name |%s| \n", branch);
-
 	// read phase list
 	char phaseList[65];
 	fread(phaseList, sizeof(char), 65, inFile);
-
-	printf("Phase List |%s|\n", phaseList);
 
 	// read num distances
 	m_iNumDistances = 0;
 	fread(&m_iNumDistances, sizeof(int), 1, inFile);
 
-	printf("Num Dist %d\n", m_iNumDistances);
-
 	// read the minimum distance
 	m_dMinimumDistance = 0;
 	fread(&m_dMinimumDistance, sizeof(double), 1, inFile);
-
-	printf("Min Dist %f \n", m_dMinimumDistance);
 
 	// read the maximum distance
 	m_dMaximumDistance = 0;
 	fread(&m_dMaximumDistance, sizeof(double), 1, inFile);
 
-	printf("Max Dist %f\n", m_dMaximumDistance);
-
 	// read num depths
 	m_iNumDepths = 0;
 	fread(&m_iNumDepths, sizeof(int), 1, inFile);
 
-	printf("Num Depth %d\n", m_iNumDepths);
-
 	// read the minimum depth
 	m_dMinimumDepth = 0;
 	fread(&m_dMinimumDepth, sizeof(double), 1, inFile);
-
-	printf("Min Depth %f\n", m_dMinimumDepth);
-
 	// read the maximum depth
 	m_dMaximumDepth = 0;
 	fread(&m_dMaximumDepth, sizeof(double), 1, inFile);
-
-	printf("Max Depth %f\n", m_dMaximumDepth);
 
 	if ((m_iNumDistances <= 0) || (m_iNumDepths <= 0)) {
 		glass3::util::Logger::log("error",
@@ -172,19 +151,26 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 		return (false);
 	}
 
-	// create interpolation grids
+	// create interpolation array
 	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
 
-	printf("Create Array \n");
-
-	// read interpolation grids
+	// read interpolation array
 	fread(m_pTravelTimeArray, 1, sizeof(double) * m_iNumDistances * m_iNumDepths,
 			inFile);
 
-	printf("Read Array \n");
-
 	// done with file
 	fclose(inFile);
+
+	glass3::util::Logger::log(
+		"debug",
+		"CTravelTime::Setup: Read: Branch Name |" + std::string(branch)
+			+ "| Phase List |" + std::string(phaseList)
+			+ "| Num Dist: " + std::to_string(m_iNumDistances)
+			+ ", Min Dist: " + std::to_string(m_dMinimumDistance)
+			+ ", Max Dist: " + std::to_string(m_dMaximumDistance)
+			+ ", Num Depth: " + std::to_string(m_iNumDepths)
+			+ ", Min Depth: " + std::to_string(m_dMinimumDepth)
+			+ ", Max Depth: " + std::to_string(m_dMaximumDepth));
 
 	return (true);
 }
@@ -228,14 +214,43 @@ double CTravelTime::T(double delta) {
 	// compute distance and depth interpolation points
 	double depthStep = (m_dMaximumDepth - m_dMinimumDepth) /
 		static_cast<double>(m_iNumDepths);
-	double depthPoint = floor((m_dDepth / depthStep) - 1);
+	double depthIndex = floor((m_dDepth / depthStep));
 
-	double distanceStep = (m_dMaximumDistance - m_dMinimumDistance) /
-		static_cast<double>(m_iNumDistances);
-	double distancePoint = floor((delta / distanceStep) - 1);
+	// bounds check
+	if (depthIndex < 0) {
+		depthIndex = 0;
+	} else if (depthIndex > (m_iNumDepths - 1)) {
+		depthIndex = m_iNumDepths - 1;
+	}
+
+	/*printf("m_dDepth: %f, ", m_dDepth);
+	printf("m_dMinimumDepth: %f, ", m_dMinimumDepth);
+	printf("m_dMaximumDepth: %f, ", m_dMaximumDepth);
+	printf("m_iNumDepths: %d, ", m_iNumDepths);
+	printf("depthStep: %f, ", depthStep);
+	printf("depthIndex: %f, ", depthIndex);*/
+
+	double distanceStep = (m_dMaximumDistance - m_dMinimumDistance)
+		/ static_cast<double>(m_iNumDistances);
+	double distanceIndex = floor((m_dDelta / distanceStep));
+
+	// bounds check
+	if (distanceIndex < 0) {
+		distanceIndex = 0;
+	} else if (distanceIndex > (m_iNumDistances - 1)) {
+		distanceIndex = m_iNumDistances - 1;
+	}
+
+	/*printf("m_dDelta: %f, ", m_dDelta);
+	printf("m_dMinimumDistance: %f, ", m_dMinimumDistance);
+	printf("m_dMaximumDistance: %f, ", m_dMaximumDistance);
+	printf("m_iNumDistances: %d, ", m_iNumDistances);
+	printf("distanceStep: %f, ", distanceStep);
+	printf("distanceIndex: %f, ", distanceIndex);*/
 
 	// compute travel time using bilinear interpolation
-	double travelTime = bilinear(distancePoint, depthPoint);
+	double travelTime = bilinear(distanceIndex, depthIndex);
+	// printf("travelTime: %f\n", travelTime);
 
 	return (travelTime);
 }
