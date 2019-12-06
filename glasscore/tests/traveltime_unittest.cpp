@@ -22,9 +22,10 @@
 #define LONGITUDE 0.0
 #define DEPTH 50.0
 #define DISTANCE 50.0
-#define TIME 529.2
-#define TIME2 50.553
-#define BILINEAR 50.553
+#define DELTATIME 529.2172
+#define GEOTIME 527.31964
+#define TIME2 169.71368
+#define BILINEAR 169.71368
 
 // tests to see if the traveltime can be constructed
 TEST(TravelTimeTest, Construction) {
@@ -177,7 +178,7 @@ TEST(TravelTimeTest, Operations) {
 	traveltime.setTTOrigin(LATITUDE, LONGITUDE, DEPTH);
 
 	// T(delta)
-	ASSERT_NEAR(TIME, traveltime.T(DISTANCE), 0.001)<< "T(delta) Check";
+	ASSERT_NEAR(DELTATIME, traveltime.T(DISTANCE), 0.001)<< "T(delta) Check";
 
 	// dDepth
 	ASSERT_NEAR(DEPTH, traveltime.m_dDepth, 0.001)<< "Depth Check";
@@ -189,7 +190,7 @@ TEST(TravelTimeTest, Operations) {
 	testGeo.setGeographic(LATITUDE, LONGITUDE + DISTANCE, DEPTH);
 
 	// T(geo)
-	ASSERT_NEAR(TIME, traveltime.T(&testGeo), 0.001)<< "T(geo) Check";
+	ASSERT_NEAR(GEOTIME, traveltime.T(&testGeo), 0.001)<< "T(geo) Check";
 
 	// dDepth
 	ASSERT_NEAR(DEPTH, traveltime.m_dDepth, 0.001)<< "Depth Check";
