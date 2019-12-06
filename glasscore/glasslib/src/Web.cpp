@@ -17,7 +17,6 @@
 #include <map>
 #include <sstream>
 #include "Glass.h"
-#include "Terra.h"
 #include "Pick.h"
 #include "Node.h"
 #include "SiteList.h"

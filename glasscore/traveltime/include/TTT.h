@@ -15,8 +15,6 @@
 
 namespace traveltime {
 
-class CRay;
-
 /**
  * \brief travel time interface class
  *

@@ -5,7 +5,6 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
-#include "TimeWarp.h"
 
 namespace traveltime {
 

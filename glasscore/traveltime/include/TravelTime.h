@@ -23,9 +23,6 @@
  */
 namespace traveltime {
 
-// forward declarations
-class CRay;
-
 /**
  * \brief travel time phase class
  *

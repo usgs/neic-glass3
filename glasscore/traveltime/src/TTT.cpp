@@ -6,7 +6,6 @@
 #include <string>
 #include <cmath>
 #include "TravelTime.h"
-#include "Ray.h"
 
 namespace traveltime {
 
