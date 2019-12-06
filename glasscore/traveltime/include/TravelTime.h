@@ -198,12 +198,6 @@ class CTravelTime {
 	double * m_pTravelTimeArray;
 
 	/**
-	 * \brief An array of double values containing the distances indexed by
-	 * depth
-	 */
-	double * m_pDepthDistanceArray;
-
-	/**
 	 * \brief A std::std::string containing the name of the phase used for this
 	 * CTravelTime
 	 */
