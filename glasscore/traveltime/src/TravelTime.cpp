@@ -97,8 +97,26 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 		return (false);
 	}
 
+	// A travel time file is a binary file with a header and the travel time
+	//     interpolation array
+	// The file consists of the following:
+	// <SOF>
+	// <FileType> - 4 ascii characters plus null termination - 5 bytes
+	// <BranchName> - 16 ascii characters plus null termination - 17 bytes
+	// <PhaseList> - 64 ascii characters plus null termination - 65 bytes
+	// <numberOfDistancePoints> - 1 int value, 4 bytes
+	// <minimumDistance> - 1 double value, 8 bytes
+	// <maximumDistance> - 1 double value, 8 bytes
+	// <numberOfDepthPoints> - 1 int value, 4 bytes
+	// <minimumDepth> - 1 double value, 8 bytes
+	// <maximumDepth> - 1 double value, 8 bytes
+	// <travelTimeInterpolationArray> -
+	//    (numberOfDistancePoints * numberOfDepthPoints) double values,
+	//    (numberOfDistancePoints * numberOfDepthPoints) * 8 bytes
+	// <EOF>
+
 	// header
-	// read file type
+	// read <FileType>
 	char fileType[5];
 	fread(fileType, sizeof(char), 5, inFile);
 
@@ -112,37 +130,39 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 		return (false);
 	}
 
-	// read branch
+	// read <BranchName>
 	char branch[17];
 	fread(branch, sizeof(char), 17, inFile);
 
-	// read phase list
+	// read <PhaseList>
 	char phaseList[65];
 	fread(phaseList, sizeof(char), 65, inFile);
 
-	// read num distances
+	// read <numberOfDistancePoints>
 	m_iNumDistances = 0;
 	fread(&m_iNumDistances, sizeof(int), 1, inFile);
 
-	// read the minimum distance
+	// read <minimumDistance>
 	m_dMinimumDistance = 0;
 	fread(&m_dMinimumDistance, sizeof(double), 1, inFile);
 
-	// read the maximum distance
+	// read <maximumDistance>
 	m_dMaximumDistance = 0;
 	fread(&m_dMaximumDistance, sizeof(double), 1, inFile);
 
-	// read num depths
+	// read <numberOfDepthPoints>
 	m_iNumDepths = 0;
 	fread(&m_iNumDepths, sizeof(int), 1, inFile);
 
-	// read the minimum depth
+	// read <minimumDepth>
 	m_dMinimumDepth = 0;
 	fread(&m_dMinimumDepth, sizeof(double), 1, inFile);
-	// read the maximum depth
+
+	// read <maximumDepth>
 	m_dMaximumDepth = 0;
 	fread(&m_dMaximumDepth, sizeof(double), 1, inFile);
 
+	// check for valid data
 	if ((m_iNumDistances <= 0) || (m_iNumDepths <= 0)) {
 		glass3::util::Logger::log("error",
 											"CTravelTime::Setup: Invalid data read from input file");
@@ -150,10 +170,10 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 		return (false);
 	}
 
-	// create interpolation array
+	// allocate travel time interpolation array
 	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
 
-	// read interpolation array
+	// read <travelTimeInterpolationArray>
 	fread(m_pTravelTimeArray, 1, sizeof(double) * m_iNumDistances * m_iNumDepths,
 			inFile);
 
