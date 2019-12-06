@@ -16,7 +16,6 @@ const std::string CTravelTime::k_dPhaseInvalid = ""; // NOLINT
 // ---------------------------------------------------------CTravelTime
 CTravelTime::CTravelTime() {
 	m_pTravelTimeArray = NULL;
-	m_pDepthDistanceArray = NULL;
 
 	clear();
 }
@@ -24,7 +23,6 @@ CTravelTime::CTravelTime() {
 // ---------------------------------------------------------CTravelTime
 CTravelTime::CTravelTime(const CTravelTime &travelTime) {
 	m_pTravelTimeArray = NULL;
-	m_pDepthDistanceArray = NULL;
 
 	clear();
 
@@ -40,13 +38,11 @@ CTravelTime::CTravelTime(const CTravelTime &travelTime) {
 	m_dDelta = travelTime.m_dDelta;
 	m_sPhase = travelTime.m_sPhase;
 
-	// null check these?
+	// null check?
 	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
-	m_pDepthDistanceArray = new double[m_iNumDistances * m_iNumDepths];
 
 	for (int i = 0; i < (m_iNumDistances * m_iNumDepths); i++) {
 		m_pTravelTimeArray[i] = travelTime.m_pTravelTimeArray[i];
-		m_pDepthDistanceArray[i] = travelTime.m_pDepthDistanceArray[i];
 	}
 }
 
@@ -73,11 +69,6 @@ void CTravelTime::clear() {
 		delete (m_pTravelTimeArray);
 	}
 	m_pTravelTimeArray = NULL;
-
-	if (m_pDepthDistanceArray) {
-		delete (m_pDepthDistanceArray);
-	}
-	m_pDepthDistanceArray = NULL;
 }
 
 // ---------------------------------------------------------Setup
@@ -107,11 +98,14 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 		return (false);
 	}
 
+	printf("Opened File \n");
+
 	// header
 	// read file type
-	char fileType[8];
-	fread(fileType, 1, 4, inFile);
-	fileType[4] = 0;
+	char fileType[5];
+	fread(fileType, sizeof(char), 5, inFile);
+
+	printf("File Type |%s|\n", fileType);
 
 	// check file type
 	if (strcmp(fileType, "TRAV") != 0) {
@@ -124,50 +118,70 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	}
 
 	// read branch
-	char branch[16];
-	fread(branch, 1, 16, inFile);
+	char branch[17];
+	fread(branch, sizeof(char), 17, inFile);
+
+	printf("Branch Name |%s| \n", branch);
 
 	// read phase list
-	char phaseList[64];
-	fread(phaseList, 1, 64, inFile);
+	char phaseList[65];
+	fread(phaseList, sizeof(char), 65, inFile);
+
+	printf("Phase List |%s|\n", phaseList);
 
 	// read num distances
 	m_iNumDistances = 0;
-	fread(&m_iNumDistances, sizeof(m_iNumDistances), 1, inFile);
+	fread(&m_iNumDistances, sizeof(int), 1, inFile);
+
+	printf("Num Dist %d\n", m_iNumDistances);
 
 	// read the minimum distance
-	float minDist = 0;
-	fread(&minDist, sizeof(minDist), 1, inFile);
-	m_dMinimumDistance = static_cast<double>(minDist);
+	m_dMinimumDistance = 0;
+	fread(&m_dMinimumDistance, sizeof(double), 1, inFile);
+
+	printf("Min Dist %f \n", m_dMinimumDistance);
 
 	// read the maximum distance
-	float maxDist = 0;
-	fread(&maxDist, sizeof(maxDist), 1, inFile);
-	m_dMaximumDistance = static_cast<double>(maxDist);
+	m_dMaximumDistance = 0;
+	fread(&m_dMaximumDistance, sizeof(double), 1, inFile);
+
+	printf("Max Dist %f\n", m_dMaximumDistance);
 
 	// read num depths
 	m_iNumDepths = 0;
-	fread(&m_iNumDepths, sizeof(m_iNumDepths), 1, inFile);
+	fread(&m_iNumDepths, sizeof(int), 1, inFile);
+
+	printf("Num Depth %d\n", m_iNumDepths);
 
 	// read the minimum depth
-	float minDepth = 0;
-	fread(&minDepth, sizeof(minDepth), 1, inFile);
-	m_dMinimumDepth = static_cast<double>(minDepth);
+	m_dMinimumDepth = 0;
+	fread(&m_dMinimumDepth, sizeof(double), 1, inFile);
+
+	printf("Min Depth %f\n", m_dMinimumDepth);
 
 	// read the maximum depth
-	float maxDepth = 0;
-	fread(&maxDepth, sizeof(maxDepth), 1, inFile);
-	m_dMaximumDepth = static_cast<double>(maxDepth);
+	m_dMaximumDepth = 0;
+	fread(&m_dMaximumDepth, sizeof(double), 1, inFile);
+
+	printf("Max Depth %f\n", m_dMaximumDepth);
+
+	if ((m_iNumDistances <= 0) || (m_iNumDepths <= 0)) {
+		glass3::util::Logger::log("error",
+											"CTravelTime::Setup: Invalid data read from input file");
+		fclose(inFile);
+		return (false);
+	}
 
 	// create interpolation grids
 	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
-	m_pDepthDistanceArray = new double[m_iNumDistances * m_iNumDepths];
+
+	printf("Create Array \n");
 
 	// read interpolation grids
 	fread(m_pTravelTimeArray, 1, sizeof(double) * m_iNumDistances * m_iNumDepths,
 			inFile);
-	fread(m_pDepthDistanceArray, 1, sizeof(double) * m_iNumDistances * m_iNumDepths,
-			inFile);
+
+	printf("Read Array \n");
 
 	// done with file
 	fclose(inFile);
