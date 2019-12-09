@@ -1,0 +1,44 @@
+{
+  "EarthModelPath" : "./models/",
+  "FileExtension" : ".trv",
+  "OutputPath" : "./",
+  "WriteDebugFile" :true,
+  "Branches" : [
+    {
+      "BranchName" : "P",
+      "FileName" : "cus_P"
+      "EarthModel" : "cus",
+      "PhaseList" : [
+        "Pb",
+        "Pg",
+        "Pn",
+        "P", 
+        "Pdif"
+      ],
+      "MinimumDistance" : 0.0,
+      "MaximumDistance" : 180.0,
+      "NumberOfDistances" : 720,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    },
+    {
+      "BranchName" : "S",
+      "FileName" : "cus_S"
+      "EarthModel" : "cus",
+      "PhaseList" : [
+        "Sb",
+        "Sg",
+        "Sn",
+        "S", 
+        "Sdif"
+      ],
+      "MinimumDistance" : 0.0,
+      "MaximumDistance" : 180.0,
+      "NumberOfDistances" : 720,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    }
+  ]
+}
