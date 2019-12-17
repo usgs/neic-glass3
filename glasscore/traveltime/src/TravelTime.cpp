@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <fstream>
 
 namespace traveltime {
 
@@ -70,7 +71,72 @@ void CTravelTime::clear() {
 	m_pTravelTimeArray = NULL;
 }
 
-// ---------------------------------------------------------Setup
+// -----------------------------------------------------writeToFile
+void CTravelTime::writeToFile(std::string fileName, double depth) {
+	if (fileName == "") {
+		return;
+	}
+
+	// bounds check depth
+	if (depth < m_dMinimumDepth) {
+		return;
+	} else if (depth > m_dMaximumDepth) {
+		return;
+	}
+
+	glass3::util::Logger::log("info",
+									"CTravelTime::writeToFile: writing: " + fileName);
+
+	// set the depth
+	m_dDepth = depth;
+
+	// compute distance step
+	double distanceStep = (m_dMaximumDistance - m_dMinimumDistance)
+		/ static_cast<double>(m_iNumDistances);
+
+	// init to minimum distance
+	double aDistance = m_dMinimumDistance;
+
+	glass3::util::Logger::log("info",
+									"CTravelTime::writeToFile: Depth: " + std::to_string(depth)
+									+ " NumDist: " + std::to_string(m_iNumDistances)
+									+ " MinDist: " + std::to_string(m_dMinimumDistance)
+									+ " MaxDist: " + std::to_string(m_dMaximumDistance)
+									+ " StartDist: " + std::to_string(aDistance));
+
+	int count = 0;
+	std::string fileString = "Distance,Time\n";
+	for (int i = 0; i < m_iNumDistances; i++) {
+		// get the travel time for this distance
+		double aTime = T(aDistance);
+
+		// make sure we got a valid time
+		if (aTime > 0) {
+			count++;
+			// add this distance/time to the file string
+			// as csv
+			fileString += std::to_string(aDistance) + ","
+				+ std::to_string(aTime) + "\n";
+		}
+
+		// update to the next distance
+		aDistance += distanceStep;
+	}
+
+glass3::util::Logger::log("info",
+									"CTravelTime::writeToFile: Generated " + std::to_string(count)
+									+ " points. ");
+
+	// now, write the file to disk
+	std::ofstream outfile;
+	outfile.open(fileName, std::ios::out);
+	outfile << fileString;
+
+	// done
+	outfile.close();
+}
+
+// ---------------------------------------------------------setup
 bool CTravelTime::setup(std::string phase, std::string file) {
 	// nullcheck
 	if (phase == CTravelTime::k_dPhaseInvalid) {
@@ -221,55 +287,82 @@ double CTravelTime::T(glass3::util::Geo *geo) {
 // ---------------------------------------------------------T
 double CTravelTime::T(double delta) {
 	// bounds checks
-	if(delta < m_dMinimumDistance || delta > m_dMaximumDistance) {
+	if((delta < m_dMinimumDistance) || (delta > m_dMaximumDistance)) {
     return (k_dTravelTimeInvalid);
 	}
-	if(m_dDepth < m_dMinimumDepth || m_dDepth > m_dMaximumDepth) {
+	if((m_dDepth < m_dMinimumDepth) || (m_dDepth > m_dMaximumDepth)) {
     return (k_dTravelTimeInvalid);
 	}
 
 	m_dDelta = delta;
 
 	// compute distance and depth interpolation points
+	// we need to convert from actual distance in degrees and depth in
+	// kilometers to index points within the distance and depth ranges
+	// specified for this branch's interpolation array so that the travel
+	// time can be computed using bilinear interpolation using the distance
+	// and depth index points, plus the interpolation array
+
+	// we do this by first computing the actual step size of the interpolation
+	// array using the valid range of the array and the number of points in the
+	// range
 	double depthStep = (m_dMaximumDepth - m_dMinimumDepth) /
 		static_cast<double>(m_iNumDepths);
-	double depthIndex = floor((m_dDepth / depthStep));
 
-	// bounds check
+	// we then divide the integer equivelent of the actual value (using floor())
+	// minus the start of the range by the actual step size
+	double depthIndex = floor(((m_dDepth - m_dMinimumDepth) / depthStep));
+
+	// bounds checks
 	if (depthIndex < 0) {
 		depthIndex = 0;
-	} else if (depthIndex > (m_iNumDepths - 1)) {
+	} else if (depthIndex > m_iNumDepths) {
 		depthIndex = m_iNumDepths - 1;
 	}
 
-	/*printf("m_dDepth: %f, ", m_dDepth);
-	printf("m_dMinimumDepth: %f, ", m_dMinimumDepth);
-	printf("m_dMaximumDepth: %f, ", m_dMaximumDepth);
-	printf("m_iNumDepths: %d, ", m_iNumDepths);
-	printf("depthStep: %f, ", depthStep);
-	printf("depthIndex: %f, ", depthIndex);*/
+	/* if (m_sPhase == "PKPab") {
+		printf("\nm_sPhase: %s, ", m_sPhase.c_str());
+		printf("m_dDepth: %f, ", m_dDepth);
+		printf("m_dMinimumDepth: %f, ", m_dMinimumDepth);
+		printf("m_dMaximumDepth: %f, ", m_dMaximumDepth);
+		printf("m_iNumDepths: %d, ", m_iNumDepths);
+		printf("depthStep: %f, ", depthStep);
+		printf("depthIndex: %f", depthIndex);
+	} */
 
+	// we do this by first computing the actual step size of the interpolation
+	// array using the valid range of the array and the number of points in the
+	// range
 	double distanceStep = (m_dMaximumDistance - m_dMinimumDistance)
 		/ static_cast<double>(m_iNumDistances);
-	double distanceIndex = floor((m_dDelta / distanceStep));
 
-	// bounds check
+	// we then divide the integer equivelent of the actual value (using floor())
+	// minus the start of the range by the actual step size
+	double distanceIndex = floor(((m_dDelta - m_dMinimumDistance) / distanceStep));
+
+	// bounds checks
 	if (distanceIndex < 0) {
 		distanceIndex = 0;
-	} else if (distanceIndex > (m_iNumDistances - 1)) {
+	} else if (distanceIndex > m_iNumDistances) {
 		distanceIndex = m_iNumDistances - 1;
 	}
 
-	/*printf("m_dDelta: %f, ", m_dDelta);
-	printf("m_dMinimumDistance: %f, ", m_dMinimumDistance);
-	printf("m_dMaximumDistance: %f, ", m_dMaximumDistance);
-	printf("m_iNumDistances: %d, ", m_iNumDistances);
-	printf("distanceStep: %f, ", distanceStep);
-	printf("distanceIndex: %f, ", distanceIndex);*/
+	/* if (m_sPhase == "PKPab") {
+		printf("\nm_sPhase: %s, ", m_sPhase.c_str());
+		printf("m_dDelta: %f, ", m_dDelta);
+		printf("m_dMinimumDistance: %f, ", m_dMinimumDistance);
+		printf("m_dMaximumDistance: %f, ", m_dMaximumDistance);
+		printf("m_iNumDistances: %d, ", m_iNumDistances);
+		printf("distanceStep: %f, ", distanceStep);
+		printf("distanceIndex: %f", distanceIndex);
+	} */
 
 	// compute travel time using bilinear interpolation
 	double travelTime = bilinear(distanceIndex, depthIndex);
-	// printf("travelTime: %f\n", travelTime);
+
+	/* if (m_sPhase == "PKPab") {
+		printf("\n\ttravelTime: %f", travelTime);
+	} */
 
 	return (travelTime);
 }

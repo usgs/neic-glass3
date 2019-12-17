@@ -6,7 +6,7 @@
   "Branches" : [
     {
       "BranchName" : "P",
-      "EarthModel" : "ak135",
+      "EarthModel" : "ak135", # "ak135", "cus", "wus", "ogs", "cia"
       "PhaseList" : [
         "Pb",
         "Pg",

@@ -69,6 +69,17 @@ class CTravelTime {
 	bool setup(std::string phase = "P", std::string file = "");
 
 	/**
+	 * \brief Write out travel times to file
+	 * 
+	 * This function prints the available travel time points for the travel
+	 * time contained in this TravelTime at a given depth to a given file.
+	 * 
+	 * \param fileName - A std::string containing the file name to write to.
+	 * \param depth - A double containing the depth to use
+	 */
+	void writeToFile(std::string fileName, double depth);
+
+	/**
 	 * \brief CTravelTime clear function
 	 */
 	void clear();
