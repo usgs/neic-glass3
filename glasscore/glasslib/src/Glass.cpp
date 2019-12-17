@@ -331,6 +331,17 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 		// set up the first phase travel time
 		m_pDefaultNucleationTravelTime->setup(phs, file);
 
+		std::string debugFile = "";
+		if (phsObj.HasKey("DebugFile")) {
+			debugFile = phsObj["DebugFile"].ToString();
+		}
+		double debugDepth = 0;
+		if (phsObj.HasKey("DebugDepth")) {
+			debugDepth = phsObj["DebugDepth"].ToDouble();
+		}
+		if (debugFile != "") {
+			m_pDefaultNucleationTravelTime->writeToFile(debugFile, debugDepth);
+		}
 	} else {
 		std::lock_guard < std::mutex > ttGuard(m_TTTMutex);
 		// if no first phase, default to P
@@ -474,22 +485,32 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 
 			// set up this phase
 			m_pAssociationTravelTimes->addPhase(phs, pdRange, pdAssoc, file);
-
-			// test this phase
-			if (m_bTestTravelTimes) {
-				m_pAssociationTravelTimes->testTravelTimes(phs);
-			}
 		}
+
 	} else {
 		glass3::util::Logger::log("error",
 									"No association Phase array provided");
 		return (false);
 	}
 
-	// setup if we are going to print phase travel times for debuging
-	if ((com->HasKey("TestTravelTimes"))
-			&& ((*com)["TestTravelTimes"].GetType() == json::ValueType::BoolVal)) {
-		m_bTestTravelTimes = (*com)["TestTravelTimes"].ToBool();
+	std::string ttDebugPath = "./";
+	if (com->HasKey("TTDebugPath")) {
+		ttDebugPath = (*com)["TTDebugPath"].ToString();
+	}
+
+	int numTTDebugDepths = 0;
+	json::Array ttDebugDepths;
+	if ((com->HasKey("TTDebugDepth") &&
+			((*com)["TTDebugDepth"].GetType() == json::ValueType::ArrayVal))) {
+		ttDebugDepths = (*com)["TTDebugDepth"].ToArray();
+		numTTDebugDepths = ttDebugDepths.size();
+	}
+
+	if ((ttDebugPath != "") && (numTTDebugDepths > 0)) {
+		for (int z = 0; z < numTTDebugDepths; z++) {
+			m_pAssociationTravelTimes->writeToFiles(ttDebugPath,
+				ttDebugDepths[z].ToDouble());
+		}
 	}
 
 	// Change locator

@@ -68,6 +68,18 @@ void CTTT::clear() {
 	}
 }
 
+// -------------------------------------------------------writeToFiles
+void CTTT::writeToFiles(std::string outDir, double depth) {
+	// write out each ttfile we know about as csv
+	for (int i = 0; i < k_iMaximumNumberOfTravelTimes; i++) {
+		if (m_pTravelTimes[i] != NULL) {
+			std::string fileName = outDir + "/" + m_pTravelTimes[i]->m_sPhase
+				+ "_" + std::to_string(depth) + ".csv";
+			m_pTravelTimes[i]->writeToFile(fileName, depth);
+		}
+	}
+}
+
 // ---------------------------------------------------------addPhase
 // Add phase to list to be calculated
 bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
@@ -211,8 +223,8 @@ double CTTT::T(double delta, std::string phase) {
 	return (CTravelTime::k_dTravelTimeInvalid);
 }
 
-// ---------------------------------------------------------T
-double CTTT::testTravelTimes(std::string phase) {
+// ---------------------------------------------------------testTravelTimes
+/* double CTTT::testTravelTimes(std::string phase) {
 	// Calculate time from delta (degrees)
 	double time = 0;
 	std::ofstream outfile;
@@ -244,7 +256,7 @@ double CTTT::testTravelTimes(std::string phase) {
 	outfile.close();
 
 	return (1.0);
-}
+} */
 
 // ---------------------------------------------------------T
 double CTTT::T(glass3::util::Geo *geo, double tObserved) {
