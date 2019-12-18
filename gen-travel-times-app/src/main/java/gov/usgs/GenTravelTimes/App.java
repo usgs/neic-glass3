@@ -101,10 +101,10 @@ public class App {
     boolean readPhaseStats = true;
     boolean readEllipticity = true;
     boolean readTopography = true;
-    boolean returnAllPhases = false;
-    boolean returnBackBranches = false;
+    boolean returnAllPhases = true; // all phase return
+    boolean returnBackBranches = true; // Return back branches
     boolean rstt = false; // always false, not implemented
-    boolean tectonic = false;
+    boolean tectonic = true; // source is a tectonic province
     double elev = 0.0d;
 
     // get the location of the model files
