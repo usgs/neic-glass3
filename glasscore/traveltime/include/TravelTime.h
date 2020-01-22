@@ -151,35 +151,91 @@ class CTravelTime {
 	double T(int deltaIndex, int depthIndex);
 
 	/**
-	 * \brief Compute travel time in seconds via bilinear interpolation
+	 * \brief Compute bilinear interpolation
 	 *
-	 * Compute a traveltime from travel time array via a bilinear interpolation
-	 * using T() and the given distance and depth
+	 * Compute a bilinear interpolation from the provided values
+	 *
+	 * \param v11 - A double containing the interpolation value for (x1, y1)
+	 * \param v12 - A double containing the interpolation value for (x1, y2)
+	 * \param v21 - A double containing the interpolation value for (x2, y1)
+	 * \param v22 - A double containing the interpolation value for (x2, y2)
+	 * \param x1 - A double containing first x interpolation coordinate
+	 * \param x2 - A double containing second x interpolation coordinate
+	 * \param y1 - A double containing first y interpolation coordinate
+	 * \param y2 - A double containing second y interpolation coordinate
+	 * \param x - A double containing the given x coordinate
+	 * \param y - A double containing the given y coordinate
+	 * \return Returns a double containing the resulting bilinear interpolation
+	 */
+	double bilinearInterpolation(double v11, double v12, double v21,
+		double v22, double x1, double x2, double y1, double y2, double x, double y);
+
+	/**
+	 * \brief Compute interpolation grid distance index
+	 *
+	 * Compute an interpolation grid index from the given distance
 	 *
 	 * \param distance - A double value containing the distance to use
-	 * \param depth - A double value  containing depth to use
-	 * \return Returns the travel time in seconds, or -1.0 if there is
-	 * no valid travel time
+	 * \return Returns the distance index
 	 */
-	double bilinear(double distance, double depth);
+	int getIndexFromDistance(double distance);
 
-/**
+	/**
+	 * \brief Compute distance using interpolation grid index
+	 *
+	 * Compute a distance using the given interpolation grid index 
+	 *
+	 * \param index - An integer value containing the interpolation grid index to
+	 * 	use
+	 * \return Returns the distance
+	 */
+	double getDistanceFromIndex(int index);
+
+	/**
+	 * \brief Compute interpolation grid depth index
+	 *
+	 * Compute an interpolation grid index from the given depth
+	 *
+	 * \param depth - A double value containing the depth to use
+	 * \return Returns the depth index
+	 */
+	int getIndexFromDepth(double depth);
+
+	/**
+	 * \brief Compute depth using interpolation grid index
+	 *
+	 * Compute a depth using the given interpolation grid index 
+	 *
+	 * \param index - An integer value containing the interpolation grid index to
+	 * 	use
+	 * \return Returns the depth
+	 */
+	double getDepthFromIndex(int index);
+
+
+	/**
 	 * \brief An integer variable containing the array index size for the distance
 	 * array
 	 */
 	int m_iNumDistances;
 
 	/**
-	 * \brief An double variable containing the minimum distance of the depth 
+	 * \brief A double variable containing the minimum distance of the depth 
 	 * distance array
 	 */
 	double m_dMinimumDistance;
 
 	/**
-	 * \brief An double variable containing the maximum distance of the depth 
+	 * \brief A double variable containing the maximum distance of the depth 
 	 * distance array
 	 */
 	double m_dMaximumDistance;
+
+	/**
+	 * \brief A double variable containing the spacing, or step, between distance
+	 * points in the depth distance array
+	 */
+	double m_dDistanceStep;
 
 	/**
 	 * \brief An integer variable containing the array index size for the depth
@@ -188,16 +244,22 @@ class CTravelTime {
 	int m_iNumDepths;
 
 	/**
-	 * \brief An double variable containing the minimum depth of the depth 
+	 * \brief A double variable containing the minimum depth of the depth 
 	 * distance array
 	 */
 	double m_dMinimumDepth;
 
 	/**
-	 * \brief An double variable containing the maximum Depth of the depth 
+	 * \brief A double variable containing the maximum Depth of the depth 
 	 * distance array
 	 */
 	double m_dMaximumDepth;
+
+	/**
+	 * \brief A double variable containing the spacing, or step, between depth
+	 * points in the depth distance array
+	 */
+	double m_dDepthStep;
 
 	/**
 	 * \brief An array of double values containing the travel times indexed by
