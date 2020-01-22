@@ -19,8 +19,8 @@
 #define DISTANCE 20.0
 #define BADDISTANCE 160.0
 #define BADDEPTH 800
-#define TIME1 262.9233
-#define TIME2 480.49606
+#define TIME1 265.071320
+#define TIME2 484.43422
 #define TIME3 268.36624
 #define TIME4 490.47196
 #define BADTIME -1

@@ -29,10 +29,12 @@ CTravelTime::CTravelTime(const CTravelTime &travelTime) {
 	m_iNumDistances = travelTime.m_iNumDistances;
 	m_dMinimumDistance = travelTime.m_dMinimumDistance;
 	m_dMaximumDistance = travelTime.m_dMaximumDistance;
+	m_dDistanceStep = travelTime.m_dDistanceStep;
 
 	m_iNumDepths = travelTime.m_iNumDepths;
 	m_dMinimumDepth = travelTime.m_dMinimumDepth;
 	m_dMaximumDepth = travelTime.m_dMaximumDepth;
+	m_dDepthStep = travelTime.m_dDepthStep;
 
 	m_dDepth = travelTime.m_dDepth;
 	m_dDelta = travelTime.m_dDelta;
@@ -56,10 +58,12 @@ void CTravelTime::clear() {
 	m_iNumDistances = 0;
 	m_dMinimumDistance = 0;
 	m_dMaximumDistance = 0;
+	m_dDistanceStep = 0;
 
 	m_iNumDepths = 0;
 	m_dMinimumDepth = 0;
 	m_dMaximumDepth = 0;
+	m_dDepthStep = 0;
 
 	m_dDepth = 0;
 	m_dDelta = 0;
@@ -123,7 +127,7 @@ void CTravelTime::writeToFile(std::string fileName, double depth) {
 		aDistance += distanceStep;
 	}
 
-glass3::util::Logger::log("info",
+	glass3::util::Logger::log("info",
 									"CTravelTime::writeToFile: Generated " + std::to_string(count)
 									+ " points. ");
 
@@ -246,6 +250,12 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 	// done with file
 	fclose(inFile);
 
+	// compute steps
+	m_dDistanceStep = (m_dMaximumDistance - m_dMinimumDistance)
+		/ static_cast<double>(m_iNumDistances);
+	m_dDepthStep = (m_dMaximumDepth - m_dMinimumDepth) /
+		static_cast<double>(m_iNumDepths);
+
 	glass3::util::Logger::log(
 		"debug",
 		"CTravelTime::Setup: Read: Branch Name |" + std::string(branch)
@@ -253,9 +263,11 @@ bool CTravelTime::setup(std::string phase, std::string file) {
 			+ "| Num Dist: " + std::to_string(m_iNumDistances)
 			+ ", Min Dist: " + std::to_string(m_dMinimumDistance)
 			+ ", Max Dist: " + std::to_string(m_dMaximumDistance)
+			+ ", Dist Step: " + std::to_string(m_dDistanceStep)
 			+ ", Num Depth: " + std::to_string(m_iNumDepths)
 			+ ", Min Depth: " + std::to_string(m_dMinimumDepth)
-			+ ", Max Depth: " + std::to_string(m_dMaximumDepth));
+			+ ", Max Depth: " + std::to_string(m_dMaximumDepth)
+			+ ", Depth Step: " + std::to_string(m_dDepthStep));
 
 	return (true);
 }
@@ -286,85 +298,160 @@ double CTravelTime::T(glass3::util::Geo *geo) {
 
 // ---------------------------------------------------------T
 double CTravelTime::T(double delta) {
+	m_dDelta = delta;
+
 	// bounds checks
-	if((delta < m_dMinimumDistance) || (delta > m_dMaximumDistance)) {
+	if((m_dDelta < m_dMinimumDistance) || (m_dDelta > m_dMaximumDistance)) {
     return (k_dTravelTimeInvalid);
 	}
 	if((m_dDepth < m_dMinimumDepth) || (m_dDepth > m_dMaximumDepth)) {
     return (k_dTravelTimeInvalid);
 	}
 
-	m_dDelta = delta;
+	double inDistance = m_dDelta;
+	double inDepth = m_dDepth;
 
-	// compute distance and depth interpolation points
-	// we need to convert from actual distance in degrees and depth in
-	// kilometers to index points within the distance and depth ranges
-	// specified for this branch's interpolation array so that the travel
-	// time can be computed using bilinear interpolation using the distance
-	// and depth index points, plus the interpolation array
+	// calculate distance interpolation indexes and values
+	int distanceIndex1 = getIndexFromDistance(inDistance);
+	double distance1 = getDistanceFromIndex(distanceIndex1);
+	int distanceIndex2 = distanceIndex1 + 1;
+	double distance2 = getDistanceFromIndex(distanceIndex2);
 
-	// we do this by first computing the actual step size of the interpolation
-	// array using the valid range of the array and the number of points in the
-	// range
-	double depthStep = (m_dMaximumDepth - m_dMinimumDepth) /
-		static_cast<double>(m_iNumDepths);
+	// calculate depth interpolation indexes and values
+	int depthIndex1 = getIndexFromDepth(inDepth);
+	double depth1 = getDepthFromIndex(depthIndex1);
+	int depthIndex2 = depthIndex1 + 1;
+	double depth2 = getDepthFromIndex(depthIndex2);
 
-	// we then divide the integer equivelent of the actual value (using floor())
-	// minus the start of the range by the actual step size
-	double depthIndex = floor(((m_dDepth - m_dMinimumDepth) / depthStep));
+	// lookup travel time interpolation values from using the indexes
+	double travelTime11 = T(distanceIndex1, depthIndex1);
+	double travelTime12 = T(distanceIndex1, depthIndex2);
+	double travelTime21 = T(distanceIndex2, depthIndex1);
+	double travelTime22 = T(distanceIndex2, depthIndex2);
 
-	// bounds checks
-	if (depthIndex < 0) {
-		depthIndex = 0;
-	} else if (depthIndex > m_iNumDepths) {
-		depthIndex = m_iNumDepths - 1;
+	// check travel time interpolation values
+	if ((travelTime11 < 0) || (travelTime12 < 0)
+		|| (travelTime21 < 0) || (travelTime22 < 0)) {
+		// no traveltime
+		return (k_dTravelTimeInvalid);
 	}
 
-	/* if (m_sPhase == "PKPab") {
-		printf("\nm_sPhase: %s, ", m_sPhase.c_str());
-		printf("m_dDepth: %f, ", m_dDepth);
-		printf("m_dMinimumDepth: %f, ", m_dMinimumDepth);
-		printf("m_dMaximumDepth: %f, ", m_dMaximumDepth);
-		printf("m_iNumDepths: %d, ", m_iNumDepths);
-		printf("depthStep: %f, ", depthStep);
-		printf("depthIndex: %f", depthIndex);
-	} */
+	// get traveltime via bilinear interpolation using the values and
+	// input distance/depth
+	double outTravelTime = bilinearInterpolation(
+		travelTime11, travelTime12, travelTime21, travelTime22,
+		distance1, distance2, depth1, depth2,
+		inDistance, inDepth);
 
-	// we do this by first computing the actual step size of the interpolation
-	// array using the valid range of the array and the number of points in the
-	// range
-	double distanceStep = (m_dMaximumDistance - m_dMinimumDistance)
-		/ static_cast<double>(m_iNumDistances);
+	// check final trave ltime
+	if (outTravelTime < 0) {
+		// no traveltime
+		return (k_dTravelTimeInvalid);
+	}
 
-	// we then divide the integer equivelent of the actual value (using floor())
+	return (outTravelTime);
+}
+
+// ------------------------------------------------------getIndexFromDistance
+int CTravelTime::getIndexFromDistance(double distance) {
+	if (m_dDistanceStep < 0) {
+		return (0);
+	}
+
+	// we need to convert from actual distance in degrees to an index point within
+	// the distance range specified for this branch's traveltime interpolation
+	// array so that the travel time can be computed using bilinear interpolation
+	// of the travel time array using distance and distance index points.
+
+	// we divide the integer equivelent of the actual value (using floor())
 	// minus the start of the range by the actual step size
-	double distanceIndex = floor(((m_dDelta - m_dMinimumDistance) / distanceStep));
+	int distanceIndex = static_cast<int>(floor(((distance - m_dMinimumDistance)
+		/ m_dDistanceStep)));
 
 	// bounds checks
 	if (distanceIndex < 0) {
-		distanceIndex = 0;
+		return(0);
 	} else if (distanceIndex > m_iNumDistances) {
-		distanceIndex = m_iNumDistances - 1;
+		return(m_iNumDistances - 1);
+	} else {
+		return (distanceIndex);
+	}
+}
+
+// ------------------------------------------------------getDepthFromIndex
+double CTravelTime::getDistanceFromIndex(int index) {
+	if (m_dDistanceStep < 0) {
+		return (0);
+	}
+	if (index < 0) {
+		return (0);
 	}
 
-	/* if (m_sPhase == "PKPab") {
-		printf("\nm_sPhase: %s, ", m_sPhase.c_str());
-		printf("m_dDelta: %f, ", m_dDelta);
-		printf("m_dMinimumDistance: %f, ", m_dMinimumDistance);
-		printf("m_dMaximumDistance: %f, ", m_dMaximumDistance);
-		printf("m_iNumDistances: %d, ", m_iNumDistances);
-		printf("distanceStep: %f, ", distanceStep);
-		printf("distanceIndex: %f", distanceIndex);
-	} */
+	double distance = (index * m_dDistanceStep) + m_dMinimumDistance;
 
-	// compute travel time using bilinear interpolation
-	double travelTime = bilinear(distanceIndex, depthIndex);
+	return distance;
+}
 
-	/* if (m_sPhase == "PKPab") {
-		printf("\n\ttravelTime: %f", travelTime);
-	} */
+// ------------------------------------------------------getIndexFromDepth
+int CTravelTime::getIndexFromDepth(double depth) {
+	if (m_dDepthStep < 0) {
+		return (0);
+	}
 
-	return (travelTime);
+	// we need to convert from actual depth in kilometers to an index point within
+	// the depth range specified for this branch's traveltime interpolation array
+	// so that the travel time can be computed using bilinear interpolation of the
+	// travel time array using distance and depth index points.
+
+	// we divide the integer equivelent of the actual value (using floor())
+	// minus the start of the range by the actual step size
+	int depthIndex = static_cast<int>(floor(((depth - m_dMinimumDepth)
+		/ m_dDepthStep)));
+
+	// bounds checks
+	if (depthIndex < 0) {
+		return(0);
+	} else if (depthIndex > m_iNumDepths) {
+		return(m_iNumDepths - 1);
+	} else {
+		return (depthIndex);
+	}
+}
+
+// ------------------------------------------------------getDepthFromIndex
+double CTravelTime::getDepthFromIndex(int index) {
+	if (m_dDepthStep < 0) {
+		return (0);
+	}
+	if (index < 0) {
+		return (0);
+	}
+
+	double depth = (index * m_dDepthStep) + m_dMinimumDepth;
+
+	return(depth);
+}
+
+// -------------------------------------------------------bilinearInterpolation
+double CTravelTime::bilinearInterpolation(double v11, double v12, double v21,
+	double v22, double x1, double x2, double y1, double y2, double x, double y) {
+	// check values
+	if ((x1 == x2) || (y1 == y2)) {
+		return(-1.0);
+	}
+
+	double x2x1 = x2 - x1;
+	double y2y1 = y2 - y1;
+	double x2x = x2 - x;
+	double y2y = y2 - y;
+	double yy1 = y - y1;
+	double xx1 = x - x1;
+
+	return 1.0 / (x2x1 * y2y1) * (
+			v11 * x2x * y2y +
+			v21 * xx1 * y2y +
+			v12 * x2x * yy1 +
+			v22 * xx1 * yy1);
 }
 
 // ---------------------------------------------------------T
@@ -380,54 +467,6 @@ double CTravelTime::T(int deltaIndex, int depthIndex) {
 	// get traveltime from travel time array
 	double travelTime = m_pTravelTimeArray[depthIndex * m_iNumDistances
 			+ deltaIndex];
-
-	return (travelTime);
-}
-
-// ---------------------------------------------------------Bilinear
-double CTravelTime::bilinear(double distance, double depth) {
-	double interpolationGrid[2][2];
-	double travelTime;
-	int startingDelta = static_cast<int>(distance);
-	int startingDepth = static_cast<int>(depth);
-	bool error = false;
-
-	// generate interpolation grid
-	for (int i = 0; i < 2; i++) {
-		// calculate distance index
-		int deltaIndex = startingDelta + i;
-
-		for (int j = 0; j < 2; j++) {
-			// calculate depth index
-			int depthIndex = startingDepth + j;
-
-			// get current travel time from travel time array
-			double time = T(deltaIndex, depthIndex);
-
-			// check current travel time
-			if (time < 0.0) {
-				error = true;
-			}
-
-			// store travel time in interpolation grid
-			interpolationGrid[i][j] = time;
-		}
-
-		double s = distance - floor(distance);
-		double t = depth - floor(depth);
-
-		// compute overall travel time by interpolating grid
-		travelTime = interpolationGrid[0][0] * (1.0f - s) * (1.0f - t)
-				+ interpolationGrid[0][1] * (1.0f - s) * t
-				+ interpolationGrid[1][0] * s * (1.0f - t)
-				+ interpolationGrid[1][1] * s * t;
-	}
-
-	// check if we had errors
-	if (error) {
-		// no traveltime
-		return (k_dTravelTimeInvalid);
-	}
 
 	return (travelTime);
 }
