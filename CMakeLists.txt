@@ -38,7 +38,6 @@ option(GENERATE_DOCUMENTATION "Create and install the HTML based API documentati
 option(RUN_TESTS "Create and run unit tests" ON)
 option(BUILD_GLASS-APP "Build the glass application" ON)
 option(BUILD_GLASS-BROKER-APP "Build the glass broker based application" OFF)
-option(BUILD_GEN-TRAVELTMES-APP "Build the travel time generation application" OFF)
 option(RUN_CPPCHECK "Run CPP Checks (requires cppcheck installed)" OFF)
 option(RUN_CPPLINT "Run CPP Checks (requires cpplint and python installed)" OFF)
 option(SUPPORT_COVERAGE "Instrument for Coverage" OFF)
@@ -369,27 +368,6 @@ if (BUILD_GLASS-BROKER-APP)
           -DCPPLINT_PATH=${CPPLINT_PATH}
           -DCPPCHECK_PATH=${CPPCHECK_PATH}
         DEPENDS SuperEasyJSON util DetectionFormats parse glasscore process output input HazdevBroker ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
-        UPDATE_COMMAND ""
-    )
-
-endif()
-
-if (BUILD_GEN-TRAVELTMES-APP)
-
-    # gen-travel-times-app
-    ExternalProject_Add(
-        gen-travel-times-app
-        SOURCE_DIR ${PROJECT_SOURCE_DIR}/gen-travel-times-app/
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${INSTALL_LOCATION}
-          -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-          -DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}
-          -DRUN_CPPCHECK=${RUN_CPPCHECK}
-          -DRUN_CPPLINT=${RUN_CPPLINT}
-          -DSUPPORT_COVERAGE=${SUPPORT_COVERAGE}
-          -DPYTHON_PATH=${PYTHON_PATH}
-          -DCPPLINT_PATH=${CPPLINT_PATH}
-          -DCPPCHECK_PATH=${CPPCHECK_PATH}
-        DEPENDS SuperEasyJSON util glasscore ${DOXYGEN_DEPEND} ${GTEST_DEPEND}
         UPDATE_COMMAND ""
     )
 

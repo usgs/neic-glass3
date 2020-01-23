@@ -15,8 +15,6 @@
 
 namespace traveltime {
 
-class CRay;
-
 /**
  * \brief travel time interface class
  *
@@ -47,6 +45,17 @@ class CTTT {
 	 * The destructor for the CTTT class.
 	 */
 	~CTTT();
+
+/**
+	 * \brief Write out travel times to files
+	 * 
+	 * This function prints the available travel time points for the travel
+	 * time contained in this TravelTime at a given depth to a given file.
+	 * 
+	 * \param outPath - A std::string containing the directory to write to.
+	 * \param depth - A double containing the depth to use
+	 */
+	void writeToFiles(std::string outDir, double depth);
 
 	/**
 	 * \brief CTTT clear function
@@ -162,7 +171,7 @@ class CTTT {
 	 *
 	 * Prints travel-times for a phase for testing purposes
 	 */
-	double testTravelTimes(std::string phase);
+	// double testTravelTimes(std::string phase);
 
 
 	// constants

@@ -1,21 +1,28 @@
-# gen-traveltimes-app
+# gen-travel-times-app
 
-**Gen-travel-times-app** is an application that uses the glasscore traveltime
-libraries to generate the traveltime lookup files (.trv) used by neic-glass3 from a
-model file.  Please note that this application is currently not optimized, and
-is **extremely** slow.
+A java program used to generate glass3 traveltimes from the NEIC java [travel time](https://github.com/usgs/neic-traveltime) package.
 
-## Building
+Dependencies
+------
+* gen-travel-times-app was written in Oracle Java 1.8
+* gen-travel-times-app is built with [Gradle](https://gradle.org/), a build.gradle file and gradlew are included in this project
+* gen-travel-times-app depends on the [neic-traveltime](https://github.com/usgs/neic-traveltime) package. A copy of this package is included with this package.
 
-To build **gen-travel-times-app**, set the `BUILD_GEN-TRAVELTMES-APP` option equal
-to true (1) in the CMake command or GUI.
+Building
+------
+The steps to get and build gen-travel-times-app.jar using gradle are as follows:
 
-## Configuration
+1. Clone neic-glass3.
+2. Open a command window and change directories to /neic-glass3/gen-travel-times-app/
+3. To build the jar file, run the command `./gradlew build`
 
-An example configuration for **gen-travel-times-app** is available in the [gen-travel-times-app params directory](https://github.com/usgs/neic-glass3/tree/master/gen-travel-times-app/params)
+Using
+-----
+Once you are able to build the gen-travel-times-app jar, simply include the jar
+file in your application, or call using the App class.
 
-## Running
+A set of model files used by the gen-travel-times-app is stored in the models/ directory.
 
-To run **gen-travel-times-app**, use the following command: `gen-travel-times-app <configfile> [logname]` where `<configfile>` is the required path the the gen-travel-times.d configuration file and `[logname]` is an optional command that when present specifies the log file name and enables logging.
+Example configuration files are included in `/neic-glass3/gen-travel-times-app/src/main/resources/`
 
-For more information, please see the [gen-travel-times-app DOxygen documentation](https://usgs.github.io/neic-glass3/html/gen-travel-times-app_8cpp.html)
+To run this example, run from `/neic-glass3/gen-travel-times-app/` run the command: `java -jar build/libs/gen-travel-times-app-0.1.0.jar --configFile=src/main/resources/config.json`

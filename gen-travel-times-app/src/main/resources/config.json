@@ -1,0 +1,109 @@
+{
+  "EarthModelPath" : "./models/",
+  "FileExtension" : ".trv",
+  "OutputPath" : "./",
+  "WriteDebugFile" :true,
+  "Branches" : [
+    {
+      "BranchName" : "P",
+      "EarthModel" : "ak135", # "ak135", "cus", "wus", "ogs", "cia"
+      "PhaseList" : [
+        "Pb",
+        "Pg",
+        "Pn",
+        "P", 
+        "Pdif",
+        "PKPpre",
+        "PKPdf"
+      ],
+      "MinimumDistance" : 0.0,
+      "MaximumDistance" : 180.0,
+      "NumberOfDistances" : 720,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    },
+    {
+      "BranchName" : "S",
+      "EarthModel" : "ak135",
+      "PhaseList" : [
+        "Sb",
+        "Sg",
+        "Sn",
+        "S", 
+        "Sdif"
+      ],
+      "MinimumDistance" : 0.0,
+      "MaximumDistance" : 180.0,
+      "NumberOfDistances" : 720,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    },
+    {
+      "BranchName" : "PcP",
+      "EarthModel" : "ak135",
+      "PhaseList" : [
+        "PcP"
+      ],
+      "MinimumDistance" : 0.0,
+      "MaximumDistance" : 98.0,
+      "NumberOfDistances" : 392,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    },
+    {
+      "BranchName" : "PP",
+      "EarthModel" : "ak135",
+      "PhaseList" : [
+        "PP"
+      ],
+      "MinimumDistance" : 25.0,
+      "MaximumDistance" : 180.0,
+      "NumberOfDistances" : 620,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    },
+    {
+      "BranchName" : "PKPab",
+      "EarthModel" : "ak135",
+      "PhaseList" : [
+        "PKPab"
+      ],
+      "MinimumDistance" : 143.0,
+      "MaximumDistance" : 180.0,
+      "NumberOfDistances" : 148,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    },
+    {
+      "BranchName" : "PKPbc",
+      "EarthModel" : "ak135",
+      "PhaseList" : [
+        "PKPbc"
+      ],
+      "MinimumDistance" : 143.0,
+      "MaximumDistance" : 155.0,
+      "NumberOfDistances" : 48,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    },
+    {
+      "BranchName" : "PKPdf",
+      "EarthModel" : "ak135",
+      "PhaseList" : [
+        "PKPdf"
+      ],
+      "MinimumDistance" : 113.0,
+      "MaximumDistance" : 180.0,
+      "NumberOfDistances" : 268,
+      "MinimumDepth" : 0.0,
+      "MaximumDepth" : 800.0,
+      "NumberOfDepths" : 160
+    }
+  ]
+}

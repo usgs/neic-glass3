@@ -23,10 +23,6 @@
  */
 namespace traveltime {
 
-// forward declarations
-class CRay;
-class CTimeWarp;
-
 /**
  * \brief travel time phase class
  *
@@ -71,6 +67,17 @@ class CTravelTime {
 	 * is ""
 	 */
 	bool setup(std::string phase = "P", std::string file = "");
+
+	/**
+	 * \brief Write out travel times to file
+	 * 
+	 * This function prints the available travel time points for the travel
+	 * time contained in this TravelTime at a given depth to a given file.
+	 * 
+	 * \param fileName - A std::string containing the file name to write to.
+	 * \param depth - A double containing the depth to use
+	 */
+	void writeToFile(std::string fileName, double depth);
 
 	/**
 	 * \brief CTravelTime clear function
@@ -144,56 +151,122 @@ class CTravelTime {
 	double T(int deltaIndex, int depthIndex);
 
 	/**
-	 * \brief Compute travel time in seconds via bilinear interpolation
+	 * \brief Compute bilinear interpolation
 	 *
-	 * Compute a traveltime from travel time array via a bilinear interpolation
-	 * using T() and the given distance and depth
+	 * Compute a bilinear interpolation from the provided values
+	 *
+	 * \param q_x1y1 - A double containing the interpolation value for (x1, y1)
+	 * \param q_x1y2 - A double containing the interpolation value for (x1, y2)
+	 * \param q_x2y1 - A double containing the interpolation value for (x2, y1)
+	 * \param q_x2y2 - A double containing the interpolation value for (x2, y2)
+	 * \param x1 - A double containing first x interpolation coordinate
+	 * \param y1 - A double containing first y interpolation coordinate
+	 * \param x2 - A double containing second x interpolation coordinate
+	 * \param y2 - A double containing second y interpolation coordinate
+	 * \param x - A double containing the given x coordinate
+	 * \param y - A double containing the given y coordinate
+	 * \return Returns a double containing the resulting bilinear interpolation
+	 */
+	double bilinearInterpolation(double q_x1y1, double q_x1y2, double q_x2y1,
+		double q_x2y2, double x1, double y1, double x2, double y2, double x,
+		double y);
+
+	/**
+	 * \brief Compute interpolation grid distance index
+	 *
+	 * Compute an interpolation grid index from the given distance
 	 *
 	 * \param distance - A double value containing the distance to use
-	 * \param depth - A double value  containing depth to use
-	 * \return Returns the travel time in seconds, or -1.0 if there is
-	 * no valid travel time
+	 * \return Returns the distance index
 	 */
-	double bilinear(double distance, double depth);
+	int getIndexFromDistance(double distance);
 
 	/**
-	 * \brief A pointer to the distance warp object used
+	 * \brief Compute distance using interpolation grid index
+	 *
+	 * Compute a distance using the given interpolation grid index 
+	 *
+	 * \param index - An integer value containing the interpolation grid index to
+	 * 	use
+	 * \return Returns the distance
 	 */
-	CTimeWarp *m_pDistanceWarp;
+	double getDistanceFromIndex(int index);
 
 	/**
-	 * \brief A pointer to the depth warp object used
+	 * \brief Compute interpolation grid depth index
+	 *
+	 * Compute an interpolation grid index from the given depth
+	 *
+	 * \param depth - A double value containing the depth to use
+	 * \return Returns the depth index
 	 */
-	CTimeWarp *m_pDepthWarp;
+	int getIndexFromDepth(double depth);
 
 	/**
-	 * \brief An integer variable containing the grid index for the distance
-	 * warp
+	 * \brief Compute depth using interpolation grid index
+	 *
+	 * Compute a depth using the given interpolation grid index 
+	 *
+	 * \param index - An integer value containing the interpolation grid index to
+	 * 	use
+	 * \return Returns the depth
 	 */
-	int m_iNumDistanceWarp;
+	double getDepthFromIndex(int index);
+
 
 	/**
-	 * \brief An integer variable containing the grid index for the depth
-	 * warp
+	 * \brief An integer variable containing the array index size for the distance
+	 * array
 	 */
-	int m_iNumDepthWarp;
+	int m_iNumDistances;
+
+	/**
+	 * \brief A double variable containing the minimum distance of the depth 
+	 * distance array
+	 */
+	double m_dMinimumDistance;
+
+	/**
+	 * \brief A double variable containing the maximum distance of the depth 
+	 * distance array
+	 */
+	double m_dMaximumDistance;
+
+	/**
+	 * \brief A double variable containing the spacing, or step, between distance
+	 * points in the depth distance array
+	 */
+	double m_dDistanceStep;
+
+	/**
+	 * \brief An integer variable containing the array index size for the depth
+	 * array
+	 */
+	int m_iNumDepths;
+
+	/**
+	 * \brief A double variable containing the minimum depth of the depth 
+	 * distance array
+	 */
+	double m_dMinimumDepth;
+
+	/**
+	 * \brief A double variable containing the maximum Depth of the depth 
+	 * distance array
+	 */
+	double m_dMaximumDepth;
+
+	/**
+	 * \brief A double variable containing the spacing, or step, between depth
+	 * points in the depth distance array
+	 */
+	double m_dDepthStep;
 
 	/**
 	 * \brief An array of double values containing the travel times indexed by
 	 * depth and distance
 	 */
 	double * m_pTravelTimeArray;
-
-	/**
-	 * \brief An array of double values containing the distances indexed by
-	 * depth
-	 */
-	double * m_pDepthDistanceArray;
-
-	/**
-	 * \brief An array of characters containing the phases
-	 */
-	char * m_pPhaseArray;
 
 	/**
 	 * \brief A std::std::string containing the name of the phase used for this

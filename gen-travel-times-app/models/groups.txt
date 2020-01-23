@@ -1,0 +1,54 @@
+Ploc: Pg Pb Pn Sg Sb Sn PgPg PbPb PnPn
+
+Pdep: pP sP pwP PcP
+
+Pdis: Pb Sb
+
+Use: Pg Pb Pn P Pdif PKiKP PKPdf PKPab PKPbc PKPdif
+Sg Sb Sn S Sdif pPg pPb pPn pP pPdif pwP pPKiKP 
+pPKPdf pPKPab pPKPbc pPKPdif sPg sPb sPn sP sPdif 
+sPKiKP sPKPdf sPKPab sPKPbc sPKPdif PcP SKiKP SKPdf 
+SKPab SKPbc ScP PP
+
+Chaff: pPg pPb pPn sPg sPb sPn pSg pSb pSn sSg sSb 
+sSn PgPg PbPb PnPn SgSg SbSb SnSn PgS PbS SPg SPb 
+SnPg
+
+P: Pg Pb Pn P Pdif
+PKP: PKiKP PKPdf PKPab PKPbc PKPdif PKPpre
+S: Sg Sb Sn S Sdif Lg
+SKS: SKSdf SKSac
+pP: pPg pPb pPn pP pPdif pwP
+pPKP: pPKiKP pPKPdf pPKPab pPKPbc pPKPdif
+sP: sPg sPb sPn sP sPdif
+sPKP: sPKiKP sPKPdf sPKPab sPKPbc sPKPdif
+PcP: PcP
+-
+SP: SnPg SPg SPb SPn SP
+SKP: SKiKP SKPdf SKPab SKPbc
+ScP: ScP
+-
+PP: PgPg PbPb PnPn PP
+P'P': P'P'df P'P'ab P'P'bc
+PKKP: PKKPdf PKKPab PKKPbc
+-
+SKKP: SKKPdf SKKPab SKKPbc
+-
+pS: pSg pSb pSn pS pSdif
+pSKS: pSKSdf pSKSac
+sS: sSg sSb sSn sS sSdif
+sSKS: sSKSdf sSKSac
+ScS: ScS
+-
+SS: SgSg SbSb SnSn SS
+S'S': S'S'df S'S'ac
+PS: PgSn PgS PbS PnS PS
+PKS: PKSdf PKSab PKSbc
+PcS: PcS
+-
+PKKS: PKKSdf PKKSab PKKSbc
+-
+SKKS: SKKSdf SKKSac
+-
+LR: LR
+-

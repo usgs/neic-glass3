@@ -17,7 +17,6 @@
 #include <map>
 #include <sstream>
 #include "Glass.h"
-#include "Terra.h"
 #include "Pick.h"
 #include "Node.h"
 #include "SiteList.h"
@@ -1011,6 +1010,29 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 			return (false);
 		}
 
+		std::string ttDebugPath = "./";
+		if (phsObj.HasKey("TTDebugPath")) {
+			ttDebugPath = phsObj["TTDebugPath"].ToString();
+		}
+
+		int numTTDebugDepths = 0;
+		json::Array ttDebugDepths;
+		if ((phsObj.HasKey("TTDebugDepth") &&
+				(phsObj["TTDebugDepth"].GetType() == json::ValueType::ArrayVal))) {
+			ttDebugDepths = phsObj["TTDebugDepth"].ToArray();
+			numTTDebugDepths = ttDebugDepths.size();
+		}
+
+		if ((ttDebugPath != "") && (numTTDebugDepths > 0)) {
+			for (int z = 0; z < numTTDebugDepths; z++) {
+				std::string fileName = ttDebugPath + "/" + m_sName +
+					+ "nuc_" + m_pNucleationTravelTime1->m_sPhase	+ "_"
+					+ std::to_string(ttDebugDepths[z].ToDouble()) + ".csv";
+
+				m_pNucleationTravelTime1->writeToFile(fileName,
+					ttDebugDepths[z].ToDouble());
+			}
+		}
 	} else {
 		// if no first phase, use default from glass
 		m_pNucleationTravelTime1.reset();
@@ -1073,6 +1095,30 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 					"error", "CWeb::loadTravelTimes: Failed to load file "
 							"location " + file + " for second phase: " + phs);
 			return (false);
+		}
+
+		std::string ttDebugPath = "./";
+		if (phsObj.HasKey("TTDebugPath")) {
+			ttDebugPath = phsObj["TTDebugPath"].ToString();
+		}
+
+		int numTTDebugDepths = 0;
+		json::Array ttDebugDepths;
+		if ((phsObj.HasKey("TTDebugDepth") &&
+				(phsObj["TTDebugDepth"].GetType() == json::ValueType::ArrayVal))) {
+			ttDebugDepths = phsObj["TTDebugDepth"].ToArray();
+			numTTDebugDepths = ttDebugDepths.size();
+		}
+
+		if ((ttDebugPath != "") && (numTTDebugDepths > 0)) {
+			for (int z = 0; z < numTTDebugDepths; z++) {
+				std::string fileName = ttDebugPath + "/" + m_sName +
+					+ "nuc_" + m_pNucleationTravelTime2->m_sPhase	+ "_"
+					+ std::to_string(ttDebugDepths[z].ToDouble()) + ".csv";
+
+				m_pNucleationTravelTime2->writeToFile(fileName,
+					ttDebugDepths[z].ToDouble());
+			}
 		}
 	} else {
 		// no second phase

@@ -19,10 +19,10 @@
 #define DISTANCE 20.0
 #define BADDISTANCE 160.0
 #define BADDEPTH 800
-#define TIME1 265.0485
-#define TIME2 484.4298
-#define TIME3 268.3447
-#define TIME4 490.4684
+#define TIME1 265.071320
+#define TIME2 484.43422
+#define TIME3 268.36624
+#define TIME4 490.47196
 #define BADTIME -1
 
 // tests to see if the ttt can be constructed
