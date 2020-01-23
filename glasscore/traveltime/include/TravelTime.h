@@ -155,20 +155,21 @@ class CTravelTime {
 	 *
 	 * Compute a bilinear interpolation from the provided values
 	 *
-	 * \param v11 - A double containing the interpolation value for (x1, y1)
-	 * \param v12 - A double containing the interpolation value for (x1, y2)
-	 * \param v21 - A double containing the interpolation value for (x2, y1)
-	 * \param v22 - A double containing the interpolation value for (x2, y2)
+	 * \param q_x1y1 - A double containing the interpolation value for (x1, y1)
+	 * \param q_x1y2 - A double containing the interpolation value for (x1, y2)
+	 * \param q_x2y1 - A double containing the interpolation value for (x2, y1)
+	 * \param q_x2y2 - A double containing the interpolation value for (x2, y2)
 	 * \param x1 - A double containing first x interpolation coordinate
-	 * \param x2 - A double containing second x interpolation coordinate
 	 * \param y1 - A double containing first y interpolation coordinate
+	 * \param x2 - A double containing second x interpolation coordinate
 	 * \param y2 - A double containing second y interpolation coordinate
 	 * \param x - A double containing the given x coordinate
 	 * \param y - A double containing the given y coordinate
 	 * \return Returns a double containing the resulting bilinear interpolation
 	 */
-	double bilinearInterpolation(double v11, double v12, double v21,
-		double v22, double x1, double x2, double y1, double y2, double x, double y);
+	double bilinearInterpolation(double q_x1y1, double q_x1y2, double q_x2y1,
+		double q_x2y2, double x1, double y1, double x2, double y2, double x,
+		double y);
 
 	/**
 	 * \brief Compute interpolation grid distance index

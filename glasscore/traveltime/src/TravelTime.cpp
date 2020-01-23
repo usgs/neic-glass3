@@ -340,10 +340,10 @@ double CTravelTime::T(double delta) {
 	// input distance/depth
 	double outTravelTime = bilinearInterpolation(
 		travelTime11, travelTime12, travelTime21, travelTime22,
-		distance1, distance2, depth1, depth2,
+		distance1, depth1, distance2, depth2,
 		inDistance, inDepth);
 
-	// check final trave ltime
+	// check final travel time
 	if (outTravelTime < 0) {
 		// no traveltime
 		return (k_dTravelTimeInvalid);
@@ -378,7 +378,7 @@ int CTravelTime::getIndexFromDistance(double distance) {
 	}
 }
 
-// ------------------------------------------------------getDepthFromIndex
+// ------------------------------------------------------getDistanceFromIndex
 double CTravelTime::getDistanceFromIndex(int index) {
 	if (m_dDistanceStep < 0) {
 		return (0);
@@ -433,9 +433,10 @@ double CTravelTime::getDepthFromIndex(int index) {
 }
 
 // -------------------------------------------------------bilinearInterpolation
-double CTravelTime::bilinearInterpolation(double v11, double v12, double v21,
-	double v22, double x1, double x2, double y1, double y2, double x, double y) {
-	// check values
+double CTravelTime::bilinearInterpolation(double q_x1y1, double q_x1y2,
+	double q_x2y1, double q_x2y2, double x1, double y1, double x2, double y2,
+	double x, double y) {
+	// check values to avoid div by 0
 	if ((x1 == x2) || (y1 == y2)) {
 		return(-1.0);
 	}
@@ -448,10 +449,10 @@ double CTravelTime::bilinearInterpolation(double v11, double v12, double v21,
 	double xx1 = x - x1;
 
 	return 1.0 / (x2x1 * y2y1) * (
-			v11 * x2x * y2y +
-			v21 * xx1 * y2y +
-			v12 * x2x * yy1 +
-			v22 * xx1 * yy1);
+			q_x1y1 * x2x * y2y +
+			q_x2y1 * xx1 * y2y +
+			q_x1y2 * x2x * yy1 +
+			q_x2y2 * xx1 * yy1);
 }
 
 // ---------------------------------------------------------T
