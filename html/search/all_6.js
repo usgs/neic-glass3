@@ -18,16 +18,8 @@ var searchData=
   ['flatbinsizedeg',['fLatBinSizeDeg',['../classtraveltime_1_1CZoneStats.html#af47de286cc62406db27ae21f195059fc',1,'traveltime::CZoneStats']]],
   ['flon',['fLon',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a07622f90d86080b15130451d7ff44e6f',1,'traveltime::_ZoneStatsInfoStruct']]],
   ['flonbinsizedeg',['fLonBinSizeDeg',['../classtraveltime_1_1CZoneStats.html#a3a18aa0ab1e47ef6578700da386001fa',1,'traveltime::CZoneStats']]],
-  ['fmax',['FMAX',['../Ray_8cpp.html#a985ff4ce447bced94342e89ab3766fdd',1,'Ray.cpp']]],
   ['fmaxdepth',['fMaxDepth',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a887818dbc6ff7f6dfba0d02f187755f0',1,'traveltime::_ZoneStatsInfoStruct']]],
   ['fmaxmag',['fMaxMag',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a24d42471135b42534ece802eba03b5ca',1,'traveltime::_ZoneStatsInfoStruct']]],
   ['fmindepth',['fMinDepth',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a5946c0f390075c74fdbc7d9535c78173',1,'traveltime::_ZoneStatsInfoStruct']]],
-  ['fminmag',['fMinMag',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a1c4dabff77d3b619863b4f1fa6559eb9',1,'traveltime::_ZoneStatsInfoStruct']]],
-  ['fun_5fp_5fdelta',['FUN_P_DELTA',['../Terra_8h.html#a013d2914acc9911d5e25895a4537475c',1,'Terra.h']]],
-  ['fun_5fp_5ftau',['FUN_P_TAU',['../Terra_8h.html#a3cddbf0737513fcd24f815c18ef30f80',1,'Terra.h']]],
-  ['fun_5fp_5ftime',['FUN_P_TIME',['../Terra_8h.html#ae4cf77d4505140a25baaccc612d91bdc',1,'Terra.h']]],
-  ['fun_5fs_5fdelta',['FUN_S_DELTA',['../Terra_8h.html#addc6106ff934fe77132474660c08a30f',1,'Terra.h']]],
-  ['fun_5fs_5ftau',['FUN_S_TAU',['../Terra_8h.html#a7bea1107486b72bbde48f49eb494eb49',1,'Terra.h']]],
-  ['fun_5fs_5ftime',['FUN_S_TIME',['../Terra_8h.html#a13fc2761f7fd03fe2258588a84d99645',1,'Terra.h']]],
-  ['fun_5ftest',['FUN_TEST',['../Terra_8h.html#aae37fb42511f521f2f27a533013ef36f',1,'Terra.h']]]
+  ['fminmag',['fMinMag',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a1c4dabff77d3b619863b4f1fa6559eb9',1,'traveltime::_ZoneStatsInfoStruct']]]
 ];

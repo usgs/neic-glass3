@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.2.1</span>
+   &#160;<span id="projectnumber">1.3.0</span>
    </div>
   </td>
  </tr>
@@ -107,8 +107,7 @@ Collaboration diagram for traveltime::CTravelTime:</div>
 <div class="dyncontent">
 <div class="center"><img src="classtraveltime_1_1CTravelTime__coll__graph.png" border="0" usemap="#traveltime_1_1CTravelTime_coll__map" alt="Collaboration graph"/></div>
 <map name="traveltime_1_1CTravelTime_coll__map" id="traveltime_1_1CTravelTime_coll__map">
-<area shape="rect" id="node3" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="232,292,424,692"/>
-<area shape="rect" id="node5" href="classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="448,402,606,582"/>
+<area shape="rect" id="node3" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="211,292,403,692"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -126,6 +125,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a95009a3163b886db913f6a9f8160eb8f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a95009a3163b886db913f6a9f8160eb8f">setup</a> (std::string phase=&quot;P&quot;, std::string file=&quot;&quot;)</td></tr>
 <tr class="memdesc:a95009a3163b886db913f6a9f8160eb8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load or generate branch data.  <a href="#a95009a3163b886db913f6a9f8160eb8f">More...</a><br /></td></tr>
 <tr class="separator:a95009a3163b886db913f6a9f8160eb8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7ebfdb36d571493efc040f83689291a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#aa7ebfdb36d571493efc040f83689291a">writeToFile</a> (std::string fileName, double depth)</td></tr>
+<tr class="memdesc:aa7ebfdb36d571493efc040f83689291a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write out travel times to file.  <a href="#aa7ebfdb36d571493efc040f83689291a">More...</a><br /></td></tr>
+<tr class="separator:aa7ebfdb36d571493efc040f83689291a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c809c2df7ec8e12e4594fe53f3dc4fe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a8c809c2df7ec8e12e4594fe53f3dc4fe">clear</a> ()</td></tr>
 <tr class="memdesc:a8c809c2df7ec8e12e4594fe53f3dc4fe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> clear function.  <a href="#a8c809c2df7ec8e12e4594fe53f3dc4fe">More...</a><br /></td></tr>
 <tr class="separator:a8c809c2df7ec8e12e4594fe53f3dc4fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,33 +146,51 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a585da4b54f1b469d31548cca67ae7355"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a585da4b54f1b469d31548cca67ae7355">T</a> (int deltaIndex, int depthIndex)</td></tr>
 <tr class="memdesc:a585da4b54f1b469d31548cca67ae7355"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lookup travel time in seconds.  <a href="#a585da4b54f1b469d31548cca67ae7355">More...</a><br /></td></tr>
 <tr class="separator:a585da4b54f1b469d31548cca67ae7355"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a579984850c5ddf6de17b505fc9cfad6c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a579984850c5ddf6de17b505fc9cfad6c">bilinear</a> (double distance, double depth)</td></tr>
-<tr class="memdesc:a579984850c5ddf6de17b505fc9cfad6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute travel time in seconds via bilinear interpolation.  <a href="#a579984850c5ddf6de17b505fc9cfad6c">More...</a><br /></td></tr>
-<tr class="separator:a579984850c5ddf6de17b505fc9cfad6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2241bfb19bd48270238630dbaf67b0c0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a2241bfb19bd48270238630dbaf67b0c0">bilinearInterpolation</a> (double q_x1y1, double q_x1y2, double q_x2y1, double q_x2y2, double x1, double y1, double x2, double y2, double x, double y)</td></tr>
+<tr class="memdesc:a2241bfb19bd48270238630dbaf67b0c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute bilinear interpolation.  <a href="#a2241bfb19bd48270238630dbaf67b0c0">More...</a><br /></td></tr>
+<tr class="separator:a2241bfb19bd48270238630dbaf67b0c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73d8523161184763c1b122ed070d7882"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a73d8523161184763c1b122ed070d7882">getIndexFromDistance</a> (double distance)</td></tr>
+<tr class="memdesc:a73d8523161184763c1b122ed070d7882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute interpolation grid distance index.  <a href="#a73d8523161184763c1b122ed070d7882">More...</a><br /></td></tr>
+<tr class="separator:a73d8523161184763c1b122ed070d7882"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1245725555706b028ce2d7ebc5f5bb50"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a1245725555706b028ce2d7ebc5f5bb50">getDistanceFromIndex</a> (int index)</td></tr>
+<tr class="memdesc:a1245725555706b028ce2d7ebc5f5bb50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute distance using interpolation grid index.  <a href="#a1245725555706b028ce2d7ebc5f5bb50">More...</a><br /></td></tr>
+<tr class="separator:a1245725555706b028ce2d7ebc5f5bb50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c49fdb9047c8af7c422acc87be61a4d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a5c49fdb9047c8af7c422acc87be61a4d">getIndexFromDepth</a> (double depth)</td></tr>
+<tr class="memdesc:a5c49fdb9047c8af7c422acc87be61a4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute interpolation grid depth index.  <a href="#a5c49fdb9047c8af7c422acc87be61a4d">More...</a><br /></td></tr>
+<tr class="separator:a5c49fdb9047c8af7c422acc87be61a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e506f24689988af394405efb96d96ff"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a0e506f24689988af394405efb96d96ff">getDepthFromIndex</a> (int index)</td></tr>
+<tr class="memdesc:a0e506f24689988af394405efb96d96ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute depth using interpolation grid index.  <a href="#a0e506f24689988af394405efb96d96ff">More...</a><br /></td></tr>
+<tr class="separator:a0e506f24689988af394405efb96d96ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:aec65e0de23f7eaaa7f271b321ff63247"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtraveltime_1_1CTimeWarp.html">CTimeWarp</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#aec65e0de23f7eaaa7f271b321ff63247">m_pDistanceWarp</a></td></tr>
-<tr class="memdesc:aec65e0de23f7eaaa7f271b321ff63247"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the distance warp object used.  <a href="#aec65e0de23f7eaaa7f271b321ff63247">More...</a><br /></td></tr>
-<tr class="separator:aec65e0de23f7eaaa7f271b321ff63247"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fe95dcd4dad0531bb1b26af673b0bea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtraveltime_1_1CTimeWarp.html">CTimeWarp</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a3fe95dcd4dad0531bb1b26af673b0bea">m_pDepthWarp</a></td></tr>
-<tr class="memdesc:a3fe95dcd4dad0531bb1b26af673b0bea"><td class="mdescLeft">&#160;</td><td class="mdescRight">A pointer to the depth warp object used.  <a href="#a3fe95dcd4dad0531bb1b26af673b0bea">More...</a><br /></td></tr>
-<tr class="separator:a3fe95dcd4dad0531bb1b26af673b0bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45684ab4d339035c7286937020c6f111"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a45684ab4d339035c7286937020c6f111">m_iNumDistanceWarp</a></td></tr>
-<tr class="memdesc:a45684ab4d339035c7286937020c6f111"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer variable containing the grid index for the distance warp.  <a href="#a45684ab4d339035c7286937020c6f111">More...</a><br /></td></tr>
-<tr class="separator:a45684ab4d339035c7286937020c6f111"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26763788a032ad33b53ab8a364ca9aef"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a26763788a032ad33b53ab8a364ca9aef">m_iNumDepthWarp</a></td></tr>
-<tr class="memdesc:a26763788a032ad33b53ab8a364ca9aef"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer variable containing the grid index for the depth warp.  <a href="#a26763788a032ad33b53ab8a364ca9aef">More...</a><br /></td></tr>
-<tr class="separator:a26763788a032ad33b53ab8a364ca9aef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3f0050befa709241365bc62420933dc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#ae3f0050befa709241365bc62420933dc">m_iNumDistances</a></td></tr>
+<tr class="memdesc:ae3f0050befa709241365bc62420933dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer variable containing the array index size for the distance array.  <a href="#ae3f0050befa709241365bc62420933dc">More...</a><br /></td></tr>
+<tr class="separator:ae3f0050befa709241365bc62420933dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e5907ea6e017812e90371b7c814f632"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a3e5907ea6e017812e90371b7c814f632">m_dMinimumDistance</a></td></tr>
+<tr class="memdesc:a3e5907ea6e017812e90371b7c814f632"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double variable containing the minimum distance of the depth distance array.  <a href="#a3e5907ea6e017812e90371b7c814f632">More...</a><br /></td></tr>
+<tr class="separator:a3e5907ea6e017812e90371b7c814f632"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8754a17c3b05e2a51454b95beadff689"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a8754a17c3b05e2a51454b95beadff689">m_dMaximumDistance</a></td></tr>
+<tr class="memdesc:a8754a17c3b05e2a51454b95beadff689"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double variable containing the maximum distance of the depth distance array.  <a href="#a8754a17c3b05e2a51454b95beadff689">More...</a><br /></td></tr>
+<tr class="separator:a8754a17c3b05e2a51454b95beadff689"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ef20e1621b4821dcfb78b8684b4ca81"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a4ef20e1621b4821dcfb78b8684b4ca81">m_dDistanceStep</a></td></tr>
+<tr class="memdesc:a4ef20e1621b4821dcfb78b8684b4ca81"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double variable containing the spacing, or step, between distance points in the depth distance array.  <a href="#a4ef20e1621b4821dcfb78b8684b4ca81">More...</a><br /></td></tr>
+<tr class="separator:a4ef20e1621b4821dcfb78b8684b4ca81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59e74d3642717daf24094e319c419b5b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a59e74d3642717daf24094e319c419b5b">m_iNumDepths</a></td></tr>
+<tr class="memdesc:a59e74d3642717daf24094e319c419b5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">An integer variable containing the array index size for the depth array.  <a href="#a59e74d3642717daf24094e319c419b5b">More...</a><br /></td></tr>
+<tr class="separator:a59e74d3642717daf24094e319c419b5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8564cad4d3ecc061b1fdcbfb0d9e86"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a1c8564cad4d3ecc061b1fdcbfb0d9e86">m_dMinimumDepth</a></td></tr>
+<tr class="memdesc:a1c8564cad4d3ecc061b1fdcbfb0d9e86"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double variable containing the minimum depth of the depth distance array.  <a href="#a1c8564cad4d3ecc061b1fdcbfb0d9e86">More...</a><br /></td></tr>
+<tr class="separator:a1c8564cad4d3ecc061b1fdcbfb0d9e86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a572ae2882c9ae598a84db865ca924e94"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a572ae2882c9ae598a84db865ca924e94">m_dMaximumDepth</a></td></tr>
+<tr class="memdesc:a572ae2882c9ae598a84db865ca924e94"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double variable containing the maximum Depth of the depth distance array.  <a href="#a572ae2882c9ae598a84db865ca924e94">More...</a><br /></td></tr>
+<tr class="separator:a572ae2882c9ae598a84db865ca924e94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c0d5b8ad80f63c2e8a47aae3c0286f5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a0c0d5b8ad80f63c2e8a47aae3c0286f5">m_dDepthStep</a></td></tr>
+<tr class="memdesc:a0c0d5b8ad80f63c2e8a47aae3c0286f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double variable containing the spacing, or step, between depth points in the depth distance array.  <a href="#a0c0d5b8ad80f63c2e8a47aae3c0286f5">More...</a><br /></td></tr>
+<tr class="separator:a0c0d5b8ad80f63c2e8a47aae3c0286f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec3b065a1bc7a6037ec5f69cb18f4b5e"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#aec3b065a1bc7a6037ec5f69cb18f4b5e">m_pTravelTimeArray</a></td></tr>
 <tr class="memdesc:aec3b065a1bc7a6037ec5f69cb18f4b5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of double values containing the travel times indexed by depth and distance.  <a href="#aec3b065a1bc7a6037ec5f69cb18f4b5e">More...</a><br /></td></tr>
 <tr class="separator:aec3b065a1bc7a6037ec5f69cb18f4b5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8de0f8b4d84e2568706c830732911682"><td class="memItemLeft" align="right" valign="top">double *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a8de0f8b4d84e2568706c830732911682">m_pDepthDistanceArray</a></td></tr>
-<tr class="memdesc:a8de0f8b4d84e2568706c830732911682"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of double values containing the distances indexed by depth.  <a href="#a8de0f8b4d84e2568706c830732911682">More...</a><br /></td></tr>
-<tr class="separator:a8de0f8b4d84e2568706c830732911682"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a01befd0aac787957c48835a688eb29bf"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a01befd0aac787957c48835a688eb29bf">m_pPhaseArray</a></td></tr>
-<tr class="memdesc:a01befd0aac787957c48835a688eb29bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of characters containing the phases.  <a href="#a01befd0aac787957c48835a688eb29bf">More...</a><br /></td></tr>
-<tr class="separator:a01befd0aac787957c48835a688eb29bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a602a6c43f4dbb68255a6a7d9805d4616"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a602a6c43f4dbb68255a6a7d9805d4616">m_sPhase</a></td></tr>
 <tr class="memdesc:a602a6c43f4dbb68255a6a7d9805d4616"><td class="mdescLeft">&#160;</td><td class="mdescRight">A std::std::string containing the name of the phase used for this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a>.  <a href="#a602a6c43f4dbb68255a6a7d9805d4616">More...</a><br /></td></tr>
 <tr class="separator:a602a6c43f4dbb68255a6a7d9805d4616"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -253,21 +273,69 @@ Static Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a579984850c5ddf6de17b505fc9cfad6c"></a>
+<a class="anchor" id="a2241bfb19bd48270238630dbaf67b0c0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double traveltime::CTravelTime::bilinear </td>
+          <td class="memname">double traveltime::CTravelTime::bilinearInterpolation </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>distance</em>, </td>
+          <td class="paramname"><em>q_x1y1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>depth</em>&#160;</td>
+          <td class="paramname"><em>q_x1y2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>q_x2y1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>q_x2y2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>x1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>y1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>x2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>y2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>y</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -277,16 +345,24 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Compute travel time in seconds via bilinear interpolation. </p>
-<p>Compute a traveltime from travel time array via a bilinear interpolation using <a class="el" href="classtraveltime_1_1CTravelTime.html#a7d82e7715d030f6bbcc897d2d330c5f9" title="Calculate travel time in seconds. ">T()</a> and the given distance and depth</p>
+<p>Compute bilinear interpolation. </p>
+<p>Compute a bilinear interpolation from the provided values</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">distance</td><td>- A double value containing the distance to use </td></tr>
-    <tr><td class="paramname">depth</td><td>- A double value containing depth to use </td></tr>
+    <tr><td class="paramname">q_x1y1</td><td>- A double containing the interpolation value for (x1, y1) </td></tr>
+    <tr><td class="paramname">q_x1y2</td><td>- A double containing the interpolation value for (x1, y2) </td></tr>
+    <tr><td class="paramname">q_x2y1</td><td>- A double containing the interpolation value for (x2, y1) </td></tr>
+    <tr><td class="paramname">q_x2y2</td><td>- A double containing the interpolation value for (x2, y2) </td></tr>
+    <tr><td class="paramname">x1</td><td>- A double containing first x interpolation coordinate </td></tr>
+    <tr><td class="paramname">y1</td><td>- A double containing first y interpolation coordinate </td></tr>
+    <tr><td class="paramname">x2</td><td>- A double containing second x interpolation coordinate </td></tr>
+    <tr><td class="paramname">y2</td><td>- A double containing second y interpolation coordinate </td></tr>
+    <tr><td class="paramname">x</td><td>- A double containing the given x coordinate </td></tr>
+    <tr><td class="paramname">y</td><td>- A double containing the given y coordinate </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns the travel time in seconds, or -1.0 if there is no valid travel time </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the resulting bilinear interpolation </dd></dl>
 
 </div>
 </div>
@@ -304,6 +380,110 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p><a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> clear function. </p>
+
+</div>
+</div>
+<a class="anchor" id="a0e506f24689988af394405efb96d96ff"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::getDepthFromIndex </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute depth using interpolation grid index. </p>
+<p>Compute a depth using the given interpolation grid index</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>- An integer value containing the interpolation grid index to use </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the depth </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1245725555706b028ce2d7ebc5f5bb50"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::getDistanceFromIndex </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute distance using interpolation grid index. </p>
+<p>Compute a distance using the given interpolation grid index</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>- An integer value containing the interpolation grid index to use </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the distance </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5c49fdb9047c8af7c422acc87be61a4d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int traveltime::CTravelTime::getIndexFromDepth </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>depth</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute interpolation grid depth index. </p>
+<p>Compute an interpolation grid index from the given depth</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">depth</td><td>- A double value containing the depth to use </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the depth index </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a73d8523161184763c1b122ed070d7882"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int traveltime::CTravelTime::getIndexFromDistance </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>distance</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute interpolation grid distance index. </p>
+<p>Compute an interpolation grid index from the given distance</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">distance</td><td>- A double value containing the distance to use </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the distance index </dd></dl>
 
 </div>
 </div>
@@ -400,7 +580,7 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Load or generate branch data. </p>
-<p>Attempts to load branch data (using Load()) for a phase using a given <a class="el" href="classtraveltime_1_1CRay.html" title="traveltime ray path class ">CRay</a> and phase std::string and filename.</p>
+<p>Attempts to load branch data (using Load()) for a phase using a given CRay and phase std::string and filename.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">phase</td><td>- A std::std::string representing the phase to use, default is "P" </td></tr>
@@ -500,6 +680,42 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aa7ebfdb36d571493efc040f83689291a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void traveltime::CTravelTime::writeToFile </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>fileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>depth</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write out travel times to file. </p>
+<p>This function prints the available travel time points for the travel time contained in this TravelTime at a given depth to a given file.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fileName</td><td>- A std::string containing the file name to write to. </td></tr>
+    <tr><td class="paramname">depth</td><td>- A double containing the depth to use </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a28f8a2f6c6179d612a8a501e860dd721"></a>
 <div class="memitem">
@@ -573,6 +789,90 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a0c0d5b8ad80f63c2e8a47aae3c0286f5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::m_dDepthStep</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A double variable containing the spacing, or step, between depth points in the depth distance array. </p>
+
+</div>
+</div>
+<a class="anchor" id="a4ef20e1621b4821dcfb78b8684b4ca81"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::m_dDistanceStep</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A double variable containing the spacing, or step, between distance points in the depth distance array. </p>
+
+</div>
+</div>
+<a class="anchor" id="a572ae2882c9ae598a84db865ca924e94"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::m_dMaximumDepth</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A double variable containing the maximum Depth of the depth distance array. </p>
+
+</div>
+</div>
+<a class="anchor" id="a8754a17c3b05e2a51454b95beadff689"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::m_dMaximumDistance</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A double variable containing the maximum distance of the depth distance array. </p>
+
+</div>
+</div>
+<a class="anchor" id="a1c8564cad4d3ecc061b1fdcbfb0d9e86"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::m_dMinimumDepth</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A double variable containing the minimum depth of the depth distance array. </p>
+
+</div>
+</div>
+<a class="anchor" id="a3e5907ea6e017812e90371b7c814f632"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::m_dMinimumDistance</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A double variable containing the minimum distance of the depth distance array. </p>
+
+</div>
+</div>
 <a class="anchor" id="a41ad6eea7c2b75a722515b64d03ac288"></a>
 <div class="memitem">
 <div class="memproto">
@@ -587,87 +887,31 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a26763788a032ad33b53ab8a364ca9aef"></a>
+<a class="anchor" id="a59e74d3642717daf24094e319c419b5b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int traveltime::CTravelTime::m_iNumDepthWarp</td>
+          <td class="memname">int traveltime::CTravelTime::m_iNumDepths</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>An integer variable containing the grid index for the depth warp. </p>
+<p>An integer variable containing the array index size for the depth array. </p>
 
 </div>
 </div>
-<a class="anchor" id="a45684ab4d339035c7286937020c6f111"></a>
+<a class="anchor" id="ae3f0050befa709241365bc62420933dc"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int traveltime::CTravelTime::m_iNumDistanceWarp</td>
+          <td class="memname">int traveltime::CTravelTime::m_iNumDistances</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>An integer variable containing the grid index for the distance warp. </p>
-
-</div>
-</div>
-<a class="anchor" id="a8de0f8b4d84e2568706c830732911682"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double* traveltime::CTravelTime::m_pDepthDistanceArray</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An array of double values containing the distances indexed by depth. </p>
-
-</div>
-</div>
-<a class="anchor" id="a3fe95dcd4dad0531bb1b26af673b0bea"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtraveltime_1_1CTimeWarp.html">CTimeWarp</a>* traveltime::CTravelTime::m_pDepthWarp</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to the depth warp object used. </p>
-
-</div>
-</div>
-<a class="anchor" id="aec65e0de23f7eaaa7f271b321ff63247"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtraveltime_1_1CTimeWarp.html">CTimeWarp</a>* traveltime::CTravelTime::m_pDistanceWarp</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A pointer to the distance warp object used. </p>
-
-</div>
-</div>
-<a class="anchor" id="a01befd0aac787957c48835a688eb29bf"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">char* traveltime::CTravelTime::m_pPhaseArray</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An array of characters containing the phases. </p>
+<p>An integer variable containing the array index size for the distance array. </p>
 
 </div>
 </div>

@@ -8,5 +8,7 @@ var searchData=
   ['workloop',['workLoop',['../classglass3_1_1util_1_1ThreadBaseClass.html#a8c9f9b8f1770dc7478cfc841cdb59b4f',1,'glass3::util::ThreadBaseClass']]],
   ['workstate',['WorkState',['../namespaceglass3_1_1util.html#a1947c31b4a8096239d371685ac465028',1,'glass3::util']]],
   ['workstate_2eh',['workstate.h',['../workstate_8h.html',1,'']]],
-  ['writeoutput',['writeOutput',['../classglass3_1_1output_1_1output.html#a79376f5b74b6082b2d9030c6e273008e',1,'glass3::output::output']]]
+  ['writeoutput',['writeOutput',['../classglass3_1_1output_1_1output.html#a79376f5b74b6082b2d9030c6e273008e',1,'glass3::output::output']]],
+  ['writetofile',['writeToFile',['../classtraveltime_1_1CTravelTime.html#aa7ebfdb36d571493efc040f83689291a',1,'traveltime::CTravelTime']]],
+  ['writetofiles',['writeToFiles',['../classtraveltime_1_1CTTT.html#a2d62e4cfd2bf3cf4541de94048ed57c3',1,'traveltime::CTTT']]]
 ];

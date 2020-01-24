@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['id_5fkey',['ID_KEY',['../output_8cpp.html#aa215b9f2435fd7b0eb9fc378bd4807fa',1,'output.cpp']]],
-  ['itmax',['ITMAX',['../Ray_8cpp.html#a3641b6d4c21b7a852dbb32c2b693302e',1,'Ray.cpp']]]
+  ['json_5fextension',['JSON_EXTENSION',['../fileInput_8h.html#a0a72ed3e8d37d6b79795c54c3bb969d1',1,'fileInput.h']]],
+  ['json_5ftype',['JSON_TYPE',['../input_8h.html#a385e8c3cb2b7c1fc68b7d874e78c6c4a',1,'input.h']]]
 ];

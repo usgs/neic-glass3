@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.2.1</span>
+   &#160;<span id="projectnumber">1.3.0</span>
    </div>
   </td>
  </tr>
@@ -107,10 +107,9 @@ Collaboration diagram for traveltime::CTTT:</div>
 <div class="dyncontent">
 <div class="center"><img src="classtraveltime_1_1CTTT__coll__graph.png" border="0" usemap="#traveltime_1_1CTTT_coll__map" alt="Collaboration graph"/></div>
 <map name="traveltime_1_1CTTT_coll__map" id="traveltime_1_1CTTT_coll__map">
-<area shape="rect" id="node2" href="classglass3_1_1util_1_1Taper.html" title="glassutil taper class " alt="" coords="6,716,133,852"/>
-<area shape="rect" id="node4" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="331,292,523,692"/>
-<area shape="rect" id="node7" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="718,876,880,1100"/>
-<area shape="rect" id="node8" href="classtraveltime_1_1CTimeWarp.html" title="traveltime branch generator " alt="" coords="950,402,1107,582"/>
+<area shape="rect" id="node2" href="classglass3_1_1util_1_1Taper.html" title="glassutil taper class " alt="" coords="5,716,132,852"/>
+<area shape="rect" id="node4" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="306,292,498,692"/>
+<area shape="rect" id="node7" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="755,876,929,1173"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -125,6 +124,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2ae15d4d84be432d184abdf4bbb87aee"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a2ae15d4d84be432d184abdf4bbb87aee">~CTTT</a> ()</td></tr>
 <tr class="memdesc:a2ae15d4d84be432d184abdf4bbb87aee"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTTT.html" title="travel time interface class ">CTTT</a> destructor.  <a href="#a2ae15d4d84be432d184abdf4bbb87aee">More...</a><br /></td></tr>
 <tr class="separator:a2ae15d4d84be432d184abdf4bbb87aee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d62e4cfd2bf3cf4541de94048ed57c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a2d62e4cfd2bf3cf4541de94048ed57c3">writeToFiles</a> (std::string outDir, double depth)</td></tr>
+<tr class="memdesc:a2d62e4cfd2bf3cf4541de94048ed57c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write out travel times to files.  <a href="#a2d62e4cfd2bf3cf4541de94048ed57c3">More...</a><br /></td></tr>
+<tr class="separator:a2d62e4cfd2bf3cf4541de94048ed57c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#ad816ca17cec35e2fe1eda2b576b9cf06">clear</a> ()</td></tr>
 <tr class="memdesc:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTTT.html" title="travel time interface class ">CTTT</a> clear function.  <a href="#ad816ca17cec35e2fe1eda2b576b9cf06">More...</a><br /></td></tr>
 <tr class="separator:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,9 +151,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:adf5c69d48204f1c7c2a83dc78163af58"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#adf5c69d48204f1c7c2a83dc78163af58">T</a> (<a class="el" href="classglass3_1_1util_1_1Geo.html">glass3::util::Geo</a> *geo, double tobs)</td></tr>
 <tr class="memdesc:adf5c69d48204f1c7c2a83dc78163af58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate best travel time in seconds.  <a href="#adf5c69d48204f1c7c2a83dc78163af58">More...</a><br /></td></tr>
 <tr class="separator:adf5c69d48204f1c7c2a83dc78163af58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a300bc10cf9a604ab573e8da6d5fb6c9c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a300bc10cf9a604ab573e8da6d5fb6c9c">testTravelTimes</a> (std::string phase)</td></tr>
-<tr class="memdesc:a300bc10cf9a604ab573e8da6d5fb6c9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print Travel Times to File.  <a href="#a300bc10cf9a604ab573e8da6d5fb6c9c">More...</a><br /></td></tr>
-<tr class="separator:a300bc10cf9a604ab573e8da6d5fb6c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -183,7 +182,7 @@ Public Attributes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a9f1bc9c593aefaf3d060d192b3a64f22"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a9f1bc9c593aefaf3d060d192b3a64f22">k_dTTTooLargeToBeValid</a> = 1000.0</td></tr>
-<tr class="memdesc:a9f1bc9c593aefaf3d060d192b3a64f22"><td class="mdescLeft">&#160;</td><td class="mdescRight">A value representing a travel time that is too large to be valid.  <a href="#a9f1bc9c593aefaf3d060d192b3a64f22">More...</a><br /></td></tr>
+<tr class="memdesc:a9f1bc9c593aefaf3d060d192b3a64f22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print Travel Times to File.  <a href="#a9f1bc9c593aefaf3d060d192b3a64f22">More...</a><br /></td></tr>
 <tr class="separator:a9f1bc9c593aefaf3d060d192b3a64f22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb454585c6279d10d3f3c3b0f0fa5b1c"><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#aeb454585c6279d10d3f3c3b0f0fa5b1c">k_iMaximumNumberOfTravelTimes</a> = 40</td></tr>
 <tr class="memdesc:aeb454585c6279d10d3f3c3b0f0fa5b1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The maximum number of supported travel times.  <a href="#aeb454585c6279d10d3f3c3b0f0fa5b1c">More...</a><br /></td></tr>
@@ -540,22 +539,39 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a300bc10cf9a604ab573e8da6d5fb6c9c"></a>
+<a class="anchor" id="a2d62e4cfd2bf3cf4541de94048ed57c3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double traveltime::CTTT::testTravelTimes </td>
+          <td class="memname">void traveltime::CTTT::writeToFiles </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>phase</em></td><td>)</td>
+          <td class="paramname"><em>outDir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>depth</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Print Travel Times to File. </p>
-<p>Prints travel-times for a phase for testing purposes </p>
+<p>Write out travel times to files. </p>
+<p>This function prints the available travel time points for the travel time contained in this TravelTime at a given depth to a given file.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">outPath</td><td>- A std::string containing the directory to write to. </td></tr>
+    <tr><td class="paramname">depth</td><td>- A double containing the depth to use </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -578,7 +594,8 @@ Static Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>A value representing a travel time that is too large to be valid. </p>
+<p>Print Travel Times to File. </p>
+<p>Prints travel-times for a phase for testing purposes A value representing a travel time that is too large to be valid </p>
 
 </div>
 </div>

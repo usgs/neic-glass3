@@ -16,7 +16,5 @@ var searchData=
   ['removeweb',['removeWeb',['../classglasscore_1_1CWebList.html#a70a95824032c7f8b303c41c1c33d9fc4',1,'glasscore::CWebList']]],
   ['reportcheck',['reportCheck',['../classglasscore_1_1CHypo.html#afb9da28882f9737b8579eb24eac8d9b8',1,'glasscore::CHypo']]],
   ['requesthypo',['requestHypo',['../classglasscore_1_1CHypoList.html#ae2c71102aa9ed00a3ef5bce446a71574',1,'glasscore::CHypoList']]],
-  ['resolvedata',['resolveData',['../classglasscore_1_1CHypo.html#a347814775871ad217d0802403da57b18',1,'glasscore::CHypo::resolveData()'],['../classglasscore_1_1CHypoList.html#a17c84fa883d776b951ca3a5e76916729',1,'glasscore::CHypoList::resolveData()']]],
-  ['rombergintegration',['rombergIntegration',['../classtraveltime_1_1CTerra.html#a6bf9fd421178bebbb91bdf86ffeff01b',1,'traveltime::CTerra']]],
-  ['row',['Row',['../classtraveltime_1_1CGenTrv.html#a1e7d43a6e233b55f1b7a932b31c58171',1,'traveltime::CGenTrv']]]
+  ['resolvedata',['resolveData',['../classglasscore_1_1CHypo.html#a347814775871ad217d0802403da57b18',1,'glasscore::CHypo::resolveData()'],['../classglasscore_1_1CHypoList.html#a17c84fa883d776b951ca3a5e76916729',1,'glasscore::CHypoList::resolveData()']]]
 ];

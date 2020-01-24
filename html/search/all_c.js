@@ -10,7 +10,6 @@ var searchData=
   ['link_5ftt1',['LINK_TT1',['../Link_8h.html#a5f7a1ad442598d7b1a29efb7d2e6cd4f',1,'Link.h']]],
   ['link_5ftt2',['LINK_TT2',['../Link_8h.html#a77662f0bc4fb389f212b9d257bddae25',1,'Link.h']]],
   ['linksite',['linkSite',['../classglasscore_1_1CNode.html#a2f1e53bc190677a52298687e8310c0e4',1,'glasscore::CNode']]],
-  ['load',['load',['../classtraveltime_1_1CTerra.html#a183f83d4ea88e19a9614ec30070c0e72',1,'traveltime::CTerra']]],
   ['loadgridconfiguration',['loadGridConfiguration',['../classglasscore_1_1CWeb.html#ada72a0f85e0c25d07a52715c7013626d',1,'glasscore::CWeb']]],
   ['loadsitefilters',['loadSiteFilters',['../classglasscore_1_1CWeb.html#a0cbc81663ea6532c312ed463e0f68af8',1,'glasscore::CWeb']]],
   ['loadtraveltimes',['loadTravelTimes',['../classglasscore_1_1CWeb.html#a3d4adbd3de21aaedb5c8a7d18c8b84cc',1,'glasscore::CWeb']]],
