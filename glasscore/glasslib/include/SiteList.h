@@ -223,6 +223,12 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	void setMaxPicksPerHour(int maxPicksPerHour);
 
 	/**
+	 * \brief Get last time in epoch seconds the site list was modified
+	 * \return Return the last time in epoch seconds the site list was modified
+	 */
+	int getLastUpdated() const;
+
+	/**
 	 * \brief SiteList work function
 	 *
 	 * checks sites
@@ -281,6 +287,17 @@ class CSiteList : public glass3::util::ThreadBaseClass {
 	 * site is declared too noisy to use, a -1 disables this metric
 	 */
 	std::atomic<int> m_iMaxPicksPerHour;
+
+	/**
+	 * \brief An integer containing the epoch time that this list was last 
+	 * modified.
+	 */
+	std::atomic<int> m_tLastUpdated;
+
+	/**
+	 * \brief An integer containing the epoch time that this list was created.
+	 */
+	std::atomic<int> m_tCreated;
 
 	// constants
 	/**

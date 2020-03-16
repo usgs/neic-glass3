@@ -151,13 +151,15 @@ class CSite {
 	 * \param qual - A double value containing a station quality estimate
 	 * \param enable - A boolean flag indicating whether the site is to be
 	 * enabled or not
+	 * \param use - A boolean flag indicating whether the site is to be
+	 * used (internally) or not
 	 * \param useTele - A boolean flag indicating whether the site is to be used
 	 * for teleseismic or not
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string sta, std::string comp, std::string net,
 					std::string loc, double lat, double lon, double elv,
-					double qual, bool enable, bool useTele);
+					double qual, bool enable, bool use, bool useTele);
 
 	/**
 	 * \brief Set the site's location
