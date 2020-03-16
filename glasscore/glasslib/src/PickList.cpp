@@ -604,7 +604,7 @@ glass3::util::WorkState CPickList::work() {
 
 	// Attempt nucleation unless we were told not to.
 	if (bNucleateThisPick == true) {
-		pick->nucleate();
+		pick->nucleate(this);
 	}
 
 	// give up some time at the end of the loop

@@ -511,7 +511,7 @@ void CPick::clearHypoReference() {
 }
 
 // ---------------------------------------------------------nucleate
-bool CPick::nucleate() {
+bool CPick::nucleate(CPickList* parentThread) {
 	// get the site shared_ptr
 	std::shared_ptr<CSite> pickSite = m_wpSite.lock();
 	std::string pt = glass3::util::Date::encodeDateTime(m_tPick);
@@ -524,7 +524,7 @@ bool CPick::nucleate() {
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
 	std::vector < std::shared_ptr < CTrigger >> vTrigger = pickSite->nucleate(
-			m_tPick);
+			m_tPick, parentThread);
 
 	// if there were no triggers, we're done
 	if (vTrigger.size() == 0) {
@@ -538,6 +538,10 @@ bool CPick::nucleate() {
 	}
 
 	for (const auto &trigger : vTrigger) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		if (trigger->getWeb() == NULL) {
 			continue;
 		}
@@ -593,6 +597,10 @@ bool CPick::nucleate() {
 		double thresh = hypo->getNucleationStackThreshold();
 		double maxDepth = trigger->getNodeMaxDepth();
 		bool bad = false;
+
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
 
 		// First localization attempt after nucleation
 		// make 3 passes

@@ -17,6 +17,7 @@
 #include "Trigger.h"
 #include "Site.h"
 #include "Pick.h"
+#include "PickList.h"
 
 namespace glasscore {
 
@@ -238,7 +239,8 @@ bool CNode::unlinkLastSite() {
 }
 
 // ---------------------------------------------------------nucleate
-std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
+std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
+		CPickList* parentThread) {
 	std::lock_guard < std::recursive_mutex > nodeGuard(m_NodeMutex);
 
 	// nullchecks
@@ -274,6 +276,10 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 	// search through each site linked to this node
 	for (const auto &link : m_vSiteLinkList) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// init sigbest
 		double dSigBest_phase1 = -1.0;
 		double dSigBest_phase2 = -1.0;
@@ -538,6 +544,10 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 
 		site->getPickMutex().unlock();
 
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site
 		// NOTE: This significance threshold is hard coded.
@@ -563,6 +573,11 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			vPick.push_back(pickBest_phase2);
 		}
 	}  // ---- end search through each site this node is linked to ----
+
+	if (parentThread != NULL) {
+		parentThread->setThreadHealth();
+	}
+
 	// std::cout << "ncount: " << nCount << std::endl;
 	// make sure the number of significant picks
 	// exceeds the nucleation threshold
