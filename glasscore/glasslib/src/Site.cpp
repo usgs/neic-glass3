@@ -851,8 +851,13 @@ void CSite::setEnable(bool enable) {
 }
 
 // ---------------------------------------------------------getUse
-bool CSite::getUse() const {
+bool CSite::getIsUsed() const {
 	return (m_bUse && m_bEnable);
+}
+
+// ---------------------------------------------------------getUse
+bool CSite::getUse() const {
+	return (m_bUse);
 }
 
 // ---------------------------------------------------------setUse
