@@ -1369,14 +1369,6 @@ bool CWeb::loadWebSiteList() {
 			continue;
 		}
 
-		// Ignore if station out of service
-		if (!site->getUse()) {
-			continue;
-		}
-		if (!site->getEnable()) {
-			continue;
-		}
-
 		if (isSiteAllowed(site)) {
 			m_vSitesSortedForCurrentNode.push_back(
 					std::pair<double, std::shared_ptr<CSite>>(0.0, site));
