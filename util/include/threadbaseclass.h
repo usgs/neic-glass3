@@ -199,6 +199,16 @@ class ThreadBaseClass : public util::BaseClass {
 	int getHealthCheckInterval();
 
 	/**
+	 * \brief Function to retrieve whether the thread should terminate
+	 *
+	 * This function retrieves internal terminate thread for use in derived 
+	 * classes
+	 *
+	 * \return A boolean value indicating whether the thread should terminate
+	 */
+	bool getTerminate();
+
+	/**
 	 * \brief Function to retrieve the name of the work threads
 	 *
 	 * This function retrieves the name of the work threads, this name is used to

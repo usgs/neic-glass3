@@ -50,6 +50,8 @@ void CSiteList::clear() {
 	m_iHoursBeforeLookingUp = -1;
 	m_iMaxPicksPerHour = -1;
 	m_tLastChecked = std::time(NULL);
+	m_tLastUpdated = std::time(NULL);
+	m_tCreated = std::time(NULL);
 }
 
 // -------------------------------------------------------receiveExternalMessage
@@ -244,6 +246,9 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 	time_t tNow;
 	std::time(&tNow);
 
+	// list was modified
+	m_tLastUpdated = tNow;
+
 	// since we've just added or updated
 	// set the lookup time to now
 	m_mLastTimeSiteLookedUp[site->getSCNL()] = tNow;
@@ -409,8 +414,13 @@ std::shared_ptr<json::Object> CSiteList::generateSiteListMessage(bool send) {
 		stationObj["Lon"] = site->getRawLongitude();
 		stationObj["Z"] = site->getRawElevation();
 		stationObj["Qual"] = site->getQuality();
-		stationObj["Use"] = site->getEnable();
+		stationObj["Use"] = site->getUse();
 		stationObj["UseForTele"] = site->getUseForTeleseismic();
+
+		int lastPicked = site->getTLastPickAdded();
+		if ((lastPicked > 0) && (m_iMaxHoursWithoutPicking > 0)) {
+			stationObj["LastPicked"] = static_cast<int>(site->getTLastPickAdded());
+		}
 
 		stationObj["Sta"] = site->getSite();
 		if (site->getComponent() != "") {
@@ -464,13 +474,25 @@ glass3::util::WorkState CSiteList::work() {
 		return (glass3::util::WorkState::Idle);
 	}
 
-	std::lock_guard<std::recursive_mutex> siteListGuard(m_SiteListMutex);
+	// lock the site list while we are checking it
+	while ((m_SiteListMutex.try_lock() == false) &&
+					(getTerminate() == false)) {
+		// update thread status
+		setThreadHealth(true);
+
+		// wait a little while
+		std::this_thread::sleep_for(
+				std::chrono::milliseconds(getSleepTime()));
+	}
 
 	// remember when we last checked
 	m_tLastChecked = tNow;
 
 	glass3::util::Logger::log("debug",
 							"CSiteList::work: checking for sites not picking");
+
+	// create a vector to hold the sites that have changed
+	std::vector<std::shared_ptr<CSite>> vModifiedSites;
 
 	// for each used site in the site list
 	for (auto aSite : m_vSite) {
@@ -528,9 +550,14 @@ glass3::util::WorkState CSiteList::work() {
 			// disable the site
 			aSite->setUse(false);
 
-			// remove site from webs
-			if (CGlass::getWebList()) {
-				CGlass::getWebList()->removeSite(aSite);
+			// site list was modified
+			m_tLastUpdated = tNow;
+
+			// add to modified sites (no duplicates)
+			if(std::find(vModifiedSites.begin(), vModifiedSites.end(), aSite) ==
+				 vModifiedSites.end()) {
+				// did not find in vector, add it
+				vModifiedSites.push_back(aSite);
 			}
 		}
 
@@ -554,7 +581,13 @@ glass3::util::WorkState CSiteList::work() {
 		// check or sites that started picking
 		if (m_iMaxHoursWithoutPicking > 0) {
 			// when was the last pick added to this site
-			time_t tLastPickAdded = aSite->getTLastPickAdded();
+			int tLastPickAdded = aSite->getTLastPickAdded();
+
+			// if we've got no time from site, default tLastPickAdded to when
+			// the sitelist was created (effectively glass startup time)
+			if (tLastPickAdded < 0) {
+				tLastPickAdded = m_tCreated;
+			}
 
 			// have we seen data?
 			if ((tNow - tLastPickAdded)
@@ -595,14 +628,32 @@ glass3::util::WorkState CSiteList::work() {
 			// enable the site
 			aSite->setUse(true);
 
-			// add site to webs
-			if (CGlass::getWebList()) {
-				CGlass::getWebList()->addSite(aSite);
+			// site list was modified
+			m_tLastUpdated = tNow;
+
+			// add to modified sites (no duplicates)
+			if(std::find(vModifiedSites.begin(), vModifiedSites.end(), aSite) ==
+				 vModifiedSites.end()) {
+				// did not find in vector, add it
+				vModifiedSites.push_back(aSite);
 			}
 		}
 
 		// update thread status
 		setThreadHealth();
+	}
+
+	// done with site list
+	m_SiteListMutex.unlock();
+
+	// pass all the modified sites to the webs for updateing
+	for (auto aSite : vModifiedSites) {
+		if (CGlass::getWebList()) {
+			CGlass::getWebList()->addSite(aSite);
+
+			// update thread status
+			setThreadHealth();
+		}
 	}
 
 	return (glass3::util::WorkState::OK);
@@ -636,6 +687,11 @@ void CSiteList::setMaxPicksPerHour(int maxPicksPerHour) {
 // ----------------------------------------------------getMaxPicksPerHour
 int CSiteList::getMaxPicksPerHour() const {
 	return (m_iMaxPicksPerHour);
+}
+
+// ----------------------------------------------------getLastUpdated
+int CSiteList::getLastUpdated() const {
+	return (m_tLastUpdated);
 }
 
 }  // namespace glasscore

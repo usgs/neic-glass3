@@ -345,6 +345,11 @@ int ThreadBaseClass::getHealthCheckInterval() {
 	return (m_iHealthCheckInterval);
 }
 
+// -------------------------------------------------------getTerminate
+bool ThreadBaseClass::getTerminate() {
+	return (m_bTerminate);
+}
+
 // ---------------------------------------------------------setWorkThreadsState
 void ThreadBaseClass::setWorkThreadsState(glass3::util::ThreadState status) {
 	m_WorkThreadsState = status;
