@@ -300,6 +300,13 @@ class CNode {
 	void setWeb(CWeb* web);
 
 	/**
+	 * \brief Get the maximum site distance for this node
+	 * \return Returns a double containing the maximum site distance for this node
+	 * in degrees.
+	 */
+	double getMaxSiteDistance() const;
+
+	/**
 	 * \brief Gets the name of the parent CWeb that created and holds this node
 	 * This name is used to ensure that only one node triggers per web during
 	 * site nucleation
@@ -347,6 +354,12 @@ class CNode {
 	 * kilometers.
 	 */
 	std::atomic<double> m_dMaxDepth;
+
+	/**
+	 * \brief A double value containing this node's maximum site distance in
+	 * degrees.
+	 */
+	std::atomic<double> m_dMaxSiteDistance;
 
 	/**
 	 * \brief A double value containing this node's spatial resolution
