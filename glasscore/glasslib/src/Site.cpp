@@ -18,6 +18,7 @@
 #include <ctime>
 #include "Glass.h"
 #include "Pick.h"
+#include "PickList.h"
 #include "Node.h"
 #include "Trigger.h"
 #include "Hypo.h"
@@ -710,7 +711,8 @@ void CSite::removeNode(std::string nodeID) {
 }
 
 // ---------------------------------------------------------nucleate
-std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
+std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick,
+		CPickList* parentThread) {
 	std::lock_guard<std::mutex> guard(m_vNodeMutex);
 
 	// create trigger vector
@@ -726,6 +728,10 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 
 	// for each node linked to this site
 	for (const auto &link : m_vNode) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// compute potential origin time from tPick and travel time to node
 		// first get traveltime1 to node
 		double travelTime1 = std::get< LINK_TT1>(link);
@@ -760,7 +766,8 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 		// at the current node with the potential origin times
 		bool primarySuccessful = false;
 		if (tOrigin1 > 0) {
-			std::shared_ptr<CTrigger> trigger1 = node->nucleate(tOrigin1);
+			std::shared_ptr<CTrigger> trigger1 = node->nucleate(tOrigin1,
+				parentThread);
 
 			if (trigger1 != NULL) {
 				// if node triggered, add to triggered vector
@@ -772,7 +779,8 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 		// only attempt secondary phase nucleation if primary nucleation
 		// was unsuccessful
 		if ((primarySuccessful == false) && (tOrigin2 > 0)) {
-			std::shared_ptr<CTrigger> trigger2 = node->nucleate(tOrigin2);
+			std::shared_ptr<CTrigger> trigger2 = node->nucleate(tOrigin2,
+				parentThread);
 
 			if (trigger2 != NULL) {
 				// if node triggered, add to triggered vector

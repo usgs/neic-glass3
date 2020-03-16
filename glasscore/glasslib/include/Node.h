@@ -21,6 +21,7 @@ namespace glasscore {
 
 // forward declarations
 class CPick;
+class CPickList;
 class CSite;
 class CWeb;
 class CTrigger;
@@ -163,9 +164,11 @@ class CNode {
 	 *
 	 * \param tOrigin - A double value containing the proposed origin time
 	 * to use in Gregorian seconds
+	 * \param parentThread - A pointer to the parent CPickList thread to allow for
+	 * thread status updates
 	 * \return Returns true if the node nucleated an event, false otherwise
 	 */
-	std::shared_ptr<CTrigger> nucleate(double tOrigin);
+	std::shared_ptr<CTrigger> nucleate(double tOrigin, CPickList* parentThread);
 
 	/**
 	 * \brief CNode significance function
