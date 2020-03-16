@@ -83,12 +83,14 @@ void CNode::clear() {
 
 // ---------------------------------------------------------clearSiteLinks
 void CNode::clearSiteLinks() {
+	// lock mutex for this scope
+	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
+
+	m_dMaxSiteDistance = 0;
+
 	if (m_vSiteLinkList.size() == 0) {
 		return;
 	}
-
-	// lock mutex for this scope
-	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
 
 	// remove any links that sites have TO this node
 	for (auto &link : m_vSiteLinkList) {
@@ -150,6 +152,10 @@ bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 	// but that caused problems when deleting site-node links.
 	site->addNode(node, distDeg, travelTime1, phase1, travelTime2, phase2);
 
+	if (distDeg > m_dMaxSiteDistance) {
+		m_dMaxSiteDistance = distDeg;
+	}
+
 	// successfully linked site
 	return (true);
 }
@@ -196,6 +202,17 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 			// unlink site from node
 			m_vSiteLinkList.erase(it);
 
+			// recompute furthest site distance
+			m_dMaxSiteDistance = 0;
+			for (const auto &link : m_vSiteLinkList) {
+				// get the distance
+				double distDeg = std::get < LINK_DIST > (link);
+
+				if (distDeg > m_dMaxSiteDistance) {
+					m_dMaxSiteDistance = distDeg;
+				}
+			}
+
 			// done modifying vSite
 			m_SiteLinkListMutex.unlock();
 
@@ -232,8 +249,16 @@ bool CNode::unlinkLastSite() {
 	// unlink last site from node
 	m_vSiteLinkList.pop_back();
 
-	// enable node
-	m_bEnabled = true;
+	// recompute furthest site distance
+	m_dMaxSiteDistance = 0;
+	for (const auto &link : m_vSiteLinkList) {
+		// get the distance
+		double distDeg = std::get < LINK_DIST > (link);
+
+		if (distDeg > m_dMaxSiteDistance) {
+			m_dMaxSiteDistance = distDeg;
+		}
+	}
 
 	return (true);
 }
@@ -790,5 +815,11 @@ std::string CNode::getID() const {
 			m_sName + "." + std::to_string(getLatitude()) + "."
 					+ std::to_string(getLongitude()) + "."
 					+ std::to_string(getDepth())));
+}
+
+// ---------------------------------------------------------getMaxSiteDistance
+double CNode::getMaxSiteDistance() const {
+	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
+	return(m_dMaxSiteDistance);
 }
 }  // namespace glasscore

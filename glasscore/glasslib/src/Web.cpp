@@ -1681,23 +1681,8 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 			continue;
 		}
 
-		// get furthest site in node list
-		// NOTE: this assumes that the node site list is sorted
-		// on distance
-		std::shared_ptr<CSite> furthestSite = node->getLastSite();
-
-		// use local copy of furthest site geo because threading
-		glass3::util::Geo furthestSiteGeo;
-		furthestSiteGeo.setGeographic(furthestSite->getRawLatitude(),
-					furthestSite->getRawLongitude(),
-					glass3::util::Geo::k_EarthRadiusKm -
-					(glass3::util::Geo::k_dElevationToDepth
-					* glass3::util::Geo::k_dMetersToKm *
-					furthestSite->getRawElevation()));
-
-		// compute distance between node and current farthest site
-		double maxDistance = glass3::util::GlassMath::k_RadiansToDegrees
-				* furthestSiteGeo.delta(&nodeGeo);
+		// get node furthest distance
+		double maxDistance = node->getMaxSiteDistance();
 
 		// Ignore if new site is farther than last linked site
 		if ((node->getSiteLinksCount() >= m_iNumStationsPerNode)
