@@ -1663,9 +1663,16 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		nodeGeo.setGeographic(node->getLatitude(), node->getLongitude(),
 							glass3::util::Geo::k_EarthRadiusKm - node->getDepth());
 
+		// use local copy of site geo because threading
+		glass3::util::Geo siteGeo;
+		siteGeo.setGeographic(site->getRawLatitude(), site->getRawLongitude(),
+					glass3::util::Geo::k_EarthRadiusKm -
+					(glass3::util::Geo::k_dElevationToDepth
+					* glass3::util::Geo::k_dMetersToKm * site->getRawElevation()));
+
 		// compute distance between site and node
 		double nodeSiteDistance = glass3::util::GlassMath::k_RadiansToDegrees
-				* site->getGeo().delta(&nodeGeo);
+				* siteGeo.delta(&nodeGeo);
 
 		// check to see if distance is valid
 		if (nodeSiteDistance < 0) {
@@ -1679,9 +1686,18 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		// on distance
 		std::shared_ptr<CSite> furthestSite = node->getLastSite();
 
+		// use local copy of furthest site geo because threading
+		glass3::util::Geo furthestSiteGeo;
+		furthestSiteGeo.setGeographic(furthestSite->getRawLatitude(),
+					furthestSite->getRawLongitude(),
+					glass3::util::Geo::k_EarthRadiusKm -
+					(glass3::util::Geo::k_dElevationToDepth
+					* glass3::util::Geo::k_dMetersToKm *
+					furthestSite->getRawElevation()));
+
 		// compute distance between node and current farthest site
 		double maxDistance = glass3::util::GlassMath::k_RadiansToDegrees
-				* nodeGeo.delta(&furthestSite->getGeo());
+				* furthestSiteGeo.delta(&nodeGeo);
 
 		// Ignore if new site is farther than last linked site
 		if ((node->getSiteLinksCount() >= m_iNumStationsPerNode)
