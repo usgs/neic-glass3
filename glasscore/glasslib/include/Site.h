@@ -308,8 +308,15 @@ class CSite {
 	 * \brief Gets whether this site should be used for picks and nucleation.
 	 * (m_bUse && m_bEnable) Use represents whether the site should be used
 	 * according to glasscore's internal metrics
+	 * \return Returns a boolean flag indicating whether the site should be used,
+	 * true if yes, false otherwise
+	 */
+	bool getIsUsed() const;
+
+	/**
+	 * \brief Gets whether this site is used
 	 * \return Returns a boolean flag indicating whether the site is used,
-	 * true if enabled, false otherwise
+	 * true if so, false otherwise
 	 */
 	bool getUse() const;
 

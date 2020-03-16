@@ -178,7 +178,7 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 	// by the addition of this site
 	for (auto &web : m_vWebs) {
 		if (web->getUpdate() == true) {
-			if (web->isSiteAllowed(site) == true) {
+			if (web->isSiteAllowed(site, false) == true) {
 				web->addJob(std::bind(&CWeb::addSite, web, site));
 			}
 		}
@@ -202,7 +202,7 @@ void CWebList::removeSite(std::shared_ptr<CSite> site) {
 	// node site lists
 	for (auto &web : m_vWebs) {
 		if (web->getUpdate() == true) {
-			if (web->isSiteAllowed(site) == true) {
+			if (web->isSiteAllowed(site, false) == true) {
 				web->addJob(std::bind(&CWeb::removeSite, web, site));
 			}
 		}

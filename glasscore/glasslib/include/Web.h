@@ -255,10 +255,11 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * the distance between the given location and the site as part of the
 	 * std::pair in vSite.
 	 *
-	 * \param lat - A double varible containing the latitude to use
-	 * \param lon - A double varible containing the longitude to use
+	 * \param lat - A double variable containing the latitude to use
+	 * \param lon - A double variable containing the longitude to use
+	 * \param depth - A double variable containing the depth to use
 	 */
-	void sortSiteListForNode(double lat, double lon);
+	void sortSiteListForNode(double lat, double lon, double depth);
 
 	/**
 	 * \brief Create new node
@@ -333,9 +334,11 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 *
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * check
-	 * \return returns true if it is allowed, false otehrwise
+	 * \param checkEnabled - A bool indicating whether to check the site
+	 * enabled and use flags, default true
+	 * \return returns true if it is allowed, false otherwise
 	 */
-	bool isSiteAllowed(std::shared_ptr<CSite> site);
+	bool isSiteAllowed(std::shared_ptr<CSite> site, bool checkEnabled = true);
 
 	/**
 	 * \brief add a job
@@ -562,6 +565,19 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	std::atomic<double> m_dMaxDepth;
 
 	/**
+	 * \brief A double value containing the minimum quality required to use a 
+	 * station in this web. This needs to be saved to support dynamic addition
+	 * and removal of sites as their usage status is changed.
+	 */
+	std::atomic<double> m_dQualityFilter;
+
+	/**
+	 * \brief A double which describes the web specific maximum allowable site
+	 * node distance in degrees
+	 **/
+	std::atomic<double> m_dMaxSiteDistanceFilter;
+
+	/**
 	 * \brief A double which describes the web depth layer resolution
 	 **/
 	std::atomic<double> m_dDepthResolution;
@@ -623,6 +639,12 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_WebMutex;
+
+	/**
+	 * \brief An integer containing the epoch time that the web site list was last 
+	 * updated.
+	 */
+	std::atomic<int> m_tLastUpdated;
 
 	/**
 	 * \brief default azimuth taper
