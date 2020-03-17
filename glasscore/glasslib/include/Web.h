@@ -262,6 +262,24 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	void sortSiteListForNode(double lat, double lon, double depth);
 
 	/**
+	 * \brief Add site to this web's sitelist 
+	 * This function adds the given site to the site list local to this web
+	 *
+	 * \param site - A shared_ptr to a CSite object containing the site to add
+	 * \return Returns true if successful, false otherwise
+	 */
+	bool addSiteToSiteList(std::shared_ptr<CSite> site);
+
+	/**
+	 * \brief Remove site from this web's sitelist 
+	 * This function Removes the given site to the site list local to this web
+	 *
+	 * \param site - A shared_ptr to a CSite object containing the site to remove
+	 * \return Returns true if successful, false otherwise
+	 */
+	bool removeSiteFromSiteList(std::shared_ptr<CSite> site);
+
+	/**
 	 * \brief Create new node
 	 *
 	 * This function creates a new node centered on the provided latitude,
