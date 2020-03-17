@@ -1585,11 +1585,14 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 	// if we already have this site, don't bother
 	if (hasSite(site) == true) {
 		// if we have this site and it's no longer allowed, we should
-		// remove it
+		// remove it, this is effectively an "update" where the change kicks
+		// the station out of the web
 		if (isSiteAllowed(site) == false) {
 			removeSite(site);
 		}
 
+		// this is this is effectively an "update" where the change ends up not 
+		// affecting the station's presence in the web
 		return;
 	}
 
@@ -1650,7 +1653,6 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		// check to see if we have this site in this node
 		std::shared_ptr<CSite> foundSite = node->getSite(site->getSCNL());
 
-		// update?
 		if (foundSite != NULL) {
 			// this is just a safety check, most existing sites should be handled
 			// by the above code
@@ -1658,7 +1660,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 			continue;
 		}
 
-		// set to node geographic location
+		// set node geographic location
 		glass3::util::Geo nodeGeo;
 		nodeGeo.setGeographic(node->getLatitude(), node->getLongitude(),
 							glass3::util::Geo::k_EarthRadiusKm - node->getDepth());

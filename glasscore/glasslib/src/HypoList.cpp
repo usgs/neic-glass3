@@ -518,14 +518,14 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 		breport = true;
 		// relocate the hypo
 		hyp->localize();
-	}
 
-	// Iterate on pruning data
-	if (hyp->pruneData()) {
-		// we should report this hypo since it has changed
-		breport = true;
-		// relocate the hypo
-		hyp->localize();
+		// Iterate on pruning data
+		if (hyp->pruneData()) {
+			// we should report this hypo since it has changed
+			breport = true;
+			// relocate the hypo
+			hyp->localize();
+		}
 	}
 
 	std::chrono::high_resolution_clock::time_point tPruneEndTime =
