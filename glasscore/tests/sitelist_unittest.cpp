@@ -76,7 +76,7 @@ TEST(SiteListTest, SiteOperations) {
 	testSiteList->addSite(sharedTestSite4);
 	std::shared_ptr<glasscore::CSite> updatedSite = testSiteList->getSite(
 			sharedTestSite4->getSCNL());
-	ASSERT_FALSE(updatedSite->getUse())<< "Updated site";
+	ASSERT_FALSE(updatedSite->getIsUsed())<< "Updated site";
 
 	std::shared_ptr<json::Object> siteListMessage = testSiteList
 			->generateSiteListMessage(false);

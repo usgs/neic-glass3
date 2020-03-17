@@ -149,5 +149,5 @@ TEST(NodeTest, FailTests) {
 	ASSERT_FALSE(testNode->unlinkSite(nullSite));
 
 	// nucleate
-	ASSERT_TRUE(testNode->nucleate(-1) == NULL);
+	ASSERT_TRUE(testNode->nucleate(-1, NULL) == NULL);
 }
