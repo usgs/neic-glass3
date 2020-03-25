@@ -79,6 +79,9 @@ void Logger::log_init(const std::string &programName,
 		auto logger = std::make_shared<spdlog::logger>("logger", begin(sinks),
 														end(sinks));
 
+		// set the flush threshold
+		logger->flush_on(spdlog::level::debug);
+
 		// register the logger
 		spdlog::register_logger(logger);
 
