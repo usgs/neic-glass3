@@ -1417,10 +1417,20 @@ bool CWeb::addSiteToSiteList(std::shared_ptr<CSite> site) {
 		return(false);
 	}
 
-	std::lock_guard<std::mutex> guard(m_vSiteMutex);
+	while ((m_vSiteMutex.try_lock() == false) &&
+				 (getTerminate() == false)) {
+		// update thread status
+		setThreadHealth(true);
+
+		// wait a little while
+		std::this_thread::sleep_for(
+				std::chrono::milliseconds(getSleepTime()));
+	}
 
 	m_vSitesSortedForCurrentNode.push_back(
 					std::pair<double, std::shared_ptr<CSite>>(0.0, site));
+
+	m_vSiteMutex.unlock();
 
 	return(true);
 }
@@ -1431,7 +1441,15 @@ bool CWeb::removeSiteFromSiteList(std::shared_ptr<CSite> site) {
 		return(false);
 	}
 
-	std::lock_guard<std::mutex> guard(m_vSiteMutex);
+	while ((m_vSiteMutex.try_lock() == false) &&
+				 (getTerminate() == false)) {
+		// update thread status
+		setThreadHealth(true);
+
+		// wait a little while
+		std::this_thread::sleep_for(
+				std::chrono::milliseconds(getSleepTime()));
+	}
 
 	// for each site
 	for (auto it = m_vSitesSortedForCurrentNode.begin();
@@ -1445,10 +1463,12 @@ bool CWeb::removeSiteFromSiteList(std::shared_ptr<CSite> site) {
 		// only erase the correct one
 		if (site->getSCNL() == aSite->getSCNL()) {
 			m_vSitesSortedForCurrentNode.erase(it);
+			m_vSiteMutex.unlock();
 			return(true);
 		}
 	}
 
+	m_vSiteMutex.unlock();
 	return(false);
 }
 
@@ -1698,6 +1718,9 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 			continue;
 		}
 
+		// update thread status
+		setThreadHealth(true);
+
 		// set node geographic location
 		glass3::util::Geo nodeGeo;
 		nodeGeo.setGeographic(node->getLatitude(), node->getLongitude(),
@@ -1880,6 +1903,9 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 							+ std::to_string(nodeModCount) + " nodes.");
 		}
 
+		// update thread status
+		setThreadHealth(true);
+
 		// remove this site from node
 		if (node->unlinkSite(foundSite) == true) {
 			// now we need to look for a new site to replace it
@@ -1918,6 +1944,9 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 
 			// for the number of allowed sites per node
 			for (int i = 0; i < sitesAllowed; i++) {
+				// update thread status
+				setThreadHealth(true);
+
 				// get each site
 				std::shared_ptr<CSite> newSite = m_vSitesSortedForCurrentNode[i].second;
 				double newDistance = glass3::util::GlassMath::k_RadiansToDegrees
