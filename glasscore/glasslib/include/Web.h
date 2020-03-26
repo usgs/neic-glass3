@@ -57,7 +57,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
 	explicit CWeb(int numThreads = 0, int sleepTime = 100, int checkInterval =
-							60);
+							300);
 
 	/**
 	 * \brief CWeb advanced constructor
@@ -97,7 +97,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 			int resolution, bool update, bool save,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
-			int numThreads = 0, int sleepTime = 100, int checkInterval = 60,
+			int numThreads = 0, int sleepTime = 100, int checkInterval = 300,
 			double aziTaper = 360.0, double maxDepth = 800.0);
 
 	/**
