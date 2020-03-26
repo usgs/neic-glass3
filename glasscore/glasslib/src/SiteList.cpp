@@ -229,7 +229,7 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 
 		// pass updated site to webs
 		if (CGlass::getWebList()) {
-			CGlass::getWebList()->addSite(oldSite);
+			CGlass::getWebList()->updateSite(oldSite);
 		}
 	} else {
 		// add new site to list and map
@@ -238,7 +238,7 @@ bool CSiteList::addSite(std::shared_ptr<CSite> site) {
 
 		// pass new site to webs
 		if (CGlass::getWebList()) {
-			CGlass::getWebList()->addSite(site);
+			CGlass::getWebList()->updateSite(site);
 		}
 	}
 
@@ -492,165 +492,138 @@ glass3::util::WorkState CSiteList::work() {
 	glass3::util::Logger::log("info",
 							"CSiteList::work: Updating used sites based on statistics.");
 
-	glass3::util::Logger::log("debug",
-							"CSiteList::work: Checking currently used sites for sites that "
-							"are not picking or are picking too often.");
 	// create a vector to hold the sites that have changed
 	std::vector<std::shared_ptr<CSite>> vModifiedSites;
 
-	// for each used site in the site list
+	// for each site in the site list
 	for (auto aSite : m_vSite) {
-		// skip disabled sites
+		// skip manually disabled sites, we can't do anything with them
 		if (aSite->getEnable() == false) {
 			continue;
 		}
-		// skip sites that are not used
-		if (aSite->getUse() == false) {
-			continue;
-		}
 
-		bool disableSite = false;
-
-		// check for sites that are not picking
-		if (m_iMaxHoursWithoutPicking > 0) {
-			// when was the last pick added to this site
-			time_t tLastPickAdded = aSite->getTLastPickAdded();
-
-			// have we not seen data?
-			if ((tNow - tLastPickAdded)
-					> (k_nHoursToSeconds * m_iMaxHoursWithoutPicking)) {
-				glass3::util::Logger::log(
-						"debug",
-						"CSiteList::work: Removing " + aSite->getSCNL()
-								+ " for not picking in "
-								+ std::to_string(tNow - tLastPickAdded)
-								+ " seconds ");
-				disableSite = true;
-			}
-		}
-
-		// check for sites that are picking too much
-		if ((disableSite != true) && (m_iMaxPicksPerHour > 0)) {
-			// how many picks since last check
-			int picksSinceCheck = aSite->getPickCountSinceCheck();
-
-			// we check every hour, so picks since check is picks per hour
-			if (picksSinceCheck > m_iMaxPicksPerHour) {
-				glass3::util::Logger::log(
-						"debug",
-						"CSiteList::work: Removing " + aSite->getSCNL()
-								+ " for picking more than "
-								+ std::to_string(m_iMaxPicksPerHour)
-								+ " in the last hour ("
-								+ std::to_string(picksSinceCheck) + ")");
-				disableSite = true;
-			}
-
-			// reset for next check
-			aSite->setPickCountSinceCheck(0);
-		}
-
-		if (disableSite == true) {
-			// disable the site
-			aSite->setUse(false);
-
-			// site list was modified
-			m_tLastUpdated = tNow;
-
-			// add to modified sites (no duplicates)
-			if(std::find(vModifiedSites.begin(), vModifiedSites.end(), aSite) ==
-				 vModifiedSites.end()) {
-				// did not find in vector, add it
-				vModifiedSites.push_back(aSite);
-			}
-		}
-
-		// update thread status
-		setThreadHealth();
-	}
-
-	glass3::util::Logger::log("debug",
-							"CSiteList::work: Checking currently unused sites for sites that "
-							"are picking or are not picking too often.");
-
-	// for each unused site in the site list
-	for (auto aSite : m_vSite) {
-		// skip sites already in the modified list
-		if(std::find(vModifiedSites.begin(), vModifiedSites.end(), aSite) ==
-				vModifiedSites.end()) {
-			continue;
-		}
-
-		// skip disabled sites
-		if (aSite->getEnable() == false) {
-			continue;
-		}
-		// skip sites that are used
+		// if we are currently using a site
 		if (aSite->getUse() == true) {
-			continue;
-		}
+			bool disableSite = false;
 
-		bool enableSite = false;
+			// check for a used site that is not picking
+			if (m_iMaxHoursWithoutPicking > 0) {
+				// when was the last pick added to this site
+				time_t tLastPickAdded = aSite->getTLastPickAdded();
 
-		// check or sites that started picking
-		if (m_iMaxHoursWithoutPicking > 0) {
-			// when was the last pick added to this site
-			int tLastPickAdded = aSite->getTLastPickAdded();
-
-			// if we've got no time from site, default tLastPickAdded to when
-			// the sitelist was created (effectively glass startup time)
-			if (tLastPickAdded < 0) {
-				tLastPickAdded = m_tCreated;
+				// have we not seen data?
+				if ((tNow - tLastPickAdded)
+						> (k_nHoursToSeconds * m_iMaxHoursWithoutPicking)) {
+					glass3::util::Logger::log(
+							"debug",
+							"CSiteList::work: Removing " + aSite->getSCNL()
+									+ " for not picking in "
+									+ std::to_string(tNow - tLastPickAdded)
+									+ " seconds ");
+					disableSite = true;
+				}
 			}
 
-			// have we seen data?
-			if ((tNow - tLastPickAdded)
-					< (k_nHoursToSeconds * m_iMaxHoursWithoutPicking)) {
-				glass3::util::Logger::log(
-						"debug",
-						"CSiteList::work: Added " + aSite->getSCNL()
-								+ " because it has picked within "
-								+ std::to_string(tNow - tLastPickAdded)
-								+ " seconds ");
+			// check for a used site that is picking too often
+			if ((disableSite != true) && (m_iMaxPicksPerHour > 0)) {
+				// how many picks since last check
+				int picksSinceCheck = aSite->getPickCountSinceCheck();
 
-				enableSite = true;
-			}
-		}
+				// we check every hour, so picks since check is picks per hour
+				if (picksSinceCheck > m_iMaxPicksPerHour) {
+					glass3::util::Logger::log(
+							"debug",
+							"CSiteList::work: Removing " + aSite->getSCNL()
+									+ " for picking more than "
+									+ std::to_string(m_iMaxPicksPerHour)
+									+ " in the last hour ("
+									+ std::to_string(picksSinceCheck) + ")");
+					disableSite = true;
+				}
 
-		// check for sites who's rate has fallen
-		if (m_iMaxPicksPerHour > 0) {
-			// how many picks since last check
-			int picksSinceCheck = aSite->getPickCountSinceCheck();
-
-			// we check every hour, so picks since check is picks per hour
-			// also, don't bother turning on a site that hasn't seen any picks
-			if ((picksSinceCheck > 0) && (picksSinceCheck < m_iMaxPicksPerHour)) {
-				glass3::util::Logger::log(
-						"debug",
-						"CSiteList::work: Added " + aSite->getSCNL()
-								+ " for picking less than "
-								+ std::to_string(m_iMaxPicksPerHour)
-								+ " in the last hour ("
-								+ std::to_string(picksSinceCheck) + ")");
-				enableSite = true;
+				// reset for next check
+				aSite->setPickCountSinceCheck(0);
 			}
 
-			// reset for next check
-			aSite->setPickCountSinceCheck(0);
-		}
+			// if we're to disable this site
+			if (disableSite == true) {
+				// disable the site
+				aSite->setUse(false);
 
-		if (enableSite == true) {
-			// enable the site
-			aSite->setUse(true);
+				// site list was modified
+				m_tLastUpdated = tNow;
 
-			// site list was modified
-			m_tLastUpdated = tNow;
+				// add to modified sites (no duplicates)
+				if(std::find(vModifiedSites.begin(), vModifiedSites.end(), aSite) ==
+					vModifiedSites.end()) {
+					// did not find in vector, add it
+					vModifiedSites.push_back(aSite);
+				}
+			}
+		} else {  // if we are currently not using a site
+			bool enableSite = false;
 
-			// add to modified sites (no duplicates)
-			if(std::find(vModifiedSites.begin(), vModifiedSites.end(), aSite) ==
-				 vModifiedSites.end()) {
-				// did not find in vector, add it
-				vModifiedSites.push_back(aSite);
+			// check for an unused site that has started picking
+			if (m_iMaxHoursWithoutPicking > 0) {
+				// when was the last pick added to this site
+				int tLastPickAdded = aSite->getTLastPickAdded();
+
+				// if we've got no time from site, default tLastPickAdded to when
+				// the sitelist was created (effectively glass startup time)
+				if (tLastPickAdded < 0) {
+					tLastPickAdded = m_tCreated;
+				}
+
+				// have we seen data?
+				if ((tNow - tLastPickAdded)
+						< (k_nHoursToSeconds * m_iMaxHoursWithoutPicking)) {
+					glass3::util::Logger::log(
+							"debug",
+							"CSiteList::work: Added " + aSite->getSCNL()
+									+ " because it has picked within "
+									+ std::to_string(tNow - tLastPickAdded)
+									+ " seconds ");
+
+					enableSite = true;
+				}
+			}
+
+			// check for an unused site that is no longer picking to often
+			if (m_iMaxPicksPerHour > 0) {
+				// how many picks since last check
+				int picksSinceCheck = aSite->getPickCountSinceCheck();
+
+				// we check every hour, so picks since check is picks per hour
+				// also, don't bother turning on a site that hasn't seen any picks
+				if ((picksSinceCheck > 0) && (picksSinceCheck < m_iMaxPicksPerHour)) {
+					glass3::util::Logger::log(
+							"debug",
+							"CSiteList::work: Added " + aSite->getSCNL()
+									+ " for picking less than "
+									+ std::to_string(m_iMaxPicksPerHour)
+									+ " in the last hour ("
+									+ std::to_string(picksSinceCheck) + ")");
+					enableSite = true;
+				}
+
+				// reset for next check
+				aSite->setPickCountSinceCheck(0);
+			}
+
+			// if we're to enable this site
+			if (enableSite == true) {
+				// enable the site
+				aSite->setUse(true);
+
+				// site list was modified
+				m_tLastUpdated = tNow;
+
+				// add to modified sites (no duplicates)
+				if(std::find(vModifiedSites.begin(), vModifiedSites.end(), aSite) ==
+					vModifiedSites.end()) {
+					// did not find in vector, add it
+					vModifiedSites.push_back(aSite);
+				}
 			}
 		}
 
@@ -664,7 +637,7 @@ glass3::util::WorkState CSiteList::work() {
 	// pass all the modified sites to the webs for updateing
 	for (auto aSite : vModifiedSites) {
 		if (CGlass::getWebList()) {
-			CGlass::getWebList()->addSite(aSite);
+			CGlass::getWebList()->updateSite(aSite);
 
 			// update thread status
 			setThreadHealth();
