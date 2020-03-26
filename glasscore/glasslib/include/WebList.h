@@ -103,22 +103,13 @@ class CWebList {
 	bool removeWeb(std::shared_ptr<json::Object> com);
 
 	/**
-	 * \brief Add a site to the webs
-	 * This function adds the given site to all appropriate webs
+	 * \brief Update a site in the webs
+	 * This function updates the given site in all appropriate webs
 	 * in the list of webs
 	 *
 	 * \param site - A shared_ptr to a CSite object containing the site to add
 	 */
-	void addSite(std::shared_ptr<CSite> site);
-
-	/**
-	 * \brief Remove Site from the webs
-	 * This function removes the given site from all webs in the
-	 * list of webs
-	 *
-	 * \param site - A shared_ptr to a CSite object containing the site to remove
-	 */
-	void removeSite(std::shared_ptr<CSite> site);
+	void updateSite(std::shared_ptr<CSite> site);
 
 	/**
 	 * \brief Check if the webs have a site

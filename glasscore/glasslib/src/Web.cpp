@@ -1638,7 +1638,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 	}
 
 	// if this is explicitly a remove, send to removeSite
-	if (site->getEnable() == false) {
+	if (site->getIsUsed() == false) {
 		removeSite(site);
 		return;
 	}

@@ -188,7 +188,7 @@ TEST(WebListTest, SiteOperations) {
 
 	// add to site list
 	testSiteList->addSite(sharedAddSite);
-	testWebList->addSite(sharedAddSite);
+	testWebList->updateSite(sharedAddSite);
 
 	// give time for site to add
 	std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -209,7 +209,7 @@ TEST(WebListTest, SiteOperations) {
 	ASSERT_TRUE(testWebList->hasSite(sharedRemoveSite))<< "site in weblist";
 
 	// remove
-	testWebList->removeSite(sharedRemoveSite);
+	testWebList->updateSite(sharedRemoveSite);
 
 	// give time for site to remove
 	std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -218,7 +218,7 @@ TEST(WebListTest, SiteOperations) {
 	ASSERT_FALSE(testWebList->hasSite(sharedRemoveSite))<< "site removed";
 }
 
-// Tests various falure cases for weblist
+// Tests various failure cases for weblist
 TEST(WebListTest, FailTests) {
 	glass3::util::Logger::disable();
 
@@ -228,6 +228,5 @@ TEST(WebListTest, FailTests) {
 	ASSERT_FALSE(testWebList->receiveExternalMessage(NULL))<< "Null dispatch false";
 	ASSERT_FALSE(testWebList->addWeb(NULL))<< "Null addWeb false";
 	ASSERT_FALSE(testWebList->removeWeb(NULL))<< "Null removeWeb false";
-	testWebList->removeSite(NULL);
-	testWebList->addSite(NULL);
+	testWebList->updateSite(NULL);
 }
