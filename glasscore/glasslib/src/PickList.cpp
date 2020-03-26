@@ -312,7 +312,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
-	glass3::util::Logger::log("debug", "CPickList::scavenge. " + hyp->getID());
+	// glass3::util::Logger::log("debug", "CPickList::scavenge. " + hyp->getID());
 
 	// Calculate range for possible associations
 	double sdassoc = CGlass::getAssociationSDCutoff();
