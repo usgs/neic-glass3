@@ -485,8 +485,6 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
 	// This is essentially a faster algorithmic implementation of iterate
-	glass3::util::Logger::log("debug", "CHypo::anneal. " + m_sID);
-
 	// *** First, locate ***
 	if (CGlass::getMinimizeTTLocator() == false) {
 		annealingLocateBayes(nIter, dStart, dStop, tStart, tStop, true);
@@ -571,6 +569,9 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		// remove the pick from this hypo
 		removePickReference(pick);
 	}
+
+	glass3::util::Logger::log("debug", "CHypo::anneal, " + m_sID + " bayes: "
+			+ std::to_string(m_dBayesValue));
 
 	// return the final bayesian value
 	return (m_dBayesValue);
@@ -1703,7 +1704,7 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 						m_pNucleationTravelTime1->m_sPhase, tobs, tcal);
 			} else if ((!m_pNucleationTravelTime1)
 					&& (m_pNucleationTravelTime2)) {
-				// we have just the second ducleation phase
+				// we have just the second nucleation phase
 				tcal = m_pNucleationTravelTime2->T(&siteGeo);
 				resi = calculateWeightedResidual(
 						m_pNucleationTravelTime2->m_sPhase, tobs, tcal);
@@ -2446,7 +2447,7 @@ double CHypo::localize() {
 	// Localize this hypo
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
-	glass3::util::Logger::log("debug", "CHypo::localize. " + m_sID);
+	// glass3::util::Logger::log("debug", "CHypo::localize. " + m_sID);
 
 	// if hypo is fixed, just return current bayesian value
 	// NOTE: What implication does this have for "seed hypos" like twitter
@@ -2567,7 +2568,7 @@ bool CHypo::pruneData() {
 		return (false);
 	}
 
-	glass3::util::Logger::log("debug", "CHypo::prune. " + m_sID);
+	// glass3::util::Logger::log("debug", "CHypo::prune. " + m_sID);
 
 	// set up local vector to track picks to remove
 	std::vector < std::shared_ptr < CPick >> vremove;
@@ -2605,7 +2606,7 @@ bool CHypo::pruneData() {
 		// check if delta is beyond distance limit
 		if (delta > m_dAssociationDistanceCutoff) {
 			snprintf(
-					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f > %.2f)",
+					sLog, sizeof(sLog), "CHypo::prune: Pick-CUL %s %s (%.2f > %.2f)",
 					glass3::util::Date::encodeDateTime(pck->getTPick()).c_str(),
 					pck->getSite()->getSCNL().c_str(), delta,
 					getAssociationDistanceCutoff());
@@ -2628,7 +2629,8 @@ bool CHypo::pruneData() {
 
 	glass3::util::Logger::log(
 			"debug",
-			"CHypo::prune pick pruneCount:" + std::to_string(pruneCount));
+			"CHypo::prune " + m_sID + + " removed " + std::to_string(pruneCount)
+			+ " picks.");
 
 	// set up local vector to track correlations to remove
 	std::vector < std::shared_ptr < CCorrelation >> vcremove;
@@ -2647,7 +2649,7 @@ bool CHypo::pruneData() {
 			snprintf(
 					sLog,
 					sizeof(sLog),
-					"CHypo::prune: C-CUL %s %s",
+					"CHypo::prune: Corr-CUL %s %s",
 					glass3::util::Date::encodeDateTime(cor->getTCorrelation())
 							.c_str(),
 					cor->getSite()->getSCNL().c_str());
@@ -2658,10 +2660,17 @@ bool CHypo::pruneData() {
 		}
 	}
 
+	pruneCount = 0;
 	for (auto cor : vcremove) {
+		pruneCount++;
 		cor->clearHypoReference();
 		removeCorrelationReference(cor);
 	}
+
+	// glass3::util::Logger::log(
+	// "debug",
+	// "CHypo::prune " + m_sID + + " removed " + std::to_string(pruneCount)
+	// + " correlations.");
 
 	// if we didn't find any data to remove, just
 	// return
@@ -2802,7 +2811,7 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 		return (false);
 	}
 
-	glass3::util::Logger::log("debug", "CHypo::resolve. " + m_sID);
+	// glass3::util::Logger::log("debug", "CHypo::resolve. " + m_sID);
 
 	bool bAssoc = false;
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
