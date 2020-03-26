@@ -489,9 +489,12 @@ glass3::util::WorkState CSiteList::work() {
 	// remember when we last checked
 	m_tLastChecked = tNow;
 
-	glass3::util::Logger::log("debug",
-							"CSiteList::work: checking for sites not picking");
+	glass3::util::Logger::log("info",
+							"CSiteList::work: Updating used sites based on statistics.");
 
+	glass3::util::Logger::log("debug",
+							"CSiteList::work: Checking currently used sites for sites that "
+							"are not picking or are picking too often.");
 	// create a vector to hold the sites that have changed
 	std::vector<std::shared_ptr<CSite>> vModifiedSites;
 
@@ -565,6 +568,10 @@ glass3::util::WorkState CSiteList::work() {
 		// update thread status
 		setThreadHealth();
 	}
+
+	glass3::util::Logger::log("debug",
+							"CSiteList::work: Checking currently unused sites for sites that "
+							"are picking or are not picking too often.");
 
 	// for each unused site in the site list
 	for (auto aSite : m_vSite) {
