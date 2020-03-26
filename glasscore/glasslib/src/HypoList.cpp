@@ -857,7 +857,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			snprintf(
 					sLog, sizeof(sLog),
 					"CHypoList::findAndMergeMatchingHypos: Testing merger of"
-					"hypo %s and %s\n",
+					"hypo %s and %s",
 					aHypo->getID().c_str(), hypo->getID().c_str());
 			glass3::util::Logger::log(sLog);
 
@@ -905,7 +905,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 					sLog,
 					sizeof(sLog),
 					"CHypoList::findAndMergeMatchingHypos: fromHypo:%s lat:%.3f, "
-					"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d\n",
+					"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d",
 					fromHypo->getID().c_str(), fromHypo->getLatitude(),
 					fromHypo->getLongitude(), fromHypo->getDepth(),
 					fromHypo->getTOrigin(), fromHypo->getBayesValue(),
@@ -915,7 +915,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			snprintf(
 					sLog, sizeof(sLog),
 					"CHypoList::findAndMergeMatchingHypos: toHypo:%s lat:%.3f, "
-					"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d\n",
+					"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d",
 					toHypo->getID().c_str(), toHypo->getLatitude(),
 					toHypo->getLongitude(), toHypo->getDepth(),
 					toHypo->getTOrigin(), toHypo->getBayesValue(),

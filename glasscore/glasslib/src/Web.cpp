@@ -1671,6 +1671,10 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
+	// timing code
+	std::chrono::high_resolution_clock::time_point tStartTime =
+			std::chrono::high_resolution_clock::now();
+
 	// now add site to web site list
 	addSiteToSiteList(site);
 
@@ -1818,19 +1822,28 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		node->setEnabled(true);
 	}
 
+	std::chrono::high_resolution_clock::time_point tEndTime =
+			std::chrono::high_resolution_clock::now();
+
+	double addTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tEndTime - tStartTime).count();
+
 	// log info if we've added a site
 	if (nodeModCount > 0) {
 		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
-		snprintf(sLog, sizeof(sLog), "CWeb::addSite: Added site: %s to %d "
-					"node(s) in web: %s",
-					site->getSCNL().c_str(), nodeModCount, m_sName.c_str());
+		snprintf(
+				sLog, sizeof(sLog),
+				"CWeb::addSite: Site: %s added to %d node(s) in web: %s "
+				"in %.2f seconds.", site->getSCNL().c_str(), nodeModCount, 
+				m_sName.c_str(), addTime);
 		glass3::util::Logger::log("info", sLog);
 	} else {
-		glass3::util::Logger::log(
-				"debug",
-				"CWeb::addSite: Station " + site->getSCNL()
-						+ " not added to any "
-								"nodes in web: " + m_sName + ".");
+		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
+		snprintf(sLog, sizeof(sLog), "CWeb::addSite: Site %s not added to "
+				" any nodes in web: %s in %.2f seconds", site->getSCNL().c_str(),
+				m_sName.c_str(), addTime);
+		glass3::util::Logger::log("info", sLog);
 	}
 }
 
@@ -1856,8 +1869,12 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 
 	glass3::util::Logger::log(
 			"debug",
-			"CWeb::remSite: Trying to remove station " + site->getSCNL()
+			"CWeb::removeSite: Trying to remove station " + site->getSCNL()
 					+ " from web " + m_sName + ".");
+
+	// timing code
+	std::chrono::high_resolution_clock::time_point tStartTime =
+			std::chrono::high_resolution_clock::now();
 
 	// init flag to check to see if we've generated a site list for this web
 	// yet
@@ -1896,7 +1913,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		if (nodeCount % 1000 == 0) {
 			glass3::util::Logger::log(
 					"debug",
-					"CWeb::remSite: Station " + site->getSCNL() + " processed "
+					"CWeb::removeSite: Station " + site->getSCNL() + " processed "
 							+ std::to_string(nodeCount) + " out of "
 							+ std::to_string(totalNodes) + " nodes in web: "
 							+ m_sName + ". Modified "
@@ -1982,7 +1999,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 									travelTime2, phase2) == false) {
 					glass3::util::Logger::log(
 							"error",
-							"CWeb::remSite: Failed to add station "
+							"CWeb::removeSite: Failed to add station "
 									+ newSite->getSCNL() + " to web " + m_sName
 									+ ".");
 				}
@@ -1998,27 +2015,35 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		} else {
 			glass3::util::Logger::log(
 					"error",
-					"CWeb::remSite: Failed to remove station " + site->getSCNL()
+					"CWeb::removeSite: Failed to remove station " + site->getSCNL()
 							+ " from web " + m_sName + ".");
 		}
 
 		node->setEnabled(true);
 	}
 
+	std::chrono::high_resolution_clock::time_point tEndTime =
+			std::chrono::high_resolution_clock::now();
+
+	double removeTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tEndTime - tStartTime).count();
+
 	// log info if we've removed a site
 	if (nodeModCount > 0) {
 		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 		snprintf(
 				sLog, sizeof(sLog),
-				"CWeb::remSite: Removed site: %s from %d node(s) in web: %s",
-				site->getSCNL().c_str(), nodeModCount, m_sName.c_str());
+				"CWeb::removeSite: Site: %s removed from %d node(s) in web: %s "
+				"in %.2f seconds.", site->getSCNL().c_str(), nodeModCount, 
+				m_sName.c_str(), removeTime);
 		glass3::util::Logger::log("info", sLog);
 	} else {
-		glass3::util::Logger::log(
-				"debug",
-				"CWeb::remSite: Station " + site->getSCNL()
-						+ " not removed from any nodes in web: " + m_sName
-						+ ".");
+		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
+		snprintf(sLog, sizeof(sLog), "CWeb::removeSite: Site %s not removed from "
+				" any nodes in web: %s in %.2f seconds", site->getSCNL().c_str(),
+				m_sName.c_str(), removeTime);
+		glass3::util::Logger::log("info", sLog);
 	}
 }
 
