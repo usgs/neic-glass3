@@ -530,7 +530,7 @@ glass3::util::WorkState CSiteList::work() {
 		}
 
 		// check for sites that are picking too much
-		if (m_iMaxPicksPerHour > 0) {
+		if ((disableSite != true) && (m_iMaxPicksPerHour > 0)) {
 			// how many picks since last check
 			int picksSinceCheck = aSite->getPickCountSinceCheck();
 
@@ -575,6 +575,12 @@ glass3::util::WorkState CSiteList::work() {
 
 	// for each unused site in the site list
 	for (auto aSite : m_vSite) {
+		// skip sites already in the modified list
+		if(std::find(vModifiedSites.begin(), vModifiedSites.end(), aSite) ==
+				vModifiedSites.end()) {
+			continue;
+		}
+
 		// skip disabled sites
 		if (aSite->getEnable() == false) {
 			continue;
@@ -617,7 +623,8 @@ glass3::util::WorkState CSiteList::work() {
 			int picksSinceCheck = aSite->getPickCountSinceCheck();
 
 			// we check every hour, so picks since check is picks per hour
-			if (picksSinceCheck < m_iMaxPicksPerHour) {
+			// also, don't bother turning on a site that hasn't seen any picks
+			if ((picksSinceCheck > 0) && (picksSinceCheck < m_iMaxPicksPerHour)) {
 				glass3::util::Logger::log(
 						"debug",
 						"CSiteList::work: Added " + aSite->getSCNL()

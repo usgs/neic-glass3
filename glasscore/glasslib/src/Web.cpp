@@ -1835,7 +1835,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		snprintf(
 				sLog, sizeof(sLog),
 				"CWeb::addSite: Site: %s added to %d node(s) in web: %s "
-				"in %.2f seconds.", site->getSCNL().c_str(), nodeModCount, 
+				"in %.2f seconds.", site->getSCNL().c_str(), nodeModCount,
 				m_sName.c_str(), addTime);
 		glass3::util::Logger::log("info", sLog);
 	} else {
@@ -2035,7 +2035,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		snprintf(
 				sLog, sizeof(sLog),
 				"CWeb::removeSite: Site: %s removed from %d node(s) in web: %s "
-				"in %.2f seconds.", site->getSCNL().c_str(), nodeModCount, 
+				"in %.2f seconds.", site->getSCNL().c_str(), nodeModCount,
 				m_sName.c_str(), removeTime);
 		glass3::util::Logger::log("info", sLog);
 	} else {
