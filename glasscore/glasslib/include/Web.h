@@ -336,14 +336,14 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	void removeSite(std::shared_ptr<CSite> site);
 
 	/**
-	 * \brief Check if this web has a site
-	 * This function checks to see if the given site is used for this web,
-	 * used by CWebList
+	 * \brief Check if the nodes in this web has a site
+	 * This function checks to see if the given site is used by any of the nodes
+	 * in this web, used by CWebList
 	 *
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * check
 	 */
-	bool hasSite(std::shared_ptr<CSite> site);
+	bool nodesHaveSite(std::shared_ptr<CSite> site);
 
 	/**
 	 * \brief Check to see if site allowed

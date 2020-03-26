@@ -267,16 +267,16 @@ bool CNode::unlinkLastSite() {
 std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 		CPickList* parentThread) {
 	std::lock_guard < std::recursive_mutex > nodeGuard(m_NodeMutex);
+	// don't nucleate if this node is disabled
+	if (m_bEnabled == false) {
+		return (NULL);
+	}
 
 	// nullchecks
 	// check web
 	if (m_pWeb == NULL) {
 		glass3::util::Logger::log("error",
 									"CNode::nucleate: NULL web pointer.");
-		return (NULL);
-	}
-	// don't nucleate if this node is disabled
-	if (m_bEnabled == false) {
 		return (NULL);
 	}
 
@@ -299,8 +299,16 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 	// lock mutex for this scope (iterating through the site links)
 	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
 
+	bool haltNucleation = false;
+
 	// search through each site linked to this node
 	for (const auto &link : m_vSiteLinkList) {
+		// halt nucleation if the node has been disabled
+		if (m_bEnabled == false) {
+			haltNucleation = true;
+			break;
+		}
+
 		if (parentThread != NULL) {
 			parentThread->setThreadHealth();
 		}
@@ -309,7 +317,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 		double dSigBest_phase1 = -1.0;
 		double dSigBest_phase2 = -1.0;
 
-		// the best nucleating pick
+		// the best nucleating picks
 		std::shared_ptr<CPick> pickBest_phase1;
 		std::shared_ptr<CPick> pickBest_phase2;
 
@@ -371,7 +379,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 		} else {
 			// no valid TTs
 			glass3::util::Logger::log(
-					"error", "CNode::nucleate: Bad Pick SearchRange.");
+					"error", "CNode::nucleate: Bad Node Traveltimes while generating pick"
+					" SearchRange.");
 			continue;
 		}
 
@@ -388,12 +397,19 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 			}
 		}
 
+		// lock site pick list while we're extracting our picks
 		site->getPickMutex().lock();
 
 		// compute bounds iterator
 		auto lower = site->getLower(min);
 
 		for (auto it = lower; (it != site->getEnd()); ++it) {
+			// halt nucleation if the node has been disabled
+			if (m_bEnabled == false) {
+				haltNucleation = true;
+				break;
+			}
+
 			auto pick = *it;
 
 			bool phase1set = false;
@@ -409,6 +425,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 			if (tPick > max) {
 				break;  // picks are in time order and we're past our window
 			}
+
 			// skip this pick if it's in our exclude window(if we have one)
 			// between our two TTs
 			if (dtExcludeBegin && (tPick > dtExcludeBegin)
@@ -547,7 +564,6 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 			}
 
 			// get the best significance from the observed time and link
-
 			double dSig1 = getSignificance(tObs, travelTime1, distDeg);
 			double dSig2 = getSignificance(tObs, travelTime2, distDeg);
 
@@ -569,8 +585,14 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 
 		site->getPickMutex().unlock();
 
+		// signal that we're still here
 		if (parentThread != NULL) {
 			parentThread->setThreadHealth();
+		}
+
+		// break out of the loop if nucleation has been halted
+		if (haltNucleation == true) {
+			break;
 		}
 
 		// check to see if the pick with the highest significance at this site
@@ -599,11 +621,16 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 		}
 	}  // ---- end search through each site this node is linked to ----
 
+	// signal that we're still here
 	if (parentThread != NULL) {
 		parentThread->setThreadHealth();
 	}
 
-	// std::cout << "ncount: " << nCount << std::endl;
+	// if we were halted, the node did not nucleate an event, return null
+	if (haltNucleation == true) {
+		return (NULL);
+	}
+
 	// make sure the number of significant picks
 	// exceeds the nucleation threshold
 	if (nCount < nCut) {

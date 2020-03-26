@@ -225,7 +225,7 @@ bool CWebList::hasSite(std::shared_ptr<CSite> site) {
 	// for each node in web
 	for (auto &web : m_vWebs) {
 		// check to see if we have this site
-		if (web->hasSite(site) == true) {
+		if (web->nodesHaveSite(site) == true) {
 			return (true);
 		}
 	}
