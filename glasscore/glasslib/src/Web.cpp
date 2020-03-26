@@ -1624,7 +1624,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 	}
 
 	// if we already have this site, don't bother
-	if (hasSite(site) == true) {
+	if (nodesHaveSite(site) == true) {
 		// if we have this site and it's no longer allowed, we should
 		// remove it, this is effectively an "update" where the change kicks
 		// the station out of the web
@@ -1827,7 +1827,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 	removeSiteFromSiteList(site);
 
 	// the nodes if don't use this site, don't bother going futher
-	if (hasSite(site) == false) {
+	if (nodesHaveSite(site) == false) {
 		return;
 	}
 
@@ -1880,7 +1880,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 							+ std::to_string(nodeModCount) + " nodes.");
 		}
 
-		// remove site from node
+		// remove this site from node
 		if (node->unlinkSite(foundSite) == true) {
 			// now we need to look for a new site to replace it
 			// lock the site list while we're using it
@@ -1898,6 +1898,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 			sortSiteListForNode(node->getLatitude(), node->getLongitude(),
 				node->getDepth());
 
+			// make sure we don't run out of sites
 			int sitesAllowed = m_iNumStationsPerNode;
 			if (m_vSitesSortedForCurrentNode.size() < m_iNumStationsPerNode) {
 				sitesAllowed = m_vSitesSortedForCurrentNode.size();
@@ -1927,6 +1928,7 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 					continue;
 				}
 
+				// got a site to add
 				// compute traveltimes between site and node
 				double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 				std::string phase1 = traveltime::CTravelTime::k_dPhaseInvalid;
@@ -1943,7 +1945,6 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 
 				// check to make sure we have at least one valid travel time
 				if ((travelTime1 < 0) && (travelTime2 < 0)) {
-					node->setEnabled(true);
 					continue;
 				}
 
@@ -2048,8 +2049,8 @@ glass3::util::WorkState CWeb::work() {
 	return (glass3::util::WorkState::OK);
 }
 
-// ---------------------------------------------------------hasSite
-bool CWeb::hasSite(std::shared_ptr<CSite> site) {
+// ---------------------------------------------------------nodesHaveSite
+bool CWeb::nodesHaveSite(std::shared_ptr<CSite> site) {
 	//  nullcheck
 	if (site == NULL) {
 		return (false);
