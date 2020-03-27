@@ -1884,6 +1884,8 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 
 	// for each node in web
 	for (auto &node : m_vNode) {
+		nodeCount++;
+
 		// update thread status
 		setThreadHealth(true);
 
