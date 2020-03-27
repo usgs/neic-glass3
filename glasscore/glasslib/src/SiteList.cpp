@@ -203,7 +203,8 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 				// check for a site that hasn't been picked in awhile
 				// this is to avoid a flurry of dead sites taking themselves out of the
 				// webs 1 hour after startup
-				if ((m_iMaxHoursWithoutPicking > 0) && (newSite->getIsUsed() == true)) {
+				if ((m_iMaxHoursWithoutPicking > 0) && (newSite->getIsUsed() == true)
+					  && (newSite->getTLastPickAdded() > 0)) {
 					// have we not seen data?
 					if ((tNow - newSite->getTLastPickAdded())
 							> (k_nHoursToSeconds * m_iMaxHoursWithoutPicking)) {

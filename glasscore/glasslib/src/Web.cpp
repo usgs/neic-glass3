@@ -1859,7 +1859,8 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
-	// first try to remove the site from the site list
+	// first try to remove the site from the site list this is so 
+	// we don't pick it up again below
 	removeSiteFromSiteList(site);
 
 	// the nodes if don't use this site, don't bother going futher
@@ -1973,6 +1974,12 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 
 				// do we have it already
 				if (node->getSite(newSite->getSCNL()) != NULL) {
+					continue;
+				}
+				
+				// we don't want an unused site, this should already be covered by the 
+				// removeSiteFromSiteList call, but better safe than sorry
+				if (newSite->getIsUsed() == false) {
 					continue;
 				}
 
