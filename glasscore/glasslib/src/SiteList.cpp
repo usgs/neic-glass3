@@ -171,6 +171,8 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 	// what time is it
 	time_t tNow;
 	std::time(&tNow);
+	int siteCount = 0;
+	int usedSiteCount = 0;
 
 	// get the list from the json
 	if (((*com).HasKey("StationList"))
@@ -208,6 +210,10 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 					// have we not seen data?
 					if ((tNow - newSite->getTLastPickAdded())
 							> (k_nHoursToSeconds * m_iMaxHoursWithoutPicking)) {
+						glass3::util::Logger::log(
+							"debug",
+							"CSiteList::addSiteList: Marking Site " + site->getSCNL()
+							+ " not used due to exceeding MaxHoursWithoutPicking.");
 						newSite->setUse(false);
 					}
 				}
@@ -226,13 +232,24 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 				if (addSite(newSite) == false) {
 					glass3::util::Logger::log(
 							"warning",
-							"CSiteList::addSiteList: Site not added.");
+							"CSiteList::addSiteList: Site " + site->getSCNL()
+							+ " not added.");
 					delete (site);
 					continue;
+				} else {
+					siteCount++;
+					if (newSite->getIsUsed() == true) {
+						usedSiteCount++;
+					}
 				}
 			}
 		}
 	}
+
+	glass3::util::Logger::log(
+							"debug",
+							"CSiteList::addSiteList: Loaded " + std::to_string(siteCount)
+							+ " sites; " + std::to_string(usedSiteCount) + " usable sites.");
 
 	return (true);
 }
