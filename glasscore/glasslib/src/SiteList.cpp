@@ -168,10 +168,15 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 				"CSiteList::addSite: Missing required Type Key.");
 	}
 
-	// get the list
+	// what time is it
+	time_t tNow;
+	std::time(&tNow);
+
+	// get the list from the json
 	if (((*com).HasKey("StationList"))
 			&& ((*com)["StationList"].GetType() == json::ValueType::ArrayVal)) {
 		json::Array stationList = (*com)["StationList"].ToArray();
+
 		// for each station in the list
 		for (auto v : stationList) {
 			if (v.GetType() == json::ValueType::ObjectVal) {
@@ -194,6 +199,29 @@ bool CSiteList::addListOfSitesFromJSON(std::shared_ptr<json::Object> com) {
 				// create new shared pointer to the site
 				std::shared_ptr<CSite> newSite(site);
 
+				// check site statistics, to preset the site use flag as needed
+				// check for a site that hasn't been picked in awhile
+				// this is to avoid a flurry of dead sites taking themselves out of the
+				// webs 1 hour after startup
+				if ((m_iMaxHoursWithoutPicking > 0) && (newSite->getIsUsed() == true)) {
+					// have we not seen data?
+					if ((tNow - newSite->getTLastPickAdded())
+							> (k_nHoursToSeconds * m_iMaxHoursWithoutPicking)) {
+						newSite->setUse(false);
+					}
+				}
+
+				// NOTE: Placeholder code for if we decide to persist site picking rate
+				// in the station list, currently it is not persisted.
+				// check for a site that is picking too often
+				// if ((m_iMaxPicksPerHour > 0) && (newSite->getIsUsed() == true)) {
+				// how many picks since last check
+				// if (newSite->getPickCountSinceCheck() > m_iMaxPicksPerHour) {
+				// newSite->setUse(false);
+				// }
+				// }
+
+				// add the new site to the list
 				if (addSite(newSite) == false) {
 					glass3::util::Logger::log(
 							"warning",
