@@ -78,10 +78,11 @@ include(${CMAKE_DIR}/cppcheck.cmake)
 include(${CMAKE_DIR}/cpplint.cmake)
 
 # ----- RUN UNIT TESTS ----- #
-file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
+# file(GLOB TESTS ${PROJECT_SOURCE_DIR}/tests/*.cpp)
+
 # Just use the exe libraries
-set(TEST_LIBRARIES testingLib ${EXE_LIBRARIES})
-include(${CMAKE_DIR}/test.cmake)
+# set(TEST_LIBRARIES testingLib ${EXE_LIBRARIES})
+# include(${CMAKE_DIR}/test.cmake)
 
 # ----- INSTALL EXECUTABLE ----- #
 include(${CMAKE_DIR}/install_exe.cmake)
