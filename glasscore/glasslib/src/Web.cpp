@@ -1702,15 +1702,15 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		node->setEnabled(false);
 
 		// modding by 1000 ensure we don't get that many log entries
-		if (nodeCount % 1000 == 0) {
-			glass3::util::Logger::log(
-					"debug",
-					"CWeb::addSite: Station " + site->getSCNL() + " processed "
-							+ std::to_string(nodeCount) + " out of "
-							+ std::to_string(totalNodes) + " nodes in web: "
-							+ m_sName + ". Modified "
-							+ std::to_string(nodeModCount) + " nodes.");
-		}
+		// if (nodeCount % 1000 == 0) {
+		// glass3::util::Logger::log(
+		// "debug",
+		// "CWeb::addSite: Station " + site->getSCNL() + " processed "
+		// + std::to_string(nodeCount) + " out of "
+		// + std::to_string(totalNodes) + " nodes in web: "
+		// + m_sName + ". Modified "
+		// + std::to_string(nodeModCount) + " nodes.");
+		// }
 
 		// check to see if we have this site in this node
 		std::shared_ptr<CSite> foundSite = node->getSite(site->getSCNL());
@@ -1913,15 +1913,15 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		}
 
 		// modding by 1000 ensure we don't get that many log entries
-		if (nodeCount % 1000 == 0) {
-			glass3::util::Logger::log(
-					"debug",
-					"CWeb::removeSite: Station " + site->getSCNL() + " processed "
-							+ std::to_string(nodeCount) + " out of "
-							+ std::to_string(totalNodes) + " nodes in web: "
-							+ m_sName + ". Modified "
-							+ std::to_string(nodeModCount) + " nodes.");
-		}
+		// if (nodeCount % 1000 == 0) {
+		// glass3::util::Logger::log(
+		// "debug",
+		// "CWeb::removeSite: Station " + site->getSCNL() + " processed "
+		// + std::to_string(nodeCount) + " out of "
+		// + std::to_string(totalNodes) + " nodes in web: "
+		// + m_sName + ". Modified "
+		// + std::to_string(nodeModCount) + " nodes.");
+		// }
 
 		// update thread status
 		setThreadHealth(true);
