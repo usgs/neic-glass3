@@ -1983,6 +1983,13 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 					continue;
 				}
 
+				// we don't want a site past the max distance for this web if we have
+				// one
+				if ((m_dMaxSiteDistanceFilter > 0) &&
+						(newDistance > m_dMaxSiteDistanceFilter)) {
+					continue;
+				}
+
 				// got a site to add
 				// compute traveltimes between site and node
 				double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
