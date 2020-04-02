@@ -595,6 +595,7 @@ bool CPick::nucleate(CPickList* parentThread) {
 		// web's nucleation threshold
 		int ncut = hypo->getNucleationDataThreshold();
 		double thresh = hypo->getNucleationStackThreshold();
+		std::string web = hypo->getWebName();
 		double maxDepth = trigger->getNodeMaxDepth();
 		bool bad = false;
 
@@ -643,10 +644,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 			if (npick < ncut) {
 				// we don't
 				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning solution %s "
-							"due to lack of picks "
-							"(npick:%d/ncut:%d)",
-							hypo->getID().c_str(), npick, ncut);
+							"CPick::nucleate: -- Abandoning trigger %s "
+							"because the number of picks is below the cutoff "
+							"(npick: %d / ncut: %d, web: %s) --",
+							hypo->getID().c_str(), npick, ncut, web.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -659,10 +660,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 			if (bayes < thresh) {
 				// it isn't
 				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning solution %s "
-							"due to low bayes value "
-							"(bayes:%f/thresh:%f)",
-							hypo->getID().c_str(), bayes, thresh);
+							"CPick::nucleate: -- Abandoning trigger %s "
+							"because the bayes value is below the threshold "
+							"(bayes: %f / thresh: %f, web: %s) --",
+							hypo->getID().c_str(), bayes, thresh, web.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -675,10 +676,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 			if (depth > maxDepth) {
 				// it isn't
 				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning solution %s "
-							"due to depth greater than max depth "
-							"(depth:%f/maxDepth:%f)",
-							hypo->getID().c_str(), depth, maxDepth);
+							"CPick::nucleate: -- Abandoning trigger %s "
+							"because the depth is greater than the max depth "
+							"(depth: %f / maxDepth: %f, web: %s) --",
+							hypo->getID().c_str(), depth, maxDepth, web.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -699,7 +700,7 @@ bool CPick::nucleate(CPickList* parentThread) {
 				"debug",
 				"CPick::nucleate: TRG site:" + pickSite->getSCNL() + "; tPick:"
 						+ pt + "; sID:" + m_sID + " => web:"
-						+ hypo->getWebName() + "; hyp: " + hypo->getID()
+						+ web + "; hyp: " + hypo->getID()
 						+ "; lat:" + std::to_string(hypo->getLatitude())
 						+ "; lon:" + std::to_string(hypo->getLongitude())
 						+ "; z:" + std::to_string(hypo->getDepth()) + "; bayes:"
