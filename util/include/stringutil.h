@@ -45,6 +45,20 @@ std::vector<std::string> split(const std::string &sInput, char cDelimiter);
  * \return returns a std::string containing modified string.
  */
 std::string& removeChars(std::string& sInput, const std::string& sRemoveChars);  // NOLINT
+
+/**
+ * \brief convert provided double to a string with desired precision
+ *
+ * Convert the provided double value into a string while truncateing it to the
+ * provided precision
+ *
+ * \param doubleVal - A double containing the value to convert
+ * \param precisionVal - An int containing the desired precision to truncate to,
+ *  default is 2.
+ * \return returns a std::string containing converted string.
+ */
+std::string to_string_with_precision(const double doubleVal,
+    const int precisionVal = 2);
 }  // namespace util
 }  // namespace glass3
 #endif  // STRINGUTIL_H

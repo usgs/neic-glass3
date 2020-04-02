@@ -570,8 +570,8 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		removePickReference(pick);
 	}
 
-	glass3::util::Logger::log("debug", "CHypo::anneal, " + m_sID + " bayes: "
-			+ std::to_string(m_dBayesValue));
+	// glass3::util::Logger::log("debug", "CHypo::anneal, " + m_sID + " bayes: "
+	// + std::to_string(m_dBayesValue));
 
 	// return the final bayesian value
 	return (m_dBayesValue);
