@@ -61,5 +61,12 @@ std::string& removeChars(std::string& sInput, const std::string& sRemoveChars) {
 	// return the string
 	return (sInput);
 }
+
+// truncate a double value to the required precision
+std::string to_string_with_precision(const double doubleVal,
+	const int precisionVal) {
+	return(std::to_string(doubleVal).substr(0, std::to_string(doubleVal).find(".")
+		+ precisionVal + 1));
+}
 }  // namespace util
 }  // namespace glass3
