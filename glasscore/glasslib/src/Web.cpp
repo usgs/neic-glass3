@@ -296,7 +296,6 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 		// zonestats available, otherwise default to the configured
 		// max depth for the grid
 		double dMaxNodeDepth = m_dMaxDepth;
-		bool bReachedMaxDepth = false;
 		if (m_pZoneStats != NULL) {
 			double aDepth = m_pZoneStats->getMaxDepthForLatLon(aLat, aLon);
 			if (aDepth != m_pZoneStats->depthInvalid) {
@@ -306,18 +305,8 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 		// for each depth
 		for (auto z : depthLayerArray) {
-			// check to see if Z is below the maximum depth
-			if (z >= std::max(dMaxNodeDepth, k_dMinimumMaxNodeDepth)) {
-				bReachedMaxDepth = true;
-				/*
-				 glass3::util::Logger::log(
-				 "debug",
-				 "CWeb::generateGlobalGrid:  Truncated shell depth to "
-				 + std::to_string(dMaxNodeDepth)
-				 + " for Lat/Lon " + std::to_string(aLat) + "/"
-				 + std::to_string(aLon));
-				 */
-				z = dMaxNodeDepth;
+			if (z > std::max(dMaxNodeDepth, k_dMinimumMaxNodeDepth)) {
+				break;
 			}
 
 			// sort site list for this vertex
@@ -349,10 +338,6 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					outstafile << node->getSitesString();
 				}
 			}  // end if addNode()
-
-			if (bReachedMaxDepth) {
-				break;
-			}
 		}  // end for each depth in depthLayerArray
 	}  // end for each sample
 
@@ -544,7 +529,6 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			// zonestats available, otherwise defailt to the configured
 			// max depth for the grid
 			double dMaxNodeDepth = m_dMaxDepth;
-			bool bReachedMaxDepth = false;
 			if (m_pZoneStats != NULL) {
 				double aDepth = m_pZoneStats->getMaxDepthForLatLon(latrow,
 																	loncol);
@@ -556,18 +540,10 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			// for each depth at this generateLocalGrid point
 			for (auto z : depthLayerArray) {
 				// check to see if Z is below the maximum depth
-				if (z >= std::max(dMaxNodeDepth, k_dMinimumMaxNodeDepth)) {
-					bReachedMaxDepth = true;
-					/*
-					 glass3::util::Logger::log(
-					 "debug",
-					 "CWeb::generateLocalGrid:  Truncated layer depth to "
-					 + std::to_string(dMaxNodeDepth)
-					 + " for Lat/Lon " + std::to_string(aLat) + "/"
-					 + std::to_string(aLon));
-					 */
-					z = dMaxNodeDepth;
+				if (z > std::max(dMaxNodeDepth, k_dMinimumMaxNodeDepth)) {
+					break;
 				}
+
 				// sort site list for this generateLocalGrid point
 				sortSiteListForNode(latrow, loncol, z);
 
@@ -590,10 +566,6 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					// write to station file
 					outstafile << node->getSitesString();
 				}  // end if getSaveGrid()
-
-				if (bReachedMaxDepth) {
-					break;
-				}
 			}  // end for each depth layer
 		}  // end for each lon-column in grid
 	}  // end for each lat-row in grid
