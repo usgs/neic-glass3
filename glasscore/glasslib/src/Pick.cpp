@@ -1,4 +1,5 @@
 #include "Pick.h"
+#include <stringutil.h>
 #include <json.h>
 #include <date.h>
 #include <logger.h>
@@ -511,7 +512,7 @@ void CPick::clearHypoReference() {
 }
 
 // ---------------------------------------------------------nucleate
-bool CPick::nucleate() {
+bool CPick::nucleate(CPickList* parentThread) {
 	// get the site shared_ptr
 	std::shared_ptr<CSite> pickSite = m_wpSite.lock();
 	std::string pt = glass3::util::Date::encodeDateTime(m_tPick);
@@ -524,7 +525,7 @@ bool CPick::nucleate() {
 	// the stacked agoric at each node.  If the threshold
 	// is exceeded, the node is added to the site's trigger list
 	std::vector < std::shared_ptr < CTrigger >> vTrigger = pickSite->nucleate(
-			m_tPick);
+			m_tPick, parentThread);
 
 	// if there were no triggers, we're done
 	if (vTrigger.size() == 0) {
@@ -538,6 +539,10 @@ bool CPick::nucleate() {
 	}
 
 	for (const auto &trigger : vTrigger) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		if (trigger->getWeb() == NULL) {
 			continue;
 		}
@@ -591,8 +596,13 @@ bool CPick::nucleate() {
 		// web's nucleation threshold
 		int ncut = hypo->getNucleationDataThreshold();
 		double thresh = hypo->getNucleationStackThreshold();
+		std::string web = hypo->getWebName();
 		double maxDepth = trigger->getNodeMaxDepth();
 		bool bad = false;
+
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
 
 		// First localization attempt after nucleation
 		// make 3 passes
@@ -619,6 +629,16 @@ bool CPick::nucleate() {
 			int npick = hypo->getPickDataSize();
 			double depth = hypo->getDepth();
 
+			// build trigger string
+			std::string triggerString = "lat:"
+						+ glass3::util::to_string_with_precision(hypo->getLatitude())
+						+ "; lon:"
+						+ glass3::util::to_string_with_precision(hypo->getLongitude())
+						+ "; z:"
+						+ glass3::util::to_string_with_precision(hypo->getDepth())
+						+ ", ot:"
+						+ glass3::util::Date::encodeDateTime(hypo->getTOrigin());
+
 			/*
 			 snprintf(sLog, sizeof(sLog), "CPick::nucleate: -- Pass:%d; nPick:%d"
 			 "/nCut:%d; bayes:%f/thresh:%f; %s",
@@ -635,10 +655,10 @@ bool CPick::nucleate() {
 			if (npick < ncut) {
 				// we don't
 				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning solution %s "
-							"due to lack of picks "
-							"(npick:%d/ncut:%d)",
-							hypo->getID().c_str(), npick, ncut);
+							"CPick::nucleate: -- Abandoning trigger %s "
+							"because the number of picks is below the cutoff "
+							"(npick:%d, ncut:%d, web:%s) --",
+							triggerString.c_str(), npick, ncut, web.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -651,10 +671,10 @@ bool CPick::nucleate() {
 			if (bayes < thresh) {
 				// it isn't
 				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning solution %s "
-							"due to low bayes value "
-							"(bayes:%f/thresh:%f)",
-							hypo->getID().c_str(), bayes, thresh);
+							"CPick::nucleate: -- Abandoning trigger %s "
+							"because the bayes value is below the threshold "
+							"(bayes:%f, thresh:%f, web:%s) --",
+							triggerString.c_str(), bayes, thresh, web.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -667,10 +687,10 @@ bool CPick::nucleate() {
 			if (depth > maxDepth) {
 				// it isn't
 				snprintf(sLog, sizeof(sLog),
-							"CPick::nucleate: -- Abandoning solution %s "
-							"due to depth greater than max depth "
-							"(depth:%f/maxDepth:%f)",
-							hypo->getID().c_str(), depth, maxDepth);
+							"CPick::nucleate: -- Abandoning trigger %s "
+							"because the depth is greater than the max depth "
+							"(depth:%f, maxDepth:%f, web:%s) --",
+							triggerString.c_str(), depth, maxDepth, web.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -691,12 +711,16 @@ bool CPick::nucleate() {
 				"debug",
 				"CPick::nucleate: TRG site:" + pickSite->getSCNL() + "; tPick:"
 						+ pt + "; sID:" + m_sID + " => web:"
-						+ hypo->getWebName() + "; hyp: " + hypo->getID()
-						+ "; lat:" + std::to_string(hypo->getLatitude())
-						+ "; lon:" + std::to_string(hypo->getLongitude())
-						+ "; z:" + std::to_string(hypo->getDepth()) + "; bayes:"
-						+ std::to_string(hypo->getBayesValue()) + "; tOrg:"
-						+ st);
+						+ web + "; hyp: " + hypo->getID()
+						+ "; lat:"
+						+ glass3::util::to_string_with_precision(hypo->getLatitude(), 3)
+						+ "; lon:"
+						+ glass3::util::to_string_with_precision(hypo->getLongitude(), 3)
+						+ "; z:"
+						+ glass3::util::to_string_with_precision(hypo->getDepth())
+						+ "; bayes:"
+						+ glass3::util::to_string_with_precision(hypo->getBayesValue())
+						+ "; tOrg:" + st);
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit adding it to the hypo list

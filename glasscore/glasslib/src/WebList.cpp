@@ -161,8 +161,8 @@ bool CWebList::removeWeb(std::shared_ptr<json::Object> com) {
 	return (false);
 }
 
-// ---------------------------------------------------------addSite
-void CWebList::addSite(std::shared_ptr<CSite> site) {
+// ---------------------------------------------------------updateSite
+void CWebList::updateSite(std::shared_ptr<CSite> site) {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 
 	// Don't process adds before web definitions
@@ -172,38 +172,18 @@ void CWebList::addSite(std::shared_ptr<CSite> site) {
 
 	glass3::util::Logger::log(
 			"debug",
-			"CWebList::addSite: Adding station " + site->getSCNL() + ".");
+			"CWebList::updateSite: Updating station " + site->getSCNL() + ".");
 
 	// Update all web node site lists that might be changed
 	// by the addition of this site
 	for (auto &web : m_vWebs) {
 		if (web->getUpdate() == true) {
-			if (web->isSiteAllowed(site) == true) {
-				web->addJob(std::bind(&CWeb::addSite, web, site));
-			}
-		}
-	}
-}
-
-// ---------------------------------------------------------removeSite
-void CWebList::removeSite(std::shared_ptr<CSite> site) {
-	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
-
-	// Don't process removes before web definitions
-	if (m_vWebs.size() < 1) {
-		return;
-	}
-
-	glass3::util::Logger::log(
-			"debug",
-			"CWebList::remSite: Removing station " + site->getSCNL() + ".");
-
-	// Remove site from all web nodes that link to it and restructure
-	// node site lists
-	for (auto &web : m_vWebs) {
-		if (web->getUpdate() == true) {
-			if (web->isSiteAllowed(site) == true) {
-				web->addJob(std::bind(&CWeb::removeSite, web, site));
+			if (web->isSiteAllowed(site, false) == true) {
+				if (site->getIsUsed() == true) {
+					web->addJob(std::bind(&CWeb::addSite, web, site));
+				} else {
+					web->addJob(std::bind(&CWeb::removeSite, web, site));
+				}
 			}
 		}
 	}
@@ -225,7 +205,7 @@ bool CWebList::hasSite(std::shared_ptr<CSite> site) {
 	// for each node in web
 	for (auto &web : m_vWebs) {
 		// check to see if we have this site
-		if (web->hasSite(site) == true) {
+		if (web->nodesHaveSite(site) == true) {
 			return (true);
 		}
 	}

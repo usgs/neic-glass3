@@ -281,13 +281,13 @@ std::shared_ptr<CPick> CPickList::getDuplicate(double newTPick,
 				if (newSCNL == currentSCNL) {
 					// if match is found, log and return true
 					glass3::util::Logger::log(
-							"warning",
-							"CPickList::checkDuplicate: Duplicate (window = "
-									+ std::to_string(tWindow) + ") : old:"
+							"debug",
+							"CPickList::getDuplicate: Duplicate pick found (window = "
+									+ std::to_string(tWindow) + "): existing pick: "
 									+ currentSCNL + " "
-									+ std::to_string(currentTPick)
-									+ " new(del):" + newSCNL + " "
-									+ std::to_string(newTPick));
+									+ glass3::util::Date::encodeISO8601Time(currentTPick)
+									+ " duplicate pick: " + newSCNL + " "
+									+ glass3::util::Date::encodeISO8601Time(newTPick));
 					return (currentPick);
 				}
 			}
@@ -312,7 +312,7 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
-	glass3::util::Logger::log("debug", "CPickList::scavenge. " + hyp->getID());
+	// glass3::util::Logger::log("debug", "CPickList::scavenge. " + hyp->getID());
 
 	// Calculate range for possible associations
 	double sdassoc = CGlass::getAssociationSDCutoff();
@@ -486,14 +486,11 @@ glass3::util::WorkState CPickList::work() {
 			if (hypo != NULL) {
 				CGlass::getHypoList()->appendToHypoProcessingQueue(hypo);
 			}
-
-			glass3::util::Logger::log(
-					"warning", "CPickList::work: Updated existing pick.");
 		} else {
 			// ignore new pick (first pick wins)
-			glass3::util::Logger::log(
-					"warning",
-					"CPickList::work: Duplicate pick not passed in.");
+			// glass3::util::Logger::log(
+			// "debug",
+			// "CPickList::work: Duplicate pick not passed in.");
 		}
 
 		// cleanup
@@ -604,7 +601,7 @@ glass3::util::WorkState CPickList::work() {
 
 	// Attempt nucleation unless we were told not to.
 	if (bNucleateThisPick == true) {
-		pick->nucleate();
+		pick->nucleate(this);
 	}
 
 	// give up some time at the end of the loop

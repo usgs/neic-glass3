@@ -27,6 +27,7 @@
 #define SITE2DISTANCE 109.66700963282658
 #define SITE2DELTA 0.017241728546897175
 #define USE true
+#define ENABLE true
 #define USEFORTELE true
 
 #define BADLATITUDE 1000.0
@@ -157,6 +158,7 @@ TEST(SiteTest, Construction) {
 							ELEVATION,
 							QUALITY,
 							USE,
+							ENABLE,
 							USEFORTELE);
 
 	// check results
@@ -359,6 +361,7 @@ TEST(SiteTest, FailTests) {
 							ELEVATION,
 							QUALITY,
 							USE,
+							ENABLE,
 							USEFORTELE));
 
 	// missing network
@@ -367,6 +370,7 @@ TEST(SiteTest, FailTests) {
 							ELEVATION,
 							QUALITY,
 							USE,
+							ENABLE,
 							USEFORTELE));
 
 	// bad latitude
@@ -375,6 +379,7 @@ TEST(SiteTest, FailTests) {
 							ELEVATION,
 							QUALITY,
 							USE,
+							ENABLE,
 							USEFORTELE));
 
 	// bad longitude
@@ -383,6 +388,7 @@ TEST(SiteTest, FailTests) {
 							ELEVATION,
 							QUALITY,
 							USE,
+							ENABLE,
 							USEFORTELE));
 
 	// bad elevation
@@ -391,6 +397,7 @@ TEST(SiteTest, FailTests) {
 							BADELEVATION,
 							QUALITY,
 							USE,
+							ENABLE,
 							USEFORTELE));
 
 

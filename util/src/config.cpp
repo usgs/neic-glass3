@@ -86,11 +86,11 @@ std::shared_ptr<const json::Object> Config::parseJSONFromString(
 		m_ConfigJSON = std::make_shared<json::Object>(
 				json::Object(deserializedJSON.ToObject()));
 
-		glass3::util::Logger::log(
-				"debug",
-				"config::setconfig_string: json::Deserialize read: {"
-						+ json::Serialize(deserializedJSON)
-						+ "} from configuration string.");
+		// glass3::util::Logger::log(
+		// "debug",
+		// "config::parseJSONFromString: json::Deserialize read: {"
+		// + json::Serialize(deserializedJSON)
+		// + "} from configuration string.");
 
 		m_sConfigString = newConfig;
 
@@ -101,7 +101,8 @@ std::shared_ptr<const json::Object> Config::parseJSONFromString(
 
 		glass3::util::Logger::log(
 				"error",
-				"config::parseJSONFromString: Invalid configuration string");
+				"config::parseJSONFromString: Invalid configuration string: "
+				+ newConfig);
 		throw std::invalid_argument("Invalid configuration string");
 	}
 

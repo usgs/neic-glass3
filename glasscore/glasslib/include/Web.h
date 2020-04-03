@@ -57,7 +57,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
 	explicit CWeb(int numThreads = 0, int sleepTime = 100, int checkInterval =
-							60);
+							300);
 
 	/**
 	 * \brief CWeb advanced constructor
@@ -97,7 +97,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 			int resolution, bool update, bool save,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
-			int numThreads = 0, int sleepTime = 100, int checkInterval = 60,
+			int numThreads = 0, int sleepTime = 100, int checkInterval = 300,
 			double aziTaper = 360.0, double maxDepth = 800.0);
 
 	/**
@@ -255,10 +255,29 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * the distance between the given location and the site as part of the
 	 * std::pair in vSite.
 	 *
-	 * \param lat - A double varible containing the latitude to use
-	 * \param lon - A double varible containing the longitude to use
+	 * \param lat - A double variable containing the latitude to use in degrees
+	 * \param lon - A double variable containing the longitude to use in degrees
+	 * \param depth - A double variable containing the depth to use in km
 	 */
-	void sortSiteListForNode(double lat, double lon);
+	void sortSiteListForNode(double lat, double lon, double depth);
+
+	/**
+	 * \brief Add site to this web's sitelist 
+	 * This function adds the given site to the site list local to this web
+	 *
+	 * \param site - A shared_ptr to a CSite object containing the site to add
+	 * \return Returns true if successful, false otherwise
+	 */
+	bool addSiteToSiteList(std::shared_ptr<CSite> site);
+
+	/**
+	 * \brief Remove site from this web's sitelist 
+	 * This function Removes the given site to the site list local to this web
+	 *
+	 * \param site - A shared_ptr to a CSite object containing the site to remove
+	 * \return Returns true if successful, false otherwise
+	 */
+	bool removeSiteFromSiteList(std::shared_ptr<CSite> site);
 
 	/**
 	 * \brief Create new node
@@ -317,14 +336,14 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	void removeSite(std::shared_ptr<CSite> site);
 
 	/**
-	 * \brief Check if this web has a site
-	 * This function checks to see if the given site is used for this web,
-	 * used by CWebList
+	 * \brief Check if the nodes in this web has a site
+	 * This function checks to see if the given site is used by any of the nodes
+	 * in this web, used by CWebList
 	 *
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * check
 	 */
-	bool hasSite(std::shared_ptr<CSite> site);
+	bool nodesHaveSite(std::shared_ptr<CSite> site);
 
 	/**
 	 * \brief Check to see if site allowed
@@ -333,9 +352,11 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 *
 	 * \param site - A shared pointer to a CSite object containing the site to
 	 * check
-	 * \return returns true if it is allowed, false otehrwise
+	 * \param checkEnabled - A bool indicating whether to check the site
+	 * enabled and use flags, default true
+	 * \return returns true if it is allowed, false otherwise
 	 */
-	bool isSiteAllowed(std::shared_ptr<CSite> site);
+	bool isSiteAllowed(std::shared_ptr<CSite> site, bool checkEnabled = true);
 
 	/**
 	 * \brief add a job
@@ -562,6 +583,19 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	std::atomic<double> m_dMaxDepth;
 
 	/**
+	 * \brief A double value containing the minimum quality required to use a 
+	 * station in this web. This needs to be saved to support dynamic addition
+	 * and removal of sites as their usage status is changed.
+	 */
+	std::atomic<double> m_dQualityFilter;
+
+	/**
+	 * \brief A double which describes the web specific maximum allowable site
+	 * node distance in degrees
+	 **/
+	std::atomic<double> m_dMaxSiteDistanceFilter;
+
+	/**
 	 * \brief A double which describes the web depth layer resolution
 	 **/
 	std::atomic<double> m_dDepthResolution;
@@ -623,6 +657,12 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * design as delivered by the contractor.
 	 */
 	mutable std::recursive_mutex m_WebMutex;
+
+	/**
+	 * \brief An integer containing the epoch time that the web site list was last 
+	 * updated.
+	 */
+	std::atomic<int> m_tLastUpdated;
 
 	/**
 	 * \brief default azimuth taper

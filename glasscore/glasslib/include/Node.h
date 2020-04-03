@@ -21,6 +21,7 @@ namespace glasscore {
 
 // forward declarations
 class CPick;
+class CPickList;
 class CSite;
 class CWeb;
 class CTrigger;
@@ -163,9 +164,12 @@ class CNode {
 	 *
 	 * \param tOrigin - A double value containing the proposed origin time
 	 * to use in Gregorian seconds
+	 * \param parentThread - A pointer to the parent CPickList thread to allow 
+	 * nucleate to call the CPickList thread status update function, the owner
+	 * of this pointer is the CPickList object
 	 * \return Returns true if the node nucleated an event, false otherwise
 	 */
-	std::shared_ptr<CTrigger> nucleate(double tOrigin);
+	std::shared_ptr<CTrigger> nucleate(double tOrigin, CPickList* parentThread);
 
 	/**
 	 * \brief CNode significance function
@@ -297,6 +301,13 @@ class CNode {
 	void setWeb(CWeb* web);
 
 	/**
+	 * \brief Get the maximum site distance for this node
+	 * \return Returns a double containing the maximum site distance for this node
+	 * in degrees.
+	 */
+	double getMaxSiteDistance() const;
+
+	/**
 	 * \brief Gets the name of the parent CWeb that created and holds this node
 	 * This name is used to ensure that only one node triggers per web during
 	 * site nucleation
@@ -344,6 +355,12 @@ class CNode {
 	 * kilometers.
 	 */
 	std::atomic<double> m_dMaxDepth;
+
+	/**
+	 * \brief A double value containing this node's maximum site distance in
+	 * degrees.
+	 */
+	std::atomic<double> m_dMaxSiteDistance;
 
 	/**
 	 * \brief A double value containing this node's spatial resolution

@@ -130,6 +130,10 @@ void CWeb::clear() {
 	// reset zonestats info
 	m_pZoneStats = NULL;
 	m_sZoneStatsFileName.clear();
+
+	// reset quality filter
+	m_dQualityFilter = -1.0;
+	m_dMaxSiteDistanceFilter = -1.0;
 }
 
 // ---------------------------------------------------------initialize
@@ -151,6 +155,9 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	m_pNucleationTravelTime2 = secondTrav;
 	m_dAzimuthTaper = aziTap;
 	m_dMaxDepth = maxDep;
+
+	m_tLastUpdated = -1;
+
 	// done
 	return (true);
 }
@@ -285,14 +292,10 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 		// lock the site list while adding a node
 		std::lock_guard<std::mutex> guard(m_vSiteMutex);
 
-		// sort site list for this vertex
-		sortSiteListForNode(aLat, aLon);
-
 		// use zonestats to get the max depth for this node, if we have
-		// zonestats available, otherwise defailt to the configured
+		// zonestats available, otherwise default to the configured
 		// max depth for the grid
 		double dMaxNodeDepth = m_dMaxDepth;
-		bool bReachedMaxDepth = false;
 		if (m_pZoneStats != NULL) {
 			double aDepth = m_pZoneStats->getMaxDepthForLatLon(aLat, aLon);
 			if (aDepth != m_pZoneStats->depthInvalid) {
@@ -302,19 +305,12 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 		// for each depth
 		for (auto z : depthLayerArray) {
-			// check to see if Z is below the maximum depth
-			if (z >= std::max(dMaxNodeDepth, k_dMinimumMaxNodeDepth)) {
-				bReachedMaxDepth = true;
-				/*
-				 glass3::util::Logger::log(
-				 "debug",
-				 "CWeb::generateGlobalGrid:  Truncated shell depth to "
-				 + std::to_string(dMaxNodeDepth)
-				 + " for Lat/Lon " + std::to_string(aLat) + "/"
-				 + std::to_string(aLon));
-				 */
-				z = dMaxNodeDepth;
+			if (z > std::max(dMaxNodeDepth, k_dMinimumMaxNodeDepth)) {
+				break;
 			}
+
+			// sort site list for this vertex
+			sortSiteListForNode(aLat, aLon, z);
 
 			// it would make a certain amount of sense here, to track
 			// the depth delta between this node and the vertically
@@ -342,10 +338,6 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					outstafile << node->getSitesString();
 				}
 			}  // end if addNode()
-
-			if (bReachedMaxDepth) {
-				break;
-			}
 		}  // end for each depth in depthLayerArray
 	}  // end for each sample
 
@@ -533,14 +525,10 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 			std::lock_guard<std::mutex> guard(m_vSiteMutex);
 
-			// sort site list for this generateLocalGrid point
-			sortSiteListForNode(latrow, loncol);
-
 			// use zonestats to get the max depth for this node, if we have
 			// zonestats available, otherwise defailt to the configured
 			// max depth for the grid
 			double dMaxNodeDepth = m_dMaxDepth;
-			bool bReachedMaxDepth = false;
 			if (m_pZoneStats != NULL) {
 				double aDepth = m_pZoneStats->getMaxDepthForLatLon(latrow,
 																	loncol);
@@ -552,18 +540,13 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			// for each depth at this generateLocalGrid point
 			for (auto z : depthLayerArray) {
 				// check to see if Z is below the maximum depth
-				if (z >= std::max(dMaxNodeDepth, k_dMinimumMaxNodeDepth)) {
-					bReachedMaxDepth = true;
-					/*
-					 glass3::util::Logger::log(
-					 "debug",
-					 "CWeb::generateLocalGrid:  Truncated layer depth to "
-					 + std::to_string(dMaxNodeDepth)
-					 + " for Lat/Lon " + std::to_string(aLat) + "/"
-					 + std::to_string(aLon));
-					 */
-					z = dMaxNodeDepth;
+				if (z > std::max(dMaxNodeDepth, k_dMinimumMaxNodeDepth)) {
+					break;
 				}
+
+				// sort site list for this generateLocalGrid point
+				sortSiteListForNode(latrow, loncol, z);
+
 				// generate this node
 				std::shared_ptr<CNode> node = generateNode(
 						latrow, loncol, z, getNodeResolution());
@@ -583,10 +566,6 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 					// write to station file
 					outstafile << node->getSitesString();
 				}  // end if getSaveGrid()
-
-				if (bReachedMaxDepth) {
-					break;
-				}
 			}  // end for each depth layer
 		}  // end for each lon-column in grid
 	}  // end for each lat-row in grid
@@ -726,7 +705,7 @@ bool CWeb::generateExplicitGrid(
 		std::lock_guard<std::mutex> guard(m_vSiteMutex);
 
 		// sort site list
-		sortSiteListForNode(lat, lon);
+		sortSiteListForNode(lat, lon, Z);
 
 		// don't do any maxdepth/zonestats checks here, since this grid is
 		// explicit
@@ -1220,13 +1199,57 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 						+ std::to_string(m_bUseOnlyTeleseismicStations) + ".");
 	}
 
+	// check to see if we have a quality filter
+	if ((*gridConfiguration).HasKey("QualityFilter")
+			&& ((*gridConfiguration)["QualityFilter"].GetType()
+					== json::ValueType::DoubleVal)) {
+		m_dQualityFilter =
+				(*gridConfiguration)["QualityFilter"].ToDouble();
+
+		glass3::util::Logger::log(
+				"debug",
+				"CWeb::genSiteFilters: m_dQualityFilter is "
+						+ std::to_string(m_dQualityFilter) + ".");
+	} else {
+		m_dQualityFilter = -1.0;
+	}
+
+	// check to see if we have a max site distance filter
+	if ((*gridConfiguration).HasKey("MaxSiteDistance")
+			&& ((*gridConfiguration)["MaxSiteDistance"].GetType()
+					== json::ValueType::DoubleVal)) {
+		m_dMaxSiteDistanceFilter =
+				(*gridConfiguration)["MaxSiteDistance"].ToDouble();
+
+		glass3::util::Logger::log(
+				"debug",
+				"CWeb::genSiteFilters: m_dMaxSiteDistanceFilter is "
+						+ std::to_string(m_dMaxSiteDistanceFilter) + ".");
+	} else {
+		m_dMaxSiteDistanceFilter = -1.0;
+	}
+
 	return (true);
 }
 
 // ---------------------------------------------------------isSiteAllowed
-bool CWeb::isSiteAllowed(std::shared_ptr<CSite> site) {
+bool CWeb::isSiteAllowed(std::shared_ptr<CSite> site, bool checkEnabled) {
 	if (site == NULL) {
 		return (false);
+	}
+
+	if (checkEnabled == true) {
+		// if the site has been disabled, return false
+		// use includes checking enable flag
+		if (!site->getIsUsed()) {
+			return(false);
+		}
+		// check quality
+		if (m_dQualityFilter > 0) {
+			if (site->getQuality() < m_dQualityFilter) {
+				return(false);
+			}
+		}
 	}
 
 	// If we have do not have a site and/or network filter, just add it
@@ -1276,6 +1299,15 @@ bool CWeb::loadWebSiteList() {
 		return (false);
 	}
 
+	// check to see if the site list has changed since we last asked
+	// this is to reduce the number of redundant site list updates
+	int tUpdated = m_pSiteList->getLastUpdated();
+	if ((m_tLastUpdated > 0) && (tUpdated <= m_tLastUpdated)) {
+		return (false);
+	}
+
+	m_tLastUpdated = tUpdated;
+
 	// get the total number sites in glass's site list
 	int nsite = m_pSiteList->size();
 
@@ -1309,14 +1341,6 @@ bool CWeb::loadWebSiteList() {
 			continue;
 		}
 
-		// Ignore if station out of service
-		if (!site->getUse()) {
-			continue;
-		}
-		if (!site->getEnable()) {
-			continue;
-		}
-
 		if (isSiteAllowed(site)) {
 			m_vSitesSortedForCurrentNode.push_back(
 					std::pair<double, std::shared_ptr<CSite>>(0.0, site));
@@ -1334,12 +1358,12 @@ bool CWeb::loadWebSiteList() {
 }
 
 // ---------------------------------------------------------sortSiteListForNode
-void CWeb::sortSiteListForNode(double lat, double lon) {
+void CWeb::sortSiteListForNode(double lat, double lon, double depth) {
 	// set to provided geographic location
 	glass3::util::Geo geo;
 
 	// NOTE: node depth is ignored here
-	geo.setGeographic(lat, lon, glass3::util::Geo::k_EarthRadiusKm);
+	geo.setGeographic(lat, lon, glass3::util::Geo::k_EarthRadiusKm - depth);
 
 	// set the distance to each site
 	for (int i = 0; i < m_vSitesSortedForCurrentNode.size(); i++) {
@@ -1357,6 +1381,67 @@ void CWeb::sortSiteListForNode(double lat, double lon) {
 	// sort sites
 	std::sort(m_vSitesSortedForCurrentNode.begin(),
 				m_vSitesSortedForCurrentNode.end(), sortSite);
+}
+
+// ---------------------------------------------------------addSiteToSiteList
+bool CWeb::addSiteToSiteList(std::shared_ptr<CSite> site) {
+	if (isSiteAllowed(site) == false) {
+		return(false);
+	}
+
+	while ((m_vSiteMutex.try_lock() == false) &&
+				 (getTerminate() == false)) {
+		// update thread status
+		setThreadHealth(true);
+
+		// wait a little while
+		std::this_thread::sleep_for(
+				std::chrono::milliseconds(getSleepTime()));
+	}
+
+	m_vSitesSortedForCurrentNode.push_back(
+					std::pair<double, std::shared_ptr<CSite>>(0.0, site));
+
+	m_vSiteMutex.unlock();
+
+	return(true);
+}
+
+// -----------------------------------------------------removeSiteFromSiteList
+bool CWeb::removeSiteFromSiteList(std::shared_ptr<CSite> site) {
+	if (isSiteAllowed(site) == true) {
+		return(false);
+	}
+
+	while ((m_vSiteMutex.try_lock() == false) &&
+				 (getTerminate() == false)) {
+		// update thread status
+		setThreadHealth(true);
+
+		// wait a little while
+		std::this_thread::sleep_for(
+				std::chrono::milliseconds(getSleepTime()));
+	}
+
+	// for each site
+	for (auto it = m_vSitesSortedForCurrentNode.begin();
+			(it != m_vSitesSortedForCurrentNode.end()); ++it) {
+		std::shared_ptr<CSite> aSite = (*it).second;
+
+		if (aSite == NULL) {
+			continue;
+		}
+
+		// only erase the correct one
+		if (site->getSCNL() == aSite->getSCNL()) {
+			m_vSitesSortedForCurrentNode.erase(it);
+			m_vSiteMutex.unlock();
+			return(true);
+		}
+	}
+
+	m_vSiteMutex.unlock();
+	return(false);
 }
 
 // ---------------------------------------------------------generateNode
@@ -1463,21 +1548,35 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 		std::shared_ptr<CSite> site = aSite.second;
 
 		// compute delta distance between site and node
-		double delta = glass3::util::GlassMath::k_RadiansToDegrees
+		double siteDistance = glass3::util::GlassMath::k_RadiansToDegrees
 				* aSite.first;
+
+		// check to see if distance is valid
+		if (siteDistance < 0) {
+			// skip this site with a bad distance
+			continue;
+		}
+
+		// if we have a maximum node-site distance for this web
+		if (m_dMaxSiteDistanceFilter > 0) {
+			// skip if node-site distance past maximum node-site distance
+			if (siteDistance > m_dMaxSiteDistanceFilter) {
+				continue;
+			}
+		}
 
 		// compute traveltimes between site and node
 		double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 		std::string phase1 = traveltime::CTravelTime::k_dPhaseInvalid;
 		if (m_pNucleationTravelTime1 != NULL) {
-			travelTime1 = m_pNucleationTravelTime1->T(delta);
+			travelTime1 = m_pNucleationTravelTime1->T(siteDistance);
 			phase1 = m_pNucleationTravelTime1->m_sPhase;
 		}
 
 		double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 		std::string phase2 = traveltime::CTravelTime::k_dPhaseInvalid;
 		if (m_pNucleationTravelTime2 != NULL) {
-			travelTime2 = m_pNucleationTravelTime2->T(delta);
+			travelTime2 = m_pNucleationTravelTime2->T(siteDistance);
 			phase2 = m_pNucleationTravelTime2->m_sPhase;
 		}
 
@@ -1487,7 +1586,7 @@ std::shared_ptr<CNode> CWeb::generateNodeSites(std::shared_ptr<CNode> node) {
 		}
 
 		// Link node to site using traveltimes
-		node->linkSite(site, node, delta, travelTime1, phase1, travelTime2,
+		node->linkSite(site, node, siteDistance, travelTime1, phase1, travelTime2,
 			phase2);
 	}
 
@@ -1510,9 +1609,23 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
-	// if this is a remove, send to remSite
-	if (site->getEnable() == false) {
+	// if this is explicitly a remove, send to removeSite
+	if (site->getIsUsed() == false) {
 		removeSite(site);
+		return;
+	}
+
+	// if we already have this site, don't bother
+	if (nodesHaveSite(site) == true) {
+		// if we have this site and it's no longer allowed, we should
+		// remove it, this is effectively an "update" where the change kicks
+		// the station out of the web
+		if (isSiteAllowed(site) == false) {
+			removeSite(site);
+		}
+
+		// this is this is effectively an "update" where the change ends up not
+		// affecting the station's presence in the web
 		return;
 	}
 
@@ -1521,7 +1634,7 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 			"CWeb::addSite: New potential station " + site->getSCNL()
 					+ " for web: " + m_sName + ".");
 
-	// don't bother if this site isn't allowed
+	// if this site is not allowed, we should not add it
 	if (isSiteAllowed(site) == false) {
 		glass3::util::Logger::log(
 				"debug",
@@ -1529,6 +1642,13 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 						+ " not allowed in web " + m_sName + ".");
 		return;
 	}
+
+	// timing code
+	std::chrono::high_resolution_clock::time_point tStartTime =
+			std::chrono::high_resolution_clock::now();
+
+	// now add site to web site list
+	addSiteToSiteList(site);
 
 	int nodeModCount = 0;
 	int nodeCount = 0;
@@ -1540,52 +1660,79 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		// update thread status
 		setThreadHealth(true);
 
+		// don't start to update a node while it's being modifed by another thread
+		while ((node->getEnabled() == false) &&
+						(getTerminate() == false)) {
+			// update thread status
+			setThreadHealth(true);
+
+			// wait a little while
+			std::this_thread::sleep_for(
+					std::chrono::milliseconds(getSleepTime()));
+		}
+
 		node->setEnabled(false);
 
 		// modding by 1000 ensure we don't get that many log entries
-		if (nodeCount % 1000 == 0) {
-			glass3::util::Logger::log(
-					"debug",
-					"CWeb::addSite: Station " + site->getSCNL() + " processed "
-							+ std::to_string(nodeCount) + " out of "
-							+ std::to_string(totalNodes) + " nodes in web: "
-							+ m_sName + ". Modified "
-							+ std::to_string(nodeModCount) + " nodes.");
-		}
+		// if (nodeCount % 1000 == 0) {
+		// glass3::util::Logger::log(
+		// "debug",
+		// "CWeb::addSite: Station " + site->getSCNL() + " processed "
+		// + std::to_string(nodeCount) + " out of "
+		// + std::to_string(totalNodes) + " nodes in web: "
+		// + m_sName + ". Modified "
+		// + std::to_string(nodeModCount) + " nodes.");
+		// }
 
-		// check to see if we have this site
+		// check to see if we have this site in this node
 		std::shared_ptr<CSite> foundSite = node->getSite(site->getSCNL());
 
-		// update?
 		if (foundSite != NULL) {
-			// NOTE: what to do here?! anything? only would
-			// matter if the site location changed or (future) quality changed
+			// this is just a safety check, most existing sites should be handled
+			// by the above code
 			node->setEnabled(true);
 			continue;
 		}
 
-		// set to node geographic location
-		// NOTE: node depth is ignored here
-		glass3::util::Geo geo;
-		geo.setGeographic(node->getLatitude(), node->getLongitude(),
-							glass3::util::Geo::k_EarthRadiusKm);
+		// update thread status
+		setThreadHealth(true);
 
-		// compute delta distance between site and node
-		double newDistance = glass3::util::GlassMath::k_RadiansToDegrees
-				* site->getGeo().delta(&geo);
+		// set node geographic location
+		glass3::util::Geo nodeGeo;
+		nodeGeo.setGeographic(node->getLatitude(), node->getLongitude(),
+							glass3::util::Geo::k_EarthRadiusKm - node->getDepth());
 
-		// get site in node list
-		// NOTE: this assumes that the node site list is sorted
-		// on distance
-		std::shared_ptr<CSite> furthestSite = node->getLastSite();
+		// use local copy of site geo because threading
+		glass3::util::Geo siteGeo;
+		siteGeo.setGeographic(site->getRawLatitude(), site->getRawLongitude(),
+					glass3::util::Geo::k_EarthRadiusKm -
+					(glass3::util::Geo::k_dElevationToDepth
+					* glass3::util::Geo::k_dMetersToKm * site->getRawElevation()));
 
-		// compute distance to farthest site
-		double maxDistance = glass3::util::GlassMath::k_RadiansToDegrees
-				* geo.delta(&furthestSite->getGeo());
+		// compute distance between site and node
+		double nodeSiteDistance = glass3::util::GlassMath::k_RadiansToDegrees
+				* siteGeo.delta(&nodeGeo);
+
+		// check to see if distance is valid
+		if (nodeSiteDistance < 0) {
+			// skip this site with a bad distance
+			node->setEnabled(true);
+			continue;
+		}
+
+		// get node furthest distance
+		double maxDistance = node->getMaxSiteDistance();
 
 		// Ignore if new site is farther than last linked site
 		if ((node->getSiteLinksCount() >= m_iNumStationsPerNode)
-				&& (newDistance > maxDistance)) {
+				&& (nodeSiteDistance > maxDistance)) {
+			node->setEnabled(true);
+			continue;
+		}
+
+		// Ignore if new site is farther than the max web distance
+		if ((m_dMaxSiteDistanceFilter > 0) &&
+				(nodeSiteDistance > m_dMaxSiteDistanceFilter)) {
 			node->setEnabled(true);
 			continue;
 		}
@@ -1606,30 +1753,35 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 		std::string phase1 = traveltime::CTravelTime::k_dPhaseInvalid;
 		if (m_pNucleationTravelTime1 != NULL) {
-			travelTime1 = m_pNucleationTravelTime1->T(newDistance);
+			travelTime1 = m_pNucleationTravelTime1->T(nodeSiteDistance);
 			phase1 = m_pNucleationTravelTime1->m_sPhase;
 		}
 		double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
 		std::string phase2 = traveltime::CTravelTime::k_dPhaseInvalid;
 		if (m_pNucleationTravelTime2 != NULL) {
-			travelTime2 = m_pNucleationTravelTime2->T(newDistance);
+			travelTime2 = m_pNucleationTravelTime2->T(nodeSiteDistance);
 			phase2 = m_pNucleationTravelTime2->m_sPhase;
 		}
 
-		// check to see if we're at the limit
-		if (node->getSiteLinksCount() < m_iNumStationsPerNode) {
-			// Link node to site using traveltimes
-			node->linkSite(site, node, newDistance, travelTime1, phase1,
-				travelTime2, phase2);
+		// check to make sure we have at least one valid travel time
+		if ((travelTime1 < 0) && (travelTime2 < 0)) {
+			node->setEnabled(true);
+			continue;
+		}
 
+		// check to see if we're at the limit
+		if (node->getSiteLinksCount() <= m_iNumStationsPerNode) {
+			// Link node to site using traveltimes
+			node->linkSite(site, node, nodeSiteDistance, travelTime1, phase1,
+				travelTime2, phase2);
 		} else {
-			// remove last site
+			// first remove last site
 			// This assumes that the node site list is sorted
 			// on distance/traveltime
 			node->unlinkLastSite();
 
 			// Link node to site using traveltimes
-			node->linkSite(site, node, newDistance, travelTime1, phase1,
+			node->linkSite(site, node, nodeSiteDistance, travelTime1, phase1,
 				travelTime2, phase2);
 		}
 
@@ -1642,19 +1794,28 @@ void CWeb::addSite(std::shared_ptr<CSite> site) {
 		node->setEnabled(true);
 	}
 
+	std::chrono::high_resolution_clock::time_point tEndTime =
+			std::chrono::high_resolution_clock::now();
+
+	double addTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tEndTime - tStartTime).count();
+
 	// log info if we've added a site
 	if (nodeModCount > 0) {
 		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
-		snprintf(sLog, sizeof(sLog), "CWeb::addSite: Added site: %s to %d "
-					"node(s) in web: %s",
-					site->getSCNL().c_str(), nodeModCount, m_sName.c_str());
+		snprintf(
+				sLog, sizeof(sLog),
+				"CWeb::addSite: Site: %s added to %d node(s) in web: %s "
+				"in %.2f seconds.", site->getSCNL().c_str(), nodeModCount,
+				m_sName.c_str(), addTime);
 		glass3::util::Logger::log("info", sLog);
 	} else {
-		glass3::util::Logger::log(
-				"debug",
-				"CWeb::addSite: Station " + site->getSCNL()
-						+ " not added to any "
-								"nodes in web: " + m_sName + ".");
+		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
+		snprintf(sLog, sizeof(sLog), "CWeb::addSite: Site %s not added to "
+				" any nodes in web: %s in %.2f seconds", site->getSCNL().c_str(),
+				m_sName.c_str(), addTime);
+		glass3::util::Logger::log("info", sLog);
 	}
 }
 
@@ -1670,23 +1831,26 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 		return;
 	}
 
-	// don't bother if this site isn't allowed
-	if (isSiteAllowed(site) == false) {
-		glass3::util::Logger::log(
-				"debug",
-				"CWeb::remSite: Station " + site->getSCNL()
-						+ " not allowed in web " + m_sName + ".");
+	// first try to remove the site from the site list this is so
+	// we don't pick it up again below
+	removeSiteFromSiteList(site);
+
+	// the nodes if don't use this site, don't bother going futher
+	if (nodesHaveSite(site) == false) {
 		return;
 	}
 
 	glass3::util::Logger::log(
 			"debug",
-			"CWeb::remSite: Trying to remove station " + site->getSCNL()
+			"CWeb::removeSite: Trying to remove station " + site->getSCNL()
 					+ " from web " + m_sName + ".");
+
+	// timing code
+	std::chrono::high_resolution_clock::time_point tStartTime =
+			std::chrono::high_resolution_clock::now();
 
 	// init flag to check to see if we've generated a site list for this web
 	// yet
-	bool bSiteList = false;
 	int nodeModCount = 0;
 	int nodeCount = 0;
 	int totalNodes = m_vNode.size();
@@ -1694,82 +1858,139 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 	// for each node in web
 	for (auto &node : m_vNode) {
 		nodeCount++;
+
 		// update thread status
 		setThreadHealth(true);
+
+		// don't start to update a node while it's being modifed by another thread
+		while ((node->getEnabled() == false) &&
+						(getTerminate() == false)) {
+			// update thread status
+			setThreadHealth(true);
+
+			// wait a little while
+			std::this_thread::sleep_for(
+					std::chrono::milliseconds(getSleepTime()));
+		}
+
+		node->setEnabled(false);
 
 		// search through each site linked to this node, see if we have it
 		std::shared_ptr<CSite> foundSite = node->getSite(site->getSCNL());
 
 		// don't bother if this node doesn't have this site
 		if (foundSite == NULL) {
+			node->setEnabled(true);
 			continue;
 		}
 
-		node->setEnabled(false);
-
 		// modding by 1000 ensure we don't get that many log entries
-		if (nodeCount % 1000 == 0) {
-			glass3::util::Logger::log(
-					"debug",
-					"CWeb::remSite: Station " + site->getSCNL() + " processed "
-							+ std::to_string(nodeCount) + " out of "
-							+ std::to_string(totalNodes) + " nodes in web: "
-							+ m_sName + ". Modified "
-							+ std::to_string(nodeModCount) + " nodes.");
-		}
+		// if (nodeCount % 1000 == 0) {
+		// glass3::util::Logger::log(
+		// "debug",
+		// "CWeb::removeSite: Station " + site->getSCNL() + " processed "
+		// + std::to_string(nodeCount) + " out of "
+		// + std::to_string(totalNodes) + " nodes in web: "
+		// + m_sName + ". Modified "
+		// + std::to_string(nodeModCount) + " nodes.");
+		// }
 
-		// lock the site list while we're using it
-		std::lock_guard<std::mutex> guard(m_vSiteMutex);
+		// update thread status
+		setThreadHealth(true);
 
-		// generate the site list for this web if this is the first
-		// iteration where a node is modified
-		if (!bSiteList) {
-			// generate the site list
-			loadWebSiteList();
-			bSiteList = true;
-
-			// make sure we've got enough sites for a node
-			if (m_vSitesSortedForCurrentNode.size() < m_iNumStationsPerNode) {
-				node->setEnabled(true);
-				return;
-			}
-		}
-
-		// sort overall list of sites for this node
-		sortSiteListForNode(node->getLatitude(), node->getLongitude());
-
-		// remove site link
+		// remove this site from node
 		if (node->unlinkSite(foundSite) == true) {
-			// get new site
-			auto nextSite = m_vSitesSortedForCurrentNode[m_iNumStationsPerNode];
-			std::shared_ptr<CSite> newSite = nextSite.second;
+			// now we need to look for a new site to replace it
+			// lock the site list while we're using it
+			while ((m_vSiteMutex.try_lock() == false) &&
+						(getTerminate() == false)) {
+				// update thread status
+				setThreadHealth(true);
 
-			// compute delta distance between site and node
-			double newDistance = glass3::util::GlassMath::k_RadiansToDegrees
-					* nextSite.first;
+				// wait a little while
+				std::this_thread::sleep_for(
+						std::chrono::milliseconds(getSleepTime()));
+			}
 
-			// compute traveltimes between site and node
-			double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
-			std::string phase1 = traveltime::CTravelTime::k_dPhaseInvalid;
+			// sort overall list of sites for this node
+			sortSiteListForNode(node->getLatitude(), node->getLongitude(),
+				node->getDepth());
+
+			// make sure we don't run out of sites
+			int sitesAllowed = m_iNumStationsPerNode;
+			if (m_vSitesSortedForCurrentNode.size() < m_iNumStationsPerNode) {
+				sitesAllowed = m_vSitesSortedForCurrentNode.size();
+			}
+
+			// setup traveltimes for this node
 			if (m_pNucleationTravelTime1 != NULL) {
-				travelTime1 = m_pNucleationTravelTime1->T(newDistance);
-				phase1 = m_pNucleationTravelTime1->m_sPhase;
+				m_pNucleationTravelTime1->setTTOrigin(node->getLatitude(),
+													node->getLongitude(),
+													node->getDepth());
 			}
-			double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
-			std::string phase2 = traveltime::CTravelTime::k_dPhaseInvalid;
 			if (m_pNucleationTravelTime2 != NULL) {
-				travelTime2 = m_pNucleationTravelTime2->T(newDistance);
-				phase2 = m_pNucleationTravelTime2->m_sPhase;
+				m_pNucleationTravelTime2->setTTOrigin(node->getLatitude(),
+													node->getLongitude(),
+													node->getDepth());
 			}
 
-			// Link node to new site using traveltimes
-			if (node->linkSite(newSite, node, newDistance, travelTime1, phase1,
-								travelTime2, phase2) == false) {
-				glass3::util::Logger::log(
-						"error",
-						"CWeb::remSite: Failed to add station "
-								+ newSite->getSCNL() + " to web " + m_sName
-								+ ".");
+			// for the number of allowed sites per node
+			for (int i = 0; i < sitesAllowed; i++) {
+				// update thread status
+				setThreadHealth(true);
+
+				// get each site
+				std::shared_ptr<CSite> newSite = m_vSitesSortedForCurrentNode[i].second;
+				double newDistance = glass3::util::GlassMath::k_RadiansToDegrees
+					* m_vSitesSortedForCurrentNode[i].first;
+
+				// do we have it already
+				if (node->getSite(newSite->getSCNL()) != NULL) {
+					continue;
+				}
+
+				// we don't want an unused site, this should already be covered by the
+				// removeSiteFromSiteList call, but better safe than sorry
+				if (newSite->getIsUsed() == false) {
+					continue;
+				}
+
+				// we don't want a site past the max distance for this web if we have
+				// one
+				if ((m_dMaxSiteDistanceFilter > 0) &&
+						(newDistance > m_dMaxSiteDistanceFilter)) {
+					continue;
+				}
+
+				// got a site to add
+				// compute traveltimes between site and node
+				double travelTime1 = traveltime::CTravelTime::k_dTravelTimeInvalid;
+				std::string phase1 = traveltime::CTravelTime::k_dPhaseInvalid;
+				if (m_pNucleationTravelTime1 != NULL) {
+					travelTime1 = m_pNucleationTravelTime1->T(newDistance);
+					phase1 = m_pNucleationTravelTime1->m_sPhase;
+				}
+				double travelTime2 = traveltime::CTravelTime::k_dTravelTimeInvalid;
+				std::string phase2 = traveltime::CTravelTime::k_dPhaseInvalid;
+				if (m_pNucleationTravelTime2 != NULL) {
+					travelTime2 = m_pNucleationTravelTime2->T(newDistance);
+					phase2 = m_pNucleationTravelTime2->m_sPhase;
+				}
+
+				// check to make sure we have at least one valid travel time
+				if ((travelTime1 < 0) && (travelTime2 < 0)) {
+					continue;
+				}
+
+				// Link node to new site using traveltimes
+				if (node->linkSite(newSite, node, newDistance, travelTime1, phase1,
+									travelTime2, phase2) == false) {
+					glass3::util::Logger::log(
+							"error",
+							"CWeb::removeSite: Failed to add station "
+									+ newSite->getSCNL() + " to web " + m_sName
+									+ ".");
+				}
 			}
 
 			// resort site links
@@ -1777,30 +1998,40 @@ void CWeb::removeSite(std::shared_ptr<CSite> site) {
 
 			// we've removed a site
 			nodeModCount++;
+
+			m_vSiteMutex.unlock();
 		} else {
 			glass3::util::Logger::log(
 					"error",
-					"CWeb::remSite: Failed to remove station " + site->getSCNL()
+					"CWeb::removeSite: Failed to remove station " + site->getSCNL()
 							+ " from web " + m_sName + ".");
 		}
 
 		node->setEnabled(true);
 	}
 
+	std::chrono::high_resolution_clock::time_point tEndTime =
+			std::chrono::high_resolution_clock::now();
+
+	double removeTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tEndTime - tStartTime).count();
+
 	// log info if we've removed a site
 	if (nodeModCount > 0) {
 		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 		snprintf(
 				sLog, sizeof(sLog),
-				"CWeb::remSite: Removed site: %s from %d node(s) in web: %s",
-				site->getSCNL().c_str(), nodeModCount, m_sName.c_str());
+				"CWeb::removeSite: Site: %s removed from %d node(s) in web: %s "
+				"in %.2f seconds.", site->getSCNL().c_str(), nodeModCount,
+				m_sName.c_str(), removeTime);
 		glass3::util::Logger::log("info", sLog);
 	} else {
-		glass3::util::Logger::log(
-				"debug",
-				"CWeb::remSite: Station " + site->getSCNL()
-						+ " not removed from any nodes in web: " + m_sName
-						+ ".");
+		char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
+		snprintf(sLog, sizeof(sLog), "CWeb::removeSite: Site %s not removed from "
+				" any nodes in web: %s in %.2f seconds", site->getSCNL().c_str(),
+				m_sName.c_str(), removeTime);
+		glass3::util::Logger::log("info", sLog);
 	}
 }
 
@@ -1860,8 +2091,8 @@ glass3::util::WorkState CWeb::work() {
 	return (glass3::util::WorkState::OK);
 }
 
-// ---------------------------------------------------------hasSite
-bool CWeb::hasSite(std::shared_ptr<CSite> site) {
+// ---------------------------------------------------------nodesHaveSite
+bool CWeb::nodesHaveSite(std::shared_ptr<CSite> site) {
 	//  nullcheck
 	if (site == NULL) {
 		return (false);

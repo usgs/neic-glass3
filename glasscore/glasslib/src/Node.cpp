@@ -17,6 +17,7 @@
 #include "Trigger.h"
 #include "Site.h"
 #include "Pick.h"
+#include "PickList.h"
 
 namespace glasscore {
 
@@ -82,12 +83,14 @@ void CNode::clear() {
 
 // ---------------------------------------------------------clearSiteLinks
 void CNode::clearSiteLinks() {
+	// lock mutex for this scope
+	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
+
+	m_dMaxSiteDistance = 0;
+
 	if (m_vSiteLinkList.size() == 0) {
 		return;
 	}
-
-	// lock mutex for this scope
-	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
 
 	// remove any links that sites have TO this node
 	for (auto &link : m_vSiteLinkList) {
@@ -149,6 +152,10 @@ bool CNode::linkSite(std::shared_ptr<CSite> site, std::shared_ptr<CNode> node,
 	// but that caused problems when deleting site-node links.
 	site->addNode(node, distDeg, travelTime1, phase1, travelTime2, phase2);
 
+	if (distDeg > m_dMaxSiteDistance) {
+		m_dMaxSiteDistance = distDeg;
+	}
+
 	// successfully linked site
 	return (true);
 }
@@ -195,6 +202,17 @@ bool CNode::unlinkSite(std::shared_ptr<CSite> site) {
 			// unlink site from node
 			m_vSiteLinkList.erase(it);
 
+			// recompute furthest site distance
+			m_dMaxSiteDistance = 0;
+			for (const auto &link : m_vSiteLinkList) {
+				// get the distance
+				double distDeg = std::get < LINK_DIST > (link);
+
+				if (distDeg > m_dMaxSiteDistance) {
+					m_dMaxSiteDistance = distDeg;
+				}
+			}
+
 			// done modifying vSite
 			m_SiteLinkListMutex.unlock();
 
@@ -231,25 +249,34 @@ bool CNode::unlinkLastSite() {
 	// unlink last site from node
 	m_vSiteLinkList.pop_back();
 
-	// enable node
-	m_bEnabled = true;
+	// recompute furthest site distance
+	m_dMaxSiteDistance = 0;
+	for (const auto &link : m_vSiteLinkList) {
+		// get the distance
+		double distDeg = std::get < LINK_DIST > (link);
+
+		if (distDeg > m_dMaxSiteDistance) {
+			m_dMaxSiteDistance = distDeg;
+		}
+	}
 
 	return (true);
 }
 
 // ---------------------------------------------------------nucleate
-std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
+std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
+		CPickList* parentThread) {
 	std::lock_guard < std::recursive_mutex > nodeGuard(m_NodeMutex);
+	// don't nucleate if this node is disabled
+	if (m_bEnabled == false) {
+		return (NULL);
+	}
 
 	// nullchecks
 	// check web
 	if (m_pWeb == NULL) {
 		glass3::util::Logger::log("error",
 									"CNode::nucleate: NULL web pointer.");
-		return (NULL);
-	}
-	// don't nucleate if this node is disabled
-	if (m_bEnabled == false) {
 		return (NULL);
 	}
 
@@ -272,13 +299,25 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 	// lock mutex for this scope (iterating through the site links)
 	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
 
+	bool haltNucleation = false;
+
 	// search through each site linked to this node
 	for (const auto &link : m_vSiteLinkList) {
+		// halt nucleation if the node has been disabled
+		if (m_bEnabled == false) {
+			haltNucleation = true;
+			break;
+		}
+
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// init sigbest
 		double dSigBest_phase1 = -1.0;
 		double dSigBest_phase2 = -1.0;
 
-		// the best nucleating pick
+		// the best nucleating picks
 		std::shared_ptr<CPick> pickBest_phase1;
 		std::shared_ptr<CPick> pickBest_phase2;
 
@@ -340,7 +379,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		} else {
 			// no valid TTs
 			glass3::util::Logger::log(
-					"error", "CNode::nucleate: Bad Pick SearchRange.");
+					"error", "CNode::nucleate: Bad Node Traveltimes while generating pick"
+					" SearchRange.");
 			continue;
 		}
 
@@ -357,12 +397,19 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			}
 		}
 
+		// lock site pick list while we're extracting our picks
 		site->getPickMutex().lock();
 
 		// compute bounds iterator
 		auto lower = site->getLower(min);
 
 		for (auto it = lower; (it != site->getEnd()); ++it) {
+			// halt nucleation if the node has been disabled
+			if (m_bEnabled == false) {
+				haltNucleation = true;
+				break;
+			}
+
 			auto pick = *it;
 
 			bool phase1set = false;
@@ -378,6 +425,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			if (tPick > max) {
 				break;  // picks are in time order and we're past our window
 			}
+
 			// skip this pick if it's in our exclude window(if we have one)
 			// between our two TTs
 			if (dtExcludeBegin && (tPick > dtExcludeBegin)
@@ -516,7 +564,6 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			}
 
 			// get the best significance from the observed time and link
-
 			double dSig1 = getSignificance(tObs, travelTime1, distDeg);
 			double dSig2 = getSignificance(tObs, travelTime2, distDeg);
 
@@ -537,6 +584,16 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 		}  // ---- end search through each pick at this site ----
 
 		site->getPickMutex().unlock();
+
+		// signal that we're still here
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
+		// break out of the loop if nucleation has been halted
+		if (haltNucleation == true) {
+			break;
+		}
 
 		// check to see if the pick with the highest significance at this site
 		// should be added to the overall sum from this site
@@ -563,7 +620,17 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin) {
 			vPick.push_back(pickBest_phase2);
 		}
 	}  // ---- end search through each site this node is linked to ----
-	// std::cout << "ncount: " << nCount << std::endl;
+
+	// signal that we're still here
+	if (parentThread != NULL) {
+		parentThread->setThreadHealth();
+	}
+
+	// if we were halted, the node did not nucleate an event, return null
+	if (haltNucleation == true) {
+		return (NULL);
+	}
+
 	// make sure the number of significant picks
 	// exceeds the nucleation threshold
 	if (nCount < nCut) {
@@ -775,5 +842,11 @@ std::string CNode::getID() const {
 			m_sName + "." + std::to_string(getLatitude()) + "."
 					+ std::to_string(getLongitude()) + "."
 					+ std::to_string(getDepth())));
+}
+
+// ---------------------------------------------------------getMaxSiteDistance
+double CNode::getMaxSiteDistance() const {
+	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
+	return(m_dMaxSiteDistance);
 }
 }  // namespace glasscore

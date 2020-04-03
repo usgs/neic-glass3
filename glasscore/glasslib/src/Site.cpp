@@ -1,4 +1,7 @@
 #include "Site.h"
+
+#include <date.h>
+
 #include <json.h>
 #include <logger.h>
 #include <geo.h>
@@ -15,6 +18,7 @@
 #include <ctime>
 #include "Glass.h"
 #include "Pick.h"
+#include "PickList.h"
 #include "Node.h"
 #include "Trigger.h"
 #include "Hypo.h"
@@ -37,7 +41,7 @@ CSite::CSite(std::string sta, std::string comp, std::string net,
 				std::string loc, double lat, double lon, double elv,
 				double qual, bool enable, bool useTele) {
 	// pass to initialization function
-	initialize(sta, comp, net, loc, lat, lon, elv, qual, enable, useTele);
+	initialize(sta, comp, net, loc, lat, lon, elv, qual, enable, true, useTele);
 }
 
 // ---------------------------------------------------------CSite
@@ -77,7 +81,9 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 	// optional values
 	double quality = 0;
 	bool enable = true;
+	bool use = true;
 	bool useForTeleseismic = true;
+	int tLastPicked = -1;
 
 	// get site information from json
 	// scnl
@@ -205,6 +211,14 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 		enable = true;
 	}
 
+	// use for this site (if present)
+	if (((*site).HasKey("Use"))
+			&& ((*site)["Use"].GetType() == json::ValueType::BoolVal)) {
+		use = (*site)["Use"].ToBool();
+	} else {
+		use = true;
+	}
+
 	// enable for this site (if present)
 	if (((*site).HasKey("UseForTeleseismic"))
 			&& ((*site)["UseForTeleseismic"].GetType()
@@ -212,6 +226,19 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 		useForTeleseismic = (*site)["UseForTeleseismic"].ToBool();
 	} else {
 		useForTeleseismic = true;
+	}
+
+	// time of last pick (if present)
+	if (((*site).HasKey("TimeLastPicked"))
+			&& ((*site)["TimeLastPicked"].GetType()
+					== json::ValueType::StringVal)) {
+		// read string
+		std::string timeString = (*site)["TimeLastPicked"].ToString();
+		// convert iso8601 time string to epoch time
+		tLastPicked =
+			static_cast<int>(glass3::util::Date::convertISO8601ToEpochTime(timeString));
+	} else {
+		tLastPicked = -1;
 	}
 
 	// make sure we got a valid lat/lon/elev
@@ -223,13 +250,20 @@ CSite::CSite(std::shared_ptr<json::Object> site) {
 
 	// pass to initialization function
 	initialize(station, channel, network, location, latitude, longitude,
-				elevation, quality, enable, useForTeleseismic);
+				elevation, quality, enable, use, useForTeleseismic);
+
+	// update m_tLastPickAdded IF we have a valid value
+	// from the json, otherwise the default (time site object was created) will
+	// be used
+	if (tLastPicked > 0) {
+		m_tLastPickAdded = tLastPicked;
+	}
 }
 
 // --------------------------------------------------------initialize
 bool CSite::initialize(std::string sta, std::string comp, std::string net,
 						std::string loc, double lat, double lon, double elv,
-						double qual, bool enable, bool useTele) {
+						double qual, bool enable, bool use, bool useTele) {
 	clear();
 
 	std::lock_guard<std::recursive_mutex> guard(m_SiteMutex);
@@ -309,7 +343,7 @@ bool CSite::initialize(std::string sta, std::string comp, std::string net,
 
 	// copy use
 	m_bEnable = enable;
-	m_bUse = true;
+	m_bUse = use;
 	m_bUseForTeleseismic = useTele;
 
 	return (true);
@@ -677,7 +711,8 @@ void CSite::removeNode(std::string nodeID) {
 }
 
 // ---------------------------------------------------------nucleate
-std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
+std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick,
+		CPickList* parentThread) {
 	std::lock_guard<std::mutex> guard(m_vNodeMutex);
 
 	// create trigger vector
@@ -693,6 +728,10 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 
 	// for each node linked to this site
 	for (const auto &link : m_vNode) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// compute potential origin time from tPick and travel time to node
 		// first get traveltime1 to node
 		double travelTime1 = std::get< LINK_TT1>(link);
@@ -727,7 +766,8 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 		// at the current node with the potential origin times
 		bool primarySuccessful = false;
 		if (tOrigin1 > 0) {
-			std::shared_ptr<CTrigger> trigger1 = node->nucleate(tOrigin1);
+			std::shared_ptr<CTrigger> trigger1 = node->nucleate(tOrigin1,
+				parentThread);
 
 			if (trigger1 != NULL) {
 				// if node triggered, add to triggered vector
@@ -739,7 +779,8 @@ std::vector<std::shared_ptr<CTrigger>> CSite::nucleate(double tPick) {
 		// only attempt secondary phase nucleation if primary nucleation
 		// was unsuccessful
 		if ((primarySuccessful == false) && (tOrigin2 > 0)) {
-			std::shared_ptr<CTrigger> trigger2 = node->nucleate(tOrigin2);
+			std::shared_ptr<CTrigger> trigger2 = node->nucleate(tOrigin2,
+				parentThread);
 
 			if (trigger2 != NULL) {
 				// if node triggered, add to triggered vector
@@ -810,8 +851,13 @@ void CSite::setEnable(bool enable) {
 }
 
 // ---------------------------------------------------------getUse
-bool CSite::getUse() const {
+bool CSite::getIsUsed() const {
 	return (m_bUse && m_bEnable);
+}
+
+// ---------------------------------------------------------getUse
+bool CSite::getUse() const {
+	return (m_bUse);
 }
 
 // ---------------------------------------------------------setUse

@@ -50,7 +50,7 @@
 #define GLOBALNUMNUCLEATE 5
 #define GLOBALRESOLUTION 250.0
 #define GLOBALNUMZ 2
-#define GLOBALNUMNODES 30861
+#define GLOBALNUMNODES 21350
 #define GLOBALNUMNETEXLUDE 13
 
 #define GRIDNAME "TestGrid"
@@ -540,13 +540,13 @@ TEST(WebTest, AddTest) {
 	testSiteList->addSite(sharedAddSite);
 
 	// check to see if this site is in grid
-	ASSERT_FALSE(testGridWeb.hasSite(sharedAddSite))<< "site not in grid";
+	ASSERT_FALSE(testGridWeb.nodesHaveSite(sharedAddSite))<< "site not in grid";
 
 	// add to grid
 	testGridWeb.addSite(sharedAddSite);
 
 	// check to see if this site is in grid
-	ASSERT_TRUE(testGridWeb.hasSite(sharedAddSite))<< "site added";
+	ASSERT_TRUE(testGridWeb.nodesHaveSite(sharedAddSite))<< "site added";
 
 	// cleanup
 	delete (testSiteList);
@@ -599,13 +599,13 @@ TEST(WebTest, RemoveTest) {
 	testSiteList->addSite(sharedRemoveSite);
 
 	// check to see if this site is in grid
-	ASSERT_TRUE(testGridWeb.hasSite(sharedRemoveSite))<< "site in grid";
+	ASSERT_TRUE(testGridWeb.nodesHaveSite(sharedRemoveSite))<< "site in grid";
 
 	// remove from grid
 	testGridWeb.removeSite(sharedRemoveSite);
 
 	// check to see if this site is in grid
-	ASSERT_FALSE(testGridWeb.hasSite(sharedRemoveSite))<< "site removed";
+	ASSERT_FALSE(testGridWeb.nodesHaveSite(sharedRemoveSite))<< "site removed";
 
 	// cleanup
 	delete (testSiteList);
