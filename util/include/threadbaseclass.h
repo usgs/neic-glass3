@@ -57,10 +57,10 @@ class ThreadBaseClass : public util::BaseClass {
 	 * \param numThreads - An integer containing the number of
 	 * work threads.  Default 1
 	 * \param checkInterval - An integer containing the amount of time in
-	 * seconds between status checks. -1 to disable status checks.  Default 30.
+	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
 	ThreadBaseClass(std::string threadName, int sleepTimeMS = 100,
-					int numThreads = 1, int checkInterval = 30);
+					int numThreads = 1, int checkInterval = 300);
 
 	/**
 	 * \brief ThreadBaseClass destructor
