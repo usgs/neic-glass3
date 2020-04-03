@@ -255,9 +255,9 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * the distance between the given location and the site as part of the
 	 * std::pair in vSite.
 	 *
-	 * \param lat - A double variable containing the latitude to use
-	 * \param lon - A double variable containing the longitude to use
-	 * \param depth - A double variable containing the depth to use
+	 * \param lat - A double variable containing the latitude to use in degrees
+	 * \param lon - A double variable containing the longitude to use in degrees
+	 * \param depth - A double variable containing the depth to use in km
 	 */
 	void sortSiteListForNode(double lat, double lon, double depth);
 
