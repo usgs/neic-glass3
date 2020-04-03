@@ -164,8 +164,9 @@ class CNode {
 	 *
 	 * \param tOrigin - A double value containing the proposed origin time
 	 * to use in Gregorian seconds
-	 * \param parentThread - A pointer to the parent CPickList thread to allow for
-	 * thread status updates
+	 * \param parentThread - A pointer to the parent CPickList thread to allow 
+	 * nucleate to call the CPickList thread status update function, the owner
+	 * of this pointer is the CPickList object
 	 * \return Returns true if the node nucleated an event, false otherwise
 	 */
 	std::shared_ptr<CTrigger> nucleate(double tOrigin, CPickList* parentThread);

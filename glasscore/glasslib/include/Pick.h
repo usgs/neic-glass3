@@ -232,11 +232,12 @@ class CPick {
 	 * scanning all nodes linked to this pick's site, producing a list of
 	 * triggers. Then, for the best trigger for each web, try to generate a new
 	 * hypo, performing a fast location/prune using hypo->anneal
-	 * \param parent - A pointer to the parent CPickList thread to allow for
-	 * thread status updates
+	 * \param parentThread - A pointer to the parent CPickList thread to allow 
+	 * nucleate to call the CPickList thread status update function, the owner
+	 * of this pointer is the CPickList object
 	 * \return Returns true if successful, false otherwise
 	 */
-	bool nucleate(CPickList* parent);
+	bool nucleate(CPickList* parentThread);
 
 	/**
 	 * \brief Get the optional back azimuth related to this pick
