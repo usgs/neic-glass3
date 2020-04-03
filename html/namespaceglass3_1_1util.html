@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.3.0</span>
+   &#160;<span id="projectnumber">1.4.0</span>
    </div>
   </td>
  </tr>
@@ -187,6 +187,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a86ff9cc6bc0636dec5df9eff2d4e3afe"><td class="memItemLeft" align="right" valign="top">std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a86ff9cc6bc0636dec5df9eff2d4e3afe">removeChars</a> (std::string &amp;sInput, const std::string &amp;sRemoveChars)</td></tr>
 <tr class="memdesc:a86ff9cc6bc0636dec5df9eff2d4e3afe"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove all instances of characters from a string  <a href="#a86ff9cc6bc0636dec5df9eff2d4e3afe">More...</a><br /></td></tr>
 <tr class="separator:a86ff9cc6bc0636dec5df9eff2d4e3afe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e3f0847e5ea4d407d3ac029953bf103"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceglass3_1_1util.html#a4e3f0847e5ea4d407d3ac029953bf103">to_string_with_precision</a> (const double doubleVal, const int precisionVal=2)</td></tr>
+<tr class="memdesc:a4e3f0847e5ea4d407d3ac029953bf103"><td class="mdescLeft">&#160;</td><td class="mdescRight">convert provided double to a string with desired precision  <a href="#a4e3f0847e5ea4d407d3ac029953bf103">More...</a><br /></td></tr>
+<tr class="separator:a4e3f0847e5ea4d407d3ac029953bf103"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -472,6 +475,43 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>returns a std::vector containing the split std::string elements </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4e3f0847e5ea4d407d3ac029953bf103"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string glass3::util::to_string_with_precision </td>
+          <td>(</td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>doubleVal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>precisionVal</em> = <code>2</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>convert provided double to a string with desired precision </p>
+<p>Convert the provided double value into a string while truncateing it to the provided precision</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">doubleVal</td><td>- A double containing the value to convert </td></tr>
+    <tr><td class="paramname">precisionVal</td><td>- An int containing the desired precision to truncate to, default is 2. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>returns a std::string containing converted string. </dd></dl>
 
 </div>
 </div>

@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.3.0</span>
+   &#160;<span id="projectnumber">1.4.0</span>
    </div>
   </td>
  </tr>
@@ -128,9 +128,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a07d5bdd3295aa876f4d205aede629cbc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a07d5bdd3295aa876f4d205aede629cbc">update</a> (<a class="el" href="classglasscore_1_1CSite.html">CSite</a> *site)</td></tr>
 <tr class="memdesc:a07d5bdd3295aa876f4d205aede629cbc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> update function.  <a href="#a07d5bdd3295aa876f4d205aede629cbc">More...</a><br /></td></tr>
 <tr class="separator:a07d5bdd3295aa876f4d205aede629cbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae19934c85e1a7793fa156d9b7bfd493d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#ae19934c85e1a7793fa156d9b7bfd493d">initialize</a> (std::string sta, std::string comp, std::string net, std::string loc, double lat, double lon, double elv, double qual, bool enable, bool useTele)</td></tr>
-<tr class="memdesc:ae19934c85e1a7793fa156d9b7bfd493d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> initialization function.  <a href="#ae19934c85e1a7793fa156d9b7bfd493d">More...</a><br /></td></tr>
-<tr class="separator:ae19934c85e1a7793fa156d9b7bfd493d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0754634ed36a28d9382b739094e6dd82"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a0754634ed36a28d9382b739094e6dd82">initialize</a> (std::string sta, std::string comp, std::string net, std::string loc, double lat, double lon, double elv, double qual, bool enable, bool use, bool useTele)</td></tr>
+<tr class="memdesc:a0754634ed36a28d9382b739094e6dd82"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> initialization function.  <a href="#a0754634ed36a28d9382b739094e6dd82">More...</a><br /></td></tr>
+<tr class="separator:a0754634ed36a28d9382b739094e6dd82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab6fa253c1f1c6920af70c13500ccf53"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#aab6fa253c1f1c6920af70c13500ccf53">setLocation</a> (double lat, double lon, double z)</td></tr>
 <tr class="memdesc:aab6fa253c1f1c6920af70c13500ccf53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the site's location This function sets the geographic location of the site to the provided latitude, longitude, and depth.  <a href="#aab6fa253c1f1c6920af70c13500ccf53">More...</a><br /></td></tr>
 <tr class="separator:aab6fa253c1f1c6920af70c13500ccf53"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,9 +155,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a85220933cc781b562b2219f142d8cae1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a85220933cc781b562b2219f142d8cae1">removeNode</a> (std::string nodeID)</td></tr>
 <tr class="memdesc:a85220933cc781b562b2219f142d8cae1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove pick from this site This function removes the given node from the list of nodes linked to this.  <a href="#a85220933cc781b562b2219f142d8cae1">More...</a><br /></td></tr>
 <tr class="separator:a85220933cc781b562b2219f142d8cae1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bcd4c0b553af67863b2af7244c48f98"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CTrigger.html">CTrigger</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a6bcd4c0b553af67863b2af7244c48f98">nucleate</a> (double tpick)</td></tr>
-<tr class="memdesc:a6bcd4c0b553af67863b2af7244c48f98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to nucleate a new event at nodes linked to site This function cycles through each node linked to this site, computes the PDF at each node, and identifies the node with the best PDF.  <a href="#a6bcd4c0b553af67863b2af7244c48f98">More...</a><br /></td></tr>
-<tr class="separator:a6bcd4c0b553af67863b2af7244c48f98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd2b7c80d8262e6588080eeac040323d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CTrigger.html">CTrigger</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#afd2b7c80d8262e6588080eeac040323d">nucleate</a> (double tpick, <a class="el" href="classglasscore_1_1CPickList.html">CPickList</a> *parentThread)</td></tr>
+<tr class="memdesc:afd2b7c80d8262e6588080eeac040323d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to nucleate a new event at nodes linked to site This function cycles through each node linked to this site, computes the PDF at each node, and identifies the node with the best PDF.  <a href="#afd2b7c80d8262e6588080eeac040323d">More...</a><br /></td></tr>
+<tr class="separator:afd2b7c80d8262e6588080eeac040323d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a671dcfe22433d3ff0f993a7faf15da25"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a671dcfe22433d3ff0f993a7faf15da25">addTriggerToList</a> (std::vector&lt; std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CTrigger.html">CTrigger</a> &gt;&gt; *vTrigger, std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CTrigger.html">CTrigger</a> &gt; trigger)</td></tr>
 <tr class="memdesc:a671dcfe22433d3ff0f993a7faf15da25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add triggering node to triggered node list if value exceeds current value of if named node's web is not yet present.  <a href="#a671dcfe22433d3ff0f993a7faf15da25">More...</a><br /></td></tr>
 <tr class="separator:a671dcfe22433d3ff0f993a7faf15da25"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,8 +170,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab470cbaf49bb094f83b1dc957326e7c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#ab470cbaf49bb094f83b1dc957326e7c5">setEnable</a> (bool enable)</td></tr>
 <tr class="memdesc:ab470cbaf49bb094f83b1dc957326e7c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets whether this site is enabled. Enable represents whether this site should be used according to sources outside glasscore.  <a href="#ab470cbaf49bb094f83b1dc957326e7c5">More...</a><br /></td></tr>
 <tr class="separator:ab470cbaf49bb094f83b1dc957326e7c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c32cdd14dcafa9cdee88a8e73ef2543"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a4c32cdd14dcafa9cdee88a8e73ef2543">getIsUsed</a> () const </td></tr>
+<tr class="memdesc:a4c32cdd14dcafa9cdee88a8e73ef2543"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets whether this site should be used for picks and nucleation. (m_bUse &amp;&amp; m_bEnable) Use represents whether the site should be used according to glasscore's internal metrics.  <a href="#a4c32cdd14dcafa9cdee88a8e73ef2543">More...</a><br /></td></tr>
+<tr class="separator:a4c32cdd14dcafa9cdee88a8e73ef2543"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34f61957162354f733a4f0a903204223"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a34f61957162354f733a4f0a903204223">getUse</a> () const </td></tr>
-<tr class="memdesc:a34f61957162354f733a4f0a903204223"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets whether this site should be used for picks and nucleation. (m_bUse &amp;&amp; m_bEnable) Use represents whether the site should be used according to glasscore's internal metrics.  <a href="#a34f61957162354f733a4f0a903204223">More...</a><br /></td></tr>
+<tr class="memdesc:a34f61957162354f733a4f0a903204223"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets whether this site is used.  <a href="#a34f61957162354f733a4f0a903204223">More...</a><br /></td></tr>
 <tr class="separator:a34f61957162354f733a4f0a903204223"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65b7668107652a975a2ffb5b51e2e398"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CSite.html#a65b7668107652a975a2ffb5b51e2e398">setUse</a> (bool use)</td></tr>
 <tr class="memdesc:a65b7668107652a975a2ffb5b51e2e398"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets whether this site should be used for picks and nucleation. Use represents whether the site should be used according to glasscore's internal metrics.  <a href="#a65b7668107652a975a2ffb5b51e2e398">More...</a><br /></td></tr>
@@ -677,6 +680,24 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a4c32cdd14dcafa9cdee88a8e73ef2543"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool glasscore::CSite::getIsUsed </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets whether this site should be used for picks and nucleation. (m_bUse &amp;&amp; m_bEnable) Use represents whether the site should be used according to glasscore's internal metrics. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a boolean flag indicating whether the site should be used, true if yes, false otherwise </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ad1e2f072dfc0f5b921a8565068016f3f"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1030,8 +1051,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Gets whether this site should be used for picks and nucleation. (m_bUse &amp;&amp; m_bEnable) Use represents whether the site should be used according to glasscore's internal metrics. </p>
-<dl class="section return"><dt>Returns</dt><dd>Returns a boolean flag indicating whether the site is used, true if enabled, false otherwise </dd></dl>
+<p>Gets whether this site is used. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a boolean flag indicating whether the site is used, true if so, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -1053,7 +1074,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae19934c85e1a7793fa156d9b7bfd493d"></a>
+<a class="anchor" id="a0754634ed36a28d9382b739094e6dd82"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1115,6 +1136,12 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>use</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>useTele</em>&#160;</td>
         </tr>
         <tr>
@@ -1138,6 +1165,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">elv</td><td>- A double value containing the geographic elevation of this site in meters </td></tr>
     <tr><td class="paramname">qual</td><td>- A double value containing a station quality estimate </td></tr>
     <tr><td class="paramname">enable</td><td>- A boolean flag indicating whether the site is to be enabled or not </td></tr>
+    <tr><td class="paramname">use</td><td>- A boolean flag indicating whether the site is to be used (internally) or not </td></tr>
     <tr><td class="paramname">useTele</td><td>- A boolean flag indicating whether the site is to be used for teleseismic or not </td></tr>
   </table>
   </dd>
@@ -1146,7 +1174,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6bcd4c0b553af67863b2af7244c48f98"></a>
+<a class="anchor" id="afd2b7c80d8262e6588080eeac040323d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1154,8 +1182,18 @@ Public Member Functions</h2></td></tr>
           <td class="memname">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CTrigger.html">CTrigger</a> &gt; &gt; glasscore::CSite::nucleate </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tpick</em></td><td>)</td>
+          <td class="paramname"><em>tpick</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CPickList.html">CPickList</a> *&#160;</td>
+          <td class="paramname"><em>parentThread</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1165,6 +1203,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tpick</td><td>- A double value containing the pick time to nucleate with in Gregorian seconds </td></tr>
+    <tr><td class="paramname">parentThread</td><td>- A pointer to the parent <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> thread to allow nucleate to call the <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> thread status update function, the owner of this pointer is the <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> object </td></tr>
   </table>
   </dd>
 </dl>

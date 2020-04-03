@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.3.0</span>
+   &#160;<span id="projectnumber">1.4.0</span>
    </div>
   </td>
  </tr>
@@ -128,12 +128,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a70a95824032c7f8b303c41c1c33d9fc4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a70a95824032c7f8b303c41c1c33d9fc4">removeWeb</a> (std::shared_ptr&lt; json::Object &gt; com)</td></tr>
 <tr class="memdesc:a70a95824032c7f8b303c41c1c33d9fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove web ('Grid', etc) from list by name.  <a href="#a70a95824032c7f8b303c41c1c33d9fc4">More...</a><br /></td></tr>
 <tr class="separator:a70a95824032c7f8b303c41c1c33d9fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea634ecbfdbf8df2cec7ee352fe675e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#aea634ecbfdbf8df2cec7ee352fe675e4">addSite</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; site)</td></tr>
-<tr class="memdesc:aea634ecbfdbf8df2cec7ee352fe675e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a site to the webs This function adds the given site to all appropriate webs in the list of webs.  <a href="#aea634ecbfdbf8df2cec7ee352fe675e4">More...</a><br /></td></tr>
-<tr class="separator:aea634ecbfdbf8df2cec7ee352fe675e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af347c9197a4b0d0f8d9190ccad88410b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#af347c9197a4b0d0f8d9190ccad88410b">removeSite</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; site)</td></tr>
-<tr class="memdesc:af347c9197a4b0d0f8d9190ccad88410b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove Site from the webs This function removes the given site from all webs in the list of webs.  <a href="#af347c9197a4b0d0f8d9190ccad88410b">More...</a><br /></td></tr>
-<tr class="separator:af347c9197a4b0d0f8d9190ccad88410b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf4f4fb368e9e942c32362de517faa96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#adf4f4fb368e9e942c32362de517faa96">updateSite</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; site)</td></tr>
+<tr class="memdesc:adf4f4fb368e9e942c32362de517faa96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a site in the webs This function updates the given site in all appropriate webs in the list of webs.  <a href="#adf4f4fb368e9e942c32362de517faa96">More...</a><br /></td></tr>
+<tr class="separator:adf4f4fb368e9e942c32362de517faa96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc9e2b21c94177318e5ac21f39a306c7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#acc9e2b21c94177318e5ac21f39a306c7">hasSite</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt; site)</td></tr>
 <tr class="memdesc:acc9e2b21c94177318e5ac21f39a306c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the webs have a site This function checks to see if the given site is used in any web in the list.  <a href="#acc9e2b21c94177318e5ac21f39a306c7">More...</a><br /></td></tr>
 <tr class="separator:acc9e2b21c94177318e5ac21f39a306c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -198,30 +195,6 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="aea634ecbfdbf8df2cec7ee352fe675e4"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glasscore::CWebList::addSite </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt;&#160;</td>
-          <td class="paramname"><em>site</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Add a site to the webs This function adds the given site to all appropriate webs in the list of webs. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">site</td><td>- A shared_ptr to a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> object containing the site to add </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="ab68a050102c410ee4b8c7dd15797e8f0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -354,30 +327,6 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af347c9197a4b0d0f8d9190ccad88410b"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void glasscore::CWebList::removeSite </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt;&#160;</td>
-          <td class="paramname"><em>site</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Remove Site from the webs This function removes the given site from all webs in the list of webs. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">site</td><td>- A shared_ptr to a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> object containing the site to remove </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a class="anchor" id="a70a95824032c7f8b303c41c1c33d9fc4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -442,6 +391,30 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Get the current size of the web list. </p>
+
+</div>
+</div>
+<a class="anchor" id="adf4f4fb368e9e942c32362de517faa96"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glasscore::CWebList::updateSite </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CSite.html">CSite</a> &gt;&#160;</td>
+          <td class="paramname"><em>site</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Update a site in the webs This function updates the given site in all appropriate webs in the list of webs. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">site</td><td>- A shared_ptr to a <a class="el" href="classglasscore_1_1CSite.html" title="glasscore site (station) class ">CSite</a> object containing the site to add </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

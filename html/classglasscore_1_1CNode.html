@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.3.0</span>
+   &#160;<span id="projectnumber">1.4.0</span>
    </div>
   </td>
  </tr>
@@ -137,9 +137,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad89c69c87b3801d96f51e800f9d397bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#ad89c69c87b3801d96f51e800f9d397bb">unlinkLastSite</a> ()</td></tr>
 <tr class="memdesc:ad89c69c87b3801d96f51e800f9d397bb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> unlink last by distance site from node.  <a href="#ad89c69c87b3801d96f51e800f9d397bb">More...</a><br /></td></tr>
 <tr class="separator:ad89c69c87b3801d96f51e800f9d397bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e3b72adfc0f3067f8af4aeae7fa9736"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CTrigger.html">CTrigger</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#a1e3b72adfc0f3067f8af4aeae7fa9736">nucleate</a> (double tOrigin)</td></tr>
-<tr class="memdesc:a1e3b72adfc0f3067f8af4aeae7fa9736"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> Nucleation function.  <a href="#a1e3b72adfc0f3067f8af4aeae7fa9736">More...</a><br /></td></tr>
-<tr class="separator:a1e3b72adfc0f3067f8af4aeae7fa9736"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7c4a06d20abaccfe5e6aff93d9cf229"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CTrigger.html">CTrigger</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#ad7c4a06d20abaccfe5e6aff93d9cf229">nucleate</a> (double tOrigin, <a class="el" href="classglasscore_1_1CPickList.html">CPickList</a> *parentThread)</td></tr>
+<tr class="memdesc:ad7c4a06d20abaccfe5e6aff93d9cf229"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> Nucleation function.  <a href="#ad7c4a06d20abaccfe5e6aff93d9cf229">More...</a><br /></td></tr>
+<tr class="separator:ad7c4a06d20abaccfe5e6aff93d9cf229"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13e33ca60e1347dd3aba693b6f949793"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#a13e33ca60e1347dd3aba693b6f949793">getSignificance</a> (double tObservedTT, double travelTime, double distDeg)</td></tr>
 <tr class="memdesc:a13e33ca60e1347dd3aba693b6f949793"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglasscore_1_1CNode.html" title="glasscore detection node class ">CNode</a> significance function.  <a href="#a13e33ca60e1347dd3aba693b6f949793">More...</a><br /></td></tr>
 <tr class="separator:a13e33ca60e1347dd3aba693b6f949793"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -188,6 +188,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac7553a8551c8a6468e5d20d8c6169b42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#ac7553a8551c8a6468e5d20d8c6169b42">setWeb</a> (<a class="el" href="classglasscore_1_1CWeb.html">CWeb</a> *web)</td></tr>
 <tr class="memdesc:ac7553a8551c8a6468e5d20d8c6169b42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a pointer to the parent <a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a> that created and holds this node.  <a href="#ac7553a8551c8a6468e5d20d8c6169b42">More...</a><br /></td></tr>
 <tr class="separator:ac7553a8551c8a6468e5d20d8c6169b42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60c4fab455c5037f9ba0c03e6c1b26a9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#a60c4fab455c5037f9ba0c03e6c1b26a9">getMaxSiteDistance</a> () const </td></tr>
+<tr class="memdesc:a60c4fab455c5037f9ba0c03e6c1b26a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the maximum site distance for this node.  <a href="#a60c4fab455c5037f9ba0c03e6c1b26a9">More...</a><br /></td></tr>
+<tr class="separator:a60c4fab455c5037f9ba0c03e6c1b26a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af17386ce370f6e51738f597c064deb11"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CNode.html#af17386ce370f6e51738f597c064deb11">getName</a> () const </td></tr>
 <tr class="memdesc:af17386ce370f6e51738f597c064deb11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the name of the parent <a class="el" href="classglasscore_1_1CWeb.html" title="glasscore detection web class ">CWeb</a> that created and holds this node This name is used to ensure that only one node triggers per web during site nucleation.  <a href="#af17386ce370f6e51738f597c064deb11">More...</a><br /></td></tr>
 <tr class="separator:af17386ce370f6e51738f597c064deb11"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -476,6 +479,24 @@ Public Member Functions</h2></td></tr>
 
 <p>Get the maximum depth for triggers made at this node. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns a double containing the maximum depth for triggers made in kilometers </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a60c4fab455c5037f9ba0c03e6c1b26a9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CNode::getMaxSiteDistance </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the maximum site distance for this node. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the maximum site distance for this node in degrees. </dd></dl>
 
 </div>
 </div>
@@ -776,7 +797,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a1e3b72adfc0f3067f8af4aeae7fa9736"></a>
+<a class="anchor" id="ad7c4a06d20abaccfe5e6aff93d9cf229"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -784,8 +805,18 @@ Public Member Functions</h2></td></tr>
           <td class="memname">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CTrigger.html">CTrigger</a> &gt; glasscore::CNode::nucleate </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tOrigin</em></td><td>)</td>
+          <td class="paramname"><em>tOrigin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classglasscore_1_1CPickList.html">CPickList</a> *&#160;</td>
+          <td class="paramname"><em>parentThread</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -795,6 +826,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tOrigin</td><td>- A double value containing the proposed origin time to use in Gregorian seconds </td></tr>
+    <tr><td class="paramname">parentThread</td><td>- A pointer to the parent <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> thread to allow nucleate to call the <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> thread status update function, the owner of this pointer is the <a class="el" href="classglasscore_1_1CPickList.html" title="glasscore pick list class ">CPickList</a> object </td></tr>
   </table>
   </dd>
 </dl>
