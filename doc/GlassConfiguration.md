@@ -21,6 +21,7 @@ An example `glass_init.d` configuration file:
       "NucleationDataCountThreshold": 10,
       "AssociationStandardDeviationCutoff": 3.0,
       "PruningStandardDeviationCutoff": 3.0,
+      "NonLocatingPhaseCutoffFactor": 3.0,
       "PickAffinityExponentialFactor": 2.5,
       "DistanceCutoffFactor": 5.0,
       "DistanceCutoffPercentage": 0.8,
@@ -74,7 +75,16 @@ An example `glass_init.d` configuration file:
       {
           "PhaseName": "PKPdf",
           "Range": [ 100, 114, 176, 180 ],
-          "TravFile": "./PKPdf.trv"
+          "TravFile": "./PKPdf.trv",
+          "UseForLocation": true,
+          "PublishPhase": true
+      },
+      {
+          "PhaseName": "PKKPab",
+          "Assoc": [ 100, 125 ],
+          "TravFile": "./PKKPab.trv",
+          "UseForLocation": false,
+          "PublishPhase": false
       }
   ]
 }
@@ -141,6 +151,9 @@ standard deviation is fixed to 1.
 * **PruningStandardDeviationCutoff** - The cutoff threshold in terms of number
 of standard deviations for pruning data (eg. Picks) from a hypocenter. The
 standard deviation is fixed to 1.
+* **NonLocatingPhaseCutoffFactor** - Thee multiplicative factor used to expand
+the SD cutoff to keep data associated to a hypocenter when the Pick phase
+does not affect the location
 * **PickAffinityExponentialFactor** - The exponential factor used when calculating the affinity of
 a pick with a hypocenter. **This value has little effect and likely does not need
 to be changed.**
@@ -200,6 +213,10 @@ exclusive with **Range**
 this association phase.  Mutually exclusive with **Assoc**
 * **TravFile** - The path to the travel-time lookup file for the association
 phase.
+* **UseForLocation** - An optional flag indicating whether this association phase 
+can be used when generating locations, default is true.
+* **PublishPhase** - An optional flag indicating whether this association phase
+can be published when generating output detection messages, default is true.
 
 ## Grid Configuration
 GLASS 3 uses detection grids (or webs) of nodes to nucleate detections. In
