@@ -14,6 +14,7 @@
       "NucleationDataCountThreshold": 10,
       "AssociationStandardDeviationCutoff": 5.0,
       "PruningStandardDeviationCutoff": 5.0,
+      "NonLocatingPhaseCutoffFactor": 3.0,
       "PickAffinityExponentialFactor": 2.5,
       "DistanceCutoffFactor": 5.0,
       "DistanceCutoffRatio": 0.8,

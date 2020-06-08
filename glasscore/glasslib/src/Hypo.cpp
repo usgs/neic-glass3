@@ -2618,9 +2618,9 @@ bool CHypo::pruneData() {
 			vremove.push_back(pck);
 
 			snprintf(
-					sLog, sizeof(sLog), "CHypo::prune: CUL %s %s (%.2f)",
+					sLog, sizeof(sLog), "CHypo::prune: ASSOC-CUL %s %s",
 					glass3::util::Date::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->getSCNL().c_str(), sdprune);
+					pck->getSite()->getSCNL().c_str());
 			glass3::util::Logger::log(sLog);
 
 			// on to the next pick
@@ -2634,7 +2634,7 @@ bool CHypo::pruneData() {
 		// check if delta is beyond distance limit
 		if (delta > m_dAssociationDistanceCutoff) {
 			snprintf(
-					sLog, sizeof(sLog), "CHypo::prune: Pick-CUL %s %s (%.2f > %.2f)",
+					sLog, sizeof(sLog), "CHypo::prune: DIST-CUL %s %s (%.2f > %.2f)",
 					glass3::util::Date::encodeDateTime(pck->getTPick()).c_str(),
 					pck->getSite()->getSCNL().c_str(), delta,
 					getAssociationDistanceCutoff());
