@@ -1067,7 +1067,8 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		}
 	}
 
-	double tRes = calculateResidual(pick);
+	bool useForLocations = true;
+	double tRes = calculateResidual(pick, &useForLocations);
 
 	if (std::isnan(tRes) == true) {
 		return (false);
@@ -1082,10 +1083,17 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	// and sigma
 	double stdev = tRes / sigma;
 
-	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
+	// char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
+
+	// if this phase is not used for locations, allow a much winder
+	// cutoff range
+	double cutoff = sdassoc;
+	if (useForLocations == false) {
+		cutoff = sdassoc * CGlass::getNonLocatingPhaseCutoffFactor();
+	}
 
 	// check if pick standard deviation is greater than cutoff
-	if (stdev > sdassoc) {
+	if (stdev > cutoff) {
 		/*
 		 snprintf(
 		 sLog, sizeof(sLog),
@@ -1542,7 +1550,8 @@ double CHypo::calculateGap(double lat, double lon, double z) {
 }
 
 // --------------------------------------------------------calculateResidual
-double CHypo::calculateResidual(std::shared_ptr<CPick> pick) {
+double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
+		bool * useForLocations) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
@@ -1589,7 +1598,15 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick) {
 	// Check if pick has an invalid travel time,
 	if (tCal <= traveltime::CTravelTime::k_dTravelTimeInvalid) {
 		// it does, don't associated
+		if (useForLocations != NULL) {
+			*useForLocations = false;
+		}
 		return (std::numeric_limits<double>::quiet_NaN());
+	}
+
+	// get the use flag if the location is valid
+	if (useForLocations != NULL) {
+		*useForLocations = m_pTravelTimeTables->m_bUseForLocations;
 	}
 
 	// compute residual from observed and calculated travel times

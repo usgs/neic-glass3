@@ -333,6 +333,14 @@ class CGlass {
 	static double getPruningSDCutoff();
 
 	/**
+	 * \brief Gets the multiplicative factor used to expand the SD cutoff to keep 
+	 * data associated to a hypocenter when the Pick phase does not affect the 
+	 * location
+	 * \return Returns a double containing the the multiplicative SD cutoff factor
+	 */
+	static double getNonLocatingPhaseCutoffFactor();
+
+	/**
 	 * \brief Gets a flag indicating whether to output locator testing files
 	 * \return Returns a boolean flag indicating whether to output locator
 	 * testing files
@@ -563,6 +571,13 @@ class CGlass {
 	 * The standard deviation is fixed to 1.
 	 */
 	static std::atomic<double> m_dPruningSDCutoff;
+
+	/**
+	 * \brief A double value containing the multiplicative factor used to expand 
+	 * the SD cutoff to keep data associated to a hypocenter when the Pick phase 
+	 * does not affect the location
+	 */
+	static std::atomic<double> m_dNonLocatingPhaseCutoffFactor;
 
 	/**
 	 * \brief A double value containing the exponential factor used when

@@ -408,10 +408,14 @@ class CHypo {
 	 * Calculates the residual of the given supporting data to this hypo
 	 *
 	 * \param pick - The pick to calculate a residual for
+	 * \param useForLocations - An optional  pointer to a boolean flag to be 
+	 * returned indicating whether this pick can be used in locations, default
+	 * is null.
 	 * \return Returns a double value containing the residual of the given
 	 * pick
 	 */
-	double calculateResidual(std::shared_ptr<CPick> pick);
+	double calculateResidual(std::shared_ptr<CPick> pick,
+						bool * useForLocations = NULL);
 
 	/**
 	 * \brief Check to see if correlation could be associated
