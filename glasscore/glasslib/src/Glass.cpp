@@ -386,6 +386,8 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			double assoc[k_nAssocArraySize];  // NOLINT
 			double * pdAssoc = NULL;
 			std::string file = "";
+			bool useForLocation = true;
+			bool publishPhase = true;
 
 			// get the phase name
 			std::string phs = obj["PhaseName"].ToString();
@@ -481,6 +483,40 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 						"info",
 						"CGlass::initialize: Using default file location for "
 								"association phase: " + phs);
+			}
+
+			// get the use for location key present
+			if (obj.HasKey("UseForLocation")
+					&& (obj["UseForLocation"].GetType() == json::ValueType::BoolVal)) {
+				useForLocation = obj["UseForLocation"].ToBool();
+
+				glass3::util::Logger::log(
+						"info",
+						"CGlass::initialize: Using useForLocation: "
+								+ std::to_string(useForLocation) + " for phase: "+ phs);
+			} else {
+				useForLocation = true;
+				glass3::util::Logger::log(
+						"info",
+						"CGlass::initialize: Using default useForLocation: "
+								+ std::to_string(useForLocation) + " for phase: "+ phs);
+			}
+
+			// get the use for publish phase key present
+			if (obj.HasKey("PublishPhase")
+					&& (obj["PublishPhase"].GetType() == json::ValueType::BoolVal)) {
+				publishPhase = obj["PublishPhase"].ToBool();
+
+				glass3::util::Logger::log(
+						"info",
+						"CGlass::initialize: Using publishPhase: "
+								+ std::to_string(publishPhase) + " for phase: " + phs);
+			} else {
+				publishPhase = true;
+				glass3::util::Logger::log(
+						"info",
+						"CGlass::initialize: Using default publishPhase: "
+								+ std::to_string(publishPhase) + " for phase: "+ phs);
 			}
 
 			// set up this phase

@@ -39,7 +39,7 @@ class CTravelTime {
 	 *
 	 * The constructor for the CTravelTime class.
 	 */
-	CTravelTime();
+	explicit CTravelTime(bool useForLocations = true, bool publishable = true);
 
 	/**
 	 * \brief CTravelTime copy constructor
@@ -269,10 +269,22 @@ class CTravelTime {
 	double * m_pTravelTimeArray;
 
 	/**
-	 * \brief A std::std::string containing the name of the phase used for this
+	 * \brief A std::string containing the name of the phase used for this
 	 * CTravelTime
 	 */
 	std::string m_sPhase;
+
+	/**
+	 * \brief A boolean flag indicating whether this CTravelTime should be used in 
+	 * generating locations
+	 */
+	bool m_bUseForLocations;
+
+	/**
+	 * \brief A boolean flag indicating whether this CTravelTime should be 
+	 * published in output messages
+	 */
+	bool m_bPublishable;
 
 	/**
 	 * \brief Delta in degrees used by caller to calculate distance

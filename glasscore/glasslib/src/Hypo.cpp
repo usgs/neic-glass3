@@ -1714,6 +1714,12 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 			// take whichever phase has the smallest residual
 			tcal = m_pTravelTimeTables->T(&siteGeo, tobs);
 
+			// check if we're allowed to use this phase in locations
+			if (m_pTravelTimeTables->m_bUseForLocations == false) {
+				// if not, skip it
+				continue;
+			}
+
 			// calculate the residual using the phase name
 			resi = calculateWeightedResidual(m_pTravelTimeTables->m_sPhase,
 												tobs, tcal);
@@ -2206,6 +2212,11 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		double tres = tobs - tcal;
 		// should this be changed?
 		double sig = glass3::util::GlassMath::sig(tres, 1.0);
+
+		// check if we're allowed to publish this pick
+		if (m_pTravelTimeTables->m_bPublishable == false) {
+			continue;
+		}
 
 		// if we have it, use the shared pointer
 		json::Object pickObj;

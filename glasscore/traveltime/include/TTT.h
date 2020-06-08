@@ -69,17 +69,22 @@ class CTTT {
 	 * pRay and the provided phase name, and adds the object to the
 	 * pTrv list.
 	 *
-	 * \param phase - A std::std::string containing the phase name to use
+	 * \param phase - A std::string containing the phase name to use
 	 * \param weightRange - An array of 4 double values defining the phase
 	 * taper weighting, mutually exclusive with assocRange
 	 * \param assocRange - An array of 2 double values containing the
 	 * association range, mutually exclusive with weightRange
-	 * \param file - A std::std::string representing the file to load, default
+	 * \param file - A std::string representing the file to load, default
 	 * is ""
+	 * \param useForLocation - A boolen flag indicating whether this phase should 
+	 * be used in generating locations, default is true
+	 * \param publishPhase - A boolen flag indicating whether this phase should 
+	 * be published in output messages, default is true
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool addPhase(std::string phase, double *weightRange = NULL,
-					double *assocRange = NULL, std::string file = "");
+					double *assocRange = NULL, std::string file = "",
+					bool useForLocation = true, bool publishPhase = true);
 
 	/**
 	 * \brief Set hypocenter for calculations
@@ -196,6 +201,19 @@ class CTTT {
 	 * during the last call to T()
 	 */
 	double m_dWeight;
+
+	/**
+	 * \brief A temporary boolean flag indicating whether this CTravelTime should 
+	 * be used in generating locations
+	 */
+	bool m_bUseForLocations;
+
+	/**
+	 * \brief A temporary boolean flag indicating whether this CTravelTime should 
+	 * be published in output messages
+	 */
+	bool m_bPublishable;
+
 
 	/**
 	 * \brief glass3::util::Geo object containing current

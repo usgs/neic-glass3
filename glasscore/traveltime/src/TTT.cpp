@@ -83,7 +83,7 @@ void CTTT::writeToFiles(std::string outDir, double depth) {
 // ---------------------------------------------------------addPhase
 // Add phase to list to be calculated
 bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
-					std::string file) {
+					std::string file, bool useForLocation, bool publishPhase) {
 	// bounds check
 	if ((m_iNumTravelTimes + 1) > k_iMaximumNumberOfTravelTimes) {
 		glass3::util::Logger::log(
@@ -94,7 +94,7 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 	}
 
 	// create and setup traveltime from phase
-	CTravelTime *trv = new CTravelTime();
+	CTravelTime *trv = new CTravelTime(useForLocation, publishPhase);
 	trv->setup(phase, file);
 
 	// add traveltime to list
@@ -142,6 +142,8 @@ double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 			// get travel time and phase
 			double traveltime = m_pTravelTimes[i]->T(geo);
 			m_sPhase = phase;
+			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
+			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
 
 			// use taper to compute weight if present
 			if (m_pTapers[i] != NULL) {
@@ -158,6 +160,8 @@ double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 	// no valid travel time
 	m_dWeight = 0.0;
 	m_sPhase = "?";
+	m_bUseForLocations = false;
+	m_bPublishable = false;
 	return (CTravelTime::k_dTravelTimeInvalid);
 }
 
@@ -176,6 +180,8 @@ double CTTT::Td(double delta, std::string phase, double depth) {
 			// get travel time and phase
 			double traveltime = m_pTravelTimes[i]->T(delta);
 			m_sPhase = phase;
+			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
+			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
 
 			// use taper to compute weight if present
 			if (m_pTapers[i] != NULL) {
@@ -190,6 +196,8 @@ double CTTT::Td(double delta, std::string phase, double depth) {
 	// no valid travel time
 	m_sPhase = "?";
 	m_dWeight = 0.0;
+	m_bUseForLocations = false;
+	m_bPublishable = false;
 	return (CTravelTime::k_dTravelTimeInvalid);
 }
 
@@ -206,6 +214,8 @@ double CTTT::T(double delta, std::string phase) {
 			// get travel time and phase
 			double traveltime = m_pTravelTimes[i]->T(delta);
 			m_sPhase = phase;
+			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
+			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
 
 			// use taper to compute weight if present
 			if (m_pTapers[i] != NULL) {
@@ -220,6 +230,8 @@ double CTTT::T(double delta, std::string phase) {
 	// no valid travel time
 	m_sPhase = "?";
 	m_dWeight = 0.0;
+	m_bUseForLocations = false;
+	m_bPublishable = false;
 	return (CTravelTime::k_dTravelTimeInvalid);
 }
 
@@ -264,6 +276,8 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 
 	double bestTraveltime;
 	std::string bestPhase;
+	bool useForLocations;
+	bool publishable;
 	double weight;
 	double minResidual = k_dTTTooLargeToBeValid;
 
@@ -311,6 +325,8 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 			minResidual = residual;
 			bestPhase = aTrv->m_sPhase;
 			bestTraveltime = traveltime;
+			useForLocations = aTrv->m_bUseForLocations;
+			publishable = aTrv->m_bPublishable;
 
 			// use taper to compute weight if present
 			if (m_pTapers[i] != NULL) {
@@ -325,6 +341,8 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 	if (minResidual < k_dTTTooLargeToBeValid) {
 		m_sPhase = bestPhase;
 		m_dWeight = weight;
+		m_bUseForLocations = useForLocations;
+		m_bPublishable = publishable;
 
 		return (bestTraveltime);
 	}
@@ -332,6 +350,8 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 	// no valid travel time
 	m_sPhase = "?";
 	m_dWeight = 0.0;
+	m_bUseForLocations = false;
+	m_bPublishable = false;
 	return (CTravelTime::k_dTravelTimeInvalid);
 }
 }  // namespace traveltime

@@ -14,10 +14,13 @@ constexpr double CTravelTime::k_dTravelTimeInvalid;
 const std::string CTravelTime::k_dPhaseInvalid = ""; // NOLINT
 
 // ---------------------------------------------------------CTravelTime
-CTravelTime::CTravelTime() {
+CTravelTime::CTravelTime(bool useForLocations, bool publishable) {
 	m_pTravelTimeArray = NULL;
 
 	clear();
+
+	m_bUseForLocations = useForLocations;
+	m_bPublishable = publishable;
 }
 
 // ---------------------------------------------------------CTravelTime
@@ -39,6 +42,9 @@ CTravelTime::CTravelTime(const CTravelTime &travelTime) {
 	m_dDepth = travelTime.m_dDepth;
 	m_dDelta = travelTime.m_dDelta;
 	m_sPhase = travelTime.m_sPhase;
+
+	m_bUseForLocations = travelTime.m_bUseForLocations;
+	m_bPublishable = travelTime.m_bPublishable;
 
 	// null check?
 	m_pTravelTimeArray = new double[m_iNumDistances * m_iNumDepths];
@@ -68,6 +74,9 @@ void CTravelTime::clear() {
 	m_dDepth = 0;
 	m_dDelta = 0;
 	m_sPhase = CTravelTime::k_dPhaseInvalid;
+
+	m_bUseForLocations = true;
+	m_bPublishable = true;
 
 	if (m_pTravelTimeArray) {
 		delete (m_pTravelTimeArray);
