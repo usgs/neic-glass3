@@ -384,9 +384,17 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			json::Object obj = val.ToObject();
 
 			double range[k_nRangeArraySize];  // NOLINT
+			for (int i = 0; i < k_nRangeArraySize; i++) {
+				range[i] = 0.0;
+			}
 			double *pdRange = NULL;
+			
 			double assoc[k_nAssocArraySize];  // NOLINT
+			for (int i = 0; i < k_nAssocArraySize; i++) {
+				assoc[i] = 0.0;
+			}
 			double * pdAssoc = NULL;
+			
 			std::string file = "";
 			bool useForLocation = true;
 			bool publishPhase = true;
@@ -420,12 +428,6 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 								+ std::to_string(range[k_iFullStart]) + ","
 								+ std::to_string(range[k_iFullEnd]) + ","
 								+ std::to_string(range[k_iTaperDownEnd]) + "]");
-				glass3::util::Logger::log(
-						"info",
-						"CGlass::initialize: Using association Assoc = ["
-								+ std::to_string(assoc[k_iAssocRangeStart])
-								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
-								+ "]");
 
 				// set range pointer
 				pdRange = range;
@@ -433,6 +435,13 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				// populate assoc from range
 				assoc[0] = range[0];
 				assoc[1] = range[3];
+
+				glass3::util::Logger::log(
+                                                "info",
+                                                "CGlass::initialize: Using association Assoc = ["
+                                                                + std::to_string(assoc[k_iAssocRangeStart])
+                                                                + "," + std::to_string(assoc[k_iAssocRangeEnd])
+                                                                + "]");
 
 				// set assoc pointer
 				pdAssoc = assoc;
@@ -458,7 +467,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 								+ std::to_string(assoc[k_iAssocRangeStart])
 								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
 								+ "]");
-
+				
 				// set range pointer
 				pdRange = NULL;
 
@@ -522,7 +531,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			}
 
 			// set up this phase
-			m_pAssociationTravelTimes->addPhase(phs, pdRange, pdAssoc, file);
+			m_pAssociationTravelTimes->addPhase(phs, pdRange, pdAssoc, file, useForLocation, publishPhase);
 		}
 
 	} else {

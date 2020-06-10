@@ -99,7 +99,6 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 
 	// add traveltime to list
 	m_pTravelTimes[m_iNumTravelTimes] = trv;
-	m_iNumTravelTimes++;
 
 	// setup taper for phase weighting
 	if (weightRange != NULL) {
@@ -113,6 +112,8 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 		m_adMinimumAssociationValues[m_iNumTravelTimes] = assocRange[0];
 		m_adMaximumAssociationValues[m_iNumTravelTimes] = assocRange[1];
 	}
+
+	m_iNumTravelTimes++;
 
 	return (true);
 }
