@@ -1,6 +1,5 @@
 #include "TTT.h"
 #include <logger.h>
-#include <taper.h>
 #include <geo.h>
 #include <fstream>
 #include <string>
@@ -24,19 +23,12 @@ CTTT::CTTT(const CTTT &ttt) {
 
 	m_iNumTravelTimes = ttt.m_iNumTravelTimes;
 	m_geoTTOrigin = ttt.m_geoTTOrigin;
-	m_dWeight = ttt.m_dWeight;
 
 	for (int i = 0; i < ttt.m_iNumTravelTimes; i++) {
 		if (ttt.m_pTravelTimes[i] != NULL) {
 			m_pTravelTimes[i] = new CTravelTime(*ttt.m_pTravelTimes[i]);
 		} else {
 			m_pTravelTimes[i] = NULL;
-		}
-
-		if (ttt.m_pTapers[i] != NULL) {
-			m_pTapers[i] = new glass3::util::Taper(*ttt.m_pTapers[i]);
-		} else {
-			m_pTapers[i] = NULL;
 		}
 
 		m_adMinimumAssociationValues[i] = ttt.m_adMinimumAssociationValues[i];
@@ -48,21 +40,15 @@ CTTT::CTTT(const CTTT &ttt) {
 CTTT::~CTTT() {
 	for (int i = 0; i < m_iNumTravelTimes; i++) {
 		delete (m_pTravelTimes[i]);
-
-		if (m_pTapers[i] != NULL) {
-			delete (m_pTapers[i]);
-		}
 	}
 }
 
 void CTTT::clear() {
 	m_iNumTravelTimes = 0;
 	m_geoTTOrigin.clear();
-	m_dWeight = 0;
 
 	for (int i = 0; i < k_iMaximumNumberOfTravelTimes; i++) {
 		m_pTravelTimes[i] = NULL;
-		m_pTapers[i] = NULL;
 		m_adMinimumAssociationValues[i] = CTravelTime::k_dTravelTimeInvalid;
 		m_adMaximumAssociationValues[i] = CTravelTime::k_dTravelTimeInvalid;
 	}
@@ -82,7 +68,7 @@ void CTTT::writeToFiles(std::string outDir, double depth) {
 
 // ---------------------------------------------------------addPhase
 // Add phase to list to be calculated
-bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
+bool CTTT::addPhase(std::string phase, double *assocRange,
 					std::string file, bool useForLocation, bool publishPhase) {
 	// bounds check
 	if ((m_iNumTravelTimes + 1) > k_iMaximumNumberOfTravelTimes) {
@@ -100,13 +86,6 @@ bool CTTT::addPhase(std::string phase, double *weightRange, double *assocRange,
 	// add traveltime to list
 	m_pTravelTimes[m_iNumTravelTimes] = trv;
 
-	// setup taper for phase weighting
-	if (weightRange != NULL) {
-		m_pTapers[m_iNumTravelTimes] = new glass3::util::Taper(weightRange[0],
-																weightRange[1],
-																weightRange[2],
-																weightRange[3]);
-	}
 	// set up association range
 	if (assocRange != NULL) {
 		m_adMinimumAssociationValues[m_iNumTravelTimes] = assocRange[0];
@@ -146,20 +125,11 @@ double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
 			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
 
-			// use taper to compute weight if present
-			if (m_pTapers[i] != NULL) {
-				m_dWeight = m_pTapers[i]->calculateValue(
-						m_pTravelTimes[i]->m_dDelta);
-			} else {
-				m_dWeight = 0.0;
-			}
-
 			return (traveltime);
 		}
 	}
 
 	// no valid travel time
-	m_dWeight = 0.0;
 	m_sPhase = "?";
 	m_bUseForLocations = false;
 	m_bPublishable = false;
@@ -184,19 +154,12 @@ double CTTT::Td(double delta, std::string phase, double depth) {
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
 			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
 
-			// use taper to compute weight if present
-			if (m_pTapers[i] != NULL) {
-				m_dWeight = m_pTapers[i]->calculateValue(delta);
-			} else {
-				m_dWeight = 0.0;
-			}
 			return (traveltime);
 		}
 	}
 
 	// no valid travel time
 	m_sPhase = "?";
-	m_dWeight = 0.0;
 	m_bUseForLocations = false;
 	m_bPublishable = false;
 	return (CTravelTime::k_dTravelTimeInvalid);
@@ -218,19 +181,12 @@ double CTTT::T(double delta, std::string phase) {
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
 			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
 
-			// use taper to compute weight if present
-			if (m_pTapers[i] != NULL) {
-				m_dWeight = m_pTapers[i]->calculateValue(delta);
-			} else {
-				m_dWeight = 0.0;
-			}
 			return (traveltime);
 		}
 	}
 
 	// no valid travel time
 	m_sPhase = "?";
-	m_dWeight = 0.0;
 	m_bUseForLocations = false;
 	m_bPublishable = false;
 	return (CTravelTime::k_dTravelTimeInvalid);
@@ -279,7 +235,6 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 	std::string bestPhase;
 	bool useForLocations;
 	bool publishable;
-	double weight;
 	double minResidual = k_dTTTooLargeToBeValid;
 
 	// for each phase
@@ -328,20 +283,12 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 			bestTraveltime = traveltime;
 			useForLocations = aTrv->m_bUseForLocations;
 			publishable = aTrv->m_bPublishable;
-
-			// use taper to compute weight if present
-			if (m_pTapers[i] != NULL) {
-				weight = m_pTapers[i]->calculateValue(aTrv->m_dDelta);
-			} else {
-				weight = 0.0;
-			}
 		}
 	}
 
 	// check to see if minimum residual is valid
 	if (minResidual < k_dTTTooLargeToBeValid) {
 		m_sPhase = bestPhase;
-		m_dWeight = weight;
 		m_bUseForLocations = useForLocations;
 		m_bPublishable = publishable;
 
@@ -350,7 +297,6 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 
 	// no valid travel time
 	m_sPhase = "?";
-	m_dWeight = 0.0;
 	m_bUseForLocations = false;
 	m_bPublishable = false;
 	return (CTravelTime::k_dTravelTimeInvalid);

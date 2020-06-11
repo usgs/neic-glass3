@@ -30,7 +30,7 @@
   "AssociationPhases": [
       {
           "PhaseName": "P",
-          "Range": [ 0, 0, 130, 180 ],
+          "Assoc": [ 0, 130 ],
           "TravFile": "./global_example/P.trv",
           "UseForLocation": true,
           "PublishPhase": true
@@ -44,28 +44,28 @@
       },
       {
           "PhaseName": "PcP",
-          "Range": [ 0 0, 45, 50 ],
+          "Assoc": [ 0, 45 ],
           "TravFile": "./global_example/PcP.trv",
           "UseForLocation": true,
           "PublishPhase": true
       },
       {
           "PhaseName": "PP",
-          "Range": [ 80, 85, 175, 180 ],
+          "Assoc": [ 80, 175 ],
           "TravFile": "./global_example/PP.trv",
           "UseForLocation": true,
           "PublishPhase": true
       },
       {
           "PhaseName": "PKPab",
-          "Range": [ 130, 132, 178, 180 ],
+          "Assoc": [ 130, 178 ],
           "TravFile": "./global_example/PKPab.trv",
           "UseForLocation": true,
           "PublishPhase": true
       },
       {
           "PhaseName": "PKPdf",
-          "Range": [ 100, 114, 176, 180 ],
+          "Assoc": [ 100, 176 ],
           "TravFile": "./global_example/PKPdf.trv",
           "UseForLocation": true,
           "PublishPhase": true

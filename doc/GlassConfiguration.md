@@ -49,7 +49,7 @@ An example `glass_init.d` configuration file:
   "AssociationPhases": [
       {
           "PhaseName": "P",
-          "Range": [ 0, 0, 120, 180 ],
+          "Assoc": [ 0, 100 ],
           "TravFile": "./P.trv"
       },
       {
@@ -59,22 +59,22 @@ An example `glass_init.d` configuration file:
       },
       {
           "PhaseName": "PcP",
-          "Range": [ 0, 0, 45 , 50],
+          "Assoc": [ 0, 50],
           "TravFile": "./PcP.trv"
       },
       {
           "PhaseName": "PP",
-          "Range": [ 90, 95, 175, 180 ],
+          "Assoc": [ 90, 180 ],
           "TravFile": "./PP.trv"
       },
       {
           "PhaseName": "PKPab",
-          "Range": [ 130, 132, 178, 180 ],
+          "Assoc": [ 130, 180 ],
           "TravFile": "./PKPab.trv"
       },
       {
           "PhaseName": "PKPdf",
-          "Range": [ 100, 114, 176, 180 ],
+          "Assoc": [ 100, 180 ],
           "TravFile": "./PKPdf.trv",
           "UseForLocation": true,
           "PublishPhase": true
@@ -207,10 +207,7 @@ nucleation phase.
 ### Association Phases
 A list of phases to use for association.
 * **PhaseName** - The name of the association phase
-* **Assoc** - The association range [Minimum, Maximum] for this phase.  Mutually
-exclusive with **Range**
-* **Range** - The association taper [Start, RampUpEnd, RampDownStart, End] for
-this association phase.  Mutually exclusive with **Assoc**
+* **Assoc** - The association distance range [Minimum, Maximum] for this phase. 
 * **TravFile** - The path to the travel-time lookup file for the association
 phase.
 * **UseForLocation** - An optional flag indicating whether this association phase 

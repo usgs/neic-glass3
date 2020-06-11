@@ -383,12 +383,6 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			// get this phase object
 			json::Object obj = val.ToObject();
 
-			double range[k_nRangeArraySize];  // NOLINT
-			for (int i = 0; i < k_nRangeArraySize; i++) {
-				range[i] = 0.0;
-			}
-			double *pdRange = NULL;
-			
 			double assoc[k_nAssocArraySize];  // NOLINT
 			for (int i = 0; i < k_nAssocArraySize; i++) {
 				assoc[i] = 0.0;
@@ -405,48 +399,8 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 					"info",
 					"CGlass::initialize: Using association phase: " + phs);
 
-			// get the Range if present, otherwise look for an Assoc
-			if (obj.HasKey("Range")
-					&& (obj["Range"].GetType() == json::ValueType::ArrayVal)) {
-				// get the range array
-				json::Array arr = obj["Range"].ToArray();
-
-				// make sure the range array has the correct number of entries
-				if (arr.size() != k_nRangeArraySize) {
-					continue;
-				}
-
-				// copy out the range values
-				for (int i = 0; i < k_nRangeArraySize; i++) {
-					range[i] = arr[i].ToDouble();
-				}
-
-				glass3::util::Logger::log(
-						"info",
-						"CGlass::initialize: Using association Range = ["
-								+ std::to_string(range[k_iTaperUpStart]) + ","
-								+ std::to_string(range[k_iFullStart]) + ","
-								+ std::to_string(range[k_iFullEnd]) + ","
-								+ std::to_string(range[k_iTaperDownEnd]) + "]");
-
-				// set range pointer
-				pdRange = range;
-
-				// populate assoc from range
-				assoc[0] = range[0];
-				assoc[1] = range[3];
-
-				glass3::util::Logger::log(
-                                                "info",
-                                                "CGlass::initialize: Using association Assoc = ["
-                                                                + std::to_string(assoc[k_iAssocRangeStart])
-                                                                + "," + std::to_string(assoc[k_iAssocRangeEnd])
-                                                                + "]");
-
-				// set assoc pointer
-				pdAssoc = assoc;
-
-			} else if (obj.HasKey("Assoc")
+			// Look for an Assoc
+			if (obj.HasKey("Assoc")
 					&& (obj["Assoc"].GetType() == json::ValueType::ArrayVal)) {
 				// get the assoc array
 				json::Array arr = obj["Assoc"].ToArray();
@@ -468,15 +422,12 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
 								+ "]");
 				
-				// set range pointer
-				pdRange = NULL;
-
 				// set assoc pointer
 				pdAssoc = assoc;
 			} else {
 				glass3::util::Logger::log(
 						"error",
-						"CGlass::initialize: Missing required Range or Assoc key.");
+						"CGlass::initialize: Missing required Assoc key.");
 				continue;
 			}
 
@@ -531,7 +482,7 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			}
 
 			// set up this phase
-			m_pAssociationTravelTimes->addPhase(phs, pdRange, pdAssoc, file, useForLocation, publishPhase);
+			m_pAssociationTravelTimes->addPhase(phs, pdAssoc, file, useForLocation, publishPhase);
 		}
 
 	} else {
