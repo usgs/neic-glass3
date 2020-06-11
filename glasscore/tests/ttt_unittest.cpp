@@ -46,9 +46,6 @@ TEST(TTTTest, Construction) {
 	// m_dGeocentricRadius
 	ASSERT_EQ(0, ttt.m_geoTTOrigin.m_dGeocentricRadius)<<
 	"m_dGeocentricRadius Check";
-
-	// dWeight
-	ASSERT_EQ(0, ttt.m_dWeight)<< "dWeight Check";
 }
 
 // tests to see if phases can be added to the ttt
