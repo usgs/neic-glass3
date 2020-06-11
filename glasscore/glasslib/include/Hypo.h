@@ -408,10 +408,14 @@ class CHypo {
 	 * Calculates the residual of the given supporting data to this hypo
 	 *
 	 * \param pick - The pick to calculate a residual for
+	 * \param useForLocations - An optional  pointer to a boolean flag to be 
+	 * returned indicating whether this pick can be used in locations, default
+	 * is null.
 	 * \return Returns a double value containing the residual of the given
 	 * pick
 	 */
-	double calculateResidual(std::shared_ptr<CPick> pick);
+	double calculateResidual(std::shared_ptr<CPick> pick,
+						bool * useForLocations = NULL);
 
 	/**
 	 * \brief Check to see if correlation could be associated
@@ -869,6 +873,14 @@ class CHypo {
 	 */
 	double getGap() const;
 
+        /**
+	 * \brief Gets the teleseismic phase count as of the last call of 
+	 * calculateStatistics
+	 * \return Returns an integer value containing the teleseismic phase count
+	 */
+
+	int getTeleseismicPhaseCount() const;
+
 	/**
 	 * \brief Gets the median data distance as of the last call of
 	 * calculateStatistics()
@@ -1290,6 +1302,13 @@ class CHypo {
 	 * degrees as of the last call of calculateStatistics
 	 */
 	std::atomic<double> m_dGap;
+
+	/**
+	 * \brief An integer value containing the count of phases this hypo's has
+ 	 * that are beyond teleseismic distances as determined by the limit from
+ 	 * CGlass as of the last call of calculateStatistics
+ 	 */
+        std::atomic<int> m_iTeleseismicPhaseCount;
 
 	/**
 	 * \brief A double value containing this hypo's distance standard deviation

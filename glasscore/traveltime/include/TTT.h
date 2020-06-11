@@ -8,7 +8,6 @@
 #define TTT_H
 
 #include <geo.h>
-#include <taper.h>
 #include <string>
 #include <mutex>
 #include "TravelTime.h"
@@ -69,17 +68,20 @@ class CTTT {
 	 * pRay and the provided phase name, and adds the object to the
 	 * pTrv list.
 	 *
-	 * \param phase - A std::std::string containing the phase name to use
-	 * \param weightRange - An array of 4 double values defining the phase
-	 * taper weighting, mutually exclusive with assocRange
+	 * \param phase - A std::string containing the phase name to use
 	 * \param assocRange - An array of 2 double values containing the
 	 * association range, mutually exclusive with weightRange
-	 * \param file - A std::std::string representing the file to load, default
+	 * \param file - A std::string representing the file to load, default
 	 * is ""
+	 * \param useForLocation - A boolen flag indicating whether this phase should 
+	 * be used in generating locations, default is true
+	 * \param publishPhase - A boolen flag indicating whether this phase should 
+	 * be published in output messages, default is true
 	 * \return Returns true if successful, false otherwise
 	 */
-	bool addPhase(std::string phase, double *weightRange = NULL,
-					double *assocRange = NULL, std::string file = "");
+	bool addPhase(std::string phase,
+					double *assocRange = NULL, std::string file = "",
+					bool useForLocation = true, bool publishPhase = true);
 
 	/**
 	 * \brief Set hypocenter for calculations
@@ -192,10 +194,17 @@ class CTTT {
 	std::string m_sPhase;
 
 	/**
-	 * \brief A temporary double variable containing the weight determined
-	 * during the last call to T()
+	 * \brief A temporary boolean flag indicating whether this CTravelTime should 
+	 * be used in generating locations
 	 */
-	double m_dWeight;
+	bool m_bUseForLocations;
+
+	/**
+	 * \brief A temporary boolean flag indicating whether this CTravelTime should 
+	 * be published in output messages
+	 */
+	bool m_bPublishable;
+
 
 	/**
 	 * \brief glass3::util::Geo object containing current
@@ -215,18 +224,12 @@ class CTTT {
 	CTravelTime * m_pTravelTimes[k_iMaximumNumberOfTravelTimes];
 
 	/**
-	 * \brief An array of pointers taper objects that determine phase
-	 * weights as a function of distance
-	 */
-	glass3::util::Taper * m_pTapers[k_iMaximumNumberOfTravelTimes];
-
-	/**
-	 * \brief An array of doubles containing the minimum values for association
+	 * \brief An array of doubles containing the minimum distance values for association
 	 */
 	double m_adMinimumAssociationValues[k_iMaximumNumberOfTravelTimes];  // NOLINT
 
 	/**
-	 * \brief An array of doubles containing the maximum values for association
+	 * \brief An array of doubles containing the maximum distance values for association
 	 */
 	double m_adMaximumAssociationValues[k_iMaximumNumberOfTravelTimes];  // NOLINT
 };

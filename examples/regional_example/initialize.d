@@ -28,12 +28,12 @@
   "AssociationPhases": [
       {
           "PhaseName": "P",
-          "Range": [ 0., 0., 120., 180. ],
+          "Assoc": [ 0., 120. ],
           "TravFile": "./regional_example/P.trv"
       },
       {
           "PhaseName": "S",
-          "Range": [ 0., 0., 120., 180. ],
+          "Assoc": [ 0., 120. ],
           "TravFile": "./regional_example/S.trv"
       }
   ]

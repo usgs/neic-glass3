@@ -41,6 +41,9 @@ std::atomic<int> CGlass::m_iNumStationsPerNode;
 std::atomic<double> CGlass::m_dNucleationStackThreshold;
 std::atomic<double> CGlass::m_dAssociationSDCutoff;
 std::atomic<double> CGlass::m_dPruningSDCutoff;
+std::atomic<double> CGlass::m_dNonLocatingPhaseCutoffFactor;
+std::atomic<double> CGlass::m_dTeleseismicDistanceLimit;
+std::atomic<int> CGlass::m_iTeleseismicPhaseCountThreshold;
 std::atomic<double> CGlass::m_dPickAffinityExpFactor;
 std::atomic<double> CGlass::m_dDistanceCutoffFactor;
 std::atomic<double> CGlass::m_dDistanceCutoffRatio;
@@ -225,6 +228,9 @@ void CGlass::clear() {
 	m_dNucleationStackThreshold = 2.5;
 	m_dAssociationSDCutoff = 3.0;
 	m_dPruningSDCutoff = 3.0;
+	m_dNonLocatingPhaseCutoffFactor = 3.0;
+	m_dTeleseismicDistanceLimit = 30.0;
+	m_iTeleseismicPhaseCountThreshold = 40;
 	m_dPickAffinityExpFactor = 2.5;
 	m_dDistanceCutoffFactor = 4.0;
 	m_dDistanceCutoffRatio = 0.4;
@@ -381,11 +387,15 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			// get this phase object
 			json::Object obj = val.ToObject();
 
-			double range[k_nRangeArraySize];  // NOLINT
-			double *pdRange = NULL;
 			double assoc[k_nAssocArraySize];  // NOLINT
+			for (int i = 0; i < k_nAssocArraySize; i++) {
+				assoc[i] = 0.0;
+			}
 			double * pdAssoc = NULL;
+
 			std::string file = "";
+			bool useForLocation = true;
+			bool publishPhase = true;
 
 			// get the phase name
 			std::string phs = obj["PhaseName"].ToString();
@@ -393,47 +403,8 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 					"info",
 					"CGlass::initialize: Using association phase: " + phs);
 
-			// get the Range if present, otherwise look for an Assoc
-			if (obj.HasKey("Range")
-					&& (obj["Range"].GetType() == json::ValueType::ArrayVal)) {
-				// get the range array
-				json::Array arr = obj["Range"].ToArray();
-
-				// make sure the range array has the correct number of entries
-				if (arr.size() != k_nRangeArraySize) {
-					continue;
-				}
-
-				// copy out the range values
-				for (int i = 0; i < k_nRangeArraySize; i++) {
-					range[i] = arr[i].ToDouble();
-				}
-
-				glass3::util::Logger::log(
-						"info",
-						"CGlass::initialize: Using association Range = ["
-								+ std::to_string(range[k_iTaperUpStart]) + ","
-								+ std::to_string(range[k_iFullStart]) + ","
-								+ std::to_string(range[k_iFullEnd]) + ","
-								+ std::to_string(range[k_iTaperDownEnd]) + "]");
-				glass3::util::Logger::log(
-						"info",
-						"CGlass::initialize: Using association Assoc = ["
-								+ std::to_string(assoc[k_iAssocRangeStart])
-								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
-								+ "]");
-
-				// set range pointer
-				pdRange = range;
-
-				// populate assoc from range
-				assoc[0] = range[0];
-				assoc[1] = range[3];
-
-				// set assoc pointer
-				pdAssoc = assoc;
-
-			} else if (obj.HasKey("Assoc")
+			// Look for an Assoc
+			if (obj.HasKey("Assoc")
 					&& (obj["Assoc"].GetType() == json::ValueType::ArrayVal)) {
 				// get the assoc array
 				json::Array arr = obj["Assoc"].ToArray();
@@ -451,19 +422,16 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 				glass3::util::Logger::log(
 						"info",
 						"CGlass::initialize: Using association Assoc = ["
-								+ std::to_string(assoc[k_iAssocRangeStart])
-								+ "," + std::to_string(assoc[k_iAssocRangeEnd])
-								+ "]");
-
-				// set range pointer
-				pdRange = NULL;
+							+ std::to_string(assoc[k_iAssocRangeStart])
+							+ "," + std::to_string(assoc[k_iAssocRangeEnd])
+							+ "]");
 
 				// set assoc pointer
 				pdAssoc = assoc;
 			} else {
 				glass3::util::Logger::log(
 						"error",
-						"CGlass::initialize: Missing required Range or Assoc key.");
+						"CGlass::initialize: Missing required Assoc key.");
 				continue;
 			}
 
@@ -483,8 +451,43 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 								"association phase: " + phs);
 			}
 
+			// get the use for location key present
+			if (obj.HasKey("UseForLocation")
+					&& (obj["UseForLocation"].GetType() == json::ValueType::BoolVal)) {
+				useForLocation = obj["UseForLocation"].ToBool();
+
+				glass3::util::Logger::log(
+						"info",
+						"CGlass::initialize: Using useForLocation: "
+								+ std::to_string(useForLocation) + " for phase: "+ phs);
+			} else {
+				useForLocation = true;
+				glass3::util::Logger::log(
+						"info",
+						"CGlass::initialize: Using default useForLocation: "
+								+ std::to_string(useForLocation) + " for phase: "+ phs);
+			}
+
+			// get the use for publish phase key present
+			if (obj.HasKey("PublishPhase")
+					&& (obj["PublishPhase"].GetType() == json::ValueType::BoolVal)) {
+				publishPhase = obj["PublishPhase"].ToBool();
+
+				glass3::util::Logger::log(
+						"info",
+						"CGlass::initialize: Using publishPhase: "
+								+ std::to_string(publishPhase) + " for phase: " + phs);
+			} else {
+				publishPhase = true;
+				glass3::util::Logger::log(
+						"info",
+						"CGlass::initialize: Using default publishPhase: "
+								+ std::to_string(publishPhase) + " for phase: "+ phs);
+			}
+
 			// set up this phase
-			m_pAssociationTravelTimes->addPhase(phs, pdRange, pdAssoc, file);
+			m_pAssociationTravelTimes->addPhase(phs, pdAssoc, file,
+				useForLocation, publishPhase);
 		}
 
 	} else {
@@ -648,6 +651,60 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 					"info",
 					"CGlass::initialize: Using default PruningStandardDeviationCutoff: "
 							+ std::to_string(m_dPruningSDCutoff));
+		}
+
+		// NonLocatingPhaseCutoffFactor
+		if ((params.HasKey("NonLocatingPhaseCutoffFactor"))
+				&& (params["NonLocatingPhaseCutoffFactor"].GetType()
+					== json::ValueType::DoubleVal)) {
+			m_dNonLocatingPhaseCutoffFactor = params["NonLocatingPhaseCutoffFactor"]
+					.ToDouble();
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using NonLocatingPhaseCutoffFactor: "
+						+ std::to_string(m_dNonLocatingPhaseCutoffFactor));
+		} else {
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default NonLocatingPhaseCutoffFactor: "
+						+ std::to_string(m_dNonLocatingPhaseCutoffFactor));
+		}
+
+		// TeleseismicDistanceLimit
+		if ((params.HasKey("TeleseismicDistanceLimit"))
+                                && (params["TeleseismicDistanceLimit"].GetType()
+					== json::ValueType::DoubleVal)) {
+			m_dTeleseismicDistanceLimit = params["TeleseismicDistanceLimit"]
+					.ToDouble();
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using TeleseismicDistanceLimit: "
+						+ std::to_string(m_dTeleseismicDistanceLimit));
+		} else {
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default TeleseismicDistanceLimit: "
+						+ std::to_string(m_dTeleseismicDistanceLimit));
+		}
+
+		// TeleseismicPhaseCountThreshold
+		if ((params.HasKey("TeleseismicPhaseCountThreshold"))
+				&& (params["TeleseismicPhaseCountThreshold"].GetType()
+					== json::ValueType::IntVal)) {
+			m_iTeleseismicPhaseCountThreshold = params["TeleseismicPhaseCountThreshold"]
+					.ToInt();
+
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using TeleseismicPhaseCountThreshold: "
+						+ std::to_string(m_iTeleseismicPhaseCountThreshold));
+		} else {
+			glass3::util::Logger::log(
+					"info",
+					"CGlass::initialize: Using default TeleseismicPhaseCountThreshold: "
+						+ std::to_string(m_iTeleseismicPhaseCountThreshold));
 		}
 
 		// ExpAffinity
@@ -1644,6 +1701,21 @@ double CGlass::getAssociationSDCutoff() {
 // ------------------------------------------------getPruningSDCutoff
 double CGlass::getPruningSDCutoff() {
 	return (m_dPruningSDCutoff);
+}
+
+// ---------------------------------------------getNonLocatingPhaseCutoffFactor
+double CGlass::getNonLocatingPhaseCutoffFactor() {
+	return (m_dNonLocatingPhaseCutoffFactor);
+}
+
+// ---------------------------------------------getTeleseismicDistanceLimit
+double CGlass::getTeleseismicDistanceLimit() {
+	return (m_dTeleseismicDistanceLimit);
+}
+
+// ---------------------------------------------:getTeleseismicPhaseCountThreshold
+int CGlass::getTeleseismicPhaseCountThreshold() {
+	return (m_iTeleseismicPhaseCountThreshold);
 }
 
 // ------------------------------------------------getTestLocator

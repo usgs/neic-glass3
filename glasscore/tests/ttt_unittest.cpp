@@ -46,9 +46,6 @@ TEST(TTTTest, Construction) {
 	// m_dGeocentricRadius
 	ASSERT_EQ(0, ttt.m_geoTTOrigin.m_dGeocentricRadius)<<
 	"m_dGeocentricRadius Check";
-
-	// dWeight
-	ASSERT_EQ(0, ttt.m_dWeight)<< "dWeight Check";
 }
 
 // tests to see if phases can be added to the ttt
@@ -66,19 +63,13 @@ TEST(TTTTest, AddPhase) {
 	// construct a traveltime
 	traveltime::CTTT ttt;
 
-	// set ranges
-	double * weightRange = new double[4];
-	weightRange[0] = 0;
-	weightRange[1] = 0;
-	weightRange[2] = 120;
-	weightRange[3] = 180;
 
 	double * assocRange = new double[2];
 	assocRange[0] = 10;
 	assocRange[1] = 90;
 
 	// add first phase
-	ttt.addPhase(phase1name, weightRange, NULL, phase1file);
+	ttt.addPhase(phase1name, NULL, phase1file, true, true);
 
 	// nTrv
 	ASSERT_EQ(1, ttt.m_iNumTravelTimes)<< "nTrv Check";
@@ -89,7 +80,7 @@ TEST(TTTTest, AddPhase) {
 					phase1name.c_str());
 
 	// add second phase
-	ttt.addPhase(phase2name, NULL, assocRange, phase2file);
+	ttt.addPhase(phase2name, assocRange, phase2file, true, true);
 
 	// nTrv
 	ASSERT_EQ(2, ttt.m_iNumTravelTimes)<< "nTrv Check";
@@ -99,7 +90,6 @@ TEST(TTTTest, AddPhase) {
 	ttt.m_pTravelTimes[ttt.m_iNumTravelTimes - 1]->m_sPhase.c_str(),
 					phase2name.c_str());
 
-	delete[] (weightRange);
 	delete[] (assocRange);
 }
 
@@ -141,20 +131,13 @@ TEST(TTTTest, Copy) {
 	// construct a traveltime
 	traveltime::CTTT ttt2;
 
-	// set ranges
-	double * weightRange = new double[4];
-	weightRange[0] = 0;
-	weightRange[1] = 0;
-	weightRange[2] = 120;
-	weightRange[3] = 180;
-
 	double * assocRange = new double[2];
 	assocRange[0] = 10;
 	assocRange[1] = 90;
 
 	// add phases
-	ttt2.addPhase(phase1name, weightRange, NULL, phase1file);
-	ttt2.addPhase(phase2name, NULL, assocRange, phase2file);
+	ttt2.addPhase(phase1name, NULL, phase1file, true, true);
+	ttt2.addPhase(phase2name, assocRange, phase2file, true, true);
 
 	// set origin
 	ttt2.setTTOrigin(LATITUDE, LONGITUDE, DEPTH);
@@ -186,7 +169,6 @@ TEST(TTTTest, Copy) {
 	ASSERT_NEAR(GEODEPTH, ttt.m_geoTTOrigin.m_dGeocentricRadius, 0.01)<<
 	"m_dGeocentricRadius Check";
 
-	delete[] (weightRange);
 	delete[] (assocRange);
 }
 
@@ -205,20 +187,13 @@ TEST(TTTTest, TTests) {
 	// construct a traveltime
 	traveltime::CTTT ttt;
 
-	// set ranges
-	double * weightRange = new double[4];
-	weightRange[0] = 0;
-	weightRange[1] = 0;
-	weightRange[2] = 120;
-	weightRange[3] = 180;
-
 	double * assocRange = new double[2];
 	assocRange[0] = 10;
 	assocRange[1] = 90;
 
 	// add phases
-	ttt.addPhase(phase1name, weightRange, NULL, phase1file);
-	ttt.addPhase(phase2name, NULL, assocRange, phase2file);
+	ttt.addPhase(phase1name, NULL, phase1file, true, true);
+	ttt.addPhase(phase2name, assocRange, phase2file, true, true);
 
 	// set origin
 	ttt.setTTOrigin(LATITUDE, LONGITUDE, DEPTH);
@@ -241,7 +216,6 @@ TEST(TTTTest, TTests) {
 	ASSERT_NEAR(TIME3, ttt.Td(DISTANCE, phase1name, DEPTH), 0.001)<< "Td(delta, phase1, depth) Check";  // NOLINT
 	ASSERT_NEAR(TIME4, ttt.Td(DISTANCE, phase2name, DEPTH), 0.001)<< "Td(delta, phase2, depth) Check";  // NOLINT
 
-	delete[] (weightRange);
 	delete[] (assocRange);
 }
 
@@ -260,20 +234,13 @@ TEST(TTTTest, TFailTests) {
 	// construct a traveltime
 	traveltime::CTTT ttt;
 
-	// set ranges
-	double * weightRange = new double[4];
-	weightRange[0] = 0;
-	weightRange[1] = 0;
-	weightRange[2] = 120;
-	weightRange[3] = 180;
-
 	double * assocRange = new double[2];
-	assocRange[0] = 10;
+        assocRange[0] = 10;
 	assocRange[1] = 90;
 
 	// add phases
-	ttt.addPhase(phase1name, weightRange, NULL, phase1file);
-	ttt.addPhase(phase2name, NULL, assocRange, phase2file);
+	ttt.addPhase(phase1name, NULL, phase1file, true, true);
+	ttt.addPhase(phase2name, assocRange, phase2file, true, true);
 
 	// set origin
 	ttt.setTTOrigin(LATITUDE, LONGITUDE, BADDEPTH);
@@ -296,7 +263,6 @@ TEST(TTTTest, TFailTests) {
 	ASSERT_NEAR(BADTIME, ttt.Td(BADDISTANCE, phase1name, BADDEPTH), 0.001)<< "Td(delta, phase1, depth) Check";  // NOLINT
 	ASSERT_NEAR(BADTIME, ttt.Td(BADDISTANCE, phase2name, BADDEPTH), 0.001)<< "Td(delta, phase2, depth) Check";  // NOLINT
 
-	delete[] (weightRange);
 	delete[] (assocRange);
 }
 
