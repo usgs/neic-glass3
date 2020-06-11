@@ -42,6 +42,8 @@ std::atomic<double> CGlass::m_dNucleationStackThreshold;
 std::atomic<double> CGlass::m_dAssociationSDCutoff;
 std::atomic<double> CGlass::m_dPruningSDCutoff;
 std::atomic<double> CGlass::m_dNonLocatingPhaseCutoffFactor;
+std::atomic<double> CGlass::m_dTeleseismicDistanceLimit;
+std::atomic<int> CGlass::m_iTeleseismicPhaseCountThreshold;
 std::atomic<double> CGlass::m_dPickAffinityExpFactor;
 std::atomic<double> CGlass::m_dDistanceCutoffFactor;
 std::atomic<double> CGlass::m_dDistanceCutoffRatio;
@@ -227,6 +229,8 @@ void CGlass::clear() {
 	m_dAssociationSDCutoff = 3.0;
 	m_dPruningSDCutoff = 3.0;
 	m_dNonLocatingPhaseCutoffFactor = 3.0;
+	m_dTeleseismicDistanceLimit = 30.0;
+	m_iTeleseismicPhaseCountThreshold = 40;
 	m_dPickAffinityExpFactor = 2.5;
 	m_dDistanceCutoffFactor = 4.0;
 	m_dDistanceCutoffRatio = 0.4;
@@ -665,6 +669,42 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 					"CGlass::initialize: Using default NonLocatingPhaseCutoffFactor: "
 							+ std::to_string(m_dNonLocatingPhaseCutoffFactor));
 		}
+
+		// TeleseismicDistanceLimit
+                if ((params.HasKey("TeleseismicDistanceLimit"))
+                                && (params["TeleseismicDistanceLimit"].GetType()
+                                                == json::ValueType::DoubleVal)) {
+                        m_dTeleseismicDistanceLimit = params["TeleseismicDistanceLimit"]
+                                        .ToDouble();
+
+                        glass3::util::Logger::log(
+                                        "info",
+                                        "CGlass::initialize: Using TeleseismicDistanceLimit: "
+                                                        + std::to_string(m_dTeleseismicDistanceLimit));
+                } else {
+                        glass3::util::Logger::log(
+                                        "info",
+                                        "CGlass::initialize: Using default TeleseismicDistanceLimit: "
+                                                        + std::to_string(m_dTeleseismicDistanceLimit));
+                }
+
+		// TeleseismicPhaseCountThreshold
+                if ((params.HasKey("TeleseismicPhaseCountThreshold"))
+                                && (params["TeleseismicPhaseCountThreshold"].GetType()
+                                                == json::ValueType::IntVal)) {
+                        m_iTeleseismicPhaseCountThreshold = params["TeleseismicPhaseCountThreshold"]
+                                        .ToInt();
+
+                        glass3::util::Logger::log(
+                                        "info",
+                                        "CGlass::initialize: Using TeleseismicPhaseCountThreshold: "
+                                                        + std::to_string(m_iTeleseismicPhaseCountThreshold));
+                } else {
+                        glass3::util::Logger::log(
+                                        "info",
+                                        "CGlass::initialize: Using default TeleseismicPhaseCountThreshold: "
+                                                        + std::to_string(m_iTeleseismicPhaseCountThreshold));
+                }
 
 		// ExpAffinity
 		if ((params.HasKey("PickAffinityExponentialFactor"))
@@ -1665,6 +1705,16 @@ double CGlass::getPruningSDCutoff() {
 // ---------------------------------------------getNonLocatingPhaseCutoffFactor
 double CGlass::getNonLocatingPhaseCutoffFactor() {
 	return (m_dNonLocatingPhaseCutoffFactor);
+}
+
+// ---------------------------------------------getTeleseismicDistanceLimit
+double CGlass::getTeleseismicDistanceLimit() {
+	return (m_dTeleseismicDistanceLimit);
+}
+
+// ---------------------------------------------:getTeleseismicPhaseCountThreshold
+int CGlass::getTeleseismicPhaseCountThreshold() {
+	return (m_iTeleseismicPhaseCountThreshold);
 }
 
 // ------------------------------------------------getTestLocator

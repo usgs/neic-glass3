@@ -396,12 +396,12 @@ double CHypo::calculateAffinity(std::shared_ptr<CPick> pck) {
 	}
 
 	// get pick residual
-	double tRes = calculateResidual(pck);
+	// double tRes = calculateResidual(pck);
 
 	// get absolute residual
-	if (tRes < 0.0) {
-		tRes = -tRes;
-	}
+	// if (tRes < 0.0) {
+	// 	tRes = -tRes;
+	// }
 
 	// WLY - I removed this because it was leading to small
 	// events trading picks and canceling....
@@ -1043,7 +1043,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 			/ glass3::util::GlassMath::k_DegreesToRadians;
 
 	// check if distance is beyond cutoff
-	if (siteDistance > m_dAssociationDistanceCutoff) {
+	if (siteDistance > m_dAssociationDistanceCutoff) { 
 		// it is, don't associated
 		return (false);
 	}
@@ -1067,10 +1067,12 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		}
 	}
 
-	bool useForLocations = true;
-	double tRes = calculateResidual(pick, &useForLocations);
+	// get residula, get useForLocations
+        bool useForLocations = true;
+        double tRes = calculateResidual(pick, &useForLocations);
 
-	if (std::isnan(tRes) == true) {
+        // give up if there's no valid residual
+ 	if (std::isnan(tRes) == true) {
 		return (false);
 	}
 
@@ -1085,11 +1087,27 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 
 	// char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
-	// if this phase is not used for locations, allow a much winder
-	// cutoff range
+	// figure out the association cutoff
+	// start off with the default cutoff
 	double cutoff = sdassoc;
+	
+	// is this phase used for locations
 	if (useForLocations == false) {
-		cutoff = sdassoc * CGlass::getNonLocatingPhaseCutoffFactor();
+		// does this event have enough teleseismic data
+		if (m_iTeleseismicPhaseCount > CGlass::getTeleseismicPhaseCountThreshold()) {
+			// if this phase is not used for locations, and if this hypo has
+			// teleseismic data, allow a much wider cutoff range so we sweep 
+			// up this phase so it doesn't cause trouble
+			cutoff = sdassoc * CGlass::getNonLocatingPhaseCutoffFactor();
+		} else {
+			// If this phase is not used for locations and if this hypo does
+			// not have teleseismic data, do not associate this phase at all.
+			// NOTE: if we ever have a non-teleseismic phase that is not used
+			// for locations, this will cause issues some sort of way to 
+			// keep track of whether a phase is teleseismic will need to 
+			// be added to traveltime
+			return (false);
+		}
 	}
 
 	// check if pick standard deviation is greater than cutoff
@@ -1374,6 +1392,7 @@ void CHypo::clear() {
 	m_dMedianDistance = 0;
 	m_dMinDistance = 0;
 	m_dGap = 0;
+	m_iTeleseismicPhaseCount = 0;
 	m_dDistanceSD = 0;
 	m_dWebResolution = 0;
 
@@ -1805,6 +1824,11 @@ double CHypo::getGap() const {
 	return (m_dGap);
 }
 
+// ----------------------------------------------------getTeleseismicPhaseCount
+int CHypo::getTeleseismicPhaseCount() const {
+	return (m_iTeleseismicPhaseCount);
+} 
+
 // ------------------------------------------------------------getGeo
 glass3::util::Geo CHypo::getGeo() const {
 	std::lock_guard < std::recursive_mutex > hypoGuard(m_HypoMutex);
@@ -2229,6 +2253,19 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		double tres = tobs - tcal;
 		// should this be changed?
 		double sig = glass3::util::GlassMath::sig(tres, 1.0);
+		
+		double dist = geo.delta(&site->getGeo())
+                                        / glass3::util::GlassMath::k_DegreesToRadians;
+			
+		glass3::util::Logger::log(
+                                "debug",
+                                "CHypo::generateHypoMessage Checking pick: " + 
+				m_pTravelTimeTables->m_sPhase + "; travtime: " + 
+				std::to_string(tobs) +
+				"; distance: " + std::to_string(dist) + 
+				"; residual: " + std::to_string(tres) +
+				"; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
+
 
 		// check if we're allowed to publish this pick
 		if (m_pTravelTimeTables->m_bPublishable == false) {
@@ -3025,6 +3062,7 @@ void CHypo::calculateStatistics() {
 		m_dMedianDistance = 0.0;
 		m_dMinDistance = 0.0;
 		m_dAssociationDistanceCutoff = 0.0;
+		m_iTeleseismicPhaseCount = 0;
 		m_dGap = 360.0;
 		return;
 	}
@@ -3038,6 +3076,7 @@ void CHypo::calculateStatistics() {
 	// pick distances and azimuths
 	std::vector<double> dis;
 	std::vector<double> azm;
+	m_iTeleseismicPhaseCount = 0;
 	for (auto pick : m_vPickData) {
 		// get the site
 		std::shared_ptr<CSite> site = pick->getSite();
@@ -3045,6 +3084,11 @@ void CHypo::calculateStatistics() {
 		// compute the distance delta
 		double delta = geo.delta(&site->getGeo())
 				/ glass3::util::GlassMath::k_DegreesToRadians;
+
+		// count phases past teleseismic distance
+		if (delta >= CGlass::getTeleseismicDistanceLimit()) {
+			m_iTeleseismicPhaseCount++;
+		}
 
 		// add to distance vactor
 		dis.push_back(delta);
