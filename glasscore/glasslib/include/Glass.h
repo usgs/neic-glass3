@@ -353,7 +353,7 @@ class CGlass {
 	 * threshold
  	 */
 	static int getTeleseismicPhaseCountThreshold();
-	
+
 	/**
 	 * \brief Gets a flag indicating whether to output locator testing files
 	 * \return Returns a boolean flag indicating whether to output locator
