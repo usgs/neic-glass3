@@ -24,6 +24,7 @@
 #define PID_KEY "Pid"
 #define PUBLOG_KEY "PubLog"
 #define VERSION_KEY "Version"
+#define BAYES_KEY "Bayes"
 
 namespace glass3 {
 namespace output {
@@ -161,6 +162,24 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 		}
 	}
 
+	// ImmediatePublicationThreshold
+	if (!(config->HasKey("ImmediatePublicationThreshold")
+			&& ((*config)["ImmediatePublicationThreshold"].GetType()
+					== json::ValueType::DoubleVal))) {
+		glass3::util::Logger::log(
+				"info",
+				"output::setup(): ImmediatePublicationThreshold not specified.");
+		setImmediatePubThreshold(-1.0);
+	} else {
+		setImmediatePubThreshold(
+				(*config)["ImmediatePublicationThreshold"].ToDouble());
+
+		glass3::util::Logger::log(
+				"info",
+				"output::setup(): Using ImmediatePublicationThreshold: "
+						+ std::to_string(getImmediatePubThreshold()) + ".");
+	}
+
 	// agencyid
 	if (!(config->HasKey("OutputAgencyID")
 			&& ((*config)["OutputAgencyID"].GetType()
@@ -225,6 +244,7 @@ void output::clear() {
 								"output::clear(): clearing configuration.");
 
 	setPubOnExpiration(false);
+	setImmediatePubThreshold(-1.0);
 	clearPubTimes();
 	setSiteListRequestInterval(-1);
 }
@@ -938,11 +958,12 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 						" missing cmd: " + json::Serialize(*data));
 		return (false);
 	} else if ((!(data->HasKey(PUBLOG_KEY)))
-			|| (!(data->HasKey(VERSION_KEY)))) {
+			|| (!(data->HasKey(VERSION_KEY)))
+			|| (!(data->HasKey(BAYES_KEY)))) {
 		glass3::util::Logger::log(
 				"error",
 				"output::isdataready(): Bad tracking object passed in, "
-						" missing PubLog or Version:" + json::Serialize(*data));
+						" missing PubLog, Bayes or Version:" + json::Serialize(*data));
 		return (false);
 	}
 
@@ -970,6 +991,47 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	// what time is it now
 	time_t tNow;
 	std::time(&tNow);
+
+	// handle immediate publication if required
+	// this should only ever be a first pub
+	if (getImmediatePubThreshold() > 0.0) {
+		// don't bother with this if we've already been
+		// published
+		if (isDataPublished(data) == false) {
+			// get the bayes value
+			double currentBayes = (*data)[BAYES_KEY].ToDouble();
+
+			// does the bayes value exceed the threshold
+			if (currentBayes >= getImmediatePubThreshold()) {
+				// it does,
+				// log what we're doing
+				glass3::util::Logger::log(
+					"debug",
+					"output::isdataready(): Immediatly Publishing Event: " + id
+							+ " version: " + std::to_string(currentVersion)
+							+ " tNow: " + std::to_string(static_cast<int>(tNow))
+							+ " bayes: " + std::to_string(currentBayes)
+							+ " > immediatePubThreshold: "
+							+ std::to_string(getImmediatePubThreshold()));
+
+				// insert a pub record at the beginning
+				// of the pub log, and update tracking
+				std::shared_ptr<json::Object> newData =
+						std::make_shared<json::Object>(*data);
+				pubLog.insert(0, currentVersion);
+				(*newData)[PUBLOG_KEY] = pubLog;
+				m_TrackingCache->addToCache(newData, id);
+
+				glass3::util::Logger::log(
+				"debug",
+				"output::isDataReady(): Updated data after immediate pub: "
+						+ json::Serialize(*m_TrackingCache->getFromCache(id)));
+
+				// yes this is publishable
+				return(true);
+			}
+		}
+	}
 
 	// has this hypo changed?
 	bool changed = isDataChanged(data);
@@ -1000,18 +1062,13 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 		// update data in cache
 		m_TrackingCache->addToCache(newData, id);
 
-		glass3::util::Logger::log(
-				"debug",
-				"output::isDataReady(): Updated data: "
-						+ json::Serialize(*m_TrackingCache->getFromCache(id)));
-
 		// depending on whether this version has already been changed
 		if (changed == true) {
 			glass3::util::Logger::log(
 					"debug",
-					"output::isdataready(): Publishing " + id + " version:"
-							+ std::to_string(currentVersion) + " tNow:"
-							+ std::to_string(static_cast<int>(tNow))
+					"output::isdataready(): Publishing Event: " + id
+							+ " version: " + std::to_string(currentVersion)
+							+ " tNow: " + std::to_string(static_cast<int>(tNow))
 							+ " > (createTime + getPubTimes()[i]): "
 							+ std::to_string(
 									static_cast<int>((createTime
@@ -1021,14 +1078,19 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 							+ std::to_string(static_cast<int>(getPubTimes()[i]))
 							+ ")");
 
+			glass3::util::Logger::log(
+				"debug",
+				"output::isDataReady(): Updated data after pub: "
+						+ json::Serialize(*m_TrackingCache->getFromCache(id)));
+
 			// ready to publish
 			return (true);
 		} else {
 			glass3::util::Logger::log(
 					"debug",
-					"output::isdataready(): Skipping " + id + " version:"
+					"output::isdataready(): Skipping Publishing Event: " + id + " version:"
 							+ std::to_string(currentVersion)
-							+ " because it is has not changed.");
+							+ " because the version has not changed since the last pub.");
 
 			// already published, don't publish
 			return (false);
@@ -1218,8 +1280,18 @@ void output::setPubOnExpiration(bool pub) {
 }
 
 // ---------------------------------------------------------getPubOnExpiration
-int output::getPubOnExpiration() {
+bool output::getPubOnExpiration() {
 	return (m_bPubOnExpiration);
+}
+
+// ----------------------------------------------------setImmediatePubThreshold
+void output::setImmediatePubThreshold(double threshold) {
+	m_dImmediatePubThreshold = threshold;
+}
+
+// ----------------------------------------------------getImmediatePubThreshold
+double output::getImmediatePubThreshold() {
+	return (m_dImmediatePubThreshold);
 }
 
 // ---------------------------------------------------------getPubTimes

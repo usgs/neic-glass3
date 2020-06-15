@@ -231,7 +231,29 @@ class output : public glass3::util::iOutput,
 	 * \return Returns a boolean flag indicating whether to generate a detection
 	 * message on expiration
 	 */
-	int getPubOnExpiration();
+	bool getPubOnExpiration();
+
+	/**
+	 * \brief Function to set the immediate publication threshold
+	 *
+	 * This function sets the threshold used to determine whether output should
+	 * generate a detection message when it receives an event message with a 
+	 * sufficent bayes value from the associator.
+	 *
+	 * \param threshold - A double value containing the immediate publication threshold
+	 */
+	void setImmediatePubThreshold(double threshold);
+
+	/**
+	 * \brief Function to retrieve the immediate publication threshold
+	 *
+	 * This function retrieves the threshold used to determine whether output should
+	 * generate a detection message when it receives an event message with a 
+	 * sufficent bayes value from the associator.
+	 *
+	 * \return Returns a double value containing the immediate publication threshold
+	 */
+	double getImmediatePubThreshold();
 
 	/**
 	 * \brief Function to retrieve the publication times
@@ -491,6 +513,14 @@ class output : public glass3::util::iOutput,
 	 * informational reports.
 	 */
 	std::atomic<int> m_iReportInterval;
+
+	/**
+	 * \brief Immediate Publication Threshold
+	 *
+	 * An optional double containing the bayes threshold for immediately 
+	 * publishing an event, -1.0 to disable
+	 */
+	std::atomic<double> m_dImmediatePubThreshold;
 
 	/**
 	 * \brief Pointer to Association class
