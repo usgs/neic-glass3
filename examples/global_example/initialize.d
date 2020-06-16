@@ -15,6 +15,8 @@
       "AssociationStandardDeviationCutoff": 5.0,
       "PruningStandardDeviationCutoff": 5.0,
       "NonLocatingPhaseCutoffFactor": 3.0,
+      "TeleseismicDistanceLimit": 30.0,
+      "TeleseismicPhaseCountThreshold": 30,
       "PickAffinityExponentialFactor": 2.5,
       "DistanceCutoffFactor": 5.0,
       "DistanceCutoffRatio": 0.8,
@@ -123,6 +125,13 @@
           "PhaseName": "P'P'df",
           "Assoc": [ 0, 110 ],
           "TravFile": "./global_example/P'P'df.trv",
+          "UseForLocation": false,
+          "PublishPhase": false
+      },
+      {
+          "PhaseName": "PKiKP",
+          "Assoc": [ 55, 118 ],
+          "TravFile": "./global_example/PKiKP.trv",
           "UseForLocation": false,
           "PublishPhase": false
       }

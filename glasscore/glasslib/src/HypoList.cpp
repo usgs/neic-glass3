@@ -24,7 +24,7 @@
 namespace glasscore {
 
 // constants
-const int CHypoList::k_nHypoSearchPastDurationForPick;
+constexpr double CHypoList::k_nHypoSearchPastDurationForPick;
 const int CHypoList::k_nMaxAllowableHypoCountDefault;
 const unsigned int CHypoList::k_nNumberOfMergeAnnealIterations;
 constexpr double CHypoList::k_dFinalMergeAnnealTimeStepSize;
@@ -122,7 +122,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 
 	// compute the list of hypos to associate with
 	// (a potential hypo must be before the pick we're associating)
-	// use the pick time minus 2400 seconds to compute the starting index
+	// use the pick time minus 3600 seconds to compute the starting index
 	// NOTE: Hard coded time delta
 	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
 			pk->getTPick() - k_nHypoSearchPastDurationForPick, pk->getTPick());
@@ -473,7 +473,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 			.count();
 
 	// Search for any associable picks that match hypo in the pick list
-	// NOTE: This uses the hard coded 2400 second scavenge duration default
+	// NOTE: This uses the hard coded 3600 second scavenge duration default
 	if (CGlass::getPickList()->scavenge(hyp)) {
 		// we should report this hypo since it has changed
 		breport = true;

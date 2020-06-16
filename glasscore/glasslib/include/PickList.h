@@ -23,6 +23,7 @@
 
 #include "Glass.h"
 #include "Pick.h"
+#include "HypoList.h"
 
 namespace glasscore {
 
@@ -152,11 +153,12 @@ class CPickList : public glass3::util::ThreadBaseClass {
 	 * \param hyp - A shared_ptr to a CHypo object containing the hypocenter
 	 * to attempt to associate to.
 	 * \param tWindow - A double value containing the window to search picks
-	 * from origin time in seconds, defaults to 2400.0
+	 * from origin time in seconds, defaults to 3600.0
 	 * \return Returns true if any picks were associated to the hypocenter,
 	 * false otherwise.
 	 */
-	bool scavenge(std::shared_ptr<CHypo> hyp, double tWindow = 2400.0);
+	bool scavenge(std::shared_ptr<CHypo> hyp,
+		double tWindow = CHypoList::k_nHypoSearchPastDurationForPick);
 
 	/**
 	 * \brief Get the CSiteList pointer used by this pick list for site lookups

@@ -231,11 +231,11 @@ double CTTT::T(double delta, std::string phase) {
 double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 	// Find Phase with least residual, returns time
 
-	double bestTraveltime;
-	std::string bestPhase;
-	bool useForLocations;
-	bool publishable;
-	double minResidual = k_dTTTooLargeToBeValid;
+	double bestTraveltime = CTravelTime::k_dTravelTimeInvalid;
+	std::string bestPhase = "?";
+	bool useForLocations = true;
+	bool publishable = true;
+	double bestResidual = k_dTTTooLargeToBeValid;
 
 	// for each phase
 	for (int i = 0; i < m_iNumTravelTimes; i++) {
@@ -249,7 +249,7 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 		double traveltime = aTrv->T(geo);
 
 		// check traveltime
-		if (traveltime < 0.0) {
+		if (traveltime <= CTravelTime::k_dTravelTimeInvalid) {
 			continue;
 		}
 
@@ -264,7 +264,7 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 
 		// check to see if phase is associable
 		// based on maximum assoc distance, if present
-		if (m_adMaximumAssociationValues[i] > 0) {
+		if (m_adMaximumAssociationValues[i] >= 0) {
 			if (aTrv->m_dDelta > m_adMaximumAssociationValues[i]) {
 				// this phase is not associable  at this distance
 				continue;
@@ -275,10 +275,10 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 		double residual = std::abs(tObserved - traveltime);
 
 		// check to see if this residual is better than the previous
-		//  best
-		if (residual < minResidual) {
+		// best
+		if (residual < bestResidual) {
 			// this is the new best travel time
-			minResidual = residual;
+			bestResidual = residual;
 			bestPhase = aTrv->m_sPhase;
 			bestTraveltime = traveltime;
 			useForLocations = aTrv->m_bUseForLocations;
@@ -287,7 +287,7 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 	}
 
 	// check to see if minimum residual is valid
-	if (minResidual < k_dTTTooLargeToBeValid) {
+	if (bestResidual < k_dTTTooLargeToBeValid) {
 		m_sPhase = bestPhase;
 		m_bUseForLocations = useForLocations;
 		m_bPublishable = publishable;

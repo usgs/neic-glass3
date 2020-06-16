@@ -45,7 +45,7 @@ class CTTT {
 	 */
 	~CTTT();
 
-/**
+	/**
 	 * \brief Write out travel times to files
 	 * 
 	 * This function prints the available travel time points for the travel
@@ -175,7 +175,6 @@ class CTTT {
 	 */
 	// double testTravelTimes(std::string phase);
 
-
 	// constants
 	/**
 	 * \brief A value representing a travel time that is too large to be valid
@@ -204,7 +203,6 @@ class CTTT {
 	 * be published in output messages
 	 */
 	bool m_bPublishable;
-
 
 	/**
 	 * \brief glass3::util::Geo object containing current
