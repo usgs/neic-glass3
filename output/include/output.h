@@ -459,6 +459,12 @@ class output : public glass3::util::iOutput,
 	 */
 	glass3::util::WorkState work() override;
 
+	// constants
+	/**
+	 * \brief The minimum time in seconds to publish an event
+	 */
+	static constexpr int k_iMinimumPublicationTime = 10;
+
  protected:
 	/**
 	 * \brief output tracking data background work function

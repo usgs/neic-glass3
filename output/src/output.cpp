@@ -29,6 +29,9 @@
 namespace glass3 {
 namespace output {
 
+// constants
+constexpr int output::k_iMinimumPublicationTime;
+
 // ---------------------------------------------------------output
 output::output()
 		: glass3::util::ThreadBaseClass("output") {
@@ -140,9 +143,9 @@ bool output::setup(std::shared_ptr<const json::Object> config) {
 	if (!(config->HasKey("PublicationTimes")
 			&& ((*config)["PublicationTimes"].GetType()
 					== json::ValueType::ArrayVal))) {
-		// PublicationTimes is optional, default to 0
+		// PublicationTimes is optional, default to minimum
 		clearPubTimes();
-		addPubTime(0);
+		addPubTime(output::k_iMinimumPublicationTime);
 		glass3::util::Logger::log(
 				"info",
 				"output::setup(): PublicationTimes not specified, using default "
@@ -1002,12 +1005,14 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 			double currentBayes = (*data)[BAYES_KEY].ToDouble();
 
 			// does the bayes value exceed the threshold
-			if (currentBayes >= getImmediatePubThreshold()) {
+			// and have we exceeded the minimum pub time?
+			if ((currentBayes >= getImmediatePubThreshold()) &&
+					(tNow >= (createTime + output::k_iMinimumPublicationTime))) {
 				// it does,
 				// log what we're doing
 				glass3::util::Logger::log(
 					"debug",
-					"output::isdataready(): Immediatly Publishing Event: " + id
+					"output::isdataready(): Immediately Publishing Event: " + id
 							+ " version: " + std::to_string(currentVersion)
 							+ " tNow: " + std::to_string(static_cast<int>(tNow))
 							+ " bayes: " + std::to_string(currentBayes)
@@ -1037,18 +1042,30 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 	bool changed = isDataChanged(data);
 
 	// for each publication time
-	for (int i = 0; i < getPubTimes().size(); i++) {
-		// get the published version for this pub time
-		int pubVersion = pubLog[i].ToInt();
+	for (int timeIndex = 0; timeIndex < getPubTimes().size(); timeIndex++) {
+		// need to adjust if an immediate pub occured
+		// by default the log index is the same as the time index
+		int logIndex = timeIndex;
+		if (pubLog.size() > getPubTimes().size()) {
+			// if we had an immediate pub, then the log indexis one past
+			// what the time index would be
+			logIndex = timeIndex + 1;
+		}
 
-		// has this pub time been published at all?
+		// get the published version (if any) for this pub time
+		int pubVersion = pubLog[logIndex].ToInt();
+
+		// get the corrsponding publish time
+		int pubTime = getPubTimes()[timeIndex];
+
+		// has this pub time been published?
 		if (pubVersion > 0) {
-			// yes, move on
+			// non-zero version means yes, move on
 			continue;
 		}
 
 		// has this pub time passed?
-		if (tNow < (createTime + getPubTimes()[i])) {
+		if (tNow < (createTime + pubTime)) {
 			// no, move on
 			continue;
 		}
@@ -1056,7 +1073,7 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 		// update pubLog for this time
 		std::shared_ptr<json::Object> newData = std::make_shared<json::Object>(
 				*data);
-		pubLog[i] = currentVersion;
+		pubLog[logIndex] = currentVersion;
 		(*newData)[PUBLOG_KEY] = pubLog;
 
 		// update data in cache
@@ -1067,16 +1084,15 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 			glass3::util::Logger::log(
 					"debug",
 					"output::isdataready(): Publishing Event: " + id
+							+ "; (pub #" + std::to_string(timeIndex + 1) + ")"
 							+ " version: " + std::to_string(currentVersion)
-							+ " tNow: " + std::to_string(static_cast<int>(tNow))
-							+ " > (createTime + getPubTimes()[i]): "
+							+ "; tNow: " + std::to_string(static_cast<int>(tNow))
+							+ " > (createTime + pubTime): "
 							+ std::to_string(
-									static_cast<int>((createTime
-											+ getPubTimes()[i])))
+									static_cast<int>((createTime + pubTime)))
 							+ " (createTime: " + std::to_string(createTime)
 							+ " getPubTimes()[i]: "
-							+ std::to_string(static_cast<int>(getPubTimes()[i]))
-							+ ")");
+							+ std::to_string(pubTime) + ")");
 
 			glass3::util::Logger::log(
 				"debug",
@@ -1088,9 +1104,15 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 		} else {
 			glass3::util::Logger::log(
 					"debug",
-					"output::isdataready(): Skipping Publishing Event: " + id + " version:"
-							+ std::to_string(currentVersion)
-							+ " because the version has not changed since the last pub.");
+					"output::isdataready(): Skipping Publishing Event: " + id
+							+ "; (pub #" + std::to_string(timeIndex + 1) + ")"
+							+ " version: " + std::to_string(currentVersion)
+							+ "; because the version has not changed since the last pub.");
+
+			glass3::util::Logger::log(
+				"debug",
+				"output::isDataReady(): Updated data after skip: "
+						+ json::Serialize(*m_TrackingCache->getFromCache(id)));
 
 			// already published, don't publish
 			return (false);
