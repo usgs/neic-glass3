@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.4.0</span>
+   &#160;<span id="projectnumber">1.4.1</span>
    </div>
   </td>
  </tr>
@@ -217,6 +217,15 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a6d114ea03ecad2be5926a1334499c25e"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a6d114ea03ecad2be5926a1334499c25e">getPruningSDCutoff</a> ()</td></tr>
 <tr class="memdesc:a6d114ea03ecad2be5926a1334499c25e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the cutoff threshold in terms of number of standard deviations for pruning data (eg. Picks) from a hypocenter. The standard deviation is fixed to 1.  <a href="#a6d114ea03ecad2be5926a1334499c25e">More...</a><br /></td></tr>
 <tr class="separator:a6d114ea03ecad2be5926a1334499c25e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad00775bb998c5973d57104517a19ed73"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#ad00775bb998c5973d57104517a19ed73">getNonLocatingPhaseCutoffFactor</a> ()</td></tr>
+<tr class="memdesc:ad00775bb998c5973d57104517a19ed73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the multiplicative factor used to expand the SD cutoff to keep data associated to a hypocenter when the Pick phase does not affect the location.  <a href="#ad00775bb998c5973d57104517a19ed73">More...</a><br /></td></tr>
+<tr class="separator:ad00775bb998c5973d57104517a19ed73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63fda77722831e486b92b2a17da1b442"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a63fda77722831e486b92b2a17da1b442">getTeleseismicDistanceLimit</a> ()</td></tr>
+<tr class="memdesc:a63fda77722831e486b92b2a17da1b442"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the distance limit in degrees used to designate a phase as teleseismic.  <a href="#a63fda77722831e486b92b2a17da1b442">More...</a><br /></td></tr>
+<tr class="separator:a63fda77722831e486b92b2a17da1b442"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e7b4b052b69ef536e2e2184ab2e5f41"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#a2e7b4b052b69ef536e2e2184ab2e5f41">getTeleseismicPhaseCountThreshold</a> ()</td></tr>
+<tr class="memdesc:a2e7b4b052b69ef536e2e2184ab2e5f41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the teleseismic phase count threshold.  <a href="#a2e7b4b052b69ef536e2e2184ab2e5f41">More...</a><br /></td></tr>
+<tr class="separator:a2e7b4b052b69ef536e2e2184ab2e5f41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6904be8e3674b703805d16f6f3241e6"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CGlass.html#af6904be8e3674b703805d16f6f3241e6">getTestLocator</a> ()</td></tr>
 <tr class="memdesc:af6904be8e3674b703805d16f6f3241e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a flag indicating whether to output locator testing files.  <a href="#af6904be8e3674b703805d16f6f3241e6">More...</a><br /></td></tr>
 <tr class="separator:af6904be8e3674b703805d16f6f3241e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1134,6 +1143,32 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ad00775bb998c5973d57104517a19ed73"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getNonLocatingPhaseCutoffFactor </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the multiplicative factor used to expand the SD cutoff to keep data associated to a hypocenter when the Pick phase does not affect the location. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the multiplicative SD cutoff factor </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ae8c97cee5e7ad6cbf7b874926f104178"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1542,6 +1577,58 @@ Static Public Attributes</h2></td></tr>
 
 <p>Gets a pointer to the Site list. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the site list </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a63fda77722831e486b92b2a17da1b442"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CGlass::getTeleseismicDistanceLimit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the distance limit in degrees used to designate a phase as teleseismic. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double containing the teleseismic distance limit </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a2e7b4b052b69ef536e2e2184ab2e5f41"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int glasscore::CGlass::getTeleseismicPhaseCountThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the teleseismic phase count threshold. </p>
+<dl class="section return"><dt>Returns</dt><dd>Returns an integer containing the teleseismic phase count threshold </dd></dl>
 
 </div>
 </div>

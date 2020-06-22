@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['scavenge',['scavenge',['../classglasscore_1_1CCorrelationList.html#a009c1a2d03024c3cfe350f9b87af0969',1,'glasscore::CCorrelationList::scavenge()'],['../classglasscore_1_1CPickList.html#a3c165b1590517b5a7177313d493a654f',1,'glasscore::CPickList::scavenge()']]],
+  ['scavenge',['scavenge',['../classglasscore_1_1CCorrelationList.html#a009c1a2d03024c3cfe350f9b87af0969',1,'glasscore::CCorrelationList::scavenge()'],['../classglasscore_1_1CPickList.html#ab42f8ac4954f601de43f4ef9aaba5af4',1,'glasscore::CPickList::scavenge()']]],
   ['seconds',['seconds',['../classglass3_1_1util_1_1Date.html#af49d8035600c602cf2c77ecab61838fe',1,'glass3::util::Date']]],
   ['send',['send',['../classglass3_1_1outputTopic.html#a6729381cb80bc31332bef993a9541727',1,'glass3::outputTopic']]],
   ['sendexternalmessage',['sendExternalMessage',['../classglasscore_1_1CGlass.html#a71825456c86b84b88c80eab868808568',1,'glasscore::CGlass']]],
@@ -25,6 +25,7 @@ var searchData=
   ['setgeographic',['setGeographic',['../classglass3_1_1util_1_1Geo.html#ad5b74733300c18c7d618b0a49566db02',1,'glass3::util::Geo']]],
   ['sethealthcheckinterval',['setHealthCheckInterval',['../classglass3_1_1util_1_1ThreadBaseClass.html#a5b3b0cb5392754afaa9d6e613e8b1e16',1,'glass3::util::ThreadBaseClass']]],
   ['sethoursbeforelookingup',['setHoursBeforeLookingUp',['../classglasscore_1_1CSiteList.html#a980a3a7bced03d7022bc7c04e302b8be',1,'glasscore::CSiteList']]],
+  ['setimmediatepubthreshold',['setImmediatePubThreshold',['../classglass3_1_1output_1_1output.html#ac45d13d35ecad6efe6b28bf72357c606',1,'glass3::output::output']]],
   ['setinputdatamaxsize',['setInputDataMaxSize',['../classglass3_1_1input_1_1Input.html#a49e568ab6a468b5adb8b4bf232e9f432',1,'glass3::input::Input']]],
   ['setinputdir',['setInputDir',['../classglass3_1_1fileInput.html#ae6a747022546110b7583de14519ddb26',1,'glass3::fileInput']]],
   ['setlasthealthy',['setLastHealthy',['../classglass3_1_1util_1_1ThreadBaseClass.html#a96125ac202d46b34280be945a6793c99',1,'glass3::util::ThreadBaseClass']]],

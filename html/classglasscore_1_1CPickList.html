@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.4.0</span>
+   &#160;<span id="projectnumber">1.4.1</span>
    </div>
   </td>
  </tr>
@@ -140,9 +140,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a573addb016eb5daf2b3389deeb718186"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a573addb016eb5daf2b3389deeb718186">getDuplicate</a> (double newTPick, std::string newSCNL, double tDuration)</td></tr>
 <tr class="memdesc:a573addb016eb5daf2b3389deeb718186"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the provided pick time is a duplicate.  <a href="#a573addb016eb5daf2b3389deeb718186">More...</a><br /></td></tr>
 <tr class="separator:a573addb016eb5daf2b3389deeb718186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c165b1590517b5a7177313d493a654f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a3c165b1590517b5a7177313d493a654f">scavenge</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp, double tWindow=2400.0)</td></tr>
-<tr class="memdesc:a3c165b1590517b5a7177313d493a654f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search for any associable picks that match hypo.  <a href="#a3c165b1590517b5a7177313d493a654f">More...</a><br /></td></tr>
-<tr class="separator:a3c165b1590517b5a7177313d493a654f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab42f8ac4954f601de43f4ef9aaba5af4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#ab42f8ac4954f601de43f4ef9aaba5af4">scavenge</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CHypo.html">CHypo</a> &gt; hyp, double tWindow=<a class="el" href="classglasscore_1_1CHypoList.html#ac2954cbb1669985b2d78421df16ea2d9">CHypoList::k_nHypoSearchPastDurationForPick</a>)</td></tr>
+<tr class="memdesc:ab42f8ac4954f601de43f4ef9aaba5af4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Search for any associable picks that match hypo.  <a href="#ab42f8ac4954f601de43f4ef9aaba5af4">More...</a><br /></td></tr>
+<tr class="separator:ab42f8ac4954f601de43f4ef9aaba5af4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c556fe54732fdd395048f4763f5c2a4"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CPickList.html#a9c556fe54732fdd395048f4763f5c2a4">getSiteList</a> () const </td></tr>
 <tr class="memdesc:a9c556fe54732fdd395048f4763f5c2a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> pointer used by this pick list for site lookups.  <a href="#a9c556fe54732fdd395048f4763f5c2a4">More...</a><br /></td></tr>
 <tr class="separator:a9c556fe54732fdd395048f4763f5c2a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -631,7 +631,7 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3c165b1590517b5a7177313d493a654f"></a>
+<a class="anchor" id="ab42f8ac4954f601de43f4ef9aaba5af4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -645,7 +645,7 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tWindow</em> = <code>2400.0</code>&#160;</td>
+          <td class="paramname"><em>tWindow</em> = <code><a class="el" href="classglasscore_1_1CHypoList.html#ac2954cbb1669985b2d78421df16ea2d9">CHypoList::k_nHypoSearchPastDurationForPick</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -660,7 +660,7 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hyp</td><td>- A shared_ptr to a <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> object containing the hypocenter to attempt to associate to. </td></tr>
-    <tr><td class="paramname">tWindow</td><td>- A double value containing the window to search picks from origin time in seconds, defaults to 2400.0 </td></tr>
+    <tr><td class="paramname">tWindow</td><td>- A double value containing the window to search picks from origin time in seconds, defaults to 3600.0 </td></tr>
   </table>
   </dd>
 </dl>

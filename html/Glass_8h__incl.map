@@ -1,7 +1,6 @@
 <map id="glasscore/glasslib/include/Glass.h" name="glasscore/glasslib/include/Glass.h">
-<area shape="rect" id="node3" href="$TTT_8h.html" title="TTT.h" alt="" coords="175,95,232,121"/>
-<area shape="rect" id="node10" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="294,169,393,196"/>
-<area shape="rect" id="node4" href="$geo_8h.html" title="geo.h" alt="" coords="164,244,219,271"/>
-<area shape="rect" id="node7" href="$taper_8h.html" title="taper.h" alt="" coords="207,169,270,196"/>
-<area shape="rect" id="node5" href="$glassmath_8h.html" title="glassmath.h" alt="" coords="145,319,238,345"/>
+<area shape="rect" id="node3" href="$TTT_8h.html" title="TTT.h" alt="" coords="121,95,179,121"/>
+<area shape="rect" id="node9" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="203,169,302,196"/>
+<area shape="rect" id="node4" href="$geo_8h.html" title="geo.h" alt="" coords="181,244,236,271"/>
+<area shape="rect" id="node5" href="$glassmath_8h.html" title="glassmath.h" alt="" coords="162,319,255,345"/>
 </map>

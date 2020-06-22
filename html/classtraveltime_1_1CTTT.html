@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.4.0</span>
+   &#160;<span id="projectnumber">1.4.1</span>
    </div>
   </td>
  </tr>
@@ -107,9 +107,8 @@ Collaboration diagram for traveltime::CTTT:</div>
 <div class="dyncontent">
 <div class="center"><img src="classtraveltime_1_1CTTT__coll__graph.png" border="0" usemap="#traveltime_1_1CTTT_coll__map" alt="Collaboration graph"/></div>
 <map name="traveltime_1_1CTTT_coll__map" id="traveltime_1_1CTTT_coll__map">
-<area shape="rect" id="node2" href="classglass3_1_1util_1_1Taper.html" title="glassutil taper class " alt="" coords="5,716,132,852"/>
-<area shape="rect" id="node4" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="306,292,498,692"/>
-<area shape="rect" id="node7" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="755,876,929,1173"/>
+<area shape="rect" id="node3" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="176,292,368,692"/>
+<area shape="rect" id="node7" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="781,784,955,1081"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -130,9 +129,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#ad816ca17cec35e2fe1eda2b576b9cf06">clear</a> ()</td></tr>
 <tr class="memdesc:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTTT.html" title="travel time interface class ">CTTT</a> clear function.  <a href="#ad816ca17cec35e2fe1eda2b576b9cf06">More...</a><br /></td></tr>
 <tr class="separator:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6928776db129cf44aea2d04eefa65998"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a6928776db129cf44aea2d04eefa65998">addPhase</a> (std::string phase, double *weightRange=NULL, double *assocRange=NULL, std::string file=&quot;&quot;)</td></tr>
-<tr class="memdesc:a6928776db129cf44aea2d04eefa65998"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add phase to list to be calculated.  <a href="#a6928776db129cf44aea2d04eefa65998">More...</a><br /></td></tr>
-<tr class="separator:a6928776db129cf44aea2d04eefa65998"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14a09e8143e446247fae68d0a0ce6740"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a14a09e8143e446247fae68d0a0ce6740">addPhase</a> (std::string phase, double *assocRange=NULL, std::string file=&quot;&quot;, bool useForLocation=true, bool publishPhase=true)</td></tr>
+<tr class="memdesc:a14a09e8143e446247fae68d0a0ce6740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add phase to list to be calculated.  <a href="#a14a09e8143e446247fae68d0a0ce6740">More...</a><br /></td></tr>
+<tr class="separator:a14a09e8143e446247fae68d0a0ce6740"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13be79973dc55d259706ac2fbc89d370"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a13be79973dc55d259706ac2fbc89d370">setTTOrigin</a> (double lat, double lon, double z)</td></tr>
 <tr class="memdesc:a13be79973dc55d259706ac2fbc89d370"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set hypocenter for calculations.  <a href="#a13be79973dc55d259706ac2fbc89d370">More...</a><br /></td></tr>
 <tr class="separator:a13be79973dc55d259706ac2fbc89d370"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,9 +156,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a52ee09c5333b9bcb540bbed952bacf9f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a52ee09c5333b9bcb540bbed952bacf9f">m_sPhase</a></td></tr>
 <tr class="memdesc:a52ee09c5333b9bcb540bbed952bacf9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">A temporary std::std::string variable containing the phase determinedduring the last call to <a class="el" href="classtraveltime_1_1CTTT.html#aa8d5e42cc0f4ee610e52d41704a0af85" title="Calculate travel time in seconds. ">T()</a>  <a href="#a52ee09c5333b9bcb540bbed952bacf9f">More...</a><br /></td></tr>
 <tr class="separator:a52ee09c5333b9bcb540bbed952bacf9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10378f9f65c522814846573db8d05376"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a10378f9f65c522814846573db8d05376">m_dWeight</a></td></tr>
-<tr class="memdesc:a10378f9f65c522814846573db8d05376"><td class="mdescLeft">&#160;</td><td class="mdescRight">A temporary double variable containing the weight determined during the last call to <a class="el" href="classtraveltime_1_1CTTT.html#aa8d5e42cc0f4ee610e52d41704a0af85" title="Calculate travel time in seconds. ">T()</a>  <a href="#a10378f9f65c522814846573db8d05376">More...</a><br /></td></tr>
-<tr class="separator:a10378f9f65c522814846573db8d05376"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cd906fbf733026302c02db98ac17d93"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a4cd906fbf733026302c02db98ac17d93">m_bUseForLocations</a></td></tr>
+<tr class="memdesc:a4cd906fbf733026302c02db98ac17d93"><td class="mdescLeft">&#160;</td><td class="mdescRight">A temporary boolean flag indicating whether this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be used in generating locations.  <a href="#a4cd906fbf733026302c02db98ac17d93">More...</a><br /></td></tr>
+<tr class="separator:a4cd906fbf733026302c02db98ac17d93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64725a73d3f0c802a675661abfa0699d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a64725a73d3f0c802a675661abfa0699d">m_bPublishable</a></td></tr>
+<tr class="memdesc:a64725a73d3f0c802a675661abfa0699d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A temporary boolean flag indicating whether this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be published in output messages.  <a href="#a64725a73d3f0c802a675661abfa0699d">More...</a><br /></td></tr>
+<tr class="separator:a64725a73d3f0c802a675661abfa0699d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af41ed0dd93d05d5841022f2b1242a55c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglass3_1_1util_1_1Geo.html">glass3::util::Geo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#af41ed0dd93d05d5841022f2b1242a55c">m_geoTTOrigin</a></td></tr>
 <tr class="memdesc:af41ed0dd93d05d5841022f2b1242a55c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class ">glass3::util::Geo</a> object containing current geographic location of source(as in source/receiver). Set by setOrigin()  <a href="#af41ed0dd93d05d5841022f2b1242a55c">More...</a><br /></td></tr>
 <tr class="separator:af41ed0dd93d05d5841022f2b1242a55c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,14 +171,11 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aad78b3fc7a7ae47070f1f1662efa0cf2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtraveltime_1_1CTravelTime.html">CTravelTime</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#aad78b3fc7a7ae47070f1f1662efa0cf2">m_pTravelTimes</a> [<a class="el" href="classtraveltime_1_1CTTT.html#aeb454585c6279d10d3f3c3b0f0fa5b1c">k_iMaximumNumberOfTravelTimes</a>]</td></tr>
 <tr class="memdesc:aad78b3fc7a7ae47070f1f1662efa0cf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of pointers to <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> objects for each phase.  <a href="#aad78b3fc7a7ae47070f1f1662efa0cf2">More...</a><br /></td></tr>
 <tr class="separator:aad78b3fc7a7ae47070f1f1662efa0cf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab91ccd6861e3583b7b04c50d9b7a72f9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classglass3_1_1util_1_1Taper.html">glass3::util::Taper</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#ab91ccd6861e3583b7b04c50d9b7a72f9">m_pTapers</a> [<a class="el" href="classtraveltime_1_1CTTT.html#aeb454585c6279d10d3f3c3b0f0fa5b1c">k_iMaximumNumberOfTravelTimes</a>]</td></tr>
-<tr class="memdesc:ab91ccd6861e3583b7b04c50d9b7a72f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of pointers taper objects that determine phase weights as a function of distance.  <a href="#ab91ccd6861e3583b7b04c50d9b7a72f9">More...</a><br /></td></tr>
-<tr class="separator:ab91ccd6861e3583b7b04c50d9b7a72f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e860f4e0b85585f28cfdeb4fb1e14fa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a2e860f4e0b85585f28cfdeb4fb1e14fa">m_adMinimumAssociationValues</a> [<a class="el" href="classtraveltime_1_1CTTT.html#aeb454585c6279d10d3f3c3b0f0fa5b1c">k_iMaximumNumberOfTravelTimes</a>]</td></tr>
-<tr class="memdesc:a2e860f4e0b85585f28cfdeb4fb1e14fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of doubles containing the minimum values for association.  <a href="#a2e860f4e0b85585f28cfdeb4fb1e14fa">More...</a><br /></td></tr>
+<tr class="memdesc:a2e860f4e0b85585f28cfdeb4fb1e14fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of doubles containing the minimum distance values for association.  <a href="#a2e860f4e0b85585f28cfdeb4fb1e14fa">More...</a><br /></td></tr>
 <tr class="separator:a2e860f4e0b85585f28cfdeb4fb1e14fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88259d4debf089e5c2965ed5814f3b78"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a88259d4debf089e5c2965ed5814f3b78">m_adMaximumAssociationValues</a> [<a class="el" href="classtraveltime_1_1CTTT.html#aeb454585c6279d10d3f3c3b0f0fa5b1c">k_iMaximumNumberOfTravelTimes</a>]</td></tr>
-<tr class="memdesc:a88259d4debf089e5c2965ed5814f3b78"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of doubles containing the maximum values for association.  <a href="#a88259d4debf089e5c2965ed5814f3b78">More...</a><br /></td></tr>
+<tr class="memdesc:a88259d4debf089e5c2965ed5814f3b78"><td class="mdescLeft">&#160;</td><td class="mdescRight">An array of doubles containing the maximum distance values for association.  <a href="#a88259d4debf089e5c2965ed5814f3b78">More...</a><br /></td></tr>
 <tr class="separator:a88259d4debf089e5c2965ed5814f3b78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
@@ -248,7 +247,7 @@ Static Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a6928776db129cf44aea2d04eefa65998"></a>
+<a class="anchor" id="a14a09e8143e446247fae68d0a0ce6740"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -262,19 +261,25 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>weightRange</em> = <code>NULL</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double *&#160;</td>
           <td class="paramname"><em>assocRange</em> = <code>NULL</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>file</em> = <code>&quot;&quot;</code>&#160;</td>
+          <td class="paramname"><em>file</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>useForLocation</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>publishPhase</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -288,10 +293,11 @@ Static Public Attributes</h2></td></tr>
 <p>Creates a new <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> object using the already set pRay and the provided phase name, and adds the object to the pTrv list.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">phase</td><td>- A std::std::string containing the phase name to use </td></tr>
-    <tr><td class="paramname">weightRange</td><td>- An array of 4 double values defining the phase taper weighting, mutually exclusive with assocRange </td></tr>
+    <tr><td class="paramname">phase</td><td>- A std::string containing the phase name to use </td></tr>
     <tr><td class="paramname">assocRange</td><td>- An array of 2 double values containing the association range, mutually exclusive with weightRange </td></tr>
-    <tr><td class="paramname">file</td><td>- A std::std::string representing the file to load, default is "" </td></tr>
+    <tr><td class="paramname">file</td><td>- A std::string representing the file to load, default is "" </td></tr>
+    <tr><td class="paramname">useForLocation</td><td>- A boolen flag indicating whether this phase should be used in generating locations, default is true </td></tr>
+    <tr><td class="paramname">publishPhase</td><td>- A boolen flag indicating whether this phase should be published in output messages, default is true </td></tr>
   </table>
   </dd>
 </dl>
@@ -631,7 +637,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>An array of doubles containing the maximum values for association. </p>
+<p>An array of doubles containing the maximum distance values for association. </p>
 
 </div>
 </div>
@@ -645,21 +651,35 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>An array of doubles containing the minimum values for association. </p>
+<p>An array of doubles containing the minimum distance values for association. </p>
 
 </div>
 </div>
-<a class="anchor" id="a10378f9f65c522814846573db8d05376"></a>
+<a class="anchor" id="a64725a73d3f0c802a675661abfa0699d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double traveltime::CTTT::m_dWeight</td>
+          <td class="memname">bool traveltime::CTTT::m_bPublishable</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>A temporary double variable containing the weight determined during the last call to <a class="el" href="classtraveltime_1_1CTTT.html#aa8d5e42cc0f4ee610e52d41704a0af85" title="Calculate travel time in seconds. ">T()</a> </p>
+<p>A temporary boolean flag indicating whether this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be published in output messages. </p>
+
+</div>
+</div>
+<a class="anchor" id="a4cd906fbf733026302c02db98ac17d93"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool traveltime::CTTT::m_bUseForLocations</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A temporary boolean flag indicating whether this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be used in generating locations. </p>
 
 </div>
 </div>
@@ -688,20 +708,6 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>An integer variable containing number of <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> objects in pTrv. </p>
-
-</div>
-</div>
-<a class="anchor" id="ab91ccd6861e3583b7b04c50d9b7a72f9"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classglass3_1_1util_1_1Taper.html">glass3::util::Taper</a>* traveltime::CTTT::m_pTapers[<a class="el" href="classtraveltime_1_1CTTT.html#aeb454585c6279d10d3f3c3b0f0fa5b1c">k_iMaximumNumberOfTravelTimes</a>]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>An array of pointers taper objects that determine phase weights as a function of distance. </p>
 
 </div>
 </div>

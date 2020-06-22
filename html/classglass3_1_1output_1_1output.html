@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.4.0</span>
+   &#160;<span id="projectnumber">1.4.1</span>
    </div>
   </td>
  </tr>
@@ -90,6 +90,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="classglass3_1_1output_1_1output-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -106,8 +107,8 @@ Inheritance diagram for glass3::output::output:</div>
 <div class="dyncontent">
 <div class="center"><img src="classglass3_1_1output_1_1output__inherit__graph.png" border="0" usemap="#glass3_1_1output_1_1output_inherit__map" alt="Inheritance graph"/></div>
 <map name="glass3_1_1output_1_1output_inherit__map" id="glass3_1_1output_1_1output_inherit__map">
-<area shape="rect" id="node5" href="classglass3_1_1brokerOutput.html" title="glass3 broker output class " alt="" coords="5,1379,168,1603"/>
-<area shape="rect" id="node6" href="classglass3_1_1fileOutput.html" title="glass fileOutput class " alt="" coords="192,1393,373,1588"/>
+<area shape="rect" id="node5" href="classglass3_1_1brokerOutput.html" title="glass3 broker output class " alt="" coords="5,1408,168,1632"/>
+<area shape="rect" id="node6" href="classglass3_1_1fileOutput.html" title="glass fileOutput class " alt="" coords="192,1423,373,1617"/>
 <area shape="rect" id="node2" href="classglass3_1_1util_1_1iOutput.html" title="The output message interface, used in sending data to output classes in neic&#45;glass3. " alt="" coords="26,468,161,545"/>
 <area shape="rect" id="node3" href="classglass3_1_1util_1_1ThreadBaseClass.html" title="glass3::util::ThreadBaseClass class " alt="" coords="185,307,364,707"/>
 <area shape="rect" id="node4" href="classglass3_1_1util_1_1BaseClass.html" title="glass3::util::BaseClass class &#45; encapsulates the most basic setup and configuration logic..." alt="" coords="196,5,353,259"/>
@@ -168,9 +169,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a03e72a4aa55b4624cbe0901b1f335649"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1output_1_1output.html#a03e72a4aa55b4624cbe0901b1f335649">setPubOnExpiration</a> (bool pub)</td></tr>
 <tr class="memdesc:a03e72a4aa55b4624cbe0901b1f335649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to set the publish on expiration flag.  <a href="#a03e72a4aa55b4624cbe0901b1f335649">More...</a><br /></td></tr>
 <tr class="separator:a03e72a4aa55b4624cbe0901b1f335649"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d3bb6c60934c2336d598a01ffaa3eb9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1output_1_1output.html#a0d3bb6c60934c2336d598a01ffaa3eb9">getPubOnExpiration</a> ()</td></tr>
-<tr class="memdesc:a0d3bb6c60934c2336d598a01ffaa3eb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to retrieve the publish on expiration flag.  <a href="#a0d3bb6c60934c2336d598a01ffaa3eb9">More...</a><br /></td></tr>
-<tr class="separator:a0d3bb6c60934c2336d598a01ffaa3eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac47aea03e36c97f978f7bc45a3720077"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1output_1_1output.html#ac47aea03e36c97f978f7bc45a3720077">getPubOnExpiration</a> ()</td></tr>
+<tr class="memdesc:ac47aea03e36c97f978f7bc45a3720077"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to retrieve the publish on expiration flag.  <a href="#ac47aea03e36c97f978f7bc45a3720077">More...</a><br /></td></tr>
+<tr class="separator:ac47aea03e36c97f978f7bc45a3720077"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac45d13d35ecad6efe6b28bf72357c606"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1output_1_1output.html#ac45d13d35ecad6efe6b28bf72357c606">setImmediatePubThreshold</a> (double threshold)</td></tr>
+<tr class="memdesc:ac45d13d35ecad6efe6b28bf72357c606"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to set the immediate publication threshold.  <a href="#ac45d13d35ecad6efe6b28bf72357c606">More...</a><br /></td></tr>
+<tr class="separator:ac45d13d35ecad6efe6b28bf72357c606"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d4957fcd5f0afab44a54ebfd0f00e69"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1output_1_1output.html#a5d4957fcd5f0afab44a54ebfd0f00e69">getImmediatePubThreshold</a> ()</td></tr>
+<tr class="memdesc:a5d4957fcd5f0afab44a54ebfd0f00e69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to retrieve the immediate publication threshold.  <a href="#a5d4957fcd5f0afab44a54ebfd0f00e69">More...</a><br /></td></tr>
+<tr class="separator:a5d4957fcd5f0afab44a54ebfd0f00e69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95e0a72e5fd34ca3ce6d2b3d19b63c83"><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1output_1_1output.html#a95e0a72e5fd34ca3ce6d2b3d19b63c83">getPubTimes</a> ()</td></tr>
 <tr class="memdesc:a95e0a72e5fd34ca3ce6d2b3d19b63c83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to retrieve the publication times.  <a href="#a95e0a72e5fd34ca3ce6d2b3d19b63c83">More...</a><br /></td></tr>
 <tr class="separator:a95e0a72e5fd34ca3ce6d2b3d19b63c83"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -292,6 +299,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abcc3e3ab9970336e555333e7c6e41be5 inherit pub_methods_classglass3_1_1util_1_1BaseClass"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1util_1_1BaseClass.html#abcc3e3ab9970336e555333e7c6e41be5">setDefaultAuthor</a> (const std::string &amp;author)</td></tr>
 <tr class="memdesc:abcc3e3ab9970336e555333e7c6e41be5 inherit pub_methods_classglass3_1_1util_1_1BaseClass"><td class="mdescLeft">&#160;</td><td class="mdescRight">Function to set the name of the default author.  <a href="#abcc3e3ab9970336e555333e7c6e41be5">More...</a><br /></td></tr>
 <tr class="separator:abcc3e3ab9970336e555333e7c6e41be5 inherit pub_methods_classglass3_1_1util_1_1BaseClass"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:ae82b13f06851e346a1b0e753941fde01"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglass3_1_1output_1_1output.html#ae82b13f06851e346a1b0e753941fde01">k_iMinimumPublicationTime</a> = 10</td></tr>
+<tr class="memdesc:ae82b13f06851e346a1b0e753941fde01"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minimum time in seconds to publish an event.  <a href="#ae82b13f06851e346a1b0e753941fde01">More...</a><br /></td></tr>
+<tr class="separator:ae82b13f06851e346a1b0e753941fde01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -546,6 +559,25 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a5d4957fcd5f0afab44a54ebfd0f00e69"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glass3::output::output::getImmediatePubThreshold </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Function to retrieve the immediate publication threshold. </p>
+<p>This function retrieves the threshold used to determine whether output should generate a detection message when it receives an event message with a sufficent bayes value from the associator.</p>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the immediate publication threshold </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a17e80e511c4f9c9deaef2a398c6efe7d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -565,12 +597,12 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a0d3bb6c60934c2336d598a01ffaa3eb9"></a>
+<a class="anchor" id="ac47aea03e36c97f978f7bc45a3720077"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int glass3::output::output::getPubOnExpiration </td>
+          <td class="memname">bool glass3::output::output::getPubOnExpiration </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -1055,6 +1087,31 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ac45d13d35ecad6efe6b28bf72357c606"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void glass3::output::output::setImmediatePubThreshold </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>threshold</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Function to set the immediate publication threshold. </p>
+<p>This function sets the threshold used to determine whether output should generate a detection message when it receives an event message with a sufficent bayes value from the associator.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">threshold</td><td>- A double value containing the immediate publication threshold </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a03e72a4aa55b4624cbe0901b1f335649"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1249,6 +1306,29 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="ae82b13f06851e346a1b0e753941fde01"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr int glass3::output::output::k_iMinimumPublicationTime = 10</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The minimum time in seconds to publish an event. </p>
 
 </div>
 </div>
