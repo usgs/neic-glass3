@@ -81,7 +81,12 @@
 			"complex": "cpp",
 			"*.tcc": "cpp",
 			"cinttypes": "cpp",
-			"hashtable": "cpp"
+			"hashtable": "cpp",
+			"__errc": "cpp",
+			"__node_handle": "cpp",
+			"bit": "cpp",
+			"condition_variable": "cpp",
+			"optional": "cpp"
 		}
 	}
 }

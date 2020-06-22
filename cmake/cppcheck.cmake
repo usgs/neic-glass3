@@ -31,6 +31,7 @@ if(RUN_CPPCHECK)
       --verbose
       --suppress=nullPointerRedundantCheck
       --suppress=constStatement
+      --suppress=compareBoolExpressionWithInt
       --error-exitcode=1
       ${SRCS} ${HDRS}
       COMMENT "Running cppcheck" VERBATIM

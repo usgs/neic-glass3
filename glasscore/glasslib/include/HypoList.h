@@ -310,6 +310,13 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 */
 	glass3::util::WorkState work() override;
 
+	// constants
+	/**
+	 * \brief The duration in seconds to search into the past for hypos matching
+	 * a pick
+	 */
+	static constexpr double k_nHypoSearchPastDurationForPick = 3600;
+
  private:
 	/**
 	 * \brief A HypoList function that updates the position of the given hypo
@@ -370,12 +377,6 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	mutable std::recursive_mutex m_HypoListMutex;
 
 	// constants
-	/**
-	 * \brief The duration in seconds to search into the past for hypos matching
-	 * a pick
-	 */
-	static const int k_nHypoSearchPastDurationForPick = 2400;
-
 	/**
 	 * \brief default maximum number of hypos allowed in CHypoList.
 	 */

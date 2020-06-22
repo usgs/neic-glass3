@@ -1067,9 +1067,9 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		}
 	}
 
-	// get residula, get useForLocations
-        bool useForLocations = true;
-        double tRes = calculateResidual(pick, &useForLocations);
+	// get residual, get useForLocations
+	bool useForLocations = true;
+	double tRes = calculateResidual(pick, &useForLocations);
 
         // give up if there's no valid residual
 	if (std::isnan(tRes) == true) {
@@ -1107,7 +1107,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 			// for locations, this will cause issues some sort of way to
 			// keep track of whether a phase is teleseismic will need to
 			// be added to traveltime
-			return (false);
+			// return (false);
 		}
 	}
 
@@ -1587,6 +1587,8 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 	// init expected travel time
 	double tCal = traveltime::CTravelTime::k_dTravelTimeInvalid;
 
+	std::string phaseName = "??";
+
 	// check pick classification
 	// are we configured to check pick phase classification
 	if (CGlass::getPickPhaseClassificationThreshold() > 0) {
@@ -1602,17 +1604,20 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 			// the classified pick phase
 			tCal = m_pTravelTimeTables->T(&site->getGeo(),
 											pick->getClassifiedPhase());
+			phaseName = pick->getClassifiedPhase();
 		} else {
 			// no valid phase classification,
 			// compute expected travel time based on the pick site location and
 			// the observed travel time
 			tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
+			phaseName = m_pTravelTimeTables->m_sPhase;
 		}
 	} else {
 		// not checking phase classification
 		// compute expected travel time based on the pick site location and
 		// the observed travel time
 		tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
+		phaseName = m_pTravelTimeTables->m_sPhase;
 	}
 
 	// Check if pick has an invalid travel time,
@@ -1631,6 +1636,24 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 
 	// compute residual from observed and calculated travel times
 	double tRes = tObs - tCal;
+
+	// set up geo for distance calculations
+	/* glass3::util::Geo geo;
+	geo.setGeographic(m_dLatitude, m_dLongitude,
+		glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
+
+	double dist = geo.delta(&site->getGeo())
+				/ glass3::util::GlassMath::k_DegreesToRadians;
+
+	// log it
+	glass3::util::Logger::log(
+			"debug",
+			"CHypo::calculateResidual: Calculated residual: " + std::to_string(tRes)
+			+ "; Phase: " + phaseName + "; for Pick: " + pick->getID()
+			+ "; tObs: " + std::to_string(tObs) + "; dist: " + std::to_string(dist)
+			+ " and Hypo: " + getID());
+	*/
+
 	return (tRes);
 }
 
@@ -3077,7 +3100,7 @@ void CHypo::calculateStatistics() {
 	// pick distances and azimuths
 	std::vector<double> dis;
 	std::vector<double> azm;
-	m_iTeleseismicPhaseCount = 0;
+	int telePhaseCount = 0;
 	for (auto pick : m_vPickData) {
 		// get the site
 		std::shared_ptr<CSite> site = pick->getSite();
@@ -3088,7 +3111,7 @@ void CHypo::calculateStatistics() {
 
 		// count phases past teleseismic distance
 		if (delta >= CGlass::getTeleseismicDistanceLimit()) {
-			m_iTeleseismicPhaseCount++;
+			telePhaseCount++;
 		}
 
 		// add to distance vactor
@@ -3101,6 +3124,8 @@ void CHypo::calculateStatistics() {
 		// add to azimuth vector
 		azm.push_back(azimuth);
 	}
+
+	m_iTeleseismicPhaseCount = telePhaseCount;
 
 	// Calculate distance standard deviation. Note that the denominator is N
 	// and not N-1, since a mean of 0 is pre-ordained.
@@ -3146,6 +3171,17 @@ void CHypo::calculateStatistics() {
 
 	// compute gap
 	m_dGap = calculateGap(m_dLatitude, m_dLongitude, m_dDepth);
+
+	glass3::util::Logger::log("debug",
+		"CHypo::calculateStatistics: ID: " + getID()
+		+ "; m_dDistanceSD: " + std::to_string(m_dDistanceSD)
+		+ "; m_dMedianDistance: " + std::to_string(m_dMedianDistance)
+		+ "; m_dMinDistance: " + std::to_string(m_dMinDistance)
+		+ "; m_dAssociationDistanceCutoff: "
+		+ std::to_string(m_dAssociationDistanceCutoff)
+		+ "; m_iTeleseismicPhaseCount: "
+		+ std::to_string(m_iTeleseismicPhaseCount)
+		+ "; m_dGap: " + std::to_string(m_dGap));
 }
 
 // ---------------------------------------------------------trap

@@ -10,6 +10,10 @@
 	# Whether to publish an event on expiration from glass
 	"PublishOnExpiration":true,
 
+	# Whether to immediately publish a quake that hits 
+	# this bayes threshold.
+	"ImmediatePublicationThreshold": 30.0,
+
 	# the directory to write output to
 	"OutputDirectory":"./global_example/output",
 
