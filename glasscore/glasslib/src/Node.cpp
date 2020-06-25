@@ -25,6 +25,7 @@ namespace glasscore {
 constexpr double CNode::k_dTravelTimePickSelectionWindow;
 constexpr double CNode::k_dDepthShellResolutionKm;
 constexpr double CNode::k_dGridPointVsResolutionRatio;
+constexpr double CNode::k_residualDistanceAllowanceFactor;
 
 // site Link sorting function
 // Compares site links using travel times
@@ -284,6 +285,17 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 	// parent web
 	int nCut = m_pWeb->getNucleationDataCountThreshold();
 	double dThresh = m_pWeb->getNucleationStackThreshold();
+
+	// use zonestats to decide whether to use stricter thresholds
+	// if the observibility is not negative (invalid) and equal
+	// to zero
+	bool isASeismic = false;
+	if (m_pWeb->getZoneStatsObservability(getLatitude(), getLongitude()) == 0) {
+		isASeismic = true;
+		nCut = m_pWeb->getASeismicNucleationDataCountThreshold();
+		dThresh = m_pWeb->getASeismicNucleationStackThreshold();
+	}
+
 	double dAzimuthRange = CGlass::getBeamMatchingAzimuthWindow();
 	// commented out because slowness matching of beams is not yet implemented
 	// but is scheduled to be soon

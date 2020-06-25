@@ -255,6 +255,11 @@ bool CZoneStats::setup(const std::string * pConfigFileName) {
 	m_dAvgObservabilityPerBin = m_nTotalNumEvents
 			/ (180.0 / fLatBinSizeDeg * 360.0 / this->fLonBinSizeDeg);
 
+	glass3::util::Logger::log(
+				"error",
+				"CZoneStats::setup(): Calculated m_dAvgObservabilityPerBin: "
+				+ std::to_string(m_dAvgObservabilityPerBin));
+
 	return (true);
 }  // end setup()
 

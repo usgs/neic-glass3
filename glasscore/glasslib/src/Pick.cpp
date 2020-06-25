@@ -647,6 +647,15 @@ bool CPick::nucleate(CPickList* parentThread) {
 			 glass3::util::Logger::log(sLog);
 			 */
 
+			// use zonestats to decide whether to use stricter thresholds
+			// if the observibility is not negative (invalid) and equal
+			// to zero
+			if (trigger->getWeb()->getZoneStatsObservability(hypo->getLatitude(),
+					hypo->getLongitude()) == 0) {
+				ncut = trigger->getWeb()->getASeismicNucleationDataCountThreshold();
+				thresh = trigger->getWeb()->getASeismicNucleationStackThreshold();
+			}
+
 			// check to see if we still have enough picks for this hypo to
 			// survive.
 			// NOTE, in Node, ncut is used as a threshold for the number of

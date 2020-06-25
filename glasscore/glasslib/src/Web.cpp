@@ -61,13 +61,15 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, bool update, bool save,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
-			int sleepTime, int checkInterval, double aziTap, double maxDep)
+			int sleepTime, int checkInterval, double aziTap, double maxDep,
+			double aSeismicThresh, int numASeismicNucleate)
 		: glass3::util::ThreadBaseClass("Web", sleepTime, numThreads,
 										checkInterval) {
 	clear();
 
 	initialize(name, thresh, numDetect, numNucleate, resolution, update, save,
-				firstTrav, secondTrav, aziTap, maxDep);
+				firstTrav, secondTrav, aziTap, maxDep, aSeismicThresh,
+				numASeismicNucleate);
 
 	// start up the threads
 	start();
@@ -83,6 +85,8 @@ void CWeb::clear() {
 	m_iNumStationsPerNode = 10;
 	m_iNucleationDataCountThreshold = 5;
 	m_dNucleationStackThreshold = 2.5;
+	m_iASeismicNucleationDataCountThreshold = 5;
+	m_dASeismicNucleationStackThreshold = 2.5;
 	m_dNodeResolution = 100;
 	m_dDepthResolution = k_dDepthResolutionUndefined;
 	m_sName = "UNDEFINED";
@@ -138,10 +142,12 @@ void CWeb::clear() {
 
 // ---------------------------------------------------------initialize
 bool CWeb::initialize(std::string name, double thresh, int numDetect,
-						int numNucleate, int resolution, bool update, bool save,
+						int numNucleate, int resolution, bool update,
+						bool save,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav,
-						double aziTap, double maxDep) {
+						double aziTap, double maxDep, double aSeismicThresh,
+						int numASeismicNucleate) {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 
 	m_sName = name;
@@ -157,6 +163,27 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	m_dMaxDepth = maxDep;
 
 	m_tLastUpdated = -1;
+
+	glass3::util::Logger::log(
+			"debug",
+			"CWeb::initialize: aSeismicThresh=" + std::to_string(aSeismicThresh));
+
+	// default to nucleation stack threshold
+	m_dASeismicNucleationStackThreshold = thresh;
+	if (aSeismicThresh > 0) {
+		m_dASeismicNucleationStackThreshold = aSeismicThresh;
+	}
+
+	glass3::util::Logger::log(
+			"debug",
+			"CWeb::initialize: numASeismicNucleate="
+			+ std::to_string(numASeismicNucleate));
+
+	// default to nucleation data count threshold
+	m_iASeismicNucleationDataCountThreshold = numNucleate;
+	if (numASeismicNucleate > 0) {
+		m_iASeismicNucleationDataCountThreshold = numASeismicNucleate;
+	}
 
 	// done
 	return (true);
@@ -359,11 +386,14 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 	snprintf(
 			sLog, sizeof(sLog),
 			"CWeb::generateGlobalGrid sName:%s Phase(s):%s; nZ:%d; resol:%.2f;"
-			" nDetect:%d; nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
-			" vSitesFilter:%d; bUseOnlyTeleseismicStations:%d; iNodeCount:%d;",
+			" nDetect:%d; nNucleate:%d; dThresh:%.2f; ASnNucleate:%d; ASdThresh:%.2f;"
+			" vNetFilter:%d; vSitesFilter:%d; bUseOnlyTeleseismicStations:%d;"
+			" iNodeCount:%d;",
 			m_sName.c_str(), phases.c_str(), numDepthLayers,
 			getNodeResolution(), getNumStationsPerNode(),
 			getNucleationDataCountThreshold(), getNucleationStackThreshold(),
+			getASeismicNucleationDataCountThreshold(),
+			getASeismicNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
@@ -589,15 +619,17 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 			sLog,
 			sizeof(sLog),
 			"CWeb::generateLocalGrid sName:%s Phase(s):%s; Ranges:Lat(%.2f,%.2f),"
-			"Lon:(%.2f,%.2f); nRow:%d; nCol:%d; nZ:%d; resol:%.2f;"
-			" nDetect:%d; nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
-			" vSitesFilter:%d;  bUseOnlyTeleseismicStations:%d;"
+			" Lon:(%.2f,%.2f); nRow:%d; nCol:%d; nZ:%d; resol:%.2f;"
+			" nDetect:%d; nNucleate:%d; dThresh:%.2f; ASnNucleate:%d; ASdThresh:%.2f;"
+			" vNetFilter:%d; vSitesFilter:%d; bUseOnlyTeleseismicStations:%d;"
 			" iNodeCount:%d;",
 			m_sName.c_str(), phases.c_str(), lat0,
 			lat0 - (rows - 1) * latDistance, lon0,
 			lon0 + (cols - 1) * lonDistance, rows, cols, numDepthLayers,
 			getNodeResolution(), getNumStationsPerNode(),
 			getNucleationDataCountThreshold(), getNucleationStackThreshold(),
+			getASeismicNucleationDataCountThreshold(),
+			getASeismicNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
@@ -739,10 +771,13 @@ bool CWeb::generateExplicitGrid(
 	snprintf(
 			sLog, sizeof(sLog),
 			"CWeb::generateExplicitGrid sName:%s Phase(s):%s; nDetect:%d;"
-			" nNucleate:%d; dThresh:%.2f; vNetFilter:%d;"
-			" bUseOnlyTeleseismicStations:%d; vSitesFilter:%d; iNodeCount:%d;",
+			" nNucleate:%d; dThresh:%.2f; ASnNucleate:%d; ASdThresh:%.2f;"
+			" vNetFilter:%d; bUseOnlyTeleseismicStations:%d; vSitesFilter:%d;"
+			" iNodeCount:%d;",
 			m_sName.c_str(), phases.c_str(), getNumStationsPerNode(),
 			getNucleationDataCountThreshold(), getNucleationStackThreshold(),
+			getASeismicNucleationDataCountThreshold(),
+			getASeismicNucleationStackThreshold(),
 			static_cast<int>(m_vNetworksFilter.size()),
 			static_cast<int>(m_vSitesFilter.size()),
 			static_cast<int>(m_bUseOnlyTeleseismicStations), iNodeCount);
@@ -769,6 +804,8 @@ bool CWeb::loadGridConfiguration(
 	int detect = CGlass::getNumStationsPerNode();
 	int nucleate = CGlass::getNucleationDataCountThreshold();
 	double thresh = CGlass::getNucleationStackThreshold();
+	int aSeismicNucleate = -1;
+	double aSeismicThresh = -1.0;
 
 	double resol = 0;
 	double aziTaper = k_dAzimuthTaperDefault;
@@ -887,10 +924,27 @@ bool CWeb::loadGridConfiguration(
 		m_dDepthResolution = k_dDepthResolutionUndefined;
 	}
 
+	// number of picks that need to associate to start an event in an aseismic area
+	if (((*gridConfiguration).HasKey("ASeismicNucleationDataCountThreshold"))
+			&& ((*gridConfiguration)["ASeismicNucleationDataCountThreshold"].GetType()
+					== json::ValueType::IntVal)) {
+		aSeismicNucleate =
+			(*gridConfiguration)["ASeismicNucleationDataCountThreshold"].ToInt();
+	}
+
+	// viability threshold needed to exceed for a nucleation in an aseismic area
+	// to be successful.
+	if (((*gridConfiguration).HasKey("ASeismicNucleationStackThreshold"))
+			&& ((*gridConfiguration)["ASeismicNucleationStackThreshold"].GetType()
+					== json::ValueType::DoubleVal)) {
+		aSeismicThresh =
+			(*gridConfiguration)["ASeismicNucleationStackThreshold"].ToDouble();
+	}
+
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, update, saveGrid,
 				m_pNucleationTravelTime1, m_pNucleationTravelTime2, aziTaper,
-				maxDepth);
+				maxDepth, aSeismicThresh, aSeismicNucleate);
 
 	// generate site and network filter lists
 	loadSiteFilters(gridConfiguration);
@@ -2203,6 +2257,31 @@ int CWeb::getSitesFilterSize() const {
 int CWeb::size() const {
 	std::lock_guard<std::mutex> vNodeGuard(m_vNodeMutex);
 	return (m_vNode.size());
+}
+
+// ----------------------------------------------getZoneStatsObservibility
+double CWeb::getZoneStatsObservability(double dLat, double dLon) {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+
+	if (m_pZoneStats == NULL) {
+		return(-1.0);
+	}
+
+	double observability =
+		m_pZoneStats->getRelativeObservabilityOfSeismicEventsAtLocation(
+			dLat, dLon);
+
+	return(observability);
+}
+
+// -------------------------------------getAseismicNucleationStackThreshold
+double CWeb::getASeismicNucleationStackThreshold() const {
+	return (m_dASeismicNucleationStackThreshold);
+}
+
+// --------------------------------getASeismicNucleationDataCountThreshold
+int CWeb::getASeismicNucleationDataCountThreshold() const {
+	return (m_iASeismicNucleationDataCountThreshold);
 }
 }  // namespace glasscore
 

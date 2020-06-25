@@ -92,13 +92,18 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * defaults to 360
 	 * \param maxDepth = A double value containing the maximum allowable depth
 	 * defaults to 800 km.
+	 * \param aSeismicThresh = An optional double value containing this web's 
+	 * aseismic nucleation threshold, -1.0 to disable.
+	 * \param numASeismicNucleate = An optional integer value containing the 
+	 * number of sitesrequired for the web to nucleate an event, -1 to disable
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, bool update, bool save,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			int numThreads = 0, int sleepTime = 100, int checkInterval = 300,
-			double aziTaper = 360.0, double maxDepth = 800.0);
+			double aziTaper = 360.0, double maxDepth = 800.0,
+			double aSeismicThresh = -1.0, int numASeismicNucleate = -1);
 
 	/**
 	 * \brief CWeb destructor
@@ -157,13 +162,18 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * defaults to 360
 	 * \param maxDepth = A double value containing the maximum allowable depth
 	 * defaults to 800 km.
+	 * \param aSeismicThresh = An optional double value containing this web's 
+	 * aseismic nucleation threshold, -1.0 to disable.
+	 * \param numASeismicNucleate = An optional integer value containing the 
+	 * number of sitesrequired for the web to nucleate an event, -1 to disable
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
 					int numNucleate, int resolution, bool update, bool save,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
-					double aziTaper = 360.0, double maxDepth = 800.0);
+					double aziTaper = 360.0, double maxDepth = 800.0,
+					double aSeismicThresh = -1.0, int numASeismicNucleate = -1);
 
 	/**
 	 * \brief Generate a local detection grid
@@ -491,6 +501,31 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 */
 	glass3::util::WorkState work() override;
 
+	/**
+	 * \brief zone stats observability retrieval function
+	 *
+	 * This function gets the zone stats observability for a given latitude and
+	 * longitude from zonestats
+	 * \param dLat - A double containing the latitude to use
+	 * \param dLon - A double containing the longitude to use
+	 * \return Returns a double value containing the zone stats observability
+	 */
+	double getZoneStatsObservability(double dLat, double dLon);
+
+	/**
+	 * \brief Gets the aseismic nucleation minimum stack threshold used for this web
+	 * \return Returns a double value containing the aseismic nucleation minimum stack
+	 * threshold
+	 */
+	double getASeismicNucleationStackThreshold() const;
+
+	/**
+	 * \brief Gets the aseismic nucleation data minimum threshold used for this web
+	 * \return Returns an integer value containing the aseismic nucleation data minimum
+	 * threshold
+	 */
+	int getASeismicNucleationDataCountThreshold() const;
+
  private:
 	/**
 	 * \brief A pointer to the CSiteList class, used get sites (stations)
@@ -611,6 +646,18 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * nodes to a file
 	 */
 	std::atomic<bool> m_bSaveGrid;
+
+	/**
+	 * \brief A double value containing the number picks of that need to be
+	 * gathered to trigger the nucleation of an event if the event is aseismic.
+	 */
+	std::atomic<double> m_dASeismicNucleationStackThreshold;
+
+	/**
+	 * \brief A double value containing the viability threshold needed to
+	 * exceed for a nucleation of an aseismic event to be successful. 
+	 */
+	std::atomic<double> m_iASeismicNucleationDataCountThreshold;
 
 	/**
 	 * \brief A pointer to a CTravelTime object containing
