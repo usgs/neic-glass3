@@ -138,6 +138,11 @@ void CWeb::clear() {
 	// reset quality filter
 	m_dQualityFilter = -1.0;
 	m_dMaxSiteDistanceFilter = -1.0;
+
+	m_dMinLatitude = 0.0;
+	m_dMinLongitude = 0.0;
+	m_dHeight = 0.0;
+	m_dWidth = 0.0;
 }
 
 // ---------------------------------------------------------initialize
@@ -288,13 +293,18 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 	if (getSaveGrid()) {
 		std::string filename = m_sName + "_gridfile.txt";
 		outfile.open(filename, std::ios::out);
-		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
+		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth,ZoneStatsObservability" << "\n"; // NOLINT
 
 		filename = m_sName + "_gridstafile.txt";
 		outstafile.open(filename, std::ios::out);
 		outstafile << "NodeID,[StationSCNL;StationLat;StationLon;StationRad],"
 					<< "\n";
 	}
+
+	m_dMinLatitude = -90.0;
+	m_dMinLongitude = -180.0;
+	m_dHeight = 180.0;
+	m_dWidth = 360.0;
 
 	// Generate equally spaced grid of nodes over the globe (more or less)
 	// Follows Paper (Gonzalez, 2010) Measurement of Areas on a Sphere Using
@@ -356,10 +366,16 @@ bool CWeb::generateGlobalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 				// write node to generateLocalGrid file
 				if (getSaveGrid()) {
+					double obs = 1.0;
+					if (m_pZoneStats != NULL) {
+						obs = m_pZoneStats->getRelativeObservabilityOfSeismicEventsAtLocation(aLat, aLon); // NOLINT
+					}
+
 					outfile << m_sName << "," << node->getID() << ","
 							<< std::to_string(aLat) << ","
-							<< std::to_string(aLon) << "," << std::to_string(z)
-							<< "\n";
+							<< std::to_string(aLon) << ","
+							<< std::to_string(z) << ","
+							<< std::to_string(obs) << "\n";
 
 					// write to station file
 					outstafile << node->getSitesString();
@@ -518,13 +534,21 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 	// middle column index, and the longitude distance
 	double lon0 = lon - (icol0 * lonDistance);
 
+	// remember min lon and lat
+	m_dMinLatitude = lat - (irow0 * latDistance);
+	m_dMinLongitude = lon0;
+
+	// compute width and height
+	m_dHeight = rows * latDistance;
+	m_dWidth = cols * lonDistance;
+
 	// create / open gridfile for saving
 	std::ofstream outfile;
 	std::ofstream outstafile;
 	if (getSaveGrid()) {
 		std::string filename = m_sName + "_gridfile.txt";
 		outfile.open(filename, std::ios::out);
-		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
+		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth,ZoneStatsObservability" << "\n"; // NOLINT
 
 		filename = m_sName + "_gridstafile.txt";
 		outstafile.open(filename, std::ios::out);
@@ -588,10 +612,16 @@ bool CWeb::generateLocalGrid(std::shared_ptr<json::Object> gridConfiguration) {
 
 				// write node to generateLocalGrid file
 				if (getSaveGrid()) {
+					double obs = 1.0;
+					if (m_pZoneStats != NULL) {
+						obs = m_pZoneStats->getRelativeObservabilityOfSeismicEventsAtLocation(latrow, loncol); // NOLINT
+					}
+
 					outfile << m_sName << "," << node->getID() << ","
 							<< std::to_string(latrow) << ","
 							<< std::to_string(loncol) << ","
-							<< std::to_string(z) << "\n";
+							<< std::to_string(z) << ","
+							<< std::to_string(obs) << "\n";
 
 					// write to station file
 					outstafile << node->getSitesString();
@@ -716,7 +746,7 @@ bool CWeb::generateExplicitGrid(
 	if (getSaveGrid()) {
 		std::string filename = m_sName + "_gridfile.txt";
 		outfile.open(filename, std::ios::out);
-		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth" << "\n";
+		outfile << "generateLocalGrid,NodeID,NodeLat,NodeLon,NodeDepth,ZoneStatsObservability" << "\n"; // NOLINT
 
 		filename = m_sName + "_gridstafile.txt";
 		outstafile.open(filename, std::ios::out);
@@ -727,12 +757,31 @@ bool CWeb::generateExplicitGrid(
 	// init node count
 	int iNodeCount = 0;
 
+	// init bounds
+	double minLat = nodes[0][k_iNodeLatitudeIndex];
+	double maxLat = nodes[0][k_iNodeLatitudeIndex];
+	double minLon = nodes[0][k_iNodeLongitudeIndex];
+	double maxLon = nodes[0][k_iNodeLongitudeIndex];
+
 	// loop through node vector
 	for (int i = 0; i < nN; i++) {
 		// get lat,lon,depth
 		double lat = nodes[i][k_iNodeLatitudeIndex];
 		double lon = nodes[i][k_iNodeLongitudeIndex];
 		double Z = nodes[i][k_iNodeDepthIndex];
+
+		if (lat < minLat) {
+			minLat = lat;
+		}
+		if (lat > maxLat) {
+			maxLat = lat;
+		}
+		if (lon < minLon) {
+			minLon = lon;
+		}
+		if (lon > maxLon) {
+			maxLon = lon;
+		}
 
 		std::lock_guard<std::mutex> guard(m_vSiteMutex);
 
@@ -749,14 +798,48 @@ bool CWeb::generateExplicitGrid(
 			iNodeCount++;
 		}
 
-		// write to station file
-		outstafile << node->getSitesString();
+		// write node to generateLocalGrid file
+		if (getSaveGrid()) {
+			double obs = 1.0;
+			if (m_pZoneStats != NULL) {
+				obs = m_pZoneStats->getRelativeObservabilityOfSeismicEventsAtLocation(lat, lon); // NOLINT
+			}
+
+			outfile << m_sName << "," << node->getID() << ","
+					<< std::to_string(lat) << ","
+					<< std::to_string(lon) << ","
+					<< std::to_string(Z) << ","
+					<< std::to_string(obs) << "\n";
+
+			// write to station file
+			outstafile << node->getSitesString();
+		}  // end if getSaveGrid()
 	}
 
 	// close grid file
 	if (getSaveGrid()) {
 		outfile.close();
 		outstafile.close();
+	}
+
+	// remember min lat and lon
+	m_dMinLatitude = minLat;
+	m_dMinLongitude = minLon;
+
+	// compute width and height
+	if ((minLat < 0) && (maxLat > 0)) {
+		m_dHeight = fabs(minLat) + maxLat;
+	} else if ((minLat < 0) && (maxLat < 0)) {
+		m_dHeight = fabs(minLat) - fabs(maxLat);
+	} else {
+		m_dHeight = maxLat - minLat;
+	}
+	if ((minLon < 0) && (maxLon > 0)) {
+		m_dWidth = fabs(minLon) + maxLon;
+	} else if ((minLon < 0) && (maxLon < 0)) {
+		m_dWidth = fabs(minLon) - fabs(maxLon);
+	} else {
+		m_dWidth = maxLon - minLon;
 	}
 
 	std::string phases = "";
@@ -2282,6 +2365,23 @@ double CWeb::getASeismicNucleationStackThreshold() const {
 // --------------------------------getASeismicNucleationDataCountThreshold
 int CWeb::getASeismicNucleationDataCountThreshold() const {
 	return (m_iASeismicNucleationDataCountThreshold);
+}
+
+// --------------------------------isWithin
+double CWeb::isWithin(double dLat, double dLon) {
+	if (m_dHeight == 0.0) {
+		return(0.0);
+	}
+	if (m_dWidth == 0.0) {
+		return(0.0);
+	}
+
+	if ((dLat >= m_dMinLatitude) && (dLat <= m_dMinLatitude + m_dHeight) &&
+		(dLon >= m_dMinLongitude) && (dLon <= m_dMinLongitude + m_dWidth)) {
+		return(m_dWidth * m_dHeight);
+	}
+
+	return(0.0);
 }
 }  // namespace glasscore
 

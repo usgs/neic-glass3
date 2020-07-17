@@ -255,4 +255,33 @@ int CWebList::size() const {
 	std::lock_guard<std::recursive_mutex> webListGuard(m_WebListMutex);
 	return (m_vWebs.size());
 }
+
+// ---------------------------------------------------getControllingWeb
+std::shared_ptr<CWeb> CWebList::getControllingWeb(double dLat,
+	double dLon) {
+	if (m_vWebs.size() < 1) {
+		return (NULL);
+	}
+
+	// for each web
+	std::shared_ptr<CWeb> bestWeb = NULL;
+	double minSize = 0.0;
+	for (auto web : m_vWebs) {
+		double size = web->isWithin(dLat, dLon);
+
+		// skip invalid web
+		if (size <= 0) {
+			continue;
+		}
+
+		// remember smallest web that contains the point
+		if ((minSize == 0.0) || (size < minSize)) {
+			minSize = size;
+			bestWeb = web;
+		}
+	}
+
+	// return the smallest web that contains the point
+	return(bestWeb);
+}
 }  // namespace glasscore

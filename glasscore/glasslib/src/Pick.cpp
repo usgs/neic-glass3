@@ -13,6 +13,7 @@
 #include "Node.h"
 #include "PickList.h"
 #include "HypoList.h"
+#include "WebList.h"
 #include "Hypo.h"
 #include "Site.h"
 #include "SiteList.h"
@@ -592,10 +593,8 @@ bool CPick::nucleate(CPickList* parentThread) {
 			hypo->addPickReference(pick);
 		}
 
-		// use the hypo's nucleation threshold, which is really the
-		// web's nucleation threshold
-		int ncut = hypo->getNucleationDataThreshold();
-		double thresh = hypo->getNucleationStackThreshold();
+		int ncut;
+		double thresh;
 		std::string web = hypo->getWebName();
 		double maxDepth = trigger->getNodeMaxDepth();
 		bool bad = false;
@@ -647,13 +646,20 @@ bool CPick::nucleate(CPickList* parentThread) {
 			 glass3::util::Logger::log(sLog);
 			 */
 
+			// look up which web controls this area
+			std::shared_ptr<CWeb> theWeb = CGlass::getWebList()->getControllingWeb(
+				hypo->getLatitude(), hypo->getLongitude());
+
 			// use zonestats to decide whether to use stricter thresholds
 			// if the observibility is not negative (invalid) and equal
 			// to zero
-			if (trigger->getWeb()->getZoneStatsObservability(hypo->getLatitude(),
+			if (theWeb->getZoneStatsObservability(hypo->getLatitude(),
 					hypo->getLongitude()) == 0) {
-				ncut = trigger->getWeb()->getASeismicNucleationDataCountThreshold();
-				thresh = trigger->getWeb()->getASeismicNucleationStackThreshold();
+				ncut = theWeb->getASeismicNucleationDataCountThreshold();
+				thresh = theWeb->getASeismicNucleationStackThreshold();
+			} else {
+				ncut = theWeb->getNucleationDataCountThreshold();
+				thresh = theWeb->getNucleationStackThreshold();
 			}
 
 			// check to see if we still have enough picks for this hypo to
@@ -706,6 +712,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 				bad = true;
 				break;
 			}
+
+			// update the hypo thresholds
+			hypo->setNucleationDataThreshold(ncut);
+			hypo->setNucleationStackThreshold(thresh);
 		}
 
 		// we've abandoned the potential hypo at this node

@@ -141,6 +141,16 @@ class CWebList {
 	void setSiteList(CSiteList* siteList);
 
 	/**
+	 * \brief Get controlling web for coordinates 
+	 *
+	 * This function returns the controlling web based on the provided coordinates
+	 * \param dLat - A double containing the latitude to use
+	 * \param dLon - A double containing the longitude to use
+	 * \return Returns shared pointer to the controlling web
+	 */
+	std::shared_ptr<CWeb> getControllingWeb(double dLat, double dLon);
+
+	/**
 	 * \brief Get the current size of the web list
 	 */
 	int size() const;

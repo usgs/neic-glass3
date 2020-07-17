@@ -526,6 +526,16 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 */
 	int getASeismicNucleationDataCountThreshold() const;
 
+	/**
+	 * \brief is coordinate within web function
+	 *
+	 * This function checks to see if the provided coordinates are within the web.
+	 * \param dLat - A double containing the latitude to use
+	 * \param dLon - A double containing the longitude to use
+	 * \return Returns a double value the relative size of the web
+	 */
+	double isWithin(double dLat, double dLon);
+
  private:
 	/**
 	 * \brief A pointer to the CSiteList class, used get sites (stations)
@@ -577,6 +587,26 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * \brief The name identifying this web
 	 */
 	std::string m_sName;
+
+	/**
+	 * \brief The bottom (latitude) coordinate of the grid bounding box as a double
+	 */
+	std::atomic<double> m_dMinLatitude;
+
+	/**
+	 * \brief The left (longitude) coordinate of the grid bounding box as a double
+	 */
+	std::atomic<double> m_dMinLongitude;
+
+	/**
+	 * \brief The height of the the grid bounding box in degreees as a double
+	 */
+	std::atomic<double> m_dHeight;
+
+	/**
+	 * \brief The width of the the grid bounding box in degreees as a double
+	 */
+	std::atomic<double> m_dWidth;
 
 	/**
 	 * \brief A double value containing the number of closest stations to use
