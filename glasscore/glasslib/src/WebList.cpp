@@ -266,6 +266,7 @@ std::shared_ptr<CWeb> CWebList::getControllingWeb(double dLat,
 	// for each web
 	std::shared_ptr<CWeb> bestWeb = NULL;
 	double minSize = 0.0;
+	bool tie = false;
 	for (auto web : m_vWebs) {
 		double size = web->isWithin(dLat, dLon);
 
@@ -278,10 +279,17 @@ std::shared_ptr<CWeb> CWebList::getControllingWeb(double dLat,
 		if ((minSize == 0.0) || (size < minSize)) {
 			minSize = size;
 			bestWeb = web;
+			tie = false;
+		} else if (size == minSize) {
+			tie = true;
 		}
 	}
 
-	// return the smallest web that contains the point
-	return(bestWeb);
+	if (tie == false) {
+		// return the smallest web that contains the point
+		return(bestWeb);
+	}
+
+	return(NULL);
 }
 }  // namespace glasscore
