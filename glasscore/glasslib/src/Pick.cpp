@@ -692,7 +692,7 @@ bool CPick::nucleate(CPickList* parentThread) {
 					aSeismic = "";
 				}
 				maxDepth = trigger->getWeb()->getMaxDepth();
-				controllingWeb = trigger->getWeb()->getName();
+				controllingWeb = "N/A";
 			}
 
 			// check to see if we still have enough picks for this hypo to
