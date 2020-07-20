@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
+#include <set>
 #include "Glass.h"
 #include "Web.h"
 #include "Trigger.h"
@@ -80,6 +81,7 @@ void CNode::clear() {
 	m_dResolution = 0;
 	m_dMaxDepth = 0;
 	m_bEnabled = false;
+	m_SourceSet.clear();
 }
 
 // ---------------------------------------------------------clearSiteLinks
@@ -428,6 +430,18 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 			bool phase2set = false;
 
 			if (pick == NULL) {
+				continue;
+			}
+
+			// skip this pick if it's not in the set of allowed sources
+			std::string pickSource = pick->getSource();
+			if ((m_SourceSet.empty() == false) &&
+				(pickSource != "") &&
+				(m_SourceSet.find(pickSource) == m_SourceSet.end())) {
+				// we have a set of allowed sources
+				// and we have a valid pick source
+				// and the source is NOT found in allowed sources
+				// so skip this pick
 				continue;
 			}
 
@@ -856,9 +870,15 @@ std::string CNode::getID() const {
 					+ std::to_string(getDepth())));
 }
 
-// ---------------------------------------------------------getMaxSiteDistance
+// -------------------------------------------------getMaxSiteDistance
 double CNode::getMaxSiteDistance() const {
 	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
 	return(m_dMaxSiteDistance);
+}
+
+// -------------------------------------------------------addSource
+void CNode::addSource(std::string source) {
+	std::lock_guard < std::recursive_mutex > nodeGuard(m_NodeMutex);
+	m_SourceSet.insert(source);
 }
 }  // namespace glasscore

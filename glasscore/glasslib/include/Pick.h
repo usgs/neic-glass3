@@ -80,6 +80,7 @@ class CPick {
 	 * made at
 	 * \param pickTime - A double containing the pick arrival time
 	 * \param pickIdString - A std::string containing the external pick id.
+	 * \param source - A std::string containing the pick source.
 	 * \param backAzimuth - A double containing the optional back azimuth, 
 	 * std::numeric_limits<double>::quiet_NaN() to omit
 	 * \param slowness - A double containing the optional slowness, 
@@ -106,8 +107,8 @@ class CPick {
 	 * magnitude probability, std::numeric_limits<double>::quiet_NaN() to omit
 	 */
 	CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-			std::string pickIdString, double backAzimuth, double slowness,
-			std::string phase, double phaseProb, double distance,
+			std::string pickIdString, std::string source, double backAzimuth,
+			double slowness, std::string phase, double phaseProb, double distance,
 			double distanceProb, double azimuth, double azimuthProb,
 			double depth, double depthProb, double magnitude,
 			double magnitudeProb);
@@ -146,6 +147,7 @@ class CPick {
 	 * made at
 	 * \param pickTime - A double containing the pick arrival time
 	 * \param pickIdString - A std::string containing the external pick id.
+	 * \param source - A std::string containing the pick source.
 	 * \param backAzimuth - A double containing the optional back azimuth, 
 	 * std::numeric_limits<double>::quiet_NaN() to omit
 	 * \param slowness - A double containing the optional slowness, 
@@ -173,11 +175,11 @@ class CPick {
 	 * \return Returns true if successful, false otherwise.
 	 */
 	bool initialize(std::shared_ptr<CSite> pickSite, double pickTime,
-					std::string pickIdString, double backAzimuth,
-					double slowness, std::string phase, double phaseProb,
-					double distance, double distanceProb, double azimuth,
-					double azimuthProb, double depth, double depthProb,
-					double magnitude, double magnitudeProb);
+					std::string pickIdString, std::string source,
+					double backAzimuth, double slowness, std::string phase,
+					double phaseProb, double distance, double distanceProb,
+					double azimuth, double azimuthProb, double depth,
+					double depthProb, double magnitude, double magnitudeProb);
 
 	/**
 	 * \brief Add hypo reference to this pick
@@ -400,6 +402,12 @@ class CPick {
 	 */
 	double getClassifiedMagnitudeProbability() const;
 
+	/**
+	 * \brief Get the source for this pick
+	 * \return Return a std::string containing the picksource
+	 */
+	const std::string& getSource() const;
+
  protected:
 	/**
 	 * \brief Remove hypo reference to this pick
@@ -449,6 +457,11 @@ class CPick {
 	 * \brief A std::string containing the string unique id of this pick
 	 */
 	std::string m_sID;
+
+	/**
+	 * \brief A std::string containing the source id for this pick
+	 */
+	std::string m_sSource;
 
 	/**
 	 * \brief A double value containing the back azimuth of the pick

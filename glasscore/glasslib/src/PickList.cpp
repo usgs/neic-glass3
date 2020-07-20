@@ -464,6 +464,7 @@ glass3::util::WorkState CPickList::work() {
 			// because the pick might be linked to a hypo
 			existingPick->initialize(existingPick->getSite(),
 										newPick->getTPick(), newPick->getID(),
+										newPick->getSource(),
 										newPick->getBackAzimuth(),
 										newPick->getSlowness(),
 										newPick->getClassifiedPhase(),

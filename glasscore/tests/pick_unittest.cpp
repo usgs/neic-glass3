@@ -28,6 +28,7 @@
 #define BACKAZIMUTH 2.65
 #define SLOWNESS 1.44
 #define PHASE "P"
+#define SOURCE "TestAuthor"
 
 #define PHASEPROB 0.22
 #define DISTANCE 0.442559
@@ -180,8 +181,9 @@ TEST(PickTest, Construction) {
 
 	// now init
 	testPick->initialize(sharedTestSite, PICKTIME, std::string(PICKIDSTRING),
-		BACKAZIMUTH, SLOWNESS, PHASE, PHASEPROB, DISTANCE, DISTANCEPROB,
-		AZIMUTH, AZIMUTHPROB, DEPTH, DEPTHPROB, MAGNITUDE, MAGNITUDEPROB);
+		std::string(SOURCE), BACKAZIMUTH, SLOWNESS, PHASE, PHASEPROB,
+		DISTANCE, DISTANCEPROB, AZIMUTH, AZIMUTHPROB, DEPTH, DEPTHPROB,
+		MAGNITUDE, MAGNITUDEPROB);
 
 	// check results
 	checkdata(testPick, "initialize check");

@@ -15,6 +15,7 @@
 #include <mutex>
 #include <tuple>
 #include <atomic>
+#include <set>
 #include "Link.h"
 
 namespace glasscore {
@@ -321,6 +322,11 @@ class CNode {
 	 */
 	std::string getID() const;
 
+	/**
+	 * \brief Add a source string to the set of source strings.
+	 */
+	void addSource(std::string source);
+
  private:
 	/**
 	 * \brief A pointer to the parent CWeb class, used get configuration,
@@ -373,6 +379,12 @@ class CNode {
 	 * nucleation. Nodes are disabled when they are being reconfigured.
 	 */
 	std::atomic<bool> m_bEnabled;
+
+	/**
+	 * \brief A std::set of strings listing the allowed pick sources for
+	 * this node.
+	 */
+	std::set<std::string> m_SourceSet;
 
 	/**
 	 * \brief A std::vector of tuples linking node to site

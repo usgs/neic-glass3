@@ -115,6 +115,7 @@ void CWeb::clear() {
 	// clear the network filter
 	m_vNetworksFilter.clear();
 	m_vSitesFilter.clear();
+	m_vSourcesFilter.clear();
 	m_bUseOnlyTeleseismicStations = false;
 
 	// clear sites
@@ -1042,7 +1043,7 @@ bool CWeb::loadGridConfiguration(
 				aSeismicThresh, aSeismicNucleate);
 
 	// generate site and network filter lists
-	loadSiteFilters(gridConfiguration);
+	loadFilters(gridConfiguration);
 
 	// Generate eligible station list
 	loadWebSiteList();
@@ -1261,13 +1262,13 @@ bool CWeb::loadTravelTimes(json::Object *gridConfiguration) {
 	return (true);
 }
 
-// ---------------------------------------------------------loadSiteFilters
-bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
+// ---------------------------------------------------------loadFilters
+bool CWeb::loadFilters(std::shared_ptr<json::Object> gridConfiguration) {
 	// nullchecks
 	// check json
 	if (gridConfiguration == NULL) {
 		glass3::util::Logger::log("error",
-									"genSiteFilters: NULL json configuration.");
+									"loadFilters: NULL json configuration.");
 		return (false);
 	}
 
@@ -1299,7 +1300,7 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 		if (netFilterCount > 0) {
 			glass3::util::Logger::log(
 					"debug",
-					"CWeb::genSiteFilters: " + std::to_string(netFilterCount)
+					"CWeb::loadFilters: " + std::to_string(netFilterCount)
 							+ " network filters configured.");
 		}
 	}
@@ -1330,8 +1331,39 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 		if (staFilterCount > 0) {
 			glass3::util::Logger::log(
 					"debug",
-					"CWeb::genSiteFilters: " + std::to_string(staFilterCount)
+					"CWeb::loadFilters: " + std::to_string(staFilterCount)
 							+ " SCNL filters configured.");
+		}
+	}
+
+	// Get the pick source names to be included in this web.
+	if ((*gridConfiguration).HasKey("PickSources")
+			&& ((*gridConfiguration)["PickSources"].GetType()
+					== json::ValueType::ArrayVal)) {
+		// clear any previous sources filter list
+		m_vSourcesFilter.clear();
+
+		// get the source array
+		json::Array arr = (*gridConfiguration)["PickSources"].ToArray();
+
+		// for each source in the array
+		int sourceFilterCount = 0;
+		for (int i = 0; i < arr.size(); i++) {
+			if (arr[i].GetType() == json::ValueType::StringVal) {
+				// get the network
+				std::string snet = arr[i].ToString();
+
+				// add to the network filter list
+				m_vSourcesFilter.push_back(snet);
+				sourceFilterCount++;
+			}
+		}
+
+		if (sourceFilterCount > 0) {
+			glass3::util::Logger::log(
+					"debug",
+					"CWeb::loadFilters: " + std::to_string(sourceFilterCount)
+							+ " pick source filters configured.");
 		}
 	}
 
@@ -1344,7 +1376,7 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 
 		glass3::util::Logger::log(
 				"debug",
-				"CWeb::genSiteFilters: bUseOnlyTeleseismicStations is "
+				"CWeb::loadFilters: bUseOnlyTeleseismicStations is "
 						+ std::to_string(m_bUseOnlyTeleseismicStations) + ".");
 	}
 
@@ -1357,7 +1389,7 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 
 		glass3::util::Logger::log(
 				"debug",
-				"CWeb::genSiteFilters: m_dQualityFilter is "
+				"CWeb::loadFilters: m_dQualityFilter is "
 						+ std::to_string(m_dQualityFilter) + ".");
 	} else {
 		m_dQualityFilter = -1.0;
@@ -1372,7 +1404,7 @@ bool CWeb::loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration) {
 
 		glass3::util::Logger::log(
 				"debug",
-				"CWeb::genSiteFilters: m_dMaxSiteDistanceFilter is "
+				"CWeb::loadFilters: m_dMaxSiteDistanceFilter is "
 						+ std::to_string(m_dMaxSiteDistanceFilter) + ".");
 	} else {
 		m_dMaxSiteDistanceFilter = -1.0;
@@ -1623,6 +1655,10 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 	// generate the sites for the node
 	node = generateNodeSites(node);
 
+	// add source filters
+	for (const auto source : m_vSourcesFilter) {
+		node->addSource(source);
+	}
 	// return the populated node
 	return (node);
 }

@@ -34,7 +34,7 @@ CPick::CPick() {
 // ---------------------------------------------------------CPick
 CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
 				std::string pickIdString, double backAzimuth, double slowness) {
-	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness, "",
+	initialize(pickSite, pickTime, pickIdString, "", backAzimuth, slowness, "",
 				std::numeric_limits<double>::quiet_NaN(),
 				std::numeric_limits<double>::quiet_NaN(),
 				std::numeric_limits<double>::quiet_NaN(),
@@ -48,14 +48,16 @@ CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
 
 // ---------------------------------------------------------CPick
 CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-				std::string pickIdString, double backAzimuth, double slowness,
+				std::string pickIdString, std::string source,
+				double backAzimuth, double slowness,
 				std::string phase, double phaseProb, double distance,
 				double distanceProb, double azimuth, double azimuthProb,
 				double depth, double depthProb, double magnitude,
 				double magnitudeProb) {
-	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness, phase,
-				phaseProb, distance, distanceProb, azimuth, azimuthProb, depth,
-				depthProb, magnitude, magnitudeProb);
+	initialize(pickSite, pickTime, pickIdString, source, backAzimuth,
+				slowness, phase, phaseProb, distance, distanceProb,
+				azimuth, azimuthProb, depth, depthProb, magnitude,
+				magnitudeProb);
 }
 
 // ---------------------------------------------------------CPick
@@ -110,6 +112,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 	double classifiedMag = std::numeric_limits<double>::quiet_NaN();
 	double classifiedMagProb = std::numeric_limits<double>::quiet_NaN();
 	std::string pid = "";
+	std::string source = "";
 
 	// site
 	if (pick->HasKey("Site")
@@ -364,11 +367,28 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		classifiedMagProb = std::numeric_limits<double>::quiet_NaN();
 	}
 
+	// source
+	if (pick->HasKey("Source")
+			&& ((*pick)["Source"].GetType()
+					== json::ValueType::ObjectVal)) {
+		// classification is an object
+		json::Object sourceobj = (*pick)["Source"].ToObject();
+
+		// author
+		if (sourceobj.HasKey("Author")
+				&& (sourceobj["Author"].GetType() == json::ValueType::StringVal)) {
+			source = sourceobj["Author"].ToString();
+		} else {
+			source = "";
+		}
+	}
+
 	// pass to initialization function
-	if (!initialize(site, tPick, pid, backAzimuth, slowness, classifiedPhase,
-					classifiedPhaseProb, classifiedDist, classifiedDistProb,
-					classifiedAzm, classifiedAzmProb, classifiedDepth,
-					classifiedDepthProb, classifiedMag, classifiedMagProb)) {
+	if (!initialize(site, tPick, pid, source, backAzimuth, slowness,
+					classifiedPhase, classifiedPhaseProb, classifiedDist,
+					classifiedDistProb, classifiedAzm, classifiedAzmProb,
+					classifiedDepth, classifiedDepthProb, classifiedMag,
+					classifiedMagProb)) {
 		glass3::util::Logger::log(
 				"error",
 				"CPick::CPick: Failed to initialize pick: "
@@ -396,6 +416,7 @@ void CPick::clear() {
 	m_JSONPick.reset();
 
 	m_sPhaseName = "";
+	m_sSource = "";
 	m_sID = "";
 	m_tPick = 0.0;
 	m_dBackAzimuth = std::numeric_limits<double>::quiet_NaN();
@@ -418,8 +439,9 @@ void CPick::clear() {
 
 // ---------------------------------------------------------initialize
 bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
-						std::string pickIdString, double backAzimuth,
-						double slowness, std::string phase, double phaseProb,
+						std::string pickIdString, std::string source,
+						double backAzimuth, double slowness,
+						std::string phase, double phaseProb,
 						double distance, double distanceProb, double azimuth,
 						double azimuthProb, double depth, double depthProb,
 						double magnitude, double magnitudeProb) {
@@ -430,6 +452,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 	setTPick(pickTime);
 	setTSort(pickTime);
 	m_sID = pickIdString;
+	m_sSource = source;
 	m_dBackAzimuth = backAzimuth;
 	m_dSlowness = slowness;
 	m_sClassifiedPhase = phase;
@@ -926,5 +949,11 @@ double CPick::getClassifiedMagnitude() const {
 // --------------------------------------------getClassifiedMagnitudeProbability
 double CPick::getClassifiedMagnitudeProbability() const {
 	return (m_dClassifiedMagnitudeProbability);
+}
+
+// ---------------------------------------------------------getSource
+const std::string& CPick::getSource() const {
+	std::lock_guard < std::recursive_mutex > pickGuard(m_PickMutex);
+	return (m_sSource);
 }
 }  // namespace glasscore

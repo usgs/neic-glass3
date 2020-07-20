@@ -240,16 +240,16 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	bool loadTravelTimes(json::Object *gridConfiguration);
 
 	/**
-	 * \brief Load Site filters
+	 * \brief Load web filters
 	 *
-	 * This function loads the station and network filter lists used in
+	 * This function loads the various filter lists used in
 	 * selecting eligible sites from the provided cofiguration
 	 *
 	 * \param gridConfiguration - A pointer to a json::object containing the web
 	 * configuration
 	 * \return Returns true if successful, false otherwise.
 	 */
-	bool loadSiteFilters(std::shared_ptr<json::Object> gridConfiguration);
+	bool loadFilters(std::shared_ptr<json::Object> gridConfiguration);
 
 	/**
 	 * \brief Load web site list
@@ -568,6 +568,13 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * and removal of sites as their usage status is changed.
 	 */
 	std::vector<std::string> m_vSitesFilter;
+
+	/**
+	 * \brief A std::vector containing the pick source names to be included
+	 * in this web. This needs to be saved to support dynamic addition
+	 * and removal of sites as their usage status is changed.
+	 */
+	std::vector<std::string> m_vSourcesFilter;
 
 	/**
 	 * \brief A boolean flag indicating whether to only use sites marked
