@@ -58,7 +58,7 @@ CWeb::CWeb(int numThreads, int sleepTime, int checkInterval)
 
 // ---------------------------------------------------------CWeb
 CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
-			int resolution, bool update, bool save,
+			int resolution, bool update, bool save, bool allowControllingWebs,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav, int numThreads,
 			int sleepTime, int checkInterval, double aziTap, double maxDep,
@@ -67,9 +67,9 @@ CWeb::CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 										checkInterval) {
 	clear();
 
-	initialize(name, thresh, numDetect, numNucleate, resolution, update, save,
-				firstTrav, secondTrav, aziTap, maxDep, aSeismicThresh,
-				numASeismicNucleate);
+	initialize(name, thresh, numDetect, numNucleate, resolution, update,
+				save, allowControllingWebs, firstTrav, secondTrav, aziTap,
+				maxDep, aSeismicThresh, numASeismicNucleate);
 
 	// start up the threads
 	start();
@@ -93,6 +93,7 @@ void CWeb::clear() {
 	m_pSiteList = NULL;
 	m_bUpdate = false;
 	m_bSaveGrid = false;
+	m_bAllowControllingWebs = false;
 	m_dAzimuthTaper = k_dAzimuthTaperDefault;
 	m_dMaxDepth = CGlass::k_dMaximumDepth;
 
@@ -148,7 +149,7 @@ void CWeb::clear() {
 // ---------------------------------------------------------initialize
 bool CWeb::initialize(std::string name, double thresh, int numDetect,
 						int numNucleate, int resolution, bool update,
-						bool save,
+						bool save, bool allowControllingWebs,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav,
 						double aziTap, double maxDep, double aSeismicThresh,
@@ -162,6 +163,7 @@ bool CWeb::initialize(std::string name, double thresh, int numDetect,
 	m_dNodeResolution = resolution;
 	m_bUpdate = update;
 	m_bSaveGrid = save;
+	m_bAllowControllingWebs = allowControllingWebs;
 	m_pNucleationTravelTime1 = firstTrav;
 	m_pNucleationTravelTime2 = secondTrav;
 	m_dAzimuthTaper = aziTap;
@@ -895,6 +897,7 @@ bool CWeb::loadGridConfiguration(
 	double maxDepth = CGlass::k_dMaximumDepth;
 	bool saveGrid = false;
 	bool update = false;
+	bool allowControllingWebs = false;
 
 	// get grid configuration from json
 	// name
@@ -1024,10 +1027,19 @@ bool CWeb::loadGridConfiguration(
 			(*gridConfiguration)["ASeismicNucleationStackThreshold"].ToDouble();
 	}
 
+	//  whether this web will allow other (smaller) webs to override it's
+	// nucleation thresholds
+	if ((gridConfiguration->HasKey("AllowControllingWebs"))
+			&& ((*gridConfiguration)["AllowControllingWebs"].GetType()
+					== json::ValueType::BoolVal)) {
+		allowControllingWebs = (*gridConfiguration)["AllowControllingWebs"].ToBool();
+	}
+
 	// initialize
 	initialize(name, thresh, detect, nucleate, resol, update, saveGrid,
-				m_pNucleationTravelTime1, m_pNucleationTravelTime2, aziTaper,
-				maxDepth, aSeismicThresh, aSeismicNucleate);
+				allowControllingWebs, m_pNucleationTravelTime1,
+				m_pNucleationTravelTime2, aziTaper, maxDepth,
+				aSeismicThresh, aSeismicNucleate);
 
 	// generate site and network filter lists
 	loadSiteFilters(gridConfiguration);
@@ -2279,6 +2291,11 @@ bool CWeb::getUpdate() const {
 // ---------------------------------------------------------getSaveGrid
 bool CWeb::getSaveGrid() const {
 	return (m_bSaveGrid);
+}
+
+// -----------------------------------------------getAllowControllingWebs
+bool CWeb::getAllowControllingWebs() const {
+	return (m_bAllowControllingWebs);
 }
 
 // ---------------------------------------------------------getResolution

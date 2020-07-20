@@ -50,6 +50,7 @@
 #define TRIGGER_WEB_RESOLUTION 100.0
 #define TRIGGER_WEB_UPDATE true
 #define TRIGGER_WEB_SAVE false
+#define TRIGGER_WEB_CONTROLLING false
 
 #define CORRELATION_LATITUDE 40.3344
 #define CORRELATION_LONGITUDE -121.44
@@ -268,7 +269,9 @@ TEST(HypoTest, TriggerConstruction) {
 			TRIGGER_WEB_NUMNUCLEATE,
 			TRIGGER_WEB_RESOLUTION,
 			TRIGGER_WEB_UPDATE,
-			TRIGGER_WEB_SAVE, nullTrav, nullTrav);
+			TRIGGER_WEB_SAVE,
+			TRIGGER_WEB_CONTROLLING,
+			nullTrav, nullTrav);
 
 	// create  shared pointer to the site
 	// create json objects from the strings

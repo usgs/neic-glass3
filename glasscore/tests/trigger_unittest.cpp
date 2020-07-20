@@ -30,6 +30,7 @@
 #define RESOLUTION 100.0
 #define UPDATE true
 #define SAVE false
+#define CONTROLLING false
 
 // tests to see if the node can be constructed
 TEST(TriggerTest, Construction) {
@@ -38,12 +39,14 @@ TEST(TriggerTest, Construction) {
 	// construct a web
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
 	glasscore::CWeb * testWeb = new glasscore::CWeb(std::string(NAME),
-	THRESH,
+													THRESH,
 													NUMDETECT,
 													NUMNUCLEATE,
 													RESOLUTION,
 													UPDATE,
-													SAVE, nullTrav, nullTrav);
+													SAVE,
+													CONTROLLING,
+													nullTrav, nullTrav);
 
 	// create  shared pointer to the site
 	// create json objects from the strings

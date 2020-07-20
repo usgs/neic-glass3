@@ -77,6 +77,8 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * update
 	 * \param save - A boolean flag indicating whether this web should save it's
 	 * nodes to a file
+	 * \param allowControllingWebs - A boolean flag indicating whether this web
+	 * will allow other (smaller) webs to override it's nucleation thresholds
 	 * \param firstTrav - A shared pointer to the first CTravelTime object to
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
@@ -98,7 +100,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * number of sitesrequired for the web to nucleate an event, -1 to disable
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
-			int resolution, bool update, bool save,
+			int resolution, bool update, bool save, bool allowControllingWebs,
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			int numThreads = 0, int sleepTime = 100, int checkInterval = 300,
@@ -154,6 +156,8 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * update
 	 * \param save - A boolean flag indicating whether this web should save it's
 	 * nodes to a file
+	 * \param allowControllingWebs - A boolean flag indicating whether this web
+	 * will allow other (smaller) webs to override it's nucleation thresholds
 	 * \param firstTrav - A shared pointer to the first CTravelTime object to
 	 * use for travel time lookups.
 	 * \param secondTrav - A shared pointer to the second CTravelTime object to
@@ -170,6 +174,7 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 */
 	bool initialize(std::string name, double thresh, int numDetect,
 					int numNucleate, int resolution, bool update, bool save,
+					bool allowControllingWebs,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
 					double aziTaper = 360.0, double maxDepth = 800.0,
@@ -416,6 +421,14 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * saving it's nodes, true if it does, false otherwise
 	 */
 	bool getSaveGrid() const;
+
+	/**
+	 * \brief Gets a boolean flag that stores whether this web will allow other 
+	 * (smaller) webs to override it's nucleation thresholds
+	 * \return Returns a boolean flag indicating whether this web will allow other 
+	 * (smaller) webs to override it's nucleation thresholds
+	 */
+	bool getAllowControllingWebs() const;
 
 	/**
 	 * \brief Gets the node resolution of this web
@@ -676,6 +689,12 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * nodes to a file
 	 */
 	std::atomic<bool> m_bSaveGrid;
+
+	/**
+	 * \brief A boolean flag that stores whether this web will allow other 
+	 * (smaller) webs to override it's nucleation thresholds
+	 */
+	std::atomic<bool> m_bAllowControllingWebs;
 
 	/**
 	 * \brief A double value containing the number picks of that need to be

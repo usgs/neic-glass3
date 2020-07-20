@@ -648,12 +648,19 @@ bool CPick::nucleate(CPickList* parentThread) {
 			 */
 
 			// look up which web controls this area
-			std::shared_ptr<CWeb> theWeb = CGlass::getWebList()->getControllingWeb(
-				hypo->getLatitude(), hypo->getLongitude());
+			std::shared_ptr<CWeb> theWeb = NULL;
+			std::string aSeismic = "";
 
-			// function returns null if there is a tie (most likely two global 
-			// grids), or if something went wrong
-			// if this happens, just use the triggering web
+			// if we allow using controlling webs
+			if (trigger->getWeb()->getAllowControllingWebs() == true) {
+				// get the controlling web
+				theWeb = CGlass::getWebList()->getControllingWeb(
+					hypo->getLatitude(), hypo->getLongitude());
+			}
+
+			// function returns null if there is a tie (most likely two global
+			// grids), if we don't allow contorlling webs, or if something else
+			// went wrong if this happens, just use the triggering web thresholds
 			if (theWeb != NULL) {
 				// use zonestats to decide whether to use stricter thresholds
 				// if the observibility is not negative (invalid) and equal
@@ -662,9 +669,11 @@ bool CPick::nucleate(CPickList* parentThread) {
 						hypo->getLongitude()) == 0) {
 					ncut = theWeb->getASeismicNucleationDataCountThreshold();
 					thresh = theWeb->getASeismicNucleationStackThreshold();
+					aSeismic = " aSeismic ";
 				} else {
 					ncut = theWeb->getNucleationDataCountThreshold();
 					thresh = theWeb->getNucleationStackThreshold();
+					aSeismic = "";
 				}
 				maxDepth = theWeb->getMaxDepth();
 				controllingWeb = theWeb->getName();
@@ -676,9 +685,11 @@ bool CPick::nucleate(CPickList* parentThread) {
 						hypo->getLongitude()) == 0) {
 					ncut = trigger->getWeb()->getASeismicNucleationDataCountThreshold();
 					thresh = trigger->getWeb()->getASeismicNucleationStackThreshold();
+					aSeismic = " aSeismic ";
 				} else {
 					ncut = trigger->getWeb()->getNucleationDataCountThreshold();
 					thresh = trigger->getWeb()->getNucleationStackThreshold();
+					aSeismic = "";
 				}
 				maxDepth = trigger->getWeb()->getMaxDepth();
 				controllingWeb = trigger->getWeb()->getName();
@@ -695,9 +706,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 							"CPick::nucleate: -- Abandoning trigger %s "
 							"because the number of picks is below the cutoff "
 							"(npick:%d, ncut:%d, triggeringWeb:%s, "
-							"controllingWeb:%s) --",
+							"controllingWeb:%s) %s--",
 							triggerString.c_str(), npick, ncut,
-							triggeringWeb.c_str(), controllingWeb.c_str());
+							triggeringWeb.c_str(), controllingWeb.c_str(),
+							aSeismic.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -713,9 +725,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 							"CPick::nucleate: -- Abandoning trigger %s "
 							"because the bayes value is below the threshold "
 							"(bayes:%f, thresh:%f, triggeringWeb:%s, "
-							"controllingWeb:%s) --",
+							"controllingWeb:%s) %s--",
 							triggerString.c_str(), bayes, thresh,
-							triggeringWeb.c_str(), controllingWeb.c_str());
+							triggeringWeb.c_str(), controllingWeb.c_str(),
+							aSeismic.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -731,9 +744,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 							"CPick::nucleate: -- Abandoning trigger %s "
 							"because the depth is greater than the max depth "
 							"(depth:%f, maxDepth:%f, triggeringWeb:%s, "
-							"controllingWeb:%s) --",
+							"controllingWeb:%s) %s--",
 							triggerString.c_str(), depth, maxDepth,
-							triggeringWeb.c_str(), controllingWeb.c_str());
+							triggeringWeb.c_str(), controllingWeb.c_str(),
+							aSeismic.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
