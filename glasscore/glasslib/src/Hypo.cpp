@@ -2205,12 +2205,28 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		return (hypo);
 	}
 
+	// make sure this event hasn't been canceld
+	if (cancelCheck() == true) {
+		glass3::util::Logger::log(
+				"debug",
+				"CHypo::generateHypoMessage: hypo:" + m_sID
+						+ " has been canceled.");
+		// return a cancel message
+		(*hypo)["Cmd"] = "Cancel";
+		(*hypo)["Pid"] = m_sID;
+		return (hypo);
+	}
+
 	// make sure this event is still reportable
 	if (reportCheck() == false) {
 		glass3::util::Logger::log(
 				"debug",
 				"CHypo::generateHypoMessage: hypo:" + m_sID
 						+ " is not reportable.");
+		// return a cancel message
+		(*hypo)["Cmd"] = "Cancel";
+		(*hypo)["Pid"] = m_sID;
+
 		return (hypo);
 	}
 
@@ -3172,7 +3188,7 @@ void CHypo::calculateStatistics() {
 	// compute gap
 	m_dGap = calculateGap(m_dLatitude, m_dLongitude, m_dDepth);
 
-	glass3::util::Logger::log("debug",
+	/* glass3::util::Logger::log("debug",
 		"CHypo::calculateStatistics: ID: " + getID()
 		+ "; m_dDistanceSD: " + std::to_string(m_dDistanceSD)
 		+ "; m_dMedianDistance: " + std::to_string(m_dMedianDistance)
@@ -3182,6 +3198,7 @@ void CHypo::calculateStatistics() {
 		+ "; m_iTeleseismicPhaseCount: "
 		+ std::to_string(m_iTeleseismicPhaseCount)
 		+ "; m_dGap: " + std::to_string(m_dGap));
+	*/
 }
 
 // ---------------------------------------------------------trap

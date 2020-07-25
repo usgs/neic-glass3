@@ -862,15 +862,25 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			glass3::util::Logger::log(sLog);
 
 			// prefer to merge into the hypo that has already been published
-			std::shared_ptr<CHypo> toHypo;
-			std::shared_ptr<CHypo> fromHypo;
+			std::shared_ptr<CHypo> intoHypo; // The hypo we are merging into
+			std::shared_ptr<CHypo> fromHypo; // The hypo we are merging from
 			if ((hypo->getHypoGenerated() == false)
 					&& (aHypo->getHypoGenerated() == true)) {
-				toHypo = aHypo;
+				intoHypo = aHypo;
 				fromHypo = hypo;
-			} else {
-				toHypo = hypo;
+			} else if ((hypo->getHypoGenerated() == true)
+					&& (aHypo->getHypoGenerated() == false)) {
+				intoHypo = hypo;
 				fromHypo = aHypo;
+			} else {
+				// otherwise prefer the "larger" event
+				if (hypo->getPickDataSize() >= aHypo->getPickDataSize()) {
+					intoHypo = hypo;
+					fromHypo = aHypo;
+				} else {
+					intoHypo = aHypo;
+					fromHypo = hypo;
+				}
 			}
 
 			// get geo objects
@@ -880,7 +890,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 									glass3::util::Geo::k_EarthRadiusKm);
 
 			glass3::util::Geo toGeo;
-			toGeo.setGeographic(toHypo->getLatitude(), toHypo->getLongitude(),
+			toGeo.setGeographic(intoHypo->getLatitude(), intoHypo->getLongitude(),
 								glass3::util::Geo::k_EarthRadiusKm);
 
 			// calculate distance between hypos
@@ -894,11 +904,11 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 			// get picks
 			auto fromPicks = fromHypo->getPickData();
-			auto toPicks = toHypo->getPickData();
+			auto intoPicks = intoHypo->getPickData();
 
 			// get bayes values
 			double fromBayes = fromHypo->getBayesValue();
-			double toBayes = toHypo->getBayesValue();
+			double intoBayes = intoHypo->getBayesValue();
 
 			// Log info on two events
 			snprintf(
@@ -914,21 +924,21 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 			snprintf(
 					sLog, sizeof(sLog),
-					"CHypoList::findAndMergeMatchingHypos: toHypo:%s lat:%.3f, "
+					"CHypoList::findAndMergeMatchingHypos: intoHypo:%s lat:%.3f, "
 					"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d",
-					toHypo->getID().c_str(), toHypo->getLatitude(),
-					toHypo->getLongitude(), toHypo->getDepth(),
-					toHypo->getTOrigin(), toHypo->getBayesValue(),
-					static_cast<int>(toPicks.size()));
+					intoHypo->getID().c_str(), intoHypo->getLatitude(),
+					intoHypo->getLongitude(), intoHypo->getDepth(),
+					intoHypo->getTOrigin(), intoHypo->getBayesValue(),
+					static_cast<int>(intoPicks.size()));
 			glass3::util::Logger::log(sLog);
 
-			// add all picks from fromHypo into toHypo
+			// add all picks from fromHypo into intoHypo
 			for (auto pick : fromPicks) {
-				toHypo->addPickReference(pick);
+				intoHypo->addPickReference(pick);
 			}
 
-			// initial localization attempt of toHypo after adding picks
-			toHypo->anneal(
+			// initial localization attempt of intoHypo after adding picks
+			intoHypo->anneal(
 					k_nNumberOfMergeAnnealIterations,
 					(distanceCut / CHypo::k_dInitialAnnealStepReducationFactor)
 							* glass3::util::Geo::k_DegreesToKm,
@@ -937,49 +947,49 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 					(timeCut / CHypo::k_dInitialAnnealStepReducationFactor),
 					k_dFinalMergeAnnealTimeStepSize);
 
-			// Remove picks from toHypo that do not fit initial location
-			if (toHypo->pruneData()) {
-				// relocate the toHypo if we pruned
-				toHypo->localize();
+			// Remove picks from intoHypo that do not fit initial location
+			if (intoHypo->pruneData()) {
+				// relocate the intoHypo if we pruned
+				intoHypo->localize();
 			}
 
 			// get the new bayes value
-			double newBayes = toHypo->getBayesValue();
+			double newBayes = intoHypo->getBayesValue();
 
 			// check that the new bayes is better than either of the original
 			// bayes values
 			if (newBayes
-					> (std::max(toBayes, fromBayes))
+					> (std::max(intoBayes, fromBayes))
 							+ (k_dMergeStackImprovementRatio
-									* std::min(toBayes, fromBayes))) {
+									* std::min(intoBayes, fromBayes))) {
 				snprintf(
 						sLog, sizeof(sLog),
 						"CHypoList::findAndMergeMatchingHypos: merged fromHypo "
-						"%s into toHypo %s because toHypo significantly better "
-						"than fromHypo and original toHypo, newBayes:%.3f > "
-						"toHypo Bayes:%.3f, fromHypo bayes:%.3f",
-						fromHypo->getID().c_str(), toHypo->getID().c_str(),
-						newBayes, toBayes, fromBayes);
+						"%s into intoHypo %s because intoHypo significantly better "
+						"than fromHypo and original intoHypo, newBayes:%.3f > "
+						"intoHypo Bayes:%.3f, fromHypo bayes:%.3f",
+						fromHypo->getID().c_str(), intoHypo->getID().c_str(),
+						newBayes, intoBayes, fromBayes);
 				glass3::util::Logger::log(sLog);
 
-				// toHypo has effectively been replaced, so now remove
+				// intoHypo has effectively been replaced, so now remove
 				// fromHypo, since it was successfully merged
 				removeHypo(fromHypo);
 
 				// we've merged a hypo, move on to the next candidate
 				merged = true;
 			} else if (newBayes
-					>= toBayes * k_dMinimumRoundingProtectionRatio) {
+					>= intoBayes * k_dMinimumRoundingProtectionRatio) {
 				// error or minor issue in location?
-				// the new Hypo is at least as good as the old toHypo but it
+				// the new Hypo is at least as good as the old intoHypo but it
 				// hasn't improved significantly. This could be because either
-				// fromHypo has a subset of the picks of the toHypo, or because
+				// fromHypo has a subset of the picks of the intoHypo, or because
 				// the two hypos are unrelated and share no picks. Resolve
 				// duplicate picks and see if the weaker hypo can still stand.
-				if (resolveData(toHypo)) {
-					// relocate the toHypo if we resolved to get an updated
+				if (resolveData(intoHypo)) {
+					// relocate the intoHypo if we resolved to get an updated
 					// bayes value
-					toHypo->localize();
+					intoHypo->localize();
 				}
 
 				// relocate and more importantly re-calc statistics for the
@@ -989,10 +999,10 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 				// Resolve duplicate picks, using our increased relative
 				// strength as we've stripped dup's away from fromHypo.
-				if (resolveData(toHypo)) {
-					// relocate the toHypo if we resolved to get an updated
+				if (resolveData(intoHypo)) {
+					// relocate the intoHypo if we resolved to get an updated
 					// bayes value
-					toHypo->localize();
+					intoHypo->localize();
 				}
 
 				// check to see if fromHypo is still healthy
@@ -1001,14 +1011,14 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 							sLog,
 							sizeof(sLog),
 							"CHypoList::findAndMergeMatchingHypos: merged "
-							"fromHypo %s into toHypo %s because fromHypo failed "
-							"cancelCheck, toHypo:Bayes %.3f, fromHypo:bayes %.3f",
-							fromHypo->getID().c_str(), toHypo->getID().c_str(),
-							toHypo->getBayesValue(), fromHypo->getBayesValue());
+							"fromHypo %s into intoHypo %s because fromHypo failed "
+							"cancelCheck, intoHypo:Bayes %.3f, fromHypo:bayes %.3f",
+							fromHypo->getID().c_str(), intoHypo->getID().c_str(),
+							intoHypo->getBayesValue(), fromHypo->getBayesValue());
 					glass3::util::Logger::log(sLog);
 
 					// fromHypo isn't strong enough to stand on it's own after
-					// we've resolved picks with toHypo.  Merge essentially
+					// we've resolved picks with intoHypo.  Merge essentially
 					// successful, make fromHypo go away.
 					removeHypo(fromHypo);
 
@@ -1020,46 +1030,46 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 					// haven't done anything evil to it, we just resolved
 					// picks multiple times... We potentially stole a bunch of
 					// picks from it, but not without merit, and the picks can't
-					// belong to both it and toHypo forever, so...
+					// belong to both it and intoHypo forever, so...
 					// And if there were NO overlapping picks between the two
 					// events, then we haven't done anything to fromHypo at
 					// all...
 					// log something here?
 
-					// the merged hypo (toHypo) was not better, revert toHypo.
+					// the merged hypo (intoHypo) was not better, revert intoHypo.
 					// and fromHypo
 					snprintf(
 							sLog, sizeof(sLog),
 							"CHypoList::findAndMergeMatchingHypos: keeping "
 							"modified hypos %s and %s because fromHypo passed "
-							"cancelCheck, toHypo Bayes:%.3f, fromHypo "
+							"cancelCheck, intoHypo Bayes:%.3f, fromHypo "
 							"bayes:%.3f",
-							toHypo->getID().c_str(), fromHypo->getID().c_str(),
-							toHypo->getBayesValue(), fromHypo->getBayesValue());
+							intoHypo->getID().c_str(), fromHypo->getID().c_str(),
+							intoHypo->getBayesValue(), fromHypo->getBayesValue());
 					glass3::util::Logger::log(sLog);
 				}  // end else (fromHypo->cancelCheck())
 			} else {
-				// the merged hypo (toHypo) was not better, revert toHypo.
+				// the merged hypo (intoHypo) was not better, revert intoHypo.
 				snprintf(
 						sLog,
 						sizeof(sLog),
 						"CHypoList::findAndMergeMatchingHypos: keeping original "
-						"hypos %s and %s, newBayes:%.3f toHypo Bayes:%.3f, "
+						"hypos %s and %s, newBayes:%.3f intoHypo Bayes:%.3f, "
 						"fromHypo bayes:%.3f",
-						toHypo->getID().c_str(), fromHypo->getID().c_str(),
-						newBayes, toBayes, fromBayes);
+						intoHypo->getID().c_str(), fromHypo->getID().c_str(),
+						newBayes, intoBayes, fromBayes);
 				glass3::util::Logger::log(sLog);
 
-				// reset toHypo to where it was
-				toHypo->clearPickReferences();
+				// reset intoHypo to where it was
+				intoHypo->clearPickReferences();
 
-				// add the original toHypo picks
-				for (auto pick : toPicks) {
-					toHypo->addPickReference(pick);
+				// add the original intoHypo picks
+				for (auto pick : intoPicks) {
+					intoHypo->addPickReference(pick);
 				}
 
-				// relocate toHypo
-				toHypo->localize();
+				// relocate intoHypo
+				intoHypo->localize();
 			}  // end else is toHypoBetter
 		}
 	}
