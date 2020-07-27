@@ -2195,40 +2195,36 @@ bool CHypo::hasPickReference(std::shared_ptr<CPick> pck) {
 
 // ---------------------------------------------------------generateHypoMessage
 std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
-	std::shared_ptr<json::Object> hypo = std::make_shared < json::Object
-			> (json::Object());
-
 	// null check
 	if (m_pTravelTimeTables == NULL) {
 		glass3::util::Logger::log("warning",
 									"CHypo::generateHypoMessage: NULL pTTT.");
-		return (hypo);
+		return (NULL);
 	}
 
 	// make sure this event hasn't been canceld
 	if (cancelCheck() == true) {
 		glass3::util::Logger::log(
 				"debug",
-				"CHypo::generateHypoMessage: hypo:" + m_sID
+				"CHypo::generateHypoMessage: hypo: " + m_sID
 						+ " has been canceled.");
 		// return a cancel message
-		(*hypo)["Cmd"] = "Cancel";
-		(*hypo)["Pid"] = m_sID;
-		return (hypo);
+		return (generateCancelMessage());
 	}
 
 	// make sure this event is still reportable
 	if (reportCheck() == false) {
 		glass3::util::Logger::log(
 				"debug",
-				"CHypo::generateHypoMessage: hypo:" + m_sID
+				"CHypo::generateHypoMessage: hypo: " + m_sID
 						+ " is not reportable.");
 		// return a cancel message
-		(*hypo)["Cmd"] = "Cancel";
-		(*hypo)["Pid"] = m_sID;
-
-		return (hypo);
+		return (generateCancelMessage());
 	}
+
+	// create json object
+	std::shared_ptr<json::Object> hypo = std::make_shared < json::Object
+			> (json::Object());
 
 	glass3::util::Logger::log(
 			"debug",

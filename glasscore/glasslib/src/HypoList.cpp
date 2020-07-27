@@ -862,8 +862,8 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			glass3::util::Logger::log(sLog);
 
 			// prefer to merge into the hypo that has already been published
-			std::shared_ptr<CHypo> intoHypo; // The hypo we are merging into
-			std::shared_ptr<CHypo> fromHypo; // The hypo we are merging from
+			std::shared_ptr<CHypo> intoHypo;  // The hypo we are merging into
+			std::shared_ptr<CHypo> fromHypo;  // The hypo we are merging from
 			if ((hypo->getHypoGenerated() == false)
 					&& (aHypo->getHypoGenerated() == true)) {
 				intoHypo = aHypo;
