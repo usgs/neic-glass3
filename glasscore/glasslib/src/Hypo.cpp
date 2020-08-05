@@ -2520,7 +2520,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 		m_pTravelTimeTables = std::make_shared < traveltime::CTTT
 				> (traveltime::CTTT(*ttt));
 	}
-	m_tCreate = glass3::util::Date::now();
+	setTCreate(glass3::util::Date::now());
 
 	return (true);
 }
@@ -3290,6 +3290,11 @@ void CHypo::setTOrigin(double newTOrg) {
 // --------------------------------------------------setTSort
 void CHypo::setTSort(double newTSort) {
 	m_tSort = std::floor(newTSort);
+}
+
+// ---------------------------------------------------------setTCreate
+void CHypo::setTCreate(double newTCreate) {
+	m_tCreate = newTCreate;
 }
 
 // --------------------------------------------------setNucleationStackThreshold

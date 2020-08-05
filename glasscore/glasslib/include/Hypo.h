@@ -1038,6 +1038,13 @@ class CHypo {
 	void setTSort(double newTSort);
 
 	/**
+	 * \brief Sets the time that this hypo was created
+	 * \param newTCreate - a double containing the hypo creation time in Gregorian
+	 * seconds
+	 */
+	void setTCreate(double newTCreate);
+
+	/**
 	 * \brief Set nucleation auditing info for this hypo
 	 * \param tNucleation - time this hypo was nucleated(Gregorian seconds).
 	 * \param tNucleationKeyPickInsertion - time the key pick for nucleating

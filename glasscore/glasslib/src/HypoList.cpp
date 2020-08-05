@@ -972,6 +972,10 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 						newBayes, intoBayes, fromBayes);
 				glass3::util::Logger::log(sLog);
 
+				if (fromHypo->getTCreate() < intoHypo->getTCreate()) {
+					intoHypo->setTCreate(fromHypo->getTCreate());
+				}
+
 				// intoHypo has effectively been replaced, so now remove
 				// fromHypo, since it was successfully merged
 				removeHypo(fromHypo);
@@ -1016,6 +1020,10 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 							fromHypo->getID().c_str(), intoHypo->getID().c_str(),
 							intoHypo->getBayesValue(), fromHypo->getBayesValue());
 					glass3::util::Logger::log(sLog);
+
+					if (fromHypo->getTCreate() < intoHypo->getTCreate()) {
+						intoHypo->setTCreate(fromHypo->getTCreate());
+					}
 
 					// fromHypo isn't strong enough to stand on it's own after
 					// we've resolved picks with intoHypo.  Merge essentially
