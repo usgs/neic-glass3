@@ -402,6 +402,16 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \brief The ratio used to protect against minimum rounding
 	 */
 	static constexpr double k_dMinimumRoundingProtectionRatio = 0.99;
+
+	/**
+	 * \brief The tolerance in seconds used to reject adding a new close hypo
+	 */
+	static constexpr double k_dExistingTimeTolerance = 5.0;
+
+	/**
+	 * \brief The tolerance in degrees used to reject adding a new close hypo
+	 */
+	static constexpr double k_dExistingDistanceTolerance = 0.5;
 };
 }  // namespace glasscore
 #endif  // HYPOLIST_H

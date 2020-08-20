@@ -1,6 +1,8 @@
 #include "HypoList.h"
 #include <logger.h>
+#include <stringutil.h>
 #include <geo.h>
+#include <date.h>
 #include <json.h>
 #include <string>
 #include <memory>
@@ -30,7 +32,8 @@ const unsigned int CHypoList::k_nNumberOfMergeAnnealIterations;
 constexpr double CHypoList::k_dFinalMergeAnnealTimeStepSize;
 constexpr double CHypoList::k_dMergeStackImprovementRatio;
 constexpr double CHypoList::k_dMinimumRoundingProtectionRatio;
-
+constexpr double CHypoList::k_dExistingTimeTolerance;
+constexpr double CHypoList::k_dExistingDistanceTolerance;
 // ---------------------------------------------------------CHypoList
 CHypoList::CHypoList(int numThreads, int sleepTime, int checkInterval)
 		: glass3::util::ThreadBaseClass("HypoList", sleepTime, numThreads,
@@ -59,6 +62,70 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 
 	m_iCountOfTotalHyposProcessed++;
+
+	// first check for a similar hypos, we want the window a *little*
+	// larger than the time tolerance
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
+			hypo->getTOrigin() - (k_dExistingTimeTolerance * 0.55),
+			hypo->getTOrigin() + (k_dExistingTimeTolerance * 0.55));
+
+	// make sure we got any hypos
+	if (hypoList.size() >= 0) {
+		// for each hypo in the list within the time range
+		for (int i = 0; i < hypoList.size(); i++) {
+			// make sure hypo is still valid before checking
+			if (std::shared_ptr<CHypo> aHypo = hypoList[i].lock()) {
+				// check to see if any hypos are close enough
+				if ((std::abs(hypo->getTOrigin() - aHypo->getTOrigin()) <
+						k_dExistingTimeTolerance) &&
+					(std::abs(hypo->getLatitude() - aHypo->getLatitude()) <
+						k_dExistingDistanceTolerance) &&
+					(std::abs(hypo->getLongitude() - aHypo->getLongitude()) <
+						k_dExistingDistanceTolerance)) {
+					// we have a matching hypo
+					glass3::util::Logger::log(
+						"debug", "CHypoList::addHypo: Proximal Hypo: "
+						+ aHypo->getID()
+						+ "; ot:"
+						+ glass3::util::Date::encodeDateTime(aHypo->getTOrigin())
+						+ "; lat:"
+						+ glass3::util::to_string_with_precision(aHypo->getLatitude(), 3)
+						+ "; lon:"
+						+ glass3::util::to_string_with_precision(aHypo->getLongitude(), 3)
+						+ "; z:"
+						+ glass3::util::to_string_with_precision(aHypo->getDepth())
+						+ " found in list, not adding: "
+						+ hypo->getID()
+						+ "; ot:"
+						+ glass3::util::Date::encodeDateTime(hypo->getTOrigin())
+						+ "; lat:"
+						+ glass3::util::to_string_with_precision(hypo->getLatitude(), 3)
+						+ "; lon:"
+						+ glass3::util::to_string_with_precision(hypo->getLongitude(), 3)
+						+ "; z:"
+						+ glass3::util::to_string_with_precision(hypo->getDepth())
+						+ " -> "
+						+ glass3::util::to_string_with_precision(
+							std::abs(hypo->getTOrigin() - aHypo->getTOrigin()), 3)
+						+ " < "
+						+ glass3::util::to_string_with_precision(k_dExistingTimeTolerance, 3)
+						+ "; "
+						+ glass3::util::to_string_with_precision(
+							std::abs(hypo->getLatitude() - aHypo->getLatitude()), 3)
+						+ " < "
+						+ glass3::util::to_string_with_precision(k_dExistingDistanceTolerance, 3)
+						+ "; "
+						+ glass3::util::to_string_with_precision(
+							std::abs(hypo->getLongitude() - aHypo->getLongitude()), 3)
+						+ " < "
+						+ glass3::util::to_string_with_precision(k_dExistingDistanceTolerance, 3));
+
+					// didn't add the hypo
+					return(false);
+				}
+			}
+		}
+	}
 
 	// get maximum number of hypos
 	// use max hypos from CGlass if we have it
@@ -472,6 +539,36 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 			std::chrono::duration<double>>(tLocalizeEndTime - tEvolveStartTime)
 			.count();
 
+	// now that we've got a location, see if we can merge any proximal events
+	// note that if successful findAndMergeMatchingHypos does a localize
+	if (findAndMergeMatchingHypos(hyp)) {
+		// we should report this hypo since it has changed
+		breport = true;
+
+		// make sure we didn't merge ourself out of existance
+		if (hyp->cancelCheck()) {
+			glass3::util::Logger::log(
+				"debug",
+				"CHypoList::processHypo: Canceled sPid:" + pid + " cycle:"
+						+ std::to_string(hyp->getProcessCount())
+						+ " processCount:"
+						+ std::to_string(hyp->getTotalProcessCount())
+						+ " after merge.");
+
+			// probably already removed, but best be safe
+			removeHypo(hyp);
+
+			// return false since the hypo was canceled.
+			return(false);
+		}
+	}
+
+	std::chrono::high_resolution_clock::time_point tMergeEndTime =
+			std::chrono::high_resolution_clock::now();
+	double mergeTime =
+			std::chrono::duration_cast<std::chrono::duration<double>>(
+					tMergeEndTime - tLocalizeEndTime).count();
+
 	// Search for any associable picks that match hypo in the pick list
 	// NOTE: This uses the hard coded 3600 second scavenge duration default
 	if (CGlass::getPickList()->scavenge(hyp)) {
@@ -494,22 +591,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	std::chrono::high_resolution_clock::time_point tScavengeEndTime =
 			std::chrono::high_resolution_clock::now();
 	double scavengeTime = std::chrono::duration_cast<
-			std::chrono::duration<double>>(tScavengeEndTime - tLocalizeEndTime)
-			.count();
-
-	// Ensure all data belong to hypo
-	if (resolveData(hyp)) {
-		// we should report this hypo since it has changed
-		breport = true;
-
-		// relocate the hypo
-		hyp->localize();
-	}
-
-	std::chrono::high_resolution_clock::time_point tResolveEndTime =
-			std::chrono::high_resolution_clock::now();
-	double resolveTime = std::chrono::duration_cast<
-			std::chrono::duration<double>>(tResolveEndTime - tScavengeEndTime)
+			std::chrono::duration<double>>(tScavengeEndTime - tMergeEndTime)
 			.count();
 
 	// Remove data that no longer fit hypo's association criteria
@@ -532,14 +614,29 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 			std::chrono::high_resolution_clock::now();
 	double pruneTime =
 			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tPruneEndTime - tResolveEndTime).count();
+					tPruneEndTime - tScavengeEndTime).count();
+
+	// Ensure all remaining data belong to hypo
+	if (resolveData(hyp)) {
+		// we should report this hypo since it has changed
+		breport = true;
+
+		// relocate the hypo
+		hyp->localize();
+	}
+
+	std::chrono::high_resolution_clock::time_point tResolveEndTime =
+			std::chrono::high_resolution_clock::now();
+	double resolveTime = std::chrono::duration_cast<
+			std::chrono::duration<double>>(tResolveEndTime - tPruneEndTime)
+			.count();
 
 	// check to see if this hypo is viable.
 	if (hyp->cancelCheck()) {
 		std::chrono::high_resolution_clock::time_point tCancelEndTime =
 				std::chrono::high_resolution_clock::now();
 		double cancelTime = std::chrono::duration_cast<
-				std::chrono::duration<double>>(tCancelEndTime - tPruneEndTime)
+				std::chrono::duration<double>>(tCancelEndTime - tResolveEndTime)
 				.count();
 
 		removeHypo(hyp);
@@ -562,8 +659,8 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 						+ std::to_string(hyp->getTotalProcessCount())
 						+ " processHypo Timing: localizeTime:"
 						+ std::to_string(localizeTime) + " scavengeTime:"
-						+ std::to_string(scavengeTime) + " resolveTime:"
 						+ std::to_string(resolveTime) + " pruneTime:"
+						+ std::to_string(scavengeTime) + " resolveTime:"
 						+ std::to_string(pruneTime) + " cancelTime:"
 						+ std::to_string(cancelTime) + " removeTime:"
 						+ std::to_string(removeTime) + " evolveTime:"
@@ -577,16 +674,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 			std::chrono::high_resolution_clock::now();
 	double cancelTime =
 			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tCancelEndTime - tPruneEndTime).count();
-
-	// if event is all good check if proximal events can be merged.
-	findAndMergeMatchingHypos(hyp);
-
-	std::chrono::high_resolution_clock::time_point tMergeEndTime =
-			std::chrono::high_resolution_clock::now();
-	double mergeTime =
-			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tMergeEndTime - tCancelEndTime).count();
+					tCancelEndTime - tResolveEndTime).count();
 
 	// announce if a correlation has been added to an existing event
 	// NOTE: Is there a better way to do this?
@@ -638,7 +726,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 			std::chrono::high_resolution_clock::now();
 	double reportTime =
 			std::chrono::duration_cast<std::chrono::duration<double>>(
-					tReportEndTime - tMergeEndTime).count();
+					tReportEndTime - tPruneEndTime).count();
 
 	// check for and log any miss-linked picks
 	hyp->trap();
@@ -658,11 +746,11 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 					+ std::to_string(hyp->getProcessCount()) + " processCount:"
 					+ std::to_string(hyp->getTotalProcessCount())
 					+ " processHypo Timing: localizeTime:"
+					+ std::to_string(cancelTime) + " mergeTime:"
 					+ std::to_string(localizeTime) + " scavengeTime:"
 					+ std::to_string(scavengeTime) + " resolveTime:"
-					+ std::to_string(resolveTime) + " pruneTime:"
 					+ std::to_string(pruneTime) + " cancelTime:"
-					+ std::to_string(cancelTime) + " mergeTime:"
+					+ std::to_string(resolveTime) + " pruneTime:"
 					+ std::to_string(mergeTime) + " reportTime:"
 					+ std::to_string(reportTime) + " trapTime:"
 					+ std::to_string(trapTime) + " evolveTime:"
@@ -873,8 +961,9 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				intoHypo = hypo;
 				fromHypo = aHypo;
 			} else {
-				// otherwise prefer the "larger" event
-				if (hypo->getPickDataSize() >= aHypo->getPickDataSize()) {
+				// otherwise prefer the "older" event
+				// if (hypo->getPickDataSize() >= aHypo->getPickDataSize()) {
+				if (hypo->getTCreate() >= aHypo->getTCreate()) {
 					intoHypo = hypo;
 					fromHypo = aHypo;
 				} else {

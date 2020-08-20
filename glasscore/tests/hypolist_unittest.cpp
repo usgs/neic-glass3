@@ -250,7 +250,7 @@ TEST(HypoListTest, ProcessTest) {
 	testHypoList->addHypo(sharedMerge, false);
 	testHypoList->addHypo(sharedMerge2, false);
 	testHypoList->addHypo(sharedNoMerge, false);
-	int expectedSize = 3;
+	int expectedSize = 2;
 	ASSERT_EQ(expectedSize, testHypoList->length())<< "Added Hypos";
 
 	// process it
