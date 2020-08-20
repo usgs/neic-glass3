@@ -118,7 +118,8 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 						+ glass3::util::to_string_with_precision(
 							std::abs(hypo->getLongitude() - aHypo->getLongitude()), 3)
 						+ " < "
-						+ glass3::util::to_string_with_precision(k_dExistingDistanceTolerance, 3));
+						+ glass3::util::to_string_with_precision(
+							k_dExistingDistanceTolerance, 3));
 
 					// didn't add the hypo
 					return(false);
