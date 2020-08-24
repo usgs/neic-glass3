@@ -26,6 +26,7 @@ const unsigned int CPick::k_nNucleateAnnealPasses;
 const unsigned int CPick::k_nNucleateNumberOfAnnealIterations;
 constexpr double CPick::k_dNucleateInitialAnnealTimeStepSize;
 constexpr double CPick::k_dNucleateFinalAnnealTimeStepSize;
+constexpr double CPick::k_dMaxDepthAdjustFactor;
 
 // ---------------------------------------------------------CPick
 CPick::CPick() {
@@ -698,7 +699,8 @@ bool CPick::nucleate(CPickList* parentThread) {
 					thresh = theWeb->getNucleationStackThreshold();
 					aSeismic = "";
 				}
-				maxDepth = theWeb->getMaxDepth();
+				maxDepth = theWeb->getZoneStatsMaxDepth(hypo->getLatitude(),
+						hypo->getLongitude() + k_dMaxDepthAdjustFactor);
 				controllingWeb = theWeb->getName();
 			} else {
 				// use zonestats to decide whether to use stricter thresholds
@@ -714,7 +716,8 @@ bool CPick::nucleate(CPickList* parentThread) {
 					thresh = trigger->getWeb()->getNucleationStackThreshold();
 					aSeismic = "";
 				}
-				maxDepth = trigger->getWeb()->getMaxDepth();
+				maxDepth = trigger->getWeb()->getZoneStatsMaxDepth(
+					hypo->getLatitude(), hypo->getLongitude() + k_dMaxDepthAdjustFactor);
 				controllingWeb = "N/A";
 			}
 

@@ -2410,6 +2410,20 @@ double CWeb::getZoneStatsObservability(double dLat, double dLon) {
 	return(observability);
 }
 
+// ----------------------------------------------getZoneStatDepth
+double CWeb::getZoneStatsMaxDepth(double dLat, double dLon) {
+	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+
+	if (m_pZoneStats == NULL) {
+		return(m_dMaxDepth);
+	}
+
+	double depth = m_pZoneStats->getMaxDepthForLatLon(
+			dLat, dLon);
+
+	return(depth);
+}
+
 // -------------------------------------getAseismicNucleationStackThreshold
 double CWeb::getASeismicNucleationStackThreshold() const {
 	return (m_dASeismicNucleationStackThreshold);

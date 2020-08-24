@@ -526,6 +526,18 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	double getZoneStatsObservability(double dLat, double dLon);
 
 	/**
+	 * \brief zone stats max depth retrieval function
+	 *
+	 * This function gets the zone stats max depth for a given latitude and
+	 * longitude from zonestats
+	 * \param dLat - A double containing the latitude to use
+	 * \param dLon - A double containing the longitude to use
+	 * \return Returns a double value containing the zone stats depth if no
+	 * zonestats, will return the web max depth
+	 */
+	double getZoneStatsMaxDepth(double dLat, double dLon);
+
+	/**
 	 * \brief Gets the aseismic nucleation minimum stack threshold used for this web
 	 * \return Returns a double value containing the aseismic nucleation minimum stack
 	 * threshold

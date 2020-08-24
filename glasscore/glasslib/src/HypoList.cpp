@@ -964,7 +964,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			} else {
 				// otherwise prefer the "older" event
 				// if (hypo->getPickDataSize() >= aHypo->getPickDataSize()) {
-				if (hypo->getTCreate() >= aHypo->getTCreate()) {
+				if (hypo->getTCreate() <= aHypo->getTCreate()) {
 					intoHypo = hypo;
 					fromHypo = aHypo;
 				} else {
