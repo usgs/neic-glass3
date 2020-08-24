@@ -1006,8 +1006,9 @@ bool output::isDataReady(std::shared_ptr<const json::Object> data) {
 
 			// does the bayes value exceed the threshold
 			// and have we exceeded the minimum pub time?
-			if ((currentBayes >= getImmediatePubThreshold()) &&
-					(tNow >= (createTime + output::k_iMinimumPublicationTime))) {
+			// if ((currentBayes >= getImmediatePubThreshold()) &&
+			// (tNow >= (createTime + output::k_iMinimumPublicationTime))) {
+			if (currentBayes >= getImmediatePubThreshold()) {
 				// it does,
 				// log what we're doing
 				glass3::util::Logger::log(

@@ -570,8 +570,9 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		removePickReference(pick);
 	}
 
-	// glass3::util::Logger::log("debug", "CHypo::anneal, " + m_sID + " bayes: "
-	// + std::to_string(m_dBayesValue));
+	glass3::util::Logger::log("debug", "CHypo::anneal, Event: " + m_sID
+		+ " bayes: " + std::to_string(m_dBayesValue)
+		+ " removed: " + std::to_string(vRemovePicks.size()));
 
 	// return the final bayesian value
 	return (m_dBayesValue);
@@ -2921,6 +2922,7 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 	// for each pick in this hypo
 	int nPck = m_vPickData.size();
 
+	int addedCount = 0;
 	int keptCount = 0;
 	int removeCount = 0;
 
@@ -2934,6 +2936,8 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 
 		// if this pick isn't linked to a hypo
 		if (pickHyp == NULL) {
+			addedCount++;
+
 			// link to this hypo and move on
 			pck->addHypoReference(hyp);
 
@@ -3002,7 +3006,8 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 
 	glass3::util::Logger::log(
 			"debug",
-			"CHypo::resolve " + m_sID + " kept:" + std::to_string(keptCount)
+			"CHypo::resolve " + m_sID + " added:" + std::to_string(addedCount)
+					+ " kept:" + std::to_string(keptCount)
 					+ " removed:" + std::to_string(removeCount));
 
 	// handle correlations
