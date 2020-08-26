@@ -344,12 +344,12 @@ void CHypo::addCorrelationReference(std::shared_ptr<CCorrelation> corr) {
 }
 
 // ---------------------------------------------------------addPickReference
-void CHypo::addPickReference(std::shared_ptr<CPick> pck) {
+bool CHypo::addPickReference(std::shared_ptr<CPick> pck) {
 	// null check
 	if (pck == NULL) {
 		glass3::util::Logger::log("warning",
 									"CHypo::addPickReference: NULL pck.");
-		return;
+		return (false);
 	}
 
 	// lock mutex for this scope
@@ -360,12 +360,13 @@ void CHypo::addPickReference(std::shared_ptr<CPick> pck) {
 		// see if we have this same pick
 		if (q->getID() == pck->getID()) {
 			// Don't add this duplicate pick
-			return;
+			return(false);
 		}
 	}
 
 	// add the pick to the vector.
 	m_vPickData.push_back(pck);
+	return(true);
 }
 
 // ---------------------------------------------------------calculateAffinity
@@ -1671,6 +1672,12 @@ double CHypo::getMaxDepth() const {
 // --------------------------------------------------------getBayesValue
 double CHypo::getBayesValue() const {
 	return (m_dBayesValue);
+}
+
+// ---------------------------------------------------calculateCurrentBayes
+double CHypo::calculateCurrentBayes() {
+	return(calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
+											m_tOrigin, false));
 }
 
 // ---------------------------------------------------calculateBayes

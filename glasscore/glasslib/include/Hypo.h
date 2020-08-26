@@ -249,8 +249,9 @@ class CHypo {
 	 * Note that this pick may or may not also be referenced by other hypocenters
 	 *
 	 * \param pck - A std::shared_ptr to the CPick object to add.
+	 * \return True if successful, false otherwise
 	 */
-	void addPickReference(std::shared_ptr<CPick> pck);
+	bool addPickReference(std::shared_ptr<CPick> pck);
 
 	/**
 	 * \brief Remove pick reference from this hypo
@@ -589,6 +590,16 @@ class CHypo {
 	 * \return Returns a double value containing the calculated gap
 	 */
 	double calculateGap(double lat, double lon, double z);
+
+	/**
+	 * \brief Calculate bayes at current location
+	 *
+	 * Calculates the total bayseian stack value at current location using
+	 * the supporting data. 
+	 * \return Returns a double value containing the total bayseian stack value
+	 * for the given location.
+	 */
+	double calculateCurrentBayes();
 
 	/**
 	 * \brief Calculate bayes
