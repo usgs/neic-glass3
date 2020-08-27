@@ -315,9 +315,9 @@ TEST(SiteTest, NodeOperations) {
 
 	// create node objects
 	glasscore::CNode * testNode = new glasscore::CNode("test", 0.0, 0.0, 10,
-														100, 10);
+														100, 10, false);
 	glasscore::CNode * testNode2 = new glasscore::CNode("test2", 0.897, 0.897,
-														10, 100, 10);
+														10, 100, 10, false);
 
 	// create new shared pointers to the nodes
 	std::shared_ptr<glasscore::CNode> sharedNode(testNode);

@@ -57,8 +57,8 @@ CNode::CNode() {
 
 // ---------------------------------------------------------CNode
 CNode::CNode(std::string name, double lat, double lon, double z,
-				double resolution, double maxDepth) {
-	if (!initialize(name, lat, lon, z, resolution, maxDepth)) {
+				double resolution, double maxDepth, bool aseismic) {
+	if (!initialize(name, lat, lon, z, resolution, maxDepth, aseismic)) {
 		clear();
 	}
 }
@@ -81,6 +81,7 @@ void CNode::clear() {
 	m_dResolution = 0;
 	m_dMaxDepth = 0;
 	m_bEnabled = false;
+	m_bAseismic = false;
 	m_SourceSet.clear();
 }
 
@@ -107,7 +108,7 @@ void CNode::clearSiteLinks() {
 
 // ---------------------------------------------------------initialize
 bool CNode::initialize(std::string name, double lat, double lon, double z,
-						double resolution, double maxDepth) {
+						double resolution, double maxDepth, bool aseismic) {
 	std::lock_guard < std::recursive_mutex > nodeGuard(m_NodeMutex);
 
 	clear();
@@ -119,6 +120,7 @@ bool CNode::initialize(std::string name, double lat, double lon, double z,
 	m_dResolution = resolution;
 	m_dMaxDepth = maxDepth;
 	m_bEnabled = true;
+	m_bAseismic = aseismic;
 
 	return (true);
 }
@@ -288,12 +290,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 	int nCut = m_pWeb->getNucleationDataCountThreshold();
 	double dThresh = m_pWeb->getNucleationStackThreshold();
 
-	// use zonestats to decide whether to use stricter thresholds
-	// if the observibility is not negative (invalid) and equal
-	// to zero
-	bool isASeismic = false;
-	if (m_pWeb->getZoneStatsObservability(getLatitude(), getLongitude()) == 0) {
-		isASeismic = true;
+	// use aseismic flag to decide whether to use stricter thresholds
+	if (m_bAseismic == true) {
 		nCut = m_pWeb->getASeismicNucleationDataCountThreshold();
 		dThresh = m_pWeb->getASeismicNucleationStackThreshold();
 	}
@@ -674,8 +672,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 	// create trigger
 	std::shared_ptr<CTrigger> trigger(
 			new CTrigger(m_dLatitude, m_dLongitude, m_dDepth, tOrigin,
-							m_dResolution, m_dMaxDepth, dSum, nCount, vPick,
-							m_pWeb));
+							m_dResolution, m_dMaxDepth, dSum, nCount,
+							m_bAseismic, vPick, m_pWeb));
 
 	// the node nucleated an event
 	return (trigger);
@@ -832,9 +830,14 @@ double CNode::getDepth() const {
 	return (m_dDepth);
 }
 
-// ---------------------------------------------------------getMaxTriggerDepth
+// ---------------------------------------------------------getMaxDepth
 double CNode::getMaxDepth() const {
 	return (m_dMaxDepth);
+}
+
+// ---------------------------------------------------------getAseismic
+bool CNode::getAseismic() const {
+	return (m_bAseismic);
 }
 
 // ---------------------------------------------------------getGeo

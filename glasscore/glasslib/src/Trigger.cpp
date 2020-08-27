@@ -19,9 +19,10 @@ CTrigger::CTrigger() {
 // ---------------------------------------------------------CTrigger
 CTrigger::CTrigger(double lat, double lon, double z, double ot,
 					double resolution, double maxZ, double sum, int count,
+					bool aSeismic,
 					std::vector<std::shared_ptr<CPick>> picks, CWeb *web) {
-	if (!initialize(lat, lon, z, ot, resolution, maxZ, sum, count, picks,
-					web)) {
+	if (!initialize(lat, lon, z, ot, resolution, maxZ, sum, count,
+					aSeismic, picks, web)) {
 		clear();
 	}
 }
@@ -43,6 +44,7 @@ void CTrigger::clear() {
 	m_dBayesValue = 0;
 	m_iPickCount = 0;
 	m_pWeb = NULL;
+	m_dNodeAseismic = false;
 
 	m_vPick.clear();
 }
@@ -50,7 +52,7 @@ void CTrigger::clear() {
 // ---------------------------------------------------------initialize
 bool CTrigger::initialize(double lat, double lon, double z, double ot,
 							double resolution, double maxZ, double sum,
-							int count,
+							int count, bool aSeismic,
 							std::vector<std::shared_ptr<CPick>> picks,
 							CWeb *web) {
 	clear();
@@ -66,6 +68,7 @@ bool CTrigger::initialize(double lat, double lon, double z, double ot,
 	m_dBayesValue = sum;
 	m_iPickCount = count;
 	m_pWeb = web;
+	m_dNodeAseismic = aSeismic;
 
 	for (auto aPick : picks) {
 		m_vPick.push_back(aPick);
@@ -133,4 +136,8 @@ const std::vector<std::shared_ptr<CPick> > CTrigger::getVPick() const {
 	return (m_vPick);
 }
 
+// ---------------------------------------------------------getNodeAseismic
+bool CTrigger::getNodeAseismic() const {
+	return (m_dNodeAseismic);
+}
 }  // namespace glasscore

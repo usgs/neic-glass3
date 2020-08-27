@@ -59,12 +59,13 @@ class CTrigger {
 	 * \param sum - A double value containing the bayesian sum for this trigger
 	 * \param count - An integer value containing the site count for this
 	 * trigger
+	 * \param aSeismic - A boolean flag indicating whether the node is aseismic
 	 * \param picks - A std::vector<std::shared_ptr<CPick> containing the picks
 	 * for this trigger
 	 * \param web - A pointer to the creating node's CWeb
 	 */
 	CTrigger(double lat, double lon, double z, double ot, double resolution,
-				double maxZ, double sum, int count,
+				double maxZ, double sum, int count, bool aSeismic,
 				std::vector<std::shared_ptr<CPick>> picks, CWeb *web);
 
 	/**
@@ -91,12 +92,14 @@ class CTrigger {
 	 * \param sum - A double value containing the bayesian sum for this trigger
 	 * \param count - An integer value containing the site count for this
 	 * trigger
+	 * \param aSeismic - A boolean flag indicating whether the node is aseismic
 	 * \param picks - A std::vector<std::shared_ptr<CPick> containing the picks
 	 * for this trigger
 	 * \param web - A pointer to the creating node's web
 	 */
 	bool initialize(double lat, double lon, double z, double ot,
 					double resolution, double maxZ, double sum, int count,
+					bool aSeismic,
 					std::vector<std::shared_ptr<CPick>> picks, CWeb *web);
 
 	/**
@@ -147,6 +150,13 @@ class CTrigger {
 	 * \return Return a double containing the node max depth in kilometers
 	 */
 	double getNodeMaxDepth() const;
+
+	/**
+	 * \brief Gets a flag indicating that the node is in an aseismic area
+	 * \return Returns a boolean flag, true if the node is aseismic, false
+	 * otherwise
+	 */
+	bool getNodeAseismic() const;
 
 	/**
 	 * \brief Gets the current bayes stack value for this trigger
@@ -206,6 +216,11 @@ class CTrigger {
 	 * \brief A double value containing the node max depth in kilometers.
 	 */
 	std::atomic<double> m_dNodeMaxDepth;
+
+	/**
+	 * \brief A boolean containing the node aseismic flag.
+	 */
+	std::atomic<bool> m_dNodeAseismic;
 
 	/**
 	 * \brief A double value that accumulates the Bayesian

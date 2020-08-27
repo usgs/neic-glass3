@@ -52,7 +52,8 @@ CHypoList::~CHypoList() {
 }
 
 // ---------------------------------------------------------addHypo
-bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
+bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
+		CPickList* parentThread) {
 	// nullcheck
 	if (hypo == NULL) {
 		glass3::util::Logger::log("error",
@@ -61,10 +62,9 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 		return (false);
 	}
 
-	// lock for this scope
-	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
-
-	m_iCountOfTotalHyposProcessed++;
+	if (parentThread != NULL) {
+		parentThread->setThreadHealth();
+	}
 
 	// first check for a similar hypos, we want the window a *little*
 	// larger than the time tolerance
@@ -76,8 +76,16 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 	if (hypoList.size() >= 0) {
 		// for each hypo in the list within the time range
 		for (int i = 0; i < hypoList.size(); i++) {
+			if (parentThread != NULL) {
+				parentThread->setThreadHealth();
+			}
+
 			// make sure hypo is still valid before checking
 			if (std::shared_ptr<CHypo> aHypo = hypoList[i].lock()) {
+				if (aHypo->getID() == "") {
+					continue;
+				}
+
 				// check to see if any hypos are close enough
 				if ((std::abs(hypo->getTOrigin() - aHypo->getTOrigin()) <
 						k_dExistingTimeTolerance) &&
@@ -131,6 +139,11 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 		}
 	}
 
+	// lock for this scope
+	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
+
+	m_iCountOfTotalHyposProcessed++;
+
 	// get maximum number of hypos
 	// use max hypos from CGlass if we have it
 	if (CGlass::getMaxNumHypos() > 0) {
@@ -158,6 +171,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing) {
 		if (oldestHypo->getHypoGenerated()) {
 			CGlass::sendExternalMessage(oldestHypo->generateExpireMessage());
 		}
+
 		// remove it
 		removeHypo(oldestHypo, false);
 	}
@@ -557,7 +571,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 						+ std::to_string(hyp->getProcessCount())
 						+ " processCount:"
 						+ std::to_string(hyp->getTotalProcessCount())
-						+ " after merge.");
+						+ " after or in merge.");
 
 			// probably already removed, but best be safe
 			removeHypo(hyp);
@@ -893,6 +907,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		return (false);
 	}
 
+	std::string primaryID = hypo->getID();
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];  // logging string
 	double distanceCut = CGlass::getHypoMergingDistanceWindow();
 	double timeCut = CGlass::getHypoMergingTimeWindow();
@@ -916,15 +931,15 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		glass3::util::Logger::log(sLog);
 		return (merged);
 	} else {
-		snprintf(sLog, sizeof(sLog),
-					"CHypoList::findAndMergeMatchingHypos: %d hypos in merge "
-					"window %.3f to %.3f for %s (%.3f)",
-					static_cast<int>(mergeList.size()),
-					hypo->getTOrigin() - timeCut,
-					hypo->getTOrigin() + timeCut,
-					hypo->getID().c_str(),
-					hypo->getTOrigin());
-		glass3::util::Logger::log(sLog);
+		// snprintf(sLog, sizeof(sLog),
+		// "CHypoList::findAndMergeMatchingHypos: %d hypos in merge "
+		// "window %.3f to %.3f for %s (%.3f)",
+		// static_cast<int>(mergeList.size()),
+		// hypo->getTOrigin() - timeCut,
+		// hypo->getTOrigin() + timeCut,
+		// hypo->getID().c_str(),
+		// hypo->getTOrigin());
+		// glass3::util::Logger::log(sLog);
 	}
 
 	// for each hypo in the mergeList
@@ -938,20 +953,20 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		if (aHypo == NULL) {
 			continue;
 		}
-
-		// skip deleted hypos
-		if ((aHypo->getID() == "") || (hypo->getID() == "")) {
+		if (aHypo->getID() == "") {
 			continue;
 		}
 
+		std::string currentID = aHypo->getID();
+
 		// make sure we're not looking at ourself
-		if (hypo->getID() == aHypo->getID()) {
-			snprintf(
-				sLog, sizeof(sLog),
-				"CHypoList::findAndMergeMatchingHypos: Skipping self"
-				" aHypo %s == hypo %s",
-				aHypo->getID().c_str(), hypo->getID().c_str());
-			glass3::util::Logger::log(sLog);
+		if (primaryID == currentID) {
+			// snprintf(
+			// sLog, sizeof(sLog),
+			// "CHypoList::findAndMergeMatchingHypos: Skipping self"
+			// " aHypo %s == hypo %s",
+			// primaryID.c_str(), currentID.c_str());
+			// glass3::util::Logger::log(sLog);
 			continue;
 		}
 
@@ -959,7 +974,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				sLog, sizeof(sLog),
 				"CHypoList::findAndMergeMatchingHypos: Testing merger of"
 				" hypo %s and %s",
-				aHypo->getID().c_str(), hypo->getID().c_str());
+				primaryID.c_str(), currentID.c_str());
 		glass3::util::Logger::log(sLog);
 
 		// lock ahypo for processing (we already have hypo locked)
@@ -967,10 +982,12 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		int tryCount = 0;
 		std::unique_lock<std::mutex> lock(aHypo->getProcessingMutex(),
 											std::defer_lock);
+
+		// loop for awhile trying to get lock
 		while (!lock.try_lock()) {
 			tryCount++;
 			if (tryCount <= 5) {
-				// didn't get it, wait a bit
+				// didn't get lock, wait a bit
 				std::this_thread::sleep_for(
 								std::chrono::milliseconds(100));
 				setThreadHealth();
@@ -986,7 +1003,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				snprintf(sLog, sizeof(sLog),
 							"CHypoList::findAndMergeMatchingHypos: could not"
 							" lock %s for merging after 500ms, continuing.",
-							aHypo->getID().c_str());
+							currentID.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// we don't have this hypo locked
@@ -994,17 +1011,6 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				continue;
 			}
 		}
-		/* 
-		std::unique_lock<std::mutex> lock(aHypo->getProcessingMutex(),
-											std::try_to_lock);
-		if (!lock.owns_lock()) {
-			setThreadHealth();
-
-			// we don't have this hypo locked
-			// move on
-			continue;
-		}
-		*/
 
 		// prefer to merge into the hypo that has already been published
 		std::shared_ptr<CHypo> intoHypo;  // The hypo we are merging into
@@ -1029,23 +1035,34 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			}
 		}
 
-		// Log info on two events
-		snprintf(sLog, sizeof(sLog),
-				"CHypoList::findAndMergeMatchingHypos: fromHypo:%s lat:%.3f, "
-				"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d",
-				fromHypo->getID().c_str(), fromHypo->getLatitude(),
-				fromHypo->getLongitude(), fromHypo->getDepth(),
-				fromHypo->getTOrigin(), fromHypo->getBayesValue(),
-				static_cast<int>(fromHypo->getPickData().size()));
-		glass3::util::Logger::log(sLog);
+		// skip deleted hypos
+		if ((intoHypo->getID() == "") || (fromHypo->getID() == "")) {
+			continue;
+		}
 
+		// Log info on the two hypos
 		snprintf(sLog, sizeof(sLog),
 				"CHypoList::findAndMergeMatchingHypos: intoHypo:%s lat:%.3f, "
-				"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d",
+				"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d "
+				"created: %.3f, pub: %s",
 				intoHypo->getID().c_str(), intoHypo->getLatitude(),
 				intoHypo->getLongitude(), intoHypo->getDepth(),
 				intoHypo->getTOrigin(), intoHypo->getBayesValue(),
-				static_cast<int>(intoHypo->getPickData().size()));
+				static_cast<int>(intoHypo->getPickData().size()),
+				intoHypo->getTCreate(),
+				intoHypo->getHypoGenerated() ? "true" : "false");
+		glass3::util::Logger::log(sLog);
+
+		snprintf(sLog, sizeof(sLog),
+				"CHypoList::findAndMergeMatchingHypos: fromHypo:%s lat:%.3f, "
+				"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d "
+				"created: %.3f, pub: %s",
+				fromHypo->getID().c_str(), fromHypo->getLatitude(),
+				fromHypo->getLongitude(), fromHypo->getDepth(),
+				fromHypo->getTOrigin(), fromHypo->getBayesValue(),
+				static_cast<int>(fromHypo->getPickData().size()),
+				fromHypo->getTCreate(),
+				fromHypo->getHypoGenerated() ? "true" : "false");
 		glass3::util::Logger::log(sLog);
 
 		// get geo objects
@@ -1062,7 +1079,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		double distanceDiff = toGeo.delta(&fromGeo)
 				/ glass3::util::GlassMath::k_DegreesToRadians;
 
-		// check distance
+		// check distance between hypos
 		if (distanceDiff > distanceCut) {
 			// didn't get it, give up
 			snprintf(sLog, sizeof(sLog),
@@ -1077,14 +1094,6 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 		// resolve both hypos before starting merging so we know
 		// they're not sharing picks.
-		resolveData(fromHypo);
-		snprintf(sLog, sizeof(sLog),
-				"CHypoList::findAndMergeMatchingHypos: %d picks"
-				" in fromHypo %s after resolve",
-				static_cast<int>(fromHypo->getPickData().size()),
-				fromHypo->getID().c_str());
-		glass3::util::Logger::log(sLog);
-
 		resolveData(intoHypo);
 		snprintf(sLog, sizeof(sLog),
 				"CHypoList::findAndMergeMatchingHypos: %d picks"
@@ -1093,13 +1102,66 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				intoHypo->getID().c_str());
 		glass3::util::Logger::log(sLog);
 
+		resolveData(fromHypo);
+		snprintf(sLog, sizeof(sLog),
+				"CHypoList::findAndMergeMatchingHypos: %d picks"
+				" in fromHypo %s after resolve",
+				static_cast<int>(fromHypo->getPickData().size()),
+				fromHypo->getID().c_str());
+		glass3::util::Logger::log(sLog);
+
+		// check hypos to see  if resolve removed all the picks,
+		// if so, remove the hypo
+		bool resolveRemoved = false;
+		if (intoHypo->getPickData().size() == 0) {
+			removeHypo(intoHypo);
+
+			// we've merged a hypo, kinda
+			merged = true;
+			resolveRemoved = true;
+		}
+		if (fromHypo->getPickData().size() == 0) {
+			removeHypo(fromHypo);
+
+			// we've merged a hypo, sorta
+			merged = true;
+			resolveRemoved = true;
+		}
+
+		// if we've removed a hypo via resolve,
+		// no point in continuing, we either have
+		// nothing to merge into, or nothing to
+		// merge from
+		if (resolveRemoved == true) {
+			// if we've removed the primary hypo
+			// we're done with findAndMerge
+			if (hypo->getID() == "") {
+				snprintf(sLog, sizeof(sLog),
+					"CHypoList::findAndMergeMatchingHypos: Primary"
+					" hypo %s removed, (0 phases after resolve)"
+					" returning", primaryID.c_str());
+				glass3::util::Logger::log(sLog);
+
+				return(merged);
+			} else {
+				// otherwise continue on
+				// to the next hypo in the merge list
+				snprintf(sLog, sizeof(sLog),
+					"CHypoList::findAndMergeMatchingHypos: "
+					" Current Hypo %s removed, (0 phases after"
+					" resolve) continuing", currentID.c_str());
+				glass3::util::Logger::log(sLog);
+				continue;
+			}
+		}
+
 		// get picks
-		auto fromPicks = fromHypo->getPickData();
 		auto intoPicks = intoHypo->getPickData();
+		auto fromPicks = fromHypo->getPickData();
 
 		// get bayes values, calculate them since we just revolved
-		double fromBayes = fromHypo->calculateCurrentBayes();
 		double intoBayes = intoHypo->calculateCurrentBayes();
+		double fromBayes = fromHypo->calculateCurrentBayes();
 
 		// add all picks from fromHypo into intoHypo
 		int addPickCount = 0;
@@ -1140,7 +1202,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			intoHypo->localize();
 		}
 
-		// get the new bayes value
+		// get the new bayes value and calculate threshold
 		double newBayes = intoHypo->calculateCurrentBayes();
 		double threshold = std::max(intoBayes, fromBayes)
 							+ (k_dMergeStackImprovementRatio
@@ -1149,9 +1211,11 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		snprintf(
 				sLog, sizeof(sLog),
 				"CHypoList::findAndMergeMatchingHypos: Merge Check:"
-				" newBayes:%.3f, threshold:%.3f, "
-				"intoHypo Bayes:%.3f, fromHypo bayes:%.3f",
-				newBayes, threshold, intoBayes, fromBayes);
+				" newBayes:%.3f > threshold:%.3f, else"
+				" newBayes:%.3f >= intoHypo Bayes:%.3f"
+				" (* k_dMinimumRoundingProtectionRatio)",
+				newBayes, threshold, newBayes,
+				(intoBayes * k_dMinimumRoundingProtectionRatio));
 		glass3::util::Logger::log(sLog);
 
 		// check that the new bayes is better than either of the original
@@ -1160,7 +1224,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			snprintf(
 					sLog, sizeof(sLog),
 					"CHypoList::findAndMergeMatchingHypos: merged fromHypo "
-					"%s into intoHypo %s because intoHypo significantly better "
+					"%s into intoHypo %s because intoHypo is better "
 					"than fromHypo and original intoHypo, newBayes:%.3f > "
 					"intoHypo Bayes:%.3f, fromHypo bayes:%.3f",
 					fromHypo->getID().c_str(), intoHypo->getID().c_str(),

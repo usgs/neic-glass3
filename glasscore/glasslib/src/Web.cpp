@@ -1635,13 +1635,25 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 									"CWeb::genNode: No valid trav pointers.");
 		return (NULL);
 	}
-	double maxZ = m_dMaxDepth;
+
+	// returns m_dMaxDepth if no zonestats
+	double maxZ = getZoneStatsMaxDepth(lat, lon);
 	if (m_dDepthResolution != -1) {
 		maxZ = z + m_dDepthResolution;
 	}
 
+	// set aseimic flag
+	// -1 means no zonestats (treat as seismic)
+	// 0 means aseismic
+	// positive means seismic
+	bool aSeismic = false;
+	if (getZoneStatsObservability(lat, lon) == 0) {
+		aSeismic = true;
+	}
+
 	// create node
-	std::shared_ptr<CNode> node(new CNode(m_sName, lat, lon, z, resol, maxZ));
+	std::shared_ptr<CNode> node(new CNode(m_sName, lat, lon, z, resol, maxZ,
+			aSeismic));
 
 	// set parent web
 	node->setWeb(this);

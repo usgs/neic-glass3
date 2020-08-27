@@ -68,9 +68,11 @@ class CNode {
 	 * in kilometers
 	 * \param maxDepth - A double value containing the maximum trigger depth
 	 * in kilometers
+	 * \param aseismic - A boolean flag indicating whether this node is in an
+	 * aseismic area
 	 */
 	CNode(std::string name, double lat, double lon, double z, double resolution,
-			double maxDepth);
+			double maxDepth, bool aseismic);
 
 	/**
 	 * \brief CNode destructor
@@ -105,9 +107,11 @@ class CNode {
 	 * in kilometers
 	 * \param maxDepth - A double value containing the maximum trigger depth
 	 * in kilometers
+	 * \param aseismic - A boolean flag indicating whether this node is in an
+	 * aseismic area
 	 */
 	bool initialize(std::string name, double lat, double lon, double z,
-					double resolution, double maxDepth);
+					double resolution, double maxDepth, bool aseismic);
 
 	/**
 	 * \brief CNode node-site and site-node linker
@@ -276,6 +280,13 @@ class CNode {
 	double getMaxDepth() const;
 
 	/**
+	 * \brief Gets a flag indicating that the node is in an aseismic area
+	 * \return Returns a boolean flag, true if the node is aseismic, false
+	 * otherwise
+	 */
+	bool getAseismic() const;
+
+	/**
 	 * \brief Get the combined node location (latitude, longitude, depth) as
 	 * a CGeo object
 	 * \return Returns a glass3::util::Geo object containing the combined location.
@@ -361,6 +372,12 @@ class CNode {
 	 * kilometers.
 	 */
 	std::atomic<double> m_dMaxDepth;
+
+	/**
+	 * \brief A boolean flag indicating whether this node is in an aseismic
+	 * area or not.
+	 */
+	std::atomic<bool> m_bAseismic;
 
 	/**
 	 * \brief A double value containing this node's maximum site distance in

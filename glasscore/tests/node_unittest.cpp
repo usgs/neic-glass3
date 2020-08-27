@@ -14,6 +14,7 @@
 #define DEPTH 10
 #define RESOLUTION 25
 #define MAXDEPTH 20
+#define ASEISMIC false
 #define NODEID "testNode.45.900000.-112.790000.10.000000"
 
 #define SITEJSON "{\"Cmd\":\"Site\",\"Elv\":2326.000000,\"Lat\":45.822170,\"Lon\":-112.451000,\"Site\":\"LRM.EHZ.MB.--\",\"Use\":true}"  // NOLINT
@@ -34,7 +35,8 @@ TEST(NodeTest, Construction) {
 	LATITUDE,
 														LONGITUDE, DEPTH,
 														RESOLUTION,
-														MAXDEPTH);
+														MAXDEPTH,
+														ASEISMIC);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testNode->getName().c_str())<<
@@ -82,7 +84,8 @@ TEST(NodeTest, SiteOperations) {
 	LATITUDE,
 														LONGITUDE, DEPTH,
 														RESOLUTION,
-														MAXDEPTH);
+														MAXDEPTH,
+														ASEISMIC);
 
 	// create json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(
@@ -126,7 +129,8 @@ TEST(NodeTest, FailTests) {
 	LATITUDE,
 														LONGITUDE, DEPTH,
 														RESOLUTION,
-														MAXDEPTH);
+														MAXDEPTH,
+														ASEISMIC);
 
 	// create json object from the string
 	std::shared_ptr<json::Object> siteJSON = std::make_shared<json::Object>(

@@ -102,9 +102,12 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \param scheduleProcessing - A boolean flag indicating whether to
 	 * automatically schedule processing when the hypo is added, defaults to
 	 * true
+	 * \param parentThread - A pointer to a CPickList parent to write thread
+	 * status to
 	 * \return Returns true if the hypo was added, false otherwise.
 	 */
-	bool addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing = true);
+	bool addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing = true,
+		CPickList* parentThread = NULL);
 
 	/**
 	 * \brief Try to associate pick to a hypo in the list

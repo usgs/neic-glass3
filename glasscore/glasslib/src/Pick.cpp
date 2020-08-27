@@ -621,7 +621,8 @@ bool CPick::nucleate(CPickList* parentThread) {
 		double thresh;
 		std::string triggeringWeb = hypo->getWebName();
 		std::string controllingWeb = "";
-		double maxDepth;
+		double maxDepth = trigger->getNodeMaxDepth();
+		bool isAseismic = trigger->getNodeAseismic();
 		bool bad = false;
 
 		if (parentThread != NULL) {
@@ -686,11 +687,8 @@ bool CPick::nucleate(CPickList* parentThread) {
 			// grids), if we don't allow contorlling webs, or if something else
 			// went wrong if this happens, just use the triggering web thresholds
 			if (theWeb != NULL) {
-				// use zonestats to decide whether to use stricter thresholds
-				// if the observibility is not negative (invalid) and equal
-				// to zero
-				if (theWeb->getZoneStatsObservability(hypo->getLatitude(),
-						hypo->getLongitude()) == 0) {
+				// isAseismic defines whether to use stricter thresholds
+				if (isAseismic == true) {
 					ncut = theWeb->getASeismicNucleationDataCountThreshold();
 					thresh = theWeb->getASeismicNucleationStackThreshold();
 					aSeismic = " aSeismic ";
@@ -699,15 +697,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 					thresh = theWeb->getNucleationStackThreshold();
 					aSeismic = "";
 				}
-				maxDepth = theWeb->getZoneStatsMaxDepth(hypo->getLatitude(),
-						hypo->getLongitude() + k_dMaxDepthAdjustFactor);
 				controllingWeb = theWeb->getName();
 			} else {
-				// use zonestats to decide whether to use stricter thresholds
-				// if the observibility is not negative (invalid) and equal
-				// to zero
-				if (trigger->getWeb()->getZoneStatsObservability(hypo->getLatitude(),
-						hypo->getLongitude()) == 0) {
+				// isAseismic defines whether to use stricter thresholds
+				if (isAseismic == true) {
 					ncut = trigger->getWeb()->getASeismicNucleationDataCountThreshold();
 					thresh = trigger->getWeb()->getASeismicNucleationStackThreshold();
 					aSeismic = " aSeismic ";
@@ -716,8 +709,6 @@ bool CPick::nucleate(CPickList* parentThread) {
 					thresh = trigger->getWeb()->getNucleationStackThreshold();
 					aSeismic = "";
 				}
-				maxDepth = trigger->getWeb()->getZoneStatsMaxDepth(
-					hypo->getLatitude(), hypo->getLongitude() + k_dMaxDepthAdjustFactor);
 				controllingWeb = "N/A";
 			}
 
@@ -784,6 +775,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 			// update the hypo thresholds
 			hypo->setNucleationDataThreshold(ncut);
 			hypo->setNucleationStackThreshold(thresh);
+
+			if (parentThread != NULL) {
+				parentThread->setThreadHealth();
+			}
 		}
 
 		// we've abandoned the potential hypo at this node
@@ -811,7 +806,11 @@ bool CPick::nucleate(CPickList* parentThread) {
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit adding it to the hypo list
-		CGlass::getHypoList()->addHypo(hypo);
+		CGlass::getHypoList()->addHypo(hypo, true, parentThread);
+
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
 	}
 
 	// done
