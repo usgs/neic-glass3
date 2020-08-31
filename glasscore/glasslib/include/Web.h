@@ -515,15 +515,15 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	glass3::util::WorkState work() override;
 
 	/**
-	 * \brief zone stats observability retrieval function
+	 * \brief zone stats aseismic retrieval function
 	 *
-	 * This function gets the zone stats observability for a given latitude and
-	 * longitude from zonestats
+	 * This function gets whether zone stats says a given latitude and
+	 * longitude is aseismic
 	 * \param dLat - A double containing the latitude to use
 	 * \param dLon - A double containing the longitude to use
-	 * \return Returns a double value containing the zone stats observability
+	 * \return Returns true if aseismic, false otherwise
 	 */
-	double getZoneStatsObservability(double dLat, double dLon);
+	bool getZoneStatsAseismic(double dLat, double dLon);
 
 	/**
 	 * \brief zone stats max depth retrieval function

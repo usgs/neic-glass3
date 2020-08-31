@@ -480,6 +480,7 @@ glass3::util::WorkState CHypoList::work() {
 
 		// process this hypocenter
 		if (processHypo(hyp) == true) {
+			setThreadHealth();
 			// reposition the hypo in the list to maintain
 			// time order
 			updatePosition(hyp);
@@ -560,6 +561,8 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	// now that we've got a location, see if we can merge any proximal events
 	// note that if successful findAndMergeMatchingHypos does a localize
 	if (findAndMergeMatchingHypos(hyp)) {
+		setThreadHealth();
+
 		// we should report this hypo since it has changed
 		breport = true;
 
@@ -581,6 +584,8 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 		}
 	}
 
+	setThreadHealth();
+
 	std::chrono::high_resolution_clock::time_point tMergeEndTime =
 			std::chrono::high_resolution_clock::now();
 	double mergeTime =
@@ -590,11 +595,15 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	// Search for any associable picks that match hypo in the pick list
 	// NOTE: This uses the hard coded 3600 second scavenge duration default
 	if (CGlass::getPickList()->scavenge(hyp)) {
+		setThreadHealth();
+
 		// we should report this hypo since it has changed
 		breport = true;
 		// relocate the hypo
 		hyp->localize();
 	}
+
+	setThreadHealth();
 
 	// search for any associable correlations that match hypo in the correlation
 	// list
@@ -613,20 +622,24 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 			.count();
 
 	// Remove data that no longer fit hypo's association criteria
-	if (hyp->pruneData()) {
+	if (hyp->pruneData(this)) {
+		setThreadHealth();
+
 		// we should report this hypo since it has changed
 		breport = true;
 		// relocate the hypo
 		hyp->localize();
 
 		// Iterate on pruning data
-		if (hyp->pruneData()) {
+		if (hyp->pruneData(this)) {
 			// we should report this hypo since it has changed
 			breport = true;
 			// relocate the hypo
 			hyp->localize();
 		}
 	}
+
+	setThreadHealth();
 
 	std::chrono::high_resolution_clock::time_point tPruneEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -636,12 +649,16 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 
 	// Ensure all remaining data belong to hypo
 	if (resolveData(hyp)) {
+		setThreadHealth();
+
 		// we should report this hypo since it has changed
 		breport = true;
 
 		// relocate the hypo
 		hyp->localize();
 	}
+
+	setThreadHealth();
 
 	std::chrono::high_resolution_clock::time_point tResolveEndTime =
 			std::chrono::high_resolution_clock::now();
@@ -918,16 +935,21 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 	std::vector<std::weak_ptr<CHypo>> mergeList = getHypos(
 			hypo->getTOrigin() - timeCut, hypo->getTOrigin() + timeCut);
 
+	setThreadHealth();
+
 	// make sure we got hypos returned
 	if (mergeList.size() == 0) {
-		// print not events to merge message
+		// print noS events to merge message
 		snprintf(sLog, sizeof(sLog),
 					"CHypoList::findAndMergeMatchingHypos: No hypos in merge "
-					"window %.3f to %.3f for %s (%.3f)",
-					hypo->getTOrigin() - timeCut,
-					hypo->getTOrigin() + timeCut,
+					"window %s to %s for %s (%s)",
+					glass3::util::Date::encodeDateTime(
+						hypo->getTOrigin() - timeCut).c_str(),
+					glass3::util::Date::encodeDateTime(
+						hypo->getTOrigin() + timeCut).c_str(),
 					hypo->getID().c_str(),
-					hypo->getTOrigin());
+					glass3::util::Date::encodeDateTime(
+						hypo->getTOrigin()).c_str());
 		glass3::util::Logger::log(sLog);
 		return (merged);
 	} else {
@@ -1043,11 +1065,12 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		// Log info on the two hypos
 		snprintf(sLog, sizeof(sLog),
 				"CHypoList::findAndMergeMatchingHypos: intoHypo:%s lat:%.3f, "
-				"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d "
+				"lon:%.3f, depth:%.3f, time:%s, bayes: %.3f, nPicks:%d "
 				"created: %.3f, pub: %s",
 				intoHypo->getID().c_str(), intoHypo->getLatitude(),
 				intoHypo->getLongitude(), intoHypo->getDepth(),
-				intoHypo->getTOrigin(), intoHypo->getBayesValue(),
+				glass3::util::Date::encodeDateTime(
+					intoHypo->getTOrigin()).c_str(), intoHypo->getBayesValue(),
 				static_cast<int>(intoHypo->getPickData().size()),
 				intoHypo->getTCreate(),
 				intoHypo->getHypoGenerated() ? "true" : "false");
@@ -1055,11 +1078,12 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 		snprintf(sLog, sizeof(sLog),
 				"CHypoList::findAndMergeMatchingHypos: fromHypo:%s lat:%.3f, "
-				"lon:%.3f, depth:%.3f, time:%.3f, bayes: %.3f, nPicks:%d "
+				"lon:%.3f, depth:%.3f, time:%s, bayes: %.3f, nPicks:%d "
 				"created: %.3f, pub: %s",
 				fromHypo->getID().c_str(), fromHypo->getLatitude(),
 				fromHypo->getLongitude(), fromHypo->getDepth(),
-				fromHypo->getTOrigin(), fromHypo->getBayesValue(),
+				glass3::util::Date::encodeDateTime(
+					fromHypo->getTOrigin()).c_str(), fromHypo->getBayesValue(),
 				static_cast<int>(fromHypo->getPickData().size()),
 				fromHypo->getTCreate(),
 				fromHypo->getHypoGenerated() ? "true" : "false");
@@ -1110,7 +1134,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				fromHypo->getID().c_str());
 		glass3::util::Logger::log(sLog);
 
-		// check hypos to see  if resolve removed all the picks,
+		// check hypos to see if resolve removed all the picks,
 		// if so, remove the hypo
 		bool resolveRemoved = false;
 		if (intoHypo->getPickData().size() == 0) {
@@ -1197,10 +1221,12 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		glass3::util::Logger::log(sLog);
 
 		// Remove picks from intoHypo that do not fit initial location
-		if (intoHypo->pruneData()) {
+		if (intoHypo->pruneData(this)) {
 			// relocate the intoHypo if we pruned
 			intoHypo->localize();
 		}
+
+		setThreadHealth();
 
 		// get the new bayes value and calculate threshold
 		double newBayes = intoHypo->calculateCurrentBayes();
@@ -1320,11 +1346,10 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			snprintf(
 					sLog,
 					sizeof(sLog),
-					"CHypoList::findAndMergeMatchingHypos: keeping original "
-					"hypos %s and %s, newBayes:%.3f intoHypo Bayes:%.3f, "
-					"fromHypo bayes:%.3f",
-					intoHypo->getID().c_str(), fromHypo->getID().c_str(),
-					newBayes, intoBayes, fromBayes);
+					"CHypoList::findAndMergeMatchingHypos: reverting original "
+					"hypo %s, newBayes:%.3f, intoHypo Bayes:%.3f",
+					intoHypo->getID().c_str(),
+					newBayes, intoBayes);
 			glass3::util::Logger::log(sLog);
 
 			// reset intoHypo to where it was
@@ -1376,6 +1401,8 @@ int CHypoList::appendToHypoProcessingQueue(std::shared_ptr<CHypo> hyp) {
 		return (size);
 	}
 	m_HypoListMutex.unlock();
+
+	setThreadHealth();
 
 	// is this id already on the queue?
 	m_HypoProcessingQueueMutex.lock();
@@ -1490,6 +1517,8 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 		}
 	}
 
+	setThreadHealth();
+
 	// remove from from multiset
 	eraseFromMultiset(hypo);
 
@@ -1497,6 +1526,8 @@ void CHypoList::removeHypo(std::shared_ptr<CHypo> hypo, bool reportCancel) {
 	m_HypoListMutex.lock();
 	m_mHypo.erase(hypo->getID());
 	m_HypoListMutex.unlock();
+
+	setThreadHealth();
 
 	// clear all other hypo data
 	// we do this to signify that we've deleted this hypo (to prevent
@@ -1591,7 +1622,7 @@ bool CHypoList::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
 
 	// return whether we've changed the pick set
-	return (hyp->resolveData(hyp, allowStealing));
+	return (hyp->resolveData(hyp, allowStealing, this));
 }
 
 // ---------------------------------------------------------setNHypoMax
@@ -1623,6 +1654,8 @@ void CHypoList::updatePosition(std::shared_ptr<CHypo> hyp) {
 	// update tSort
 	hyp->setTSort(hyp->getTOrigin());
 
+	setThreadHealth();
+
 	// insert
 	m_msHypoList.insert(hyp);
 }
@@ -1638,6 +1671,8 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 	}
 
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
+
+	setThreadHealth();
 
 	if (m_msHypoList.size() == 0) {
 		return;
@@ -1655,6 +1690,8 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 
 	// for all matching (tSort range) hypos
 	for (it = lower; ((it != upper) && (it != m_msHypoList.end())); ++it) {
+		setThreadHealth();
+
 		std::shared_ptr<CHypo> aHyp = *it;
 
 		// only erase the correct one
@@ -1674,6 +1711,8 @@ void CHypoList::eraseFromMultiset(std::shared_ptr<CHypo> hyp) {
 	// relatively small and we want to be sure
 	// note: this may just be me being paranoid
 	for (it = m_msHypoList.begin(); (it != m_msHypoList.end()); ++it) {
+		setThreadHealth();
+
 		std::shared_ptr<CHypo> aHyp = *it;
 
 		// only erase the correct one

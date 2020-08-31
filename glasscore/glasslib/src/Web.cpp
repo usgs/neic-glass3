@@ -1636,20 +1636,24 @@ std::shared_ptr<CNode> CWeb::generateNode(double lat, double lon, double z,
 		return (NULL);
 	}
 
+	// get zonestats max depth
 	// returns m_dMaxDepth if no zonestats
 	double maxZ = getZoneStatsMaxDepth(lat, lon);
+	double nodeZ = z;
+
+	// adjust node limit by depth resolution if we have it
 	if (m_dDepthResolution != -1) {
-		maxZ = z + m_dDepthResolution;
+		nodeZ = z + m_dDepthResolution;
+	}
+
+	// take the larger depth limit
+	if (maxZ < nodeZ) {
+		maxZ = nodeZ;
 	}
 
 	// set aseimic flag
-	// -1 means no zonestats (treat as seismic)
-	// 0 means aseismic
-	// positive means seismic
-	bool aSeismic = false;
-	if (getZoneStatsObservability(lat, lon) == 0) {
-		aSeismic = true;
-	}
+	// returns true if no zonestats
+	bool aSeismic = getZoneStatsAseismic(lat, lon);
 
 	// create node
 	std::shared_ptr<CNode> node(new CNode(m_sName, lat, lon, z, resol, maxZ,
@@ -2407,19 +2411,22 @@ int CWeb::size() const {
 	return (m_vNode.size());
 }
 
-// ----------------------------------------------getZoneStatsObservibility
-double CWeb::getZoneStatsObservability(double dLat, double dLon) {
+// ----------------------------------------------getZoneStatsAseismic
+bool CWeb::getZoneStatsAseismic(double dLat, double dLon) {
 	std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
 
 	if (m_pZoneStats == NULL) {
-		return(-1.0);
+		return(false);
 	}
 
-	double observability =
-		m_pZoneStats->getRelativeObservabilityOfSeismicEventsAtLocation(
-			dLat, dLon);
+	// if the observability is less than or equal to zero
+	// then the location is aseismic
+	if(m_pZoneStats->getRelativeObservabilityOfSeismicEventsAtLocation(
+			dLat, dLon) <= 0) {
+		return (true);
+	}
 
-	return(observability);
+	return(false);
 }
 
 // ----------------------------------------------getZoneStatDepth

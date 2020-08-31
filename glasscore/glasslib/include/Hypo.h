@@ -23,6 +23,7 @@ class CPick;
 class CCorrelation;
 class CTrigger;
 class CSiteList;
+class CHypoList;
 
 /**
  * \brief glasscore hypo auditing structure
@@ -464,9 +465,11 @@ class CHypo {
 	 * including the identified phase, distance to picked station,
 	 * observation error, and other hypocentral properties
 	 *
+	 * \param parentThread - A pointer to a parent Hypolist thread to
+	 * reprt status to.
 	 * \return Returns true if any data removed
 	 */
-	bool pruneData();
+	bool pruneData(CHypoList* parentThread = NULL);
 
 	/**
 	 * \brief Evaluate hypocenter viability
@@ -670,10 +673,13 @@ class CHypo {
 	 * this-> to reference data.
 	 * \param allowStealing - A boolean flag indicating whether to allow
 	 * resolveData to steal data, defaults to true
+	 * \param parentThread - A pointer to a parent Hypolist thread to
+	 * reprt status to.
 	 * \return Returns true if the hypocenter's pick list was changed,
 	 * false otherwise.
 	 */
-	bool resolveData(std::shared_ptr<CHypo> hypo, bool allowStealing = true);
+	bool resolveData(std::shared_ptr<CHypo> hypo, bool allowStealing = true,
+			CHypoList* parentThread = NULL);
 
 	/**
 	 * \brief Supporting data link checking function

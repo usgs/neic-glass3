@@ -2668,7 +2668,7 @@ double CHypo::localize() {
 }
 
 // ---------------------------------------------------------pruneData
-bool CHypo::pruneData() {
+bool CHypo::pruneData(CHypoList* parentThread) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
@@ -2693,6 +2693,10 @@ bool CHypo::pruneData() {
 
 	// for each pick in this hypo
 	for (auto pck : m_vPickData) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// check to see if it can still be associated
 		if (!canAssociate(pck, 1.0, sdprune)) {
 			// pick no longer associates, add to remove list
@@ -2750,6 +2754,10 @@ bool CHypo::pruneData() {
 
 	// for each correlation in this hypo
 	for (auto cor : m_vCorrelationData) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// check to see if it can still be associated
 		if (!canAssociate(cor, tWindow, xWindow)) {
 			// correlation no longer associates, add to remove list
@@ -2906,7 +2914,8 @@ bool CHypo::reportCheck() {
 }
 
 // ---------------------------------------------------------resolveData
-bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
+bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing,
+		CHypoList* parentThread) {
 	// lock the hypo since we're iterating through it's lists
 	std::lock_guard < std::recursive_mutex > hypoGuard(m_HypoMutex);
 
@@ -2935,6 +2944,10 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 
 	// NOTE: Why are we moving backwards through the list?
 	for (int iPck = nPck - 1; iPck >= 0; iPck--) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// get the pick
 		std::shared_ptr<CPick> pck = m_vPickData[iPck];
 

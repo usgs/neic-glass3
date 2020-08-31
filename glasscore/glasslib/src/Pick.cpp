@@ -621,7 +621,6 @@ bool CPick::nucleate(CPickList* parentThread) {
 		double thresh;
 		std::string triggeringWeb = hypo->getWebName();
 		std::string controllingWeb = "";
-		double maxDepth = trigger->getNodeMaxDepth();
 		bool isAseismic = trigger->getNodeAseismic();
 		bool bad = false;
 
@@ -754,7 +753,18 @@ bool CPick::nucleate(CPickList* parentThread) {
 			}
 
 			// check to see if we are not below the maximum allowed depth for
-			// the trigger's node
+			// the web,
+			// look it up from zonestats if available
+			// we look this up here to reduce calls on zonestats
+			double maxDepth = 800.0;
+			if (theWeb != NULL) {
+				maxDepth = theWeb->getZoneStatsMaxDepth(
+						hypo->getLatitude(), hypo->getLongitude());
+			} else {
+				maxDepth = trigger->getWeb()->getZoneStatsMaxDepth(
+						hypo->getLatitude(), hypo->getLongitude());
+			}
+
 			if (depth > maxDepth) {
 				// it isn't
 				snprintf(sLog, sizeof(sLog),
