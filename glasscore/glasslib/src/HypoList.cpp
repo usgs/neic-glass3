@@ -97,13 +97,13 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 					// add all the picks in this hypo to
 					// the existing hypo just in case
 					int addPickCount = 0;
-					auto aHypoPicks = aHypo->getPickData();
-					for (auto pick : aHypoPicks) {
+					auto hypoPicks = hypo->getPickData();
+					for (auto pick : hypoPicks) {
 						if (parentThread != NULL) {
 							parentThread->setThreadHealth();
 						}
 
-						if (hypo->addPickReference(pick) == true) {
+						if (aHypo->addPickReference(pick) == true) {
 							addPickCount++;
 						}
 					}
@@ -148,6 +148,10 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 						+ "; added "
 						+ std::to_string(addPickCount)
 						+ " picks from not added hypo.");
+
+					if ((addPickCount > 0) && (scheduleProcessing == true)) {
+						appendToHypoProcessingQueue(aHypo);
+					}
 
 					// didn't add the hypo
 					return(false);

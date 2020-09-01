@@ -225,9 +225,10 @@ class ThreadBaseClass : public util::BaseClass {
 	 * This function retrieves the oldest time any of the the health statuses of
 	 * the work threads was updated as healthy by the setThreadHealth function
 	 *
+	 * \param pThreadId a pointer to a size_t holding the oldest thread id
 	 * \return A std::time_t containing the last check time
 	 */
-	std::time_t getAllLastHealthy();
+	std::time_t getAllLastHealthy(size_t * pThreadId);
 
 	/**
 	 * \brief ThreadBaseClass work function
