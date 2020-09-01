@@ -753,16 +753,12 @@ bool CPick::nucleate(CPickList* parentThread) {
 			}
 
 			// check to see if we are not below the maximum allowed depth for
-			// the web,
-			// look it up from zonestats if available
-			// we look this up here to reduce calls on zonestats
+			// the web
 			double maxDepth = 800.0;
 			if (theWeb != NULL) {
-				maxDepth = theWeb->getZoneStatsMaxDepth(
-						hypo->getLatitude(), hypo->getLongitude());
+				maxDepth = theWeb->getMaxDepth();
 			} else {
-				maxDepth = trigger->getWeb()->getZoneStatsMaxDepth(
-						hypo->getLatitude(), hypo->getLongitude());
+				maxDepth = trigger->getWeb()->getMaxDepth();
 			}
 
 			if (depth > maxDepth) {

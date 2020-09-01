@@ -94,6 +94,20 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 					(std::abs(hypo->getLongitude() - aHypo->getLongitude()) <
 						k_dExistingDistanceTolerance)) {
 					// we have a matching hypo
+					// add all the picks in this hypo to
+					// the existing hypo just in case
+					int addPickCount = 0;
+					auto aHypoPicks = aHypo->getPickData();
+					for (auto pick : aHypoPicks) {
+						if (parentThread != NULL) {
+							parentThread->setThreadHealth();
+						}
+
+						if (hypo->addPickReference(pick) == true) {
+							addPickCount++;
+						}
+					}
+
 					glass3::util::Logger::log(
 						"debug", "CHypoList::addHypo: Proximal Hypo: "
 						+ aHypo->getID()
@@ -130,7 +144,10 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 							std::abs(hypo->getLongitude() - aHypo->getLongitude()), 3)
 						+ " < "
 						+ glass3::util::to_string_with_precision(
-							k_dExistingDistanceTolerance, 3));
+							k_dExistingDistanceTolerance, 3)
+						+ "; added "
+						+ std::to_string(addPickCount)
+						+ " picks from not added hypo.");
 
 					// didn't add the hypo
 					return(false);
