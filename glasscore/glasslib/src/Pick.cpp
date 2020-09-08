@@ -631,6 +631,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 		// First localization attempt after nucleation
 		// make 3 passes
 		for (int ipass = 0; ipass < k_nNucleateAnnealPasses; ipass++) {
+			if (parentThread != NULL) {
+				parentThread->setThreadHealth();
+			}
+
 			// get an initial location via synthetic annealing,
 			// which also prunes out any poorly fitting picks
 			// the search is based on the grid resolution, and how
@@ -785,6 +789,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 			if (parentThread != NULL) {
 				parentThread->setThreadHealth();
 			}
+		}
+
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
 		}
 
 		// we've abandoned the potential hypo at this node

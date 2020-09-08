@@ -55,7 +55,7 @@ class ThreadPool : public util::ThreadBaseClass {
 	 * seconds between status checks. -1 to disable status checks.  Default 30.
 	 */
 	explicit ThreadPool(std::string poolName, int numThreads = 5,
-						int sleepTime = 100, int checkInterval = 30);
+						int sleepTime = 100, int checkInterval = 300);
 
 	/**
 	 * \brief ThreadPool destructor

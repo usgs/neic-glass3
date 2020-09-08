@@ -394,6 +394,12 @@ void brokerOutput::sendToOutputTopics(const std::string &message) {
 				"brokerOutput::sendToOutputTopics: Message missing type.");
 		return;
 	}
+	
+	std::string id = "";
+	if (messageObject.HasKey("ID")
+			&& ((messageObject)["ID"].GetType() == json::ValueType::StringVal)) {
+		id = (messageObject)["ID"].ToString();
+	}
 
 	// handle based on type
 	if (type == "Detection") {
@@ -443,6 +449,11 @@ void brokerOutput::sendToOutputTopics(const std::string &message) {
 					aTopic->send(message);
 				}
 			}
+			glass3::util::Logger::log(
+					"debug",
+					"brokerOutput::sendToOutputTopics: Detection Message "
+					+ id +
+					"written to topics");
 		} else {
 			glass3::util::Logger::log(
 					"error",
@@ -457,6 +468,12 @@ void brokerOutput::sendToOutputTopics(const std::string &message) {
 			// send it
 			aTopic->send(message);
 		}
+
+		glass3::util::Logger::log(
+					"debug",
+					"brokerOutput::sendToOutputTopics: Retraction Message "
+					+ id +
+					"written to topics");
 	}
 }
 

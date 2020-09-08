@@ -2210,7 +2210,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		return (NULL);
 	}
 
-	// make sure this event hasn't been canceld
+	// make sure this event hasn't been canceled
 	if (cancelCheck() == true) {
 		glass3::util::Logger::log(
 				"debug",
@@ -2301,15 +2301,14 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		double dist = geo.delta(&site->getGeo())
 				/ glass3::util::GlassMath::k_DegreesToRadians;
 
-		glass3::util::Logger::log(
-			"debug",
-			"CHypo::generateHypoMessage Checking pick: " +
-				m_pTravelTimeTables->m_sPhase + "; travtime: " +
-				std::to_string(tobs) +
-				"; distance: " + std::to_string(dist) +
-				"; residual: " + std::to_string(tres) +
-				"; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
-
+		// glass3::util::Logger::log(
+		// "debug",
+		// "CHypo::generateHypoMessage Checking pick: " +
+		// m_pTravelTimeTables->m_sPhase + "; travtime: " +
+		// std::to_string(tobs) +
+		// "; distance: " + std::to_string(dist) +
+		// "; residual: " + std::to_string(tres) +
+		// "; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
 
 		// check if we're allowed to publish this pick
 		if (m_pTravelTimeTables->m_bPublishable == false) {

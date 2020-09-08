@@ -1155,17 +1155,18 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				fromHypo->getID().c_str());
 		glass3::util::Logger::log(sLog);
 
-		// check hypos to see if resolve removed all the picks,
+		// check hypos to see if resolve removed enough
+		// of the picks to kill the hypo,
 		// if so, remove the hypo
 		bool resolveRemoved = false;
-		if (intoHypo->getPickData().size() == 0) {
+		if (intoHypo->cancelCheck() == true) {
 			removeHypo(intoHypo);
 
 			// we've merged a hypo, kinda
 			merged = true;
 			resolveRemoved = true;
 		}
-		if (fromHypo->getPickData().size() == 0) {
+		if (fromHypo->cancelCheck() == true) {
 			removeHypo(fromHypo);
 
 			// we've merged a hypo, sorta
@@ -1619,6 +1620,12 @@ bool CHypoList::requestHypo(std::shared_ptr<json::Object> com) {
 		// return true even if we didn't find anything, since
 		// we've handled the message
 		return (true);
+	}
+
+	// resolve all data prior to generating the hypo
+	if (resolveData(hyp)) {
+		// relocate the hypo
+		hyp->localize();
 	}
 
 	// generate the hypo message
