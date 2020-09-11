@@ -18,6 +18,7 @@
 #define SUM 3.5
 #define COUNT 1
 #define MAXDEPTH 10.0
+#define ASEISMIC false
 
 #define SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}" // NOLINT
 
@@ -30,6 +31,8 @@
 #define RESOLUTION 100.0
 #define UPDATE true
 #define SAVE false
+#define CONTROLLING false
+
 
 // tests to see if the node can be constructed
 TEST(TriggerTest, Construction) {
@@ -38,12 +41,14 @@ TEST(TriggerTest, Construction) {
 	// construct a web
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
 	glasscore::CWeb * testWeb = new glasscore::CWeb(std::string(NAME),
-	THRESH,
+													THRESH,
 													NUMDETECT,
 													NUMNUCLEATE,
 													RESOLUTION,
 													UPDATE,
-													SAVE, nullTrav, nullTrav);
+													SAVE,
+													CONTROLLING,
+													nullTrav, nullTrav);
 
 	// create  shared pointer to the site
 	// create json objects from the strings
@@ -109,6 +114,7 @@ TEST(TriggerTest, Construction) {
 							MAXDEPTH,
 							SUM,
 							COUNT,
+							ASEISMIC,
 							picks, testWeb);
 
 	// latitude

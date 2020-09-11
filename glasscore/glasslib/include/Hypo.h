@@ -23,6 +23,7 @@ class CPick;
 class CCorrelation;
 class CTrigger;
 class CSiteList;
+class CHypoList;
 
 /**
  * \brief glasscore hypo auditing structure
@@ -249,8 +250,9 @@ class CHypo {
 	 * Note that this pick may or may not also be referenced by other hypocenters
 	 *
 	 * \param pck - A std::shared_ptr to the CPick object to add.
+	 * \return True if successful, false otherwise
 	 */
-	void addPickReference(std::shared_ptr<CPick> pck);
+	bool addPickReference(std::shared_ptr<CPick> pck);
 
 	/**
 	 * \brief Remove pick reference from this hypo
@@ -463,9 +465,11 @@ class CHypo {
 	 * including the identified phase, distance to picked station,
 	 * observation error, and other hypocentral properties
 	 *
+	 * \param parentThread - A pointer to a parent Hypolist thread to
+	 * reprt status to.
 	 * \return Returns true if any data removed
 	 */
-	bool pruneData();
+	bool pruneData(CHypoList* parentThread = NULL);
 
 	/**
 	 * \brief Evaluate hypocenter viability
@@ -591,6 +595,16 @@ class CHypo {
 	double calculateGap(double lat, double lon, double z);
 
 	/**
+	 * \brief Calculate bayes at current location
+	 *
+	 * Calculates the total bayseian stack value at current location using
+	 * the supporting data. 
+	 * \return Returns a double value containing the total bayseian stack value
+	 * for the given location.
+	 */
+	double calculateCurrentBayes();
+
+	/**
 	 * \brief Calculate bayes
 	 *
 	 * Calculates the total bayseian stack value for a given location using
@@ -659,10 +673,13 @@ class CHypo {
 	 * this-> to reference data.
 	 * \param allowStealing - A boolean flag indicating whether to allow
 	 * resolveData to steal data, defaults to true
+	 * \param parentThread - A pointer to a parent Hypolist thread to
+	 * reprt status to.
 	 * \return Returns true if the hypocenter's pick list was changed,
 	 * false otherwise.
 	 */
-	bool resolveData(std::shared_ptr<CHypo> hypo, bool allowStealing = true);
+	bool resolveData(std::shared_ptr<CHypo> hypo, bool allowStealing = true,
+			CHypoList* parentThread = NULL);
 
 	/**
 	 * \brief Supporting data link checking function
@@ -1036,6 +1053,13 @@ class CHypo {
 	 * \param newTSort - a double containing the hypo sort time in Gregorian seconds
 	 */
 	void setTSort(double newTSort);
+
+	/**
+	 * \brief Sets the time that this hypo was created
+	 * \param newTCreate - a double containing the hypo creation time in Gregorian
+	 * seconds
+	 */
+	void setTCreate(double newTCreate);
 
 	/**
 	 * \brief Set nucleation auditing info for this hypo

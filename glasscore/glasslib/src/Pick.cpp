@@ -13,6 +13,7 @@
 #include "Node.h"
 #include "PickList.h"
 #include "HypoList.h"
+#include "WebList.h"
 #include "Hypo.h"
 #include "Site.h"
 #include "SiteList.h"
@@ -33,7 +34,7 @@ CPick::CPick() {
 // ---------------------------------------------------------CPick
 CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
 				std::string pickIdString, double backAzimuth, double slowness) {
-	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness, "",
+	initialize(pickSite, pickTime, pickIdString, "", backAzimuth, slowness, "",
 				std::numeric_limits<double>::quiet_NaN(),
 				std::numeric_limits<double>::quiet_NaN(),
 				std::numeric_limits<double>::quiet_NaN(),
@@ -47,14 +48,16 @@ CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
 
 // ---------------------------------------------------------CPick
 CPick::CPick(std::shared_ptr<CSite> pickSite, double pickTime,
-				std::string pickIdString, double backAzimuth, double slowness,
+				std::string pickIdString, std::string source,
+				double backAzimuth, double slowness,
 				std::string phase, double phaseProb, double distance,
 				double distanceProb, double azimuth, double azimuthProb,
 				double depth, double depthProb, double magnitude,
 				double magnitudeProb) {
-	initialize(pickSite, pickTime, pickIdString, backAzimuth, slowness, phase,
-				phaseProb, distance, distanceProb, azimuth, azimuthProb, depth,
-				depthProb, magnitude, magnitudeProb);
+	initialize(pickSite, pickTime, pickIdString, source, backAzimuth,
+				slowness, phase, phaseProb, distance, distanceProb,
+				azimuth, azimuthProb, depth, depthProb, magnitude,
+				magnitudeProb);
 }
 
 // ---------------------------------------------------------CPick
@@ -109,6 +112,7 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 	double classifiedMag = std::numeric_limits<double>::quiet_NaN();
 	double classifiedMagProb = std::numeric_limits<double>::quiet_NaN();
 	std::string pid = "";
+	std::string source = "";
 
 	// site
 	if (pick->HasKey("Site")
@@ -363,11 +367,28 @@ CPick::CPick(std::shared_ptr<json::Object> pick, CSiteList *pSiteList) {
 		classifiedMagProb = std::numeric_limits<double>::quiet_NaN();
 	}
 
+	// source
+	if (pick->HasKey("Source")
+			&& ((*pick)["Source"].GetType()
+					== json::ValueType::ObjectVal)) {
+		// classification is an object
+		json::Object sourceobj = (*pick)["Source"].ToObject();
+
+		// author
+		if (sourceobj.HasKey("Author")
+				&& (sourceobj["Author"].GetType() == json::ValueType::StringVal)) {
+			source = sourceobj["Author"].ToString();
+		} else {
+			source = "";
+		}
+	}
+
 	// pass to initialization function
-	if (!initialize(site, tPick, pid, backAzimuth, slowness, classifiedPhase,
-					classifiedPhaseProb, classifiedDist, classifiedDistProb,
-					classifiedAzm, classifiedAzmProb, classifiedDepth,
-					classifiedDepthProb, classifiedMag, classifiedMagProb)) {
+	if (!initialize(site, tPick, pid, source, backAzimuth, slowness,
+					classifiedPhase, classifiedPhaseProb, classifiedDist,
+					classifiedDistProb, classifiedAzm, classifiedAzmProb,
+					classifiedDepth, classifiedDepthProb, classifiedMag,
+					classifiedMagProb)) {
 		glass3::util::Logger::log(
 				"error",
 				"CPick::CPick: Failed to initialize pick: "
@@ -395,6 +416,7 @@ void CPick::clear() {
 	m_JSONPick.reset();
 
 	m_sPhaseName = "";
+	m_sSource = "";
 	m_sID = "";
 	m_tPick = 0.0;
 	m_dBackAzimuth = std::numeric_limits<double>::quiet_NaN();
@@ -417,8 +439,9 @@ void CPick::clear() {
 
 // ---------------------------------------------------------initialize
 bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
-						std::string pickIdString, double backAzimuth,
-						double slowness, std::string phase, double phaseProb,
+						std::string pickIdString, std::string source,
+						double backAzimuth, double slowness,
+						std::string phase, double phaseProb,
 						double distance, double distanceProb, double azimuth,
 						double azimuthProb, double depth, double depthProb,
 						double magnitude, double magnitudeProb) {
@@ -429,6 +452,7 @@ bool CPick::initialize(std::shared_ptr<CSite> pickSite, double pickTime,
 	setTPick(pickTime);
 	setTSort(pickTime);
 	m_sID = pickIdString;
+	m_sSource = source;
 	m_dBackAzimuth = backAzimuth;
 	m_dSlowness = slowness;
 	m_sClassifiedPhase = phase;
@@ -592,12 +616,11 @@ bool CPick::nucleate(CPickList* parentThread) {
 			hypo->addPickReference(pick);
 		}
 
-		// use the hypo's nucleation threshold, which is really the
-		// web's nucleation threshold
-		int ncut = hypo->getNucleationDataThreshold();
-		double thresh = hypo->getNucleationStackThreshold();
-		std::string web = hypo->getWebName();
-		double maxDepth = trigger->getNodeMaxDepth();
+		int ncut;
+		double thresh;
+		std::string triggeringWeb = hypo->getWebName();
+		std::string controllingWeb = "";
+		bool isAseismic = trigger->getNodeAseismic();
 		bool bad = false;
 
 		if (parentThread != NULL) {
@@ -607,6 +630,10 @@ bool CPick::nucleate(CPickList* parentThread) {
 		// First localization attempt after nucleation
 		// make 3 passes
 		for (int ipass = 0; ipass < k_nNucleateAnnealPasses; ipass++) {
+			if (parentThread != NULL) {
+				parentThread->setThreadHealth();
+			}
+
 			// get an initial location via synthetic annealing,
 			// which also prunes out any poorly fitting picks
 			// the search is based on the grid resolution, and how
@@ -647,6 +674,46 @@ bool CPick::nucleate(CPickList* parentThread) {
 			 glass3::util::Logger::log(sLog);
 			 */
 
+			// look up which web controls this area
+			std::shared_ptr<CWeb> theWeb = NULL;
+			std::string aSeismic = "";
+
+			// if we allow using controlling webs
+			if (trigger->getWeb()->getAllowControllingWebs() == true) {
+				// get the controlling web
+				theWeb = CGlass::getWebList()->getControllingWeb(
+					hypo->getLatitude(), hypo->getLongitude());
+			}
+
+			// function returns null if there is a tie (most likely two global
+			// grids), if we don't allow contorlling webs, or if something else
+			// went wrong if this happens, just use the triggering web thresholds
+			if (theWeb != NULL) {
+				// isAseismic defines whether to use stricter thresholds
+				if (isAseismic == true) {
+					ncut = theWeb->getASeismicNucleationDataCountThreshold();
+					thresh = theWeb->getASeismicNucleationStackThreshold();
+					aSeismic = " aSeismic ";
+				} else {
+					ncut = theWeb->getNucleationDataCountThreshold();
+					thresh = theWeb->getNucleationStackThreshold();
+					aSeismic = "";
+				}
+				controllingWeb = theWeb->getName();
+			} else {
+				// isAseismic defines whether to use stricter thresholds
+				if (isAseismic == true) {
+					ncut = trigger->getWeb()->getASeismicNucleationDataCountThreshold();
+					thresh = trigger->getWeb()->getASeismicNucleationStackThreshold();
+					aSeismic = " aSeismic ";
+				} else {
+					ncut = trigger->getWeb()->getNucleationDataCountThreshold();
+					thresh = trigger->getWeb()->getNucleationStackThreshold();
+					aSeismic = "";
+				}
+				controllingWeb = "N/A";
+			}
+
 			// check to see if we still have enough picks for this hypo to
 			// survive.
 			// NOTE, in Node, ncut is used as a threshold for the number of
@@ -657,8 +724,11 @@ bool CPick::nucleate(CPickList* parentThread) {
 				snprintf(sLog, sizeof(sLog),
 							"CPick::nucleate: -- Abandoning trigger %s "
 							"because the number of picks is below the cutoff "
-							"(npick:%d, ncut:%d, web:%s) --",
-							triggerString.c_str(), npick, ncut, web.c_str());
+							"(npick:%d, ncut:%d, triggeringWeb:%s, "
+							"controllingWeb:%s) %s--",
+							triggerString.c_str(), npick, ncut,
+							triggeringWeb.c_str(), controllingWeb.c_str(),
+							aSeismic.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -673,8 +743,11 @@ bool CPick::nucleate(CPickList* parentThread) {
 				snprintf(sLog, sizeof(sLog),
 							"CPick::nucleate: -- Abandoning trigger %s "
 							"because the bayes value is below the threshold "
-							"(bayes:%f, thresh:%f, web:%s) --",
-							triggerString.c_str(), bayes, thresh, web.c_str());
+							"(bayes:%f, thresh:%f, triggeringWeb:%s, "
+							"controllingWeb:%s) %s--",
+							triggerString.c_str(), bayes, thresh,
+							triggeringWeb.c_str(), controllingWeb.c_str(),
+							aSeismic.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
@@ -683,20 +756,42 @@ bool CPick::nucleate(CPickList* parentThread) {
 			}
 
 			// check to see if we are not below the maximum allowed depth for
-			// the trigger's node
+			// the web
+			double maxDepth = CGlass::k_dMaximumDepth;
+			if (theWeb != NULL) {
+				maxDepth = theWeb->getMaxDepth();
+			} else {
+				maxDepth = trigger->getWeb()->getMaxDepth();
+			}
+
 			if (depth > maxDepth) {
 				// it isn't
 				snprintf(sLog, sizeof(sLog),
 							"CPick::nucleate: -- Abandoning trigger %s "
 							"because the depth is greater than the max depth "
-							"(depth:%f, maxDepth:%f, web:%s) --",
-							triggerString.c_str(), depth, maxDepth, web.c_str());
+							"(depth:%f, maxDepth:%f, triggeringWeb:%s, "
+							"controllingWeb:%s) %s--",
+							triggerString.c_str(), depth, maxDepth,
+							triggeringWeb.c_str(), controllingWeb.c_str(),
+							aSeismic.c_str());
 				glass3::util::Logger::log(sLog);
 
 				// don't bother making additional passes
 				bad = true;
 				break;
 			}
+
+			// update the hypo thresholds
+			hypo->setNucleationDataThreshold(ncut);
+			hypo->setNucleationStackThreshold(thresh);
+
+			if (parentThread != NULL) {
+				parentThread->setThreadHealth();
+			}
+		}  // end for each anneal pass
+
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
 		}
 
 		// we've abandoned the potential hypo at this node
@@ -711,7 +806,7 @@ bool CPick::nucleate(CPickList* parentThread) {
 				"debug",
 				"CPick::nucleate: TRG site:" + pickSite->getSCNL() + "; tPick:"
 						+ pt + "; sID:" + m_sID + " => web:"
-						+ web + "; hyp: " + hypo->getID()
+						+ triggeringWeb + "; hyp: " + hypo->getID()
 						+ "; lat:"
 						+ glass3::util::to_string_with_precision(hypo->getLatitude(), 3)
 						+ "; lon:"
@@ -724,7 +819,11 @@ bool CPick::nucleate(CPickList* parentThread) {
 
 		// if we got this far, the hypo has enough supporting data to
 		// merit adding it to the hypo list
-		CGlass::getHypoList()->addHypo(hypo);
+		CGlass::getHypoList()->addHypo(hypo, true, parentThread);
+
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
 	}
 
 	// done
@@ -865,5 +964,11 @@ double CPick::getClassifiedMagnitude() const {
 // --------------------------------------------getClassifiedMagnitudeProbability
 double CPick::getClassifiedMagnitudeProbability() const {
 	return (m_dClassifiedMagnitudeProbability);
+}
+
+// ---------------------------------------------------------getSource
+const std::string& CPick::getSource() const {
+	std::lock_guard < std::recursive_mutex > pickGuard(m_PickMutex);
+	return (m_sSource);
 }
 }  // namespace glasscore

@@ -38,6 +38,7 @@
 #define TRIGGER_SUM 3.5
 #define TRIGGER_COUNT 1
 #define TRIGGER_MAXDEPTH 15
+#define TRIGGER_ASEISMIC false
 
 #define TRIGGER_SITEJSON "{\"Type\":\"StationInfo\",\"Elevation\":2326.000000,\"Latitude\":45.822170,\"Longitude\":-112.451000,\"Site\":{\"Station\":\"LRM\",\"Channel\":\"EHZ\",\"Network\":\"MB\",\"Location\":\"\"},\"Enable\":true,\"Quality\":1.0,\"UseForTeleseismic\":true}" // NOLINT
 
@@ -50,6 +51,7 @@
 #define TRIGGER_WEB_RESOLUTION 100.0
 #define TRIGGER_WEB_UPDATE true
 #define TRIGGER_WEB_SAVE false
+#define TRIGGER_WEB_CONTROLLING false
 
 #define CORRELATION_LATITUDE 40.3344
 #define CORRELATION_LONGITUDE -121.44
@@ -268,7 +270,9 @@ TEST(HypoTest, TriggerConstruction) {
 			TRIGGER_WEB_NUMNUCLEATE,
 			TRIGGER_WEB_RESOLUTION,
 			TRIGGER_WEB_UPDATE,
-			TRIGGER_WEB_SAVE, nullTrav, nullTrav);
+			TRIGGER_WEB_SAVE,
+			TRIGGER_WEB_CONTROLLING,
+			nullTrav, nullTrav);
 
 	// create  shared pointer to the site
 	// create json objects from the strings
@@ -300,7 +304,9 @@ TEST(HypoTest, TriggerConstruction) {
 			TRIGGER_WEB_RESOLUTION,
 			TRIGGER_MAXDEPTH,
 			TRIGGER_SUM,
-			TRIGGER_COUNT, picks, testWeb);
+			TRIGGER_COUNT, 
+			TRIGGER_ASEISMIC,
+			picks, testWeb);
 	std::shared_ptr<glasscore::CTrigger> sharedTrigger(testTrigger);
 
 	// construct a hypo

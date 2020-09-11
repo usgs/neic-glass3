@@ -102,9 +102,12 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \param scheduleProcessing - A boolean flag indicating whether to
 	 * automatically schedule processing when the hypo is added, defaults to
 	 * true
+	 * \param parentThread - A pointer to a CPickList parent to write thread
+	 * status to
 	 * \return Returns true if the hypo was added, false otherwise.
 	 */
-	bool addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing = true);
+	bool addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing = true,
+		CPickList* parentThread = NULL);
 
 	/**
 	 * \brief Try to associate pick to a hypo in the list
@@ -402,6 +405,16 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	 * \brief The ratio used to protect against minimum rounding
 	 */
 	static constexpr double k_dMinimumRoundingProtectionRatio = 0.99;
+
+	/**
+	 * \brief The tolerance in seconds used to reject adding a new close hypo
+	 */
+	static constexpr double k_dExistingTimeTolerance = 5.0;
+
+	/**
+	 * \brief The tolerance in degrees used to reject adding a new close hypo
+	 */
+	static constexpr double k_dExistingDistanceTolerance = 0.5;
 };
 }  // namespace glasscore
 #endif  // HYPOLIST_H

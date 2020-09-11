@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <vector>
 #include <cmath>
+#include <set>
 #include "Glass.h"
 #include "Web.h"
 #include "Trigger.h"
@@ -25,6 +26,7 @@ namespace glasscore {
 constexpr double CNode::k_dTravelTimePickSelectionWindow;
 constexpr double CNode::k_dDepthShellResolutionKm;
 constexpr double CNode::k_dGridPointVsResolutionRatio;
+constexpr double CNode::k_residualDistanceAllowanceFactor;
 
 // site Link sorting function
 // Compares site links using travel times
@@ -55,8 +57,8 @@ CNode::CNode() {
 
 // ---------------------------------------------------------CNode
 CNode::CNode(std::string name, double lat, double lon, double z,
-				double resolution, double maxDepth) {
-	if (!initialize(name, lat, lon, z, resolution, maxDepth)) {
+				double resolution, double maxDepth, bool aseismic) {
+	if (!initialize(name, lat, lon, z, resolution, maxDepth, aseismic)) {
 		clear();
 	}
 }
@@ -79,6 +81,8 @@ void CNode::clear() {
 	m_dResolution = 0;
 	m_dMaxDepth = 0;
 	m_bEnabled = false;
+	m_bAseismic = false;
+	m_SourceSet.clear();
 }
 
 // ---------------------------------------------------------clearSiteLinks
@@ -104,7 +108,7 @@ void CNode::clearSiteLinks() {
 
 // ---------------------------------------------------------initialize
 bool CNode::initialize(std::string name, double lat, double lon, double z,
-						double resolution, double maxDepth) {
+						double resolution, double maxDepth, bool aseismic) {
 	std::lock_guard < std::recursive_mutex > nodeGuard(m_NodeMutex);
 
 	clear();
@@ -116,6 +120,7 @@ bool CNode::initialize(std::string name, double lat, double lon, double z,
 	m_dResolution = resolution;
 	m_dMaxDepth = maxDepth;
 	m_bEnabled = true;
+	m_bAseismic = aseismic;
 
 	return (true);
 }
@@ -284,6 +289,13 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 	// parent web
 	int nCut = m_pWeb->getNucleationDataCountThreshold();
 	double dThresh = m_pWeb->getNucleationStackThreshold();
+
+	// use aseismic flag to decide whether to use stricter thresholds
+	if (m_bAseismic == true) {
+		nCut = m_pWeb->getASeismicNucleationDataCountThreshold();
+		dThresh = m_pWeb->getASeismicNucleationStackThreshold();
+	}
+
 	double dAzimuthRange = CGlass::getBeamMatchingAzimuthWindow();
 	// commented out because slowness matching of beams is not yet implemented
 	// but is scheduled to be soon
@@ -416,6 +428,18 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 			bool phase2set = false;
 
 			if (pick == NULL) {
+				continue;
+			}
+
+			// skip this pick if it's not in the set of allowed sources
+			std::string pickSource = pick->getSource();
+			if ((m_SourceSet.empty() == false) &&
+				(pickSource != "") &&
+				(m_SourceSet.find(pickSource) == m_SourceSet.end())) {
+				// we have a set of allowed sources
+				// and we have a valid pick source
+				// and the source is NOT found in allowed sources
+				// so skip this pick
 				continue;
 			}
 
@@ -648,8 +672,8 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 	// create trigger
 	std::shared_ptr<CTrigger> trigger(
 			new CTrigger(m_dLatitude, m_dLongitude, m_dDepth, tOrigin,
-							m_dResolution, m_dMaxDepth, dSum, nCount, vPick,
-							m_pWeb));
+							m_dResolution, m_dMaxDepth, dSum, nCount,
+							m_bAseismic, vPick, m_pWeb));
 
 	// the node nucleated an event
 	return (trigger);
@@ -806,9 +830,14 @@ double CNode::getDepth() const {
 	return (m_dDepth);
 }
 
-// ---------------------------------------------------------getMaxTriggerDepth
+// ---------------------------------------------------------getMaxDepth
 double CNode::getMaxDepth() const {
 	return (m_dMaxDepth);
+}
+
+// ---------------------------------------------------------getAseismic
+bool CNode::getAseismic() const {
+	return (m_bAseismic);
 }
 
 // ---------------------------------------------------------getGeo
@@ -844,9 +873,15 @@ std::string CNode::getID() const {
 					+ std::to_string(getDepth())));
 }
 
-// ---------------------------------------------------------getMaxSiteDistance
+// -------------------------------------------------getMaxSiteDistance
 double CNode::getMaxSiteDistance() const {
 	std::lock_guard < std::mutex > guard(m_SiteLinkListMutex);
 	return(m_dMaxSiteDistance);
+}
+
+// -------------------------------------------------------addSource
+void CNode::addSource(std::string source) {
+	std::lock_guard < std::recursive_mutex > nodeGuard(m_NodeMutex);
+	m_SourceSet.insert(source);
 }
 }  // namespace glasscore

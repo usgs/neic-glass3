@@ -138,9 +138,14 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	}
 
 	// get the current size of the queue
-	m_PicksToProcessMutex.lock();
+	while (m_PicksToProcessMutex.try_lock() == false) {
+		std::this_thread::sleep_for(
+								std::chrono::milliseconds(100));
+		setThreadHealth();
+	}
 	int queueSize = m_qPicksToProcess.size();
 	m_PicksToProcessMutex.unlock();
+	setThreadHealth();
 
 	// don't let the queue get too large
 	while (queueSize >= k_ProcessQueueMaximumSize) {
@@ -161,6 +166,7 @@ bool CPickList::addPick(std::shared_ptr<json::Object> pick) {
 	m_PicksToProcessMutex.lock();
 	m_qPicksToProcess.push(pick);
 	m_PicksToProcessMutex.unlock();
+	setThreadHealth();
 
 	// we're done, message was processed
 	return (true);
@@ -408,7 +414,11 @@ glass3::util::WorkState CPickList::work() {
 	}
 
 	// lock for queue access
-	m_PicksToProcessMutex.lock();
+	while (m_PicksToProcessMutex.try_lock() == false) {
+		std::this_thread::sleep_for(
+								std::chrono::milliseconds(100));
+		setThreadHealth();
+	}
 
 	// are there any picks to process
 	if (m_qPicksToProcess.empty() == true) {
@@ -425,6 +435,7 @@ glass3::util::WorkState CPickList::work() {
 
 	// done with queue
 	m_PicksToProcessMutex.unlock();
+	setThreadHealth();
 
 	// check the pick
 	if (jsonPick == NULL) {
@@ -455,6 +466,8 @@ glass3::util::WorkState CPickList::work() {
 			newPick->getTPick(), newPick->getSite()->getSCNL(),
 			CGlass::getPickDuplicateTimeWindow());
 
+	setThreadHealth();
+
 	// it is a duplicate
 	if (existingPick != NULL) {
 		// do we allow updates (latest pick wins rather than
@@ -464,6 +477,7 @@ glass3::util::WorkState CPickList::work() {
 			// because the pick might be linked to a hypo
 			existingPick->initialize(existingPick->getSite(),
 										newPick->getTPick(), newPick->getID(),
+										newPick->getSource(),
 										newPick->getBackAzimuth(),
 										newPick->getSlowness(),
 										newPick->getClassifiedPhase(),
@@ -521,6 +535,7 @@ glass3::util::WorkState CPickList::work() {
 
 	// create new shared pointer to this pick
 	std::shared_ptr<CPick> pick(newPick);
+	setThreadHealth();
 
 	m_iCountOfTotalPicksProcessed++;
 
@@ -531,7 +546,11 @@ glass3::util::WorkState CPickList::work() {
 	}
 
 	// lock while we're modifying the multiset
-	m_PickListMutex.lock();
+	while (m_PickListMutex.try_lock() == false) {
+		std::this_thread::sleep_for(
+								std::chrono::milliseconds(100));
+		setThreadHealth();
+	}
 
 	// check to see if we're at the pick limit
 	if (m_msPickList.size() >= m_iMaxAllowablePickCount) {

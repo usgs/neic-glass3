@@ -41,6 +41,8 @@
 #define NOUPDATE false
 #define SAVE true
 #define NOSAVE false
+#define CONTROLLING true
+#define NOCONTROLLING false
 #define NUMTHREADS 1
 #define NOTHREADS 0
 
@@ -83,12 +85,14 @@ TEST(WebTest, Construction) {
 	// construct a web
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
 	glasscore::CWeb * testWeb = new glasscore::CWeb(std::string(NAME),
-	THRESH,
+													THRESH,
 													NUMDETECT,
 													NUMNUCLEATE,
 													RESOLUTION,
 													UPDATE,
-													NOSAVE, nullTrav, nullTrav);
+													NOSAVE,
+													NOCONTROLLING,
+													nullTrav, nullTrav);
 
 	// name
 	ASSERT_STREQ(std::string(NAME).c_str(), testWeb->getName().c_str())<<
@@ -124,12 +128,14 @@ TEST(WebTest, Construction) {
 
 	// construct a web
 	glasscore::CWeb * testWeb2 = new glasscore::CWeb(std::string(NAME),
-	THRESH,
+														THRESH,
 														NUMDETECT,
 														NUMNUCLEATE,
 														RESOLUTION,
 														NOUPDATE,
-														SAVE, nullTrav,
+														SAVE,
+														CONTROLLING,
+														nullTrav,
 														nullTrav);
 
 	// name
@@ -180,12 +186,16 @@ TEST(WebTest, Initialize) {
 	printf("[ construct]\n");
 
 	testWeb->initialize(std::string(NAME),
-	THRESH,
+						THRESH,
 						NUMDETECT,
 						NUMNUCLEATE,
 						RESOLUTION,
 						UPDATE,
-						SAVE, nullTrav, nullTrav, AZIGAP);
+						SAVE,
+						CONTROLLING,
+						nullTrav,
+						nullTrav,
+						AZIGAP);
 
 	printf("[ init     ]\n");
 
@@ -619,12 +629,18 @@ TEST(WebTest, FailTests) {
 
 	std::shared_ptr<traveltime::CTravelTime> nullTrav;
 	glasscore::CWeb aWeb(std::string(NAME),
-	THRESH,
+							THRESH,
 							NUMDETECT,
 							NUMNUCLEATE,
 							RESOLUTION,
 							NOUPDATE,
-							SAVE, nullTrav, nullTrav, NOTHREADS, 10, 10);
+							SAVE,
+							CONTROLLING,
+							nullTrav,
+							nullTrav,
+							NOTHREADS,
+							10,
+							10);
 
 	printf("[ construct]\n");
 

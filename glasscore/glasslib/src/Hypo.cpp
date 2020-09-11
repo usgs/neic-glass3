@@ -344,28 +344,29 @@ void CHypo::addCorrelationReference(std::shared_ptr<CCorrelation> corr) {
 }
 
 // ---------------------------------------------------------addPickReference
-void CHypo::addPickReference(std::shared_ptr<CPick> pck) {
+bool CHypo::addPickReference(std::shared_ptr<CPick> pck) {
 	// null check
 	if (pck == NULL) {
 		glass3::util::Logger::log("warning",
 									"CHypo::addPickReference: NULL pck.");
-		return;
+		return (false);
 	}
 
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
 	// for each pick in the vector
-	for (auto q : m_vPickData) {
+	for (auto aPick : m_vPickData) {
 		// see if we have this same pick
-		if (q->getID() == pck->getID()) {
+		if (aPick->getID() == pck->getID()) {
 			// Don't add this duplicate pick
-			return;
+			return(false);
 		}
 	}
 
 	// add the pick to the vector.
 	m_vPickData.push_back(pck);
+	return(true);
 }
 
 // ---------------------------------------------------------calculateAffinity
@@ -570,8 +571,9 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		removePickReference(pick);
 	}
 
-	// glass3::util::Logger::log("debug", "CHypo::anneal, " + m_sID + " bayes: "
-	// + std::to_string(m_dBayesValue));
+	glass3::util::Logger::log("debug", "CHypo::anneal, Event: " + m_sID
+		+ " bayes: " + std::to_string(m_dBayesValue)
+		+ " removed: " + std::to_string(vRemovePicks.size()));
 
 	// return the final bayesian value
 	return (m_dBayesValue);
@@ -1672,6 +1674,13 @@ double CHypo::getBayesValue() const {
 	return (m_dBayesValue);
 }
 
+// ---------------------------------------------------calculateCurrentBayes
+double CHypo::calculateCurrentBayes() {
+	// note false = don't use nucleation phases
+	return(calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
+											m_tOrigin, false));
+}
+
 // ---------------------------------------------------calculateBayes
 double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 								bool nucleate) {
@@ -2195,24 +2204,36 @@ bool CHypo::hasPickReference(std::shared_ptr<CPick> pck) {
 
 // ---------------------------------------------------------generateHypoMessage
 std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
-	std::shared_ptr<json::Object> hypo = std::make_shared < json::Object
-			> (json::Object());
-
 	// null check
 	if (m_pTravelTimeTables == NULL) {
 		glass3::util::Logger::log("warning",
 									"CHypo::generateHypoMessage: NULL pTTT.");
-		return (hypo);
+		return (NULL);
+	}
+
+	// make sure this event hasn't been canceled
+	if (cancelCheck() == true) {
+		glass3::util::Logger::log(
+				"debug",
+				"CHypo::generateHypoMessage: hypo: " + m_sID
+						+ " has been canceled.");
+		// return a cancel message
+		return (generateCancelMessage());
 	}
 
 	// make sure this event is still reportable
 	if (reportCheck() == false) {
 		glass3::util::Logger::log(
 				"debug",
-				"CHypo::generateHypoMessage: hypo:" + m_sID
+				"CHypo::generateHypoMessage: hypo: " + m_sID
 						+ " is not reportable.");
-		return (hypo);
+		// return a cancel message
+		return (generateCancelMessage());
 	}
+
+	// create json object
+	std::shared_ptr<json::Object> hypo = std::make_shared < json::Object
+			> (json::Object());
 
 	glass3::util::Logger::log(
 			"debug",
@@ -2281,17 +2302,19 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		double dist = geo.delta(&site->getGeo())
 				/ glass3::util::GlassMath::k_DegreesToRadians;
 
-		glass3::util::Logger::log(
-			"debug",
-			"CHypo::generateHypoMessage Checking pick: " +
-				m_pTravelTimeTables->m_sPhase + "; travtime: " +
-				std::to_string(tobs) +
-				"; distance: " + std::to_string(dist) +
-				"; residual: " + std::to_string(tres) +
-				"; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
+		// glass3::util::Logger::log(
+		// "debug",
+		// "CHypo::generateHypoMessage Checking pick: " +
+		// m_pTravelTimeTables->m_sPhase + "; travtime: " +
+		// std::to_string(tobs) +
+		// "; distance: " + std::to_string(dist) +
+		// "; residual: " + std::to_string(tres) +
+		// "; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
 
-
-		// check if we're allowed to publish this pick
+		// check if we're allowed to publish this pick based
+		// on whether the travel time phase is publishable
+		// m_bPublishable is set in the above m_pTravelTimeTables->T()
+		// call
 		if (m_pTravelTimeTables->m_bPublishable == false) {
 			continue;
 		}
@@ -2508,7 +2531,7 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 		m_pTravelTimeTables = std::make_shared < traveltime::CTTT
 				> (traveltime::CTTT(*ttt));
 	}
-	m_tCreate = glass3::util::Date::now();
+	setTCreate(glass3::util::Date::now());
 
 	return (true);
 }
@@ -2648,7 +2671,7 @@ double CHypo::localize() {
 }
 
 // ---------------------------------------------------------pruneData
-bool CHypo::pruneData() {
+bool CHypo::pruneData(CHypoList* parentThread) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
@@ -2673,6 +2696,10 @@ bool CHypo::pruneData() {
 
 	// for each pick in this hypo
 	for (auto pck : m_vPickData) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// check to see if it can still be associated
 		if (!canAssociate(pck, 1.0, sdprune)) {
 			// pick no longer associates, add to remove list
@@ -2730,6 +2757,10 @@ bool CHypo::pruneData() {
 
 	// for each correlation in this hypo
 	for (auto cor : m_vCorrelationData) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// check to see if it can still be associated
 		if (!canAssociate(cor, tWindow, xWindow)) {
 			// correlation no longer associates, add to remove list
@@ -2886,7 +2917,8 @@ bool CHypo::reportCheck() {
 }
 
 // ---------------------------------------------------------resolveData
-bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
+bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing,
+		CHypoList* parentThread) {
 	// lock the hypo since we're iterating through it's lists
 	std::lock_guard < std::recursive_mutex > hypoGuard(m_HypoMutex);
 
@@ -2909,11 +2941,16 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 	// for each pick in this hypo
 	int nPck = m_vPickData.size();
 
+	int addedCount = 0;
 	int keptCount = 0;
 	int removeCount = 0;
 
 	// NOTE: Why are we moving backwards through the list?
 	for (int iPck = nPck - 1; iPck >= 0; iPck--) {
+		if (parentThread != NULL) {
+			parentThread->setThreadHealth();
+		}
+
 		// get the pick
 		std::shared_ptr<CPick> pck = m_vPickData[iPck];
 
@@ -2922,6 +2959,8 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 
 		// if this pick isn't linked to a hypo
 		if (pickHyp == NULL) {
+			addedCount++;
+
 			// link to this hypo and move on
 			pck->addHypoReference(hyp);
 
@@ -2990,7 +3029,8 @@ bool CHypo::resolveData(std::shared_ptr<CHypo> hyp, bool allowStealing) {
 
 	glass3::util::Logger::log(
 			"debug",
-			"CHypo::resolve " + m_sID + " kept:" + std::to_string(keptCount)
+			"CHypo::resolve " + m_sID + " added:" + std::to_string(addedCount)
+					+ " kept:" + std::to_string(keptCount)
 					+ " removed:" + std::to_string(removeCount));
 
 	// handle correlations
@@ -3172,7 +3212,7 @@ void CHypo::calculateStatistics() {
 	// compute gap
 	m_dGap = calculateGap(m_dLatitude, m_dLongitude, m_dDepth);
 
-	glass3::util::Logger::log("debug",
+	/* glass3::util::Logger::log("debug",
 		"CHypo::calculateStatistics: ID: " + getID()
 		+ "; m_dDistanceSD: " + std::to_string(m_dDistanceSD)
 		+ "; m_dMedianDistance: " + std::to_string(m_dMedianDistance)
@@ -3182,6 +3222,7 @@ void CHypo::calculateStatistics() {
 		+ "; m_iTeleseismicPhaseCount: "
 		+ std::to_string(m_iTeleseismicPhaseCount)
 		+ "; m_dGap: " + std::to_string(m_dGap));
+	*/
 }
 
 // ---------------------------------------------------------trap
@@ -3277,6 +3318,11 @@ void CHypo::setTOrigin(double newTOrg) {
 // --------------------------------------------------setTSort
 void CHypo::setTSort(double newTSort) {
 	m_tSort = std::floor(newTSort);
+}
+
+// ---------------------------------------------------------setTCreate
+void CHypo::setTCreate(double newTCreate) {
+	m_tCreate = newTCreate;
 }
 
 // --------------------------------------------------setNucleationStackThreshold

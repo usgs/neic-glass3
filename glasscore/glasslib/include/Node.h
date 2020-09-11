@@ -15,6 +15,7 @@
 #include <mutex>
 #include <tuple>
 #include <atomic>
+#include <set>
 #include "Link.h"
 
 namespace glasscore {
@@ -67,9 +68,11 @@ class CNode {
 	 * in kilometers
 	 * \param maxDepth - A double value containing the maximum trigger depth
 	 * in kilometers
+	 * \param aseismic - A boolean flag indicating whether this node is in an
+	 * aseismic area
 	 */
 	CNode(std::string name, double lat, double lon, double z, double resolution,
-			double maxDepth);
+			double maxDepth, bool aseismic);
 
 	/**
 	 * \brief CNode destructor
@@ -104,9 +107,11 @@ class CNode {
 	 * in kilometers
 	 * \param maxDepth - A double value containing the maximum trigger depth
 	 * in kilometers
+	 * \param aseismic - A boolean flag indicating whether this node is in an
+	 * aseismic area
 	 */
 	bool initialize(std::string name, double lat, double lon, double z,
-					double resolution, double maxDepth);
+					double resolution, double maxDepth, bool aseismic);
 
 	/**
 	 * \brief CNode node-site and site-node linker
@@ -160,7 +165,9 @@ class CNode {
 	 * Given an origin time, compute a number representing the stacked PDF
 	 * of a hypocenter centered on this node, by computing the PDF
 	 * of each pick at each site linked to this node and totaling (stacking)
-	 * them up.
+	 * them up. Picks with authors that are not in the set of allowed 
+	 * sources are not nuclated. Picks without authors or sources are always
+	 * nuclated.
 	 *
 	 * \param tOrigin - A double value containing the proposed origin time
 	 * to use in Gregorian seconds
@@ -275,6 +282,13 @@ class CNode {
 	double getMaxDepth() const;
 
 	/**
+	 * \brief Gets a flag indicating that the node is in an aseismic area
+	 * \return Returns a boolean flag, true if the node is aseismic, false
+	 * otherwise
+	 */
+	bool getAseismic() const;
+
+	/**
 	 * \brief Get the combined node location (latitude, longitude, depth) as
 	 * a CGeo object
 	 * \return Returns a glass3::util::Geo object containing the combined location.
@@ -321,6 +335,13 @@ class CNode {
 	 */
 	std::string getID() const;
 
+	/**
+	 * \brief Add to the allowed pick sources for this node.
+	 * \param source - A std::string containing a pick source (author) string to
+	 * add to the list of allowed sources for this node
+	 */
+	void addSource(std::string source);
+
  private:
 	/**
 	 * \brief A pointer to the parent CWeb class, used get configuration,
@@ -357,6 +378,12 @@ class CNode {
 	std::atomic<double> m_dMaxDepth;
 
 	/**
+	 * \brief A boolean flag indicating whether this node is in an aseismic
+	 * area or not.
+	 */
+	std::atomic<bool> m_bAseismic;
+
+	/**
 	 * \brief A double value containing this node's maximum site distance in
 	 * degrees.
 	 */
@@ -373,6 +400,12 @@ class CNode {
 	 * nucleation. Nodes are disabled when they are being reconfigured.
 	 */
 	std::atomic<bool> m_bEnabled;
+
+	/**
+	 * \brief A std::set of strings listing the allowed pick sources for
+	 * this node.
+	 */
+	std::set<std::string> m_SourceSet;
 
 	/**
 	 * \brief A std::vector of tuples linking node to site

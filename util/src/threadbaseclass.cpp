@@ -216,13 +216,17 @@ bool ThreadBaseClass::healthCheck() {
 						+ getThreadName() + ")");
 		return (false);
 	}
-	int lastCheckInterval = (std::time(nullptr) - getAllLastHealthy());
+
+	// use spdlog to get thread id
+	size_t thread_id = 0;
+	int lastCheckInterval = (std::time(nullptr) - getAllLastHealthy(&thread_id));
 
 	if (lastCheckInterval > getHealthCheckInterval()) {
 		glass3::util::Logger::log(
 				"error",
 				"ThreadBaseClass::healthCheck():"
-						" lastCheckInterval for at least one thread in "
+						" lastCheckInterval for at least thread "
+						+ std::to_string(thread_id) + " in "
 						+ getThreadName() + " exceeds health check interval ( "
 						+ std::to_string(lastCheckInterval) + " > "
 						+ std::to_string(getHealthCheckInterval()) + " )");
@@ -298,7 +302,7 @@ void ThreadBaseClass::workLoop() {
 }
 
 // ---------------------------------------------------------getAllLastHealthy
-std::time_t ThreadBaseClass::getAllLastHealthy() {
+std::time_t ThreadBaseClass::getAllLastHealthy(size_t * pThreadId) {
 	// don't bother if we've not got any threads
 	if (getNumThreads() <= 0) {
 		return (0);
@@ -316,6 +320,7 @@ std::time_t ThreadBaseClass::getAllLastHealthy() {
 
 	// init oldest time to now, everything should be older than now
 	double oldestTime = std::time(nullptr);
+	size_t oldest_thread_id = 0;
 
 	// go through all work threads
 	// I don't think we need a mutex here because the only function that
@@ -330,8 +335,13 @@ std::time_t ThreadBaseClass::getAllLastHealthy() {
 		if (healthTime < oldestTime) {
 			// remember the oldest time
 			oldestTime = healthTime;
+			oldest_thread_id =
+				static_cast<size_t>(std::hash<std::thread::id>()
+					(StatusItr->first));
 		}
 	}
+	*pThreadId = oldest_thread_id;
+
 	return (oldestTime);
 }
 
