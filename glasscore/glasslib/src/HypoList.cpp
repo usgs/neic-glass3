@@ -1242,27 +1242,20 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 		glass3::util::Logger::log(sLog);
 
 		// initial localization attempt of intoHypo after adding picks
-		intoHypo->anneal(
-				k_nNumberOfMergeAnnealIterations,
-				(distanceCut / CHypo::k_dInitialAnnealStepReducationFactor)
-						* glass3::util::Geo::k_DegreesToKm,
-				(distanceCut / CHypo::k_dFinalAnnealStepReducationFactor)
-						* glass3::util::Geo::k_DegreesToKm,
-				(timeCut / CHypo::k_dInitialAnnealStepReducationFactor),
-				k_dFinalMergeAnnealTimeStepSize);
-
-		snprintf(sLog, sizeof(sLog),
-				"CHypoList::findAndMergeMatchingHypos: %d picks"
-				" in intoHypo %s after anneal",
-				static_cast<int>(intoHypo->getPickData().size()),
-				intoHypo->getID().c_str());
-		glass3::util::Logger::log(sLog);
+		intoHypo->localize();
 
 		// Remove picks from intoHypo that do not fit initial location
 		if (intoHypo->pruneData(this)) {
 			// relocate the intoHypo if we pruned
 			intoHypo->localize();
 		}
+
+		snprintf(sLog, sizeof(sLog),
+				"CHypoList::findAndMergeMatchingHypos: %d picks"
+				" in intoHypo %s after localize and prune",
+				static_cast<int>(intoHypo->getPickData().size()),
+				intoHypo->getID().c_str());
+		glass3::util::Logger::log(sLog);
 
 		setThreadHealth();
 
