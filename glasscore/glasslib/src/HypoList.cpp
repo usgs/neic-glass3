@@ -69,8 +69,8 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 	// first check for similar hypos, we want the window a *little*
 	// larger than the time tolerance, so we use 0.55
 	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
-			hypo->getTOrigin() - (k_dExistingTimeTolerance * 0.55),
-			hypo->getTOrigin() + (k_dExistingTimeTolerance * 0.55));
+			hypo->getTOrigin() - (k_dExistingTimeTolerance),
+			hypo->getTOrigin() + (k_dExistingTimeTolerance));
 
 	// make sure that there were any existing hypos in the time window
 	if (hypoList.size() >= 0) {
@@ -574,6 +574,15 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	// otherwise, in some cases events will not be reported.
 	bool breport = false;
 
+	// Current Workflow is:
+	// localize()
+	// merge()
+	// scavenge(picks) (re-localize() if succesfull)
+	// scavenge(correlations) (re-localize() if successful)
+	// pruneData() (localize() and re-pruneData() if successful)
+	// resolveData()(localize() if successful)
+	// cancelCheck() (removeHypo() if cancelled)
+
 	// locate the hypo
 	hyp->localize();
 
@@ -676,7 +685,7 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 	if (resolveData(hyp)) {
 		setThreadHealth();
 
-		// we should report this hypo since it has changed
+		// we should report this hypo out since it has changed
 		breport = true;
 
 		// relocate the hypo
@@ -759,11 +768,12 @@ bool CHypoList::processHypo(std::shared_ptr<CHypo> hyp) {
 		breport = true;
 	}
 
-	// if we're supposed to report
+	// if we're supposed to report out a summary of the hypo outside
+	// of glasscore
 	if (breport == true) {
 		// if we CAN report
 		if (hyp->reportCheck() == true) {
-			// report
+			// report to anyone listening outside of glasscore
 			CGlass::sendExternalMessage(hyp->generateEventMessage());
 
 			glass3::util::Logger::log(

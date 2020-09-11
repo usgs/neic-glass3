@@ -96,8 +96,9 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * defaults to 800 km.
 	 * \param aSeismicThresh = An optional double value containing this web's 
 	 * aseismic nucleation threshold, -1.0 to disable.
-	 * \param numASeismicNucleate = An optional integer value containing the 
-	 * number of sitesrequired for the web to nucleate an event, -1 to disable
+	 * \param numASeismicNucleate = An optional integer value containing the
+	 * number of sites required for the web to nucleate an event at an aseismic
+	 * node, -1 to disable
 	 */
 	CWeb(std::string name, double thresh, int numDetect, int numNucleate,
 			int resolution, bool update, bool save, bool allowControllingWebs,
