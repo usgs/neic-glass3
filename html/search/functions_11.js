@@ -57,6 +57,7 @@ var searchData=
   ['setsitelistrequestinterval',['setSiteListRequestInterval',['../classglass3_1_1output_1_1output.html#a89d9aeb7aac37a092fef364dee27dad0',1,'glass3::output::output']]],
   ['setsleeptime',['setSleepTime',['../classglass3_1_1util_1_1ThreadBaseClass.html#a1bd59890fd240cf982e0f37f2f67778b',1,'glass3::util::ThreadBaseClass']]],
   ['setstationfilename',['setStationFileName',['../classglass3_1_1brokerOutput.html#aa227fbb822d72a514ec825d7f606cb7d',1,'glass3::brokerOutput']]],
+  ['settcreate',['setTCreate',['../classglasscore_1_1CHypo.html#a0aec00cbcd88776269473e63157d5ec3',1,'glasscore::CHypo']]],
   ['settfirstassociation',['setTFirstAssociation',['../classglasscore_1_1CPick.html#a5dd74a1686d3ebf304005beba2af01e5',1,'glasscore::CPick']]],
   ['setthreadhealth',['setThreadHealth',['../classglass3_1_1util_1_1ThreadBaseClass.html#ad04ed0961ca30819b86b34f99d61f900',1,'glass3::util::ThreadBaseClass']]],
   ['settnucleation',['setTNucleation',['../classglasscore_1_1CPick.html#aadbb627dd4407abe3718de4f634ad8ff',1,'glasscore::CPick']]],

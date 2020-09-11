@@ -21,6 +21,6 @@ var searchData=
   ['polarity_5findex',['POLARITY_INDEX',['../gpickparser_8cpp.html#a29c8745416d1efab5cb6e02a63a932dd',1,'gpickparser.cpp']]],
   ['processdetectionmessage',['processDetectionMessage',['../classglasscore_1_1CDetection.html#ab9bbc5c9a34a01e5b9977977897a664e',1,'glasscore::CDetection']]],
   ['processhypo',['processHypo',['../classglasscore_1_1CHypoList.html#a8d21fe5e194c96f7c786369963893b43',1,'glasscore::CHypoList']]],
-  ['prunedata',['pruneData',['../classglasscore_1_1CHypo.html#aeaa1cd7f3241e4a8f614c01d17f6bee0',1,'glasscore::CHypo']]],
+  ['prunedata',['pruneData',['../classglasscore_1_1CHypo.html#a27cebb7b162fce8a084c176b142a2ba6',1,'glasscore::CHypo']]],
   ['publog_5fkey',['PUBLOG_KEY',['../output_8cpp.html#abe2c07a6b0f2d86ab3361bba6921b52d',1,'output.cpp']]]
 ];

@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.4.1</span>
+   &#160;<span id="projectnumber">1.4.4</span>
    </div>
   </td>
  </tr>
@@ -143,6 +143,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a84bee09486ad929b6acb64e3e277c2eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#a84bee09486ad929b6acb64e3e277c2eb">setSiteList</a> (<a class="el" href="classglasscore_1_1CSiteList.html">CSiteList</a> *siteList)</td></tr>
 <tr class="memdesc:a84bee09486ad929b6acb64e3e277c2eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the <a class="el" href="classglasscore_1_1CSiteList.html" title="glasscore site list class ">CSiteList</a> pointer used by this web list for site lookups.  <a href="#a84bee09486ad929b6acb64e3e277c2eb">More...</a><br /></td></tr>
 <tr class="separator:a84bee09486ad929b6acb64e3e277c2eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac81d83f7f15f9f0e7848ca1955015a7b"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CWeb.html">CWeb</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#ac81d83f7f15f9f0e7848ca1955015a7b">getControllingWeb</a> (double dLat, double dLon)</td></tr>
+<tr class="memdesc:ac81d83f7f15f9f0e7848ca1955015a7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get controlling web for coordinates.  <a href="#ac81d83f7f15f9f0e7848ca1955015a7b">More...</a><br /></td></tr>
+<tr class="separator:ac81d83f7f15f9f0e7848ca1955015a7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac798543cd2bc0b8303fa8648b35835e1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CWebList.html#ac798543cd2bc0b8303fa8648b35835e1">size</a> () const </td></tr>
 <tr class="memdesc:ac798543cd2bc0b8303fa8648b35835e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current size of the web list.  <a href="#ac798543cd2bc0b8303fa8648b35835e1">More...</a><br /></td></tr>
 <tr class="separator:ac798543cd2bc0b8303fa8648b35835e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -237,6 +240,42 @@ Public Member Functions</h2></td></tr>
 
 <p><a class="el" href="classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co...">CWebList</a> clear function. </p>
 <p>The clear function for the <a class="el" href="classglasscore_1_1CWebList.html" title="glasscore detection node class The detection fabric consists of a collection of nets which in turn co...">CWebList</a> class. </p>
+
+</div>
+</div>
+<a class="anchor" id="ac81d83f7f15f9f0e7848ca1955015a7b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CWeb.html">CWeb</a> &gt; glasscore::CWebList::getControllingWeb </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>dLat</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>dLon</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get controlling web for coordinates. </p>
+<p>This function returns the controlling web based on the provided coordinates </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dLat</td><td>- A double containing the latitude to use </td></tr>
+    <tr><td class="paramname">dLon</td><td>- A double containing the longitude to use </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns shared pointer to the controlling web, or NULL if there is a tie. </dd></dl>
 
 </div>
 </div>

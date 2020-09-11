@@ -7,5 +7,5 @@ var searchData=
   ['parser',['Parser',['../classglass3_1_1parse_1_1Parser.html#a15ab2d4f9ff89ec5c7b10a33275f2f1c',1,'glass3::parse::Parser::Parser()'],['../classglass3_1_1parse_1_1Parser.html#aa1d1db000316868ce4256cff65613d2d',1,'glass3::parse::Parser::Parser(const std::string &amp;defaultAgencyID, const std::string &amp;defaultAuthor)']]],
   ['processdetectionmessage',['processDetectionMessage',['../classglasscore_1_1CDetection.html#ab9bbc5c9a34a01e5b9977977897a664e',1,'glasscore::CDetection']]],
   ['processhypo',['processHypo',['../classglasscore_1_1CHypoList.html#a8d21fe5e194c96f7c786369963893b43',1,'glasscore::CHypoList']]],
-  ['prunedata',['pruneData',['../classglasscore_1_1CHypo.html#aeaa1cd7f3241e4a8f614c01d17f6bee0',1,'glasscore::CHypo']]]
+  ['prunedata',['pruneData',['../classglasscore_1_1CHypo.html#a27cebb7b162fce8a084c176b142a2ba6',1,'glasscore::CHypo']]]
 ];

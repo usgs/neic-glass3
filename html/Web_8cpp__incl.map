@@ -1,19 +1,19 @@
 <map id="glasscore/glasslib/src/Web.cpp" name="glasscore/glasslib/src/Web.cpp">
-<area shape="rect" id="node2" href="$Web_8h.html" title="Web.h" alt="" coords="1903,95,1963,121"/>
-<area shape="rect" id="node20" href="$geo_8h.html" title="geo.h" alt="" coords="2936,319,2991,345"/>
-<area shape="rect" id="node26" href="$logger_8h.html" title="logger.h contains the interface to the neic&#45;glass3 logging library " alt="" coords="50,95,118,121"/>
-<area shape="rect" id="node32" href="$Glass_8h.html" title="Glass.h" alt="" coords="2138,95,2205,121"/>
-<area shape="rect" id="node34" href="$Pick_8h.html" title="Pick.h" alt="" coords="2088,244,2146,271"/>
-<area shape="rect" id="node35" href="$Node_8h.html" title="Node.h" alt="" coords="3158,169,3222,196"/>
-<area shape="rect" id="node37" href="$SiteList_8h.html" title="SiteList.h" alt="" coords="961,95,1038,121"/>
-<area shape="rect" id="node38" href="$Site_8h.html" title="Site.h" alt="" coords="2734,169,2790,196"/>
-<area shape="rect" id="node3" href="$threadbaseclass_8h.html" title="threadbaseclass.h" alt="" coords="734,169,862,196"/>
-<area shape="rect" id="node19" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="2221,244,2320,271"/>
-<area shape="rect" id="node23" href="$ZoneStats_8h.html" title="ZoneStats.h" alt="" coords="1154,169,1248,196"/>
-<area shape="rect" id="node4" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="1768,244,1860,271"/>
-<area shape="rect" id="node10" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="749,244,848,271"/>
-<area shape="rect" id="node11" href="$workstate_8h.html" title="workstate.h " alt="" coords="634,244,725,271"/>
-<area shape="rect" id="node21" href="$glassmath_8h.html" title="glassmath.h" alt="" coords="2917,393,3010,420"/>
-<area shape="rect" id="node33" href="$TTT_8h.html" title="TTT.h" alt="" coords="2240,169,2298,196"/>
-<area shape="rect" id="node36" href="$Link_8h.html" title="Link.h" alt="" coords="3296,244,3354,271"/>
+<area shape="rect" id="node2" href="$Web_8h.html" title="Web.h" alt="" coords="1573,95,1633,121"/>
+<area shape="rect" id="node20" href="$geo_8h.html" title="geo.h" alt="" coords="2837,319,2892,345"/>
+<area shape="rect" id="node26" href="$logger_8h.html" title="logger.h contains the interface to the neic&#45;glass3 logging library " alt="" coords="49,95,117,121"/>
+<area shape="rect" id="node32" href="$Glass_8h.html" title="Glass.h" alt="" coords="1878,95,1944,121"/>
+<area shape="rect" id="node34" href="$Pick_8h.html" title="Pick.h" alt="" coords="2118,244,2176,271"/>
+<area shape="rect" id="node35" href="$Node_8h.html" title="Node.h" alt="" coords="3048,169,3112,196"/>
+<area shape="rect" id="node38" href="$SiteList_8h.html" title="SiteList.h" alt="" coords="1235,95,1312,121"/>
+<area shape="rect" id="node39" href="$Site_8h.html" title="Site.h" alt="" coords="2786,169,2842,196"/>
+<area shape="rect" id="node3" href="$threadbaseclass_8h.html" title="threadbaseclass.h" alt="" coords="763,169,891,196"/>
+<area shape="rect" id="node19" href="$TravelTime_8h.html" title="TravelTime.h" alt="" coords="1742,244,1840,271"/>
+<area shape="rect" id="node23" href="$ZoneStats_8h.html" title="ZoneStats.h" alt="" coords="1055,169,1148,196"/>
+<area shape="rect" id="node4" href="$baseclass_8h.html" title="baseclass.h" alt="" coords="2201,244,2293,271"/>
+<area shape="rect" id="node10" href="$threadstate_8h.html" title="threadstatus.h " alt="" coords="659,244,758,271"/>
+<area shape="rect" id="node11" href="$workstate_8h.html" title="workstate.h " alt="" coords="782,244,872,271"/>
+<area shape="rect" id="node21" href="$glassmath_8h.html" title="glassmath.h" alt="" coords="2818,393,2911,420"/>
+<area shape="rect" id="node33" href="$TTT_8h.html" title="TTT.h" alt="" coords="1916,169,1973,196"/>
+<area shape="rect" id="node37" href="$Link_8h.html" title="Link.h" alt="" coords="3220,244,3277,271"/>
 </map>
