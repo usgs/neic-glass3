@@ -559,7 +559,8 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	 * This function checks to see if the provided coordinates are within the web.
 	 * \param dLat - A double containing the latitude to use
 	 * \param dLon - A double containing the longitude to use
-	 * \return Returns a double value the relative size of the web
+	 * \return Returns a double value holding overall size of the web
+	 * (lat deg * lon deg)
 	 */
 	double isWithin(double dLat, double dLon);
 

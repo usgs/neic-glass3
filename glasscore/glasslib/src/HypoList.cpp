@@ -1151,8 +1151,9 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 			continue;
 		}
 
-		// resolve both hypos before starting merging so we know
-		// they're not sharing picks.
+		// resolve and prune both hypos before starting merging so
+		// we know they're not sharing picks.
+		intoHypo->pruneData(this);
 		resolveData(intoHypo);
 		snprintf(sLog, sizeof(sLog),
 				"CHypoList::findAndMergeMatchingHypos: %d picks"
@@ -1161,6 +1162,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				intoHypo->getID().c_str());
 		glass3::util::Logger::log(sLog);
 
+		fromHypo->pruneData(this);
 		resolveData(fromHypo);
 		snprintf(sLog, sizeof(sLog),
 				"CHypoList::findAndMergeMatchingHypos: %d picks"
