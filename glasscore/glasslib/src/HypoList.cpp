@@ -66,13 +66,13 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 		parentThread->setThreadHealth();
 	}
 
-	// first check for a similar hypos, we want the window a *little*
-	// larger than the time tolerance
+	// first check for similar hypos, we want the window a *little*
+	// larger than the time tolerance, so we use 0.55
 	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
 			hypo->getTOrigin() - (k_dExistingTimeTolerance * 0.55),
 			hypo->getTOrigin() + (k_dExistingTimeTolerance * 0.55));
 
-	// make sure we got any hypos
+	// make sure that there were any existing hypos in the time window
 	if (hypoList.size() >= 0) {
 		// for each hypo in the list within the time range
 		for (int i = 0; i < hypoList.size(); i++) {
@@ -103,6 +103,10 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 							parentThread->setThreadHealth();
 						}
 
+						// try and add the pick to the hypo.
+						// Keep track of how many picks were added.
+						// if a pick was not added, it was probably
+						// already in the event
 						if (aHypo->addPickReference(pick) == true) {
 							addPickCount++;
 						}
@@ -155,10 +159,10 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 
 					// didn't add the hypo
 					return(false);
-				}
-			}
-		}
-	}
+				}  // end if hypo is close enough
+			}  // end if weak_ptr valid
+		}  // end for each hypo in vector
+	}  // end if there were close hypos
 
 	// lock for this scope
 	std::lock_guard<std::recursive_mutex> listGuard(m_HypoListMutex);
@@ -960,7 +964,7 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 
 	// make sure we got hypos returned
 	if (mergeList.size() == 0) {
-		// print noS events to merge message
+		// Log that there were no other events close enough to merge with
 		snprintf(sLog, sizeof(sLog),
 					"CHypoList::findAndMergeMatchingHypos: No hypos in merge "
 					"window %s to %s for %s (%s)",
@@ -1283,7 +1287,8 @@ bool CHypoList::findAndMergeMatchingHypos(std::shared_ptr<CHypo> hypo) {
 				intoHypo->setTCreate(fromHypo->getTCreate());
 			}
 
-			// intoHypo has effectively been replaced, so now remove
+			// intoHypo has effectively been replaced by the result
+			// of the combination of intoHypo and fromHypo. So now remove
 			// fromHypo, since it was successfully merged
 			removeHypo(fromHypo);
 

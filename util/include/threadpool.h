@@ -52,7 +52,7 @@ class ThreadPool : public util::ThreadBaseClass {
 	 * \param sleepTime - An integer containing the amount of
 	 * time to sleep in milliseconds between jobs.  Default 100
 	 * \param checkInterval - An integer containing the amount of time in
-	 * seconds between status checks. -1 to disable status checks.  Default 30.
+	 * seconds between status checks. -1 to disable status checks.  Default 300.
 	 */
 	explicit ThreadPool(std::string poolName, int numThreads = 5,
 						int sleepTime = 100, int checkInterval = 300);

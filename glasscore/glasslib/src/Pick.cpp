@@ -26,7 +26,6 @@ const unsigned int CPick::k_nNucleateAnnealPasses;
 const unsigned int CPick::k_nNucleateNumberOfAnnealIterations;
 constexpr double CPick::k_dNucleateInitialAnnealTimeStepSize;
 constexpr double CPick::k_dNucleateFinalAnnealTimeStepSize;
-constexpr double CPick::k_dMaxDepthAdjustFactor;
 
 // ---------------------------------------------------------CPick
 CPick::CPick() {
@@ -758,7 +757,7 @@ bool CPick::nucleate(CPickList* parentThread) {
 
 			// check to see if we are not below the maximum allowed depth for
 			// the web
-			double maxDepth = 800.0;
+			double maxDepth = CGlass::k_dMaximumDepth;
 			if (theWeb != NULL) {
 				maxDepth = theWeb->getMaxDepth();
 			} else {
@@ -789,7 +788,7 @@ bool CPick::nucleate(CPickList* parentThread) {
 			if (parentThread != NULL) {
 				parentThread->setThreadHealth();
 			}
-		}
+		}  // end for each anneal pass
 
 		if (parentThread != NULL) {
 			parentThread->setThreadHealth();

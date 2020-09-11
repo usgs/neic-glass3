@@ -165,7 +165,9 @@ class CNode {
 	 * Given an origin time, compute a number representing the stacked PDF
 	 * of a hypocenter centered on this node, by computing the PDF
 	 * of each pick at each site linked to this node and totaling (stacking)
-	 * them up.
+	 * them up. Picks with authors that are not in the set of allowed 
+	 * sources are not nuclated. Picks without authors or sources are always
+	 * nuclated.
 	 *
 	 * \param tOrigin - A double value containing the proposed origin time
 	 * to use in Gregorian seconds
@@ -334,7 +336,9 @@ class CNode {
 	std::string getID() const;
 
 	/**
-	 * \brief Add a source string to the set of source strings.
+	 * \brief Add to the allowed pick sources for this node.
+	 * \param source - A std::string containing a pick source (author) string to
+	 * add to the list of allowed sources for this node
 	 */
 	void addSource(std::string source);
 

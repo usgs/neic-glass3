@@ -1350,11 +1350,11 @@ bool CWeb::loadFilters(std::shared_ptr<json::Object> gridConfiguration) {
 		int sourceFilterCount = 0;
 		for (int i = 0; i < arr.size(); i++) {
 			if (arr[i].GetType() == json::ValueType::StringVal) {
-				// get the network
-				std::string snet = arr[i].ToString();
+				// get the pick source string
+				std::string aPickSource = arr[i].ToString();
 
 				// add to the network filter list
-				m_vSourcesFilter.push_back(snet);
+				m_vSourcesFilter.push_back(aPickSource);
 				sourceFilterCount++;
 			}
 		}

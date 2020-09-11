@@ -598,12 +598,6 @@ class CPick {
 	 * \brief The final anneal step size to use when nucleating
 	 */
 	static constexpr double k_dNucleateFinalAnnealTimeStepSize = 0.1;
-
-	/**
-	 * \brief A double containing the factor to adust the maximum
-	 * depth from the web.
-	 */
-	static constexpr double k_dMaxDepthAdjustFactor = 10;
 };
 }  // namespace glasscore
 #endif  // PICK_H

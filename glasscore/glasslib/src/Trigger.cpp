@@ -126,7 +126,7 @@ int CTrigger::getPickCount() const {
 }
 
 // ---------------------------------------------------------getWeb
-CWeb* CTrigger::getWeb() {
+const CWeb* CTrigger::getWeb() const {
 	return (m_pWeb);
 }
 

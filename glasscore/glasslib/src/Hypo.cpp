@@ -356,9 +356,9 @@ bool CHypo::addPickReference(std::shared_ptr<CPick> pck) {
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
 	// for each pick in the vector
-	for (auto q : m_vPickData) {
+	for (auto aPick : m_vPickData) {
 		// see if we have this same pick
-		if (q->getID() == pck->getID()) {
+		if (aPick->getID() == pck->getID()) {
 			// Don't add this duplicate pick
 			return(false);
 		}
@@ -1676,6 +1676,7 @@ double CHypo::getBayesValue() const {
 
 // ---------------------------------------------------calculateCurrentBayes
 double CHypo::calculateCurrentBayes() {
+	// note false = don't use nucleation phases
 	return(calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
 											m_tOrigin, false));
 }
@@ -2310,7 +2311,10 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		// "; residual: " + std::to_string(tres) +
 		// "; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
 
-		// check if we're allowed to publish this pick
+		// check if we're allowed to publish this pick based
+		// on whether the travel time phase is publishable
+		// m_bPublishable is set in the above m_pTravelTimeTables->T()
+		// call
 		if (m_pTravelTimeTables->m_bPublishable == false) {
 			continue;
 		}

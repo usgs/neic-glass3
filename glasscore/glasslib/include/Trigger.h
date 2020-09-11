@@ -176,7 +176,7 @@ class CTrigger {
 	 * travel times
 	 * \return Returns a pointer to the CWeb that generated this trigger
 	 */
-	CWeb* getWeb();
+	const CWeb* getWeb() const;
 
 	/**
 	 * \brief Get the list of picks supporting this trigger

@@ -545,7 +545,8 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	double getASeismicNucleationStackThreshold() const;
 
 	/**
-	 * \brief Gets the aseismic nucleation data minimum threshold used for this web
+	 * \brief Gets the aseismic nucleation data (picks) minimum threshold used for
+	 * this web
 	 * \return Returns an integer value containing the aseismic nucleation data minimum
 	 * threshold
 	 */
