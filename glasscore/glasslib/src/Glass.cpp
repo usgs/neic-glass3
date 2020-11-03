@@ -395,7 +395,8 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 
 			std::string file = "";
 			bool useForLocation = true;
-			bool publishPhase = true;
+			double minPublishPhase = 0.0;
+			double maxPublishPhase = 180.0;
 
 			// get the phase name
 			std::string phs = obj["PhaseName"].ToString();
@@ -428,6 +429,10 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 
 				// set assoc pointer
 				pdAssoc = assoc;
+
+				// default publish phase to the assoc range
+				minPublishPhase = assoc[0];
+				maxPublishPhase = assoc[1];
 			} else {
 				glass3::util::Logger::log(
 						"error",
@@ -471,23 +476,51 @@ bool CGlass::initialize(std::shared_ptr<json::Object> com) {
 			// get the use for publish phase key present
 			if (obj.HasKey("PublishPhase")
 					&& (obj["PublishPhase"].GetType() == json::ValueType::BoolVal)) {
-				publishPhase = obj["PublishPhase"].ToBool();
+				if(obj["PublishPhase"].ToBool() == false) {
+					minPublishPhase = -1.0;
+					maxPublishPhase = -1.0;
+					glass3::util::Logger::log(
+							"info",
+							"CGlass::initialize: Publishing phase: " + phs
+							+ " is disabled.");
+				} else {
+					glass3::util::Logger::log(
+							"info",
+							"CGlass::initialize: Using default publishPhase range: "
+									+ std::to_string(minPublishPhase) + " to "
+									+ std::to_string(maxPublishPhase)
+									+ " for phase: " + phs);
+				}
+			} else if (obj.HasKey("PublishPhase")
+					&& (obj["PublishPhase"].GetType() == json::ValueType::ArrayVal)) {
+				json::Array arr = obj["PublishPhase"].ToArray();
 
-				glass3::util::Logger::log(
-						"info",
-						"CGlass::initialize: Using publishPhase: "
-								+ std::to_string(publishPhase) + " for phase: " + phs);
+				// make sure the publish range array has the correct number of entries
+				// which is the same as the assoc array size
+				if (arr.size() == k_nAssocArraySize) {
+					// get the publish range
+					minPublishPhase = arr[0].ToDouble();
+					maxPublishPhase = arr[1].ToDouble();
+
+					glass3::util::Logger::log(
+							"info",
+							"CGlass::initialize: Using specified publishPhase range: "
+									+ std::to_string(minPublishPhase) + " to "
+									+ std::to_string(maxPublishPhase)
+									+ " for phase: " + phs);
+				}
 			} else {
-				publishPhase = true;
 				glass3::util::Logger::log(
-						"info",
-						"CGlass::initialize: Using default publishPhase: "
-								+ std::to_string(publishPhase) + " for phase: "+ phs);
+							"info",
+							"CGlass::initialize: Using default publishPhase range: "
+									+ std::to_string(minPublishPhase) + " to "
+									+ std::to_string(maxPublishPhase)
+									+ " for phase: " + phs);
 			}
 
 			// set up this phase
 			m_pAssociationTravelTimes->addPhase(phs, pdAssoc, file,
-				useForLocation, publishPhase);
+				useForLocation, minPublishPhase, maxPublishPhase);
 		}
 
 	} else {

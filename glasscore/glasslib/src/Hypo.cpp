@@ -1751,7 +1751,7 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 				double resi1 = calculateWeightedResidual(
 						m_pNucleationTravelTime1->m_sPhase, tobs, tcal1);
 
-				// second nucleation phase
+				// second nucleation phasecal
 				// calculate the residual using the phase name
 				double tcal2 = m_pNucleationTravelTime2->T(&siteGeo);
 				double resi2 = calculateWeightedResidual(
@@ -2302,14 +2302,14 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		double dist = geo.delta(&site->getGeo())
 				/ glass3::util::GlassMath::k_DegreesToRadians;
 
-		// glass3::util::Logger::log(
-		// "debug",
-		// "CHypo::generateHypoMessage Checking pick: " +
-		// m_pTravelTimeTables->m_sPhase + "; travtime: " +
-		// std::to_string(tobs) +
-		// "; distance: " + std::to_string(dist) +
-		// "; residual: " + std::to_string(tres) +
-		// "; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
+		glass3::util::Logger::log(
+		"debug",
+		"CHypo::generateHypoMessage Checking pick: " +
+		m_pTravelTimeTables->m_sPhase + "; travtime: " +
+		std::to_string(tobs) +
+		"; distance: " + std::to_string(dist) +
+		"; residual: " + std::to_string(tres) +
+		"; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
 
 		// check if we're allowed to publish this pick based
 		// on whether the travel time phase is publishable

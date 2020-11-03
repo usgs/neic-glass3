@@ -75,13 +75,16 @@ class CTTT {
 	 * is ""
 	 * \param useForLocation - A boolen flag indicating whether this phase should 
 	 * be used in generating locations, default is true
-	 * \param publishPhase - A boolen flag indicating whether this phase should 
-	 * be published in output messages, default is true
+	 * \param minPublishable - A double value containing the minumum distance 
+	 * in degrees to publish this phase.
+	 * \param minPublishable - A double value containing the maximum distance 
+	 * in degrees to publish this phase.
 	 * \return Returns true if successful, false otherwise
 	 */
 	bool addPhase(std::string phase,
 					double *assocRange = NULL, std::string file = "",
-					bool useForLocation = true, bool publishPhase = true);
+					bool useForLocation = true, double minPublishable = 0,
+					double maxPublishable = 180);
 
 	/**
 	 * \brief Set hypocenter for calculations

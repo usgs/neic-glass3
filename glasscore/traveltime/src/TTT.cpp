@@ -69,7 +69,8 @@ void CTTT::writeToFiles(std::string outDir, double depth) {
 // ---------------------------------------------------------addPhase
 // Add phase to list to be calculated
 bool CTTT::addPhase(std::string phase, double *assocRange,
-					std::string file, bool useForLocation, bool publishPhase) {
+					std::string file, bool useForLocation,
+					double minPublishable, double maxPublishable) {
 	// bounds check
 	if ((m_iNumTravelTimes + 1) > k_iMaximumNumberOfTravelTimes) {
 		glass3::util::Logger::log(
@@ -80,7 +81,8 @@ bool CTTT::addPhase(std::string phase, double *assocRange,
 	}
 
 	// create and setup traveltime from phase
-	CTravelTime *trv = new CTravelTime(useForLocation, publishPhase);
+	CTravelTime *trv = new CTravelTime(useForLocation, minPublishable,
+									   maxPublishable);
 	trv->setup(phase, file);
 
 	// add traveltime to list
@@ -123,7 +125,14 @@ double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 			double traveltime = m_pTravelTimes[i]->T(geo);
 			m_sPhase = phase;
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
-			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
+			if ((m_pTravelTimes[i]->m_dDelta >=
+					m_pTravelTimes[i]->m_dMinDeltaPublishable) &&
+				(m_pTravelTimes[i]->m_dDelta <=
+					m_pTravelTimes[i]->m_dMaxDeltaPublishable)) {
+				m_bPublishable = true;
+			} else {
+				m_bPublishable = false;
+			}
 
 			return (traveltime);
 		}
@@ -152,7 +161,14 @@ double CTTT::Td(double delta, std::string phase, double depth) {
 			double traveltime = m_pTravelTimes[i]->T(delta);
 			m_sPhase = phase;
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
-			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
+			if ((m_pTravelTimes[i]->m_dDelta >=
+					m_pTravelTimes[i]->m_dMinDeltaPublishable) &&
+				(m_pTravelTimes[i]->m_dDelta <=
+					m_pTravelTimes[i]->m_dMaxDeltaPublishable)) {
+				m_bPublishable = true;
+			} else {
+				m_bPublishable = false;
+			}
 
 			return (traveltime);
 		}
@@ -179,7 +195,14 @@ double CTTT::T(double delta, std::string phase) {
 			double traveltime = m_pTravelTimes[i]->T(delta);
 			m_sPhase = phase;
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
-			m_bPublishable = m_pTravelTimes[i]->m_bPublishable;
+			if ((m_pTravelTimes[i]->m_dDelta >=
+					m_pTravelTimes[i]->m_dMinDeltaPublishable) &&
+				(m_pTravelTimes[i]->m_dDelta <=
+					m_pTravelTimes[i]->m_dMaxDeltaPublishable)) {
+				m_bPublishable = true;
+			} else {
+				m_bPublishable = false;
+			}
 
 			return (traveltime);
 		}
@@ -282,7 +305,12 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 			bestPhase = aTrv->m_sPhase;
 			bestTraveltime = traveltime;
 			useForLocations = aTrv->m_bUseForLocations;
-			publishable = aTrv->m_bPublishable;
+			if ((aTrv->m_dDelta >= aTrv->m_dMinDeltaPublishable) &&
+				(aTrv->m_dDelta <= aTrv->m_dMaxDeltaPublishable)) {
+				publishable = true;
+			} else {
+				publishable = false;
+			}
 		}
 	}
 
