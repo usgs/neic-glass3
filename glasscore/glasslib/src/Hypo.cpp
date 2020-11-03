@@ -1264,11 +1264,15 @@ bool CHypo::cancelCheck() {
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize * 2];
 	char sHypo[glass3::util::Logger::k_nMaxLogEntrySize];
 
+	// calculate a new bayes value to use for these checks
+	double bayes = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
+									m_tOrigin, false);
+
 	glass3::util::Date dt = glass3::util::Date(m_tOrigin);
 	snprintf(sHypo, sizeof(sHypo), "CHypo::cancel: %s tOrg:%s; dLat:%9.4f; "
 				"dLon:%10.4f; dZ:%6.1f; bayes:%.2f; nPick:%d; nCorr:%d",
 				m_sID.c_str(), dt.dateTime().c_str(), getLatitude(),
-				getLongitude(), getDepth(), getBayesValue(),
+				getLongitude(), getDepth(), bayes,
 				static_cast<int>(m_vPickData.size()),
 				static_cast<int>(m_vCorrelationData.size()));
 
@@ -1342,8 +1346,7 @@ bool CHypo::cancelCheck() {
 	// check to see if we still have a high enough bayes value for this
 	// hypo to survive.
 	double thresh = m_dNucleationStackThreshold;
-	double bayes = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth,
-									m_tOrigin, false);
+	
 	if (bayes < thresh) {
 		// failure
 		snprintf(sLog, sizeof(sLog),
@@ -1751,7 +1754,7 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 				double resi1 = calculateWeightedResidual(
 						m_pNucleationTravelTime1->m_sPhase, tobs, tcal1);
 
-				// second nucleation phasecal
+				// second nucleation phase
 				// calculate the residual using the phase name
 				double tcal2 = m_pNucleationTravelTime2->T(&siteGeo);
 				double resi2 = calculateWeightedResidual(
@@ -2302,14 +2305,14 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		double dist = geo.delta(&site->getGeo())
 				/ glass3::util::GlassMath::k_DegreesToRadians;
 
-		glass3::util::Logger::log(
-		"debug",
-		"CHypo::generateHypoMessage Checking pick: " +
-		m_pTravelTimeTables->m_sPhase + "; travtime: " +
-		std::to_string(tobs) +
-		"; distance: " + std::to_string(dist) +
-		"; residual: " + std::to_string(tres) +
-		"; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
+		// glass3::util::Logger::log(
+		// "debug",
+		// "CHypo::generateHypoMessage Checking pick: " +
+		// m_pTravelTimeTables->m_sPhase + "; travtime: " +
+		// std::to_string(tobs) +
+		// "; distance: " + std::to_string(dist) +
+		// "; residual: " + std::to_string(tres) +
+		// "; publishable: " + std::to_string(m_pTravelTimeTables->m_bPublishable));
 
 		// check if we're allowed to publish this pick based
 		// on whether the travel time phase is publishable
