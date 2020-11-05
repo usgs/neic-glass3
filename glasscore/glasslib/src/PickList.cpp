@@ -588,19 +588,20 @@ glass3::util::WorkState CPickList::work() {
 	// signal that the thread is still alive after pick insertion
 	setThreadHealth();
 
-	// Attempt to associate the pick
+	// Attempt to associate the pick with existing hypos
 	CGlass::getHypoList()->associateData(pick);
 
-	// check to see if the pick is currently associated to a hypo
+	// check to see if the pick is now associated to a hypo
 	std::shared_ptr<CHypo> pHypo = pick->getHypoReference();
 	if (pHypo != NULL) {
-		// compute ratio
+		// compute ratio to threshold
 		double adBayesRatio = (pHypo->getBayesValue())
 				/ (pHypo->getNucleationStackThreshold());
 
 		std::string pt = glass3::util::Date::encodeDateTime(pick->getTPick());
 
 		// check to see if the ratio is high enough to not bother
+		// nucleating
 		// NOTE: Hardcoded ratio threshold
 		if (adBayesRatio > 2.0) {
 			glass3::util::Logger::log(

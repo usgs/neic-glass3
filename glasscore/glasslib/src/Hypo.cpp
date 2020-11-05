@@ -1346,7 +1346,7 @@ bool CHypo::cancelCheck() {
 	// check to see if we still have a high enough bayes value for this
 	// hypo to survive.
 	double thresh = m_dNucleationStackThreshold;
-	
+
 	if (bayes < thresh) {
 		// failure
 		snprintf(sLog, sizeof(sLog),

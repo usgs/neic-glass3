@@ -239,47 +239,44 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 
 	// make sure we got any hypos
 	if (hypoList.size() == 0) {
-		/*
-		 glass3::util::Logger::log(
-		 "debug",
-		 "CHypoList::associate NOASSOC idPick:" + pk->getID()
-		 + "; No Usable Hypos"); */
 		// nope
 		return (false);
 	}
 
-	std::shared_ptr<CHypo> bestHyp;
-	double sdassoc = CGlass::getAssociationSDCutoff();
+	std::shared_ptr<CHypo> bestHyp = NULL;
+	double bestAffinity = -1;
 
 	// for each hypo in the list within the time range
 	for (int i = 0; i < hypoList.size(); i++) {
 		// make sure hypo is still valid before associating
 		if (std::shared_ptr<CHypo> hyp = hypoList[i].lock()) {
-			// check to see if the pick will associate with
-			// this hypo
-			// NOTE: The sigma value passed into associate is hard coded
-			if (hyp->canAssociate(pk, CGlass::k_dAssociationSecondsPerSigma,
-									sdassoc)) {
-				// add to the list of hypos this pick can associate with
-				assocHypoList.push_back(hyp);
+			// get the affinity this pick has with this hypo
+			double pickAffinity = hyp->calculateAffinity(pk);
 
-				// remember this hypo
+			// move on if it has no affinity
+			if (pickAffinity <= 0) {
+				continue;
+			}
+
+			// add to the list of hypos this pick *can* associate with
+			assocHypoList.push_back(hyp);
+
+			// check to see if this affinity is the best one
+			if (pickAffinity > bestAffinity) {
+				// remember the best hypo
 				bestHyp = hyp;
+				bestAffinity = pickAffinity;
 			}
 		}
 	}
 
 	// there were no hypos that the pick associated with
-	if (assocHypoList.size() < 1) {
-		/*
-		 glass3::util::Logger::log(
-		 "debug", "CHypoList::associate NOASSOC idPick:" + pk->getID());
-		 */
+	if (assocHypoList.size() <= 0) {
 		return (false);
 	}
 
-	// there was only one hypo that the pick associated with
-	if (assocHypoList.size() == 1) {
+	// Associate to the hypo that fits the best
+	if (bestHyp != NULL) {
 		// link the pick to the hypo
 		pk->addHypoReference(bestHyp, true);
 
@@ -288,31 +285,12 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 
 		glass3::util::Logger::log(
 				"debug",
-				"CHypoList::associate (pick) sPid:" + bestHyp->getID()
-						+ " resetting cycle count due to new association");
-
-		// reset the cycle count
-		bestHyp->setProcessCount(0);
-
-		// add to the processing queue
-		appendToHypoProcessingQueue(bestHyp);
-
-		glass3::util::Logger::log(
-				"debug",
 				"CHypoList::associate ASSOC idPick:" + pk->getID()
-						+ "; numHypos: 1");
-
-		// the pick was associated
-		return (true);
+				+ "; idHypo: " + bestHyp->getID());
 	}
 
 	// For each hypo that the pick could associate with
 	for (auto q : assocHypoList) {
-		glass3::util::Logger::log(
-				"debug",
-				"CHypoList::associate (pick) sPid:" + q->getID()
-						+ " resetting cycle count due to new association");
-
 		// reset the cycle count
 		q->setProcessCount(0);
 
@@ -320,11 +298,6 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 		// note that we didn't link the pick to any hypos
 		appendToHypoProcessingQueue(q);
 	}
-
-	glass3::util::Logger::log(
-			"debug",
-			"CHypoList::associate ASSOC idPick:" + pk->getID() + "; numHypos: "
-					+ std::to_string(assocHypoList.size()));
 
 	// the pick was associated
 	return (true);

@@ -125,6 +125,7 @@ double CTTT::T(glass3::util::Geo *geo, std::string phase) {
 			double traveltime = m_pTravelTimes[i]->T(geo);
 			m_sPhase = phase;
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
+
 			if ((m_pTravelTimes[i]->m_dDelta >=
 					m_pTravelTimes[i]->m_dMinDeltaPublishable) &&
 				(m_pTravelTimes[i]->m_dDelta <=
@@ -161,6 +162,7 @@ double CTTT::Td(double delta, std::string phase, double depth) {
 			double traveltime = m_pTravelTimes[i]->T(delta);
 			m_sPhase = phase;
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
+
 			if ((m_pTravelTimes[i]->m_dDelta >=
 					m_pTravelTimes[i]->m_dMinDeltaPublishable) &&
 				(m_pTravelTimes[i]->m_dDelta <=
@@ -195,6 +197,7 @@ double CTTT::T(double delta, std::string phase) {
 			double traveltime = m_pTravelTimes[i]->T(delta);
 			m_sPhase = phase;
 			m_bUseForLocations = m_pTravelTimes[i]->m_bUseForLocations;
+
 			if ((m_pTravelTimes[i]->m_dDelta >=
 					m_pTravelTimes[i]->m_dMinDeltaPublishable) &&
 				(m_pTravelTimes[i]->m_dDelta <=
@@ -305,6 +308,7 @@ double CTTT::T(glass3::util::Geo *geo, double tObserved) {
 			bestPhase = aTrv->m_sPhase;
 			bestTraveltime = traveltime;
 			useForLocations = aTrv->m_bUseForLocations;
+
 			if ((aTrv->m_dDelta >= aTrv->m_dMinDeltaPublishable) &&
 				(aTrv->m_dDelta <= aTrv->m_dMaxDeltaPublishable)) {
 				publishable = true;

@@ -315,10 +315,10 @@ double CTravelTime::T(double delta) {
 
 	// bounds checks
 	if((m_dDelta < m_dMinimumDistance) || (m_dDelta > m_dMaximumDistance)) {
-    return (k_dTravelTimeInvalid);
+    	return (k_dTravelTimeInvalid);
 	}
 	if((m_dDepth < m_dMinimumDepth) || (m_dDepth > m_dMaximumDepth)) {
-    return (k_dTravelTimeInvalid);
+    	return (k_dTravelTimeInvalid);
 	}
 
 	double inDistance = m_dDelta;
