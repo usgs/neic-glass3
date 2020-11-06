@@ -244,28 +244,30 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 	}
 
 	std::shared_ptr<CHypo> bestHyp = NULL;
-	double bestAffinity = -1;
+	double bestBayes = -1;
+	double sdassoc = CGlass::getAssociationSDCutoff();
 
 	// for each hypo in the list within the time range
 	for (int i = 0; i < hypoList.size(); i++) {
 		// make sure hypo is still valid before associating
 		if (std::shared_ptr<CHypo> hyp = hypoList[i].lock()) {
 			// get the affinity this pick has with this hypo
-			double pickAffinity = hyp->calculateAffinity(pk);
+			double bayesValue = hyp->getBayesValue();
 
-			// move on if it has no affinity
-			if (pickAffinity <= 0) {
+			// move on if it cannot associate
+			if (hyp->canAssociate(pk, CGlass::k_dAssociationSecondsPerSigma,
+									sdassoc) == false) {
 				continue;
 			}
 
 			// add to the list of hypos this pick *can* associate with
 			assocHypoList.push_back(hyp);
 
-			// check to see if this affinity is the best one
-			if (pickAffinity > bestAffinity) {
-				// remember the best hypo
+			// check to see if this hypo is the biggest
+			if (bayesValue > bestBayes) {
+				// remember the biggest hypo
 				bestHyp = hyp;
-				bestAffinity = pickAffinity;
+				bestBayes = bayesValue;
 			}
 		}
 	}
@@ -275,7 +277,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 		return (false);
 	}
 
-	// Associate to the hypo that fits the best
+	// Associate to the hypo that is the biggest
 	if (bestHyp != NULL) {
 		// link the pick to the hypo
 		pk->addHypoReference(bestHyp, true);
@@ -286,10 +288,13 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 		glass3::util::Logger::log(
 				"debug",
 				"CHypoList::associate ASSOC idPick:" + pk->getID()
-				+ "; idHypo: " + bestHyp->getID());
+				+ "; idHypo: " + bestHyp->getID()
+				+ "; bayes: " + std::to_string(bestBayes));
 	}
 
 	// For each hypo that the pick could associate with
+	// schedule it for processing so all the canidates
+	// can fight it out
 	for (auto q : assocHypoList) {
 		// reset the cycle count
 		q->setProcessCount(0);

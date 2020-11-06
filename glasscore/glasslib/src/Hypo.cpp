@@ -1073,7 +1073,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	bool useForLocations = true;
 	double tRes = calculateResidual(pick, &useForLocations);
 
-        // give up if there's no valid residual
+    // give up if there's no valid residual
 	if (std::isnan(tRes) == true) {
 		return (false);
 	}
@@ -2720,8 +2720,8 @@ bool CHypo::pruneData(CHypoList* parentThread) {
 
 		// Trim whiskers
 		// compute delta between site and hypo
-		// THIS NEEDS TO BE CONVERTER DO DEG BUT NEED TO TEST LATER - WY
-		double delta = geo.delta(&pck->getSite()->getGeo());
+		double delta = glass3::util::GlassMath::k_RadiansToDegrees
+				* geo.delta(&pck->getSite()->getGeo());
 		// check if delta is beyond distance limit
 		if (delta > m_dAssociationDistanceCutoff) {
 			snprintf(
