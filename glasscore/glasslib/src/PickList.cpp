@@ -607,9 +607,8 @@ glass3::util::WorkState CPickList::work() {
 			glass3::util::Logger::log(
 					"debug",
 					"CPickList::work(): SKIPNUC tPick:" + pt + "; idPick:"
-							+ pick->getID() + " due to "
-									"association with a hypo with stack twice "
-									"threshold ("
+							+ pick->getID() + " due to association with hypo "
+							+ pHypo->getID() + " with stack twice threshold ("
 							+ std::to_string(pHypo->getBayesValue()) + ")");
 			bNucleateThisPick = false;
 		}
