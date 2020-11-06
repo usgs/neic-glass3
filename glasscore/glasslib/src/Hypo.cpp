@@ -1040,9 +1040,9 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	 }
 	 } */
 
-	// compute distance
-	double siteDistance = hypoGeo.delta(&site->getGeo())
-			/ glass3::util::GlassMath::k_DegreesToRadians;
+	// compute distance in degrees
+	double siteDistance = glass3::util::GlassMath::k_RadiansToDegrees
+				* hypoGeo.delta(&site->getGeo());
 
 	// check if distance is beyond cutoff
 	if (siteDistance > m_dAssociationDistanceCutoff) {
@@ -2719,15 +2719,16 @@ bool CHypo::pruneData(CHypoList* parentThread) {
 		}
 
 		// Trim whiskers
-		// compute delta between site and hypo
-		double delta = glass3::util::GlassMath::k_RadiansToDegrees
+		// compute distance in degrees between site and hypo
+		double siteDistance = glass3::util::GlassMath::k_RadiansToDegrees
 				* geo.delta(&pck->getSite()->getGeo());
-		// check if delta is beyond distance limit
-		if (delta > m_dAssociationDistanceCutoff) {
+
+		// check if site is beyond distance limit
+		if (siteDistance > m_dAssociationDistanceCutoff) {
 			snprintf(
 					sLog, sizeof(sLog), "CHypo::prune: DIST-CUL %s %s (%.2f > %.2f)",
 					glass3::util::Date::encodeDateTime(pck->getTPick()).c_str(),
-					pck->getSite()->getSCNL().c_str(), delta,
+					pck->getSite()->getSCNL().c_str(), siteDistance,
 					getAssociationDistanceCutoff());
 			glass3::util::Logger::log(sLog);
 

@@ -253,6 +253,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 		if (std::shared_ptr<CHypo> hyp = hypoList[i].lock()) {
 			// get the affinity this pick has with this hypo
 			double bayesValue = hyp->getBayesValue();
+			double nucleationThreshold = hyp->getNucleationStackThreshold();
 
 			// move on if it cannot associate
 			if (hyp->canAssociate(pk, CGlass::k_dAssociationSecondsPerSigma,
@@ -263,8 +264,9 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 			// add to the list of hypos this pick *can* associate with
 			assocHypoList.push_back(hyp);
 
-			// check to see if this hypo is the biggest
-			if (bayesValue > bestBayes) {
+			// check to see if this hypo is the biggest and valid
+			if ((bayesValue >= nucleationThreshold) &&
+				(bayesValue > bestBayes)) {
 				// remember the biggest hypo
 				bestHyp = hyp;
 				bestBayes = bayesValue;
