@@ -86,7 +86,11 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 					continue;
 				}
 
-				// check to see if any hypos are close enough
+				// get the supporting pick data, we need it for
+				// both checks
+				auto hypoPicks = hypo->getPickData();
+
+				// check to see if this hypo is close enough to match
 				if ((std::abs(hypo->getTOrigin() - aHypo->getTOrigin()) <
 						k_dExistingTimeTolerance) &&
 					(std::abs(hypo->getLatitude() - aHypo->getLatitude()) <
@@ -97,7 +101,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 					// add all the picks in this hypo to
 					// the existing hypo just in case
 					int addPickCount = 0;
-					auto hypoPicks = hypo->getPickData();
+
 					for (auto pick : hypoPicks) {
 						if (parentThread != NULL) {
 							parentThread->setThreadHealth();
@@ -113,7 +117,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 					}
 
 					glass3::util::Logger::log(
-						"debug", "CHypoList::addHypo: Proximal Hypo: "
+						"debug", "CHypoList::addHypo: Existing Proximal Hypo: "
 						+ aHypo->getID()
 						+ "; ot:"
 						+ glass3::util::Date::encodeDateTime(aHypo->getTOrigin())
@@ -123,7 +127,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 						+ glass3::util::to_string_with_precision(aHypo->getLongitude(), 3)
 						+ "; z:"
 						+ glass3::util::to_string_with_precision(aHypo->getDepth())
-						+ " found in list, not adding: "
+						+ " found in list. Not adding new Hypo: "
 						+ hypo->getID()
 						+ "; ot:"
 						+ glass3::util::Date::encodeDateTime(hypo->getTOrigin())
@@ -151,7 +155,7 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 							k_dExistingDistanceTolerance, 3)
 						+ "; added "
 						+ std::to_string(addPickCount)
-						+ " picks from not added hypo.");
+						+ " picks from new hypo to existing hypo.");
 
 					if ((addPickCount > 0) && (scheduleProcessing == true)) {
 						appendToHypoProcessingQueue(aHypo);
@@ -160,6 +164,90 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 					// didn't add the hypo
 					return(false);
 				}  // end if hypo is close enough
+
+				// now compare the pick sets to see if they overlap
+				int hasPickCount = 0;
+				int numPicks = hypoPicks.size();
+
+				// for each pick in hypo, count how many picks are also
+				// in aHypo
+				for (auto pick : hypoPicks) {
+					if (parentThread != NULL) {
+						parentThread->setThreadHealth();
+					}
+
+					// check to see if aHypo has this pick
+					if (aHypo->hasPickReference(pick) == true) {
+						hasPickCount++;
+					}
+				}
+
+				// compute the percentage of picks that hypo has that are
+				// already in aHypo
+				double threshold = 0.80;  // this needs to be configurable
+				double percentCommon = static_cast<double>(hasPickCount)
+					/ static_cast<double>(numPicks);
+
+				if (percentCommon >= threshold) {
+					// we have a matching hypo
+					// add all the picks in this hypo to
+					// the existing hypo just in case
+					int addPickCount = 0;
+
+					for (auto pick : hypoPicks) {
+						if (parentThread != NULL) {
+							parentThread->setThreadHealth();
+						}
+
+						// try and add the pick to the hypo.
+						// Keep track of how many picks were added.
+						// if a pick was not added, it was probably
+						// already in the event
+						if (aHypo->addPickReference(pick) == true) {
+							addPickCount++;
+						}
+					}
+
+					glass3::util::Logger::log(
+						"debug", "CHypoList::addHypo: Existing Hypo with "
+						+ glass3::util::to_string_with_precision(percentCommon * 100, 1)
+						+ "% common picks found. Existing Hypo: "
+						+ aHypo->getID()
+						+ "; ot:"
+						+ glass3::util::Date::encodeDateTime(aHypo->getTOrigin())
+						+ "; lat:"
+						+ glass3::util::to_string_with_precision(aHypo->getLatitude(), 3)
+						+ "; lon:"
+						+ glass3::util::to_string_with_precision(aHypo->getLongitude(), 3)
+						+ "; z:"
+						+ glass3::util::to_string_with_precision(aHypo->getDepth())
+						+ "; picks:"
+						+ std::to_string(aHypo->getPickDataSize())
+						+ ". Not adding new Hypo: "
+						+ hypo->getID()
+						+ "; ot:"
+						+ glass3::util::Date::encodeDateTime(hypo->getTOrigin())
+						+ "; lat:"
+						+ glass3::util::to_string_with_precision(hypo->getLatitude(), 3)
+						+ "; lon:"
+						+ glass3::util::to_string_with_precision(hypo->getLongitude(), 3)
+						+ "; z:"
+						+ glass3::util::to_string_with_precision(hypo->getDepth())
+						+ "; picks:"
+						+ std::to_string(numPicks)
+						+ " common pick threshold: "
+						+ glass3::util::to_string_with_precision(threshold * 100, 1)
+						+ "%; added "
+						+ std::to_string(addPickCount)
+						+ " picks from new hypo added to existing hypo.");
+
+					if ((addPickCount > 0) && (scheduleProcessing == true)) {
+						appendToHypoProcessingQueue(aHypo);
+					}
+
+					// didn't add the hypo
+					return(false);
+				}  // end if percentage common above threshold
 			}  // end if weak_ptr valid
 		}  // end for each hypo in vector
 	}  // end if there were close hypos
@@ -440,7 +528,46 @@ glass3::util::WorkState CHypoList::work() {
 		return (glass3::util::WorkState::Idle);
 	}
 
-	std::lock_guard<std::mutex> hypoGuard(hyp->getProcessingMutex());
+	// std::lock_guard<std::mutex> hypoGuard(hyp->getProcessingMutex());
+
+	// we need to lock hyp for processing
+	int tryCount = 0;
+	int tryLimit = 10 * 10;  // 10 second converted to tenths of a second
+							 // (the sleep time)
+	std::unique_lock<std::mutex> hypoGuard(hyp->getProcessingMutex(),
+										std::defer_lock);
+
+	// loop for awhile trying to get lock
+	while (!hypoGuard.try_lock()) {
+		tryCount++;
+		if (tryCount <= tryLimit) {
+			// didn't get lock, wait a bit
+			std::this_thread::sleep_for(
+							std::chrono::milliseconds(100));
+			setThreadHealth();
+		} else {
+			break;
+		}
+	}
+
+	// last try
+	if (!hypoGuard.owns_lock()) {
+		if (!hypoGuard.try_lock()) {
+			// didn't get it, give up
+			snprintf(sLog, sizeof(sLog),
+						"CHypoList::work: could not"
+						" lock %s for processing after 10s, continuing.",
+						hyp->getID().c_str());
+			glass3::util::Logger::log(sLog);
+
+			// we can't lock this hypo
+			// put it back on the queue
+			appendToHypoProcessingQueue(hyp);
+
+			// move on
+			return (glass3::util::WorkState::OK);
+		}
+	}
 
 	try {
 		// log the hypo we're working on
