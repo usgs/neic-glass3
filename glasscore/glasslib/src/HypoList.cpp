@@ -329,7 +329,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 			}
 
 			// add to the list of hypos this pick *can* associate with
-			I hav
+			assocHypoList.push_back(hyp);
 
 			// check to see if this hypo is the biggest and valid
 			if ((bayesValue >= nucleationThreshold) &&
