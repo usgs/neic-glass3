@@ -189,25 +189,6 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 					/ static_cast<double>(numPicks);
 
 				if (percentCommon >= threshold) {
-					// we have a matching hypo
-					// add all the picks in this hypo to
-					// the existing hypo just in case
-					int addPickCount = 0;
-
-					for (auto pick : hypoPicks) {
-						if (parentThread != NULL) {
-							parentThread->setThreadHealth();
-						}
-
-						// try and add the pick to the hypo.
-						// Keep track of how many picks were added.
-						// if a pick was not added, it was probably
-						// already in the event
-						if (aHypo->addPickReference(pick) == true) {
-							addPickCount++;
-						}
-					}
-
 					glass3::util::Logger::log(
 						"debug", "CHypoList::addHypo: Existing Hypo with "
 						+ glass3::util::to_string_with_precision(percentCommon * 100, 1)
@@ -237,11 +218,9 @@ bool CHypoList::addHypo(std::shared_ptr<CHypo> hypo, bool scheduleProcessing,
 						+ std::to_string(numPicks)
 						+ " common pick threshold: "
 						+ glass3::util::to_string_with_precision(threshold * 100, 1)
-						+ "%; added "
-						+ std::to_string(addPickCount)
-						+ " picks from new hypo added to existing hypo.");
+						+ "%.");
 
-					if ((addPickCount > 0) && (scheduleProcessing == true)) {
+					if (scheduleProcessing == true) {
 						appendToHypoProcessingQueue(aHypo);
 					}
 
@@ -350,7 +329,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 			}
 
 			// add to the list of hypos this pick *can* associate with
-			assocHypoList.push_back(hyp);
+			I hav
 
 			// check to see if this hypo is the biggest and valid
 			if ((bayesValue >= nucleationThreshold) &&
