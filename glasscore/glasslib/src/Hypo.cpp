@@ -957,7 +957,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 
 // ---------------------------------------------------------canAssociate
 bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
-							double sdassoc) {
+							double sdassoc, bool p_only) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
@@ -1071,7 +1071,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 
 	// get residual, get useForLocations
 	bool useForLocations = true;
-	double tRes = calculateResidual(pick, &useForLocations);
+	double tRes = calculateResidual(pick, &useForLocations, p_only);
 
     // give up if there's no valid residual
 	if (std::isnan(tRes) == true) {
@@ -1576,7 +1576,7 @@ double CHypo::calculateGap(double lat, double lon, double z) {
 
 // --------------------------------------------------------calculateResidual
 double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
-		bool * useForLocations) {
+		bool * useForLocations, bool p_only) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
@@ -1614,15 +1614,25 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 			// no valid phase classification,
 			// compute expected travel time based on the pick site location and
 			// the observed travel time
-			tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
-			phaseName = m_pTravelTimeTables->m_sPhase;
+			if (p_only == false) {
+				tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
+				phaseName = m_pTravelTimeTables->m_sPhase;
+			} else {
+				tCal = m_pTravelTimeTables->T(&site->getGeo(), "P");
+				phaseName = "P";
+			}
 		}
 	} else {
 		// not checking phase classification
 		// compute expected travel time based on the pick site location and
 		// the observed travel time
-		tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
-		phaseName = m_pTravelTimeTables->m_sPhase;
+		if (p_only == false) {
+			tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
+			phaseName = m_pTravelTimeTables->m_sPhase;
+		} else {
+			tCal = m_pTravelTimeTables->T(&site->getGeo(), "P");
+			phaseName = "P";
+		}
 	}
 
 	// Check if pick has an invalid travel time,

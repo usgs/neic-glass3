@@ -618,6 +618,21 @@ glass3::util::WorkState CPickList::work() {
 	// taken awhile
 	setThreadHealth();
 
+	// check to see if this pick *FITS* with an existing large event
+	// if so do not nucleate
+	if (bNucleateThisPick == true) {
+		if (CGlass::getHypoList()->fitData(pick) == true) {
+			std::string pt = glass3::util::Date::encodeDateTime(pick->getTPick());
+			glass3::util::Logger::log(
+					"debug",
+					"CPickList::work(): SKIPNUC tPick:" + pt + "; idPick:"
+							+ pick->getID() + " because it fits with another hypo");
+			bNucleateThisPick = false;
+		}
+	}
+
+	setThreadHealth();
+
 	// Attempt nucleation unless we were told not to.
 	if (bNucleateThisPick == true) {
 		pick->nucleate(this);

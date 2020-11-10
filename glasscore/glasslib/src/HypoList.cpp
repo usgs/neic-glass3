@@ -302,7 +302,8 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 	// use the pick time minus 3600 seconds to compute the starting index
 	// NOTE: Hard coded time delta
 	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
-			pk->getTPick() - k_nHypoSearchPastDurationForPick, pk->getTPick());
+			pk->getTPick() - k_nHypoSearchPastDurationForPick,
+			pk->getTPick() + 10.0);
 
 	// make sure we got any hypos
 	if (hypoList.size() == 0) {
@@ -375,6 +376,63 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 
 	// the pick was associated
 	return (true);
+}
+
+// ---------------------------------------------------------fitData
+bool CHypoList::fitData(std::shared_ptr<CPick> pk) {
+	// nullcheck
+	if (pk == NULL) {
+		glass3::util::Logger::log(
+				"warning", "CHypoList::associate: NULL pick provided.");
+
+		return (false);
+	}
+
+	std::vector<std::shared_ptr<CHypo>> assocHypoList;
+
+	// compute the list of hypos to associate with
+	// (a potential hypo must be before the pick we're associating)
+	// use the pick time minus 3600 seconds to compute the starting index
+	// NOTE: Hard coded time delta
+	std::vector<std::weak_ptr<CHypo>> hypoList = getHypos(
+			pk->getTPick() - k_nHypoSearchPastDurationForPick,
+			pk->getTPick() + 10.0);
+
+	// make sure we got any hypos
+	if (hypoList.size() == 0) {
+		// nope
+		return (false);
+	}
+
+	double bigsdassoc = CGlass::getAssociationSDCutoff() * 10.0;
+	double p_only = true;
+
+	// for each hypo in the list within the time range
+	for (int i = 0; i < hypoList.size(); i++) {
+		// make sure hypo is still valid before associating
+		if (std::shared_ptr<CHypo> hyp = hypoList[i].lock()) {
+			// compute ratio to threshold
+			double adBayesRatio = (hyp->getBayesValue())
+				/ (hyp->getNucleationStackThreshold());
+
+			// check to see if the ratio is high enough
+			if (adBayesRatio > 2.0) {
+				// check to see if this pick can associate to
+				// this 'big enough' hypo ONLY as P (which is
+				// assumed to be first arriving P)
+				if (hyp->canAssociate(pk,
+									  CGlass::k_dAssociationSecondsPerSigma,
+									  bigsdassoc, p_only) == true) {
+					// this pick 'fit' for a very qualified
+					// definition of the word 'fit'
+					return(true);
+				}
+			}
+		}
+	}
+
+	// this pick did not 'fit'
+	return(false);
 }
 
 // ---------------------------------------------------------associateData
