@@ -607,9 +607,12 @@ glass3::util::WorkState CPickList::work() {
 			glass3::util::Logger::log(
 					"debug",
 					"CPickList::work(): SKIPNUC tPick:" + pt + "; idPick:"
-							+ pick->getID() + " due to association with hypo "
+							+ pick->getID() + " ("
+							+ pick->getSite()->getSCNL() +
+							") due to association with hypo "
 							+ pHypo->getID() + " with stack twice threshold ("
-							+ std::to_string(pHypo->getBayesValue()) + ")");
+							+ std::to_string(pHypo->getBayesValue()) + ", "
+							+ std::to_string(adBayesRatio) + ")");
 			bNucleateThisPick = false;
 		}
 	}
@@ -626,7 +629,9 @@ glass3::util::WorkState CPickList::work() {
 			glass3::util::Logger::log(
 					"debug",
 					"CPickList::work(): SKIPNUC tPick:" + pt + "; idPick:"
-							+ pick->getID() + " because it fits with another hypo");
+							+ pick->getID() + " ("
+							+ pick->getSite()->getSCNL() +
+							") because it fits with another hypo");
 			bNucleateThisPick = false;
 		}
 	}

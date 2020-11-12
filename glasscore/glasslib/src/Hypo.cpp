@@ -957,7 +957,7 @@ void CHypo::annealingLocateResidual(int nIter, double dStart, double dStop,
 
 // ---------------------------------------------------------canAssociate
 bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
-							double sdassoc, bool p_only) {
+							double sdassoc, bool p_only, bool debug) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
@@ -968,12 +968,12 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 
 	// null check
 	if (pick == NULL) {
-		glass3::util::Logger::log("error", "CHypo::associate: NULL pick.");
+		glass3::util::Logger::log("error", "CHypo::canAssociate: NULL pick.");
 		return (false);
 	}
 
 	if (m_pTravelTimeTables == NULL) {
-		glass3::util::Logger::log("error", "CHypo::associate: NULL pTTT.");
+		glass3::util::Logger::log("error", "CHypo::canAssociate: NULL pTTT.");
 		return (false);
 	}
 
@@ -999,6 +999,18 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 														siteAzimuth)
 				> dAzimuthRange) {
 			// it is not, do not associate
+			if (debug) {
+				glass3::util::Logger::log("debug", "CHypo::canAssociate: Pick: "
+							+ pick->getID() + " ("
+							+ pick->getSite()->getSCNL()
+							+ ") back azimuth "
+							+ std::to_string(pick->getBackAzimuth())
+							+ " is beyond the valid range "
+							+ std::to_string(dAzimuthRange)
+							+ " of " + std::to_string(siteAzimuth)
+							+ ", cannot associate with "
+							+ getID());
+			}
 			return (false);
 		}
 	}
@@ -1017,6 +1029,18 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 					pick->getClassifiedAzimuth(), siteAzimuth)
 					> CGlass::getPickAzimuthClassificationUncertainty()) {
 				// it is not, do not associate
+				if (debug) {
+					glass3::util::Logger::log("debug", "CHypo::canAssociate: Pick: "
+								+ pick->getID() + " ("
+								+ pick->getSite()->getSCNL()
+								+ ") classified azimuth "
+								+ std::to_string(pick->getBackAzimuth())
+								+ " is beyond the valid range "
+								+ std::to_string(dAzimuthRange)
+								+ " of " + std::to_string(siteAzimuth)
+								+ ", cannot associate with "
+								+ getID());
+				}
 				return (false);
 			}
 		}
@@ -1046,6 +1070,17 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 
 	// check if distance is beyond cutoff
 	if (siteDistance > m_dAssociationDistanceCutoff) {
+		if (debug) {
+			glass3::util::Logger::log("debug", "CHypo::canAssociate: Pick: "
+						+ pick->getID() + " ("
+						+ pick->getSite()->getSCNL()
+						+ ") site distance "
+						+ std::to_string(siteDistance)
+						+ " is beyond the cutoff "
+						+ std::to_string(m_dAssociationDistanceCutoff)
+						+ ", cannot associate with "
+						+ getID());
+		}
 		// it is, don't associated
 		return (false);
 	}
@@ -1063,6 +1098,21 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 					|| siteDistance
 							> CGlass::getDistanceClassUpperBound(
 									pick->getClassifiedDistance())) {
+				if (debug) {
+					glass3::util::Logger::log("debug", "CHypo::canAssociate: Pick: "
+								+ pick->getID() + " ("
+								+ pick->getSite()->getSCNL()
+								+ ") site distance "
+								+ std::to_string(siteDistance)
+								+ " is beyond the classified range of "
+								+ std::to_string(CGlass::getDistanceClassLowerBound(
+									pick->getClassifiedDistance()))
+								+ " to "
+								+ std::to_string(CGlass::getDistanceClassUpperBound(
+									pick->getClassifiedDistance()))
+								+ ", cannot associate with "
+								+ getID());
+				}
 				// it is not, do not associate
 				return (false);
 			}
@@ -1075,6 +1125,15 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 
     // give up if there's no valid residual
 	if (std::isnan(tRes) == true) {
+		if (debug) {
+			glass3::util::Logger::log("debug", "CHypo::canAssociate: Pick: "
+							+ pick->getID() + " ("
+							+ pick->getSite()->getSCNL() + ")"
+							+ " does not have a valid residual, p_only is "
+							+ (p_only ? "true" : "false")
+							+ ", cannot associate with "
+							+ getID());
+		}
 		return (false);
 	}
 
@@ -1115,30 +1174,23 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 
 	// check if pick standard deviation is greater than cutoff
 	if (stdev > cutoff) {
-		/*
-		 snprintf(
-		 sLog, sizeof(sLog),
-		 "CHypo::associate: NOASSOC Hypo:%s Time:%s Station:%s Pick:%s"
-		 " Res:%.2f stdev:%.2f>sdassoc:%.2f)",
-		 m_sID.c_str(),
-		 glassutil::CDate::encodeDateTime(pick->getTPick()).c_str(),
-		 pick->getSite()->getSCNL().c_str(), pick->getID().c_str(), tRes,
-		 stdev, sdassoc);
-		 glass3::util::Logger::log(sLog);
-		 */
+		if (debug) {
+			glass3::util::Logger::log("debug", "CHypo::canAssociate: Pick: "
+							+ pick->getID() + " ("
+							+ pick->getSite()->getSCNL() + ")"
+							+ " standard deviation "
+							+ std::to_string(stdev)
+							+ " is beyond the cutoff "
+							+ std::to_string(cutoff)
+							+ " (base sdassoc "
+							+ std::to_string(sdassoc)
+							+ "), cannot associate with "
+							+ getID());
+		}
 
 		// it is, don't associate
 		return (false);
 	}
-	/*
-	 snprintf(sLog, sizeof(sLog),
-	 "CHypo::associate: ASSOC Hypo:%s Time:%s Station:%s Pick:%s"
-	 " stdev:%.2f>sdassoc:%.2f)",
-	 sPid.c_str(),
-	 glassutil::CDate::encodeDateTime(pick->getTPick()).c_str(),
-	 pick->getSite()->getScnl().c_str(), pick->getPid().c_str(), stdev, sdassoc);
-	 glass3::util::Logger::log(sLog);
-	 */
 
 	// trimming criteria are met, associate
 	return (true);

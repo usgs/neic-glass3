@@ -401,10 +401,13 @@ class CHypo {
 	 * deviation assocaiation limit to use
 	 * \param p_only - A boolean flag indicating that this pick should 
 	 * try to associate ONLY with P, default to false
+	 * \param p_only - A boolean flag indicating that debug logging should
+	 * be performed, default to false
 	 * \return Returns true if the pick can be associated, false otherwise
 	 */
 	bool canAssociate(std::shared_ptr<CPick> pick, double sigma,
-						double sdassoc, bool p_only = false);
+						double sdassoc, bool p_only = false,
+						bool debug = false);
 
 	/**
 	 * \brief Calculates the residual of a pick to this hypo

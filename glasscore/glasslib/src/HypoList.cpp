@@ -387,7 +387,7 @@ bool CHypoList::fitData(std::shared_ptr<CPick> pk) {
 
 		return (false);
 	}
-
+	bool debug = true;
 	std::vector<std::shared_ptr<CHypo>> assocHypoList;
 
 	// compute the list of hypos to associate with
@@ -400,6 +400,18 @@ bool CHypoList::fitData(std::shared_ptr<CPick> pk) {
 
 	// make sure we got any hypos
 	if (hypoList.size() == 0) {
+		if (debug) {
+			glass3::util::Logger::log("debug",
+				"CHypoList::fitData: No hypos to check Pick: "
+				+ pk->getID() + " ("
+				+ pk->getSite()->getSCNL() + ")"
+				+ " with in range "
+				+ std::to_string(pk->getTPick()
+					- k_nHypoSearchPastDurationForPick)
+				+ " to "
+				+ std::to_string(pk->getTPick()
+					+ 10.0));
+		}
 		// nope
 		return (false);
 	}
@@ -422,7 +434,15 @@ bool CHypoList::fitData(std::shared_ptr<CPick> pk) {
 				// assumed to be first arriving P)
 				if (hyp->canAssociate(pk,
 									  CGlass::k_dAssociationSecondsPerSigma,
-									  bigsdassoc, p_only) == true) {
+									  bigsdassoc, p_only, debug) == true) {
+					if (debug) {
+						glass3::util::Logger::log("debug",
+							"CHypoList::fitData: Pick: "
+							+ pk->getID() + " ("
+							+ pk->getSite()->getSCNL() + ")"
+							+ " fits with hypo "
+							+ hyp->getID());
+					}
 					// this pick 'fit' for a very qualified
 					// definition of the word 'fit'
 					return(true);
@@ -431,6 +451,13 @@ bool CHypoList::fitData(std::shared_ptr<CPick> pk) {
 		}
 	}
 
+	if (debug) {
+		glass3::util::Logger::log("debug",
+			"CHypoList::fitData: Pick: "
+			+ pk->getID() + " ("
+			+ pk->getSite()->getSCNL() + ")"
+			+ " did not fit with any hypos");
+	}
 	// this pick did not 'fit'
 	return(false);
 }
