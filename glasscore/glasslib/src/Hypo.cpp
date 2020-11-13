@@ -1065,8 +1065,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	 } */
 
 	// compute distance in degrees
-	double siteDistance = glass3::util::GlassMath::k_RadiansToDegrees
-				* hypoGeo.delta(&site->getGeo());
+	double siteDistance = calculateDistanceToPick(pick);
 
 	// check if distance is beyond cutoff
 	if (siteDistance > m_dAssociationDistanceCutoff) {
@@ -1119,9 +1118,10 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		}
 	}
 
-	// get residual, get useForLocations
+	// get residual, get useForLocations, get phase
 	bool useForLocations = true;
-	double tRes = calculateResidual(pick, &useForLocations, p_only);
+	std::string phaseName = "??";
+	double tRes = calculateResidual(pick, &useForLocations, &phaseName, p_only);
 
     // give up if there's no valid residual
 	if (std::isnan(tRes) == true) {
@@ -1172,6 +1172,39 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 		}
 	}
 
+	// allow a wider association window for Lg
+	if (phaseName == "Lg") {
+		// only for shallow events
+		if(getDepth() < 35.0) {
+			// really big quake
+			if((getBayesValue() / getNucleationStackThreshold()) > 20) {
+				// Ideally this would be (-sdassoc, 4.5 * pick_dist_Deg)
+				cutoff = 2.27 * siteDistance;
+			} else if (((getBayesValue() / getNucleationStackThreshold()) > 10)
+					  && (siteDistance < 10)) {
+				// less big quake
+				// Ideally this would be (-sdassoc, 4.5 * pick_dist_Deg)
+				cutoff = 2.27 * siteDistance;
+			} else if (siteDistance < 5) {
+				// close in data
+				// Ideally this would be (-sdassoc, 4.5 * pick_dist_Deg)
+				cutoff = 2.27 * siteDistance;
+			}
+		}
+	} else if ((getBayesValue() / getNucleationStackThreshold()) > 6) {
+		// big quake, but not Lg
+		if((getBayesValue() / getNucleationStackThreshold()) > 20) {
+			// *really* big quake
+			// allow all phases 3x the normal association leeway
+			// - gives WLY heartburn
+			cutoff = 3.0 * sdassoc;
+		} else {
+			// allow all phases 2x the normal association leeway
+			// - gives WLY heartburn
+			cutoff = 2.0 * sdassoc;
+		}
+	}
+
 	// check if pick standard deviation is greater than cutoff
 	if (stdev > cutoff) {
 		if (debug) {
@@ -1180,6 +1213,8 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 							+ pick->getSite()->getSCNL() + ")"
 							+ " standard deviation "
 							+ std::to_string(stdev)
+							+ " for phase "
+							+ phaseName
 							+ " is beyond the cutoff "
 							+ std::to_string(cutoff)
 							+ " (base sdassoc "
@@ -1626,9 +1661,70 @@ double CHypo::calculateGap(double lat, double lon, double z) {
 	return tempGap;
 }
 
+// ---------------------------------------------getTravelTimeForPhase
+double CHypo::getTravelTimeForPhase(std::shared_ptr<CPick> pick,
+									std::string phaseName) {
+	if (pick == NULL) {
+		return(traveltime::CTravelTime::k_dTravelTimeInvalid);
+	}
+	if (phaseName == "") {
+		return(traveltime::CTravelTime::k_dTravelTimeInvalid);
+	}
+
+	// lock mutex for this scope
+	std::lock_guard <std::recursive_mutex> guard(m_HypoMutex);
+
+	// setup traveltime interface for this hypo
+	m_pTravelTimeTables->setTTOrigin(m_dLatitude, m_dLongitude, m_dDepth);
+
+	// set up a geographic object for this hypo
+	glass3::util::Geo hypoGeo;
+	hypoGeo.setGeographic(m_dLatitude, m_dLongitude,
+							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
+
+	// get site
+	std::shared_ptr<CSite> site = pick->getSite();
+
+	// compute site distance in degrees
+	double siteDistance = calculateDistanceToPick(pick);
+
+	// get the traveltime for this phase depth and distance
+	double tCal = m_pTravelTimeTables->Td(siteDistance, phaseName, m_dDepth);
+
+	return (tCal);
+}
+
+// ---------------------------------------------calculateDistanceToPick
+double CHypo::calculateDistanceToPick(std::shared_ptr<CPick> pick) {
+	if (pick == NULL) {
+		return(std::numeric_limits<double>::quiet_NaN());
+	}
+
+	// lock mutex for this scope
+	std::lock_guard <std::recursive_mutex> guard(m_HypoMutex);
+
+	// set up a geographic object for this hypo
+	glass3::util::Geo hypoGeo;
+	hypoGeo.setGeographic(m_dLatitude, m_dLongitude,
+							glass3::util::Geo::k_EarthRadiusKm - m_dDepth);
+
+	// get site
+	std::shared_ptr<CSite> site = pick->getSite();
+
+	// compute site distance in degrees
+	double siteDistance = glass3::util::GlassMath::k_RadiansToDegrees
+				* hypoGeo.delta(&site->getGeo());
+
+	return(siteDistance);
+}
+
 // --------------------------------------------------------calculateResidual
 double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
-		bool * useForLocations, bool p_only) {
+		bool * useForLocations, std::string * phaseName, bool p_only) {
+	if (pick == NULL) {
+		return(std::numeric_limits<double>::quiet_NaN());
+	}
+
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
@@ -1644,7 +1740,7 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 	// init expected travel time
 	double tCal = traveltime::CTravelTime::k_dTravelTimeInvalid;
 
-	std::string phaseName = "??";
+	std::string phase = "??";
 
 	// check pick classification
 	// are we configured to check pick phase classification
@@ -1661,17 +1757,17 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 			// the classified pick phase
 			tCal = m_pTravelTimeTables->T(&site->getGeo(),
 											pick->getClassifiedPhase());
-			phaseName = pick->getClassifiedPhase();
+			phase = pick->getClassifiedPhase();
 		} else {
 			// no valid phase classification,
 			// compute expected travel time based on the pick site location and
 			// the observed travel time
 			if (p_only == false) {
 				tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
-				phaseName = m_pTravelTimeTables->m_sPhase;
+				phase = m_pTravelTimeTables->m_sPhase;
 			} else {
 				tCal = m_pTravelTimeTables->T(&site->getGeo(), "P");
-				phaseName = "P";
+				phase = "P";
 			}
 		}
 	} else {
@@ -1680,10 +1776,10 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 		// the observed travel time
 		if (p_only == false) {
 			tCal = m_pTravelTimeTables->T(&site->getGeo(), tObs);
-			phaseName = m_pTravelTimeTables->m_sPhase;
+			phase = m_pTravelTimeTables->m_sPhase;
 		} else {
 			tCal = m_pTravelTimeTables->T(&site->getGeo(), "P");
-			phaseName = "P";
+			phase = "P";
 		}
 	}
 
@@ -1701,6 +1797,10 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 		*useForLocations = m_pTravelTimeTables->m_bUseForLocations;
 	}
 
+	if (phaseName != NULL) {
+		*phaseName = phase;
+	}
+
 	// compute residual from observed and calculated travel times
 	double tRes = tObs - tCal;
 
@@ -1716,7 +1816,7 @@ double CHypo::calculateResidual(std::shared_ptr<CPick> pick,
 	glass3::util::Logger::log(
 			"debug",
 			"CHypo::calculateResidual: Calculated residual: " + std::to_string(tRes)
-			+ "; Phase: " + phaseName + "; for Pick: " + pick->getID()
+			+ "; Phase: " + phase + "; for Pick: " + pick->getID()
 			+ "; tObs: " + std::to_string(tObs) + "; dist: " + std::to_string(dist)
 			+ " and Hypo: " + getID());
 	*/
@@ -2364,8 +2464,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 		// should this be changed?
 		double sig = glass3::util::GlassMath::sig(tres, 1.0);
 
-		double dist = geo.delta(&site->getGeo())
-				/ glass3::util::GlassMath::k_DegreesToRadians;
+		double dist = calculateDistanceToPick(pick);
 
 		// glass3::util::Logger::log(
 		// "debug",
@@ -2405,8 +2504,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 			// add the association info
 			json::Object assocobj;
 			assocobj["Phase"] = m_pTravelTimeTables->m_sPhase;
-			assocobj["Distance"] = geo.delta(&site->getGeo())
-					/ glass3::util::GlassMath::k_DegreesToRadians;
+			assocobj["Distance"] = calculateDistanceToPick(pick);
 			assocobj["Azimuth"] = geo.azimuth(&site->getGeo())
 					/ glass3::util::GlassMath::k_DegreesToRadians;
 			assocobj["Residual"] = tres;
@@ -2419,8 +2517,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 			pickObj["T"] = glass3::util::Date::encodeDateTime(pick->getTPick());
 			pickObj["Time"] = glass3::util::Date::encodeISO8601Time(
 					pick->getTPick());
-			pickObj["Distance"] = geo.delta(&site->getGeo())
-					/ glass3::util::GlassMath::k_DegreesToRadians;
+			pickObj["Distance"] = calculateDistanceToPick(pick);
 			pickObj["Azimuth"] = geo.azimuth(&site->getGeo())
 					/ glass3::util::GlassMath::k_DegreesToRadians;
 			pickObj["Residual"] = tres;
@@ -2750,11 +2847,6 @@ bool CHypo::pruneData(CHypoList* parentThread) {
 	// set up local vector to track picks to remove
 	std::vector < std::shared_ptr < CPick >> vremove;
 
-	// set up a geographic object for this hypo
-	glass3::util::Geo geo;
-	geo.setGeographic(m_dLatitude, m_dLongitude,
-						glass3::util::Geo::k_EarthRadiusKm);
-
 	// get the standard deviation allowed for pruning
 	double sdprune = CGlass::getPruningSDCutoff();
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
@@ -2782,8 +2874,7 @@ bool CHypo::pruneData(CHypoList* parentThread) {
 
 		// Trim whiskers
 		// compute distance in degrees between site and hypo
-		double siteDistance = glass3::util::GlassMath::k_RadiansToDegrees
-				* geo.delta(&pck->getSite()->getGeo());
+		double siteDistance = calculateDistanceToPick(pck);
 
 		// check if site is beyond distance limit
 		if (siteDistance > m_dAssociationDistanceCutoff) {
@@ -3212,8 +3303,7 @@ void CHypo::calculateStatistics() {
 		std::shared_ptr<CSite> site = pick->getSite();
 
 		// compute the distance delta
-		double delta = geo.delta(&site->getGeo())
-				/ glass3::util::GlassMath::k_DegreesToRadians;
+		double delta = calculateDistanceToPick(pick);
 
 		// count phases past teleseismic distance
 		if (delta >= CGlass::getTeleseismicDistanceLimit()) {

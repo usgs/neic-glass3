@@ -325,7 +325,7 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 
 			// move on if it cannot associate
 			if (hyp->canAssociate(pk, CGlass::k_dAssociationSecondsPerSigma,
-									sdassoc) == false) {
+									sdassoc, false, true) == false) {
 				continue;
 			}
 
@@ -416,9 +416,6 @@ bool CHypoList::fitData(std::shared_ptr<CPick> pk) {
 		return (false);
 	}
 
-	double bigsdassoc = CGlass::getAssociationSDCutoff() * 10.0;
-	double p_only = true;
-
 	// for each hypo in the list within the time range
 	for (int i = 0; i < hypoList.size(); i++) {
 		// make sure hypo is still valid before associating
@@ -428,20 +425,41 @@ bool CHypoList::fitData(std::shared_ptr<CPick> pk) {
 				/ (hyp->getNucleationStackThreshold());
 
 			// check to see if the ratio is high enough
-			if (adBayesRatio > 2.0) {
-				// check to see if this pick can associate to
-				// this 'big enough' hypo ONLY as P (which is
-				// assumed to be first arriving P)
-				if (hyp->canAssociate(pk,
-									  CGlass::k_dAssociationSecondsPerSigma,
-									  bigsdassoc, p_only, debug) == true) {
+			if (adBayesRatio > 6.0) {
+				double travelTimeP =
+						hyp->getTravelTimeForPhase(pk, "P");
+				double travelTimeS =
+						hyp->getTravelTimeForPhase(pk, "S");
+				double travelTimeObs = pk->getTPick()
+										- hyp->getTOrigin();
+				double distance = hyp->calculateDistanceToPick(pk);
+				double distanceLimit = std::min(17.5,
+										hyp->getAssociationDistanceCutoff());
+
+				// check to see if this pick fits between predicted
+				// P and predicted S and within the distance limit
+				if ((travelTimeObs >= travelTimeP) &&
+					(travelTimeObs <= travelTimeS) &&
+					(distance <= distanceLimit)) {
 					if (debug) {
 						glass3::util::Logger::log("debug",
 							"CHypoList::fitData: Pick: "
 							+ pk->getID() + " ("
 							+ pk->getSite()->getSCNL() + ")"
 							+ " fits with hypo "
-							+ hyp->getID());
+							+ hyp->getID()
+							+ " P: "
+							+ std::to_string(travelTimeP)
+							+ " obs: "
+							+ std::to_string(travelTimeObs)
+							+ " S: "
+							+ std::to_string(travelTimeS)
+							+ " distance: "
+							+ std::to_string(distance)
+							+ " distanceLimit: "
+							+ std::to_string(distanceLimit)
+							+ " ratio: "
+							+ std::to_string(adBayesRatio));
 					}
 					// this pick 'fit' for a very qualified
 					// definition of the word 'fit'
