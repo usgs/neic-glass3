@@ -321,7 +321,8 @@ bool CPickList::scavenge(std::shared_ptr<CHypo> hyp, double tDuration) {
 	// glass3::util::Logger::log("debug", "CPickList::scavenge. " + hyp->getID());
 
 	// Calculate range for possible associations
-	double sdassoc = CGlass::getAssociationSDCutoff();
+	// NOTE MAKE CONFIGURABLE
+	double sdassoc = CGlass::getAssociationSDCutoff() * 3.0;
 	int addCount = 0;
 	bool associated = false;
 

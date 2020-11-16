@@ -452,7 +452,7 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 						/ (pHypo->getNucleationStackThreshold());
 
 				// check to see if the ratio is high enough to not bother
-				// nucleating
+				// nucleating with
 				// NOTE: Hardcoded ratio threshold
 				if (adBayesRatio > 2.0) {
 					continue;

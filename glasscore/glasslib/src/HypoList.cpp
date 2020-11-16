@@ -313,7 +313,8 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 
 	std::shared_ptr<CHypo> bestHyp = NULL;
 	double bestBayes = -1;
-	double sdassoc = CGlass::getAssociationSDCutoff();
+	// NOTE MAKE CONFIGURABLE
+	double sdassoc = CGlass::getAssociationSDCutoff() * 3.0;
 
 	// for each hypo in the list within the time range
 	for (int i = 0; i < hypoList.size(); i++) {
@@ -425,6 +426,7 @@ bool CHypoList::fitData(std::shared_ptr<CPick> pk) {
 				/ (hyp->getNucleationStackThreshold());
 
 			// check to see if the ratio is high enough
+			// NOTE MAKE CONFIGURABLE
 			if (adBayesRatio > 6.0) {
 				double travelTimeP =
 						hyp->getTravelTimeForPhase(pk, "P");

@@ -384,7 +384,8 @@ double CHypo::calculateAffinity(std::shared_ptr<CPick> pck) {
 
 	// get various global parameters from the glass pointer
 	// get the standard deviation allowed for association
-	double sdassoc = CGlass::getAssociationSDCutoff();
+	// NOTE MAKE CONFIGURABLE
+	double sdassoc = CGlass::getAssociationSDCutoff() * 3.0;
 
 	// get the affinity factor
 	double expaff = CGlass::getPickAffinityExpFactor();
@@ -551,8 +552,9 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		}
 
 		// make sure the pick residual is within the residual limits
-		// NOTE: The residual limit is hard coded
-		if (tResBest > CGlass::getAssociationSDCutoff()) {
+		// NOTE MAKE CONFIGURABLE
+		double sdassoc = CGlass::getAssociationSDCutoff() * 3.0;
+		if (tResBest > sdassoc) {
 			vRemovePicks.push_back(pick);
 		}
 	}
@@ -1173,6 +1175,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 	}
 
 	// allow a wider association window for Lg
+	// NOTE MAKE CONFIGURABLE
 	if (phaseName == "Lg") {
 		// only for shallow events
 		if(getDepth() < 35.0) {
@@ -2848,7 +2851,8 @@ bool CHypo::pruneData(CHypoList* parentThread) {
 	std::vector < std::shared_ptr < CPick >> vremove;
 
 	// get the standard deviation allowed for pruning
-	double sdprune = CGlass::getPruningSDCutoff();
+	// NOTE MAKE CONFIGURABLE
+	double sdprune = CGlass::getPruningSDCutoff() * 3.0;
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// for each pick in this hypo
