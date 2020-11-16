@@ -328,26 +328,37 @@ public class App {
             Double rowEntry = INVALID_TRAVEL_TIME;
             String rowPhase = INVALID_PHASE;
 
-            // get the best travel time
-            TTimeData phase = getBestPhase(ttLocal.getTT(elev, currentDistance), phaseList);
+            // check to see if we've got branch specific rules
+            if (branchName.equals("Lg")) {
+              // Lg has a constant velocity
+              // convert to km
+              double distanceKM = currentDistance * 111.5;
 
-            // is the phase valid and positive
-            if ((phase != null) && (phase.getTT() >= 0)) {
-              // round travel time to 5 decimals
-              rowEntry = Math.floor(phase.getTT() * 100000) / 100000;
-
-              // if the row entry is less than or equal to zero, use the
-              // default "no data" indicator
-              if (rowEntry <= 0) {
-                rowEntry = INVALID_TRAVEL_TIME;
-              }
-
-              // remember the phase used to generate the tt file (for debug file)
-              rowPhase = phase.getPhCode();
+              // we assume the Lg velocity is 3.6 km / sec
+              rowEntry = distanceKM * 3.6;
+              rowPhase = "Lg";
             } else {
-              // no valid travel time
-              rowEntry = INVALID_TRAVEL_TIME;
-              rowPhase = INVALID_PHASE;
+              // get the best travel time
+              TTimeData phase = getBestPhase(ttLocal.getTT(elev, currentDistance), phaseList);
+
+              // is the phase valid and positive
+              if ((phase != null) && (phase.getTT() >= 0)) {
+                // round travel time to 5 decimals
+                rowEntry = Math.floor(phase.getTT() * 100000) / 100000;
+
+                // if the row entry is less than or equal to zero, use the
+                // default "no data" indicator
+                if (rowEntry <= 0) {
+                  rowEntry = INVALID_TRAVEL_TIME;
+                }
+
+                // remember the phase used to generate the tt file (for debug file)
+                rowPhase = phase.getPhCode();
+              } else {
+                // no valid travel time
+                rowEntry = INVALID_TRAVEL_TIME;
+                rowPhase = INVALID_PHASE;
+              }
             }
 
             // add the phase travel time to the list
