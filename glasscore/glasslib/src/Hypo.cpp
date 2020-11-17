@@ -384,8 +384,7 @@ double CHypo::calculateAffinity(std::shared_ptr<CPick> pck) {
 
 	// get various global parameters from the glass pointer
 	// get the standard deviation allowed for association
-	// NOTE MAKE CONFIGURABLE
-	double sdassoc = CGlass::getAssociationSDCutoff() * 3.0;
+	double sdassoc = CGlass::getAssociationSDCutoff();
 
 	// get the affinity factor
 	double expaff = CGlass::getPickAffinityExpFactor();
@@ -552,8 +551,7 @@ double CHypo::anneal(int nIter, double dStart, double dStop, double tStart,
 		}
 
 		// make sure the pick residual is within the residual limits
-		// NOTE MAKE CONFIGURABLE
-		double sdassoc = CGlass::getAssociationSDCutoff() * 3.0;
+		double sdassoc = CGlass::getAssociationSDCutoff();
 		if (tResBest > sdassoc) {
 			vRemovePicks.push_back(pick);
 		}
@@ -1194,7 +1192,9 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 				cutoff = 2.27 * siteDistance;
 			}
 		}
-	} else if ((getBayesValue() / getNucleationStackThreshold()) > 6) {
+	}
+	/*
+	 else if ((getBayesValue() / getNucleationStackThreshold()) > 6) {
 		// big quake, but not Lg
 		if((getBayesValue() / getNucleationStackThreshold()) > 20) {
 			// *really* big quake
@@ -1207,6 +1207,7 @@ bool CHypo::canAssociate(std::shared_ptr<CPick> pick, double sigma,
 			cutoff = 2.0 * sdassoc;
 		}
 	}
+	*/
 
 	// check if pick standard deviation is greater than cutoff
 	if (stdev > cutoff) {
@@ -2851,8 +2852,7 @@ bool CHypo::pruneData(CHypoList* parentThread) {
 	std::vector < std::shared_ptr < CPick >> vremove;
 
 	// get the standard deviation allowed for pruning
-	// NOTE MAKE CONFIGURABLE
-	double sdprune = CGlass::getPruningSDCutoff() * 3.0;
+	double sdprune = CGlass::getPruningSDCutoff();
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
 	// for each pick in this hypo

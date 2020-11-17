@@ -313,8 +313,8 @@ bool CHypoList::associateData(std::shared_ptr<CPick> pk) {
 
 	std::shared_ptr<CHypo> bestHyp = NULL;
 	double bestBayes = -1;
-	// NOTE MAKE CONFIGURABLE
-	double sdassoc = CGlass::getAssociationSDCutoff() * 3.0;
+
+	double sdassoc = CGlass::getAssociationSDCutoff();
 
 	// for each hypo in the list within the time range
 	for (int i = 0; i < hypoList.size(); i++) {
