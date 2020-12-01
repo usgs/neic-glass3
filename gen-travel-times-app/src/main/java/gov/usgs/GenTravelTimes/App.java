@@ -332,7 +332,7 @@ public class App {
             if (branchName.equals("Lg")) {
               // Lg has a constant velocity
               // convert to km
-              double distanceKM = currentDistance * 111.5;
+              double distanceKM = currentDistance * 111.14;
 
               // we assume the Lg velocity is 3.6 km / sec
               rowEntry = distanceKM * 3.6;
