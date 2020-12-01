@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.4.4</span>
+   &#160;<span id="projectnumber">1.4.5</span>
    </div>
   </td>
  </tr>
@@ -107,8 +107,8 @@ Collaboration diagram for traveltime::CTTT:</div>
 <div class="dyncontent">
 <div class="center"><img src="classtraveltime_1_1CTTT__coll__graph.png" border="0" usemap="#traveltime_1_1CTTT_coll__map" alt="Collaboration graph"/></div>
 <map name="traveltime_1_1CTTT_coll__map" id="traveltime_1_1CTTT_coll__map">
-<area shape="rect" id="node3" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="176,292,368,692"/>
-<area shape="rect" id="node7" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="781,784,955,1081"/>
+<area shape="rect" id="node3" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="175,292,367,692"/>
+<area shape="rect" id="node7" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class " alt="" coords="781,784,956,1096"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -129,9 +129,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#ad816ca17cec35e2fe1eda2b576b9cf06">clear</a> ()</td></tr>
 <tr class="memdesc:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTTT.html" title="travel time interface class ">CTTT</a> clear function.  <a href="#ad816ca17cec35e2fe1eda2b576b9cf06">More...</a><br /></td></tr>
 <tr class="separator:ad816ca17cec35e2fe1eda2b576b9cf06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14a09e8143e446247fae68d0a0ce6740"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a14a09e8143e446247fae68d0a0ce6740">addPhase</a> (std::string phase, double *assocRange=NULL, std::string file=&quot;&quot;, bool useForLocation=true, bool publishPhase=true)</td></tr>
-<tr class="memdesc:a14a09e8143e446247fae68d0a0ce6740"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add phase to list to be calculated.  <a href="#a14a09e8143e446247fae68d0a0ce6740">More...</a><br /></td></tr>
-<tr class="separator:a14a09e8143e446247fae68d0a0ce6740"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3393b0365bd533ddd5550a79d30dfc9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#ab3393b0365bd533ddd5550a79d30dfc9">addPhase</a> (std::string phase, double *assocRange=NULL, std::string file=&quot;&quot;, bool useForLocation=true, double minPublishable=0, double maxPublishable=180)</td></tr>
+<tr class="memdesc:ab3393b0365bd533ddd5550a79d30dfc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add phase to list to be calculated.  <a href="#ab3393b0365bd533ddd5550a79d30dfc9">More...</a><br /></td></tr>
+<tr class="separator:ab3393b0365bd533ddd5550a79d30dfc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13be79973dc55d259706ac2fbc89d370"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTTT.html#a13be79973dc55d259706ac2fbc89d370">setTTOrigin</a> (double lat, double lon, double z)</td></tr>
 <tr class="memdesc:a13be79973dc55d259706ac2fbc89d370"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set hypocenter for calculations.  <a href="#a13be79973dc55d259706ac2fbc89d370">More...</a><br /></td></tr>
 <tr class="separator:a13be79973dc55d259706ac2fbc89d370"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -247,7 +247,7 @@ Static Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a14a09e8143e446247fae68d0a0ce6740"></a>
+<a class="anchor" id="ab3393b0365bd533ddd5550a79d30dfc9"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -278,8 +278,14 @@ Static Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>publishPhase</em> = <code>true</code>&#160;</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>minPublishable</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>maxPublishable</em> = <code>180</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -297,7 +303,8 @@ Static Public Attributes</h2></td></tr>
     <tr><td class="paramname">assocRange</td><td>- An array of 2 double values containing the association range, mutually exclusive with weightRange </td></tr>
     <tr><td class="paramname">file</td><td>- A std::string representing the file to load, default is "" </td></tr>
     <tr><td class="paramname">useForLocation</td><td>- A boolen flag indicating whether this phase should be used in generating locations, default is true </td></tr>
-    <tr><td class="paramname">publishPhase</td><td>- A boolen flag indicating whether this phase should be published in output messages, default is true </td></tr>
+    <tr><td class="paramname">minPublishable</td><td>- A double value containing the minumum distance in degrees to publish this phase. </td></tr>
+    <tr><td class="paramname">minPublishable</td><td>- A double value containing the maximum distance in degrees to publish this phase. </td></tr>
   </table>
   </dd>
 </dl>

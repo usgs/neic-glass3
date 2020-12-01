@@ -14,6 +14,7 @@ var searchData=
   ['fileutil_2ecpp',['fileutil.cpp',['../fileutil_8cpp.html',1,'']]],
   ['fileutil_2eh',['fileutil.h',['../fileutil_8h.html',1,'']]],
   ['findandmergematchinghypos',['findAndMergeMatchingHypos',['../classglasscore_1_1CHypoList.html#a5834ef9dc0af85c23285aebbc622c7ee',1,'glasscore::CHypoList']]],
+  ['fitdata',['fitData',['../classglasscore_1_1CHypoList.html#aad55e97d0d6402e6532c36fc83669b8c',1,'glasscore::CHypoList']]],
   ['flat',['fLat',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a02f8195fdbe02cdc512acdb868ce28aa',1,'traveltime::_ZoneStatsInfoStruct']]],
   ['flatbinsizedeg',['fLatBinSizeDeg',['../classtraveltime_1_1CZoneStats.html#af47de286cc62406db27ae21f195059fc',1,'traveltime::CZoneStats']]],
   ['flon',['fLon',['../structtraveltime_1_1__ZoneStatsInfoStruct.html#a07622f90d86080b15130451d7ff44e6f',1,'traveltime::_ZoneStatsInfoStruct']]],

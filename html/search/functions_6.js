@@ -217,6 +217,7 @@ var searchData=
   ['gettotalprocesscount',['getTotalProcessCount',['../classglasscore_1_1CHypo.html#a66371ef5f13b46dccbcefeb263efaab8',1,'glasscore::CHypo']]],
   ['gettpick',['getTPick',['../classglasscore_1_1CPick.html#ad4bbd3255f2bb32887f45d12a39bc8d0',1,'glasscore::CPick']]],
   ['gettrackingdata',['getTrackingData',['../classglass3_1_1output_1_1output.html#aa56f8b697e491e707aced2996014f4d6',1,'glass3::output::output']]],
+  ['gettraveltimeforphase',['getTravelTimeForPhase',['../classglasscore_1_1CHypo.html#abb1671d0374e335247fd0a4f4c8701f4',1,'glasscore::CHypo']]],
   ['gettraveltimetables',['getTravelTimeTables',['../classglasscore_1_1CHypo.html#a413cb130fae47603134c1473d985ec11',1,'glasscore::CHypo']]],
   ['gettsort',['getTSort',['../classglasscore_1_1CHypo.html#ade1ecc0ef1c3f446193a7bfd6e1f37d9',1,'glasscore::CHypo::getTSort()'],['../classglasscore_1_1CPick.html#a0d79a3af5dcff18ade3f8e992cb94067',1,'glasscore::CPick::getTSort()']]],
   ['getunitvectors',['getUnitVectors',['../classglasscore_1_1CSite.html#abc024b94426e4487b455de2e47e7b273',1,'glasscore::CSite']]],

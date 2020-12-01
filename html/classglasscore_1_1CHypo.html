@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.4.4</span>
+   &#160;<span id="projectnumber">1.4.5</span>
    </div>
   </td>
  </tr>
@@ -171,12 +171,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae521fd4376e1b85e88f206840cc85133"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; json::Object &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#ae521fd4376e1b85e88f206840cc85133">generateExpireMessage</a> ()</td></tr>
 <tr class="memdesc:ae521fd4376e1b85e88f206840cc85133"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate expire message.  <a href="#ae521fd4376e1b85e88f206840cc85133">More...</a><br /></td></tr>
 <tr class="separator:ae521fd4376e1b85e88f206840cc85133"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a015c1f1091b6be61fd267ffa8ba7b083"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a015c1f1091b6be61fd267ffa8ba7b083">canAssociate</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; pick, double sigma, double sdassoc)</td></tr>
-<tr class="memdesc:a015c1f1091b6be61fd267ffa8ba7b083"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check to see if pick could be associated.  <a href="#a015c1f1091b6be61fd267ffa8ba7b083">More...</a><br /></td></tr>
-<tr class="separator:a015c1f1091b6be61fd267ffa8ba7b083"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af66e727b12988bd15ef7b410e4debf51"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#af66e727b12988bd15ef7b410e4debf51">calculateResidual</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; pick, bool *useForLocations=NULL)</td></tr>
-<tr class="memdesc:af66e727b12988bd15ef7b410e4debf51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the residual of a pick to this hypo.  <a href="#af66e727b12988bd15ef7b410e4debf51">More...</a><br /></td></tr>
-<tr class="separator:af66e727b12988bd15ef7b410e4debf51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad56100611859ad316606fad090cf77ef"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#ad56100611859ad316606fad090cf77ef">canAssociate</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; pick, double sigma, double sdassoc, bool p_only=false, bool debug=false)</td></tr>
+<tr class="memdesc:ad56100611859ad316606fad090cf77ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check to see if pick could be associated.  <a href="#ad56100611859ad316606fad090cf77ef">More...</a><br /></td></tr>
+<tr class="separator:ad56100611859ad316606fad090cf77ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb1671d0374e335247fd0a4f4c8701f4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#abb1671d0374e335247fd0a4f4c8701f4">getTravelTimeForPhase</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; pick, std::string phaseName)</td></tr>
+<tr class="memdesc:abb1671d0374e335247fd0a4f4c8701f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the travel time for the given pick and phase to this hypo.  <a href="#abb1671d0374e335247fd0a4f4c8701f4">More...</a><br /></td></tr>
+<tr class="separator:abb1671d0374e335247fd0a4f4c8701f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab4a49648ba764655e7a7f696e37fabc7"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#ab4a49648ba764655e7a7f696e37fabc7">calculateDistanceToPick</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; pick)</td></tr>
+<tr class="memdesc:ab4a49648ba764655e7a7f696e37fabc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the distance between the given pick and phase to this hypo.  <a href="#ab4a49648ba764655e7a7f696e37fabc7">More...</a><br /></td></tr>
+<tr class="separator:ab4a49648ba764655e7a7f696e37fabc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac32cb67206a50d1f0127815d8f2c638a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#ac32cb67206a50d1f0127815d8f2c638a">calculateResidual</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt; pick, bool *useForLocations=NULL, std::string *phaseName=NULL, bool p_only=false)</td></tr>
+<tr class="memdesc:ac32cb67206a50d1f0127815d8f2c638a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the residual of a pick to this hypo.  <a href="#ac32cb67206a50d1f0127815d8f2c638a">More...</a><br /></td></tr>
+<tr class="separator:ac32cb67206a50d1f0127815d8f2c638a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25909a07a0163dd2f2ccd2a75bfa2d2a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a25909a07a0163dd2f2ccd2a75bfa2d2a">canAssociate</a> (std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CCorrelation.html">CCorrelation</a> &gt; corr, double tWindow, double xWindow)</td></tr>
 <tr class="memdesc:a25909a07a0163dd2f2ccd2a75bfa2d2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check to see if correlation could be associated.  <a href="#a25909a07a0163dd2f2ccd2a75bfa2d2a">More...</a><br /></td></tr>
 <tr class="separator:a25909a07a0163dd2f2ccd2a75bfa2d2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -289,7 +295,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a15450e48bfcd490c6599c4e667ac5761"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the initial (nucleation) bayes stack value for this hypo.  <a href="#a15450e48bfcd490c6599c4e667ac5761">More...</a><br /></td></tr>
 <tr class="separator:a15450e48bfcd490c6599c4e667ac5761"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3ef2e4deee0bbd70fbcc25c6cdf7f34"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#ab3ef2e4deee0bbd70fbcc25c6cdf7f34">getAssociationDistanceCutoff</a> () const </td></tr>
-<tr class="memdesc:ab3ef2e4deee0bbd70fbcc25c6cdf7f34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the association distance cutoff used in <a class="el" href="classglasscore_1_1CHypo.html#a015c1f1091b6be61fd267ffa8ba7b083" title="Check to see if pick could be associated. ">canAssociate()</a> and generateAffinitu()  <a href="#ab3ef2e4deee0bbd70fbcc25c6cdf7f34">More...</a><br /></td></tr>
+<tr class="memdesc:ab3ef2e4deee0bbd70fbcc25c6cdf7f34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the association distance cutoff used in <a class="el" href="classglasscore_1_1CHypo.html#ad56100611859ad316606fad090cf77ef" title="Check to see if pick could be associated. ">canAssociate()</a> and generateAffinitu()  <a href="#ab3ef2e4deee0bbd70fbcc25c6cdf7f34">More...</a><br /></td></tr>
 <tr class="separator:ab3ef2e4deee0bbd70fbcc25c6cdf7f34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a770fe140fc74b40fd478d2b02b2b2fba"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a770fe140fc74b40fd478d2b02b2b2fba">getDistanceCutoffFactor</a> () const </td></tr>
 <tr class="memdesc:a770fe140fc74b40fd478d2b02b2b2fba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the distance cutoff factor used in calculating the Association Distance Cutoff.  <a href="#a770fe140fc74b40fd478d2b02b2b2fba">More...</a><br /></td></tr>
@@ -364,7 +370,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a6c73879d999f9b380cf0a9fc364d4a6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the secondary phase/travel time used in nucleating this hypo This object is kept in <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> for performance (throughput) reasons, and is used in the <a class="el" href="classglasscore_1_1CHypo.html#afd4c83dfb69a35dd3841a7498cac4d3c" title="Calculate bayes. ">calculateBayes()</a> and <a class="el" href="classglasscore_1_1CHypo.html#afeda539858c17faddf1cbe44fca10489" title="Calculate absolute residual sum. ">calculateAbsResidualSum()</a> functions.  <a href="#a6c73879d999f9b380cf0a9fc364d4a6e">More...</a><br /></td></tr>
 <tr class="separator:a6c73879d999f9b380cf0a9fc364d4a6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a413cb130fae47603134c1473d985ec11"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtraveltime_1_1CTTT.html">traveltime::CTTT</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a413cb130fae47603134c1473d985ec11">getTravelTimeTables</a> () const </td></tr>
-<tr class="memdesc:a413cb130fae47603134c1473d985ec11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of association phases / travel times for this hypo This object is kept in <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> for performance (throughput) reasons, and is used in <a class="el" href="classglasscore_1_1CHypo.html#a015c1f1091b6be61fd267ffa8ba7b083" title="Check to see if pick could be associated. ">canAssociate()</a> <a class="el" href="classglasscore_1_1CHypo.html#af66e727b12988bd15ef7b410e4debf51" title="Calculates the residual of a pick to this hypo. ">calculateResidual()</a>, and <a class="el" href="classglasscore_1_1CHypo.html#a53d3f01739998d729a1a6ea7933d9605" title="Residual synthetic annealing location algorithm. ">annealingLocateResidual()</a> functions.  <a href="#a413cb130fae47603134c1473d985ec11">More...</a><br /></td></tr>
+<tr class="memdesc:a413cb130fae47603134c1473d985ec11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of association phases / travel times for this hypo This object is kept in <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> for performance (throughput) reasons, and is used in <a class="el" href="classglasscore_1_1CHypo.html#ad56100611859ad316606fad090cf77ef" title="Check to see if pick could be associated. ">canAssociate()</a> <a class="el" href="classglasscore_1_1CHypo.html#ac32cb67206a50d1f0127815d8f2c638a" title="Calculates the residual of a pick to this hypo. ">calculateResidual()</a>, and <a class="el" href="classglasscore_1_1CHypo.html#a53d3f01739998d729a1a6ea7933d9605" title="Residual synthetic annealing location algorithm. ">annealingLocateResidual()</a> functions.  <a href="#a413cb130fae47603134c1473d985ec11">More...</a><br /></td></tr>
 <tr class="separator:a413cb130fae47603134c1473d985ec11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a873d303e956b4ce7302272d669627644"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classglasscore_1_1CHypo.html#a873d303e956b4ce7302272d669627644">getReportCount</a> () const </td></tr>
 <tr class="memdesc:a873d303e956b4ce7302272d669627644"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the number of times that this hypo has been reported.  <a href="#a873d303e956b4ce7302272d669627644">More...</a><br /></td></tr>
@@ -1255,6 +1261,33 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ab4a49648ba764655e7a7f696e37fabc7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CHypo::calculateDistanceToPick </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt;&#160;</td>
+          <td class="paramname"><em>pick</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the distance between the given pick and phase to this hypo. </p>
+<p>Calculates the distance between the given supporting data to this hypo for the given phase</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pick</td><td>- The pick to calculate a distance for for </td></tr>
+    <tr><td class="paramname">phaseName</td><td>- The phase name to use for calcuation </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the distance to the given pick in degrees </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a0eeb673db6695035c4697b2f93510ccd"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1299,7 +1332,7 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af66e727b12988bd15ef7b410e4debf51"></a>
+<a class="anchor" id="ac32cb67206a50d1f0127815d8f2c638a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1313,7 +1346,19 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool *&#160;</td>
-          <td class="paramname"><em>useForLocations</em> = <code>NULL</code>&#160;</td>
+          <td class="paramname"><em>useForLocations</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string *&#160;</td>
+          <td class="paramname"><em>phaseName</em> = <code>NULL</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>p_only</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1329,6 +1374,8 @@ Static Public Attributes</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">pick</td><td>- The pick to calculate a residual for </td></tr>
     <tr><td class="paramname">useForLocations</td><td>- An optional pointer to a boolean flag to be returned indicating whether this pick can be used in locations, default is null. </td></tr>
+    <tr><td class="paramname">phaseName</td><td>- An optional pointer to a string to be returned indicating the phase name, default is null. </td></tr>
+    <tr><td class="paramname">p_only</td><td>- A boolean flag indicating that this pick should calculate a residual ONLY for P, default to false </td></tr>
   </table>
   </dd>
 </dl>
@@ -1397,7 +1444,7 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a015c1f1091b6be61fd267ffa8ba7b083"></a>
+<a class="anchor" id="ad56100611859ad316606fad090cf77ef"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1417,7 +1464,19 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>sdassoc</em>&#160;</td>
+          <td class="paramname"><em>sdassoc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>p_only</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>debug</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1434,6 +1493,8 @@ Static Public Attributes</h2></td></tr>
     <tr><td class="paramname">pick</td><td>- A std::shared_ptr to the <a class="el" href="classglasscore_1_1CPick.html" title="glasscore pick class ">CPick</a> object to check. </td></tr>
     <tr><td class="paramname">sigma</td><td>- A double value containing the sigma to use </td></tr>
     <tr><td class="paramname">sdassoc</td><td>- A double value containing the standard deviation assocaiation limit to use </td></tr>
+    <tr><td class="paramname">p_only</td><td>- A boolean flag indicating that this pick should try to associate ONLY with P, default to false </td></tr>
+    <tr><td class="paramname">p_only</td><td>- A boolean flag indicating that debug logging should be performed, default to false </td></tr>
   </table>
   </dd>
 </dl>
@@ -1649,7 +1710,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Gets the association distance cutoff used in <a class="el" href="classglasscore_1_1CHypo.html#a015c1f1091b6be61fd267ffa8ba7b083" title="Check to see if pick could be associated. ">canAssociate()</a> and generateAffinitu() </p>
+<p>Gets the association distance cutoff used in <a class="el" href="classglasscore_1_1CHypo.html#ad56100611859ad316606fad090cf77ef" title="Check to see if pick could be associated. ">canAssociate()</a> and generateAffinitu() </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the current association distance cutoff </dd></dl>
 
 </div>
@@ -2249,6 +2310,43 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="abb1671d0374e335247fd0a4f4c8701f4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double glasscore::CHypo::getTravelTimeForPhase </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classglasscore_1_1CPick.html">CPick</a> &gt;&#160;</td>
+          <td class="paramname"><em>pick</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>phaseName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets the travel time for the given pick and phase to this hypo. </p>
+<p>Calculates the travel time of the given supporting data to this hypo for the given phase</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pick</td><td>- The pick to calculate a travel tiem for for </td></tr>
+    <tr><td class="paramname">phaseName</td><td>- The phase name to use for calcuation </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns a double value containing the travel time of the given pick for the given phase </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a413cb130fae47603134c1473d985ec11"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2262,7 +2360,7 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get the list of association phases / travel times for this hypo This object is kept in <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> for performance (throughput) reasons, and is used in <a class="el" href="classglasscore_1_1CHypo.html#a015c1f1091b6be61fd267ffa8ba7b083" title="Check to see if pick could be associated. ">canAssociate()</a> <a class="el" href="classglasscore_1_1CHypo.html#af66e727b12988bd15ef7b410e4debf51" title="Calculates the residual of a pick to this hypo. ">calculateResidual()</a>, and <a class="el" href="classglasscore_1_1CHypo.html#a53d3f01739998d729a1a6ea7933d9605" title="Residual synthetic annealing location algorithm. ">annealingLocateResidual()</a> functions. </p>
+<p>Get the list of association phases / travel times for this hypo This object is kept in <a class="el" href="classglasscore_1_1CHypo.html" title="glasscore hypocenter class ">CHypo</a> for performance (throughput) reasons, and is used in <a class="el" href="classglasscore_1_1CHypo.html#ad56100611859ad316606fad090cf77ef" title="Check to see if pick could be associated. ">canAssociate()</a> <a class="el" href="classglasscore_1_1CHypo.html#ac32cb67206a50d1f0127815d8f2c638a" title="Calculates the residual of a pick to this hypo. ">calculateResidual()</a>, and <a class="el" href="classglasscore_1_1CHypo.html#a53d3f01739998d729a1a6ea7933d9605" title="Residual synthetic annealing location algorithm. ">annealingLocateResidual()</a> functions. </p>
 <dl class="section return"><dt>Returns</dt><dd>Returns a shared_ptr to the association CTTT used in this hypo </dd></dl>
 
 </div>

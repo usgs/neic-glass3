@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">neic-glass3
-   &#160;<span id="projectnumber">1.4.4</span>
+   &#160;<span id="projectnumber">1.4.5</span>
    </div>
   </td>
  </tr>
@@ -107,15 +107,15 @@ Collaboration diagram for traveltime::CTravelTime:</div>
 <div class="dyncontent">
 <div class="center"><img src="classtraveltime_1_1CTravelTime__coll__graph.png" border="0" usemap="#traveltime_1_1CTravelTime_coll__map" alt="Collaboration graph"/></div>
 <map name="traveltime_1_1CTravelTime_coll__map" id="traveltime_1_1CTravelTime_coll__map">
-<area shape="rect" id="node3" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="215,292,407,692"/>
+<area shape="rect" id="node3" href="classglass3_1_1util_1_1Geo.html" title="geographic coordinate conversion class " alt="" coords="229,292,421,692"/>
 </map>
 </div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acdef542ba188fd82df4f983e018913ac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#acdef542ba188fd82df4f983e018913ac">CTravelTime</a> (bool useForLocations=true, bool publishable=true)</td></tr>
-<tr class="memdesc:acdef542ba188fd82df4f983e018913ac"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> constructor.  <a href="#acdef542ba188fd82df4f983e018913ac">More...</a><br /></td></tr>
-<tr class="separator:acdef542ba188fd82df4f983e018913ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39828912dbf88ed27ca69b9fabea873c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a39828912dbf88ed27ca69b9fabea873c">CTravelTime</a> (bool useForLocations=true, double minPublishable=0, double maxPublishable=180)</td></tr>
+<tr class="memdesc:a39828912dbf88ed27ca69b9fabea873c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> constructor.  <a href="#a39828912dbf88ed27ca69b9fabea873c">More...</a><br /></td></tr>
+<tr class="separator:a39828912dbf88ed27ca69b9fabea873c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab12ace5626a71e3ed24e5a18e11d015"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#aab12ace5626a71e3ed24e5a18e11d015">CTravelTime</a> (const <a class="el" href="classtraveltime_1_1CTravelTime.html">CTravelTime</a> &amp;travelTime)</td></tr>
 <tr class="memdesc:aab12ace5626a71e3ed24e5a18e11d015"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> copy constructor.  <a href="#aab12ace5626a71e3ed24e5a18e11d015">More...</a><br /></td></tr>
 <tr class="separator:aab12ace5626a71e3ed24e5a18e11d015"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -197,9 +197,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aca8c48853fdad773e7eeab5b053afa93"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#aca8c48853fdad773e7eeab5b053afa93">m_bUseForLocations</a></td></tr>
 <tr class="memdesc:aca8c48853fdad773e7eeab5b053afa93"><td class="mdescLeft">&#160;</td><td class="mdescRight">A boolean flag indicating whether this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be used in generating locations.  <a href="#aca8c48853fdad773e7eeab5b053afa93">More...</a><br /></td></tr>
 <tr class="separator:aca8c48853fdad773e7eeab5b053afa93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46291729f39664114adf51d7c368001d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a46291729f39664114adf51d7c368001d">m_bPublishable</a></td></tr>
-<tr class="memdesc:a46291729f39664114adf51d7c368001d"><td class="mdescLeft">&#160;</td><td class="mdescRight">A boolean flag indicating whether this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be published in output messages.  <a href="#a46291729f39664114adf51d7c368001d">More...</a><br /></td></tr>
-<tr class="separator:a46291729f39664114adf51d7c368001d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a78f64618364d30d11885abbdb18dd1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a2a78f64618364d30d11885abbdb18dd1">m_dMinDeltaPublishable</a></td></tr>
+<tr class="memdesc:a2a78f64618364d30d11885abbdb18dd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value representing the minimum distance in degrees this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be published in output messages.  <a href="#a2a78f64618364d30d11885abbdb18dd1">More...</a><br /></td></tr>
+<tr class="separator:a2a78f64618364d30d11885abbdb18dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbe09569e43ab3ead13a893c350f320a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#adbe09569e43ab3ead13a893c350f320a">m_dMaxDeltaPublishable</a></td></tr>
+<tr class="memdesc:adbe09569e43ab3ead13a893c350f320a"><td class="mdescLeft">&#160;</td><td class="mdescRight">A double value representing the maximum distance in degrees this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be published in output messages.  <a href="#adbe09569e43ab3ead13a893c350f320a">More...</a><br /></td></tr>
+<tr class="separator:adbe09569e43ab3ead13a893c350f320a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bc0e3fa739a9b790889c2fcc4871ccc"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtraveltime_1_1CTravelTime.html#a5bc0e3fa739a9b790889c2fcc4871ccc">m_dDelta</a></td></tr>
 <tr class="memdesc:a5bc0e3fa739a9b790889c2fcc4871ccc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delta in degrees used by caller to calculate distance dependent weights.  <a href="#a5bc0e3fa739a9b790889c2fcc4871ccc">More...</a><br /></td></tr>
 <tr class="separator:a5bc0e3fa739a9b790889c2fcc4871ccc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -223,7 +226,7 @@ Static Public Attributes</h2></td></tr>
 <div class="textblock"><p>travel time phase class </p>
 <p>The traveltime <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> class is a class that loads, parses, and generates travel time phase branch over a set of valid depths for a given phase or phase class. <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> supports calculating travel times based on distance or geographic location for the given phase or phase class. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="acdef542ba188fd82df4f983e018913ac"></a>
+<a class="anchor" id="a39828912dbf88ed27ca69b9fabea873c"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -239,8 +242,14 @@ Static Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>publishable</em> = <code>true</code>&#160;</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>minPublishable</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>maxPublishable</em> = <code>180</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -256,7 +265,15 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p><a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> constructor. </p>
-<p>The constructor for the <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> class. </p>
+<p>The constructor for the <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> class.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">useForLocations</td><td>- A boolean flag indicating that this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> is usable for location </td></tr>
+    <tr><td class="paramname">minPublishable</td><td>- A double value containing the minumum distance in degrees to publish this phase. </td></tr>
+    <tr><td class="paramname">minPublishable</td><td>- A double value containing the maximum distance in degrees to publish this phase. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -786,20 +803,6 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a46291729f39664114adf51d7c368001d"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool traveltime::CTravelTime::m_bPublishable</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>A boolean flag indicating whether this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be published in output messages. </p>
-
-</div>
-</div>
 <a class="anchor" id="aca8c48853fdad773e7eeab5b053afa93"></a>
 <div class="memitem">
 <div class="memproto">
@@ -870,6 +873,20 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="adbe09569e43ab3ead13a893c350f320a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::m_dMaxDeltaPublishable</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A double value representing the maximum distance in degrees this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be published in output messages. </p>
+
+</div>
+</div>
 <a class="anchor" id="a572ae2882c9ae598a84db865ca924e94"></a>
 <div class="memitem">
 <div class="memproto">
@@ -895,6 +912,20 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>A double variable containing the maximum distance of the depth distance array. </p>
+
+</div>
+</div>
+<a class="anchor" id="a2a78f64618364d30d11885abbdb18dd1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double traveltime::CTravelTime::m_dMinDeltaPublishable</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A double value representing the minimum distance in degrees this <a class="el" href="classtraveltime_1_1CTravelTime.html" title="travel time phase class ">CTravelTime</a> should be published in output messages. </p>
 
 </div>
 </div>
