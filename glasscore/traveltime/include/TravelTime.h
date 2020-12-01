@@ -38,8 +38,16 @@ class CTravelTime {
 	 * \brief CTravelTime constructor
 	 *
 	 * The constructor for the CTravelTime class.
+	 * 
+	 * \param useForLocations - A boolean flag indicating that this CTravelTime
+	 * is usable for location
+	 * \param minPublishable - A double value containing the minumum distance 
+	 * in degrees to publish this phase.
+	 * \param minPublishable - A double value containing the maximum distance 
+	 * in degrees to publish this phase.
 	 */
-	explicit CTravelTime(bool useForLocations = true, bool publishable = true);
+	explicit CTravelTime(bool useForLocations = true, double minPublishable = 0,
+		double maxPublishable = 180);
 
 	/**
 	 * \brief CTravelTime copy constructor
@@ -281,10 +289,16 @@ class CTravelTime {
 	bool m_bUseForLocations;
 
 	/**
-	 * \brief A boolean flag indicating whether this CTravelTime should be 
-	 * published in output messages
+	 * \brief A double value representing the minimum distance in degrees this  
+	 * CTravelTime should be published in output messages
 	 */
-	bool m_bPublishable;
+	double m_dMinDeltaPublishable;
+
+	/**
+	 * \brief A double value representing the maximum distance in degrees this  
+	 * CTravelTime should be published in output messages
+	 */
+	double m_dMaxDeltaPublishable;
 
 	/**
 	 * \brief Delta in degrees used by caller to calculate distance

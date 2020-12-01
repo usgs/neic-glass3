@@ -443,6 +443,26 @@ std::shared_ptr<CTrigger> CNode::nucleate(double tOrigin,
 				continue;
 			}
 
+			/*
+			// check to see if the pick is currently associated to a hypo
+			std::shared_ptr<CHypo> pHypo = pick->getHypoReference();
+			if (pHypo != NULL) {
+				// pick is associated, compute ratio to threshold
+				double adBayesRatio = (pHypo->getBayesValue())
+						/ (pHypo->getNucleationStackThreshold());
+
+				// check to see if the ratio is high enough to not bother
+				// using this pick for nucleation
+				// NOTE: Hardcoded ratio threshold
+				if (adBayesRatio > 2.0) {
+					// this pick is associated with an existing
+					// hypo that is big enough that we should not
+					// use this pick for nucleation
+					continue;
+				}
+			}
+			*/
+
 			// get the pick's arrival time
 			double tPick = pick->getTPick();
 

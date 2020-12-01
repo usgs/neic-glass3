@@ -399,10 +399,42 @@ class CHypo {
 	 * \param sigma - A double value containing the sigma to use
 	 * \param sdassoc - A double value containing the standard
 	 * deviation assocaiation limit to use
+	 * \param p_only - A boolean flag indicating that this pick should 
+	 * try to associate ONLY with P, default to false
+	 * \param p_only - A boolean flag indicating that debug logging should
+	 * be performed, default to false
 	 * \return Returns true if the pick can be associated, false otherwise
 	 */
 	bool canAssociate(std::shared_ptr<CPick> pick, double sigma,
-						double sdassoc);
+						double sdassoc, bool p_only = false,
+						bool debug = false);
+
+	/**
+	 * \brief Gets the travel time for the given pick and phase to this hypo
+	 *
+	 * Calculates the travel time of the given supporting data to this hypo
+	 * for the given phase
+	 *
+	 * \param pick - The pick to calculate a travel tiem for for
+	 * \param phaseName - The phase name to use for calcuation
+	 * \return Returns a double value containing the travel time of the given
+	 * pick for the given phase
+	 */
+	double getTravelTimeForPhase(std::shared_ptr<CPick> pick,
+								  std::string phaseName);
+
+	/**
+	 * \brief Gets the distance between the given pick and phase to this hypo
+	 *
+	 * Calculates the distance between the given supporting data to this hypo
+	 * for the given phase
+	 *
+	 * \param pick - The pick to calculate a distance for for
+	 * \param phaseName - The phase name to use for calcuation
+	 * \return Returns a double value containing the distance to the given
+	 * pick in degrees
+	 */
+	double calculateDistanceToPick(std::shared_ptr<CPick> pick);
 
 	/**
 	 * \brief Calculates the residual of a pick to this hypo
@@ -410,14 +442,21 @@ class CHypo {
 	 * Calculates the residual of the given supporting data to this hypo
 	 *
 	 * \param pick - The pick to calculate a residual for
-	 * \param useForLocations - An optional  pointer to a boolean flag to be 
+	 * \param useForLocations - An optional pointer to a boolean flag to be 
 	 * returned indicating whether this pick can be used in locations, default
 	 * is null.
+	 * \param phaseName - An optional pointer to a string to be 
+	 * returned indicating the phase name, default
+	 * is null.
+	 * \param p_only - A boolean flag indicating that this pick should 
+	 * calculate a residual ONLY for P, default to false
 	 * \return Returns a double value containing the residual of the given
 	 * pick
 	 */
 	double calculateResidual(std::shared_ptr<CPick> pick,
-						bool * useForLocations = NULL);
+						bool * useForLocations = NULL,
+						std::string * phaseName = NULL,
+						bool p_only = false);
 
 	/**
 	 * \brief Check to see if correlation could be associated

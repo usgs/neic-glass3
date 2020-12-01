@@ -122,6 +122,17 @@ class CHypoList : public glass3::util::ThreadBaseClass {
 	bool associateData(std::shared_ptr<CPick> pk);
 
 	/**
+	 * \brief Try to fit pick to a hypo in the list
+	 *
+	 * Attempt to fit the given pick to a hypocenter in the list
+	 *
+	 *
+	 * \param pk - A std::shared_ptr to the pick to associate.
+	 * \return Returns true if the pick fit with a hypo, false otherwise
+	 */
+	bool fitData(std::shared_ptr<CPick> pk);
+
+	/**
 	 * \brief Try to associate correlation to a hypo in the list
 	 *
 	 * Attempt to associate the given correlation to a hypocenter in the list
