@@ -2443,6 +2443,12 @@ double CWeb::getZoneStatsMaxDepth(double dLat, double dLon) {
 	return(depth);
 }
 
+// -------------------------------------------getZoneStatPointer
+const std::shared_ptr<traveltime::CZoneStats>& CWeb::getZoneStatsPointer() const {  // NOLINT
+	// std::lock_guard<std::recursive_mutex> webGuard(m_WebMutex);
+	return(m_pZoneStats);
+	}
+
 // -------------------------------------getAseismicNucleationStackThreshold
 double CWeb::getASeismicNucleationStackThreshold() const {
 	return (m_dASeismicNucleationStackThreshold);

@@ -15,6 +15,7 @@
 #include <mutex>
 #include <atomic>
 #include "TTT.h"
+#include "ZoneStats.h"
 
 namespace glasscore {
 
@@ -113,7 +114,8 @@ class CHypo {
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100,
 			double aziTaper = 360.0, double maxDepth = 800.0,
-			CSiteList *pSiteList = NULL);
+			CSiteList *pSiteList = NULL,
+			std::shared_ptr<traveltime::CZoneStats> m_pZoneStats = NULL);
 
 	/**
 	 * \brief CHypo advanced constructor
@@ -151,7 +153,8 @@ class CHypo {
 			std::shared_ptr<traveltime::CTravelTime> firstTrav,
 			std::shared_ptr<traveltime::CTravelTime> secondTrav,
 			std::shared_ptr<traveltime::CTTT> ttt, double resolution = 100,
-			double aziTaper = 360.0, double maxDepth = 800.0);
+			double aziTaper = 360.0, double maxDepth = 800.0,
+			std::shared_ptr<traveltime::CZoneStats> m_pZoneStats = NULL);
 
 	/**
 	 * \brief CHypo advanced constructor
@@ -235,9 +238,10 @@ class CHypo {
 					double thresh, int cut,
 					std::shared_ptr<traveltime::CTravelTime> firstTrav,
 					std::shared_ptr<traveltime::CTravelTime> secondTrav,
-					std::shared_ptr<traveltime::CTTT> ttt, double resolution =
-							100,
-					double aziTaper = 360.0, double maxDepth = 800.0);
+					std::shared_ptr<traveltime::CTTT> ttt,
+					double resolution = 100,
+					double aziTaper = 360.0, double maxDepth = 800.0,
+					std::shared_ptr<traveltime::CZoneStats> m_pZoneStats = NULL);
 
 	/**
 	 * \brief Add pick reference to this hypo
@@ -1207,7 +1211,7 @@ class CHypo {
 	/**
 	 * \brief The maximum threshold for the location taper
 	 */
-	static constexpr double k_dLocationMaxTaperThreshold = 30.0;
+	static constexpr double k_dLocationMaxTaperThreshold = 50.0;
 
 	/**
 	 * \brief The small nPick threshold to skip during location
@@ -1227,12 +1231,12 @@ class CHypo {
 	/**
 	 * \brief The nPick threshold indicating a small hypo during location
 	 */
-	static const int k_iLocationNPickThresholdSmall = 25;
+	static const int k_iLocationNPickThresholdSmall = 50;
 
 	/**
 	 * \brief The nPick threshold indicating a medium hypo during location
 	 */
-	static const int k_iLocationNPickThresholdMedium = 50;
+	static const int k_iLocationNPickThresholdMedium = 100;
 
 	/**
 	 * \brief The nPick threshold indicating a large hypo during location
@@ -1371,7 +1375,7 @@ class CHypo {
  	 * that are beyond teleseismic distances as determined by the limit from
  	 * CGlass as of the last call of calculateStatistics
  	 */
-        std::atomic<int> m_iTeleseismicPhaseCount;
+     std::atomic<int> m_iTeleseismicPhaseCount;
 
 	/**
 	 * \brief A double value containing this hypo's distance standard deviation
@@ -1478,6 +1482,11 @@ class CHypo {
 	 * functions
 	 */
 	std::shared_ptr<traveltime::CTTT> m_pTravelTimeTables;
+
+	/**
+	 * \brief A pointer to a zonestats pointer
+	 */
+	std::shared_ptr<traveltime::CZoneStats> m_pZoneStats;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypo.
