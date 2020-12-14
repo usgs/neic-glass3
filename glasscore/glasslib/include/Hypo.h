@@ -18,6 +18,7 @@
 #include "ZoneStats.h"
 #include "taper.h"
 
+
 namespace glasscore {
 
 // forward declarations
@@ -1509,10 +1510,16 @@ class CHypo {
 	 */
 	std::shared_ptr<traveltime::CZoneStats> m_pZoneStats;
 
-
+	/**
+	 * \brief Taper for event depth being larger than zonestats
+	 */
 	glass3::util::Taper m_taperDepth;
-
+	
+	/**
+	 * \brief Taper for large azimuthal gap
+	 */
 	glass3::util::Taper m_taperGap;
+
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypo.
