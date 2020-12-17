@@ -16,6 +16,7 @@
 #include <atomic>
 #include "TTT.h"
 #include "ZoneStats.h"
+#include "taper.h"
 
 namespace glasscore {
 
@@ -1487,6 +1488,11 @@ class CHypo {
 	 * \brief A pointer to a zonestats pointer
 	 */
 	std::shared_ptr<traveltime::CZoneStats> m_pZoneStats;
+
+
+	glass3::util::Taper m_taperDepth;
+
+	glass3::util::Taper m_taperGap;
 
 	/**
 	 * \brief A recursive_mutex to control threading access to CHypo.
