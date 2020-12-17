@@ -619,12 +619,12 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 			currentLocationMaxDepthFromZoneStats > m_dMaxDepth) {
 		currentLocationMaxDepthFromZoneStats = m_dMaxDepth;
 	}
-	currentLocationMaxDepthFromZoneStats = 1.;
+
 	// build taper for depth, from 0 to currentLocationMaxDepthFromZoneStats
 	// it equals 1, from currentLocationMaxDepthFromZoneStats to 1.5 *
 	// currentLocationMaxDepthFromZoneStats it tapers to zero
 	m_taperDepth = glass3::util::Taper(0.0, 0.0,
-			currentLocationMaxDepthFromZoneStats,
+			currentLocationMaxDepthFromZoneStats*1.,
 			currentLocationMaxDepthFromZoneStats*1.5);
 
 	// these hold the values of the initial, current, and best stack location
@@ -2007,7 +2007,10 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 		// calculate and add to the stack
 		value += glass3::util::GlassMath::sig(resi, sigma);
 	}
-	return value * taperGap.calculateValue(calculateGap(xlat, xlon, xZ)) * taperDepth.calculateValue(xZ);
+
+	return value
+			* m_taperGap.calculateValue(calculateGap(xlat, xlon, xZ))
+			* ((m_taperDepth.calculateValue(xZ)*.75)+.25);
 }
 
 // --------------------------------------------------------getInitialBayesValue
