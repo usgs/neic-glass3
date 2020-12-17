@@ -17,7 +17,10 @@
 #include "TTT.h"
 #include "ZoneStats.h"
 #include "taper.h"
+<<<<<<< HEAD
 
+=======
+>>>>>>> added depth taper based on zone stats, where bayes is downweighted to .25 at 1.5* max zonestats depth. Also moved these to calculateBayes function for consistency throughout the algorithm
 
 namespace glasscore {
 
