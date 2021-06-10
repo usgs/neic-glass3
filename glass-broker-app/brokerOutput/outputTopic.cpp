@@ -13,6 +13,13 @@ outputTopic::outputTopic(hazdevbroker::Producer * producer) {
 	m_OutputTopic = NULL;
 	m_OutputProducer = NULL;
 
+	m_iReportInterval = 300;
+	std::time(&tLastPerformanceReport);
+	m_dSendTime = 0;
+	m_dRunningSendTimeAverage = -1;
+	m_iRunningAverageCounter = 0;
+	m_iMessageCounter = 0;
+
 	clear();
 
 	m_OutputProducer = producer;
@@ -191,7 +198,78 @@ void outputTopic::send(const std::string &message) {
 			"outputTopic::send(): Sent message to topic: " + m_sTopicName);
 
 	// send it
+	std::chrono::high_resolution_clock::time_point tSendStartTime =
+			std::chrono::high_resolution_clock::now();
+
 	m_OutputProducer->sendString(m_OutputTopic, message);
+
+	std::chrono::high_resolution_clock::time_point tSendEndTime =
+		std::chrono::high_resolution_clock::now();
+
+	// compute the time sending
+	double currentSendTime = std::chrono::duration_cast<
+			std::chrono::duration<double>>(tSendEndTime - tSendStartTime)
+			.count();
+
+	m_iMessageCounter++;
+	m_dSendTime += currentSendTime;
+
+	// don't alert if our average is not going yet
+	if ((m_iRunningAverageCounter > 1) &&
+		(currentSendTime > 2*(m_dRunningSendTimeAverage))) {
+		glass3::util::Logger::log("warning",
+				"outputTopic::send(): Time sending a message to topic "
+				+ m_sTopicName +
+				" took two times longer than average: "
+				+ std::to_string(currentSendTime)
+				+ " vs "
+				+ std::to_string(m_dRunningSendTimeAverage));
+	}
+
+	// do a performance report if it's time
+	std::time_t tNow;
+	std::time(&tNow);
+	if ((tNow - tLastPerformanceReport) >= m_iReportInterval) {
+		// calculate send time average since the last report
+		// we need a default so use the last send time
+		double sendTimeAverage = currentSendTime;
+
+		// avoid startup wierdness (first report)
+		if (m_dRunningSendTimeAverage < 0) {
+			m_dRunningSendTimeAverage = currentSendTime;
+		}
+		if ((m_iRunningAverageCounter > 0)  && (m_iMessageCounter > 0)) {
+			sendTimeAverage = static_cast<double>(m_dSendTime)
+				/ static_cast<double>(m_iMessageCounter);
+		}
+
+		// calculate running average of the data per second
+		m_iRunningAverageCounter++;
+		if (m_iRunningAverageCounter == 1) {
+			m_dRunningSendTimeAverage = sendTimeAverage;
+		}
+		m_dRunningSendTimeAverage = (m_dRunningSendTimeAverage
+				* (m_iRunningAverageCounter - 1) + sendTimeAverage)
+				/ m_iRunningAverageCounter;
+
+		// log the report
+		glass3::util::Logger::log(
+				"info",
+				"outputTopic::send(): Topic: "
+						+ m_sTopicName
+						+ "; current send time: "
+						+ std::to_string(currentSendTime) +
+						"; average send time: "
+						+ std::to_string(sendTimeAverage)
+						+ "; running send time average: "
+						+ std::to_string(m_dRunningSendTimeAverage)
+						+ "; number of messages sent: "
+						+ std::to_string(m_iMessageCounter));
+
+		tLastPerformanceReport = tNow;
+		m_dSendTime = 0;
+		m_iMessageCounter = 0;
+	}
 }
 
 // ---------------------------------------------------------heartbeat

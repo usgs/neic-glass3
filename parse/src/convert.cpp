@@ -114,6 +114,7 @@ std::string hypoToJSONDetection(std::shared_ptr<json::Object> data,
 		// optional values that we have
 		detection.minimumdistance = (*data)["MinimumDistance"];
 		detection.gap = (*data)["Gap"];
+		detection.detector = (*data)["WebName"].ToString();
 		detection.bayes = (*data)["Bayes"];
 		detection.detectiontime = tNow;
 

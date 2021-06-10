@@ -394,7 +394,7 @@ void brokerOutput::sendToOutputTopics(const std::string &message) {
 				"brokerOutput::sendToOutputTopics: Message missing type.");
 		return;
 	}
-	
+
 	std::string id = "";
 	if (messageObject.HasKey("ID")
 			&& ((messageObject)["ID"].GetType() == json::ValueType::StringVal)) {

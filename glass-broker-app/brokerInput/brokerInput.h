@@ -105,6 +105,43 @@ class brokerInput : public glass3::input::Input {
 	 * \brief the interval in seconds to expect hazdevbroker heartbeats.
 	 */
 	int m_iBrokerHeartbeatInterval;
+
+	/**
+	 * \brief Double holding the time spent polling since the last  since
+	 * the last informational report.
+	 */
+	double m_dPollTime;
+
+	/**
+	 * \brief Integer holding the count of times the running average has been
+	 * computed, used to compute the running average of time to poll 
+	 */
+	int m_iRunningAverageCounter;
+
+	/**
+	 * \brief Double holding the the running average of time to poll used
+	 * in the information report
+	 */
+	double m_dRunningPollTimeAverage;
+
+	/**
+	 * \brief Integer holding the count of messages received since
+	 * the last informational report.
+	 */
+	int m_iMessageCounter;
+
+	/**
+	 * \brief The time the last informational report was generated.
+	 */
+	time_t tLastPerformanceReport;
+
+	/**
+	 * \brief Information Report interval
+	 *
+	 * An integer containing the interval (in seconds) between
+	 * logging informational reports.
+	 */
+	int m_iReportInterval;
 };
 }  // namespace glass3
 #endif  // BROKERINPUT_H

@@ -20,6 +20,12 @@ brokerInput::brokerInput()
 
 	m_Consumer = NULL;
 	m_iBrokerHeartbeatInterval = -1;
+	m_iReportInterval = 60;
+	std::time(&tLastPerformanceReport);
+	m_dPollTime = 0;
+	m_dRunningPollTimeAverage = -1;
+	m_iRunningAverageCounter = 0;
+	m_iMessageCounter = 0;
 
 	clear();
 }
@@ -29,6 +35,12 @@ brokerInput::brokerInput(const std::shared_ptr<const json::Object> &config)
 		: glass3::input::Input() {
 	m_Consumer = NULL;
 	m_iBrokerHeartbeatInterval = -1;
+	m_iReportInterval = 60;
+	std::time(&tLastPerformanceReport);
+	m_dPollTime = 0;
+	m_dRunningPollTimeAverage = -1;
+	m_iRunningAverageCounter = 0;
+	m_iMessageCounter = 0;
 
 	// do basic construction
 	clear();
@@ -190,6 +202,9 @@ void brokerInput::clear() {
 std::string brokerInput::fetchRawData(std::string* pOutType) {
 	// we only expect json messages from the broker
 	*pOutType = std::string(JSON_TYPE);
+	int brokerMaxPollTimeMS = 100;
+	double brokerMaxPollTime = static_cast<double>(brokerMaxPollTimeMS) /
+		static_cast<double>(1000);
 
 	// make sure we have a consumer
 	if (m_Consumer == NULL) {
@@ -221,7 +236,70 @@ std::string brokerInput::fetchRawData(std::string* pOutType) {
 	}
 
 	// get message from the consumer
-	std::string message = m_Consumer->pollString(100);
+	std::chrono::high_resolution_clock::time_point tPollStartTime =
+			std::chrono::high_resolution_clock::now();
+
+	std::string message = m_Consumer->pollString(brokerMaxPollTimeMS);
+
+	std::chrono::high_resolution_clock::time_point tPollEndTime =
+			std::chrono::high_resolution_clock::now();
+
+	// compute the time polling
+	double currentPollTime = std::chrono::duration_cast<
+			std::chrono::duration<double>>(tPollEndTime - tPollStartTime)
+			.count();
+
+	if (message != "") {
+		m_iMessageCounter++;
+		m_dPollTime += currentPollTime;
+	}
+
+	// do a performance report if it's time
+	std::time_t tNow;
+	std::time(&tNow);
+	if ((tNow - tLastPerformanceReport) >= m_iReportInterval) {
+		// calculate poll time average since the last report
+		// we need a default so use the last poll time
+		double pollTimeAverage = currentPollTime;
+
+		// avoid startup wierdness (first report)
+		if (m_dRunningPollTimeAverage < 0) {
+			m_dRunningPollTimeAverage = brokerMaxPollTime;
+			pollTimeAverage = brokerMaxPollTime;
+		}
+		if ((m_iRunningAverageCounter > 0)  && (m_iMessageCounter > 0)) {
+			pollTimeAverage = static_cast<double>(m_dPollTime)
+				/ static_cast<double>(m_iMessageCounter);
+		}
+
+		// calculate running average of the data per second
+		m_iRunningAverageCounter++;
+		if (m_iRunningAverageCounter == 1) {
+			m_dRunningPollTimeAverage = pollTimeAverage;
+		}
+		m_dRunningPollTimeAverage = (m_dRunningPollTimeAverage
+				* (m_iRunningAverageCounter - 1) + pollTimeAverage)
+				/ m_iRunningAverageCounter;
+
+		// log the report
+		glass3::util::Logger::log(
+				"info",
+				"brokerInput::fetchRawData(): "
+						" current message time: "
+						+ std::to_string(currentPollTime)
+						+ "; average message time: "
+						+ std::to_string(pollTimeAverage)
+						+ "; running message time average: "
+						+ std::to_string(m_dRunningPollTimeAverage)
+						+ "; poll timeout: "
+						+ std::to_string(brokerMaxPollTime)
+						+ "; number of messages: "
+						+ std::to_string(m_iMessageCounter));
+
+		tLastPerformanceReport = tNow;
+		m_dPollTime = 0;
+		m_iMessageCounter = 0;
+	}
 
 	// check for empty string
 	if (message != "") {

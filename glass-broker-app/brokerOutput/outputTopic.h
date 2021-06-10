@@ -123,6 +123,43 @@ class outputTopic {
 	 * \brief the output producer
 	 */
 	hazdevbroker::Producer * m_OutputProducer;
+
+	/**
+	 * \brief Double holding the time spent sending since the last
+	 * the last informational report.
+	 */
+	double m_dSendTime;
+
+	/**
+	 * \brief Integer holding the count of times the running average has been
+	 * computed, used to compute the running average of time to poll 
+	 */
+	int m_iRunningAverageCounter;
+
+	/**
+	 * \brief Double holding the the running average of time to send used
+	 * in the information report
+	 */
+	double m_dRunningSendTimeAverage;
+
+	/**
+	 * \brief Integer holding the count of messages sent since
+	 * the last informational report.
+	 */
+	int m_iMessageCounter;
+
+	/**
+	 * \brief The time the last informational report was generated.
+	 */
+	time_t tLastPerformanceReport;
+
+	/**
+	 * \brief Information Report interval
+	 *
+	 * An integer containing the interval (in seconds) between
+	 * logging informational reports.
+	 */
+	int m_iReportInterval;
 };
 }  // namespace glass3
 #endif  // OUTPUTTOPIC_H
