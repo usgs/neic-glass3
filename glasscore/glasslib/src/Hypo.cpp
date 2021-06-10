@@ -2421,6 +2421,7 @@ std::shared_ptr<json::Object> CHypo::generateHypoMessage() {
 	(*hypo)["Cmd"] = "Hypo";
 	(*hypo)["Type"] = "Hypo";
 	(*hypo)["ID"] = m_sID;
+	(*hypo)["WebName"] = getWebName();
 
 	// source
 	// NOTE: THIS NEEDS TO BE NOT HARDCODED EVENTUALLY
