@@ -56,7 +56,7 @@ const int CHypo::k_iLocationNumIterationsMedium;
 const int CHypo::k_iLocationNumIterationsLarge;
 constexpr double CHypo::k_dSearchRadiusResolutionFactor;
 constexpr double CHypo::k_dSearchRadiusTaperFactor;
-constexpr double CHypo::k_dSearchRadiusFactor;
+
 
 // ---------------------------------------------------------CHypo
 CHypo::CHypo() {
@@ -2263,14 +2263,14 @@ double CHypo::calculateWeightedResidual(std::string sPhase, double tObs,
 		// this value was selected by testing specific
 		// events with issues
 		// NOTE: Hard Coded
-		return ((tObs - tCal) * 2.0);
+		return ((tObs - tCal) * (1./k_SPhaseDownweight));
 	} else {
 		// Down weighting all other phases
 		// Value was chosen so that other phases would
 		// still contribute (reducing instabilities)
 		// but remain insignificant
 		// NOTE: Hard Coded
-		return ((tObs - tCal) * 10.0);
+		return ((tObs - tCal) * (1./k_OtherPhaseDownweight));
 	}
 }
 

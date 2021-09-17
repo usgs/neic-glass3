@@ -1276,6 +1276,16 @@ class CHypo {
 	 */
 	static constexpr double k_dSearchRadiusFactor = 0.5;
 
+	/**
+	 * \brief The factor for dividing when computing the location search radius
+	 */
+	static constexpr double k_SPhaseDownweight = 0.5;
+
+	/**
+	 * \brief The factor for dividing when computing the location search radius
+	 */
+	static constexpr double k_OtherPhaseDownweight = 0.1;
+
  private:
 	/**
 	 * \brief  A std::string with the name of the web used during the nucleation
@@ -1294,6 +1304,16 @@ class CHypo {
 	 * used during the nucleation process
 	 */
 	std::atomic<double> m_dNucleationStackThreshold;
+
+	/**
+	 * \brief A double for all other phases (not P or S) downweight in bayes/location
+	 */
+	std::atomic<double> m_OtherPhaseDownweight;
+
+	/**
+	 * \brief A double for S phase downweight in bayes/location
+	 */
+	std::atomic<double> m_SPhaseDownweight;
 
 	/**
 	 * \brief A double value containing the the taper to use on the bayseian
