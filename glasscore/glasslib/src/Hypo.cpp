@@ -56,7 +56,7 @@ const int CHypo::k_iLocationNumIterationsMedium;
 const int CHypo::k_iLocationNumIterationsLarge;
 constexpr double CHypo::k_dSearchRadiusResolutionFactor;
 constexpr double CHypo::k_dSearchRadiusTaperFactor;
-constexpr double CHypo::k_dSearchRadiusFactor;
+
 
 // ---------------------------------------------------------CHypo
 CHypo::CHypo() {
@@ -69,9 +69,10 @@ CHypo::CHypo(double lat, double lon, double z, double time, std::string pid,
 				std::shared_ptr<traveltime::CTravelTime> firstTrav,
 				std::shared_ptr<traveltime::CTravelTime> secondTrav,
 				std::shared_ptr<traveltime::CTTT> ttt, double resolution,
-				double aziTap, double maxDep) {
+				double aziTap, double maxDep,
+				std::shared_ptr<traveltime::CZoneStats> zoneStats) {
 	if (!initialize(lat, lon, z, time, pid, web, bayes, thresh, cut, firstTrav,
-					secondTrav, ttt, resolution, aziTap, maxDep)) {
+					secondTrav, ttt, resolution, aziTap, maxDep, zoneStats)) {
 		clear();
 	}
 }
@@ -81,7 +82,8 @@ CHypo::CHypo(std::shared_ptr<json::Object> detection, double thresh, int cut,
 				std::shared_ptr<traveltime::CTravelTime> firstTrav,
 				std::shared_ptr<traveltime::CTravelTime> secondTrav,
 				std::shared_ptr<traveltime::CTTT> ttt, double resolution,
-				double aziTap, double maxDep, CSiteList *pSiteList) {
+				double aziTap, double maxDep, CSiteList *pSiteList,
+				std::shared_ptr<traveltime::CZoneStats> zoneStats) {
 	// null check json
 	if (detection == NULL) {
 		glass3::util::Logger::log("error",
@@ -198,7 +200,7 @@ CHypo::CHypo(std::shared_ptr<json::Object> detection, double thresh, int cut,
 
 	if (!initialize(lat, lon, z, time, glass3::util::GlassID::getID(),
 					"Detection", bayes, thresh, cut, firstTrav, secondTrav, ttt,
-					resolution, aziTap, maxDep)) {
+					resolution, aziTap, maxDep, zoneStats)) {
 		clear();
 	}
 
@@ -276,7 +278,8 @@ CHypo::CHypo(std::shared_ptr<CTrigger> trigger,
 					trigger->getWeb()->getNucleationTravelTime2(), ttt,
 					trigger->getWebResolution(),
 					trigger->getWeb()->getAzimuthTaper(),
-					trigger->getWeb()->getMaxDepth())) {
+					trigger->getWeb()->getMaxDepth(),
+					trigger->getWeb()->getZoneStatsPointer())) {
 		clear();
 	}
 }
@@ -592,18 +595,45 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 	}
 
 	// taper to lower calculateValue if large azimuthal gap
-	glass3::util::Taper taperGap;
-	taperGap = glass3::util::Taper(0.0, 0.0, m_dAzimuthTaper,
+	m_taperGap = glass3::util::Taper(0.0, 0.0, m_dAzimuthTaper,
 									k_dGapTaperDownEnd);
+
+	// first set the max amount to be large, so basically the taper is always 1.
+	// if m_pWeb is NULL
+	double currentLocationMaxDepthFromZoneStats = 999999.;
+	// use the getZoneStatMaxDepth to set the start of the taper
+
+	if(m_pZoneStats != NULL) {
+    	currentLocationMaxDepthFromZoneStats =
+    			m_pZoneStats->getMaxDepthForLatLon(m_dLatitude,m_dLongitude);
+    }
+
+	// if its too small set to moho-ish depth
+	if(m_pZoneStats != NULL &&
+			currentLocationMaxDepthFromZoneStats < 35.) {
+		currentLocationMaxDepthFromZoneStats = 35.;
+	}
+
+	// if it is larger than the web max depth, use web's max depth
+	if(m_pZoneStats != NULL &&
+			currentLocationMaxDepthFromZoneStats > m_dMaxDepth) {
+		currentLocationMaxDepthFromZoneStats = m_dMaxDepth;
+	}
+
+	// build taper for depth, from 0 to currentLocationMaxDepthFromZoneStats
+	// it equals 1, from currentLocationMaxDepthFromZoneStats to 1.5 *
+	// currentLocationMaxDepthFromZoneStats it tapers to zero
+	m_taperDepth = glass3::util::Taper(0.0, 0.0,
+			currentLocationMaxDepthFromZoneStats*1.,
+			currentLocationMaxDepthFromZoneStats*1.5);
 
 	// these hold the values of the initial, current, and best stack location
 	double valStart = 0;
 	double valBest = 0;
 	// calculate the value of the stack at the current location
 	valStart = calculateBayes(m_dLatitude, m_dLongitude, m_dDepth, m_tOrigin,
-								nucleate)
-			* taperGap.calculateValue(
-					calculateGap(m_dLatitude, m_dLongitude, m_dDepth));
+								nucleate);
+
 
 	char sLog[glass3::util::Logger::k_nMaxLogEntrySize];
 
@@ -682,8 +712,7 @@ void CHypo::annealingLocateBayes(int nIter, double dStart, double dStop,
 		double oT = m_tOrigin + dt;
 
 		// get the stack value for this hypocenter
-		double bayes = calculateBayes(xlat, xlon, xz, oT, nucleate)
-				* taperGap.calculateValue(calculateGap(xlat, xlon, xz));
+		double bayes = calculateBayes(xlat, xlon, xz, oT, nucleate);
 
 		// if testing locator print iteration
 		if (CGlass::getTestLocator()) {
@@ -1978,7 +2007,10 @@ double CHypo::calculateBayes(double xlat, double xlon, double xZ, double oT,
 		// calculate and add to the stack
 		value += glass3::util::GlassMath::sig(resi, sigma);
 	}
-	return value;
+
+	return value
+			* m_taperGap.calculateValue(calculateGap(xlat, xlon, xZ))
+			* ((m_taperDepth.calculateValue(xZ)*.75)+.25);
 }
 
 // --------------------------------------------------------getInitialBayesValue
@@ -2231,14 +2263,14 @@ double CHypo::calculateWeightedResidual(std::string sPhase, double tObs,
 		// this value was selected by testing specific
 		// events with issues
 		// NOTE: Hard Coded
-		return ((tObs - tCal) * 2.0);
+		return ((tObs - tCal) * (1./k_SPhaseDownweight));
 	} else {
 		// Down weighting all other phases
 		// Value was chosen so that other phases would
 		// still contribute (reducing instabilities)
 		// but remain insignificant
 		// NOTE: Hard Coded
-		return ((tObs - tCal) * 10.0);
+		return ((tObs - tCal) * (1./k_OtherPhaseDownweight));
 	}
 }
 
@@ -2650,7 +2682,8 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 						std::shared_ptr<traveltime::CTravelTime> firstTrav,
 						std::shared_ptr<traveltime::CTravelTime> secondTrav,
 						std::shared_ptr<traveltime::CTTT> ttt,
-						double resolution, double aziTap, double maxDep) {
+						double resolution, double aziTap, double maxDep,
+						std::shared_ptr<traveltime::CZoneStats> zoneStats) {
 	// lock mutex for this scope
 	std::lock_guard < std::recursive_mutex > guard(m_HypoMutex);
 
@@ -2670,9 +2703,13 @@ bool CHypo::initialize(double lat, double lon, double z, double time,
 	m_dNucleationStackThreshold = thresh;
 	m_iNucleationDataThreshold = cut;
 	m_dWebResolution = resolution;
+	m_pZoneStats = zoneStats;
 	if (m_dWebResolution == 0.0) {
 		m_dWebResolution = 100.0;
 	}
+
+	m_taperGap = glass3::util::Taper(0.0, 0.0, 999., 999.);
+	m_taperDepth = glass3::util::Taper(0.0, 0.0, 999., 999.);
 
 	// init the performance timing audit struct to 0's
 	memset(&m_hapsAudit, 0, sizeof(m_hapsAudit));

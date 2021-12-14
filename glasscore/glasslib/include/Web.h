@@ -546,6 +546,13 @@ class CWeb : public glass3::util::ThreadBaseClass {
 	double getASeismicNucleationStackThreshold() const;
 
 	/**
+	 * \brief gets the zonestats pointer for the web
+	 * \return returns a zonestats pointer or null
+	 *
+	 */
+	const std::shared_ptr<traveltime::CZoneStats>& getZoneStatsPointer() const;  // NOLINT
+
+	/**
 	 * \brief Gets the aseismic nucleation data (picks) minimum threshold used for
 	 * this web
 	 * \return Returns an integer value containing the aseismic nucleation data minimum
