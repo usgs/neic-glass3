@@ -1,3 +1,7 @@
+> **THIS PROJECT HAS BEEN ARCHIVED**
+> 
+> Please see [https://code.usgs.gov/ghsc/neic/algorithms/neic-glass3)
+
 [![codecov](https://codecov.io/gh/usgs/neic-glass3/branch/master/graph/badge.svg)](https://codecov.io/gh/usgs/neic-glass3)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5584cd7bb81f412c9d6dda9ebd787d13)](https://www.codacy.com/app/jpatton-USGS/neic-glass3?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=usgs/neic-glass3&amp;utm_campaign=Badge_Grade)
 [![Documentation](https://usgs.github.io/neic-glass3/codedocumented.svg)](https://usgs.github.io/neic-glass3/)
